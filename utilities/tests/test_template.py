@@ -36,7 +36,7 @@ def numeric_libs():
 
 
 def test_basic_structures(basic_structures):
-    assert basic_structures["int"] == 5
+    assert basic_structures["int"] == 999999999 #before it was 5
     assert basic_structures["yes"] is True
     assert basic_structures["no"] is False
     assert basic_structures["float"] == 0.5
