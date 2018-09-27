@@ -1,0 +1,37 @@
+jobs:
+
+- job: 'Test'
+  pool:
+    name: ${{ parameters.name }}
+    vmImage: ${{ parameters.pool }}
+    # pool: 
+    # 'macOS-10.13', 'VS2017-Win2016'
+  strategy:
+    matrix:
+      Python27:
+        python.version: '2.7'
+      Python36:
+        python.version: '3.6'
+    maxParallel: 4
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+
+  - script: python -m pip install --upgrade pip 
+    # && pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: |
+      pip install pytest
+      cd examples/notebooks
+      pytest tests --doctest-modules --junitxml=junit/test-results.xml
+    displayName: 'pytest'
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
+      testRunTitle: 'Python $(python.version)'
+    condition: succeededOrFailed()
