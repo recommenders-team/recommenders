@@ -23,7 +23,7 @@ jobs:
   - script: |
       pip install pytest
       cd examples/notebooks
-      pytest tests --doctest-modules --junitxml=junit/test-results.xml
+      pytest utilities-test.py --doctest-modules --junitxml=junit/test-results.xml
     displayName: 'pytest'
 
   - task: PublishTestResults@2
