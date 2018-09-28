@@ -45,7 +45,7 @@ jobs:
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     diplayName: 'Install miniconda - Windows'
 
-  - script:
+  - script: |
       cd xDeepFM
       # restore environment
       conda env create -f environment.yml
