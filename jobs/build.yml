@@ -45,6 +45,7 @@ jobs:
 
   - script: |
       export PATH="$HOME/miniconda/bin:$PATH"
+      . /Users/vsts/miniconda/etc/profile.d/conda.sh
       cd examples/notebooks/xDeepFM
 
       # restore environment
