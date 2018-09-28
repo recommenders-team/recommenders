@@ -21,7 +21,7 @@ def count_lines(name):
     (3, [0.3,0.3], [307, 307, 386])
 ])
 def test_split_files(tmpdir, split_count, ratios, expected_line_counts):
-    os.chdir(tmpdir)
+    os.chdir(str(tmpdir))
 
     # make it reproducible
     random.seed(123)
