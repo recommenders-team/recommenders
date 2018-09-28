@@ -28,14 +28,12 @@ jobs:
   - script: |
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O ~/miniconda.sh  
       bash ~/miniconda.sh -b -p $HOME/miniconda
-      export PATH="$HOME/miniconda/bin:$PATH"
     condition: eq(variables['Agent.OS'], 'Darwin')
     displayName: 'Install miniconda - Darwin'
 
   - script: |
       wget https://repo.continuum.io/miniconda/Miniconda3-3.7.0-Linux-x86_64.sh -O ~/miniconda.sh  
       bash ~/miniconda.sh -b -p $HOME/miniconda
-      export PATH="$HOME/miniconda/bin:$PATH"
     condition: eq(variables['Agent.OS'], 'Linux')
     displayName: 'Install miniconda - Linux'
 
@@ -46,7 +44,9 @@ jobs:
     displayName: 'Install miniconda - Windows'
 
   - script: |
-      cd xDeepFM
+      export PATH="$HOME/miniconda/bin:$PATH"
+      cd examples/notebooks/xDeepFM
+
       # restore environment
       conda env create -f environment.yml
       conda activate xDeepFM-criteo
