@@ -20,13 +20,24 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
-      pip install pytest papermill
+      pip install pytest
       cd examples/notebooks
       pytest utilities-test.py --doctest-modules --junitxml=junit/test-results.xml
 
       cd xDeepFM
+      
+      # install miniconda
+      wget https://repo.continuum.io/miniconda/Miniconda3-3.7.0-Linux-x86_64.sh -O ~/miniconda.sh
+      bash ~/miniconda.sh -b -p $HOME/miniconda
+      export PATH="$HOME/miniconda/bin:$PATH"
+       
+      # restore environment
       conda env create -f environment.yml
       conda activate xDeepFM-criteo
+
+      pip install papermill
+      
+      # run notebook
       papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'https://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
     displayName: 'pytest'
 
