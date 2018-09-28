@@ -1,3 +1,4 @@
+import os
 import random
 import sys
 from typing import List
@@ -54,3 +55,10 @@ def split_files(input_path: str, output_paths: List[str], ratios: List[float], m
                     break
 
             output_files[idx].write(line)
+
+
+def mkdir_safe(name: str):
+    try:
+        os.stat(name)
+    except:
+        os.mkdir(name)

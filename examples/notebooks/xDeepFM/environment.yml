@@ -3,6 +3,7 @@ channels:
   - defaults
 dependencies:
   - _tflow_1100_select=0.0.1=gpu
+  - _tflow_190_select=0.0.1=gpu
   - absl-py=0.4.1=py36_0
   - appdirs=1.4.3=py36h28b3542_0
   - asn1crypto=0.24.0=py36_0
@@ -18,9 +19,10 @@ dependencies:
   - cffi=1.11.5=py36he75722e_1
   - constantly=15.1.0=py36h28b3542_0
   - cryptography=2.3.1=py36hc365091_0
-  - cudatoolkit=9.2=0
-  - cudnn=7.2.1=cuda9.2_0
-  - cupti=9.2.148=0
+  - cudatoolkit=9.0=h13b8566_0
+  - cudnn=7.1.2=cuda9.0_0
+  - cupti=9.0.176=0
+  - cycler=0.10.0=py36_0
   - dbus=1.13.2=h714fa37_1
   - decorator=4.3.0=py36_0
   - entrypoints=0.2.3=py36_2
@@ -51,6 +53,7 @@ dependencies:
   - jupyter_client=5.2.3=py36_0
   - jupyter_console=5.2.0=py36_1
   - jupyter_core=4.4.0=py36_0
+  - kiwisolver=1.0.1=py36hf484d3e_0
   - libedit=3.1.20170329=h6b74fdf_2
   - libffi=3.2.1=hd88cf55_4
   - libgcc-ng=8.2.0=hdf63c60_1
@@ -64,6 +67,7 @@ dependencies:
   - libxml2=2.9.8=h26e45fe_1
   - markdown=2.6.11=py36_0
   - markupsafe=1.0=py36h14c3975_1
+  - matplotlib=2.2.3=py36hb69df0a_0
   - mistune=0.8.3=py36h14c3975_1
   - mkl=2019.0=118
   - mkl_fft=1.0.4=py36h4414c95_1
@@ -76,6 +80,7 @@ dependencies:
   - numpy=1.15.1=py36h1d66e8a_0
   - numpy-base=1.15.1=py36h81de0dd_0
   - openssl=1.0.2p=h14c3975_0
+  - packaging=17.1=py36_0
   - pandas=0.23.4=py36h04863e7_0
   - pandoc=2.2.3.2=0
   - pandocfilters=1.4.2=py36_1
@@ -95,26 +100,30 @@ dependencies:
   - pycparser=2.18=py36_1
   - pygments=2.2.0=py36_0
   - pyopenssl=18.0.0=py36_0
-  - pyqt=5.9.2=py36h22d08a2_1
+  - pyparsing=2.2.0=py36_1
+  - pyqt=5.9.2=py36h05f1152_2
   - pytest=3.8.0=py36_0
   - python=3.6.6=hc3d631a_0
   - python-dateutil=2.7.3=py36_0
   - pytz=2018.5=py36_0
+  - pyyaml=3.13=py36h14c3975_0
   - pyzmq=17.1.2=py36h14c3975_0
   - qt=5.9.6=h8703b6f_2
   - qtconsole=4.4.1=py36_0
   - readline=7.0=h7b6447c_5
+  - scikit-learn=0.19.1=py36hedc7406_0
+  - scipy=1.1.0=py36hfa4b5c9_1
   - send2trash=1.5.0=py36_0
   - service_identity=17.0.0=py36h28b3542_0
   - setuptools=40.2.0=py36_0
   - simplegeneric=0.8.1=py36_2
-  - sip=4.19.12=py36he6710b0_0
+  - sip=4.19.8=py36hf484d3e_0
   - six=1.11.0=py36_1
   - sqlite=3.24.0=h84994c4_0
-  - tensorboard=1.10.0=py36hf484d3e_0
-  - tensorflow=1.10.0=gpu_py36hcebf108_0
-  - tensorflow-base=1.10.0=gpu_py36had579c0_0
-  - tensorflow-gpu=1.10.0=hf154084_0
+  - tensorboard=1.9.0=py36hf484d3e_0
+  - tensorflow=1.9.0=gpu_py36h02c5d5e_1
+  - tensorflow-base=1.9.0=gpu_py36h6ecc378_0
+  - tensorflow-gpu=1.9.0=hf154084_0
   - termcolor=1.1.0=py36_1
   - terminado=0.8.1=py36_1
   - testpath=0.3.1=py36_0
@@ -128,9 +137,15 @@ dependencies:
   - wheel=0.31.1=py36_0
   - widgetsnbextension=3.4.1=py36_0
   - xz=5.2.4=h14c3975_4
+  - yaml=0.1.7=had09818_2
   - zeromq=4.2.5=hf484d3e_1
   - zlib=1.2.11=ha838bed_2
   - zope=1.0=py36_1
   - zope.interface=4.5.0=py36h14c3975_0
+  - pip:
+    - black==18.6b4
+    - blackcellmagic==0.0.1
+    - click==6.7
+    - toml==0.9.6
 prefix: /home/markus/miniconda3/envs/xDeepFM-criteo
 

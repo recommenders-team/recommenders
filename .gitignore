@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# generate fiels
+examples/notebooks/xDeepFM/config.yaml
