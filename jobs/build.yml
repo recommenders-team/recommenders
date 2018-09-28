@@ -18,27 +18,35 @@ jobs:
 
   - script: python -m pip install --upgrade pip 
     displayName: 'Install dependencies'
-      
-  - script: wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O ~/miniconda.sh  
-    condition: eq(variables['Agent.OS'], 'Linux')
-
-  - script: wget https://repo.continuum.io/miniconda/Miniconda3-3.7.0-Linux-x86_64.sh -O ~/miniconda.sh  
-    condition: eq(variables['Agent.OS'], 'Darwin')
-
-  - script: wget https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -O ~/miniconda.exe  
-    condition: eq(variables['Agent.OS'], 'Windows_NT')
 
   - script: |
       pip install pytest
       cd examples/notebooks
       pytest utilities-test.py --doctest-modules --junitxml=junit/test-results.xml
+    displayName: 'pytest'      
 
-      cd xDeepFM
-      
-      # install miniconda
+  - script: |
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O ~/miniconda.sh  
       bash ~/miniconda.sh -b -p $HOME/miniconda
       export PATH="$HOME/miniconda/bin:$PATH"
-       
+    condition: eq(variables['Agent.OS'], 'Linux')
+    diplayName: 'Install miniconda - Linux'
+
+  - script: |
+      wget https://repo.continuum.io/miniconda/Miniconda3-3.7.0-Linux-x86_64.sh -O ~/miniconda.sh  
+      bash ~/miniconda.sh -b -p $HOME/miniconda
+      export PATH="$HOME/miniconda/bin:$PATH"
+    condition: eq(variables['Agent.OS'], 'Darwin')
+    diplayName: 'Install miniconda - Darwin'
+
+  - script: |
+      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -O ~/miniconda.exe  
+      start /wait "" Miniconda4-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Miniconda3       
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    diplayName: 'Install miniconda - Windows'
+
+  - script:
+      cd xDeepFM
       # restore environment
       conda env create -f environment.yml
       conda activate xDeepFM-criteo
@@ -47,7 +55,7 @@ jobs:
       
       # run notebook
       papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'https://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
-    displayName: 'pytest'
+    displayName: 'notebooks'
 
   - task: PublishTestResults@2
     inputs:
