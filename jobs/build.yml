@@ -30,20 +30,20 @@ jobs:
       bash ~/miniconda.sh -b -p $HOME/miniconda
       export PATH="$HOME/miniconda/bin:$PATH"
     condition: eq(variables['Agent.OS'], 'Linux')
-    diplayName: 'Install miniconda - Linux'
+    displayName: 'Install miniconda - Linux'
 
   - script: |
       wget https://repo.continuum.io/miniconda/Miniconda3-3.7.0-Linux-x86_64.sh -O ~/miniconda.sh  
       bash ~/miniconda.sh -b -p $HOME/miniconda
       export PATH="$HOME/miniconda/bin:$PATH"
     condition: eq(variables['Agent.OS'], 'Darwin')
-    diplayName: 'Install miniconda - Darwin'
+    displayName: 'Install miniconda - Darwin'
 
   - script: |
       wget https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -O ~/miniconda.exe  
       start /wait "" Miniconda4-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Miniconda3       
     condition: eq(variables['Agent.OS'], 'Windows_NT')
-    diplayName: 'Install miniconda - Windows'
+    displayName: 'Install miniconda - Windows'
 
   - script: |
       cd xDeepFM
