@@ -2,8 +2,6 @@ name: xDeepFM-criteo
 channels:
   - defaults
 dependencies:
-  - _tflow_1100_select=0.0.1
-  - _tflow_190_select=0.0.1
   - absl-py=0.4.1
   - appdirs=1.4.3
   - asn1crypto=0.24.0
@@ -20,8 +18,6 @@ dependencies:
   - constantly=15.1.0
   - cryptography=2.3.1
   - cudatoolkit=9.0
-  - cudnn=7.1.2
-  - cupti=9.0.176
   - cycler=0.10.0
   - dbus=1.13.2
   - decorator=4.3.0
@@ -57,13 +53,10 @@ dependencies:
   - libedit=3.1.20170329
   - libffi=3.2.1
   - libgcc-ng=8.2.0
-  - libgfortran-ng=7.3.0
   - libpng=1.6.34
   - libprotobuf=3.6.0
   - libsodium=1.0.16
-  - libstdcxx-ng=8.2.0
   - libuuid=1.0.3
-  - libxcb=1.13
   - libxml2=2.9.8
   - markdown=2.6.11
   - markupsafe=1.0
