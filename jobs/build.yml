@@ -24,39 +24,11 @@ jobs:
       pytest utilities-test.py --doctest-modules --junitxml=junit/test-results.xml
     displayName: 'pytest'      
 
-  - script: |
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-x86_64.sh -O ~/miniconda.sh  
-      bash ~/miniconda.sh -b -p $HOME/miniconda
-
-      export PATH="$HOME/miniconda/bin:$PATH"
-      source $HOME/miniconda/bin/activate
-
-      echo $PATH
-      cd examples/notebooks/xDeepFM 
-
-      conda env create -f environment.yml
-      conda activate xDeepFM-criteo
-  
-      ./run_notebooks.sh
-
+  - script: bash jobs/build_darwin.sh
     condition: eq(variables['Agent.OS'], 'Darwin')
     displayName: 'Install miniconda - Darwin'
 
-  - script: |
-      wget https://repo.continuum.io/miniconda/Miniconda3-3.7.0-Linux-x86_64.sh -O ~/miniconda.sh  
-      bash ~/miniconda.sh -b -p $HOME/miniconda
-
-      export PATH="$HOME/miniconda/bin:$PATH"
-      source $HOME/miniconda/bin/activate
-
-      echo $PATH
-      cd examples/notebooks/xDeepFM
-      
-      conda env create -f environment.yml
-      source activate xDeepFM-criteo
-
-      ./run_notebooks.sh
-
+  - script: bash jobs/build_linux.sh 
     condition: eq(variables['Agent.OS'], 'Linux')
     displayName: 'Install miniconda - Linux'
 
