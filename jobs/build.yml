@@ -4,8 +4,9 @@ jobs:
   pool: ${{ parameters.pool }}
   strategy:
     matrix:
-      Python35:
-        python.version: '3.5'
+      # build_linux.sh has python 3.6 hardcoded
+      # Python35:
+      #  python.version: '3.5'
       Python36:
         python.version: '3.6'
     maxParallel: 4
@@ -26,7 +27,7 @@ jobs:
 
   - script: bash jobs/build_darwin.sh
     condition: eq(variables['Agent.OS'], 'Darwin')
-    displayName: 'Install miniconda - Darwin'
+    displayName: 'Install miniconda - MacOS'
 
   - script: bash jobs/build_linux.sh 
     condition: eq(variables['Agent.OS'], 'Linux')
