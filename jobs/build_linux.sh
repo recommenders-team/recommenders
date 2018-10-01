@@ -8,6 +8,10 @@ conda env create -n xDeepFM-criteo python=3.6
 export PATH="$HOME/miniconda/envs/xDeepFM-criteo/bin:$PATH"
 echo $PATH
 
+echo d.1 
+ls -l $HOME/miniconda/envs/xDeepFM-criteo/bin
+echo d.2 
+
 # source $HOME/miniconda/bin/activate
 # export PATH="$HOME/miniconda/bin:$PATH"
 # echo $PATH
