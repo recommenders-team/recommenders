@@ -33,7 +33,7 @@ jobs:
     displayName: 'Install miniconda - Linux'
 
   - script: |
-      wget https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -O ~/miniconda.exe  
+      powershell -Command "Invoke-WebRequest -Uri https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda4-latest-Windows-x86_64.exe"
       start /wait "" Miniconda4-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Miniconda3       
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     displayName: 'Install miniconda - Windows'
