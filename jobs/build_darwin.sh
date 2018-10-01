@@ -10,7 +10,14 @@ cd examples/notebooks/xDeepFM
 
 pwd
 
+echo 'creating environment.1'
 conda env create -f environment.yml
+echo 'creating environment.2'
+
+conda info --envs
+
+echo 'trying to activate'
+
 conda activate xDeepFM-criteo
 
 bash ./run_notebooks.sh
