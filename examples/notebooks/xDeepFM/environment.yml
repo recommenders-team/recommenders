@@ -52,7 +52,6 @@ dependencies:
   - kiwisolver=1.0.1
   - libedit=3.1.20170329
   - libffi=3.2.1
-  - libgcc-ng=8.2.0
   - libpng=1.6.34
   - libprotobuf=3.6.0
   - libsodium=1.0.16
@@ -116,7 +115,6 @@ dependencies:
   - tensorboard=1.9.0
   - tensorflow=1.9.0
   - tensorflow-base=1.9.0
-  - tensorflow-gpu=1.9.0
   - termcolor=1.1.0
   - terminado=0.8.1
   - testpath=0.3.1
