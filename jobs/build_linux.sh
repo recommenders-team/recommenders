@@ -5,7 +5,7 @@ bash ~/miniconda.sh -b -p $HOME/miniconda
 export PATH="$HOME/miniconda/bin:$PATH"
 which conda
 conda create -h
-# conda create --verbose -n xDeepFM-criteo python=3.6
+conda create --dry-run -n xDeepFM-criteo python=3.6
  
 # source $HOME/miniconda/bin/activate
 export PATH="$HOME/miniconda/envs/xDeepFM-criteo/bin:$PATH"

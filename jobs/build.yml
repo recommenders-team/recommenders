@@ -40,6 +40,7 @@ jobs:
       %UserProfile%\Miniconda3\Scripts\conda create -n xDeepFM-criteo python=3.6
       rem -f environment.yml
       rem conda activate xDeepFM-criteo
+      %UserProfile%\Miniconda3\Scripts\conda env update -f environment.yml
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     displayName: 'Install miniconda - Windows'
 
