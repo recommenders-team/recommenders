@@ -36,6 +36,10 @@ jobs:
   - script: |
       powershell -Command "Invoke-WebRequest -Uri https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda4-latest-Windows-x86_64.exe"
       start /wait "" Miniconda4-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Miniconda3       
+      set PATH=%UserProfile%\Miniconda3\bin;%PATH%
+      cd examples/notebooks/xDeepFM
+      conda env create -f environment.yml
+      conda activate xDeepFM-criteo
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     displayName: 'Install miniconda - Windows'
 
