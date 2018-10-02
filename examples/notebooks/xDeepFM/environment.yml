@@ -23,7 +23,6 @@ dependencies:
   - entrypoints=0.2.3
   - freetype=2.9.1
   - gast=0.2.0
-  - glib=2.56.2
   - grpcio=1.12.1
   - html5lib=1.0.1
   - hyperlink=18.0.0
