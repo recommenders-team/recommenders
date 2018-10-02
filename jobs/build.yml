@@ -20,6 +20,11 @@ jobs:
   - script: python -m pip install --upgrade pip && pip install pytest papermill
     displayName: 'Install dependencies'
 
+  - task: CondaEnvironment@1
+    inputs:
+      environmentName: xDeep-FM
+      packageSpecs: 'python=3'
+
   - script: |
       cd examples/notebooks
       pytest utilities-test.py --doctest-modules --junitxml=junit/test-results.xml
@@ -34,10 +39,11 @@ jobs:
     displayName: 'Install miniconda - Linux'
 
   - script: |
-      powershell -Command "Invoke-WebRequest -Uri https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
-      start /wait "" Miniconda3-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Miniconda3       
+      rem powershell -Command "Invoke-WebRequest -Uri https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -OutFile Miniconda3-latest-Windows-x86_64.exe"
+      rem start /wait "" Miniconda3-latest-Windows-x86_64.exe /InstallationType=JustMe /RegisterPython=0 /S /D=%UserProfile%\Miniconda3       
       cd examples/notebooks/xDeepFM
-      %UserProfile%\Miniconda3\Scripts\conda create -n xDeepFM-criteo python=3.6
+      conda create -n xDeepFM-criteo python=3.6
+      rem %UserProfile%\Miniconda3\Scripts\conda create -n xDeepFM-criteo python=3.6
       rem -f environment.yml
       rem conda activate xDeepFM-criteo
       %UserProfile%\Miniconda3\Scripts\conda env update -f environment.yml
