@@ -4,7 +4,7 @@ bash ~/miniconda.sh -b -p $HOME/miniconda
 
 export PATH="$HOME/miniconda/bin:$PATH"
 which conda
-conda -h
+conda create -h
 # conda create --verbose -n xDeepFM-criteo python=3.6
  
 # source $HOME/miniconda/bin/activate
