@@ -31,11 +31,11 @@ def test_template_notebook_runs(notebooks):
     assert check_version is True
 
 
-@pytest.mark.notebooks
-def test_teamplate_notebook_fails(notebooks):
-    notebook_path = notebooks["template"]
-    with pytest.raises(Exception):
-        pm.execute_notebook(
-            notebook_path, OUTPUT_NOTEBOOK, parameters=dict(pm_version="0.1")
-        )
+# @pytest.mark.notebooks
+# def test_teamplate_notebook_fails(notebooks):
+#     notebook_path = notebooks["template"]
+#     with pytest.raises(Exception):
+#         pm.execute_notebook(
+#             notebook_path, OUTPUT_NOTEBOOK, parameters=dict(pm_version="0.1")
+#         )
 
