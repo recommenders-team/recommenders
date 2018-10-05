@@ -43,7 +43,8 @@ jobs:
 
   - script: |
       cd examples/notebooks/xDeepFM
-      conda create -f environment.yml
+      conda create -n xDeepFM-criteo python=3.6
+      rem conda create -f environment.yml
       source activate xDeepFM-criteo
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     displayName: 'Install miniconda - Windows'
