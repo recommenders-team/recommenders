@@ -109,5 +109,5 @@ venv.bak/
 Untitled*.ipynb
 *-Copy*.ipynb
 ~$*
-
+output.ipynb
 
