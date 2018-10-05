@@ -9,6 +9,6 @@ cd examples/notebooks/xDeepFM
 
 conda env create -f environment.yml
 
-conda activate xDeepFM-criteo
+source activate xDeepFM-criteo
 
 bash ./run_notebooks.sh
