@@ -34,7 +34,7 @@ jobs:
       cd examples/notebooks/xDeepFM 
 
       conda env create -f environment.yml
-      source activate xDeepFM-criteo
+      activate xDeepFM-criteo
 
       papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'https://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
 
@@ -43,8 +43,8 @@ jobs:
 
   - script: |
       cd examples/notebooks/xDeepFM
-      conda create -n xDeepFM-criteo python=3.6
-      rem conda create -f environment.yml
+      rem conda create -n xDeepFM-criteo python=3.6
+      conda env create -f environment.yml
       activate xDeepFM-criteo
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     displayName: 'Install miniconda - Windows'
