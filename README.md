@@ -1,5 +1,10 @@
+| Build Type      | Status | Branch |
+| ---             | ---    | ---       |
+| **Linux CPU**   | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/staging_nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | master |
+| **Linux CPU**   | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/staging_nightly?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | staging |
+
+
 # Microsoft Recommenders
-[![master status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/staging_nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) [![staging status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/staging_nightly?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594)
 
 Work in progress.
 
