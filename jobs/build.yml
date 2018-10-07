@@ -45,12 +45,13 @@ jobs:
   - script: |
       cd examples/notebooks/xDeepFM
       rem conda create -n xDeepFM-criteo python=3.6
+      echo  before create
       conda env create -f environment.yml
-      rem TODO this just misses the source... 
+      echo  before activate
       activate xDeepFM-criteo
       
       papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'https://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
-      echo Notebook done!?
+      echo Notebook done
       
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     displayName: 'Jupyter Notebook - Windows'
