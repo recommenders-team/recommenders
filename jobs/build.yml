@@ -34,7 +34,8 @@ jobs:
       cd examples/notebooks/xDeepFM 
 
       conda env create -f environment.yml
-      activate xDeepFM-criteo
+      # source activate vs activate
+      source activate xDeepFM-criteo
 
       papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'https://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
 
@@ -45,7 +46,11 @@ jobs:
       cd examples/notebooks/xDeepFM
       rem conda create -n xDeepFM-criteo python=3.6
       conda env create -f environment.yml
+      rem TODO this just misses the source... 
       activate xDeepFM-criteo
+
+      papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'https://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
+      
     condition: eq(variables['Agent.OS'], 'Windows_NT')
     displayName: 'Install miniconda - Windows'
 
