@@ -48,7 +48,7 @@ jobs:
       echo  before create
       conda env create -f environment.yml
       echo before activate
-      rem activate xDeepFM-criteo
+      activate xDeepFM-criteo
       echo after activate  
       rem papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'https://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
       echo Notebook done
