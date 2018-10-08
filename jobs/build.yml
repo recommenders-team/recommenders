@@ -1,0 +1,59 @@
+jobs:
+
+- job: ${{ parameters.name }}
+  pool: ${{ parameters.pool }}
+  strategy:
+    matrix:
+      # build_linux.sh has python 3.6 hardcoded
+      # Python35:
+      #  python.version: '3.5'
+      Python36:
+        python.version: '3.6'
+    maxParallel: 4
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+
+  - script: python -m pip install --upgrade pip && pip install pytest papermill
+    displayName: 'Install dependencies'
+
+  - task: CondaEnvironment@1
+    inputs:
+      environmentName: xDeep-FM
+      packageSpecs: 'python=3'
+
+  - script: |
+      cd examples/notebooks
+      pytest utilities-test.py --doctest-modules --junitxml=junit/test-results.xml
+    displayName: 'pytest'      
+
+  - script: |
+      cd examples/notebooks/xDeepFM 
+
+      conda env create -f environment.yml
+      source activate xDeepFM-criteo
+
+      papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'http://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
+
+    condition: not(eq(variables['Agent.OS'], 'Windows_NT'))
+    displayName: 'Jupyter Notebook - Linux'
+
+  - script: |
+      cd examples/notebooks/xDeepFM
+
+      conda env create -f environment.yml
+      call activate xDeepFM-criteo
+
+      papermill criteo.ipynb criteo-subsampled.ipynb -p max_rows 10000 -p data_url 'http://marcozocriteodata.blob.core.windows.net/criteo/dac-subsampled.tar.gz'
+      
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
+    displayName: 'Jupyter Notebook - Windows'
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
+      testRunTitle: 'Python $(python.version)'
+    condition: succeededOrFailed()

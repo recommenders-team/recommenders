@@ -1,0 +1,3 @@
+[submodule "examples/notebooks/xDeepFM/xDeepFM"]
+	path = examples/notebooks/xDeepFM/xDeepFM
+	url = https://github.com/Leavingseason/xDeepFM
