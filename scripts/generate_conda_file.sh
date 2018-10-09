@@ -21,8 +21,7 @@ else
 fi
 
 
-# File which containt conda configuration
-# virtual environment name
+# File which contains conda configuration virtual environment name
 CONDA_FILE="conda_bare.yaml"
 
 # default CPU-only no-pySpark versions of conda packages.
