@@ -98,6 +98,7 @@ ${pyspark}- pyspark==2.2.0
   - pytest-datafiles>=1.0
   - pylint>=2.0.1
   - pytest-pylint==0.11.0
+  - papermill>=0.15.0
 EOM
 
 
