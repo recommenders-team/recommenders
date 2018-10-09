@@ -1,4 +1,15 @@
 #!/bin/bash
+# This script generates a conda file for python, pyspark, gpu or
+# all libraries.
+# For generating a conda file for running only python code:
+# $ sh generate_conda_file.sh
+# For generating a conda file for running python gpu:
+# $ sh generate_conda_file.sh --gpu
+# For generating a conda file for running pyspark:
+# $ sh generate_conda_file.sh --pyspark
+# For generating a conda file for running python gpu and pyspark:
+# $ sh generate_conda_file.sh --gpu --pyspark
+#
 
 # first check if conda is installed
 CONDA_BINARY=$(which conda)
@@ -10,15 +21,10 @@ else
 fi
 
 
-# file which containt conda configuration
-CONDA_FILE="conda.yaml"
-# virtual environment name
-ENV_NAME="airship_bare"
+# File which contains conda configuration virtual environment name
+CONDA_FILE="conda_bare.yaml"
 
 # default CPU-only no-pySpark versions of conda packages.
-pytorch="pytorch-cpu"
-# TODO: torchvision-cpu does not seem to exist in pytorch channel
-torchvision="torchvision"
 tensorflow="tensorflow"
 pyspark="#"
 
@@ -35,15 +41,13 @@ do
 			exit
 			;;
 		--gpu)
-			pytorch="pytorch"
-			torchvision="torchvision"
 			tensorflow="tensorflow-gpu"
-			ENV_NAME="airship_gpu"
+			CONDA_FILE="conda_gpu.yaml"
 			gpu_flag=true
 			;;
 		--pyspark)
 			pyspark=""
-			ENV_NAME="airship_pyspark"
+			CONDA_FILE="conda_pyspark.yaml"
 			pyspark_flag=true
 			;;			
 		*)
@@ -54,7 +58,7 @@ do
 done
 
 if [ "$pyspark_flag" = true ] && [ "$gpu_flag" = true ]; then
-	ENV_NAME="airship_full"
+	CONDA_FILE="conda_full.yaml"
 fi
 
 /bin/cat <<EOM >${CONDA_FILE}
@@ -69,7 +73,6 @@ fi
 #
 
 channels:
-- pytorch
 - conda-forge
 - defaults
 dependencies:
@@ -81,7 +84,6 @@ ${pyspark}- pyspark==2.2.0
 - pymongo>=3.6.1
 - ipykernel>=4.6.1
 - ${tensorflow}==1.5.0
-- ${pytorch}==0.4.0
 - scikit-surprise>=1.0.6
 - scikit-learn==0.19.1
 - jupyter>=1.0.0
@@ -94,31 +96,9 @@ ${pyspark}- pyspark==2.2.0
   - pytest==3.6.4
   - pytest-cov
   - pytest-datafiles>=1.0
-  - ${torchvision}
   - pylint>=2.0.1
   - pytest-pylint==0.11.0
 EOM
 
-# get current directory and create conda env dir relative to it as a full path
-# DIR="$( cd "$( dirname $CONDA_BINARY )" >/dev/null && pwd )"
-# ENV_DIR=$(realpath "${DIR}/../..")
-CONDA_ROOT=$(conda env list | grep "^root\|^base" | cut -d"*" -f2 | tr -d '[:space:]')
-ENV_DIR=${CONDA_ROOT}/envs
-[[ -e $ENV_DIR ]] || mkdir -p ${ENV_DIR}
-
-# get conda location for printing purposes only
-CONDA_LOC=$(which conda)
-# get actual env as a full absolute path
-FULL_ENV_PATH=${ENV_DIR}/${ENV_NAME}
-
-# generate conda environment
-echo "Using Conda ${CONDA_LOC} to install environment name ${ENV_NAME} to ${ENV_DIR}"
-conda env create --prefix ${FULL_ENV_PATH} -f ${CONDA_FILE}
-echo "Temporarily activating ${ENV_NAME} to install Airship"
-source activate ${ENV_DIR}/${ENV_NAME}
-echo "Installing Airship..."
-python setup.py install
-echo "Done."
-echo "Please run 'source activate $FULL_ENV_PATH' to use Airship in the new environment."
 
 
