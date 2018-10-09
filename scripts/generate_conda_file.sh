@@ -26,9 +26,6 @@ fi
 CONDA_FILE="conda_bare.yaml"
 
 # default CPU-only no-pySpark versions of conda packages.
-pytorch="pytorch-cpu"
-# TODO: torchvision-cpu does not seem to exist in pytorch channel
-torchvision="torchvision"
 tensorflow="tensorflow"
 pyspark="#"
 
@@ -45,8 +42,6 @@ do
 			exit
 			;;
 		--gpu)
-			pytorch="pytorch"
-			torchvision="torchvision"
 			tensorflow="tensorflow-gpu"
 			CONDA_FILE="conda_gpu.yaml"
 			gpu_flag=true
@@ -79,7 +74,6 @@ fi
 #
 
 channels:
-- pytorch
 - conda-forge
 - defaults
 dependencies:
@@ -91,7 +85,6 @@ ${pyspark}- pyspark==2.2.0
 - pymongo>=3.6.1
 - ipykernel>=4.6.1
 - ${tensorflow}==1.5.0
-- ${pytorch}==0.4.0
 - scikit-surprise>=1.0.6
 - scikit-learn==0.19.1
 - jupyter>=1.0.0
