@@ -97,7 +97,6 @@ ${pyspark}- pyspark==2.2.0
   - pytest==3.6.4
   - pytest-cov
   - pytest-datafiles>=1.0
-  - ${torchvision}
   - pylint>=2.0.1
   - pytest-pylint==0.11.0
 EOM
