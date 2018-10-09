@@ -58,7 +58,7 @@ class SARpySparkReference():
 
         # array of indexes for rows and columns of users and items in training set
         self.index = None
-        self.model_str = "sar_ref_sql"
+        self.model_str = "sar_pyspark"
         self.model = self
         # spark context
         self.spark = spark
