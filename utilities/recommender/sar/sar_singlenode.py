@@ -10,24 +10,51 @@ PS: there is plenty of room for improvement, especially around the very last ste
 
 import numpy as np
 import logging
+from scipy import sparse
 
-from utilities.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, TIMESTAMP_COL
+from utilities.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    TIMESTAMP_COL,
+)
 from utilities.common.constants import PREDICTION_COL
 
-from utilities.recommender.sar import SIM_JACCARD, SIM_LIFT, SIM_COOCCUR, HASHED_USERS, HASHED_ITEMS
-from utilities.recommender.sar import TIME_DECAY_COEFFICIENT, TIME_NOW, TIMEDECAY_FORMULA, THRESHOLD
+from utilities.recommender.sar import (
+    SIM_JACCARD,
+    SIM_LIFT,
+    SIM_COOCCUR,
+    HASHED_USERS,
+    HASHED_ITEMS,
+)
+from utilities.recommender.sar import (
+    TIME_DECAY_COEFFICIENT,
+    TIME_NOW,
+    TIMEDECAY_FORMULA,
+    THRESHOLD,
+)
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-class SARSingleNodeReference():
+
+class SARSingleNodeReference:
     """SAR reference implementation"""
 
-    def __init__(self, remove_seen=True, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-                 col_rating=DEFAULT_RATING_COL, col_timestamp=TIMESTAMP_COL,
-                 similarity_type=SIM_JACCARD,
-                 time_decay_coefficient=TIME_DECAY_COEFFICIENT, time_now=TIME_NOW,
-                 timedecay_formula=TIMEDECAY_FORMULA, threshold=THRESHOLD, debug = False):
+    def __init__(
+        self,
+        remove_seen=True,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_timestamp=TIMESTAMP_COL,
+        similarity_type=SIM_JACCARD,
+        time_decay_coefficient=TIME_DECAY_COEFFICIENT,
+        time_now=TIME_NOW,
+        timedecay_formula=TIMEDECAY_FORMULA,
+        threshold=THRESHOLD,
+        debug=False,
+    ):
 
         self.col_rating = col_rating
         self.col_item = col_item
@@ -82,8 +109,15 @@ class SARSingleNodeReference():
         # affinity scores for the recommendation
         self.scores = None
 
-    def set_index(self, unique_users, unique_items, user_map_dict, item_map_dict, index2user,
-                  index2item):
+    def set_index(
+        self,
+        unique_users,
+        unique_items,
+        user_map_dict,
+        item_map_dict,
+        index2user,
+        index2item,
+    ):
         """MVP2 temporary function to set the index of the sparse dataframe.
         In future releases this will be carried out into the data object and index will be provided
         with the data"""
@@ -107,7 +141,7 @@ class SARSingleNodeReference():
     @staticmethod
     def __jaccard(cooccurrence):
         """Helper method to calculate teh Jaccard cooccurrence of the item-item similarity"""
-        log.info('Calculating jaccard...')
+        log.info("Calculating jaccard...")
         diag = cooccurrence.diagonal()
         diag_rows = np.expand_dims(diag, axis=0)
         diag_cols = np.expand_dims(diag, axis=1)
@@ -124,10 +158,34 @@ class SARSingleNodeReference():
         denom = diag_rows * diag_cols
         return cooccurrence / denom
 
-    def _fit(self, df):
+    # stateful time function
+    def time(self):
+        """
+        Time a particular section of the code - call this once to set the state somewhere
+        in the code, then call it again to return the elapsed time since last call.
+        Call again to set the time and so on...
+
+        Returns:
+             None if we're not in debug mode - doesn't do anything
+             False if timer started
+             time in seconds since the last time time function was called
+        """
+        if self.debug:
+            if self.start_time is None:
+                self.start_time = time()
+                return False
+            else:
+                answer = time() - self.start_time
+                # reset state
+                self.start_time = None
+                return answer
+        else:
+            return None
+
+    def fit(self, df):
         """Main fit method for SAR"""
 
-        log.info('Collecting user affinity matrix...')
+        log.info("Collecting user affinity matrix...")
         self.time()
         if self.timedecay_formula:
             # WARNING: previously we would take the last value in training dataframe and set it
@@ -136,7 +194,7 @@ class SARSingleNodeReference():
             # by a user in the case
             # when T=np.inf, so user gets a cumulative sum of ratings for a particular item and
             # not the last rating.
-            log.info('Calculating time-decayed affinities...')
+            log.info("Calculating time-decayed affinities...")
             # Time Decay
             # do a group by on user item pairs and apply the formula for time decay there
             # Time T parameter is in days and input time is in seconds
@@ -147,7 +205,11 @@ class SARSingleNodeReference():
                 self.time_now = df[self.col_timestamp].max()
 
             # optimization - pre-compute time decay exponential which multiplies the ratings
-            expo_fun = lambda x: np.exp(-np.log(2.) * (self.time_now - x) / (self.time_decay_coefficient * 24. * 3600))
+            expo_fun = lambda x: np.exp(
+                -np.log(2.)
+                * (self.time_now - x)
+                / (self.time_decay_coefficient * 24. * 3600)
+            )
             df["exponential"] = expo_fun(df[self.col_timestamp].values)
 
             df["rating_exponential"] = df[self.col_rating] * df["exponential"]
@@ -192,13 +254,17 @@ class SARSingleNodeReference():
             # without time decay we take the last user-provided rating supplied in the dataset as the
             # final rating for the user-item pair
             log.info("Deduplicating the user-item counts")
-            df = df.drop_duplicates([self.col_user, self.col_item])[[self.col_user, self.col_item, self.col_rating]]
+            df = df.drop_duplicates([self.col_user, self.col_item])[
+                [self.col_user, self.col_item, self.col_rating]
+            ]
 
         if self.debug:
             elapsed_time = self.time()
             cnt = df.shape[0]
-            self.timer_log += ["Affinity calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second." %
-                               (cnt, elapsed_time, float(cnt) / elapsed_time)]
+            self.timer_log += [
+                "Affinity calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
+                % (cnt, elapsed_time, float(cnt) / elapsed_time)
+            ]
 
         self.time()
         log.info("Creating index columns...")
@@ -218,25 +284,41 @@ class SARSingleNodeReference():
         # the ratings as the event weights.  We convert between different sparse-matrix
         # formats to de-duplicate user-item pairs, otherwise they will get added up.
         log.info("Building user affinity sparse matrix...")
-        self.user_affinity = sparse.coo_matrix(
-            (df[self.col_rating], (df[self._col_hashed_users], df[self._col_hashed_items])),
-            shape=(n_users, n_items)).todok().tocsr()
+        self.user_affinity = (
+            sparse.coo_matrix(
+                (
+                    df[self.col_rating],
+                    (df[self._col_hashed_users], df[self._col_hashed_items]),
+                ),
+                shape=(n_users, n_items),
+            )
+            .todok()
+            .tocsr()
+        )
 
         if self.debug:
             elapsed_time = self.time()
             self.timer_log += [
-                "Indexing and affinity matrix construction:\t%d\trows in\t%s\tseconds -\t%f\trows per second." %
-                (cnt, elapsed_time, float(cnt) / elapsed_time)]
+                "Indexing and affinity matrix construction:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
+                % (cnt, elapsed_time, float(cnt) / elapsed_time)
+            ]
 
         # Calculate item cooccurrence by computing:
         #  C = U'.transpose() * U'
         # where U' is the user_affinity matrix with 1's as values (instead of ratings)
-        log.info('Calculating item cooccurrence...')
+        log.info("Calculating item cooccurrence...")
         self.time()
-        user_item_hits = sparse.coo_matrix(
-            ([1] * len(df[self._col_hashed_users]),
-             (df[self._col_hashed_users], df[self._col_hashed_items])),
-            shape=(n_users, n_items)).todok().tocsr()
+        user_item_hits = (
+            sparse.coo_matrix(
+                (
+                    [1] * len(df[self._col_hashed_users]),
+                    (df[self._col_hashed_users], df[self._col_hashed_items]),
+                ),
+                shape=(n_users, n_items),
+            )
+            .todok()
+            .tocsr()
+        )
 
         fname = "user_item_hits.npz"
         sparse.save_npz(fname, user_item_hits)
@@ -245,19 +327,26 @@ class SARSingleNodeReference():
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
         if self.debug:
             elapsed_time = self.time()
-            self.timer_log += ["Item cooccurrence calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second." %
-                               (cnt, elapsed_time, float(cnt) / elapsed_time)]
+            self.timer_log += [
+                "Item cooccurrence calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
+                % (cnt, elapsed_time, float(cnt) / elapsed_time)
+            ]
 
         self.time()
-        item_cooccurrence = item_cooccurrence.multiply(item_cooccurrence >= self.threshold)
+        item_cooccurrence = item_cooccurrence.multiply(
+            item_cooccurrence >= self.threshold
+        )
         if self.debug:
             elapsed_time = self.time()
-            self.timer_log += ["Applying threshold:\t%d\trows in\t%s\tseconds -\t%f\trows per second." %
-                               (cnt, elapsed_time, float(cnt) / elapsed_time)]
+            self.timer_log += [
+                "Applying threshold:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
+                % (cnt, elapsed_time, float(cnt) / elapsed_time)
+            ]
 
-        log.info('Calculating item similarity...')
-        similarity_type = (SIM_COOCCUR if self.similarity_type is None
-                           else self.similarity_type)
+        log.info("Calculating item similarity...")
+        similarity_type = (
+            SIM_COOCCUR if self.similarity_type is None else self.similarity_type
+        )
 
         self.time()
         if similarity_type == SIM_COOCCUR:
@@ -267,27 +356,32 @@ class SARSingleNodeReference():
         elif similarity_type == SIM_LIFT:
             self.item_similarity = self.__lift(item_cooccurrence)
         else:
-            raise ValueError(
-                "Unknown similarity type: {0}".format(similarity_type))
+            raise ValueError("Unknown similarity type: {0}".format(similarity_type))
 
-        if self.debug and (similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT):
+        if self.debug and (
+            similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
+        ):
             elapsed_time = self.time()
-            self.timer_log += ["Item similarity calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second." %
-                               (cnt, elapsed_time, float(cnt) / elapsed_time)]
+            self.timer_log += [
+                "Item similarity calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
+                % (cnt, elapsed_time, float(cnt) / elapsed_time)
+            ]
 
         # Calculate raw scores with a matrix multiplication.
-        log.info('Calculating recommendation scores...')
+        log.info("Calculating recommendation scores...")
         self.time()
         self.scores = self.user_affinity.dot(self.item_similarity)
 
         if self.debug:
             elapsed_time = self.time()
-            self.timer_log += ["Score calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second." %
-                               (cnt, elapsed_time, float(cnt) / elapsed_time)]
+            self.timer_log += [
+                "Score calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
+                % (cnt, elapsed_time, float(cnt) / elapsed_time)
+            ]
 
-        log.info('done training')
+        log.info("done training")
 
-    def _recommend_k_items(self, test, top_k=10, **kwargs):
+    def recommend_k_items(self, test, top_k=10, **kwargs):
         """Recommend top K items for all users which are in the test set
 
         Args:
@@ -297,7 +391,9 @@ class SARSingleNodeReference():
         # pick users from test set and
         test_users = test[self.col_user].unique()
         try:
-            test_users_training_ids = np.array([self.user_map_dict[user] for user in test_users])
+            test_users_training_ids = np.array(
+                [self.user_map_dict[user] for user in test_users]
+            )
         except KeyError():
             msg = "SAR cannot score test set users which are not in the training set"
             log.error(msg)
@@ -307,7 +403,7 @@ class SARSingleNodeReference():
         scores = self.scores
 
         # Convert to dense, the following operations are easier.
-        log.info('Converting to dense matrix...')
+        log.info("Converting to dense matrix...")
         if isinstance(scores, np.matrixlib.defmatrix.matrix):
             scores_dense = np.array(scores)
         else:
@@ -319,19 +415,19 @@ class SARSingleNodeReference():
         # Mask out items in the train set.  This only makes sense for some
         # problems (where a user wouldn't interact with an item more than once).
         if self.remove_seen:
-            log.info('Removing seen items...')
+            log.info("Removing seen items...")
             scores_dense[self.index[:, 0], self.index[:, 1]] = 0
 
         # Get top K items and scores.
-        log.info('Getting top K...')
+        log.info("Getting top K...")
         top_items = np.argpartition(scores_dense, -top_k, axis=1)[:, -top_k:]
         top_scores = scores_dense[np.arange(scores_dense.shape[0])[:, None], top_items]
 
-        log.info('Select users from the test set')
+        log.info("Select users from the test set")
         top_items = top_items[test_users_training_ids, :]
         top_scores = top_scores[test_users_training_ids, :]
 
-        log.info('Creating output dataframe...')
+        log.info("Creating output dataframe...")
 
         # Convert to np.array (from view) and flatten
         top_items = np.reshape(np.array(top_items), -1)
@@ -342,7 +438,12 @@ class SARSingleNodeReference():
             userids.extend([u] * top_k)
 
         results = pd.DataFrame.from_dict(
-            {self.col_user: userids, self.col_item: top_items, self.col_rating: top_scores})
+            {
+                self.col_user: userids,
+                self.col_item: top_items,
+                self.col_rating: top_scores,
+            }
+        )
 
         # remap user and item indices to IDs
         results[self.col_item] = results[self.col_item].map(self.index2item)
@@ -355,14 +456,19 @@ class SARSingleNodeReference():
 
         # modify test to make it compatible with
 
-        return results[[self.col_user, self.col_item, self.col_rating]].rename(
-            columns={self.col_rating: PREDICTION_COL}).astype(
-            {self.col_user: self._get_user_item_return_type(),
-             self.col_item: self._get_user_item_return_type(),
-             PREDICTION_COL: self._get_predict_column_type()}
+        return (
+            results[[self.col_user, self.col_item, self.col_rating]]
+            .rename(columns={self.col_rating: PREDICTION_COL})
+            .astype(
+                {
+                    self.col_user: self._get_user_item_return_type(),
+                    self.col_item: self._get_user_item_return_type(),
+                    PREDICTION_COL: self._get_predict_column_type(),
+                }
+            )
         )
 
-    def _predict(self, test):
+    def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set"""
         # pick users from test set and
         test_users = test[self.col_user].unique()
@@ -378,7 +484,7 @@ class SARSingleNodeReference():
         scores = self.scores
 
         # Convert to dense, the following operations are easier.
-        log.info('Converting to dense matrix...')
+        log.info("Converting to dense matrix...")
         if isinstance(scores, np.matrixlib.defmatrix.matrix):
             scores_dense = np.array(scores)
         else:
@@ -397,14 +503,18 @@ class SARSingleNodeReference():
         # Mask out items in the train set.  This only makes sense for some
         # problems (where a user wouldn't interact with an item more than once).
         if self.remove_seen and len(aset & bset) > 0:
-            log.info('Removing seen items...')
+            log.info("Removing seen items...")
             scores_dense[common_index[:, 0], common_index[:, 1]] = 0
 
         final_scores = scores_dense[test_index[:, 0], test_index[:, 1]]
 
         results = pd.DataFrame.from_dict(
-            {self.col_user: test_index[:, 0], self.col_item: test_index[:, 1],
-             self.col_rating: final_scores})
+            {
+                self.col_user: test_index[:, 0],
+                self.col_item: test_index[:, 1],
+                self.col_rating: final_scores,
+            }
+        )
 
         # remap user and item indices to IDs
         results[self.col_user] = results[self.col_user].map(self.index2user)
@@ -414,8 +524,15 @@ class SARSingleNodeReference():
         log.info("Formatting output")
 
         # modify test to make it compatible with
-        return results[[self.col_user, self.col_item, self.col_rating]].rename(
-            columns={self.col_rating: PREDICTION_COL}).astype(
-            {self.col_user: self._get_user_item_return_type(),
-             self.col_item: self._get_user_item_return_type(),
-             PREDICTION_COL: self._get_predict_column_type()})
+        return (
+            results[[self.col_user, self.col_item, self.col_rating]]
+            .rename(columns={self.col_rating: PREDICTION_COL})
+            .astype(
+                {
+                    self.col_user: self._get_user_item_return_type(),
+                    self.col_item: self._get_user_item_return_type(),
+                    PREDICTION_COL: self._get_predict_column_type(),
+                }
+            )
+        )
+
