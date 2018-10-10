@@ -1,8 +1,11 @@
 import os
 from urllib.request import urlretrieve
+import logging
+
+log = logging.getLogger(__name__)
 
 
-def maybe_download(filename, work_directory, url, expected_bytes=None):
+def maybe_download(url, filename, work_directory=".", expected_bytes=None):
     """Download a file if it is not already downloaded.
     Args:
         filename (str): File name.
@@ -16,11 +19,11 @@ def maybe_download(filename, work_directory, url, expected_bytes=None):
     if not os.path.exists(filepath):
         filepath, _ = urlretrieve(url, filepath)
     else:
-        if verbose:
-            print("File {} already downloaded".format(filepath))
+        log.debug("File {} already downloaded".format(filepath))
     if expected_bytes is not None:
         statinfo = os.stat(filepath)
         if statinfo.st_size != expected_bytes:
-            raise Exception("Failed to verify {}".format(filepath))
+            os.remove(filepath)
+            raise IOError("Failed to verify {}".format(filepath))
 
     return filepath
