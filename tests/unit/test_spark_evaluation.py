@@ -76,8 +76,6 @@ def test_init_spark_rating_eval(spark_data):
     evaluator = SparkRatingEvaluation(df_true, df_pred)
 
     assert evaluator is not None
-    # assert evaluator.rating_true == df_true
-    # assert evaluator.rating_pred == df_pred
     assert evaluator.get_available_metrics() is not None
 
 
@@ -104,7 +102,7 @@ def test_spark_mae(spark_data, target_metrics):
     assert evaluator1.mae() == 0
 
     evaluator2 = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator2.mae() == target_metrics['mae']
+    assert evaluator2.mae() == target_metrics["mae"]
 
 
 @pytest.mark.spark
@@ -113,12 +111,11 @@ def test_spark_rsquared(spark_data, target_metrics):
     """Test Spark evaluator rsquared"""
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRatingEvaluation(
-        df_true, df_true, col_prediction="rating")
+    evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
     assert evaluator1.rsquared() == pytest.approx(1.0, 0.0001)
 
     evaluator2 = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator2.rsquared() == target_metrics['rsquared']
+    assert evaluator2.rsquared() == target_metrics["rsquared"]
 
 
 @pytest.mark.spark
@@ -127,12 +124,11 @@ def test_spark_exp_var(spark_data, target_metrics):
     """Test Spark evaluator exp_var"""
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRatingEvaluation(
-        df_true, df_true, col_prediction="rating")
+    evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
     assert evaluator1.exp_var() == pytest.approx(1.0, 0.0001)
 
     evaluator2 = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator2.exp_var() == target_metrics['exp_var']
+    assert evaluator2.exp_var() == target_metrics["exp_var"]
 
 
 @pytest.mark.spark
@@ -142,11 +138,12 @@ def test_spark_recall(spark_data, target_metrics):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred)
-    assert evaluator.recall_at_k() == target_metrics['recall']
+    assert evaluator.recall_at_k() == target_metrics["recall"]
 
-    evaluator1 = SparkRankingEvaluation(df_true, df_pred,
-                           relevancy_method="by_threshold")
-    assert evaluator1.recall_at_k() == target_metrics['recall']
+    evaluator1 = SparkRankingEvaluation(
+        df_true, df_pred, relevancy_method="by_threshold"
+    )
+    assert evaluator1.recall_at_k() == target_metrics["recall"]
 
 
 @pytest.mark.spark
@@ -156,11 +153,12 @@ def test_spark_precision(spark_data, target_metrics):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
-    assert evaluator.precision_at_k() == target_metrics['precision']
+    assert evaluator.precision_at_k() == target_metrics["precision"]
 
-    evaluator1 = SparkRankingEvaluation(df_true, df_pred,
-                           relevancy_method="by_threshold")
-    assert evaluator1.precision_at_k() == target_metrics['precision']
+    evaluator1 = SparkRankingEvaluation(
+        df_true, df_pred, relevancy_method="by_threshold"
+    )
+    assert evaluator1.precision_at_k() == target_metrics["precision"]
 
 
 @pytest.mark.spark
@@ -173,11 +171,12 @@ def test_spark_ndcg(spark_data, target_metrics):
     assert evaluator0.ndcg_at_k() == 1.0
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
-    assert evaluator.ndcg_at_k() == target_metrics['ndcg']
+    assert evaluator.ndcg_at_k() == target_metrics["ndcg"]
 
-    evaluator1 = SparkRankingEvaluation(df_true, df_pred,
-                           relevancy_method="by_threshold")
-    assert evaluator1.ndcg_at_k() == target_metrics['ndcg']
+    evaluator1 = SparkRankingEvaluation(
+        df_true, df_pred, relevancy_method="by_threshold"
+    )
+    assert evaluator1.ndcg_at_k() == target_metrics["ndcg"]
 
 
 @pytest.mark.spark
@@ -186,13 +185,15 @@ def test_spark_map(spark_data, target_metrics):
     """Test Spark ranking evaluator map."""
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRankingEvaluation(k=10, rating_true=df_true, rating_pred=df_true,
-                           col_prediction="rating")
+    evaluator1 = SparkRankingEvaluation(
+        k=10, rating_true=df_true, rating_pred=df_true, col_prediction="rating"
+    )
     assert evaluator1.map_at_k() == 1.0
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
-    assert evaluator.map_at_k() == target_metrics['map']
+    assert evaluator.map_at_k() == target_metrics["map"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold")
-    assert evaluator1.map_at_k() == target_metrics['map']
+        df_true, df_pred, relevancy_method="by_threshold"
+    )
+    assert evaluator1.map_at_k() == target_metrics["map"]
