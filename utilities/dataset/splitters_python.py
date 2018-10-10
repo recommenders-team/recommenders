@@ -28,7 +28,7 @@ def pandas_chrono_split(
 
     num_of_splits = len(ratio)
     splits = [pd.DataFrame({})] * num_of_splits
-    df_grouped = data.sort_values(self.col_timestamp).groupby(split_by_column)
+    df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
     for name, group in df_grouped:
         group_splits = _split_pandas_data_with_ratios(
             df_grouped.get_group(name), ratio, resample=False
@@ -39,7 +39,7 @@ def pandas_chrono_split(
     return splits
 
 
-def _split_pandas_data_with_ratios(data, ratios, seed=1234, resample=False):
+def _split_pandas_data_with_ratios(data, ratio, seed=1234, resample=False):
     """Helper function to split pandas DataFrame with given ratios
 
     Note:
@@ -49,14 +49,14 @@ def _split_pandas_data_with_ratios(data, ratios, seed=1234, resample=False):
 
     Args:
         data (pandas.DataFrame): Pandas data frame to be split.
-        ratios (list of floats): list of ratios for split.
+        ratio (list of floats): list of ratios for split.
         seed (int): random seed.
         resample (bool): whether data will be resampled when being split.
 
     Returns:
         List of data frames which are split by the given specifications.
     """
-    split_index = np.cumsum(ratios).tolist()[:-1]
+    split_index = np.cumsum(ratio).tolist()[:-1]
 
     if resample:
         data = data.sample(frac=1, random_state=seed)
