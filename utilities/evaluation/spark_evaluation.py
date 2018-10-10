@@ -3,10 +3,9 @@ SparkEvaluation
 """
 
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
-from pyspark.sql import Window, DataFrame, SparkSession
+from pyspark.sql import Window, DataFrame
 from pyspark.sql.functions import col, row_number, expr
 
-from utilities.common.spark_utils import start_or_get_spark
 from utilities.common.constants import (
     PREDICTION_COL,
     DEFAULT_USER_COL,
@@ -213,12 +212,12 @@ class SparkRankingEvaluation:
         self.col_prediction = col_prediction
 
         # Check if inputs are Spark DataFrames.
-        if not isinstance(self.rating_true, pyspark.sql.dataframe.DataFrame):
+        if not isinstance(self.rating_true, DataFrame):
             raise TypeError(
                 "rating_true should be but is not a Spark DataFrame"
             )  # pragma : No Cover
 
-        if not isinstance(self.rating_pred, pyspark.sql.dataframe.DataFrame):
+        if not isinstance(self.rating_pred, DataFrame):
             raise TypeError(
                 "rating_pred should be but is not a Spark DataFrame"
             )  # pragma : No Cover

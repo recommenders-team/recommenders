@@ -11,15 +11,13 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G"):
         url (str): url for spark master
         memory (str): size of memory for spark driver
     """
-    spark = SparkSession \
-        .builder \
-        .appName(app_name) \
-        .master(url) \
-        .config("spark.driver.memory", memory) \
+    spark = (
+        SparkSession.builder.appName(app_name)
+        .master(url)
+        .config("spark.driver.memory", memory)
+        .config("spark.jars.repositories", "https://aicat.azureedge.net/maven2")
+        .config("spark.jars.packages", "Azure:mmlspark_2.11:0.0")
         .getOrCreate()
-
-    # .config('spark.jars.repositories',
-    #     'https://aicat.azureedge.net/maven2') \
-    # .config("spark.jars.packages", "Azure:mmlspark_2.11:0.0") \
+    )
 
     return spark
