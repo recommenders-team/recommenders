@@ -30,6 +30,7 @@ def start_spark_test(app_name="Sample", url="local[*]", memory="1G"):
         SparkSession.builder.appName(app_name)
         .master(url)
         .config("spark.driver.memory", memory)
+        .config("spark.sql.shuffle.partitions", "1")
         .getOrCreate()
     )
 
