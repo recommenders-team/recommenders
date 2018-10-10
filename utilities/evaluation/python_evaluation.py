@@ -176,16 +176,12 @@ class PythonRankingEvaluation:
         # Spark evaluation metrics, where index of each recommended items (the indices are unique
         #  to items) is used
         # to calculate penalized precision of the ordered items.
-        df_rating_pred = self.rating_pred
+        df_rating_pred = self.rating_pred.copy()
         df_rating_pred[self.col_user] = df_rating_pred[self.col_user].astype(int)
         df_rating_pred[self.col_item] = df_rating_pred[self.col_item].astype(int)
         df_rating_pred["ranking"] = self.rating_pred \
             .groupby(self.col_user)[self.col_prediction] \
             .rank(method="first", ascending=False)
-
-        df_rating_true = self.rating_true
-        df_rating_true[self.col_user] = df_rating_true[self.col_user].astype(int)
-        df_rating_true[self.col_item] = df_rating_true[self.col_item].astype(int)
 
         df_hit = \
             pd.merge(self.rating_true, df_rating_pred, how="inner",
@@ -350,4 +346,4 @@ def get_top_k_items(dataframe, col_user="customerID", col_item="itemID",
     return dataframe \
         .groupby(col_user, as_index=False) \
         .apply(lambda x: x.nlargest(k, col_rating)) \
-        .reset_index()[[col_user, col_item, col_rating]]
+        .reset_index()[dataframe.columns]
