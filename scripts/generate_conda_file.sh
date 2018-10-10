@@ -99,7 +99,6 @@ ${pyspark}- pyspark==2.2.0
   - pylint>=2.0.1
   - pytest-pylint==0.11.0
   - papermill>=0.15.0
-  - urllib3>=2.13
   - black>=18.6b4
 EOM
 
