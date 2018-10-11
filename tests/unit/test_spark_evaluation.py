@@ -71,6 +71,13 @@ def spark_data():
 
 
 @pytest.mark.spark
+def test_init_spark():
+    spark = start_or_get_spark("EvaluationTesting", "local")
+
+    assert spark is not None
+
+
+@pytest.mark.spark
 def test_init_spark_rating_eval(spark_data):
     """Test initializer spark"""
     df_true, df_pred = spark_data
