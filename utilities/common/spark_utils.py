@@ -15,8 +15,6 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G"):
         SparkSession.builder.appName(app_name)
         .master(url)
         .config("spark.driver.memory", memory)
-        .config("spark.jars.repositories", "https://aicat.azureedge.net/maven2")
-        .config("spark.jars.packages", "Azure:mmlspark_2.11:0.0")
         .getOrCreate()
     )
 
