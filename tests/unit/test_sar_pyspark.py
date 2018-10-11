@@ -184,6 +184,7 @@ def rearrange_to_test_sql(array, row_ids, col_ids, row_map, col_map):
 """
 Tests 
 """
+@pytest.mark.spark
 def test_initializaton_and_fit():
     """Test algorithm initialization"""
 
@@ -197,6 +198,7 @@ def test_initializaton_and_fit():
     assert hasattr(recommender.model, 'fit')
     assert hasattr(recommender.model, 'recommend_k_items')
 
+@pytest.mark.spark
 def test_recommend_top_k():
     """Test algo recommend top-k"""
 
@@ -221,6 +223,7 @@ Main SAR tests are below - load test files which are used for both Scala SAR and
 
 # Tests 1-6
 params="threshold,similarity_type,file"
+@pytest.mark.spark
 @pytest.mark.parametrize(params, [
     (1,'cooccurrence', 'count'),
     (1,'jaccard', 'jac'),
@@ -244,6 +247,7 @@ def test_sar_item_similarity(threshold, similarity_type, file):
         assert np.allclose(true_item_similarity.astype(test_item_similarity.dtype), test_item_similarity, atol=ATOL)
 
 # Test 7
+@pytest.mark.spark
 def test_user_affinity():
     spark = start_spark_test()
     data = load_demoUsage_data_spark(spark)
@@ -262,6 +266,7 @@ def test_user_affinity():
 
 # Tests 8-10
 params="threshold,similarity_type,file"
+@pytest.mark.spark
 @pytest.mark.parametrize(params, [
     (3,'cooccurrence', 'count'),
     (3,'jaccard', 'jac'),
