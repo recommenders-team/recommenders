@@ -3,6 +3,36 @@ import urllib.request
 import codecs
 import pytest
 import pandas as pd
+from pyspark.sql import SparkSession
+
+
+@pytest.fixture(scope="session")
+def start_spark_test(app_name="Sample", url="local[*]", memory="1G"):
+    """Start Spark if not started
+    Args:
+        app_name (str): sets name of the application
+        url (str): url for spark master
+        memory (str): size of memory for spark driver
+    """
+
+    """
+    Other Spark settings which you might find useful:
+        .config("spark.executor.cores", "4")
+        .config("spark.executor.memory", "2g")
+        .config("spark.memory.fraction", "0.9")
+        .config("spark.memory.stageFraction", "0.3")
+        .config("spark.executor.instances", 1)
+        .config("spark.executor.heartbeatInterval", "36000s")
+        .config("spark.network.timeout", "10000000s")
+        .config("spark.driver.maxResultSize", memory)
+    """
+    spark = SparkSession.builder.appName(app_name) \
+        .master(url) \
+        .config("spark.driver.memory", memory) \
+        .config("spark.sql.shuffle.partitions", "1") \
+        .getOrCreate()
+
+    return spark
 
 
 @pytest.fixture(scope="module")
