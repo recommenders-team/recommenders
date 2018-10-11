@@ -64,6 +64,7 @@ def spark_data():
     spark = start_or_get_spark("EvaluationTesting", "local")
     df_true = spark.createDataFrame(rating_true)
     df_pred = spark.createDataFrame(rating_pred)
+
     return df_true, df_pred
 
 
