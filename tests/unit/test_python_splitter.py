@@ -160,10 +160,11 @@ def test_chrono_splitter(test_specs, python_dataset):
     """
     df_rating = python_dataset
 
-    splits = ChronoSplitter(ratio=test_specs['ratio'],
-                            min_rating=10,
-                            filter_by="user",
-                            seed=test_specs['seed']).split(df_rating)
+    splits = python_chrono_split(
+        df_rating,
+        ratio=test_specs['ratio'],
+        min_rating=10,
+        filter_by="user")
 
     assert len(splits[0]) / test_specs["number_of_rows"] \
            == pytest.approx(test_specs["ratio"], test_specs["tolerance"])
@@ -189,10 +190,12 @@ def test_chrono_splitter(test_specs, python_dataset):
 
     assert set(users_train) == set(users_test)
 
-    splits = ChronoSplitter(ratio=test_specs['ratios'],
-                            min_rating=10,
-                            filter_by="user",
-                            seed=test_specs['seed']).split(df_rating)
+    splits = python_chrono_split(
+        df_rating,
+        ratio=test_specs['ratios'],
+        min_rating=10,
+        filter_by="user")
+
     assert len(splits) == 3
     assert len(splits[0]) / test_specs["number_of_rows"] \
            == pytest.approx(test_specs["ratios"][0], test_specs["tolerance"])
