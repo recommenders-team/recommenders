@@ -6,8 +6,7 @@ import numpy as np
 from itertools import product
 import pytest
 
-from tests.conftest import load_pandas_dummy_dataset, load_pandas_dummy_timestamp_dataset
-from utilities.dataset.split_utils import min_rating_filter, split_pandas_data_with_ratios
+from utilities.dataset.split_utils import min_rating_filter
 from utilities.dataset.spark_splitters import spark_chrono_split, spark_random_split
 from utilities.common.constants import (
     DEFAULT_USER_COL,
@@ -15,6 +14,7 @@ from utilities.common.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
+from utilities.common.spark_utils import start_or_get_spark
 
 
 @pytest.fixture(scope='module')
@@ -67,24 +67,6 @@ def spark_dataset(python_data):
 
 
 @pytest.mark.spark
-def test_splitter_error():
-    """Test Splitter Error"""
-    splitter = RandomSplitter()
-    with pytest.raises(NotImplementedError):
-        splitter.split(None)
-
-
-@pytest.mark.spark
-def test_setter_getter():
-    """Test Splitter setter and getter"""
-    splitter = RandomSplitter(ratio=0.5, seed=42)
-    assert splitter.ratio == 0.5
-    assert splitter.seed == 42
-    splitter.ratio = 0.75
-    assert splitter.ratio == 0.75
-
-
-@pytest.mark.spark
 def test_min_rating_filter(spark_dataset):
     """Test min rating filter
     """
@@ -118,15 +100,21 @@ def test_random_splitter(test_specs, spark_dataset):
     """
     df_rating = spark_dataset
 
-    splits = RandomSplitter(ratio=test_specs['ratio'],
-                            seed=test_specs['seed']).split(df_rating)
+    splits = spark_random_split(
+        df_rating,
+        ratio=test_specs['ratio'],
+        seed=test_specs['seed'])
+
     assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
         test_specs['ratio'], test_specs["spark_randomsplit_tolerance"])
     assert splits[1].count() / test_specs['number_of_rows'] == pytest.approx(
         1 - test_specs['ratio'], test_specs["spark_randomsplit_tolerance"])
 
-    splits = RandomSplitter(ratio=test_specs['ratios'],
-                            seed=test_specs['seed']).split(df_rating)
+    splits = spark_random_split(
+        df_rating,
+        ratio=test_specs['ratios'],
+        seed=test_specs['seed'])
+
     assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
         test_specs['ratios'][0], test_specs["spark_randomsplit_tolerance"])
     assert splits[1].count() / test_specs['number_of_rows'] == pytest.approx(
@@ -140,10 +128,11 @@ def test_chrono_splitter(test_specs, spark_dataset):
     """Test chronological splitter for Spark dataframes"""
     dfs_rating = spark_dataset
 
-    splits = ChronoSplitter(ratio=test_specs['ratio'],
-                            seed=test_specs['seed'],
-                            filter_by="user",
-                            min_rating=10).split(dfs_rating)
+    splits = spark_chrono_split(
+        dfs_rating,
+        ratio=test_specs['ratio'],
+        filter_by="user",
+        min_rating=10)
 
     assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
         test_specs['ratio'], test_specs["tolerance"])
@@ -170,8 +159,10 @@ def test_chrono_splitter(test_specs, spark_dataset):
         all_later.append(user_later)
     assert all(all_later)
 
-    splits = ChronoSplitter(ratio=test_specs['ratios'],
-                            seed=test_specs['seed']).split(dfs_rating)
+    splits = spark_chrono_split(
+        dfs_rating,
+        ratio=test_specs['ratios'])
+
     assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
         test_specs['ratios'][0], test_specs["tolerance"])
     assert splits[1].count() / test_specs['number_of_rows'] == pytest.approx(

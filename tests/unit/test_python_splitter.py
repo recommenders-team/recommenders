@@ -109,7 +109,7 @@ def test_min_rating_filter(python_dataset):
     assert all(item_rating_counts)
 
 
-def test_random_splitter(test_specs, python_dataset, surprise_dataset):
+def test_random_splitter(test_specs, python_dataset):
     """Test random splitter for Spark dataframes.
 
     NOTE: some split results may not match exactly with the ratios, which may be owing to the
