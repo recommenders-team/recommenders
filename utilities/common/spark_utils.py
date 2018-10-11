@@ -11,11 +11,9 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G"):
         url (str): url for spark master
         memory (str): size of memory for spark driver
     """
-    spark = (
-        SparkSession.builder.appName(app_name)
-        .master(url)
-        .config("spark.driver.memory", memory)
-        .getOrCreate()
-    )
+    spark = SparkSession.builder.appName(app_name) \
+            .master(url) \
+            .config("spark.driver.memory", memory) \
+            .getOrCreate()
 
     return spark
