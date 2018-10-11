@@ -68,7 +68,6 @@ def spark_data():
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_init_spark_rating_eval(spark_data):
     """Test initializer spark"""
     df_true, df_pred = spark_data
@@ -80,7 +79,6 @@ def test_init_spark_rating_eval(spark_data):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_rmse(spark_data, target_metrics):
     """Test Spark evaluator RMSE"""
     df_true, df_pred = spark_data
@@ -93,7 +91,6 @@ def test_spark_rmse(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_mae(spark_data, target_metrics):
     """Test Spark evaluator MAE"""
     df_true, df_pred = spark_data
@@ -106,7 +103,6 @@ def test_spark_mae(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_rsquared(spark_data, target_metrics):
     """Test Spark evaluator rsquared"""
     df_true, df_pred = spark_data
@@ -119,7 +115,6 @@ def test_spark_rsquared(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_exp_var(spark_data, target_metrics):
     """Test Spark evaluator exp_var"""
     df_true, df_pred = spark_data
@@ -132,7 +127,6 @@ def test_spark_exp_var(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_recall(spark_data, target_metrics):
     """Test Spark ranking evaluator recall."""
     df_true, df_pred = spark_data
@@ -147,7 +141,6 @@ def test_spark_recall(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_precision(spark_data, target_metrics):
     """Test Spark ranking evaluator precision."""
     df_true, df_pred = spark_data
@@ -162,7 +155,6 @@ def test_spark_precision(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_ndcg(spark_data, target_metrics):
     """Test Spark ranking evaluator ndcg."""
     df_true, df_pred = spark_data
@@ -180,7 +172,6 @@ def test_spark_ndcg(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-@pytest.mark.evaluation
 def test_spark_map(spark_data, target_metrics):
     """Test Spark ranking evaluator map."""
     df_true, df_pred = spark_data
