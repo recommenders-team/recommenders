@@ -111,7 +111,6 @@ Untitled*.ipynb
 ~$*
 output.ipynb
 conda*.yaml
-user_item_hits.npz
 .idea
 *.zip
 *.csv
