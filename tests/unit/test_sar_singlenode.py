@@ -39,8 +39,8 @@ class setup_SAR:
         similarity_type="jaccard",
         timedecay_formula=False,
         time_decay_coefficient=30,
-        threshold = 1,
-        time_now=TIME_NOW
+        threshold=1,
+        time_now=TIME_NOW,
     ):
 
         self.data = data
@@ -214,7 +214,7 @@ def load_demoUsage_data():
             "userId": header()["col_user"],
             "productId": header()["col_item"],
             "rating": header()["col_rating"],
-            "timestamp": header()["col_timestamp"]
+            "timestamp": header()["col_timestamp"],
         }
     )
 
@@ -339,6 +339,7 @@ Main SAR tests are below - load test files which are used for both Scala SAR and
 # Tests 1-6
 params = "threshold,similarity_type,file"
 
+
 @pytest.mark.parametrize(
     params,
     [
@@ -352,9 +353,7 @@ params = "threshold,similarity_type,file"
 )
 def test_sar_item_similarity(threshold, similarity_type, file):
     data = load_demoUsage_data()
-    tester = setup_SAR(
-        data, similarity_type=similarity_type, threshold=threshold
-    )
+    tester = setup_SAR(data, similarity_type=similarity_type, threshold=threshold)
     true_item_similarity, row_ids, col_ids = read_matrix(
         FILE_DIR + "sim_" + file + str(threshold) + ".csv"
     )
@@ -395,7 +394,7 @@ def test_user_affinity():
         similarity_type="cooccurrence",
         timedecay_formula=True,
         time_now=time_now,
-        time_decay_coefficient=30
+        time_decay_coefficient=30,
     )
     true_user_affinity, items = load_affinity(FILE_DIR + "user_aff.csv")
     user_index = tester.user_map_dict[TEST_USER_ID]
@@ -431,7 +430,7 @@ def test_userpred(threshold, similarity_type, file):
         timedecay_formula=True,
         time_now=time_now,
         time_decay_coefficient=30,
-        threshold=threshold
+        threshold=threshold,
     )
     true_items, true_scores = load_userped(
         FILE_DIR + "userpred_" + file + str(threshold) + "_userid_only.csv"
