@@ -26,6 +26,12 @@ def pandas_chrono_split(
         by=[split_by_column, col_timestamp], axis=0, ascending=False
     )
 
+    # TODO: add min_rating
+    # min_rating > 1:
+    # data = min_rating_filter(data, min_rating=min_rating,
+    #                             filter_by=filter_by,
+    #                             col_user=col_user, col_item=col_item)
+
     num_of_splits = len(ratio)
     splits = [pd.DataFrame({})] * num_of_splits
     df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
@@ -48,7 +54,7 @@ def _split_pandas_data_with_ratios(data, ratio, seed=1234, resample=False):
         -validation-and-test
 
     Args:
-        data (pandas.DataFrame): Pandas data frame to be split.
+        data (pd.DataFrame): Pandas data frame to be split.
         ratio (list of floats): list of ratios for split.
         seed (int): random seed.
         resample (bool): whether data will be resampled when being split.
