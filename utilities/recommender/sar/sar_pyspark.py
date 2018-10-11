@@ -198,7 +198,7 @@ class SARpySparkReference:
 
         return affinity_vector
 
-    def _fit(self, df):
+    def fit(self, df):
         """Main fit method for SAR. Expects the dataframes to have row_id, col_id columns which are indexes,
         i.e. contain the sequential integer index of the original alphanumeric user and item IDs.
         Dataframe also contains rating and timestamp as floats; timestamp is in seconds since Epoch by default.
@@ -397,7 +397,7 @@ class SARpySparkReference:
 
         log.info("done training")
 
-    def _recommend_k_items(self, test, top_k=10, output_pandas=False, **kwargs):
+    def recommend_k_items(self, test, top_k=10, output_pandas=False, **kwargs):
         """Recommend top K items for all users which are in the test set.
 
         Args:
@@ -520,6 +520,6 @@ class SARpySparkReference:
 
         return top_scores
 
-    def _predict(self, test):
+    def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set"""
         raise NotImplementedError
