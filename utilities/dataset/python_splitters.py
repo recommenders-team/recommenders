@@ -12,7 +12,7 @@ from utilities.common.constants import (
 from utilities.dataset.split_utils import (
     process_split_ratio,
     min_rating_filter,
-    split_python_data_with_ratios,
+    split_pandas_data_with_ratios,
 )
 
 
@@ -36,7 +36,7 @@ def python_random_split(data, ratio=0.75, seed=123):
     multi_split, ratio = process_split_ratio(ratio)
 
     if multi_split:
-        splits = split_python_data_with_ratios(data, ratio, resample=True, seed=seed)
+        splits = split_pandas_data_with_ratios(data, ratio, resample=True, seed=seed)
         return splits
     else:
         return sk_split(data, test_size=None, train_size=ratio, random_state=seed)
@@ -104,7 +104,7 @@ def python_chrono_split(
     splits = [pd.DataFrame({})] * num_of_splits
     df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
     for name, group in df_grouped:
-        group_splits = split_python_data_with_ratios(
+        group_splits = split_pandas_data_with_ratios(
             df_grouped.get_group(name), ratio, resample=False
         )
         for x in range(num_of_splits):

@@ -1,3 +1,12 @@
+import pandas as pd
+import numpy as np
+
+from utilities.common.constants import (
+    DEFAULT_ITEM_COL,
+    DEFAULT_USER_COL,
+)
+
+
 def process_split_ratio(ratio):
     if isinstance(ratio, float):
         if ratio <= 0 or ratio >= 1:
@@ -22,11 +31,11 @@ def process_split_ratio(ratio):
 
 
 def min_rating_filter(
-        data,
-        min_rating=1,
-        filter_by="user",
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
+    data,
+    min_rating=1,
+    filter_by="user",
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
 ):
     """Filter rating DataFrame for each user with minimum rating.
 
@@ -72,11 +81,11 @@ def min_rating_filter(
         if isinstance(data, pyspark.sql.DataFrame):
             rating_temp = (
                 data.groupBy(split_by_column)
-                    .agg({split_with_column: "count"})
-                    .withColumnRenamed(
+                .agg({split_with_column: "count"})
+                .withColumnRenamed(
                     "count(" + split_with_column + ")", "n" + split_with_column
                 )
-                    .where(col("n" + split_with_column) >= min_rating)
+                .where(col("n" + split_with_column) >= min_rating)
             )
 
             rating_filtered = data.join(broadcast(rating_temp), split_by_column).drop(
