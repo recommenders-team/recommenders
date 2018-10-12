@@ -177,8 +177,8 @@ class PythonRankingEvaluation:
         #  to items) is used
         # to calculate penalized precision of the ordered items.
         df_rating_pred = self.rating_pred.copy()
-        df_rating_pred[self.col_user] = df_rating_pred[self.col_user].astype(int)
-        df_rating_pred[self.col_item] = df_rating_pred[self.col_item].astype(int)
+        df_rating_pred[self.col_user] = df_rating_pred[self.col_user]
+        df_rating_pred[self.col_item] = df_rating_pred[self.col_item]
         df_rating_pred["ranking"] = self.rating_pred \
             .groupby(self.col_user)[self.col_prediction] \
             .rank(method="first", ascending=False)
