@@ -160,6 +160,8 @@ class PythonRankingEvaluation:
         self.rating_pred = self.rating_pred[self.rating_pred[self.col_user].isin(common_user_list)]
         self.rating_true = self.rating_true[self.rating_true[self.col_user].isin(common_user_list)]
 
+        self.n_users = len(common_user_list)
+
         self.df_hit = self._calculate_ranked_hit()
         assert self.df_hit.shape[0] > 0
 
@@ -177,8 +179,8 @@ class PythonRankingEvaluation:
         #  to items) is used
         # to calculate penalized precision of the ordered items.
         df_rating_pred = self.rating_pred.copy()
-        df_rating_pred[self.col_user] = df_rating_pred[self.col_user].astype(int)
-        df_rating_pred[self.col_item] = df_rating_pred[self.col_item].astype(int)
+        df_rating_pred[self.col_user] = df_rating_pred[self.col_user]
+        df_rating_pred[self.col_item] = df_rating_pred[self.col_item]
         df_rating_pred["ranking"] = self.rating_pred \
             .groupby(self.col_user)[self.col_prediction] \
             .rank(method="first", ascending=False)
@@ -212,7 +214,7 @@ class PythonRankingEvaluation:
 
         df_count_hit["precision"] = df_count_hit.apply(lambda x: (x.hit / self.top_k), axis=1)
 
-        precision_at_k = np.float64(df_count_hit.agg({"precision": "sum"})) / df_count_hit.shape[0]
+        precision_at_k = np.float64(df_count_hit.agg({"precision": "sum"})) / self.n_users
 
         return precision_at_k
 
@@ -238,7 +240,7 @@ class PythonRankingEvaluation:
 
         df_count_all["recall"] = df_count_all.apply(lambda x: (x.hit / x.actual), axis=1)
 
-        recall_at_k = np.float64(df_count_all.agg({"recall": "sum"})) / df_count_all.shape[0]
+        recall_at_k = np.float64(df_count_all.agg({"recall": "sum"})) / self.n_users
 
         return recall_at_k
 
@@ -280,7 +282,7 @@ class PythonRankingEvaluation:
         df_ndcg["ndcg"] = df_ndcg.apply(lambda x: x.dcg / x.mdcg, axis=1)
 
         # Average across users.
-        ndcg_at_k = np.float64(df_ndcg.agg({"ndcg": "sum"})) / df_ndcg.shape[0]
+        ndcg_at_k = np.float64(df_ndcg.agg({"ndcg": "sum"})) / self.n_users
 
         return ndcg_at_k
 
@@ -317,7 +319,7 @@ class PythonRankingEvaluation:
         df_sum_all["map"] = df_sum_all.apply(lambda x: (x.precision / x.actual), axis=1)
 
         # Average the results across users.
-        map_at_k = np.float64(df_sum_all.agg({"map": "sum"})) / df_sum_all.shape[0]
+        map_at_k = np.float64(df_sum_all.agg({"map": "sum"})) / self.n_users
 
         return map_at_k
 
