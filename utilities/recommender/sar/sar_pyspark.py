@@ -129,6 +129,7 @@ class SARpySparkReference():
             FROM item_cooccurrence A 
                 INNER JOIN item_marginal M1 ON A.i1 = M1.i 
                 INNER JOIN item_marginal M2 ON A.i2 = M2.i
+            CLUSTER BY i1, i2
             """
             # log.info("Running query -- " + query)
             self.item_similarity = self.spark.sql(query)
@@ -138,6 +139,7 @@ class SARpySparkReference():
             FROM item_cooccurrence A 
                 INNER JOIN item_marginal M1 ON A.i1 = M1.i 
                 INNER JOIN item_marginal M2 ON A.i2 = M2.i
+            CLUSTER BY i1, i2
             """
             #log.info("Running query -- " + query)
             self.item_similarity = self.spark.sql(query)
@@ -146,20 +148,10 @@ class SARpySparkReference():
 
         self.item_similarity.write.mode("overwrite").saveAsTable("item_similarity")
         self.spark.table("item_similarity").cache()
-
-        # user_affinity * item_similarity
-        # use CASE to expand upper-triangular to full-matrix
-        query = """
-        SELECT df.{col_user} userID,
-               CASE WHEN df.{col_item} = S.i1 THEN S.i2 ELSE S.i1 END itemID,
-               SUM(df.{col_rating} * S.value) AS score
-        FROM   df_train df, item_similarity S
-        WHERE  df.{col_item} = S.i1 OR df.{col_item} = S.i2
-        GROUP BY df.{col_user}, CASE WHEN df.{col_item} = S.i1 THEN S.i2 ELSE S.i1 END
-        """.format(col_user = self.col_user, col_item = self.col_item, col_rating = self.col_rating)
-
-        self.scores = self.spark.sql(query)
-        self.scores.createOrReplaceTempView("scores")
+        
+        # free memory
+        self.spark.sql("DROP TABLE item_cooccurrence") # TODO: if not exists
+        self.item_similarity = self.spark.table("item_similarity")
 
     def recommend_k_items(self, test, top_k=10, output_pandas=False, **kwargs):
         """Recommend top K items for all users which are in the test set.
@@ -173,45 +165,59 @@ class SARpySparkReference():
 
         test.createOrReplaceTempView("df_test")
 
-        # get the top items   
-        query = """
-        SELECT
-            scores.userID, scores.itemID, scores.score
-        FROM (SELECT DISTINCT {col_user} userID FROM df_test) users
-            INNER JOIN scores ON users.userID = scores.userID
-        """.format(col_user = self.col_user, top_k = top_k)
-
-        # remove previously seen items
-        if self.remove_seen:
-            top_scores = self.spark.sql(query)        
-            top_scores.createOrReplaceTempView("top_scores_full")
-
-            query = """
-            SELECT userID, itemID, score
-            FROM
-            (
-                SELECT ts.*, df_test.{col_item} existingItemID
-                FROM top_scores_full ts LEFT OUTER JOIN df_test
-                    ON ts.userID = df_test.{col_user} AND ts.itemID = df_test.{col_item}
-            )
-            WHERE existingItemID IS NULL
-            """.format(col_user = self.col_user, col_item = self.col_item)
-
-        top_scores = self.spark.sql(query)
-
-        # filter down to top-k items
-        top_scores.createOrReplaceTempView("top_scores")
-
+        query = "SELECT DISTINCT {col_user} FROM df_test CLUSTER BY {col_user}".format(col_user = self.col_user)
+        df_test_users = self.spark.sql(query)
+        df_test_users.write.mode("overwrite").saveAsTable("df_test_users")
+        df_test_users.cache()
+        
+        query = "SELECT df_train.* FROM df_train INNER JOIN df_test_users ON df_train.{col_user} = df_test_users.{col_user} CLUSTER BY {col_user}".format(col_user = model.col_user)
+        df_train_filtered_test = spark.sql(query)
+        df_train_filtered_test.write.mode("overwrite").saveAsTable("df_train_filtered_test")
+        df_train_filtered_test.cache()
+        
+        # user_affinity * item_similarity
+        # use CASE to expand upper-triangular to full-matrix
         query = """
         SELECT userID, itemID, score
         FROM
         (
-            SELECT
-                top_scores.*,
-                row_number() OVER(PARTITION BY userID ORDER BY score DESC) rank
-            FROM top_scores
+          SELECT userID, itemID, score, row_number() OVER(PARTITION BY userID ORDER BY score DESC) rank
+          FROM
+          (
+            SELECT userID, itemID, score
+            FROM
+            (
+              SELECT df.{col_user} userID,
+                     S.i2 itemID,
+                     SUM(df.{col_rating} * S.value) AS score,
+                     row_number() OVER(PARTITION BY {col_user} ORDER BY SUM(df.{col_rating} * S.value) DESC) rank
+              FROM   
+                df_train_filtered_test df, 
+                item_similarity S
+              WHERE df.{col_item} = S.i1
+              GROUP BY df.{col_user}, S.i2
+            )
+            WHERE rank <= {top_k} 
+
+            UNION ALL
+
+            SELECT userID, itemID, score
+            FROM
+            (
+              SELECT df.{col_user} userID,
+                     S.i1 itemID,
+                     SUM(df.{col_rating} * S.value) AS score,
+                     row_number() OVER(PARTITION BY {col_user} ORDER BY SUM(df.{col_rating} * S.value) DESC) rank
+              FROM   
+                df_train_filtered_test df, 
+                item_similarity S
+              WHERE df.{col_item} = S.i2 AND S.i1 <> S.i2
+              GROUP BY df.{col_user}, S.i1
+            )
+            WHERE rank <= {top_k} 
+          )
         )
         WHERE rank <= {top_k} 
-        """.format(col_user = self.col_user, top_k = top_k)
-  
+        """.format(col_user = model.col_user, col_item = model.col_item, col_rating = model.col_rating, top_k = 10)
+
         return self.spark.sql(query)
