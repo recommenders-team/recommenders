@@ -112,6 +112,8 @@ Untitled*.ipynb
 output.ipynb
 conda*.yaml
 .idea
-*.npz
-*.data
+*.zip
 *.csv
+*.data
+*.npz
+
