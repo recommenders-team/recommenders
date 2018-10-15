@@ -59,6 +59,7 @@ if [ "$pyspark_flag" = true ] && [ "$gpu_flag" = true ]; then
 	CONDA_FILE="conda_full.yaml"
 fi
 
+# Write conda file with libraries
 /bin/cat <<EOM >${CONDA_FILE}
 # To create the conda environment:
 # $ conda env create -n my_env_name -f conda.yml
