@@ -3,7 +3,6 @@ import pytest
 import pandas as pd
 import papermill as pm
 
-
 OUTPUT_NOTEBOOK = "output.ipynb"
 
 
