@@ -13,9 +13,7 @@
 
 # first check if conda is installed
 CONDA_BINARY=$(which conda)
-if [ -x "$CONDA_BINARY" ] ; then
-	echo "Installation script will use this conda binary ${CONDA_BINARY} for installation"
-else
+if [ ! -x "$CONDA_BINARY" ] ; then
 	echo "No conda found!! Please see the README.md file for installation prerequisites."
 	exit 1
 fi
@@ -102,5 +100,5 @@ ${pyspark}- pyspark==2.3
   - black>=18.6b4
 EOM
 
-
+echo "Conda file generated: " $CONDA_FILE
 
