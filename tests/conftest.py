@@ -1,6 +1,3 @@
-import csv
-import urllib.request
-import codecs
 import pytest
 import pandas as pd
 
@@ -82,15 +79,3 @@ def load_pandas_dummy_timestamp_dataset():
 
     return dataframe
 
-
-@pytest.fixture(scope="module")
-def csv_reader_url(url, delimiter=",", encoding="utf-8"):
-    """
-    Read a csv file over http
-
-    Returns:
-         csv reader iterable
-    """
-    ftpstream = urllib.request.urlopen(url)
-    csvfile = csv.reader(codecs.iterdecode(ftpstream, encoding), delimiter=delimiter)
-    return csvfile
