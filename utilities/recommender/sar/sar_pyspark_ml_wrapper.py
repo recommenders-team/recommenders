@@ -1,7 +1,6 @@
 from pyspark.sql.functions import to_date, unix_timestamp
 from pyspark.sql.types import *
-
-data_all = data_all.withColumn('Timestamp', unix_timestamp("date","yyyy-MM-ddTHH:mm:ss:X"))
+from pyspark.ml import Estimator
 
 class RandomSplitter():
     """Random Splitter"""
@@ -65,14 +64,52 @@ from utilities.recommender.sar import (
 )
 from utilities.recommender.sar.sar_pyspark import SARpySparkReference
 
-class SAR():
+class SAR(Estimator, ValidatorParams):
+  col_rating = Param(Params._dummy(), "col_rating", "ratingCol: column name for ratings (default: rating)")
+  col_user = Param(Params._dummy(), "col_user",
+                  "col_user: column name for user ids. Ids must be within the integer value range. (default: user)")
+  col_item = Param(Params._dummy(), "col_item",
+                "col_item: column name for item ids. Ids must be within the integer value range. (default: item)")
+  similarity_type = Param(Params._dummy(), "similarity_type", "similarity_type")
+  col_timestamp = Param(Params._dummy(), "col_timestamp", "col_timestamp")
+  time_decay_coefficient = Param(Params._dummy(), "time_decay_coefficient", "time_decay_coefficient", typeConverter=TypeConverters.toFloat)
+  remove_seen = Param(Params._dummy(), "remove_seen", "remove_seen")
+  time_now = Param(Params._dummy(), "time_now", "time_now")
+  timedecay_formula = Param(Params._dummy(), "timedecay_formula", "timedecay_formula")
+  threshold = Param(Params._dummy(), "threshold", "threshold")
+  debug = Param(Params._dummy(), "debug", "debug")
 
-  def __init__(self, remove_seen=True, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL, col_rating=DEFAULT_RATING_COL, col_timestamp=TIMESTAMP_COL, similarity_type=SIM_JACCARD, time_decay_coefficient=TIME_DECAY_COEFFICIENT, time_now=TIME_NOW, timedecay_formula=TIMEDECAY_FORMULA, threshold=THRESHOLD, debug=False):
+  def copy(self, extra=None):
+    if extra is None:
+        extra = dict()
+    return Params.copy(self, extra)
+  
+  @keyword_only
+  def setParams(self,  remove_seen=True, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL, col_rating=DEFAULT_RATING_COL, col_timestamp=TIMESTAMP_COL, similarity_type=SIM_JACCARD, time_decay_coefficient=TIME_DECAY_COEFFICIENT, time_now=TIME_NOW, timedecay_formula=TIMEDECAY_FORMULA, threshold=THRESHOLD, debug=False):
+      kwargs = self._input_kwargs
+      return self._set(**kwargs)
+  
+  @keyword_only
+  def __init__(self, remove_seen=True, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL, col_rating=DEFAULT_RATING_COL, col_timestamp=TIMESTAMP_COL, similarity_type=SIM_JACCARD, time_decay_coefficient=30.0, time_now=TIME_NOW, timedecay_formula=TIMEDECAY_FORMULA, threshold=THRESHOLD, debug=False):
+    super(SAR, self).__init__()
+    self._setDefault(remove_seen=True, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL, col_rating=DEFAULT_RATING_COL, col_timestamp=TIMESTAMP_COL, similarity_type=SIM_JACCARD, time_decay_coefficient=30.0, time_now=TIME_NOW, timedecay_formula=TIMEDECAY_FORMULA, threshold=THRESHOLD, debug=False)
+    kwargs = self._input_kwargs
+    self._set(**kwargs)    
+
+  def _fit(self, df):
     spark = pyspark.sql.SparkSession.builder.getOrCreate()
-    self.sar = SARpySparkReference(spark, remove_seen, col_user, col_item, col_rating, col_timestamp, similarity_type, time_decay_coefficient, time_now, timedecay_formula, threshold, debug)
-    self.threshold = threshold
-      
-  def fit(self, df, epm=None):
+    col_user = self.getOrDefault(self.col_user)
+    col_rating = self.getOrDefault(self.col_rating)
+    col_item = self.getOrDefault(self.col_item)
+    col_timestamp = self.getOrDefault(self.col_timestamp)
+    similarity_type = self.getOrDefault(self.similarity_type)
+    time_now = self.getOrDefault(self.time_now)
+    timedecay_formula = self.getOrDefault(self.timedecay_formula)
+    debug = self.getOrDefault(self.debug)  
+    threshold = self.getOrDefault(self.threshold)
+    time_decay_coefficient = self.getOrDefault(self.time_decay_coefficient)
+    
+    sar = SARpySparkReference(spark, True, col_user, col_item, col_rating, col_timestamp, similarity_type, time_decay_coefficient, time_now, timedecay_formula, threshold, debug)
     
     # split into two spark dataframes for training and testing
     train, test = RandomSplitter(ratio=0.8).split(df)
@@ -131,18 +168,23 @@ class SAR():
     test_indexed = spark.sql(query)
 
     # we need to index the train and test sets for SAR matrix operations to work
-    # TODO: in MVP3 this index will be passed along with the data structure which we are yet to design.
-    self.sar.set_index(unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item)
+    sar.set_index(unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item)
 
-    self.sar.fit(train_indexed)
-    return [SARModel(self.sar, test_indexed)]
+    sar.fit(train_indexed)
+    return SARModel(sar, test_indexed)
         
   def getUserCol(self):
-    return self.sar.col_user
+    return self.getOrDefault(self.col_user)
+
   def getRatingCol(self):
-    return self.sar.col_rating
+    return self.getOrDefault(self.col_rating)
   def getItemCol(self):
-    return self.sar.col_item
+    return self.getOrDefault(self.col_item)
+  def getTime_decay_coefficient(self):
+    return self.getOrDefault(self.time_decay_coefficient)
+  def setTime_decay_coefficient(self, value):
+    self._set(time_decay_coefficient=value)
+    return self
   
 class SARModel():
   def __init__(self, sar, df):
