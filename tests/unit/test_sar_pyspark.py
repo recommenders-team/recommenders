@@ -163,7 +163,8 @@ Fixtures to load and reconcile custom output from TLC
 
 @pytest.fixture
 def load_demoUsage_data_spark(spark):
-    data_local = load_demo_usage_data(header)[[x[1] for x in header().items()]]
+    df = load_demo_usage_data(header)
+    data_local = df[[x[1] for x in header().items()]]
     # TODO: install pyArrow in DS VM
     # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     data = spark.createDataFrame(data_local)
