@@ -1,9 +1,10 @@
-import csv
-import urllib.request
-import codecs
 import pytest
 import pandas as pd
-from pyspark.sql import SparkSession
+
+try:
+    from pyspark.sql import SparkSession
+except:
+    pass
 
 
 @pytest.fixture(scope="session")
@@ -26,11 +27,13 @@ def start_spark_test(app_name="Sample", url="local[*]", memory="1G"):
         .config("spark.network.timeout", "10000000s")
         .config("spark.driver.maxResultSize", memory)
     """
-    spark = SparkSession.builder.appName(app_name) \
-        .master(url) \
-        .config("spark.driver.memory", memory) \
-        .config("spark.sql.shuffle.partitions", "1") \
+    spark = (
+        SparkSession.builder.appName(app_name)
+        .master(url)
+        .config("spark.driver.memory", memory)
+        .config("spark.sql.shuffle.partitions", "1")
         .getOrCreate()
+    )
 
     return spark
 
@@ -76,15 +79,3 @@ def load_pandas_dummy_timestamp_dataset():
 
     return dataframe
 
-
-@pytest.fixture(scope="module")
-def csv_reader_url(url, delimiter=",", encoding="utf-8"):
-    """
-    Read a csv file over http
-
-    Returns:
-         csv reader iterable
-    """
-    ftpstream = urllib.request.urlopen(url)
-    csvfile = csv.reader(codecs.iterdecode(ftpstream, encoding), delimiter=delimiter)
-    return csvfile
