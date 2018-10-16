@@ -52,8 +52,6 @@ class SAR
 
     float join_prod_sum(std::string& uid, std::vector<uint32_t>& items_of_user, std::vector<double>& ratings, uint32_t related_item);
 
-    uint32_t get_or_insert(std::string& s);
-
     void index_and_cache(const char* dir_path);
 
     bool load_from_cache(const char* dir_path);

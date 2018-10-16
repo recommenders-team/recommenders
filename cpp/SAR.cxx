@@ -53,7 +53,6 @@ void SAR::predict_worker()
                 _predict_queue.pop();
             }
 
-            // cout << "processing " << input_path << endl;
             predict_single_parquet(input_path.c_str());
         }
     }
@@ -112,8 +111,6 @@ uint64_t SAR::get_row_count(const char* input_path)
 
     std::shared_ptr<arrow::Array> array;
     PARQUET_THROW_NOT_OK(reader->ReadColumn(0, &array));
-
-    // cout << input_path << ": " << array->length() << endl;
 
     return array->length();
 }
@@ -178,42 +175,10 @@ void SAR::predict_single_parquet(const char* input_path)
     predict(prev_uid, items_of_user, ratings, outfile);
 }
 
-template<typename T>
-void printVector(const char* name, T beg, T end)
-{
-    cout << name << ": ";
-    size_t i = 0;
-    for(;beg != end && i < 20;++beg,++i)
-        cout << *beg << ",";
-    cout << endl;
-}
-
-template<typename T>
-void printVector(const char* name, vector<T>& vec)
-{
-    cout << name << ": ";
-    for(auto& val : vec)
-        cout << val << ",";
-    cout << endl;
-}
-
 void SAR::predict(string uid, vector<uint32_t>& items_of_user, vector<double>& ratings, ofstream& outfile)
 {
     if (items_of_user.empty())
         return;
-
-/*
-    if (uid == "496")
-    {
-        cout << "items_of_user '" << uid << "': ";
-        for(auto& val : items_of_user)
-            cout << _item_to_index[val] << ",";
-        cout << endl << endl;
-        for(auto& val : items_of_user)
-            cout << val << ",";
-        cout << endl;
-    }
-*/
 
     unordered_set<uint32_t> seen_items;
     priority_queue<item_score> top_k_items;
@@ -228,12 +193,6 @@ void SAR::predict(string uid, vector<uint32_t>& items_of_user, vector<double>& r
         {
             auto related_item = *related_beg;
 
-/*
-        if (uid == "496")
-        {
-            cout << "\trelated " << _item_to_index[related_item] << endl;
-        }
-*/
             // avoid duplicated
             if (seen_items.find(related_item) != seen_items.end())
                 continue;
@@ -242,8 +201,6 @@ void SAR::predict(string uid, vector<uint32_t>& items_of_user, vector<double>& r
             // calculate score
             auto related_item_score = join_prod_sum(uid, items_of_user, ratings, related_item);
 
-            // if (uid == "496" && _item_to_index[related_item] == "590")
-                // cout << "related " << _item_to_index[related_item] << ": " << related_item_score << endl;
             if (related_item_score > 0)
                 push_if_better(top_k_items, {related_item, related_item_score}, _top_k);
         }
@@ -255,8 +212,6 @@ void SAR::predict(string uid, vector<uint32_t>& items_of_user, vector<double>& r
         auto is = top_k_items.top();
         outfile << uid << "\t" << _item_to_index[is.iid] << "\t" << is.score << endl;
 
-        // if (uid == "496")
-            // cout << uid << "\t" << _item_to_index[is.iid] << "\t" << is.score << endl;
         top_k_items.pop();
     }
 
@@ -291,32 +246,11 @@ float SAR::join_prod_sum(string& uid, vector<uint32_t>& items_of_user, vector<do
     auto user_iid = items_of_user.begin();
     auto user_iid_end = items_of_user.end();
 
-/*
-    if (uid == "496" && _item_to_index[related_item] == "592")
-    {
-    contrib_beg = &_related_items[0] + _related_item_offsets[related_item];
-    contrib_end = &_related_items[0] + _related_item_offsets[related_item+1];
-        cout << "found" << endl;
-        for(auto it = contrib_beg;it!=contrib_end;++it)
-            cout << _item_to_index[*it] << ","; 
-        cout << endl << endl;
-        for(auto it = contrib_beg;it!=contrib_end;++it)
-            cout << *it << ","; 
-        cout << endl;
-    }
-*/
-
     while(true)
     {
         auto user_iid_v = *user_iid;
         auto contrib_v = *contrib_beg;
 
-/*
-        if (uid == "496" && _item_to_index[related_item] == "592")
-        {
-                cout << _item_to_index[user_iid_v] << " <-> " << _item_to_index[contrib_v] << endl;
-        }
-*/
         // binary search
         if (user_iid_v < contrib_v)
         {
@@ -337,14 +271,7 @@ float SAR::join_prod_sum(string& uid, vector<uint32_t>& items_of_user, vector<do
 
             continue;
         }
-/*
-        if (uid == "496" && _item_to_index[related_item] == "592")
-        {
-         cout << "score (" << score << ") += "  << 
-             ratings[&*user_iid - &items_of_user[0]] << " * " <<
-             _scores[&*contrib_beg - &_related_items[0]] << endl;
-        }
-*/
+
         // match
         score += ratings[&*user_iid - &items_of_user[0]]
             * _scores[&*contrib_beg - &_related_items[0]];
@@ -358,24 +285,7 @@ float SAR::join_prod_sum(string& uid, vector<uint32_t>& items_of_user, vector<do
             break;
     }
 
-    // if (score > 0)
-        // cout << "score: " << score << endl;
-
     return score;
-}
-
-// helper to remap input id-strings to continuous numbers
-uint32_t SAR::get_or_insert(string& s)
-{
-    auto it = _item_to_index_map.find(s);
-    if (it != _item_to_index_map.end())
-        return it->second;
-
-    auto id = _item_to_index_map.size();
-    _item_to_index_map.insert(make_pair(s, id));
-    _item_to_index.push_back(s);
-
-    return id;
 }
 
 void SAR::predict_parquet(const char* user_to_items_parquet, uint32_t top_k)
@@ -398,7 +308,6 @@ void SAR::predict_parquet(const char* user_to_items_parquet, uint32_t top_k)
 
     vector<thread> pool;
     int num_threads = thread::hardware_concurrency();
-    // num_threads = 1;
 
     cout << "Thread count: " << num_threads << endl;
     for (int i=0;i<num_threads;i++)
@@ -445,13 +354,9 @@ public:
         if (!array->type()->Equals(arrow::DoubleType()))
             throw runtime_error("similarity input column 2 (scores) must be of type double");
         value_array = make_unique<arrow::NumericArray<arrow::DoubleType>>(array->data());
-
-        // first_iid = i1_array->GetString(0);
     }
 
     string _file_name;
-
-    // string first_iid;
 
     std::unique_ptr<arrow::StringArray> i1_array;
     std::unique_ptr<arrow::StringArray> i2_array;
@@ -467,6 +372,7 @@ void SAR::index_and_cache(const char* dir_path)
         throw std::runtime_error(msg.str());
     }
 
+    // TODO: really this must be a single file
     cout << "Mapping item ids to indicies..." << endl;
 
     vector<SimilarityFile> sim_files;
@@ -482,19 +388,10 @@ void SAR::index_and_cache(const char* dir_path)
 
         files.push_back(file_name);
         sim_files.push_back(std::move(SimilarityFile(file_name.c_str())));
-        // cout << "\t" << file_name << endl;
     }
 
-/*
-    sort(sim_files.begin(), sim_files.end(), 
-        [](const auto & a, const auto & b) -> bool
-    { 
-        return a.first_iid < b.first_iid; 
-    });
-*/
     cout << "Building continuous index..." << endl;
     string prev_iid_str;
-    uint32_t i1_assumption = 0;
 
     for (auto& sim_file : sim_files)
     {
@@ -506,24 +403,14 @@ void SAR::index_and_cache(const char* dir_path)
             if (s1 == prev_iid_str)
                 continue;
 
-            auto i1 = get_or_insert(s1);
-
-            if (i1 != i1_assumption)
-            {
-                cout << "failed assumption.3 " << s1 << " -> " << i1 << " vs " << i1_assumption << " line nr " << idx << endl;
-                exit(-1);
-            }
-
-            i1_assumption++;
-            // cout << "x: " << x << " to " << s1 << endl;
+            auto i1 = _item_to_index_map.size();
+            _item_to_index_map.insert(make_pair(s1, i1));
+            _item_to_index.push_back(s1);
 
             prev_iid_str = s1;
         }
     }
  
-    // string x463 = "463";
-    // cout << "463 -> " << get_or_insert(x463) << endl;
-
     cout << "Building lookup..." << endl;
     uint32_t prev_iid = 0xFFFFFFFF; 
     for (auto& sim_file : sim_files)
@@ -531,16 +418,16 @@ void SAR::index_and_cache(const char* dir_path)
         const double* values = sim_file.value_array->raw_values();
         for (uint64_t idx = 0;idx<sim_file.i1_array->length();++idx,++values)
         {
-                // cout << "idx " << idx << endl;
             auto s1 = sim_file.i1_array->GetString(idx);
             auto s2 = sim_file.i2_array->GetString(idx);
 
-            auto i1 =  get_or_insert(s1);
-            auto i2 =  get_or_insert(s2);
+            auto i1 = _item_to_index_map.find(s1)->second;
+            auto i2 = _item_to_index_map.find(s2)->second;
 
             // expect ORDERY BY uid, iid
             if (prev_iid != i1)
             {
+                // some sanity check to make sure the indicies are all sorted and continuous
                 if (i1 != _related_item_offsets.size())
                 {
                     cout << "i1 mismatch " << s1 << " -> " << i1 << " vs " << _related_item_offsets.size() << endl;
@@ -581,6 +468,7 @@ void SAR::index_and_cache(const char* dir_path)
     }
 }
 
+// helpful during development to avoid re-indexing the item ids
 bool SAR::load_from_cache(const char* dir_path)
 {
     cout << "Loading cache..." << endl;
