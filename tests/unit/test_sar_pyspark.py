@@ -21,7 +21,7 @@ from utilities.recommender.sar.sar_pyspark import SARpySparkReference
 from utilities.recommender.sar import TIME_NOW
 from tests.conftest import header, start_spark_test
 from utilities.common.constants import PREDICTION_COL
-from tests.unit.test_sar_singlenode import load_demoUsage_data, read_matrix, load_userped, load_affinity
+from tests.unit.test_sar_singlenode import load_demo_usage_data, read_matrix, load_userped, load_affinity
 
 # absolute tolerance parameter for matrix equivalnce in SAR tests
 ATOL = 1e-8
@@ -163,7 +163,7 @@ Fixtures to load and reconcile custom output from TLC
 
 @pytest.fixture
 def load_demoUsage_data_spark(spark):
-    data_local = load_demoUsage_data()[[x[1] for x in header().items()]]
+    data_local = load_demo_usage_data(header)[[x[1] for x in header().items()]]
     # TODO: install pyArrow in DS VM
     # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     data = spark.createDataFrame(data_local)
