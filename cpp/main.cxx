@@ -9,12 +9,18 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    SAR sar;
+    try
+    {
+        SAR sar;
 
-    // const char* dir_path = "/mnt/c/Data/netflix/similarity-full.parquet";
-    // "/mnt/c/Data/netflix/test_users_with_train_items.parquet"
-    sar.load(argv[1]);
-    sar.predict_parquet(argv[2], atoi(argv[3]));
+        sar.load(argv[1]);
+        sar.predict_parquet(argv[2], atoi(argv[3]));
 
-    return 0;
+        return 0;
+    }
+    catch (std::exception& e)
+    {
+        std::cerr << "Exception: " << e.what() << std::endl;
+        return -1;
+    }
 }
