@@ -14,7 +14,12 @@ log = logging.getLogger(__name__)
 from utilities.recommender.sar.sar_pyspark import SARpySparkReference
 from utilities.recommender.sar import TIME_NOW
 from utilities.common.constants import PREDICTION_COL
-from tests.unit.test_sar_singlenode import load_demo_usage_data, read_matrix, load_userped, load_affinity
+from tests.unit.test_sar_singlenode import (
+    load_demo_usage_data,
+    read_matrix,
+    load_userped,
+    load_affinity,
+)
 
 # absolute tolerance parameter for matrix equivalnce in SAR tests
 ATOL = 1e-1
@@ -22,55 +27,6 @@ ATOL = 1e-1
 FILE_DIR = "http://recodatasets.blob.core.windows.net/sarunittest/"
 # user ID used in the test files (they are designed for this user ID, this is part of the test)
 TEST_USER_ID = "0003000098E85347"
-
-# convenient way to invoke SAR with different parameters on different datasets
-# TODO: pytest class fixtures are not yet supported as of this release
-# @pytest.fixture
-class setup_SARpySpark:
-    def __init__(
-        self,
-        spark,
-        data,
-        header,
-        remove_seen=True,
-        similarity_type="jaccard",
-        timedecay_formula=False,
-        time_decay_coefficient=30,
-        threshold=1,
-        time_now=TIME_NOW,
-    ):
-
-        self.data = data
-        model = SARpySparkReference(
-            spark,
-            remove_seen=remove_seen,
-            similarity_type=similarity_type,
-            timedecay_formula=timedecay_formula,
-            time_decay_coefficient=time_decay_coefficient,
-            time_now=time_now,
-            threshold=threshold,
-            **header
-        )
-
-        data_indexed, unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = airship_hash_sql(
-            spark, data, header
-        )
-
-        # we need to index the train and test sets for SAR matrix operations to work
-        model.set_index(
-            unique_users,
-            unique_items,
-            user_map_dict,
-            item_map_dict,
-            index2user,
-            index2item,
-        )
-        model.fit(data_indexed)
-
-        self.model = model
-        self.data_indexed = data_indexed
-        self.user_map_dict = user_map_dict
-        self.item_map_dict = item_map_dict
 
 
 @pytest.fixture(scope="module")
@@ -81,7 +37,7 @@ def get_train_test(load_pandas_dummy_timestamp_dataset):
     return trainset, testset
 
 
-def airship_hash_sql(spark, df_all, header):
+def _index_and_fit(spark, model, df_all, header):
 
     df_all.createOrReplaceTempView("df_all")
 
@@ -140,20 +96,20 @@ def airship_hash_sql(spark, df_all, header):
     user_map_dict = {v: k for k, v in index2user.items()}
     item_map_dict = {v: k for k, v in index2item.items()}
 
-    return (
-        df_all,
-        unique_users,
-        unique_items,
-        user_map_dict,
-        item_map_dict,
-        index2user,
-        index2item,
+    # we need to index the train and test sets for SAR matrix operations to work
+    model.set_index(
+        unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item
     )
+
+    model.fit(df_all)
+
+    return df_all
 
 
 """
 Fixtures to load and reconcile custom output from TLC
 """
+
 
 @pytest.fixture
 def load_demo_usage_data_spark(spark, header):
@@ -164,14 +120,15 @@ def load_demo_usage_data_spark(spark, header):
     data = spark.createDataFrame(data_local)
     return data
 
+
 def rearrange_to_test_sql(array, row_ids, col_ids, row_map, col_map):
     """Rearranges SAR array into test array order
     Same as rearrange_to_test but offsets the count by -1 to account for SQL counts starting at 1"""
     if row_ids is not None:
-        row_index = [row_map[x]-1 for x in row_ids]
+        row_index = [row_map[x] - 1 for x in row_ids]
         array = array[row_index, :]
     if col_ids is not None:
-        col_index = [col_map[x]-1 for x in col_ids]
+        col_index = [col_map[x] - 1 for x in col_ids]
         array = array[:, col_index]
     return array
 
@@ -179,17 +136,22 @@ def rearrange_to_test_sql(array, row_ids, col_ids, row_map, col_map):
 """
 Tests 
 """
+
+
 @pytest.mark.spark
 def test_initializaton_and_fit(header, spark):
     """Test algorithm initialization"""
     data = load_demo_usage_data_spark(spark, header)
-    # recommender will execute a fit method here
-    recommender = setup_SARpySpark(spark, data, header)
 
-    assert recommender is not None
-    assert hasattr(recommender.model, 'set_index')
-    assert hasattr(recommender.model, 'fit')
-    assert hasattr(recommender.model, 'recommend_k_items')
+    # recommender will execute a fit method here
+    model = SARpySparkReference(spark, **header)
+    _index_and_fit(spark, model, data, header)
+
+    assert model is not None
+    assert hasattr(model, "set_index")
+    assert hasattr(model, "fit")
+    assert hasattr(model, "recommend_k_items")
+
 
 @pytest.mark.spark
 def test_recommend_top_k(header, spark):
@@ -197,44 +159,71 @@ def test_recommend_top_k(header, spark):
     data = load_demo_usage_data_spark(spark, header)
 
     # recommender will execute a fit method here
-    recommender = setup_SARpySpark(spark, data, header)
+    model = SARpySparkReference(spark, **header)
+    data_indexed = _index_and_fit(spark, model, data, header)
 
-    top_k_spark = recommender.model.recommend_k_items(recommender.data_indexed, top_k=10)
+    top_k_spark = model.recommend_k_items(data_indexed, top_k=10)
     top_k = top_k_spark.toPandas()
 
     assert 23410 == len(top_k)
     assert isinstance(top_k, pd.DataFrame)
-    assert top_k[header['col_user']].dtype == object
-    assert top_k[header['col_item']].dtype == object
+    assert top_k[header["col_user"]].dtype == object
+    assert top_k[header["col_item"]].dtype == object
     assert top_k[PREDICTION_COL].dtype == float
+
 
 """
 Main SAR tests are below - load test files which are used for both Scala SAR and Python reference implementations
 """
 
 # Tests 1-6
-params="threshold,similarity_type,file"
+params = "threshold,similarity_type,file"
+
+
 @pytest.mark.spark
-@pytest.mark.parametrize(params, [
-    (1,'cooccurrence', 'count'),
-    (1,'jaccard', 'jac'),
-    (1,'lift', 'lift'),
-    (3,'cooccurrence', 'count'),
-    (3,'jaccard', 'jac'),
-    (3,'lift', 'lift')
-])
+@pytest.mark.parametrize(
+    params,
+    [
+        (1, "cooccurrence", "count"),
+        (1, "jaccard", "jac"),
+        (1, "lift", "lift"),
+        (3, "cooccurrence", "count"),
+        (3, "jaccard", "jac"),
+        (3, "lift", "lift"),
+    ],
+)
 def test_sar_item_similarity(threshold, similarity_type, file, header, spark):
     data = load_demo_usage_data_spark(spark, header)
-    tester = setup_SARpySpark(spark, data, header, similarity_type=similarity_type, threshold=threshold)
-    true_item_similarity, row_ids, col_ids = read_matrix(FILE_DIR + 'sim_' + file + str(threshold) + '.csv')
 
-    test_item_similarity = rearrange_to_test_sql(tester.model.get_item_similarity_as_matrix(), row_ids, col_ids,
-                                                 tester.item_map_dict, tester.item_map_dict)
+    model = SARpySparkReference(
+        spark, similarity_type=similarity_type, threshold=threshold, **header
+    )
+    _index_and_fit(spark, model, data, header)
+
+    true_item_similarity, row_ids, col_ids = read_matrix(
+        FILE_DIR + "sim_" + file + str(threshold) + ".csv"
+    )
+
+    test_item_similarity = rearrange_to_test_sql(
+        model.get_item_similarity_as_matrix(),
+        row_ids,
+        col_ids,
+        model.item_map_dict,
+        model.item_map_dict,
+    )
     if similarity_type is "cooccurrence":
         # these are integer counts so can test for direct equality
-        assert np.array_equal(true_item_similarity.astype(test_item_similarity.dtype), test_item_similarity)
+        assert np.array_equal(
+            true_item_similarity.astype(test_item_similarity.dtype),
+            test_item_similarity,
+        )
     else:
-        assert np.allclose(true_item_similarity.astype(test_item_similarity.dtype), test_item_similarity, atol=ATOL)
+        assert np.allclose(
+            true_item_similarity.astype(test_item_similarity.dtype),
+            test_item_similarity,
+            atol=ATOL,
+        )
+
 
 # Test 7
 @pytest.mark.spark
@@ -242,41 +231,67 @@ def test_user_affinity(header, spark):
     data = load_demo_usage_data_spark(spark, header)
 
     # time_now None should trigger max value computation from Data
-    tester = setup_SARpySpark(spark, data, header, similarity_type='cooccurrence', timedecay_formula=True, time_now=None,
-       time_decay_coefficient = 30)
+    model = SARpySparkReference(
+        spark,
+        similarity_type="cooccurrence",
+        timedecay_formula=True,
+        time_now=None,
+        time_decay_coefficient=30,
+        **header,
+    )
+    _index_and_fit(spark, model, data, header)
 
-    true_user_affinity, items = load_affinity(FILE_DIR+'user_aff.csv')
+    true_user_affinity, items = load_affinity(FILE_DIR + "user_aff.csv")
 
-    tester_affinity = tester.model.get_user_affinity_as_vector(TEST_USER_ID)
+    tester_affinity = model.get_user_affinity_as_vector(TEST_USER_ID)
 
     test_user_affinity = np.reshape(
-        rearrange_to_test_sql(tester_affinity, None, items, None, tester.item_map_dict), -1)
-    assert np.allclose(true_user_affinity.astype(test_user_affinity.dtype), test_user_affinity, atol=ATOL)
+        rearrange_to_test_sql(tester_affinity, None, items, None, model.item_map_dict),
+        -1,
+    )
+    assert np.allclose(
+        true_user_affinity.astype(test_user_affinity.dtype),
+        test_user_affinity,
+        atol=ATOL,
+    )
+
 
 # Tests 8-10
-params="threshold,similarity_type,file"
+params = "threshold,similarity_type,file"
+
+
 @pytest.mark.spark
-@pytest.mark.parametrize(params, [
-    (3,'cooccurrence', 'count'),
-    (3,'jaccard', 'jac'),
-    (3,'lift', 'lift')
-])
+@pytest.mark.parametrize(
+    params, [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")]
+)
 def test_userpred(threshold, similarity_type, file, header, spark):
     data = load_demo_usage_data_spark(spark, header)
 
     # time_now None should trigger max value computation from Data
-    tester = setup_SARpySpark(spark, data, header, remove_seen=True, similarity_type=similarity_type, timedecay_formula=True,
-                       time_now=None, time_decay_coefficient=30, threshold=threshold)
-    true_items, true_scores = load_userped(FILE_DIR + "userpred_" + file + str(threshold) + "_userid_only.csv")
+    model = SARpySparkReference(
+        spark,
+        remove_seen=True,
+        similarity_type=similarity_type,
+        timedecay_formula=True,
+        time_now=None,
+        time_decay_coefficient=30,
+        threshold=threshold,
+        **header,
+    )
+    data_indexed = _index_and_fit(spark, model, data, header)
 
-    tester.data_indexed.createOrReplaceTempView("data_indexed")
-    test_data = \
-        spark.sql("select * from data_indexed where row_id = %d" % tester.user_map_dict[TEST_USER_ID])
-    test_results = tester.model.recommend_k_items(test_data, top_k=10).toPandas()
+    true_items, true_scores = load_userped(
+        FILE_DIR + "userpred_" + file + str(threshold) + "_userid_only.csv"
+    )
+
+    data_indexed.createOrReplaceTempView("data_indexed")
+    test_data = spark.sql(
+        "select * from data_indexed where row_id = %d"
+        % model.user_map_dict[TEST_USER_ID]
+    )
+    test_results = model.recommend_k_items(test_data, top_k=10).toPandas()
     test_items = list(test_results[header["col_item"]])
     test_scores = np.array(test_results["prediction"])
     assert true_items == test_items
     assert np.allclose(true_scores, test_scores, atol=ATOL)
-
-
 
