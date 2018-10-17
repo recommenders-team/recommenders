@@ -14,19 +14,7 @@ log = logging.getLogger(__name__)
 from utilities.recommender.sar.sar_pyspark import SARpySparkReference
 from utilities.recommender.sar import TIME_NOW
 from utilities.common.constants import PREDICTION_COL
-from tests.unit.test_sar_singlenode import (
-    load_demo_usage_data,
-    read_matrix,
-    load_userped,
-    load_affinity,
-)
-
-# absolute tolerance parameter for matrix equivalnce in SAR tests
-ATOL = 1e-1
-# directory of the current file - used to link unit test data
-FILE_DIR = "http://recodatasets.blob.core.windows.net/sarunittest/"
-# user ID used in the test files (they are designed for this user ID, this is part of the test)
-TEST_USER_ID = "0003000098E85347"
+from tests.unit.test_sar_singlenode import read_matrix, load_userped, load_affinity
 
 
 @pytest.fixture(scope="module")
@@ -112,9 +100,8 @@ Fixtures to load and reconcile custom output from TLC
 
 
 @pytest.fixture
-def load_demo_usage_data_spark(spark, header):
-    df = load_demo_usage_data(header)
-    data_local = df[[x[1] for x in header.items()]]
+def demo_usage_data_spark(spark, demo_usage_data, header):
+    data_local = demo_usage_data[[x[1] for x in header.items()]]
     # TODO: install pyArrow in DS VM
     # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     data = spark.createDataFrame(data_local)
@@ -139,13 +126,12 @@ Tests
 
 
 @pytest.mark.spark
-def test_initializaton_and_fit(header, spark):
+def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
     """Test algorithm initialization"""
-    data = load_demo_usage_data_spark(spark, header)
 
     # recommender will execute a fit method here
     model = SARpySparkReference(spark, **header)
-    _index_and_fit(spark, model, data, header)
+    _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     assert model is not None
     assert hasattr(model, "set_index")
@@ -154,13 +140,12 @@ def test_initializaton_and_fit(header, spark):
 
 
 @pytest.mark.spark
-def test_recommend_top_k(header, spark):
+def test_recommend_top_k(header, spark, demo_usage_data_spark):
     """Test algo recommend top-k"""
-    data = load_demo_usage_data_spark(spark, header)
 
     # recommender will execute a fit method here
     model = SARpySparkReference(spark, **header)
-    data_indexed = _index_and_fit(spark, model, data, header)
+    data_indexed = _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     top_k_spark = model.recommend_k_items(data_indexed, top_k=10)
     top_k = top_k_spark.toPandas()
@@ -192,16 +177,23 @@ params = "threshold,similarity_type,file"
         (3, "lift", "lift"),
     ],
 )
-def test_sar_item_similarity(threshold, similarity_type, file, header, spark):
-    data = load_demo_usage_data_spark(spark, header)
+def test_sar_item_similarity(
+    threshold,
+    similarity_type,
+    file,
+    demo_usage_data_spark,
+    header,
+    spark,
+    spark_test_settings,
+):
 
     model = SARpySparkReference(
         spark, similarity_type=similarity_type, threshold=threshold, **header
     )
-    _index_and_fit(spark, model, data, header)
+    _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_item_similarity, row_ids, col_ids = read_matrix(
-        FILE_DIR + "sim_" + file + str(threshold) + ".csv"
+        spark_test_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
     test_item_similarity = rearrange_to_test_sql(
@@ -211,6 +203,7 @@ def test_sar_item_similarity(threshold, similarity_type, file, header, spark):
         model.item_map_dict,
         model.item_map_dict,
     )
+
     if similarity_type is "cooccurrence":
         # these are integer counts so can test for direct equality
         assert np.array_equal(
@@ -221,15 +214,13 @@ def test_sar_item_similarity(threshold, similarity_type, file, header, spark):
         assert np.allclose(
             true_item_similarity.astype(test_item_similarity.dtype),
             test_item_similarity,
-            atol=ATOL,
+            atol=spark_test_settings["ATOL"],
         )
 
 
 # Test 7
 @pytest.mark.spark
-def test_user_affinity(header, spark):
-    data = load_demo_usage_data_spark(spark, header)
-
+def test_user_affinity(spark_test_settings, header, spark, demo_usage_data_spark):
     # time_now None should trigger max value computation from Data
     model = SARpySparkReference(
         spark,
@@ -239,11 +230,15 @@ def test_user_affinity(header, spark):
         time_decay_coefficient=30,
         **header,
     )
-    _index_and_fit(spark, model, data, header)
+    _index_and_fit(spark, model, demo_usage_data_spark, header)
 
-    true_user_affinity, items = load_affinity(FILE_DIR + "user_aff.csv")
+    true_user_affinity, items = load_affinity(
+        spark_test_settings["FILE_DIR"] + "user_aff.csv"
+    )
 
-    tester_affinity = model.get_user_affinity_as_vector(TEST_USER_ID)
+    tester_affinity = model.get_user_affinity_as_vector(
+        spark_test_settings["TEST_USER_ID"]
+    )
 
     test_user_affinity = np.reshape(
         rearrange_to_test_sql(tester_affinity, None, items, None, model.item_map_dict),
@@ -252,7 +247,7 @@ def test_user_affinity(header, spark):
     assert np.allclose(
         true_user_affinity.astype(test_user_affinity.dtype),
         test_user_affinity,
-        atol=ATOL,
+        atol=spark_test_settings["ATOL"],
     )
 
 
@@ -264,8 +259,15 @@ params = "threshold,similarity_type,file"
 @pytest.mark.parametrize(
     params, [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")]
 )
-def test_userpred(threshold, similarity_type, file, header, spark):
-    data = load_demo_usage_data_spark(spark, header)
+def test_userpred(
+    threshold,
+    similarity_type,
+    file,
+    header,
+    spark,
+    demo_usage_data_spark,
+    spark_test_settings,
+):
 
     # time_now None should trigger max value computation from Data
     model = SARpySparkReference(
@@ -278,20 +280,24 @@ def test_userpred(threshold, similarity_type, file, header, spark):
         threshold=threshold,
         **header,
     )
-    data_indexed = _index_and_fit(spark, model, data, header)
+    data_indexed = _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_items, true_scores = load_userped(
-        FILE_DIR + "userpred_" + file + str(threshold) + "_userid_only.csv"
+        spark_test_settings["FILE_DIR"]
+        + "userpred_"
+        + file
+        + str(threshold)
+        + "_userid_only.csv"
     )
 
     data_indexed.createOrReplaceTempView("data_indexed")
     test_data = spark.sql(
         "select * from data_indexed where row_id = %d"
-        % model.user_map_dict[TEST_USER_ID]
+        % model.user_map_dict[spark_test_settings["TEST_USER_ID"]]
     )
     test_results = model.recommend_k_items(test_data, top_k=10).toPandas()
     test_items = list(test_results[header["col_item"]])
     test_scores = np.array(test_results["prediction"])
     assert true_items == test_items
-    assert np.allclose(true_scores, test_scores, atol=ATOL)
+    assert np.allclose(true_scores, test_scores, atol=spark_test_settings["ATOL"])
 
