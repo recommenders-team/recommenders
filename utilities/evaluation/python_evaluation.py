@@ -423,3 +423,19 @@ def get_top_k_items(
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index()[dataframe.columns]
     )
+
+
+def check_duplicates(data, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL):
+    """A helper function that checks if there are duplicates of (user, item)
+    pairs in the input data.
+
+    Args:
+        data (pandas.DataFrame): A Pandas DataFrame.
+
+    Returns:
+        True if there are duplicates of (user, item) pairs in the given data,
+        and False otherwise.
+    """
+    duplicates = data.duplicated(subset=[col_user, col_item])
+
+    return not any(duplicates)
