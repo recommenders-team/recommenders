@@ -183,6 +183,14 @@ class PythonRankingEvaluation:
                 + str(self.rating_pred.columns)
             )
 
+        if not check_duplicates(self.rating_true):
+            raise ValueError("Duplicates of (user, item) pairs found in the true"
+                             "rating dataset.")
+
+        if not check_duplicates(self.rating_pred):
+            raise ValueError("Duplicates of (user, item) pairs found in the prediction"
+                             "rating dataset.")
+
         relevant_func = {"top_k": get_top_k_items}
 
         self.rating_pred = (
@@ -439,3 +447,4 @@ def check_duplicates(data, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL)
     duplicates = data.duplicated(subset=[col_user, col_item])
 
     return not any(duplicates)
+

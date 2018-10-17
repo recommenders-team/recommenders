@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 
 from utilities.evaluation.python_evaluation import PythonRatingEvaluation, PythonRankingEvaluation
+from utilities.evaluation.python_evaluation import check_duplicates
 
 TOL = 0.0001
 
@@ -50,6 +51,19 @@ def python_data():
                        14, 13, 12, 11, 10, 9, 8, 7, 6, 5]
     })
     return rating_true, rating_pred
+
+
+def test_check_data_validity(python_data):
+    """Test if data are valid for evaluation"""
+    rating_true, rating_pred = python_data
+
+    assert check_duplicates(rating_pred)
+    assert check_duplicates(rating_true)
+
+    # Duplicate the true rating dataset.
+    rating_true = pd.concat([rating_true, rating_true])
+
+    assert not check_duplicates(rating_true)
 
 
 def test_init_python_rating_eval(python_data):
