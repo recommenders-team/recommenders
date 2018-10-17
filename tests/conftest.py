@@ -8,7 +8,7 @@ except:
 
 
 @pytest.fixture(scope="session")
-def start_spark_test(app_name="Sample", url="local[*]", memory="1G"):
+def spark(app_name="Sample", url="local[*]", memory="1G"):
     """Start Spark if not started
     Args:
         app_name (str): sets name of the application
