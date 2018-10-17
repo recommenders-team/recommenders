@@ -120,7 +120,7 @@ def load_demo_usage_data(header):
     return data
 
 
-def _sar_hash(train, test, header, pandas_new=False):
+def _apply_sar_hash_index(model, train, test, header, pandas_new=False):
     # TODO: review this function
     # index all users and items which SAR will compute scores for
     # bugfix to get around different pandas vesions in build servers
@@ -138,7 +138,7 @@ def _sar_hash(train, test, header, pandas_new=False):
     unique_items = df_all[header["col_item"]].unique()
 
     # Hash users and items to smaller continuous space.
-    # Actually, this is an ordered set - it's discrete, but contiguous.
+    # Actually, this is an ordered set - it's discrete, but .
     # This helps keep the matrices we keep in memory as small as possible.
     enumerate_items_1, enumerate_items_2 = itertools.tee(enumerate(unique_items))
     enumerate_users_1, enumerate_users_2 = itertools.tee(enumerate(unique_users))
@@ -149,13 +149,8 @@ def _sar_hash(train, test, header, pandas_new=False):
     index2user = dict(enumerate_users_2)
     index2item = dict(enumerate_items_2)
 
-    return (
-        unique_users,
-        unique_items,
-        user_map_dict,
-        item_map_dict,
-        index2user,
-        index2item,
+    model.set_index(
+        unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item
     )
 
 
@@ -170,43 +165,39 @@ def test_init(header):
     # TODO: add more parameters
 
 
-@pytest.mark.parametrize("similarity_type, timedecay_formula", [
-    ("jaccard", False),
-    ("lift", True),
-])
+@pytest.mark.parametrize(
+    "similarity_type, timedecay_formula", [("jaccard", False), ("lift", True)]
+)
 def test_fit(similarity_type, timedecay_formula, get_train_test, header):
     model = SARSingleNodeReference(
-        remove_seen=True, similarity_type=similarity_type, timedecay_formula=timedecay_formula, **header
+        remove_seen=True,
+        similarity_type=similarity_type,
+        timedecay_formula=timedecay_formula,
+        **header
     )
     trainset, testset = get_train_test
-    unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = _sar_hash(
-        trainset, testset, header
-    )
-    model.set_index(
-        unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item
-    )
+    _apply_sar_hash_index(model, trainset, testset, header)
+
     model.fit(trainset)
 
 
-@pytest.mark.parametrize("similarity_type, timedecay_formula", [
-    ("jaccard", False),
-    ("lift", True),
-])
+@pytest.mark.parametrize(
+    "similarity_type, timedecay_formula", [("jaccard", False), ("lift", True)]
+)
 def test_predict(similarity_type, timedecay_formula, get_train_test, header):
     model = SARSingleNodeReference(
-        remove_seen=True, similarity_type=similarity_type, timedecay_formula=timedecay_formula, **header
+        remove_seen=True,
+        similarity_type=similarity_type,
+        timedecay_formula=timedecay_formula,
+        **header
     )
     trainset, testset = get_train_test
 
-    unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = _sar_hash(
-        trainset, testset, header
-    )
-    model.set_index(
-        unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item
-    )
+    _apply_sar_hash_index(model, trainset, testset, header)
+
     model.fit(trainset)
     preds = model.predict(testset)
-    
+
     assert len(preds) == 2
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == object
@@ -234,32 +225,21 @@ def test_sar_item_similarity(
     threshold, similarity_type, file, load_demo_usage_data, header
 ):
     data = load_demo_usage_data
-    
+
     model = SARSingleNodeReference(
-            remove_seen=True,
-            similarity_type=similarity_type,
-            timedecay_formula=False,
-            time_decay_coefficient=30,
-            time_now=TIME_NOW,
-            threshold=threshold,
-            **header
-        )
-
-    unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = _sar_hash(
-        data, None, header
+        remove_seen=True,
+        similarity_type=similarity_type,
+        timedecay_formula=False,
+        time_decay_coefficient=30,
+        time_now=TIME_NOW,
+        threshold=threshold,
+        **header
     )
 
-    # we need to index the train and test sets for SAR matrix operations to work
-    model.set_index(
-        unique_users,
-        unique_items,
-        user_map_dict,
-        item_map_dict,
-        index2user,
-        index2item,
-    )
+    _apply_sar_hash_index(model, data, None, header)
+
     model.fit(data)
-   
+
     true_item_similarity, row_ids, col_ids = read_matrix(
         FILE_DIR + "sim_" + file + str(threshold) + ".csv"
     )
@@ -269,8 +249,8 @@ def test_sar_item_similarity(
             model.item_similarity.todense(),
             row_ids,
             col_ids,
-            item_map_dict,
-            item_map_dict,
+            model.item_map_dict,
+            model.item_map_dict,
         )
         assert np.array_equal(
             true_item_similarity.astype(test_item_similarity.dtype),
@@ -281,8 +261,8 @@ def test_sar_item_similarity(
             np.array(model.item_similarity),
             row_ids,
             col_ids,
-            item_map_dict,
-            item_map_dict,
+            model.item_map_dict,
+            model.item_map_dict,
         )
         assert np.allclose(
             true_item_similarity.astype(test_item_similarity.dtype),
