@@ -79,7 +79,7 @@ dependencies:
 - python==3.6
 - numpy>=1.13.3
 - dask>=0.17.1
-${pyspark}- pyspark==2.3
+${pyspark}- pyspark==2.3.1
 - pymongo>=3.6.1
 - ipykernel>=4.6.1
 - ${tensorflow}==1.5.0
