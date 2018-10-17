@@ -7,18 +7,19 @@ import pytest
 
 from utilities.evaluation.python_evaluation import PythonRatingEvaluation, PythonRankingEvaluation
 
+TOL = 0.0001
 
 @pytest.fixture
 def target_metrics():
     return {
-        'rmse': pytest.approx(7.254309, 0.0001),
-        'mae': pytest.approx(6.375, 0.0001),
-        'rsquared': pytest.approx(-31.699029, 0.0001),
+        'rmse': pytest.approx(7.254309, TOL),
+        'mae': pytest.approx(6.375, TOL),
+        'rsquared': pytest.approx(-31.699029, TOL),
         'exp_var': pytest.approx(-6.4466, 0.01),
-        'ndcg': pytest.approx(0.38172, 0.0001),
-        'precision': pytest.approx(0.26666, 0.0001),
-        'map': pytest.approx(0.23613, 0.0001),
-        'recall': pytest.approx(0.37777, 0.0001)
+        'ndcg': pytest.approx(0.38172, TOL),
+        'precision': pytest.approx(0.26666, TOL),
+        'map': pytest.approx(0.23613, TOL),
+        'recall': pytest.approx(0.37777, TOL)
     }
 
 
@@ -51,7 +52,6 @@ def python_data():
     return rating_true, rating_pred
 
 
-@pytest.mark.evaluation
 def test_init_python_rating_eval(python_data):
     """Test initializer python"""
     rating_true, rating_pred = python_data
@@ -63,7 +63,6 @@ def test_init_python_rating_eval(python_data):
     assert np.all(evaluator.rating_pred == rating_pred)
 
 
-@pytest.mark.evaluation
 def test_python_rmse(python_data, target_metrics):
     """Test Python evaluator RMSE"""
     rating_true, rating_pred = python_data
@@ -74,7 +73,6 @@ def test_python_rmse(python_data, target_metrics):
     assert evaluator2.rmse() == target_metrics['rmse']
 
 
-@pytest.mark.evaluation
 def test_python_mae(python_data, target_metrics):
     """Test Python evaluator MAE"""
     rating_true, rating_pred = python_data
@@ -85,33 +83,30 @@ def test_python_mae(python_data, target_metrics):
     assert evaluator2.mae() == target_metrics['mae']
 
 
-@pytest.mark.evaluation
 def test_python_rsquared(python_data, target_metrics):
     """Test Python evaluator rsquared"""
     rating_true, rating_pred = python_data
 
     evaluator1 = PythonRatingEvaluation(rating_true=rating_true, rating_pred=rating_true,
                                         col_prediction="rating")
-    assert evaluator1.rsquared() == pytest.approx(1.0, 0.0001)
+    assert evaluator1.rsquared() == pytest.approx(1.0, TOL)
 
     evaluator2 = PythonRatingEvaluation(rating_true, rating_pred)
     assert evaluator2.rsquared() == target_metrics['rsquared']
 
 
-@pytest.mark.evaluation
 def test_python_exp_var(python_data, target_metrics):
     """Test Spark evaluator exp_var"""
     rating_true, rating_pred = python_data
 
     evaluator1 = PythonRatingEvaluation(rating_true=rating_true, rating_pred=rating_true,
                                         col_prediction="rating")
-    assert evaluator1.exp_var() == pytest.approx(1.0, 0.0001)
+    assert evaluator1.exp_var() == pytest.approx(1.0, TOL)
 
     evaluator2 = PythonRatingEvaluation(rating_true, rating_pred)
     assert evaluator2.exp_var() == target_metrics['exp_var']
 
 
-@pytest.mark.evaluation
 def test_python_ndcg_at_k(python_data, target_metrics):
     """Test Python evaluator NDCG"""
     rating_true, rating_pred = python_data
@@ -122,7 +117,6 @@ def test_python_ndcg_at_k(python_data, target_metrics):
     assert evaluator2.ndcg_at_k() == target_metrics['ndcg']
 
 
-@pytest.mark.evaluation
 def test_python_map_at_k(python_data, target_metrics):
     """Test Python evaluator MAP"""
     rating_true, rating_pred = python_data
@@ -133,7 +127,6 @@ def test_python_map_at_k(python_data, target_metrics):
     assert evaluator2.map_at_k() == target_metrics['map']
 
 
-@pytest.mark.evaluation
 def test_python_precision(python_data, target_metrics):
     """Test Python evaluator precision"""
     rating_true, rating_pred = python_data
@@ -144,7 +137,6 @@ def test_python_precision(python_data, target_metrics):
     assert evaluator2.precision_at_k() == target_metrics['precision']
 
 
-@pytest.mark.evaluation
 def test_python_recall(python_data, target_metrics):
     """Test Python evaluator recall"""
     rating_true, rating_pred = python_data
@@ -155,7 +147,6 @@ def test_python_recall(python_data, target_metrics):
     assert evaluator2.recall_at_k() == target_metrics['recall']
 
 
-@pytest.mark.evaluation
 def test_python_errors(python_data):
     """Test Python evaluator errors."""
     rating_true, rating_pred = python_data
@@ -199,3 +190,5 @@ def test_python_errors(python_data):
 
     with pytest.raises(ValueError):
         PythonRankingEvaluation(rating_true, rating_pred, col_prediction="not_prediction")
+
+
