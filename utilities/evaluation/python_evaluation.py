@@ -3,17 +3,35 @@ PythonEvaluation
 """
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, explained_variance_score
+from sklearn.metrics import (
+    mean_squared_error,
+    mean_absolute_error,
+    r2_score,
+    explained_variance_score,
+)
 
-from utilities.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, PREDICTION_COL, \
-    DEFAULT_K, DEFAULT_THRESHOLD
+from utilities.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    PREDICTION_COL,
+    DEFAULT_K,
+    DEFAULT_THRESHOLD,
+)
 
 
 class PythonRatingEvaluation:
     """Python Evaluation implementation based on scikit-learn"""
 
-    def __init__(self, rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-                 col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL):
+    def __init__(
+        self,
+        rating_true,
+        rating_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL,
+    ):
         """Initialization
         Args:
             rating_true (pd.DataFrame): True labels.
@@ -27,68 +45,81 @@ class PythonRatingEvaluation:
         self.col_item = col_item
 
         if self.col_user not in self.rating_true.columns:
-            raise ValueError('Schema of y_true not valid. Missing User Col')
+            raise ValueError("Schema of y_true not valid. Missing User Col")
         if self.col_item not in self.rating_true.columns:
-            raise ValueError('Schema of y_true not valid. Missing Item Col')
+            raise ValueError("Schema of y_true not valid. Missing Item Col")
         if self.col_rating not in self.rating_true.columns:
-            raise ValueError('Schema of y_true not valid. Missing Rating Col')
+            raise ValueError("Schema of y_true not valid. Missing Rating Col")
 
         if self.col_user not in self.rating_pred.columns:
             # pragma : No Cover
-            raise ValueError('Schema of y_pred not valid. Missing User Col')
+            raise ValueError("Schema of y_pred not valid. Missing User Col")
         if self.col_item not in self.rating_pred.columns:
             # pragma : No Cover
-            raise ValueError('Schema of y_pred not valid. Missing Item Col')
+            raise ValueError("Schema of y_pred not valid. Missing Item Col")
         if self.col_prediction not in self.rating_pred.columns:
             raise ValueError(
-                'Schema of y_true not valid. Missing Prediction Col: ' + str(
-                    self.rating_pred.columns))
+                "Schema of y_true not valid. Missing Prediction Col: "
+                + str(self.rating_pred.columns)
+            )
 
         if col_rating == col_prediction:
             self.rating_true_pred = pd.merge(
                 self.rating_true,
                 self.rating_pred,
                 on=[col_user, col_item],
-                suffixes=["_true", "_pred"]
+                suffixes=["_true", "_pred"],
             )
 
-            self.rating_true_pred.rename(columns={col_rating + "_true": DEFAULT_RATING_COL},
-                                         inplace=True)
-            self.rating_true_pred.rename(columns={col_prediction + "_pred": PREDICTION_COL},
-                                         inplace=True)
+            self.rating_true_pred.rename(
+                columns={col_rating + "_true": DEFAULT_RATING_COL}, inplace=True
+            )
+            self.rating_true_pred.rename(
+                columns={col_prediction + "_pred": PREDICTION_COL}, inplace=True
+            )
         else:
             self.rating_true_pred = pd.merge(
-                self.rating_true,
-                self.rating_pred,
-                on=[col_user, col_item]
+                self.rating_true, self.rating_pred, on=[col_user, col_item]
             )
 
-            self.rating_true_pred.rename(columns={col_rating: DEFAULT_RATING_COL}, inplace=True)
-            self.rating_true_pred.rename(columns={col_prediction: PREDICTION_COL}, inplace=True)
+            self.rating_true_pred.rename(
+                columns={col_rating: DEFAULT_RATING_COL}, inplace=True
+            )
+            self.rating_true_pred.rename(
+                columns={col_prediction: PREDICTION_COL}, inplace=True
+            )
 
     def rmse(self):
         """Calculate Root Mean Squared Error
         Return:
             Root mean squared error.
         """
-        return np.sqrt(mean_squared_error(self.rating_true_pred[DEFAULT_RATING_COL],
-                                          self.rating_true_pred[PREDICTION_COL]))
+        return np.sqrt(
+            mean_squared_error(
+                self.rating_true_pred[DEFAULT_RATING_COL],
+                self.rating_true_pred[PREDICTION_COL],
+            )
+        )
 
     def mae(self):
         """Calculate Mean Absolute Error.
         Returns:
             Mean Absolute Error
         """
-        return mean_absolute_error(self.rating_true_pred[DEFAULT_RATING_COL],
-                                   self.rating_true_pred[PREDICTION_COL])
+        return mean_absolute_error(
+            self.rating_true_pred[DEFAULT_RATING_COL],
+            self.rating_true_pred[PREDICTION_COL],
+        )
 
     def rsquared(self):
         """Calculate R squared
         Returns:
             R squared
         """
-        return r2_score(self.rating_true_pred[DEFAULT_RATING_COL],
-                        self.rating_true_pred[PREDICTION_COL])
+        return r2_score(
+            self.rating_true_pred[DEFAULT_RATING_COL],
+            self.rating_true_pred[PREDICTION_COL],
+        )
 
     def exp_var(self):
         """Calculate explained variance.
@@ -96,8 +127,10 @@ class PythonRatingEvaluation:
             Explained variance
         """
         # return self.metrics.explainedVariance
-        return explained_variance_score(self.rating_true_pred[DEFAULT_RATING_COL],
-                                        self.rating_true_pred[PREDICTION_COL])
+        return explained_variance_score(
+            self.rating_true_pred[DEFAULT_RATING_COL],
+            self.rating_true_pred[PREDICTION_COL],
+        )
 
 
 class PythonRankingEvaluation:
@@ -105,9 +138,18 @@ class PythonRankingEvaluation:
     Evaluation with ranking metrics on given data sets.
     """
 
-    def __init__(self, rating_true, rating_pred, k=DEFAULT_K, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-                 col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL, relevancy_method="top_k",
-                 threshold=DEFAULT_THRESHOLD):
+    def __init__(
+        self,
+        rating_true,
+        rating_pred,
+        k=DEFAULT_K,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL,
+        relevancy_method="top_k",
+        threshold=DEFAULT_THRESHOLD,
+    ):
         """
         Initialization.
         """
@@ -123,42 +165,56 @@ class PythonRankingEvaluation:
         self.top_k = k
 
         if self.col_user not in self.rating_true.columns:
-            raise ValueError('Schema of y_true not valid. Missing User Col')
+            raise ValueError("Schema of y_true not valid. Missing User Col")
         if self.col_item not in self.rating_true.columns:
-            raise ValueError('Schema of y_true not valid. Missing Item Col')
+            raise ValueError("Schema of y_true not valid. Missing Item Col")
         if self.col_rating not in self.rating_true.columns:
-            raise ValueError('Schema of y_true not valid. Missing Rating Col')
+            raise ValueError("Schema of y_true not valid. Missing Rating Col")
 
         if self.col_user not in self.rating_pred.columns:
             # pragma : No Cover
-            raise ValueError('Schema of y_pred not valid. Missing User Col')
+            raise ValueError("Schema of y_pred not valid. Missing User Col")
         if self.col_item not in self.rating_pred.columns:
             # pragma : No Cover
-            raise ValueError('Schema of y_pred not valid. Missing Item Col')
+            raise ValueError("Schema of y_pred not valid. Missing Item Col")
         if self.col_prediction not in self.rating_pred.columns:
             raise ValueError(
-                'Schema of y_pred not valid. Missing Prediction Col: ' + str(
-                    self.rating_pred.columns))
+                "Schema of y_pred not valid. Missing Prediction Col: "
+                + str(self.rating_pred.columns)
+            )
 
-        relevant_func = {
-            "top_k": get_top_k_items,
-        }
+        relevant_func = {"top_k": get_top_k_items}
 
-        self.rating_pred = relevant_func[relevancy_method](dataframe=self.rating_pred,
-                                                           col_user=self.col_user,
-                                                           col_item=self.col_item,
-                                                           col_rating=self.col_prediction) \
-            if relevancy_method == "by_threshold" \
-            else relevant_func[relevancy_method](dataframe=self.rating_pred, col_user=self.col_user,
-                                                 col_item=self.col_item,
-                                                 col_rating=self.col_prediction, k=self.top_k)
+        self.rating_pred = (
+            relevant_func[relevancy_method](
+                dataframe=self.rating_pred,
+                col_user=self.col_user,
+                col_item=self.col_item,
+                col_rating=self.col_prediction,
+            )
+            if relevancy_method == "by_threshold"
+            else relevant_func[relevancy_method](
+                dataframe=self.rating_pred,
+                col_user=self.col_user,
+                col_item=self.col_item,
+                col_rating=self.col_prediction,
+                k=self.top_k,
+            )
+        )
 
         common_user_list = list(
-            set(self.rating_true[self.col_user]).intersection(set(self.rating_pred[self.col_user])))
+            set(self.rating_true[self.col_user]).intersection(
+                set(self.rating_pred[self.col_user])
+            )
+        )
 
         # To make sure the prediction and true data frames have the same set of users.
-        self.rating_pred = self.rating_pred[self.rating_pred[self.col_user].isin(common_user_list)]
-        self.rating_true = self.rating_true[self.rating_true[self.col_user].isin(common_user_list)]
+        self.rating_pred = self.rating_pred[
+            self.rating_pred[self.col_user].isin(common_user_list)
+        ]
+        self.rating_true = self.rating_true[
+            self.rating_true[self.col_user].isin(common_user_list)
+        ]
 
         self.n_users = len(common_user_list)
 
@@ -181,14 +237,16 @@ class PythonRankingEvaluation:
         df_rating_pred = self.rating_pred.copy()
         df_rating_pred[self.col_user] = df_rating_pred[self.col_user]
         df_rating_pred[self.col_item] = df_rating_pred[self.col_item]
-        df_rating_pred["ranking"] = self.rating_pred \
-            .groupby(self.col_user)[self.col_prediction] \
-            .rank(method="first", ascending=False)
+        df_rating_pred["ranking"] = self.rating_pred.groupby(self.col_user)[
+            self.col_prediction
+        ].rank(method="first", ascending=False)
 
-        df_hit = \
-            pd.merge(self.rating_true, df_rating_pred, how="inner",
-                     on=[self.col_user, self.col_item])[
-                [self.col_user, self.col_item, "ranking"]]
+        df_hit = pd.merge(
+            self.rating_true,
+            df_rating_pred,
+            how="inner",
+            on=[self.col_user, self.col_item],
+        )[[self.col_user, self.col_item, "ranking"]]
 
         return df_hit
 
@@ -206,15 +264,20 @@ class PythonRankingEvaluation:
         Returns:
             result (float): precision at k (max=1, min=0)
         """
-        df_count_hit = self.df_hit \
-            .groupby(self.col_user) \
-            .agg({self.col_item: "count"}) \
-            .reset_index() \
+        df_count_hit = (
+            self.df_hit.groupby(self.col_user)
+            .agg({self.col_item: "count"})
+            .reset_index()
             .rename(columns={self.col_item: "hit"}, inplace=False)
+        )
 
-        df_count_hit["precision"] = df_count_hit.apply(lambda x: (x.hit / self.top_k), axis=1)
+        df_count_hit["precision"] = df_count_hit.apply(
+            lambda x: (x.hit / self.top_k), axis=1
+        )
 
-        precision_at_k = np.float64(df_count_hit.agg({"precision": "sum"})) / self.n_users
+        precision_at_k = (
+            np.float64(df_count_hit.agg({"precision": "sum"})) / self.n_users
+        )
 
         return precision_at_k
 
@@ -224,21 +287,25 @@ class PythonRankingEvaluation:
             result (float): recall at k (max=1, min=0)
                 The maximum value is 1 even when fewer than k items exist for a user in rating_true.
         """
-        df_count_hit = self.df_hit \
-            .groupby(self.col_user) \
-            .agg({self.col_item: "count"}) \
-            .reset_index() \
+        df_count_hit = (
+            self.df_hit.groupby(self.col_user)
+            .agg({self.col_item: "count"})
+            .reset_index()
             .rename(columns={self.col_item: "hit"}, inplace=False)
+        )
 
-        df_count_true = self.rating_true \
-            .groupby(self.col_user) \
-            .agg({self.col_item: "count"}) \
-            .reset_index() \
+        df_count_true = (
+            self.rating_true.groupby(self.col_user)
+            .agg({self.col_item: "count"})
+            .reset_index()
             .rename(columns={self.col_item: "actual"}, inplace=False)
+        )
 
         df_count_all = pd.merge(df_count_hit, df_count_true, on=self.col_user)
 
-        df_count_all["recall"] = df_count_all.apply(lambda x: (x.hit / x.actual), axis=1)
+        df_count_all["recall"] = df_count_all.apply(
+            lambda x: (x.hit / x.actual), axis=1
+        )
 
         recall_at_k = np.float64(df_count_all.agg({"recall": "sum"})) / self.n_users
 
@@ -269,13 +336,15 @@ class PythonRankingEvaluation:
             return _sum
 
         # Calculate maximum discounted accumulative gain.
-        df_mdcg_sum = self.rating_true \
-            .groupby(self.col_user) \
-            .agg({self.col_item: "count"}) \
-            .reset_index() \
+        df_mdcg_sum = (
+            self.rating_true.groupby(self.col_user)
+            .agg({self.col_item: "count"})
+            .reset_index()
             .rename(columns={self.col_item: "actual"}, inplace=False)
-        df_mdcg_sum["mdcg"] = df_mdcg_sum.apply(lambda x: log_sum(min(x.actual, self.top_k)),
-                                                axis=1)
+        )
+        df_mdcg_sum["mdcg"] = df_mdcg_sum.apply(
+            lambda x: log_sum(min(x.actual, self.top_k)), axis=1
+        )
 
         # DCG over MDCG is the normalized DCG.
         df_ndcg = pd.merge(df_dcg_sum, df_mdcg_sum, on=self.col_user)
@@ -305,14 +374,17 @@ class PythonRankingEvaluation:
         df_hit["group_index"] = df_hit.groupby(self.col_user).cumcount() + 1
         df_hit["precision"] = df_hit.apply(lambda x: x.group_index / x.ranking, axis=1)
 
-        df_sum_hit = df_hit.groupby(self.col_user).agg({"precision": "sum"}).reset_index()
+        df_sum_hit = (
+            df_hit.groupby(self.col_user).agg({"precision": "sum"}).reset_index()
+        )
 
         # Count of true items for each user.
-        df_count_true = self.rating_true \
-            .groupby(self.col_user) \
-            .agg({self.col_item: "count"}) \
-            .reset_index() \
+        df_count_true = (
+            self.rating_true.groupby(self.col_user)
+            .agg({self.col_item: "count"})
+            .reset_index()
             .rename(columns={self.col_item: "actual"}, inplace=False)
+        )
 
         # Calculate proportion of sum of inverse rank over count of true items.
         df_sum_all = pd.merge(df_sum_hit, df_count_true, on=self.col_user)
@@ -324,8 +396,9 @@ class PythonRankingEvaluation:
         return map_at_k
 
 
-def get_top_k_items(dataframe, col_user="customerID", col_item="itemID",
-                    col_rating="rating", k=10):
+def get_top_k_items(
+    dataframe, col_user="customerID", col_item="itemID", col_rating="rating", k=10
+):
     """Get the input customer-item-rating tuple in the format of Pandas
     DataFrame, output a Pandas DataFrame in the dense format of top k items
     for each user.
@@ -345,7 +418,8 @@ def get_top_k_items(dataframe, col_user="customerID", col_item="itemID",
         Pandas DataFrame of top k items for each user.
     """
     dataframe[col_rating] = dataframe[col_rating].astype(float)
-    return dataframe \
-        .groupby(col_user, as_index=False) \
-        .apply(lambda x: x.nlargest(k, col_rating)) \
+    return (
+        dataframe.groupby(col_user, as_index=False)
+        .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index()[dataframe.columns]
+    )
