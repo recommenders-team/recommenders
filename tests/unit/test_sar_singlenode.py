@@ -35,53 +35,6 @@ def _csv_reader_url(url, delimiter=",", encoding="utf-8"):
     return csvfile
 
 
-# convenient way to invoke SAR with different parameters on different datasets
-# TODO: pytest class fixtures are not yet supported as of this release
-# @pytest.fixture
-class setup_SAR:
-    def __init__(
-        self,
-        data,
-        header,
-        remove_seen=True,
-        similarity_type="jaccard",
-        timedecay_formula=False,
-        time_decay_coefficient=30,
-        threshold=1,
-        time_now=TIME_NOW,
-    ):
-
-        self.data = data
-        model = SARSingleNodeReference(
-            remove_seen=remove_seen,
-            similarity_type=similarity_type,
-            timedecay_formula=timedecay_formula,
-            time_decay_coefficient=time_decay_coefficient,
-            time_now=time_now,
-            threshold=threshold,
-            **header
-        )
-
-        unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = _sar_hash(
-            data, None, header
-        )
-
-        # we need to index the train and test sets for SAR matrix operations to work
-        model.set_index(
-            unique_users,
-            unique_items,
-            user_map_dict,
-            item_map_dict,
-            index2user,
-            index2item,
-        )
-        model.fit(data)
-
-        self.model = model
-        self.user_map_dict = user_map_dict
-        self.item_map_dict = item_map_dict
-
-
 @pytest.fixture(scope="module")
 def get_train_test(load_pandas_dummy_timestamp_dataset):
     trainset, testset = train_test_split(
@@ -281,20 +234,43 @@ def test_sar_item_similarity(
     threshold, similarity_type, file, load_demo_usage_data, header
 ):
     data = load_demo_usage_data
-    tester = setup_SAR(
-        data, header, similarity_type=similarity_type, threshold=threshold
+    
+    model = SARSingleNodeReference(
+            remove_seen=True,
+            similarity_type=similarity_type,
+            timedecay_formula=False,
+            time_decay_coefficient=30,
+            time_now=TIME_NOW,
+            threshold=threshold,
+            **header
+        )
+
+    unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = _sar_hash(
+        data, None, header
     )
+
+    # we need to index the train and test sets for SAR matrix operations to work
+    model.set_index(
+        unique_users,
+        unique_items,
+        user_map_dict,
+        item_map_dict,
+        index2user,
+        index2item,
+    )
+    model.fit(data)
+   
     true_item_similarity, row_ids, col_ids = read_matrix(
         FILE_DIR + "sim_" + file + str(threshold) + ".csv"
     )
 
     if similarity_type is "cooccurrence":
         test_item_similarity = rearrange_to_test(
-            tester.model.item_similarity.todense(),
+            model.item_similarity.todense(),
             row_ids,
             col_ids,
-            tester.item_map_dict,
-            tester.item_map_dict,
+            item_map_dict,
+            item_map_dict,
         )
         assert np.array_equal(
             true_item_similarity.astype(test_item_similarity.dtype),
@@ -302,11 +278,11 @@ def test_sar_item_similarity(
         )
     else:
         test_item_similarity = rearrange_to_test(
-            np.array(tester.model.item_similarity),
+            np.array(model.item_similarity),
             row_ids,
             col_ids,
-            tester.item_map_dict,
-            tester.item_map_dict,
+            item_map_dict,
+            item_map_dict,
         )
         assert np.allclose(
             true_item_similarity.astype(test_item_similarity.dtype),
