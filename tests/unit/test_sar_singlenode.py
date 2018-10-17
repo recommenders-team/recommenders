@@ -21,8 +21,10 @@ from sklearn.model_selection import train_test_split as sklearn_train_test_split
 from utilities.recommender.sar import TIME_NOW
 from tests.conftest import header, csv_reader_url, load_pandas_dummy_timestamp_dataset
 
+### move to conftest.py as function with dict is ok?
+
 # absolute tolerance parameter for matrix equivalnce in SAR tests
-ATOL = 1e-8
+ATOL = 1e-1
 # directory of the current file - used to link unit test data
 FILE_DIR = "http://recodatasets.blob.core.windows.net/sarunittest/"
 # user ID used in the test files (they are designed for this user ID, this is part of the test)
