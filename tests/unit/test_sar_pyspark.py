@@ -23,13 +23,6 @@ from tests.conftest import header, start_spark_test
 from utilities.common.constants import PREDICTION_COL
 from tests.unit.test_sar_singlenode import load_demoUsage_data, read_matrix, load_userped, load_affinity
 
-# absolute tolerance parameter for matrix equivalnce in SAR tests
-ATOL = 1e-1
-# directory of the current file - used to link unit test data
-FILE_DIR = "http://recodatasets.blob.core.windows.net/sarunittest/"
-# user ID used in the test files (they are designed for this user ID, this is part of the test)
-TEST_USER_ID = "0003000098E85347"
-
 # convenient way to invoke SAR with different parameters on different datasets
 # TODO: pytest class fixtures are not yet supported as of this release
 # @pytest.fixture
@@ -232,11 +225,11 @@ params="threshold,similarity_type,file"
     (3,'jaccard', 'jac'),
     (3,'lift', 'lift')
 ])
-def test_sar_item_similarity(threshold, similarity_type, file):
+def test_sar_item_similarity(threshold, similarity_type, file, spark_test_settings):
     spark = start_spark_test()
     data = load_demoUsage_data_spark(spark)
     tester = setup_SARpySpark(spark, data, similarity_type=similarity_type, threshold=threshold)
-    true_item_similarity, row_ids, col_ids = read_matrix(FILE_DIR + 'sim_' + file + str(threshold) + '.csv')
+    true_item_similarity, row_ids, col_ids = read_matrix(spark_test_settings["FILE_DIR"] + 'sim_' + file + str(threshold) + '.csv')
 
     test_item_similarity = rearrange_to_test_sql(tester.model.get_item_similarity_as_matrix(), row_ids, col_ids,
                                                  tester.item_map_dict, tester.item_map_dict)
@@ -244,11 +237,11 @@ def test_sar_item_similarity(threshold, similarity_type, file):
         # these are integer counts so can test for direct equality
         assert np.array_equal(true_item_similarity.astype(test_item_similarity.dtype), test_item_similarity)
     else:
-        assert np.allclose(true_item_similarity.astype(test_item_similarity.dtype), test_item_similarity, atol=ATOL)
+        assert np.allclose(true_item_similarity.astype(test_item_similarity.dtype), test_item_similarity, atol=spark_test_settings["ATOL"])
 
 # Test 7
 @pytest.mark.spark
-def test_user_affinity():
+def test_user_affinity(spark_test_settings):
     spark = start_spark_test()
     data = load_demoUsage_data_spark(spark)
 
@@ -256,13 +249,13 @@ def test_user_affinity():
     tester = setup_SARpySpark(spark, data, similarity_type='cooccurrence', timedecay_formula=True, time_now=None,
        time_decay_coefficient = 30)
 
-    true_user_affinity, items = load_affinity(FILE_DIR+'user_aff.csv')
+    true_user_affinity, items = load_affinity(spark_test_settings["FILE_DIR"]+'user_aff.csv')
 
-    tester_affinity = tester.model.get_user_affinity_as_vector(TEST_USER_ID)
+    tester_affinity = tester.model.get_user_affinity_as_vector(spark_test_settings["TEST_USER_ID"])
 
     test_user_affinity = np.reshape(
         rearrange_to_test_sql(tester_affinity, None, items, None, tester.item_map_dict), -1)
-    assert np.allclose(true_user_affinity.astype(test_user_affinity.dtype), test_user_affinity, atol=ATOL)
+    assert np.allclose(true_user_affinity.astype(test_user_affinity.dtype), test_user_affinity, atol=spark_test_settings["ATOL"])
 
 # Tests 8-10
 params="threshold,similarity_type,file"
@@ -272,23 +265,23 @@ params="threshold,similarity_type,file"
     (3,'jaccard', 'jac'),
     (3,'lift', 'lift')
 ])
-def test_userpred(threshold, similarity_type, file):
+def test_userpred(threshold, similarity_type, file, spark_test_settings):
     spark = start_spark_test()
     data = load_demoUsage_data_spark(spark)
 
     # time_now None should trigger max value computation from Data
     tester = setup_SARpySpark(spark, data, remove_seen=True, similarity_type=similarity_type, timedecay_formula=True,
                        time_now=None, time_decay_coefficient=30, threshold=threshold)
-    true_items, true_scores = load_userped(FILE_DIR + "userpred_" + file + str(threshold) + "_userid_only.csv")
+    true_items, true_scores = load_userped(spark_test_settings["FILE_DIR"] + "userpred_" + file + str(threshold) + "_userid_only.csv")
 
     tester.data_indexed.createOrReplaceTempView("data_indexed")
     test_data = \
-        spark.sql("select * from data_indexed where row_id = %d" % tester.user_map_dict[TEST_USER_ID])
+        spark.sql("select * from data_indexed where row_id = %d" % tester.user_map_dict[spark_test_settings["TEST_USER_ID"]])
     test_results = tester.model.recommend_k_items(test_data, top_k=10).toPandas()
     test_items = list(test_results[header()["col_item"]])
     test_scores = np.array(test_results["prediction"])
     assert true_items == test_items
-    assert np.allclose(true_scores, test_scores, atol=ATOL)
+    assert np.allclose(true_scores, test_scores, atol=spark_test_settings["ATOL"])
 
 
 
