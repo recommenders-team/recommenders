@@ -13,8 +13,6 @@ log = logging.getLogger(__name__)
 
 from utilities.recommender.sar.sar_pyspark import SARpySparkReference
 from utilities.recommender.sar import TIME_NOW
-#from tests.conftest import header, start_spark_test
-from tests.conftest import start_spark_test
 from utilities.common.constants import PREDICTION_COL
 from tests.unit.test_sar_singlenode import load_demo_usage_data, read_matrix, load_userped, load_affinity
 
@@ -182,10 +180,8 @@ def rearrange_to_test_sql(array, row_ids, col_ids, row_map, col_map):
 Tests 
 """
 @pytest.mark.spark
-def test_initializaton_and_fit(header):
+def test_initializaton_and_fit(header, spark):
     """Test algorithm initialization"""
-
-    spark = start_spark_test()
     data = load_demo_usage_data_spark(spark, header)
     # recommender will execute a fit method here
     recommender = setup_SARpySpark(spark, data, header)
@@ -196,10 +192,8 @@ def test_initializaton_and_fit(header):
     assert hasattr(recommender.model, 'recommend_k_items')
 
 @pytest.mark.spark
-def test_recommend_top_k(header):
+def test_recommend_top_k(header, spark):
     """Test algo recommend top-k"""
-
-    spark = start_spark_test()
     data = load_demo_usage_data_spark(spark, header)
 
     # recommender will execute a fit method here
@@ -229,8 +223,7 @@ params="threshold,similarity_type,file"
     (3,'jaccard', 'jac'),
     (3,'lift', 'lift')
 ])
-def test_sar_item_similarity(threshold, similarity_type, file, header):
-    spark = start_spark_test()
+def test_sar_item_similarity(threshold, similarity_type, file, header, spark):
     data = load_demo_usage_data_spark(spark, header)
     tester = setup_SARpySpark(spark, data, header, similarity_type=similarity_type, threshold=threshold)
     true_item_similarity, row_ids, col_ids = read_matrix(FILE_DIR + 'sim_' + file + str(threshold) + '.csv')
@@ -245,8 +238,7 @@ def test_sar_item_similarity(threshold, similarity_type, file, header):
 
 # Test 7
 @pytest.mark.spark
-def test_user_affinity(header):
-    spark = start_spark_test()
+def test_user_affinity(header, spark):
     data = load_demo_usage_data_spark(spark, header)
 
     # time_now None should trigger max value computation from Data
@@ -269,8 +261,7 @@ params="threshold,similarity_type,file"
     (3,'jaccard', 'jac'),
     (3,'lift', 'lift')
 ])
-def test_userpred(threshold, similarity_type, file, header):
-    spark = start_spark_test()
+def test_userpred(threshold, similarity_type, file, header, spark):
     data = load_demo_usage_data_spark(spark, header)
 
     # time_now None should trigger max value computation from Data
