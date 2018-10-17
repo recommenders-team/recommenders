@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 from utilities.recommender.sar.sar_pyspark import SARpySparkReference
 from utilities.recommender.sar import TIME_NOW
 from utilities.common.constants import PREDICTION_COL
-from tests.unit.test_sar_singlenode import read_matrix, load_userped, load_affinity
+from tests.unit.test_sar_singlenode import _read_matrix, _load_userped, _load_affinity
 
 
 @pytest.fixture(scope="module")
@@ -192,7 +192,7 @@ def test_sar_item_similarity(
     )
     _index_and_fit(spark, model, demo_usage_data_spark, header)
 
-    true_item_similarity, row_ids, col_ids = read_matrix(
+    true_item_similarity, row_ids, col_ids = _read_matrix(
         spark_test_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
@@ -232,7 +232,7 @@ def test_user_affinity(spark_test_settings, header, spark, demo_usage_data_spark
     )
     _index_and_fit(spark, model, demo_usage_data_spark, header)
 
-    true_user_affinity, items = load_affinity(
+    true_user_affinity, items = _load_affinity(
         spark_test_settings["FILE_DIR"] + "user_aff.csv"
     )
 
@@ -282,7 +282,7 @@ def test_userpred(
     )
     data_indexed = _index_and_fit(spark, model, demo_usage_data_spark, header)
 
-    true_items, true_scores = load_userped(
+    true_items, true_scores = _load_userped(
         spark_test_settings["FILE_DIR"]
         + "userpred_"
         + file
