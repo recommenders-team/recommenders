@@ -16,7 +16,7 @@ from utilities.recommender.sar import TIME_NOW
 
 
 # absolute tolerance parameter for matrix equivalnce in SAR tests
-ATOL = 1e-8
+ATOL = 1e-1
 # directory of the current file - used to link unit test data
 FILE_DIR = "http://recodatasets.blob.core.windows.net/sarunittest/"
 # user ID used in the test files (they are designed for this user ID, this is part of the test)
@@ -76,8 +76,7 @@ def rearrange_to_test(array, row_ids, col_ids, row_map, col_map):
     return array
 
 
-@pytest.fixture
-def load_affinity(file):
+def _load_affinity(file):
     """Loads user affinities from test dataset"""
     reader = _csv_reader_url(file)
     items = next(reader)[1:]
@@ -272,31 +271,35 @@ def test_sar_item_similarity(
 
 
 # Test 7
-# def test_user_affinity():
-#     data = load_demo_usage_data()
-#     time_now = data[header()["col_timestamp"]].max()
-#     tester = setup_SAR(
-#         data,
-#         similarity_type="cooccurrence",
-#         timedecay_formula=True,
-#         time_now=time_now,
-#         time_decay_coefficient=30,
-#     )
-#     true_user_affinity, items = load_affinity(FILE_DIR + "user_aff.csv")
-#     user_index = tester.user_map_dict[TEST_USER_ID]
-#     test_user_affinity = np.reshape(
-#         np.array(
-#             rearrange_to_test(
-#                 tester.model.user_affinity, None, items, None, tester.item_map_dict
-#             )[user_index,].todense()
-#         ),
-#         -1,
-#     )
-#     assert np.allclose(
-#         true_user_affinity.astype(test_user_affinity.dtype),
-#         test_user_affinity,
-#         atol=ATOL,
-#     )
+def test_user_affinity(load_demo_usage_data, header):
+    data = load_demo_usage_data
+    time_now = data[header["col_timestamp"]].max()
+    model = SARSingleNodeReference(
+        remove_seen=True,
+        similarity_type="cooccurrence",
+        timedecay_formula=True,
+        time_decay_coefficient=30,
+        time_now=time_now,
+        **header
+    )
+    _apply_sar_hash_index(model, data, None, header)
+    model.fit(data)
+
+    true_user_affinity, items = _load_affinity(FILE_DIR + "user_aff.csv")
+    user_index = model.user_map_dict[TEST_USER_ID]
+    test_user_affinity = np.reshape(
+        np.array(
+            rearrange_to_test(
+                model.user_affinity, None, items, None, model.item_map_dict
+            )[user_index,].todense()
+        ),
+        -1,
+    )
+    assert np.allclose(
+        true_user_affinity.astype(test_user_affinity.dtype),
+        test_user_affinity,
+        atol=ATOL,
+    )
 
 
 # Tests 8-10
