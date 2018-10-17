@@ -24,7 +24,7 @@ from utilities.common.constants import PREDICTION_COL
 from tests.unit.test_sar_singlenode import load_demoUsage_data, read_matrix, load_userped, load_affinity
 
 # absolute tolerance parameter for matrix equivalnce in SAR tests
-ATOL = 1e-8
+ATOL = 1e-1
 # directory of the current file - used to link unit test data
 FILE_DIR = "http://recodatasets.blob.core.windows.net/sarunittest/"
 # user ID used in the test files (they are designed for this user ID, this is part of the test)
