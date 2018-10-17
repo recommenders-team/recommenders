@@ -8,59 +8,60 @@ from utilities.evaluation.spark_evaluation import (
     SparkRankingEvaluation,
     SparkRatingEvaluation,
 )
+from utilities.evaluation.python_evaluation import PythonRankingEvaluation
 from utilities.common.spark_utils import start_or_get_spark
+
+
+TOL = 0.0001
 
 
 @pytest.fixture(scope="module")
 def target_metrics():
     return {
-        "rmse": pytest.approx(7.254309, 0.0001),
-        "mae": pytest.approx(6.375, 0.0001),
-        "rsquared": pytest.approx(-31.699029, 0.0001),
+        "rmse": pytest.approx(7.254309, TOL),
+        "mae": pytest.approx(6.375, TOL),
+        "rsquared": pytest.approx(-31.699029, TOL),
         "exp_var": pytest.approx(-6.4466, 0.01),
-        "ndcg": pytest.approx(0.38172, 0.0001),
-        "precision": pytest.approx(0.26666, 0.0001),
-        "map": pytest.approx(0.23613, 0.0001),
-        "recall": pytest.approx(0.37777, 0.0001),
+        "ndcg": pytest.approx(0.38172, TOL),
+        "precision": pytest.approx(0.26666, TOL),
+        "map": pytest.approx(0.23613, TOL),
+        "recall": pytest.approx(0.37777, TOL),
     }
 
 
-@pytest.fixture(scope="module")
-def spark_data():
+@pytest.fixture(scope='module')
+def python_data():
     """Get Python labels"""
-    rating_true = pd.DataFrame(
-        {
-            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            "itemID": [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
-            "rating": [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
-        }
-    )
-    rating_pred = pd.DataFrame(
-        {
-            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            "itemID": [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
-            "prediction": [
-                14,
-                13,
-                12,
-                14,
-                13,
-                12,
-                11,
-                10,
-                14,
-                13,
-                12,
-                11,
-                10,
-                9,
-                8,
-                7,
-                6,
-                5,
-            ],
-        }
-    )
+    rating_true = pd.DataFrame({
+        'userID': [1, 1, 1,
+                   2, 2, 2, 2, 2,
+                   3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        'itemID': [1, 2, 3,
+                   1, 4, 5, 6, 7,
+                   2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
+        'rating': [5, 4, 3,
+                   5, 5, 3, 3, 1,
+                   5, 5, 5, 4, 4, 3, 3, 3, 2, 1]
+    })
+    rating_pred = pd.DataFrame({
+        'userID': [1, 1, 1,
+                   2, 2, 2, 2, 2,
+                   3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+        'itemID': [3, 10, 12,
+                   10, 3, 5, 11, 13,
+                   4, 10, 7, 13, 1, 3, 5, 2, 11, 14
+                   ],
+        'prediction': [14, 13, 12,
+                       14, 13, 12, 11, 10,
+                       14, 13, 12, 11, 10, 9, 8, 7, 6, 5]
+    })
+    return rating_true, rating_pred
+
+
+@pytest.fixture(scope="module")
+def spark_data(python_data):
+    """Get Python labels"""
+    rating_true, rating_pred = python_data
 
     spark = start_or_get_spark("EvaluationTesting", "local")
 
@@ -118,7 +119,7 @@ def test_spark_rsquared(spark_data, target_metrics):
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
-    assert evaluator1.rsquared() == pytest.approx(1.0, 0.0001)
+    assert evaluator1.rsquared() == pytest.approx(1.0, TOL)
 
     evaluator2 = SparkRatingEvaluation(df_true, df_pred)
     assert evaluator2.rsquared() == target_metrics["rsquared"]
@@ -130,7 +131,7 @@ def test_spark_exp_var(spark_data, target_metrics):
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
-    assert evaluator1.exp_var() == pytest.approx(1.0, 0.0001)
+    assert evaluator1.exp_var() == pytest.approx(1.0, TOL)
 
     evaluator2 = SparkRatingEvaluation(df_true, df_pred)
     assert evaluator2.exp_var() == target_metrics["exp_var"]
@@ -198,3 +199,90 @@ def test_spark_map(spark_data, target_metrics):
         df_true, df_pred, relevancy_method="by_threshold"
     )
     assert evaluator1.map_at_k() == target_metrics["map"]
+
+
+@pytest.mark.spark
+def test_spark_python_match(python_data):
+    # Test on the original data with k = 10.
+
+    df_true, df_pred = python_data
+
+    eval_python1 = PythonRankingEvaluation(df_true, df_pred, k=10)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark1 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
+
+    match1 = [
+        eval_python1.recall_at_k() == pytest.approx(eval_spark1.recall_at_k(), TOL),
+        eval_python1.precision_at_k() == pytest.approx(eval_spark1.precision_at_k(), TOL),
+        eval_python1.ndcg_at_k() == pytest.approx(eval_spark1.ndcg_at_k(), TOL),
+        eval_python1.map_at_k() == pytest.approx(eval_spark1.map_at_k(), TOL)
+    ]
+
+    assert all(match1)
+
+    # Test on the original data with k = 3.
+
+    eval_python2 = PythonRankingEvaluation(df_true, df_pred, k=3)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark2 = SparkRankingEvaluation(dfs_true, dfs_pred, k=3)
+
+    match2 = [
+        eval_python2.recall_at_k() == pytest.approx(eval_spark2.recall_at_k(), TOL),
+        eval_python2.precision_at_k() == pytest.approx(eval_spark2.precision_at_k(), TOL),
+        eval_python2.ndcg_at_k() == pytest.approx(eval_spark2.ndcg_at_k(), TOL),
+        eval_python2.map_at_k() == pytest.approx(eval_spark2.map_at_k(), TOL)
+    ]
+
+    assert all(match2)
+
+    # Remove the first row from the original data.
+
+    df_pred = df_pred[1:-1]
+
+    eval_python3 = PythonRankingEvaluation(df_true, df_pred, k=10)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark3 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
+
+    match3 = [
+        eval_python3.recall_at_k() == pytest.approx(eval_spark3.recall_at_k(), TOL),
+        eval_python3.precision_at_k() == pytest.approx(eval_spark3.precision_at_k(), TOL),
+        eval_python3.ndcg_at_k() == pytest.approx(eval_spark3.ndcg_at_k(), TOL),
+        eval_python3.map_at_k() == pytest.approx(eval_spark3.map_at_k(), TOL)
+    ]
+
+    assert all(match3)
+
+    # Test with one user
+
+    df_pred = df_pred[df_pred["userID"] == 3]
+    df_true = df_true[df_true["userID"] == 3]
+
+    eval_python4 = PythonRankingEvaluation(df_true, df_pred, k=10)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark4 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
+
+    match4 = [
+        eval_python4.recall_at_k() == pytest.approx(eval_spark4.recall_at_k(), TOL),
+        eval_python4.precision_at_k() == pytest.approx(eval_spark4.precision_at_k(), TOL),
+        eval_python4.ndcg_at_k() == pytest.approx(eval_spark4.ndcg_at_k(), TOL),
+        eval_python4.map_at_k() == pytest.approx(eval_spark4.map_at_k(), TOL)
+    ]
+
+    assert all(match4)
+
