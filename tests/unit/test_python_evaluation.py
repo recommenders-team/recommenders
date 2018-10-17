@@ -6,6 +6,8 @@ import pandas as pd
 import pytest
 
 from utilities.evaluation.python_evaluation import PythonRatingEvaluation, PythonRankingEvaluation
+from utilities.evaluation.spark_evaluation import SparkRankingEvaluation, SparkRatingEvaluation
+from utilities.common.spark_utils import start_or_get_spark
 
 
 @pytest.fixture
@@ -199,3 +201,90 @@ def test_python_errors(python_data):
 
     with pytest.raises(ValueError):
         PythonRankingEvaluation(rating_true, rating_pred, col_prediction="not_prediction")
+
+
+@pytest.mark.spark
+def test_spark_python_match(python_data):
+    # Test on the original data with k = 10.
+
+    df_true, df_pred = python_data
+
+    eval_python1 = PythonRankingEvaluation(df_true, df_pred, k=10)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark1 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
+
+    match1 = [
+        eval_python1.recall_at_k() == pytest.approx(eval_spark1.recall_at_k(), 0.0001),
+        eval_python1.precision_at_k() == pytest.approx(eval_spark1.precision_at_k(), 0.0001),
+        eval_python1.ndcg_at_k() == pytest.approx(eval_spark1.ndcg_at_k(), 0.0001),
+        eval_python1.map_at_k() == pytest.approx(eval_spark1.map_at_k(), 0.0001)
+    ]
+
+    assert all(match1)
+
+    # Test on the original data with k = 3.
+
+    eval_python2 = PythonRankingEvaluation(df_true, df_pred, k=3)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark2 = SparkRankingEvaluation(dfs_true, dfs_pred, k=3)
+
+    match2 = [
+        eval_python2.recall_at_k() == pytest.approx(eval_spark2.recall_at_k(), 0.0001),
+        eval_python2.precision_at_k() == pytest.approx(eval_spark2.precision_at_k(), 0.0001),
+        eval_python2.ndcg_at_k() == pytest.approx(eval_spark2.ndcg_at_k(), 0.0001),
+        eval_python2.map_at_k() == pytest.approx(eval_spark2.map_at_k(), 0.0001)
+    ]
+
+    assert all(match2)
+
+    # Remove the first row from the original data.
+
+    df_pred = df_pred[1:-1]
+
+    eval_python3 = PythonRankingEvaluation(df_true, df_pred, k=10)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark3 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
+
+    match3 = [
+        eval_python3.recall_at_k() == pytest.approx(eval_spark3.recall_at_k(), 0.0001),
+        eval_python3.precision_at_k() == pytest.approx(eval_spark3.precision_at_k(), 0.0001),
+        eval_python3.ndcg_at_k() == pytest.approx(eval_spark3.ndcg_at_k(), 0.0001),
+        eval_python3.map_at_k() == pytest.approx(eval_spark3.map_at_k(), 0.0001)
+    ]
+
+    assert all(match3)
+
+    # Test with one user
+
+    df_pred = df_pred[df_pred["userID"] == 3]
+    df_true = df_true[df_true["userID"] == 3]
+
+    eval_python4 = PythonRankingEvaluation(df_true, df_pred, k=10)
+
+    spark = start_or_get_spark()
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
+    eval_spark4 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
+
+    match4 = [
+        eval_python4.recall_at_k() == pytest.approx(eval_spark4.recall_at_k(), 0.0001),
+        eval_python4.precision_at_k() == pytest.approx(eval_spark4.precision_at_k(), 0.0001),
+        eval_python4.ndcg_at_k() == pytest.approx(eval_spark4.ndcg_at_k(), 0.0001),
+        eval_python4.map_at_k() == pytest.approx(eval_spark4.map_at_k(), 0.0001)
+    ]
+
+    assert all(match4)
+
