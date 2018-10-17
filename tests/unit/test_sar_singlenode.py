@@ -84,8 +84,7 @@ def _load_affinity(file):
     return affinities, items
 
 
-@pytest.fixture
-def load_userped(file, k=10):
+def _load_userped(file, k=10):
     """Loads test predicted items and their SAR scores"""
     reader = _csv_reader_url(file)
     next(reader)
@@ -223,7 +222,6 @@ Main SAR tests are below - load test files which are used for both Scala SAR and
 def test_sar_item_similarity(
     threshold, similarity_type, file, load_demo_usage_data, header
 ):
-    data = load_demo_usage_data
 
     model = SARSingleNodeReference(
         remove_seen=True,
@@ -235,9 +233,9 @@ def test_sar_item_similarity(
         **header
     )
 
-    _apply_sar_hash_index(model, data, None, header)
+    _apply_sar_hash_index(model, load_demo_usage_data, None, header)
 
-    model.fit(data)
+    model.fit(load_demo_usage_data)
 
     true_item_similarity, row_ids, col_ids = read_matrix(
         FILE_DIR + "sim_" + file + str(threshold) + ".csv"
@@ -272,8 +270,7 @@ def test_sar_item_similarity(
 
 # Test 7
 def test_user_affinity(load_demo_usage_data, header):
-    data = load_demo_usage_data
-    time_now = data[header["col_timestamp"]].max()
+    time_now = load_demo_usage_data[header["col_timestamp"]].max()
     model = SARSingleNodeReference(
         remove_seen=True,
         similarity_type="cooccurrence",
@@ -282,8 +279,8 @@ def test_user_affinity(load_demo_usage_data, header):
         time_now=time_now,
         **header
     )
-    _apply_sar_hash_index(model, data, None, header)
-    model.fit(data)
+    _apply_sar_hash_index(model, load_demo_usage_data, None, header)
+    model.fit(load_demo_usage_data)
 
     true_user_affinity, items = _load_affinity(FILE_DIR + "user_aff.csv")
     user_index = model.user_map_dict[TEST_USER_ID]
@@ -303,31 +300,30 @@ def test_user_affinity(load_demo_usage_data, header):
 
 
 # Tests 8-10
-params = "threshold,similarity_type,file"
+@pytest.mark.parametrize(
+    "threshold,similarity_type,file", [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")]
+)
+def test_userpred(threshold, similarity_type, file, header, load_demo_usage_data):
+    time_now = load_demo_usage_data[header["col_timestamp"]].max()
+    model = SARSingleNodeReference(
+        remove_seen=True,
+        similarity_type=similarity_type,
+        timedecay_formula=True,
+        time_decay_coefficient=30,
+        time_now=time_now,
+        threshold=threshold,
+        **header
+    )
+    _apply_sar_hash_index(model, load_demo_usage_data, None, header)
+    model.fit(load_demo_usage_data)
 
-
-# @pytest.mark.parametrize(
-#     params, [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")]
-# )
-# def test_userpred(threshold, similarity_type, file):
-#     data = load_demo_usage_data()
-#     time_now = data[header()["col_timestamp"]].max()
-#     tester = setup_SAR(
-#         data,
-#         remove_seen=True,
-#         similarity_type=similarity_type,
-#         timedecay_formula=True,
-#         time_now=time_now,
-#         time_decay_coefficient=30,
-#         threshold=threshold,
-#     )
-#     true_items, true_scores = load_userped(
-#         FILE_DIR + "userpred_" + file + str(threshold) + "_userid_only.csv"
-#     )
-#     test_results = tester.model.recommend_k_items(
-#         data[data[header()["col_user"]] == TEST_USER_ID], top_k=10
-#     )
-#     test_items = list(test_results[header()["col_item"]])
-#     test_scores = np.array(test_results["prediction"])
-#     assert true_items == test_items
-#     assert np.allclose(true_scores, test_scores, atol=ATOL)
+    true_items, true_scores = _load_userped(
+        FILE_DIR + "userpred_" + file + str(threshold) + "_userid_only.csv"
+    )
+    test_results = model.recommend_k_items(
+        load_demo_usage_data[load_demo_usage_data[header["col_user"]] == TEST_USER_ID], top_k=10
+    )
+    test_items = list(test_results[header["col_item"]])
+    test_scores = np.array(test_results["prediction"])
+    assert true_items == test_items
+    assert np.allclose(true_scores, test_scores, atol=ATOL)
