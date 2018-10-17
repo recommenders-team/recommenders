@@ -12,7 +12,7 @@ def basic_structures():
         "yes": True,
         "no": False,
         "float": 0.5,
-        "pi": 3.1415926535897932384626433832790,
+        "pi": 3.141592653589793238462643383279,
         "string": "Miguel",
         "none": None,
     }
