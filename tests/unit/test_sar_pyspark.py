@@ -19,7 +19,7 @@ from utilities.common.constants import PREDICTION_COL
 from tests.unit.test_sar_singlenode import load_demo_usage_data, read_matrix, load_userped, load_affinity
 
 # absolute tolerance parameter for matrix equivalnce in SAR tests
-ATOL = 1e-8
+ATOL = 1e-1
 # directory of the current file - used to link unit test data
 FILE_DIR = "http://recodatasets.blob.core.windows.net/sarunittest/"
 # user ID used in the test files (they are designed for this user ID, this is part of the test)
@@ -55,7 +55,7 @@ class setup_SARpySpark:
         )
 
         data_indexed, unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = airship_hash_sql(
-            spark, data
+            spark, data, header
         )
 
         # we need to index the train and test sets for SAR matrix operations to work
