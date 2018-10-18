@@ -75,7 +75,7 @@ def load_pandas_dummy_timestamp_dataset(header):
         single Pandas dataframe
     """
     time = 1535133442
-    time_series = [time + 20*i for i in range(10)]
+    time_series = [time + 20 * i for i in range(10)]
     dataframe = load_pandas_dummy_dataset(header)
     dataframe[header["col_timestamp"]] = time_series
 
@@ -83,7 +83,7 @@ def load_pandas_dummy_timestamp_dataset(header):
 
 
 @pytest.fixture(scope="module")
-def sar_test_settings():
+def sar_settings():
     return {
         # absolute tolerance parameter for matrix equivalence in SAR tests
         "ATOL": 1e-1,
@@ -95,9 +95,9 @@ def sar_test_settings():
 
 
 @pytest.fixture
-def demo_usage_data(header, sar_test_settings):
+def demo_usage_data(header, sar_settings):
     # load the data
-    data = pd.read_csv(sar_test_settings["FILE_DIR"] + "demoUsage.csv")
+    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv")
     data["rating"] = pd.Series([1] * data.shape[0])
     data = data.rename(
         columns={
