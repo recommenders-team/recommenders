@@ -52,15 +52,15 @@ def header():
 
 
 @pytest.fixture(scope="module")
-def load_pandas_dummy_dataset():
+def load_pandas_dummy_dataset(header):
     """Load sample dataset in pandas for testing; can be used to create a Spark dataframe
     Returns:
         single Pandas dataframe
     """
     ratings_dict = {
-        header()["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
-        header()["col_item"]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        header()["col_rating"]: [1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
+        header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
+        header["col_item"]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        header["col_rating"]: [1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
     }
     dataframe = pd.DataFrame(ratings_dict)
 
@@ -68,16 +68,16 @@ def load_pandas_dummy_dataset():
 
 
 @pytest.fixture(scope="module")
-def load_pandas_dummy_timestamp_dataset():
+def load_pandas_dummy_timestamp_dataset(header):
     """Load sample dataset in pandas for testing; can be used to create a Spark dataframe
        This method adds an additional column.
     Returns:
         single Pandas dataframe
     """
     time = 1535133442
-    time_series = pd.Series([time] * 10)
-    dataframe = load_pandas_dummy_dataset()
-    dataframe[header()["col_timestamp"]] = time_series.values
+    time_series = [time + 20*i for i in range(10)]
+    dataframe = load_pandas_dummy_dataset(header)
+    dataframe[header["col_timestamp"]] = time_series
 
     return dataframe
 
@@ -85,7 +85,7 @@ def load_pandas_dummy_timestamp_dataset():
 @pytest.fixture(scope="module")
 def spark_test_settings():
     return {
-        # absolute tolerance parameter for matrix equivalnce in SAR tests
+        # absolute tolerance parameter for matrix equivalence in SAR tests
         "ATOL": 1e-1,
         # directory of the current file - used to link unit test data
         "FILE_DIR": "http://recodatasets.blob.core.windows.net/sarunittest/",

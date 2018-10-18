@@ -13,18 +13,6 @@ from utilities.recommender.sar.sar_singlenode import SARSingleNodeReference
 from utilities.recommender.sar import TIME_NOW
 
 
-def csv_reader_url(file, delimiter=",", encoding="utf-8"):
-    """
-    Read a csv file over http
-
-    Returns:
-         csv reader iterable
-    """
-    ftpstream = urllib.request.urlopen(file)
-    csvfile = csv.reader(codecs.iterdecode(ftpstream, encoding), delimiter=delimiter)
-    return csvfile
-
-
 def _csv_reader_url(url, delimiter=",", encoding="utf-8"):
     """
     Read a csv file over http
