@@ -9,9 +9,9 @@
 Work in progress.
 
 
-## Installation
+## Setup
 
-Please see the [installation guide](INSTALL.md).
+Please see the [setup guide](SETUP.md).
 
 ## Contributing
 
