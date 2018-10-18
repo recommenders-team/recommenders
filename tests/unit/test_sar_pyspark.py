@@ -4,13 +4,6 @@ import pytest
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
-
-import logging
-
-
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
-
 from utilities.recommender.sar.sar_pyspark import SARpySparkReference
 from utilities.recommender.sar import TIME_NOW
 from utilities.common.constants import PREDICTION_COL
@@ -47,11 +40,9 @@ def _index_and_fit(spark, model, df_all, header):
         + header["col_timestamp"]
         + " from df_all"
     )
-    log.info("Running query -- " + query)
     df_all = spark.sql(query)
     df_all.createOrReplaceTempView("df_all")
 
-    log.info("Obtaining all users and items ")
     # Obtain all the users and items from both training and test data
     unique_users = np.array(
         [
@@ -66,7 +57,6 @@ def _index_and_fit(spark, model, df_all, header):
         ]
     )
 
-    log.info("Indexing users and items")
     # index all rows and columns, then split again intro train and test
     # We perform the reduction on Spark across keys before calling .collect so this is scalable
     index2user = dict(
@@ -162,12 +152,9 @@ Main SAR tests are below - load test files which are used for both Scala SAR and
 """
 
 # Tests 1-6
-params = "threshold,similarity_type,file"
-
-
 @pytest.mark.spark
 @pytest.mark.parametrize(
-    params,
+    "threshold,similarity_type,file",
     [
         (1, "cooccurrence", "count"),
         (1, "jaccard", "jac"),
@@ -252,12 +239,10 @@ def test_user_affinity(spark_test_settings, header, spark, demo_usage_data_spark
 
 
 # Tests 8-10
-params = "threshold,similarity_type,file"
-
-
 @pytest.mark.spark
 @pytest.mark.parametrize(
-    params, [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")]
+    "threshold,similarity_type,file",
+    [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")],
 )
 def test_userpred(
     threshold,
