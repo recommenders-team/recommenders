@@ -28,6 +28,7 @@ To install each environment, first we need to generate a conda yml file and then
 
 To install the Python CPU environment:
 
+    cd Recommenders
     ./scripts/generate_conda_file.sh
     conda env create -n reco_bare -f conda_bare.yaml 
 
@@ -35,6 +36,7 @@ To install the Python CPU environment:
 
 Assuming that you have a GPU machine, to install the Python GPU environment, which by default installs the CPU environment:
 
+    cd Recommenders
     ./scripts/generate_conda_file.sh --gpu
     conda env create -n reco_gpu -f conda_gpu.yaml 
 
@@ -42,6 +44,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
 
 To install the PySpark environment, which by default installs the CPU environment:
 
+    cd Recommenders
     ./scripts/generate_conda_file.sh --pyspark
     conda env create -n reco_pyspark -f conda_gpu.yaml
 
@@ -67,6 +70,7 @@ unset PYSPARK_DRIVER_PYTHON
 
 To install all three environments:
 
+    cd Recommenders
     ./scripts/generate_conda_file.sh  --gpu --pyspark
     conda env create -n reco_full -f conda_full.yaml
 
@@ -74,6 +78,7 @@ To install all three environments:
 
 We can register our created conda environment to appear as a kernel in the Jupyter notebooks. 
 
+    source activate my_env_name
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 
 ## Troubleshooting
