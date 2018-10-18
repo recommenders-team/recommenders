@@ -120,7 +120,7 @@ class PythonRankingEvaluation:
 
         self.threshold = threshold
         self.relevancy_method = relevancy_method
-        self.top_k = k
+        self.k = k
 
         if self.col_user not in self.rating_true.columns:
             raise ValueError('Schema of y_true not valid. Missing User Col')
@@ -151,7 +151,7 @@ class PythonRankingEvaluation:
             if relevancy_method == "by_threshold" \
             else relevant_func[relevancy_method](dataframe=self.rating_pred, col_user=self.col_user,
                                                  col_item=self.col_item,
-                                                 col_rating=self.col_prediction, k=self.top_k)
+                                                 col_rating=self.col_prediction, k=self.k)
 
         common_user_list = list(
             set(self.rating_true[self.col_user]).intersection(set(self.rating_pred[self.col_user])))
@@ -212,7 +212,7 @@ class PythonRankingEvaluation:
             .reset_index() \
             .rename(columns={self.col_item: "hit"}, inplace=False)
 
-        df_count_hit["precision"] = df_count_hit.apply(lambda x: (x.hit / self.top_k), axis=1)
+        df_count_hit["precision"] = df_count_hit.apply(lambda x: (x.hit / self.k), axis=1)
 
         precision_at_k = np.float64(df_count_hit.agg({"precision": "sum"})) / self.n_users
 
@@ -274,7 +274,7 @@ class PythonRankingEvaluation:
             .agg({self.col_item: "count"}) \
             .reset_index() \
             .rename(columns={self.col_item: "actual"}, inplace=False)
-        df_mdcg_sum["mdcg"] = df_mdcg_sum.apply(lambda x: log_sum(min(x.actual, self.top_k)),
+        df_mdcg_sum["mdcg"] = df_mdcg_sum.apply(lambda x: log_sum(min(x.actual, self.k)),
                                                 axis=1)
 
         # DCG over MDCG is the normalized DCG.
