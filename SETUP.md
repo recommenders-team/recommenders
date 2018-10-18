@@ -1,6 +1,6 @@
-# Installation guide
+# Setup guide
 
-In this guide we show how to install all the dependencies to run the notebooks of this repo. 
+In this guide we show how to setup all the dependencies to run the notebooks of this repo. 
 
 We have three different environments for our algorithms:
 * Python CPU
