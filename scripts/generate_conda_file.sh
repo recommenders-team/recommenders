@@ -75,7 +75,6 @@ channels:
 - conda-forge
 - defaults
 dependencies:
-- jupyter==1.0.0
 - python==3.6
 - numpy>=1.13.3
 - dask>=0.17.1
@@ -93,10 +92,6 @@ ${pyspark}- pyspark==2.3.1
   - azure-storage>=0.36.0
   - tffm==1.0.1
   - pytest==3.6.4
-  - pytest-cov
-  - pytest-datafiles>=1.0
-  - pylint>=2.0.1
-  - pytest-pylint==0.11.0
   - papermill>=0.15.0
   - black>=18.6b4
 EOM
