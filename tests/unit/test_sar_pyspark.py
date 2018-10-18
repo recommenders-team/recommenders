@@ -171,7 +171,7 @@ def test_sar_item_similarity(
     demo_usage_data_spark,
     header,
     spark,
-    spark_test_settings,
+    sar_test_settings,
 ):
 
     model = SARpySparkReference(
@@ -180,7 +180,7 @@ def test_sar_item_similarity(
     _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_item_similarity, row_ids, col_ids = _read_matrix(
-        spark_test_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
+        sar_test_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
     test_item_similarity = rearrange_to_test_sql(
@@ -201,13 +201,13 @@ def test_sar_item_similarity(
         assert np.allclose(
             true_item_similarity.astype(test_item_similarity.dtype),
             test_item_similarity,
-            atol=spark_test_settings["ATOL"],
+            atol=sar_test_settings["ATOL"],
         )
 
 
 # Test 7
 @pytest.mark.spark
-def test_user_affinity(spark_test_settings, header, spark, demo_usage_data_spark):
+def test_user_affinity(sar_test_settings, header, spark, demo_usage_data_spark):
     # time_now None should trigger max value computation from Data
     model = SARpySparkReference(
         spark,
@@ -220,11 +220,11 @@ def test_user_affinity(spark_test_settings, header, spark, demo_usage_data_spark
     _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_user_affinity, items = _load_affinity(
-        spark_test_settings["FILE_DIR"] + "user_aff.csv"
+        sar_test_settings["FILE_DIR"] + "user_aff.csv"
     )
 
     tester_affinity = model.get_user_affinity_as_vector(
-        spark_test_settings["TEST_USER_ID"]
+        sar_test_settings["TEST_USER_ID"]
     )
 
     test_user_affinity = np.reshape(
@@ -234,7 +234,7 @@ def test_user_affinity(spark_test_settings, header, spark, demo_usage_data_spark
     assert np.allclose(
         true_user_affinity.astype(test_user_affinity.dtype),
         test_user_affinity,
-        atol=spark_test_settings["ATOL"],
+        atol=sar_test_settings["ATOL"],
     )
 
 
@@ -251,7 +251,7 @@ def test_userpred(
     header,
     spark,
     demo_usage_data_spark,
-    spark_test_settings,
+    sar_test_settings,
 ):
 
     # time_now None should trigger max value computation from Data
@@ -268,7 +268,7 @@ def test_userpred(
     data_indexed = _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_items, true_scores = _load_userped(
-        spark_test_settings["FILE_DIR"]
+        sar_test_settings["FILE_DIR"]
         + "userpred_"
         + file
         + str(threshold)
@@ -278,11 +278,11 @@ def test_userpred(
     data_indexed.createOrReplaceTempView("data_indexed")
     test_data = spark.sql(
         "select * from data_indexed where row_id = %d"
-        % model.user_map_dict[spark_test_settings["TEST_USER_ID"]]
+        % model.user_map_dict[sar_test_settings["TEST_USER_ID"]]
     )
     test_results = model.recommend_k_items(test_data, top_k=10).toPandas()
     test_items = list(test_results[header["col_item"]])
     test_scores = np.array(test_results["prediction"])
     assert true_items == test_items
-    assert np.allclose(true_scores, test_scores, atol=spark_test_settings["ATOL"])
+    assert np.allclose(true_scores, test_scores, atol=sar_test_settings["ATOL"])
 

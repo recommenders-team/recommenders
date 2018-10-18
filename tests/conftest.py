@@ -83,7 +83,7 @@ def load_pandas_dummy_timestamp_dataset(header):
 
 
 @pytest.fixture(scope="module")
-def spark_test_settings():
+def sar_test_settings():
     return {
         # absolute tolerance parameter for matrix equivalence in SAR tests
         "ATOL": 1e-1,
@@ -95,9 +95,9 @@ def spark_test_settings():
 
 
 @pytest.fixture
-def demo_usage_data(header, spark_test_settings):
+def demo_usage_data(header, sar_test_settings):
     # load the data
-    data = pd.read_csv(spark_test_settings["FILE_DIR"] + "demoUsage.csv")
+    data = pd.read_csv(sar_test_settings["FILE_DIR"] + "demoUsage.csv")
     data["rating"] = pd.Series([1] * data.shape[0])
     data = data.rename(
         columns={
