@@ -535,9 +535,9 @@ class SARpySparkReference:
     def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set"""
         df = self.recommend_k_items(test, for_predict=True)
-        return self.test.join(
+        return test.join(
             df,
-            test[self.header["col_user"]] == df[self.header["col_user"]],
-            test[self.header["col_item"]] == df[self.header["col_item"]],
+            (test[self.header["col_user"]] == df[self.header["col_user"]]) &
+            (test[self.header["col_item"]] == df[self.header["col_item"]]),
             "inner",
         )
