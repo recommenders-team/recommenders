@@ -4,9 +4,9 @@ import pytest
 from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
-from utilities.recommender.sar.sar_pyspark import SARpySparkReference
-from utilities.recommender.sar import TIME_NOW
-from utilities.common.constants import PREDICTION_COL
+from reco_utils.recommender.sar.sar_pyspark import SARpySparkReference
+from reco_utils.recommender.sar import TIME_NOW
+from reco_utils.common.constants import PREDICTION_COL
 from tests.unit.sar_common import read_matrix, load_userpred, load_affinity
 
 # TODO: DRY with _rearrange_to_test
@@ -248,4 +248,3 @@ def test_userpred(
     test_scores = np.array(test_results["prediction"])
     assert true_items == test_items
     assert np.allclose(true_scores, test_scores, atol=sar_settings["ATOL"])
-

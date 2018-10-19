@@ -106,4 +106,3 @@ def demo_usage_data(header, sar_settings):
     )
 
     return data
-
