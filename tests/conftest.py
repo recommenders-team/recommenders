@@ -84,7 +84,7 @@ def train_test_dummy_timestamp(pandas_dummy_timestamp):
     return train_test_split(pandas_dummy_timestamp, test_size=0.2, random_state=0)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def demo_usage_data(header, sar_settings):
     # load the data
     data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv")
