@@ -3,17 +3,30 @@ PythonEvaluation
 """
 import numpy as np
 import pandas as pd
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, explained_variance_score
+from sklearn.metrics import (
+    mean_squared_error,
+    mean_absolute_error,
+    r2_score,
+    explained_variance_score,
+)
 
-from utilities.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, PREDICTION_COL, \
-    DEFAULT_K, DEFAULT_THRESHOLD
+from utilities.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    PREDICTION_COL,
+    DEFAULT_K,
+    DEFAULT_THRESHOLD,
+)
 
 """
 Evaluation of rating metrics, based on scikit-learn
 """
 
 
-def _merge_rating_true_pred(rating_true, rating_pred, col_user, col_item, col_rating, col_prediction):
+def _merge_rating_true_pred(
+    rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+):
     """Join truth and prediction data frames on userID and itemID
     Args:
         rating_true (pd.DataFrame): True labels.
@@ -23,48 +36,53 @@ def _merge_rating_true_pred(rating_true, rating_pred, col_user, col_item, col_ra
     """
 
     if col_user not in rating_true.columns:
-        raise ValueError('Schema of y_true not valid. Missing User Col')
+        raise ValueError("Schema of y_true not valid. Missing User Col")
     if col_item not in rating_true.columns:
-        raise ValueError('Schema of y_true not valid. Missing Item Col')
+        raise ValueError("Schema of y_true not valid. Missing Item Col")
     if col_rating not in rating_true.columns:
-        raise ValueError('Schema of y_true not valid. Missing Rating Col')
+        raise ValueError("Schema of y_true not valid. Missing Rating Col")
 
     if col_user not in rating_pred.columns:
         # pragma : No Cover
-        raise ValueError('Schema of y_pred not valid. Missing User Col')
+        raise ValueError("Schema of y_pred not valid. Missing User Col")
     if col_item not in rating_pred.columns:
         # pragma : No Cover
-        raise ValueError('Schema of y_pred not valid. Missing Item Col')
+        raise ValueError("Schema of y_pred not valid. Missing Item Col")
     if col_prediction not in rating_pred.columns:
         raise ValueError(
-            'Schema of y_true not valid. Missing Prediction Col: ' + str(
-                rating_pred.columns))
+            "Schema of y_true not valid. Missing Prediction Col: "
+            + str(rating_pred.columns)
+        )
 
     if col_rating == col_prediction:
         rating_true_pred = pd.merge(
             rating_true,
             rating_pred,
             on=[col_user, col_item],
-            suffixes=["_true", "_pred"]
+            suffixes=["_true", "_pred"],
         )
-        rating_true_pred.rename(columns={col_rating + "_true": DEFAULT_RATING_COL},
-                                inplace=True)
-        rating_true_pred.rename(columns={col_prediction + "_pred": PREDICTION_COL},
-                                inplace=True)
+        rating_true_pred.rename(
+            columns={col_rating + "_true": DEFAULT_RATING_COL}, inplace=True
+        )
+        rating_true_pred.rename(
+            columns={col_prediction + "_pred": PREDICTION_COL}, inplace=True
+        )
     else:
-        rating_true_pred = pd.merge(
-            rating_true,
-            rating_pred,
-            on=[col_user, col_item]
-        )
+        rating_true_pred = pd.merge(rating_true, rating_pred, on=[col_user, col_item])
         rating_true_pred.rename(columns={col_rating: DEFAULT_RATING_COL}, inplace=True)
         rating_true_pred.rename(columns={col_prediction: PREDICTION_COL}, inplace=True)
 
     return rating_true_pred
 
 
-def rmse(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-         col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL):
+def rmse(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+):
     """Calculate Root Mean Squared Error
         Args:
         rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
@@ -75,13 +93,24 @@ def rmse(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_I
     Returns:
         Root mean squared error.
     """
-    rating_true_pred = _merge_rating_true_pred(rating_true, rating_pred, col_user, col_item, col_rating, col_prediction)
-    return np.sqrt(mean_squared_error(rating_true_pred[DEFAULT_RATING_COL],
-                                      rating_true_pred[PREDICTION_COL]))
+    rating_true_pred = _merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+    return np.sqrt(
+        mean_squared_error(
+            rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
+        )
+    )
 
 
-def mae(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL):
+def mae(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+):
     """Calculate Mean Absolute Error.
     Args:
         rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
@@ -93,13 +122,22 @@ def mae(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_IT
     Returns:
         Mean Absolute Error
     """
-    rating_true_pred = _merge_rating_true_pred(rating_true, rating_pred, col_user, col_item, col_rating, col_prediction)
-    return mean_absolute_error(rating_true_pred[DEFAULT_RATING_COL],
-                               rating_true_pred[PREDICTION_COL])
+    rating_true_pred = _merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+    return mean_absolute_error(
+        rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
+    )
 
 
-def rsquared(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-             col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL):
+def rsquared(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+):
     """Calculate R squared
     Args:
         rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
@@ -111,13 +149,22 @@ def rsquared(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAU
     Returns:
         R squared
     """
-    rating_true_pred = _merge_rating_true_pred(rating_true, rating_pred, col_user, col_item, col_rating, col_prediction)
-    return r2_score(rating_true_pred[DEFAULT_RATING_COL],
-                    rating_true_pred[PREDICTION_COL])
+    rating_true_pred = _merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+    return r2_score(
+        rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
+    )
 
 
-def exp_var(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-            col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL):
+def exp_var(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+):
     """Calculate explained variance.
     Args:
         rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
@@ -129,9 +176,12 @@ def exp_var(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAUL
     Returns:
         Explained variance
     """
-    rating_true_pred = _merge_rating_true_pred(rating_true, rating_pred, col_user, col_item, col_rating, col_prediction)
-    return explained_variance_score(rating_true_pred[DEFAULT_RATING_COL],
-                                    rating_true_pred[PREDICTION_COL])
+    rating_true_pred = _merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+    return explained_variance_score(
+        rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
+    )
 
 
 """
@@ -139,8 +189,17 @@ Evaluation of ranking metrics.
 """
 
 
-def _merge_ranking_true_pred(rating_true, rating_pred, col_user, col_item, col_rating, col_prediction,
-                             relevancy_method, k=DEFAULT_K, threshold=DEFAULT_THRESHOLD):
+def _merge_ranking_true_pred(
+    rating_true,
+    rating_pred,
+    col_user,
+    col_item,
+    col_rating,
+    col_prediction,
+    relevancy_method,
+    k=DEFAULT_K,
+    threshold=DEFAULT_THRESHOLD,
+):
     """Filter truth and prediction data frames on common users
     Args:
         rating_true (pd.DataFrame): True labels.
@@ -155,39 +214,42 @@ def _merge_ranking_true_pred(rating_true, rating_pred, col_user, col_item, col_r
     """
 
     if col_user not in rating_true.columns:
-        raise ValueError('Schema of y_true not valid. Missing User Col')
+        raise ValueError("Schema of y_true not valid. Missing User Col")
     if col_item not in rating_true.columns:
-        raise ValueError('Schema of y_true not valid. Missing Item Col')
+        raise ValueError("Schema of y_true not valid. Missing Item Col")
     if col_rating not in rating_true.columns:
-        raise ValueError('Schema of y_true not valid. Missing Rating Col')
+        raise ValueError("Schema of y_true not valid. Missing Rating Col")
 
     if col_user not in rating_pred.columns:
         # pragma : No Cover
-        raise ValueError('Schema of y_pred not valid. Missing User Col')
+        raise ValueError("Schema of y_pred not valid. Missing User Col")
     if col_item not in rating_pred.columns:
         # pragma : No Cover
-        raise ValueError('Schema of y_pred not valid. Missing Item Col')
+        raise ValueError("Schema of y_pred not valid. Missing Item Col")
     if col_prediction not in rating_pred.columns:
         raise ValueError(
-            'Schema of y_pred not valid. Missing Prediction Col: ' + str(
-                rating_pred.columns))
+            "Schema of y_pred not valid. Missing Prediction Col: "
+            + str(rating_pred.columns)
+        )
 
-    relevant_func = {
-        "top_k": get_top_k_items,
-    }
+    relevant_func = {"top_k": get_top_k_items}
 
-    rating_pred_new = relevant_func[relevancy_method](dataframe=rating_pred,
-                                                      col_user=col_user,
-                                                      col_rating=col_prediction,
-                                                      threshold=threshold) \
-        if relevancy_method == "by_threshold" \
-        else relevant_func[relevancy_method](dataframe=rating_pred,
-                                             col_user=col_user,
-                                             col_rating=col_prediction,
-                                             k=k)
+    rating_pred_new = (
+        relevant_func[relevancy_method](
+            dataframe=rating_pred,
+            col_user=col_user,
+            col_rating=col_prediction,
+            threshold=threshold,
+        )
+        if relevancy_method == "by_threshold"
+        else relevant_func[relevancy_method](
+            dataframe=rating_pred, col_user=col_user, col_rating=col_prediction, k=k
+        )
+    )
 
     common_user_list = list(
-        set(rating_true[col_user]).intersection(set(rating_pred_new[col_user])))
+        set(rating_true[col_user]).intersection(set(rating_pred_new[col_user]))
+    )
 
     # To make sure the prediction and true data frames have the same set of users.
     rating_pred_new = rating_pred_new[rating_pred_new[col_user].isin(common_user_list)]
@@ -204,21 +266,30 @@ def _merge_ranking_true_pred(rating_true, rating_pred, col_user, col_item, col_r
     #  to items) is used
     # to calculate penalized precision of the ordered items.
     df_rating_pred = rating_pred_new.copy()
-    df_rating_pred["ranking"] = rating_pred_new \
-        .groupby(col_user)[col_prediction] \
-        .rank(method="first", ascending=False)
+    df_rating_pred["ranking"] = rating_pred_new.groupby(col_user)[col_prediction].rank(
+        method="first", ascending=False
+    )
 
-    df_hit = \
-        pd.merge(rating_true_new, df_rating_pred, how="inner", on=[col_user, col_item])[[col_user, col_item, "ranking"]]
+    df_hit = pd.merge(
+        rating_true_new, df_rating_pred, how="inner", on=[col_user, col_item]
+    )[[col_user, col_item, "ranking"]]
 
     assert df_hit.shape[0] > 0
 
     return rating_true_new, df_hit, n_users
 
 
-def precision_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-                   col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL, relevancy_method="top_k",
-                   k=DEFAULT_K, threshold=DEFAULT_THRESHOLD):
+def precision_at_k(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+    relevancy_method="top_k",
+    k=DEFAULT_K,
+    threshold=DEFAULT_THRESHOLD,
+):
     """Precision at K.
 
     Note we use the same formula to calculate precision@k as that in Spark.
@@ -240,24 +311,41 @@ def precision_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item
     Returns:
         result (float): precision at k (max=1, min=0)
     """
-    _, df_hit, n_users = _merge_ranking_true_pred(rating_true, rating_pred, col_user, col_item,
-                                                  col_rating, col_prediction, relevancy_method, k,
-                                                  threshold)
+    _, df_hit, n_users = _merge_ranking_true_pred(
+        rating_true,
+        rating_pred,
+        col_user,
+        col_item,
+        col_rating,
+        col_prediction,
+        relevancy_method,
+        k,
+        threshold,
+    )
 
-    df_count_hit = df_hit \
-        .groupby(col_user) \
-        .agg({col_item: "count"}) \
-        .reset_index() \
+    df_count_hit = (
+        df_hit.groupby(col_user)
+        .agg({col_item: "count"})
+        .reset_index()
         .rename(columns={col_item: "hit"}, inplace=False)
+    )
 
     df_count_hit["precision"] = df_count_hit.apply(lambda x: (x.hit / k), axis=1)
 
     return np.float64(df_count_hit.agg({"precision": "sum"})) / n_users
 
 
-def recall_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-                col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL, relevancy_method="top_k",
-                k=DEFAULT_K, threshold=DEFAULT_THRESHOLD):
+def recall_at_k(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+    relevancy_method="top_k",
+    k=DEFAULT_K,
+    threshold=DEFAULT_THRESHOLD,
+):
     """Recall at K.
     Args:
         rating_true (pd.DataFrame): True labels.
@@ -273,21 +361,31 @@ def recall_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DE
         result (float): recall at k (max=1, min=0)
             The maximum value is 1 even when fewer than k items exist for a user in rating_true.
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(rating_true, rating_pred, col_user, col_item,
-                                                                col_rating, col_prediction, relevancy_method, k,
-                                                                threshold)
+    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+        rating_true,
+        rating_pred,
+        col_user,
+        col_item,
+        col_rating,
+        col_prediction,
+        relevancy_method,
+        k,
+        threshold,
+    )
 
-    df_count_hit = df_hit \
-        .groupby(col_user) \
-        .agg({col_item: "count"}) \
-        .reset_index() \
+    df_count_hit = (
+        df_hit.groupby(col_user)
+        .agg({col_item: "count"})
+        .reset_index()
         .rename(columns={col_item: "hit"}, inplace=False)
+    )
 
-    df_count_true = rating_true_new \
-        .groupby(col_user) \
-        .agg({col_item: "count"}) \
-        .reset_index() \
+    df_count_true = (
+        rating_true_new.groupby(col_user)
+        .agg({col_item: "count"})
+        .reset_index()
         .rename(columns={col_item: "actual"}, inplace=False)
+    )
 
     df_count_all = pd.merge(df_count_hit, df_count_true, on=col_user)
 
@@ -296,9 +394,17 @@ def recall_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DE
     return np.float64(df_count_all.agg({"recall": "sum"})) / n_users
 
 
-def ndcg_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-              col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL, relevancy_method="top_k",
-              k=DEFAULT_K, threshold=DEFAULT_THRESHOLD):
+def ndcg_at_k(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+    relevancy_method="top_k",
+    k=DEFAULT_K,
+    threshold=DEFAULT_THRESHOLD,
+):
     """Normalized Discounted Cumulative Gain (nDCG).
     Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain
     Args:
@@ -314,9 +420,17 @@ def ndcg_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFA
     Returns:
         result (float): nDCG (max=1, min=0)
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(rating_true, rating_pred, col_user, col_item,
-                                                                col_rating, col_prediction, relevancy_method, k,
-                                                                threshold)
+    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+        rating_true,
+        rating_pred,
+        col_user,
+        col_item,
+        col_rating,
+        col_prediction,
+        relevancy_method,
+        k,
+        threshold,
+    )
 
     # Calculate gain for hit items.
     df_dcg = df_hit.sort_values([col_user, "ranking"])
@@ -336,13 +450,13 @@ def ndcg_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFA
         return _sum
 
     # Calculate maximum discounted accumulative gain.
-    df_mdcg_sum = rating_true_new \
-        .groupby(col_user) \
-        .agg({col_item: "count"}) \
-        .reset_index() \
+    df_mdcg_sum = (
+        rating_true_new.groupby(col_user)
+        .agg({col_item: "count"})
+        .reset_index()
         .rename(columns={col_item: "actual"}, inplace=False)
-    df_mdcg_sum["mdcg"] = df_mdcg_sum.apply(lambda x: log_sum(min(x.actual, k)),
-                                            axis=1)
+    )
+    df_mdcg_sum["mdcg"] = df_mdcg_sum.apply(lambda x: log_sum(min(x.actual, k)), axis=1)
 
     # DCG over MDCG is the normalized DCG.
     df_ndcg = pd.merge(df_dcg_sum, df_mdcg_sum, on=col_user)
@@ -352,9 +466,17 @@ def ndcg_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFA
     return np.float64(df_ndcg.agg({"ndcg": "sum"})) / n_users
 
 
-def map_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL,
-             col_rating=DEFAULT_RATING_COL, col_prediction=PREDICTION_COL, relevancy_method="top_k",
-             k=DEFAULT_K, threshold=DEFAULT_THRESHOLD):
+def map_at_k(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL,
+    relevancy_method="top_k",
+    k=DEFAULT_K,
+    threshold=DEFAULT_THRESHOLD,
+):
     # pylint: disable=line-too-long
     """
     Get mean average precision at k. A good reference can be found at
@@ -376,9 +498,17 @@ def map_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAU
     Return:
         MAP at k.
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(rating_true, rating_pred, col_user, col_item,
-                                                                col_rating, col_prediction, relevancy_method, k,
-                                                                threshold)
+    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+        rating_true,
+        rating_pred,
+        col_user,
+        col_item,
+        col_rating,
+        col_prediction,
+        relevancy_method,
+        k,
+        threshold,
+    )
 
     # Calculate inverse of rank of items for each user, use the inverse ranks to penalize
     # precision,
@@ -390,11 +520,12 @@ def map_at_k(rating_true, rating_pred, col_user=DEFAULT_USER_COL, col_item=DEFAU
     df_sum_hit = df_hit.groupby(col_user).agg({"precision": "sum"}).reset_index()
 
     # Count of true items for each user.
-    df_count_true = rating_true_new \
-        .groupby(col_user) \
-        .agg({col_item: "count"}) \
-        .reset_index() \
+    df_count_true = (
+        rating_true_new.groupby(col_user)
+        .agg({col_item: "count"})
+        .reset_index()
         .rename(columns={col_item: "actual"}, inplace=False)
+    )
 
     # Calculate proportion of sum of inverse rank over count of true items.
     df_sum_all = pd.merge(df_sum_hit, df_count_true, on=col_user)
@@ -422,8 +553,9 @@ def get_top_k_items(dataframe, col_user="customerID", col_rating="rating", k=10)
     Return:
         Pandas DataFrame of top k items for each user.
     """
-    dataframe[col_rating] = dataframe[col_rating].astype(float)
-    return dataframe \
-        .groupby(col_user, as_index=False) \
-        .apply(lambda x: x.nlargest(k, col_rating)) \
+    dataframe.loc[:, col_rating] = dataframe[col_rating].astype(float)
+    return (
+        dataframe.groupby(col_user, as_index=False)
+        .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index()[dataframe.columns]
+    )
