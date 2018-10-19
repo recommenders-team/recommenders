@@ -35,7 +35,11 @@ from utilities.recommender.sar import (
     THRESHOLD,
 )
 
-logging.basicConfig(level=logging.INFO)
+"""
+enable or set manually with --log=INFO when running example file if you want logging:
+disabling because logging output contaminates stdout output on Databricsk Spark clusters
+"""
+# logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
