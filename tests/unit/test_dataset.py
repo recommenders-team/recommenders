@@ -7,7 +7,7 @@ root = os.path.abspath(
     os.path.join(os.path.dirname(__file__), os.path.pardir, os.path.pardir)
 )
 sys.path.append(root)
-from utilities.dataset.url_utils import maybe_download
+from reco_utils.dataset.url_utils import maybe_download
 
 
 def test_maybe_download():

@@ -15,22 +15,22 @@ from pyspark.sql.functions import col, lit, create_map, sum
 from pyspark.sql.window import Window
 from itertools import chain
 
-from utilities.common.constants import (
+from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     TIMESTAMP_COL,
 )
-from utilities.common.constants import PREDICTION_COL
+from reco_utils.common.constants import PREDICTION_COL
 
-from utilities.recommender.sar import (
+from reco_utils.recommender.sar import (
     SIM_JACCARD,
     SIM_LIFT,
     SIM_COOCCUR,
     HASHED_USERS,
     HASHED_ITEMS,
 )
-from utilities.recommender.sar import (
+from reco_utils.recommender.sar import (
     TIME_DECAY_COEFFICIENT,
     TIME_NOW,
     TIMEDECAY_FORMULA,
