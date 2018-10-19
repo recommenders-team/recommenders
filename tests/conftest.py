@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 import time
 import datetime
+from sklearn.model_selection import train_test_split
 
 try:
     from pyspark.sql import SparkSession
@@ -16,9 +17,6 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         app_name (str): sets name of the application
         url (str): url for spark master
         memory (str): size of memory for spark driver
-    """
-
-    """
     Other Spark settings which you might find useful:
         .config("spark.executor.cores", "4")
         .config("spark.executor.memory", "2g")
@@ -29,7 +27,7 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .config("spark.network.timeout", "10000000s")
         .config("spark.driver.maxResultSize", memory)
     """
-    spark = (
+    return (
         SparkSession.builder.appName(app_name)
         .master(url)
         .config("spark.driver.memory", memory)
@@ -37,7 +35,17 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .getOrCreate()
     )
 
-    return spark
+
+@pytest.fixture(scope="module")
+def sar_settings():
+    return {
+        # absolute tolerance parameter for matrix equivalence in SAR tests
+        "ATOL": 1e-1,
+        # directory of the current file - used to link unit test data
+        "FILE_DIR": "http://recodatasets.blob.core.windows.net/sarunittest/",
+        # user ID used in the test files (they are designed for this user ID, this is part of the test)
+        "TEST_USER_ID": "0003000098E85347",
+    }
 
 
 @pytest.fixture(scope="module")
@@ -52,46 +60,28 @@ def header():
 
 
 @pytest.fixture(scope="module")
-def load_pandas_dummy_dataset(header):
-    """Load sample dataset in pandas for testing; can be used to create a Spark dataframe
-    Returns:
-        single Pandas dataframe
-    """
+def pandas_dummy(header):
     ratings_dict = {
         header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
         header["col_item"]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
         header["col_rating"]: [1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
     }
-    dataframe = pd.DataFrame(ratings_dict)
-
-    return dataframe
+    df = pd.DataFrame(ratings_dict)
+    return df
 
 
 @pytest.fixture(scope="module")
-def load_pandas_dummy_timestamp_dataset(header):
-    """Load sample dataset in pandas for testing; can be used to create a Spark dataframe
-       This method adds an additional column.
-    Returns:
-        single Pandas dataframe
-    """
+def pandas_dummy_timestamp(pandas_dummy, header):
     time = 1535133442
     time_series = [time + 20 * i for i in range(10)]
-    dataframe = load_pandas_dummy_dataset(header)
-    dataframe[header["col_timestamp"]] = time_series
-
-    return dataframe
+    df = pandas_dummy
+    df[header["col_timestamp"]] = time_series
+    return df
 
 
 @pytest.fixture(scope="module")
-def sar_settings():
-    return {
-        # absolute tolerance parameter for matrix equivalence in SAR tests
-        "ATOL": 1e-1,
-        # directory of the current file - used to link unit test data
-        "FILE_DIR": "http://recodatasets.blob.core.windows.net/sarunittest/",
-        # user ID used in the test files (they are designed for this user ID, this is part of the test)
-        "TEST_USER_ID": "0003000098E85347",
-    }
+def train_test_dummy_timestamp(pandas_dummy_timestamp):
+    return train_test_split(pandas_dummy_timestamp, test_size=0.2, random_state=0)
 
 
 @pytest.fixture
