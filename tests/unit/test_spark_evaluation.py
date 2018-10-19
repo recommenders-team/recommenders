@@ -8,7 +8,12 @@ from utilities.evaluation.spark_evaluation import (
     SparkRankingEvaluation,
     SparkRatingEvaluation,
 )
-from utilities.evaluation.python_evaluation import precision_at_k, recall_at_k, ndcg_at_k, map_at_k
+from utilities.evaluation.python_evaluation import (
+    precision_at_k,
+    recall_at_k,
+    ndcg_at_k,
+    map_at_k,
+)
 from utilities.common.spark_utils import start_or_get_spark
 
 
@@ -29,32 +34,42 @@ def target_metrics():
     }
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def python_data():
     """Get Python labels"""
-    rating_true = pd.DataFrame({
-        'userID': [1, 1, 1,
-                   2, 2, 2, 2, 2,
-                   3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        'itemID': [1, 2, 3,
-                   1, 4, 5, 6, 7,
-                   2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
-        'rating': [5, 4, 3,
-                   5, 5, 3, 3, 1,
-                   5, 5, 5, 4, 4, 3, 3, 3, 2, 1]
-    })
-    rating_pred = pd.DataFrame({
-        'userID': [1, 1, 1,
-                   2, 2, 2, 2, 2,
-                   3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        'itemID': [3, 10, 12,
-                   10, 3, 5, 11, 13,
-                   4, 10, 7, 13, 1, 3, 5, 2, 11, 14
-                   ],
-        'prediction': [14, 13, 12,
-                       14, 13, 12, 11, 10,
-                       14, 13, 12, 11, 10, 9, 8, 7, 6, 5]
-    })
+    rating_true = pd.DataFrame(
+        {
+            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+            "itemID": [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
+            "rating": [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
+        }
+    )
+    rating_pred = pd.DataFrame(
+        {
+            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+            "itemID": [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
+            "prediction": [
+                14,
+                13,
+                12,
+                14,
+                13,
+                12,
+                11,
+                10,
+                14,
+                13,
+                12,
+                11,
+                10,
+                9,
+                8,
+                7,
+                6,
+                5,
+            ],
+        }
+    )
     return rating_true, rating_pred
 
 
@@ -214,10 +229,13 @@ def test_spark_python_match(python_data):
     eval_spark1 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
 
     match1 = [
-        recall_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark1.recall_at_k(), TOL),
-        precision_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark1.precision_at_k(), TOL),
-        ndcg_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark1.ndcg_at_k(), TOL),
-        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark1.map_at_k(), TOL)
+        recall_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark1.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark1.precision_at_k(), TOL),
+        ndcg_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark1.ndcg_at_k(), TOL),
+        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark1.map_at_k(), TOL),
     ]
 
     assert all(match1)
@@ -231,10 +249,12 @@ def test_spark_python_match(python_data):
     eval_spark2 = SparkRankingEvaluation(dfs_true, dfs_pred, k=3)
 
     match2 = [
-        recall_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.recall_at_k(), TOL),
-        precision_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.precision_at_k(), TOL),
+        recall_at_k(df_true, df_pred, k=3)
+        == pytest.approx(eval_spark2.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=3)
+        == pytest.approx(eval_spark2.precision_at_k(), TOL),
         ndcg_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.ndcg_at_k(), TOL),
-        map_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.map_at_k(), TOL)
+        map_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.map_at_k(), TOL),
     ]
 
     assert all(match2)
@@ -250,10 +270,13 @@ def test_spark_python_match(python_data):
     eval_spark3 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
 
     match3 = [
-        recall_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark3.recall_at_k(), TOL),
-        precision_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark3.precision_at_k(), TOL),
-        ndcg_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark3.ndcg_at_k(), TOL),
-        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark3.map_at_k(), TOL)
+        recall_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark3.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark3.precision_at_k(), TOL),
+        ndcg_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark3.ndcg_at_k(), TOL),
+        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark3.map_at_k(), TOL),
     ]
 
     assert all(match3)
@@ -270,11 +293,13 @@ def test_spark_python_match(python_data):
     eval_spark4 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
 
     match4 = [
-        recall_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark4.recall_at_k(), TOL),
-        precision_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark4.precision_at_k(), TOL),
-        ndcg_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark4.ndcg_at_k(), TOL),
-        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark4.map_at_k(), TOL)
+        recall_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark4.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark4.precision_at_k(), TOL),
+        ndcg_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark4.ndcg_at_k(), TOL),
+        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark4.map_at_k(), TOL),
     ]
 
     assert all(match4)
-
