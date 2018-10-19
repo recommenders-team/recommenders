@@ -36,7 +36,6 @@ def target_metrics():
 
 @pytest.fixture(scope="module")
 def python_data():
-    """Get Python labels"""
     rating_true = pd.DataFrame(
         {
             "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -75,7 +74,6 @@ def python_data():
 
 @pytest.fixture(scope="module")
 def spark_data(python_data):
-    """Get Python labels"""
     rating_true, rating_pred = python_data
 
     spark = start_or_get_spark("EvaluationTesting", "local")
@@ -95,7 +93,6 @@ def test_init_spark():
 
 @pytest.mark.spark
 def test_init_spark_rating_eval(spark_data):
-    """Test initializer spark"""
     df_true, df_pred = spark_data
 
     evaluator = SparkRatingEvaluation(df_true, df_pred)
@@ -106,7 +103,6 @@ def test_init_spark_rating_eval(spark_data):
 
 @pytest.mark.spark
 def test_spark_rmse(spark_data, target_metrics):
-    """Test Spark evaluator RMSE"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -118,7 +114,6 @@ def test_spark_rmse(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_mae(spark_data, target_metrics):
-    """Test Spark evaluator MAE"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -130,7 +125,6 @@ def test_spark_mae(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_rsquared(spark_data, target_metrics):
-    """Test Spark evaluator rsquared"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -142,7 +136,6 @@ def test_spark_rsquared(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_exp_var(spark_data, target_metrics):
-    """Test Spark evaluator exp_var"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -154,7 +147,6 @@ def test_spark_exp_var(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_recall(spark_data, target_metrics):
-    """Test Spark ranking evaluator recall."""
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred)
@@ -168,7 +160,6 @@ def test_spark_recall(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_precision(spark_data, target_metrics):
-    """Test Spark ranking evaluator precision."""
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
@@ -182,7 +173,6 @@ def test_spark_precision(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_ndcg(spark_data, target_metrics):
-    """Test Spark ranking evaluator ndcg."""
     df_true, df_pred = spark_data
 
     evaluator0 = SparkRankingEvaluation(df_true, df_true, k=10, col_prediction="rating")
@@ -199,7 +189,6 @@ def test_spark_ndcg(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_map(spark_data, target_metrics):
-    """Test Spark ranking evaluator map."""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRankingEvaluation(

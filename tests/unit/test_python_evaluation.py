@@ -34,7 +34,6 @@ def target_metrics():
 
 @pytest.fixture(scope="module")
 def python_data():
-    """Get Python labels"""
     rating_true = pd.DataFrame(
         {
             "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -72,7 +71,6 @@ def python_data():
 
 
 def test_python_rmse(python_data, target_metrics):
-    """Test Python evaluator RMSE"""
     rating_true, rating_pred = python_data
     assert (
         rmse(rating_true=rating_true, rating_pred=rating_true, col_prediction="rating")
@@ -82,7 +80,6 @@ def test_python_rmse(python_data, target_metrics):
 
 
 def test_python_mae(python_data, target_metrics):
-    """Test Python evaluator MAE"""
     rating_true, rating_pred = python_data
     assert (
         mae(rating_true=rating_true, rating_pred=rating_true, col_prediction="rating")
@@ -92,7 +89,6 @@ def test_python_mae(python_data, target_metrics):
 
 
 def test_python_rsquared(python_data, target_metrics):
-    """Test Python evaluator rsquared"""
     rating_true, rating_pred = python_data
 
     assert rsquared(
@@ -103,7 +99,6 @@ def test_python_rsquared(python_data, target_metrics):
 
 
 def test_python_exp_var(python_data, target_metrics):
-    """Test Spark evaluator exp_var"""
     rating_true, rating_pred = python_data
 
     assert exp_var(
@@ -114,7 +109,6 @@ def test_python_exp_var(python_data, target_metrics):
 
 
 def test_python_ndcg_at_k(python_data, target_metrics):
-    """Test Python evaluator NDCG"""
     rating_true, rating_pred = python_data
     assert (
         ndcg_at_k(
@@ -129,7 +123,6 @@ def test_python_ndcg_at_k(python_data, target_metrics):
 
 
 def test_python_map_at_k(python_data, target_metrics):
-    """Test Python evaluator MAP"""
     rating_true, rating_pred = python_data
     assert (
         map_at_k(
@@ -144,7 +137,6 @@ def test_python_map_at_k(python_data, target_metrics):
 
 
 def test_python_precision(python_data, target_metrics):
-    """Test Python evaluator precision"""
     rating_true, rating_pred = python_data
     assert (
         precision_at_k(
@@ -159,7 +151,6 @@ def test_python_precision(python_data, target_metrics):
 
 
 def test_python_recall(python_data, target_metrics):
-    """Test Python evaluator recall"""
     rating_true, rating_pred = python_data
     assert recall_at_k(
         k=10, rating_true=rating_true, rating_pred=rating_true, col_prediction="rating"
@@ -168,7 +159,6 @@ def test_python_recall(python_data, target_metrics):
 
 
 def test_python_errors(python_data):
-    """Test Python evaluator errors."""
     rating_true, rating_pred = python_data
 
     with pytest.raises(ValueError):
