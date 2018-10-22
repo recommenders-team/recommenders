@@ -2,17 +2,16 @@ import os
 import pytest
 import pandas as pd
 import papermill as pm
-
-OUTPUT_NOTEBOOK = "output.ipynb"
+from tests.unit.notebooks_common import (
+    path_notebooks,
+    conda_environment_name,
+    OUTPUT_NOTEBOOK,
+)
 
 
 @pytest.fixture(scope="module")
 def notebooks():
-    folder_notebooks = os.path.abspath(
-        os.path.join(
-            os.path.dirname(__file__), os.path.pardir, os.path.pardir, "notebooks"
-        )
-    )
+    folder_notebooks = path_notebooks()
     paths = {
         "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
@@ -26,7 +25,10 @@ def notebooks():
 def test_template_runs(notebooks):
     notebook_path = notebooks["template"]
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, parameters=dict(pm_version=pm.__version__)
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        parameters=dict(pm_version=pm.__version__),
+        kernel_name=conda_environment_name(),
     )
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
     df = nb.dataframe
