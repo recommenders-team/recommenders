@@ -1,6 +1,7 @@
 import pytest
 import pandas as pd
 import time
+import calendar
 import datetime
 from sklearn.model_selection import train_test_split
 
@@ -40,7 +41,7 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
 def sar_settings():
     return {
         # absolute tolerance parameter for matrix equivalence in SAR tests
-        "ATOL": 1e-1,
+        "ATOL": 1e-8,
         # directory of the current file - used to link unit test data
         "FILE_DIR": "http://recodatasets.blob.core.windows.net/sarunittest/",
         # user ID used in the test files (they are designed for this user ID, this is part of the test)
@@ -100,8 +101,10 @@ def demo_usage_data(header, sar_settings):
 
     # convert timestamp
     data[header["col_timestamp"]] = data[header["col_timestamp"]].apply(
-        lambda s: time.mktime(
-            datetime.datetime.strptime(s, "%Y/%m/%dT%H:%M:%S").timetuple()
+        lambda s: float(
+            calendar.timegm(
+                datetime.datetime.strptime(s, "%Y/%m/%dT%H:%M:%S").timetuple()
+            )
         )
     )
 
