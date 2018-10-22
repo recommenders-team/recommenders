@@ -13,29 +13,35 @@ import pandas as pd
 import logging
 from scipy import sparse
 
-from utilities.common.constants import (
+from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     TIMESTAMP_COL,
 )
-from utilities.common.constants import PREDICTION_COL
+from reco_utils.common.constants import PREDICTION_COL
 
-from utilities.recommender.sar import (
+from reco_utils.recommender.sar import (
     SIM_JACCARD,
     SIM_LIFT,
     SIM_COOCCUR,
     HASHED_USERS,
     HASHED_ITEMS,
-    _user_item_return_type, _predict_column_type)
-from utilities.recommender.sar import (
+    _user_item_return_type,
+    _predict_column_type,
+)
+from reco_utils.recommender.sar import (
     TIME_DECAY_COEFFICIENT,
     TIME_NOW,
     TIMEDECAY_FORMULA,
     THRESHOLD,
 )
 
-logging.basicConfig(level=logging.INFO)
+"""
+enable or set manually with --log=INFO when running example file if you want logging:
+disabling because logging output contaminates stdout output on Databricsk Spark clusters
+"""
+# logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -464,7 +470,7 @@ class SARSingleNodeReference:
                 {
                     self.col_user: _user_item_return_type(),
                     self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type()
+                    PREDICTION_COL: _predict_column_type(),
                 }
             )
         )
@@ -536,4 +542,3 @@ class SARSingleNodeReference:
                 }
             )
         )
-
