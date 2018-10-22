@@ -26,4 +26,3 @@ def notebooks():
 def test_sar_single_node_runs(notebooks):
     notebook_path = notebooks["sar_pyspark"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK)
-

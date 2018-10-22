@@ -1,26 +1,24 @@
 """
 Collection of Splitter Methods
 """
-import pandas as pd
-from sklearn.model_selection import train_test_split as sk_split
+import numpy as np
 
-from utilities.common.constants import (
+from pyspark.sql import Window
+from pyspark.sql.functions import col, row_number, broadcast
+
+from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from utilities.dataset.split_utils import (
-    process_split_ratio,
-    min_rating_filter,
-    split_pandas_data_with_ratios,
-)
+from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filter
 
 
-def python_random_split(data, ratio=0.75, seed=123):
-    """Pandas random splitter
+def spark_random_split(data, ratio=0.75, seed=123):
+    """Spark random splitter
 
     Args:
-        data (pandas.DataFrame): Pandas DataFrame to be split.
+        data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
         it splits data into
         two halfs and the ratio argument indicates the ratio of training data set;
@@ -36,25 +34,24 @@ def python_random_split(data, ratio=0.75, seed=123):
     multi_split, ratio = process_split_ratio(ratio)
 
     if multi_split:
-        splits = split_pandas_data_with_ratios(data, ratio, resample=True, seed=seed)
-        return splits
+        return data.randomSplit(ratio, seed=seed)
     else:
-        return sk_split(data, test_size=None, train_size=ratio, random_state=seed)
+        return data.randomSplit([ratio, 1 - ratio], seed=seed)
 
 
-def python_chrono_split(
-        data,
-        ratio=0.75,
-        min_rating=1,
-        filter_by="user",
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_timestamp=DEFAULT_TIMESTAMP_COL,
+def spark_chrono_split(
+    data,
+    ratio=0.75,
+    min_rating=1,
+    filter_by="user",
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_timestamp=DEFAULT_TIMESTAMP_COL,
 ):
-    """Pandas chronological splitter
+    """Spark chronological splitter
 
     Args:
-        data (pandas.DataFrame): Pandas DataFrame to be split.
+        data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
         it splits data into
         two halfs and the ratio argument indicates the ratio of training data set;
@@ -84,13 +81,6 @@ def python_chrono_split(
 
     split_by_column = col_user if filter_by == "user" else col_item
 
-    # Sort data by timestamp.
-    data = data.sort_values(
-        by=[split_by_column, col_timestamp], axis=0, ascending=False
-    )
-
-    ratio = ratio if multi_split else [ratio, 1 - ratio]
-
     if min_rating > 1:
         data = min_rating_filter(
             data,
@@ -100,14 +90,31 @@ def python_chrono_split(
             col_item=col_item,
         )
 
-    num_of_splits = len(ratio)
-    splits = [pd.DataFrame({})] * num_of_splits
-    df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
-    for name, group in df_grouped:
-        group_splits = split_pandas_data_with_ratios(
-            df_grouped.get_group(name), ratio, resample=False
-        )
-        for x in range(num_of_splits):
-            splits[x] = pd.concat([splits[x], group_splits[x]])
+    ratio = ratio if multi_split else [ratio, 1 - ratio]
+    ratio_index = np.cumsum(ratio)
+
+    window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp).desc())
+
+    rating_grouped = (
+        data.groupBy(split_by_column)
+        .agg({col_timestamp: "count"})
+        .withColumnRenamed("count(" + col_timestamp + ")", "count")
+    )
+    rating_all = data.join(broadcast(rating_grouped), on=split_by_column)
+
+    rating_rank = rating_all.withColumn(
+        "rank", row_number().over(window_spec) / col("count")
+    )
+
+    splits = []
+    for i, _ in enumerate(ratio_index):
+        if i == 0:
+            rating_split = rating_rank.filter(col("rank") <= ratio_index[i])
+        else:
+            rating_split = rating_rank.filter(
+                (col("rank") <= ratio_index[i]) & (col("rank") > ratio_index[i - 1])
+            )
+
+        splits.append(rating_split)
 
     return splits
