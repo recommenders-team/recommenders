@@ -1,10 +1,10 @@
-package com.microsoft
+package com.microsoft.sar
 
 import org.apache.hadoop.mapreduce.TaskAttemptContext
 
 import org.apache.spark.sql.execution.datasources.{OutputWriter, OutputWriterFactory}
 import org.apache.spark.sql.types._
-
+import java.io.File
 
 class SARCacheOutputWriterFactory(schema: StructType) extends OutputWriterFactory {
 
@@ -16,6 +16,8 @@ class SARCacheOutputWriterFactory(schema: StructType) extends OutputWriterFactor
       path: String,
       dataSchema: StructType,
       context: TaskAttemptContext): OutputWriter = {
-    new SARCacheOutputWriter(path, context, schema)
+    // new File(path).getParentFile.mkdirs
+
+    return new SARCacheOutputWriter(path, context, schema)
   }
 }

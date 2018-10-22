@@ -8,5 +8,6 @@ val sparkVersion = "2.3.0"
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % sparkVersion,
-  "org.apache.spark" %% "spark-sql" % sparkVersion
+  "org.apache.spark" %% "spark-sql" % sparkVersion,
+  "com.google.guava" % "guava" % "25.0-jre"
 )

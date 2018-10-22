@@ -1,4 +1,4 @@
-package com.microsoft
+package com.microsoft.sar
 
 import org.apache.spark.sql.sources.DataSourceRegister
 import org.apache.spark.sql.SparkSession
