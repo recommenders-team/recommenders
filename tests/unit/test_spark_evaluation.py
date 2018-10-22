@@ -4,12 +4,12 @@ Test Spark evaluation
 import pandas as pd
 import pytest
 
-from utilities.evaluation.spark_evaluation import (
+from reco_utils.evaluation.spark_evaluation import (
     SparkRankingEvaluation,
     SparkRatingEvaluation,
 )
-from utilities.evaluation.python_evaluation import PythonRankingEvaluation
-from utilities.common.spark_utils import start_or_get_spark
+from reco_utils.evaluation.python_evaluation import PythonRankingEvaluation
+from reco_utils.common.spark_utils import start_or_get_spark
 
 
 TOL = 0.0001
@@ -29,32 +29,42 @@ def target_metrics():
     }
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def python_data():
     """Get Python labels"""
-    rating_true = pd.DataFrame({
-        'userID': [1, 1, 1,
-                   2, 2, 2, 2, 2,
-                   3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        'itemID': [1, 2, 3,
-                   1, 4, 5, 6, 7,
-                   2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
-        'rating': [5, 4, 3,
-                   5, 5, 3, 3, 1,
-                   5, 5, 5, 4, 4, 3, 3, 3, 2, 1]
-    })
-    rating_pred = pd.DataFrame({
-        'userID': [1, 1, 1,
-                   2, 2, 2, 2, 2,
-                   3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-        'itemID': [3, 10, 12,
-                   10, 3, 5, 11, 13,
-                   4, 10, 7, 13, 1, 3, 5, 2, 11, 14
-                   ],
-        'prediction': [14, 13, 12,
-                       14, 13, 12, 11, 10,
-                       14, 13, 12, 11, 10, 9, 8, 7, 6, 5]
-    })
+    rating_true = pd.DataFrame(
+        {
+            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+            "itemID": [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
+            "rating": [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
+        }
+    )
+    rating_pred = pd.DataFrame(
+        {
+            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+            "itemID": [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
+            "prediction": [
+                14,
+                13,
+                12,
+                14,
+                13,
+                12,
+                11,
+                10,
+                14,
+                13,
+                12,
+                11,
+                10,
+                9,
+                8,
+                7,
+                6,
+                5,
+            ],
+        }
+    )
     return rating_true, rating_pred
 
 
@@ -217,9 +227,10 @@ def test_spark_python_match(python_data):
 
     match1 = [
         eval_python1.recall_at_k() == pytest.approx(eval_spark1.recall_at_k(), TOL),
-        eval_python1.precision_at_k() == pytest.approx(eval_spark1.precision_at_k(), TOL),
+        eval_python1.precision_at_k()
+        == pytest.approx(eval_spark1.precision_at_k(), TOL),
         eval_python1.ndcg_at_k() == pytest.approx(eval_spark1.ndcg_at_k(), TOL),
-        eval_python1.map_at_k() == pytest.approx(eval_spark1.map_at_k(), TOL)
+        eval_python1.map_at_k() == pytest.approx(eval_spark1.map_at_k(), TOL),
     ]
 
     assert all(match1)
@@ -236,9 +247,10 @@ def test_spark_python_match(python_data):
 
     match2 = [
         eval_python2.recall_at_k() == pytest.approx(eval_spark2.recall_at_k(), TOL),
-        eval_python2.precision_at_k() == pytest.approx(eval_spark2.precision_at_k(), TOL),
+        eval_python2.precision_at_k()
+        == pytest.approx(eval_spark2.precision_at_k(), TOL),
         eval_python2.ndcg_at_k() == pytest.approx(eval_spark2.ndcg_at_k(), TOL),
-        eval_python2.map_at_k() == pytest.approx(eval_spark2.map_at_k(), TOL)
+        eval_python2.map_at_k() == pytest.approx(eval_spark2.map_at_k(), TOL),
     ]
 
     assert all(match2)
@@ -257,9 +269,10 @@ def test_spark_python_match(python_data):
 
     match3 = [
         eval_python3.recall_at_k() == pytest.approx(eval_spark3.recall_at_k(), TOL),
-        eval_python3.precision_at_k() == pytest.approx(eval_spark3.precision_at_k(), TOL),
+        eval_python3.precision_at_k()
+        == pytest.approx(eval_spark3.precision_at_k(), TOL),
         eval_python3.ndcg_at_k() == pytest.approx(eval_spark3.ndcg_at_k(), TOL),
-        eval_python3.map_at_k() == pytest.approx(eval_spark3.map_at_k(), TOL)
+        eval_python3.map_at_k() == pytest.approx(eval_spark3.map_at_k(), TOL),
     ]
 
     assert all(match3)
@@ -279,10 +292,10 @@ def test_spark_python_match(python_data):
 
     match4 = [
         eval_python4.recall_at_k() == pytest.approx(eval_spark4.recall_at_k(), TOL),
-        eval_python4.precision_at_k() == pytest.approx(eval_spark4.precision_at_k(), TOL),
+        eval_python4.precision_at_k()
+        == pytest.approx(eval_spark4.precision_at_k(), TOL),
         eval_python4.ndcg_at_k() == pytest.approx(eval_spark4.ndcg_at_k(), TOL),
-        eval_python4.map_at_k() == pytest.approx(eval_spark4.map_at_k(), TOL)
+        eval_python4.map_at_k() == pytest.approx(eval_spark4.map_at_k(), TOL),
     ]
 
     assert all(match4)
-
