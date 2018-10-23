@@ -19,6 +19,7 @@ def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
 
     # recommender will execute a fit method here
     model = SARpySparkReference(spark, **header)
+    # test running indexer
     _index_and_fit(spark, model, demo_usage_data_spark, header)
 
     assert model is not None
@@ -34,7 +35,6 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     # recommender will execute a fit method here
     model = SARpySparkReference(spark, **header)
     data_indexed = _index_and_fit(spark, model, demo_usage_data_spark, header)
-
     top_k_spark = model.recommend_k_items(data_indexed, top_k=10)
     top_k = top_k_spark.toPandas()
 
