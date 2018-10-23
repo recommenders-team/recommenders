@@ -6,7 +6,7 @@ from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.sql import Window, DataFrame
 from pyspark.sql.functions import col, row_number, expr
 
-from utilities.common.constants import (
+from reco_utils.common.constants import (
     PREDICTION_COL,
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -16,6 +16,7 @@ from utilities.common.constants import (
 
 class SparkRatingEvaluation:
     """Spark Rating Evaluator"""
+
     def __init__(
         self,
         rating_true,

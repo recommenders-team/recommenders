@@ -3,12 +3,12 @@ import numpy as np
 from itertools import product
 import pytest
 
-from utilities.dataset.split_utils import (
+from reco_utils.dataset.split_utils import (
     min_rating_filter,
     split_pandas_data_with_ratios,
 )
-from utilities.dataset.python_splitters import python_chrono_split, python_random_split
-from utilities.common.constants import (
+from reco_utils.dataset.python_splitters import python_chrono_split, python_random_split
+from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -228,4 +228,3 @@ def test_chrono_splitter(test_specs, python_dataset):
         all_later.append(user_later_1)
         all_later.append(user_later_2)
     assert all(all_later)
-

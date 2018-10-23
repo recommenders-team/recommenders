@@ -4,17 +4,17 @@ Test Spark evaluation
 import pandas as pd
 import pytest
 
-from utilities.evaluation.spark_evaluation import (
+from reco_utils.evaluation.spark_evaluation import (
     SparkRankingEvaluation,
     SparkRatingEvaluation,
 )
-from utilities.evaluation.python_evaluation import (
+from reco_utils.evaluation.python_evaluation import (
     precision_at_k,
     recall_at_k,
     ndcg_at_k,
     map_at_k,
 )
-from utilities.common.spark_utils import start_or_get_spark
+from reco_utils.common.spark_utils import start_or_get_spark
 
 
 TOL = 0.0001
