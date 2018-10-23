@@ -3,15 +3,16 @@ import numpy as np
 import pandas as pd
 from reco_utils.recommender.sar.sar_pyspark import SARpySparkReference
 from reco_utils.common.constants import PREDICTION_COL
-from tests.unit.sar_common import (
-    read_matrix,
-    load_userpred,
-    load_affinity,
-    _rearrange_to_test_sql,
-    _index_and_fit,
-)
+from tests.unit.sar_common import read_matrix, load_userpred, load_affinity, _rearrange_to_test_sql, _index_and_fit
 from tests.unit.sar_common import demo_usage_data_spark
 
+@pytest.fixture
+def demo_usage_data_spark(spark, demo_usage_data, header):
+    data_local = demo_usage_data[[x[1] for x in header.items()]]
+    # TODO: install pyArrow in DS VM
+    # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
+    data = spark.createDataFrame(data_local)
+    return data
 
 @pytest.mark.spark
 def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
@@ -25,7 +26,6 @@ def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
     assert hasattr(model, "set_index")
     assert hasattr(model, "fit")
     assert hasattr(model, "recommend_k_items")
-
 
 @pytest.mark.spark
 def test_recommend_top_k(header, spark, demo_usage_data_spark):
@@ -44,7 +44,6 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     assert top_k[header["col_item"]].dtype == object
     assert top_k[PREDICTION_COL].dtype == float
     # TODO: add validation of the topk result
-
 
 # Tests 1-6
 @pytest.mark.spark
