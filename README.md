@@ -6,7 +6,7 @@
 
 # Microsoft Recommenders
 
-Work in progress.
+Work in progress. 
 
 
 ## Setup
