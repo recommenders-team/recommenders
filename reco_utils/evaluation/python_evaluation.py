@@ -91,7 +91,7 @@ def rmse(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
     Returns:
-        Root mean squared error.
+        Root mean squared error (float).
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -120,7 +120,7 @@ def mae(
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
     Returns:
-        Mean Absolute Error
+        Mean Absolute Error (float)
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -147,7 +147,7 @@ def rsquared(
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
     Returns:
-        R squared
+        R squared (float <= 1)
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -174,7 +174,7 @@ def exp_var(
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
     Returns:
-        Explained variance
+        Explained variance (float <= 1)
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -496,7 +496,7 @@ def map_at_k(
         k (int): number of top k items per user.
         threshold (float): threshold of top items per user (optional).
     Return:
-        MAP at k.
+        MAP at k (float in [0, 1])
     """
     rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
         rating_true,
