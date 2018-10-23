@@ -1,10 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from utilities.common.constants import (
-    DEFAULT_ITEM_COL,
-    DEFAULT_USER_COL,
-)
+from reco_utils.common.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
 
 def process_split_ratio(ratio):

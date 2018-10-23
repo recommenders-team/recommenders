@@ -4,7 +4,7 @@ Test evaluation
 import pandas as pd
 import pytest
 
-from utilities.evaluation.python_evaluation import (
+from reco_utils.evaluation.python_evaluation import (
     rmse,
     mae,
     rsquared,

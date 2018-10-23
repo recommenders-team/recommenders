@@ -6,29 +6,31 @@ import numpy as np
 from itertools import product
 import pytest
 
-from utilities.dataset.split_utils import min_rating_filter
-from utilities.dataset.spark_splitters import spark_chrono_split, spark_random_split
-from utilities.common.constants import (
+from reco_utils.dataset.split_utils import min_rating_filter
+from reco_utils.dataset.spark_splitters import spark_chrono_split, spark_random_split
+from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from utilities.common.spark_utils import start_or_get_spark
+from reco_utils.common.spark_utils import start_or_get_spark
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def test_specs():
-    return {'number_of_rows': 1000,
-            'user_ids': [1, 2, 3, 4, 5],
-            'seed': 1234,
-            "ratio": 0.6,
-            'ratios': [0.2, 0.3, 0.5],
-            'tolerance': 0.05,
-            'spark_randomsplit_tolerance': 0.1}
+    return {
+        "number_of_rows": 1000,
+        "user_ids": [1, 2, 3, 4, 5],
+        "seed": 1234,
+        "ratio": 0.6,
+        "ratios": [0.2, 0.3, 0.5],
+        "tolerance": 0.05,
+        "spark_randomsplit_tolerance": 0.1,
+    }
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def python_data(test_specs):
     """Get Python labels"""
 
@@ -46,17 +48,27 @@ def python_data(test_specs):
 
         return random_dates
 
-    rating = pd.DataFrame({
-        DEFAULT_USER_COL: np.random.random_integers(1, 5, test_specs['number_of_rows']),
-        DEFAULT_ITEM_COL: np.random.random_integers(1, 15, test_specs['number_of_rows']),
-        DEFAULT_RATING_COL: np.random.random_integers(1, 5, test_specs['number_of_rows']),
-        DEFAULT_TIMESTAMP_COL: random_date_generator('2018-01-01', test_specs['number_of_rows'])
-    })
+    rating = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: np.random.random_integers(
+                1, 5, test_specs["number_of_rows"]
+            ),
+            DEFAULT_ITEM_COL: np.random.random_integers(
+                1, 15, test_specs["number_of_rows"]
+            ),
+            DEFAULT_RATING_COL: np.random.random_integers(
+                1, 5, test_specs["number_of_rows"]
+            ),
+            DEFAULT_TIMESTAMP_COL: random_date_generator(
+                "2018-01-01", test_specs["number_of_rows"]
+            ),
+        }
+    )
 
     return rating
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def spark_dataset(python_data):
     """Get Python labels"""
     rating = python_data
@@ -72,11 +84,8 @@ def test_min_rating_filter(spark_dataset):
     """
     dfs_rating = spark_dataset
 
-    dfs_user = min_rating_filter(dfs_rating, min_rating=5,
-                                 filter_by="user")
-    dfs_item = min_rating_filter(dfs_rating, min_rating=5,
-                                 filter_by="item")
-
+    dfs_user = min_rating_filter(dfs_rating, min_rating=5, filter_by="user")
+    dfs_item = min_rating_filter(dfs_rating, min_rating=5, filter_by="item")
 
     user_rating_counts = [
         x["count"] >= 5 for x in dfs_user.groupBy(DEFAULT_USER_COL).count().collect()
@@ -101,26 +110,29 @@ def test_random_splitter(test_specs, spark_dataset):
     df_rating = spark_dataset
 
     splits = spark_random_split(
-        df_rating,
-        ratio=test_specs['ratio'],
-        seed=test_specs['seed'])
+        df_rating, ratio=test_specs["ratio"], seed=test_specs["seed"]
+    )
 
-    assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratio'], test_specs["spark_randomsplit_tolerance"])
-    assert splits[1].count() / test_specs['number_of_rows'] == pytest.approx(
-        1 - test_specs['ratio'], test_specs["spark_randomsplit_tolerance"])
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratio"], test_specs["spark_randomsplit_tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        1 - test_specs["ratio"], test_specs["spark_randomsplit_tolerance"]
+    )
 
     splits = spark_random_split(
-        df_rating,
-        ratio=test_specs['ratios'],
-        seed=test_specs['seed'])
+        df_rating, ratio=test_specs["ratios"], seed=test_specs["seed"]
+    )
 
-    assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratios'][0], test_specs["spark_randomsplit_tolerance"])
-    assert splits[1].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratios'][1], test_specs["spark_randomsplit_tolerance"])
-    assert splits[2].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratios'][2], test_specs["spark_randomsplit_tolerance"])
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][0], test_specs["spark_randomsplit_tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][1], test_specs["spark_randomsplit_tolerance"]
+    )
+    assert splits[2].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][2], test_specs["spark_randomsplit_tolerance"]
+    )
 
 
 @pytest.mark.spark
@@ -129,19 +141,23 @@ def test_chrono_splitter(test_specs, spark_dataset):
     dfs_rating = spark_dataset
 
     splits = spark_chrono_split(
-        dfs_rating,
-        ratio=test_specs['ratio'],
-        filter_by="user",
-        min_rating=10)
+        dfs_rating, ratio=test_specs["ratio"], filter_by="user", min_rating=10
+    )
 
-    assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratio'], test_specs["tolerance"])
-    assert splits[1].count() / test_specs['number_of_rows'] == pytest.approx(
-        1 - test_specs['ratio'], test_specs["tolerance"])
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratio"], test_specs["tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        1 - test_specs["ratio"], test_specs["tolerance"]
+    )
 
     # Test if both contains the same user list. This is because chrono split is stratified.
-    users_train = splits[0].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
-    users_test = splits[1].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
+    users_train = (
+        splits[0].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
+    )
+    users_test = (
+        splits[1].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
+    )
 
     assert set(users_train) == set(users_test)
 
@@ -152,23 +168,31 @@ def test_chrono_splitter(test_specs, spark_dataset):
         dfs_test = splits[1][splits[1][DEFAULT_USER_COL] == user]
 
         p = product(
-            [x[DEFAULT_TIMESTAMP_COL] for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()],
-            [x[DEFAULT_TIMESTAMP_COL] for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()])
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+        )
         user_later = [a <= b for (a, b) in p]
 
         all_later.append(user_later)
     assert all(all_later)
 
-    splits = spark_chrono_split(
-        dfs_rating,
-        ratio=test_specs['ratios'])
+    splits = spark_chrono_split(dfs_rating, ratio=test_specs["ratios"])
 
-    assert splits[0].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratios'][0], test_specs["tolerance"])
-    assert splits[1].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratios'][1], test_specs["tolerance"])
-    assert splits[2].count() / test_specs['number_of_rows'] == pytest.approx(
-        test_specs['ratios'][2], test_specs["tolerance"])
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][0], test_specs["tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][1], test_specs["tolerance"]
+    )
+    assert splits[2].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][2], test_specs["tolerance"]
+    )
 
     # Test if timestamps are correctly split. This is for multi-split case.
     all_later = []
@@ -178,11 +202,25 @@ def test_chrono_splitter(test_specs, spark_dataset):
         dfs_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
 
         p1 = product(
-            [x[DEFAULT_TIMESTAMP_COL] for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()],
-            [x[DEFAULT_TIMESTAMP_COL] for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()])
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+        )
         p2 = product(
-            [x[DEFAULT_TIMESTAMP_COL] for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()],
-            [x[DEFAULT_TIMESTAMP_COL] for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()])
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+        )
 
         user_later_1 = [a <= b for (a, b) in p1]
         user_later_2 = [a <= b for (a, b) in p2]
