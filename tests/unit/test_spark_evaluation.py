@@ -14,7 +14,6 @@ from reco_utils.evaluation.python_evaluation import (
     ndcg_at_k,
     map_at_k,
 )
-from reco_utils.common.spark_utils import start_or_get_spark
 
 
 TOL = 0.0001
@@ -73,10 +72,8 @@ def python_data():
 
 
 @pytest.fixture(scope="module")
-def spark_data(python_data):
+def spark_data(python_data, spark):
     rating_true, rating_pred = python_data
-
-    spark = start_or_get_spark("EvaluationTesting", "local")
 
     df_true = spark.createDataFrame(rating_true)
     df_pred = spark.createDataFrame(rating_pred)
@@ -85,9 +82,7 @@ def spark_data(python_data):
 
 
 @pytest.mark.spark
-def test_init_spark():
-    spark = start_or_get_spark("EvaluationTesting", "local")
-
+def test_init_spark(spark):
     assert spark is not None
 
 
@@ -206,12 +201,11 @@ def test_spark_map(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_spark_python_match(python_data):
+def test_spark_python_match(python_data, spark):
     # Test on the original data with k = 10.
 
     df_true, df_pred = python_data
 
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
@@ -231,7 +225,6 @@ def test_spark_python_match(python_data):
 
     # Test on the original data with k = 3.
 
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
@@ -252,7 +245,6 @@ def test_spark_python_match(python_data):
 
     df_pred = df_pred[1:-1]
 
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
@@ -275,7 +267,6 @@ def test_spark_python_match(python_data):
     df_pred = df_pred[df_pred["userID"] == 3]
     df_true = df_true[df_true["userID"] == 3]
 
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
