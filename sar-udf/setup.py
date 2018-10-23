@@ -21,7 +21,7 @@ def readme():
 
 setup(
     name="pysar",
-    version="0.1",
+    version="0.4",
     description="SAR prediction for use with PySpark",
     long_description=readme(),
     url="https://github.com/Microsoft/Recommenders",
@@ -49,6 +49,7 @@ setup(
             include_dirs=[get_pybind_include(), get_pybind_include(user=True)],
             extra_compile_args=sysconfig.get_config_var("CFLAGS").split()
             + ["-std=c++11", "-Wall", "-Wextra"],
+	    libraries=['stdc++'],
             language="c++11",
         )
     ],
