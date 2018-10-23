@@ -16,7 +16,7 @@ class SARCacheOutputWriterFactory(schema: StructType) extends OutputWriterFactor
       path: String,
       dataSchema: StructType,
       context: TaskAttemptContext): OutputWriter = {
-    // new File(path).getParentFile.mkdirs
+    new File(path).getParentFile.mkdirs
 
     return new SARCacheOutputWriter(path, context, schema)
   }

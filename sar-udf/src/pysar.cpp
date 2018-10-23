@@ -14,6 +14,8 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include <iostream>
+
 namespace py = pybind11;
 
 class MemoryMapFile {
@@ -69,17 +71,24 @@ struct item_score
 };
 
 class SARModel {
-    MemoryMapFile _offsets_memory_map;
-    MemoryMapFile _related_memory_map;
+    // MemoryMapFile _offsets_memory_map;
+    // MemoryMapFile _related_memory_map;
+    MemoryMapFile _memory_map;
 
     int64_t* _offsets;
     item_score* _related;
 
 public:
-    SARModel(std::string& offsets_path, std::string& related_path)
-        : _offsets_memory_map(offsets_path), _related_memory_map(related_path) { 
-        _offsets = (int64_t*)_offsets_memory_map.addr();
-        _related = (item_score*)_related_memory_map.addr();
+    SARModel(std::string& path)
+        : _memory_map(path) { 
+        _offsets = (int64_t*)_memory_map.addr();
+
+        int64_t rows = *_offsets;
+
+        // skip # num row field
+        _offsets++;
+
+        _related = (item_score*)(_offsets + rows);
     }
 
     std::vector<item_score> predict(std::vector<int32_t>& items_of_user, std::vector<float>& ratings, int32_t top_k) {
@@ -194,7 +203,7 @@ PYBIND11_MODULE(pysar_cpp, m) {
 
     py::class_<SARModel> model(m, "SARModelCpp");
 
-    model.def(py::init([](std::string offsets_path, std::string related_path)
-                       { return new SARModel(offsets_path, related_path); }))
+    model.def(py::init([](std::string path)
+                       { return new SARModel(path); }))
          .def("predict", &SARModel::predict);
 }
