@@ -29,8 +29,12 @@ def _merge_rating_true_pred(
 ):
     """Join truth and prediction data frames on userID and itemID
     Args:
-        rating_true (pd.DataFrame): True labels.
-        rating_pred (pd.DataFrame): Predicted labels.
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
     Returns:
         Merged pd.DataFrame
     """
@@ -85,11 +89,12 @@ def rmse(
 ):
     """Calculate Root Mean Squared Error
         Args:
-        rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted labels. There should be no duplicate (userID, itemID) pairs.
+        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
+        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
     Returns:
         Root mean squared error (float).
     """
@@ -113,8 +118,8 @@ def mae(
 ):
     """Calculate Mean Absolute Error.
     Args:
-        rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted labels. There should be no duplicate (userID, itemID) pairs.
+        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
+        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
@@ -140,8 +145,8 @@ def rsquared(
 ):
     """Calculate R squared
     Args:
-        rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted labels. There should be no duplicate (userID, itemID) pairs.
+        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
+        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
@@ -167,8 +172,8 @@ def exp_var(
 ):
     """Calculate explained variance.
     Args:
-        rating_true (pd.DataFrame): True labels. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted labels. There should be no duplicate (userID, itemID) pairs.
+        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
+        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
@@ -202,13 +207,14 @@ def _merge_ranking_true_pred(
 ):
     """Filter truth and prediction data frames on common users
     Args:
-        rating_true (pd.DataFrame): True labels.
-        rating_pred (pd.DataFrame): Predicted labels.
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
     Returns:
-        new data frame of true labels
+        new data frame of true data
         data frame of recommendation hits
         number of common users
     """
@@ -299,8 +305,8 @@ def precision_at_k(
     user in rating_pred is less than k.
 
     Args:
-        rating_true (pd.DataFrame): True labels.
-        rating_pred (pd.DataFrame): Predicted labels.
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
@@ -348,8 +354,8 @@ def recall_at_k(
 ):
     """Recall at K.
     Args:
-        rating_true (pd.DataFrame): True labels.
-        rating_pred (pd.DataFrame): Predicted labels.
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
@@ -408,8 +414,8 @@ def ndcg_at_k(
     """Normalized Discounted Cumulative Gain (nDCG).
     Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain
     Args:
-        rating_true (pd.DataFrame): True labels.
-        rating_pred (pd.DataFrame): Predicted labels.
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
@@ -486,8 +492,8 @@ def map_at_k(
     the prediction items.
 
     Args:
-        rating_true (pd.DataFrame): True labels.
-        rating_pred (pd.DataFrame): Predicted labels.
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
