@@ -1,6 +1,7 @@
 import os
 
 OUTPUT_NOTEBOOK = "output.ipynb"
+KERNEL_NAME = "python3"
 
 
 def path_notebooks():
@@ -11,7 +12,3 @@ def path_notebooks():
         )
     )
 
-
-def conda_environment_name():
-    """Returns the current conda environment name"""
-    return os.environ["CONDA_DEFAULT_ENV"]
