@@ -44,9 +44,27 @@ disabling because logging output contaminates stdout output on Databricsk Spark 
 # logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+# define Python user-defined exceptions
+class Error(Exception):
+   """Base class for other exceptions"""
+   pass
+
+class ThresholdValueTooSmallError(Error):
+   """Raised when the threshold input value is too small"""
+   pass
 
 class SARSQLReference:
-    """SAR reference implementation"""
+    """SAR SQL reference implementation.
+
+    This class implements SQL operations on Spark (Spark-SQL) which demonstrate that SAR can also be implemented on
+    a SQL database - we actually think that a distributed columnar SQL DB is the best platform for SAR.
+
+    Example:
+        After defining spark context as "spark" we can instantiate model with default parameters as
+            $ model = SARSQLReference(spark)
+
+
+    """
 
     def __init__(
         self,
@@ -99,7 +117,8 @@ class SARSQLReference:
         self.affinity = None
 
         # threshold - items below this number get set to zero in coocurrence counts
-        assert self.threshold > 0
+        if self.threshold < 0:
+            raise ThresholdValueTooSmallError("negative value detected")
 
         # more columns which are used internally
         self._col_hashed_items = HASHED_ITEMS
@@ -361,8 +380,8 @@ class SARSQLReference:
         """Recommend top K items for all users which are in the test set.
 
         Args:
-            test: indexed test Spark dataframe
-            top_k: top n items to return
+            test (pyspark.Dataframe): Indexed test Spark dataframe.
+            top_k (int): top n items to return
             output_pandas: specify whether to convert the output dataframe to Pandas.
             **kwargs:
         """
