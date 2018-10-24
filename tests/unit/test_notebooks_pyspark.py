@@ -18,6 +18,10 @@ def notebooks():
         "sar_deep_dive": os.path.join(
             folder_notebooks, "02_modeling", "sar_deep_dive.ipynb"
         ),
+        "als_deep_dive": os.path.join(
+            folder_notebooks, "02_modeling", "als_deep_dive.ipynb"
+        ),
+        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }
     return paths
 
@@ -40,4 +44,18 @@ def test_data_split_runs(notebooks):
 @pytest.mark.spark
 def test_sar_deep_dive_runs(notebooks):
     notebook_path = notebooks["sar_deep_dive"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+
+
+@pytest.mark.notebooks
+@pytest.mark.spark
+def test_als_deep_dive_runs(notebooks):
+    notebook_path = notebooks["als_deep_dive"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+
+
+@pytest.mark.notebooks
+@pytest.mark.spark
+def test_evaluation_runs(notebooks):
+    notebook_path = notebooks["evaluation"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
