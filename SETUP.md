@@ -58,7 +58,7 @@ export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
 export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
 ```
 
-This will export the variables every time we do `source activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/activate.d/env_vars.sh` and add:
+This will export the variables every time we do `source activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/deactivate.d/env_vars.sh` and add:
 
 ```bash
 #!/bin/sh
