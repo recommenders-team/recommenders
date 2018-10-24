@@ -8,8 +8,12 @@ from reco_utils.evaluation.spark_evaluation import (
     SparkRankingEvaluation,
     SparkRatingEvaluation,
 )
-from reco_utils.evaluation.python_evaluation import PythonRankingEvaluation
-from reco_utils.common.spark_utils import start_or_get_spark
+from reco_utils.evaluation.python_evaluation import (
+    precision_at_k,
+    recall_at_k,
+    ndcg_at_k,
+    map_at_k,
+)
 
 
 TOL = 0.0001
@@ -31,7 +35,6 @@ def target_metrics():
 
 @pytest.fixture(scope="module")
 def python_data():
-    """Get Python labels"""
     rating_true = pd.DataFrame(
         {
             "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -69,11 +72,8 @@ def python_data():
 
 
 @pytest.fixture(scope="module")
-def spark_data(python_data):
-    """Get Python labels"""
+def spark_data(python_data, spark):
     rating_true, rating_pred = python_data
-
-    spark = start_or_get_spark("EvaluationTesting", "local")
 
     df_true = spark.createDataFrame(rating_true)
     df_pred = spark.createDataFrame(rating_pred)
@@ -82,15 +82,12 @@ def spark_data(python_data):
 
 
 @pytest.mark.spark
-def test_init_spark():
-    spark = start_or_get_spark("EvaluationTesting", "local")
-
+def test_init_spark(spark):
     assert spark is not None
 
 
 @pytest.mark.spark
 def test_init_spark_rating_eval(spark_data):
-    """Test initializer spark"""
     df_true, df_pred = spark_data
 
     evaluator = SparkRatingEvaluation(df_true, df_pred)
@@ -101,7 +98,6 @@ def test_init_spark_rating_eval(spark_data):
 
 @pytest.mark.spark
 def test_spark_rmse(spark_data, target_metrics):
-    """Test Spark evaluator RMSE"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -113,7 +109,6 @@ def test_spark_rmse(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_mae(spark_data, target_metrics):
-    """Test Spark evaluator MAE"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -125,7 +120,6 @@ def test_spark_mae(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_rsquared(spark_data, target_metrics):
-    """Test Spark evaluator rsquared"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -137,7 +131,6 @@ def test_spark_rsquared(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_exp_var(spark_data, target_metrics):
-    """Test Spark evaluator exp_var"""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
@@ -149,7 +142,6 @@ def test_spark_exp_var(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_recall(spark_data, target_metrics):
-    """Test Spark ranking evaluator recall."""
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred)
@@ -163,7 +155,6 @@ def test_spark_recall(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_precision(spark_data, target_metrics):
-    """Test Spark ranking evaluator precision."""
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
@@ -177,7 +168,6 @@ def test_spark_precision(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_ndcg(spark_data, target_metrics):
-    """Test Spark ranking evaluator ndcg."""
     df_true, df_pred = spark_data
 
     evaluator0 = SparkRankingEvaluation(df_true, df_true, k=10, col_prediction="rating")
@@ -194,7 +184,6 @@ def test_spark_ndcg(spark_data, target_metrics):
 
 @pytest.mark.spark
 def test_spark_map(spark_data, target_metrics):
-    """Test Spark ranking evaluator map."""
     df_true, df_pred = spark_data
 
     evaluator1 = SparkRankingEvaluation(
@@ -212,45 +201,42 @@ def test_spark_map(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_spark_python_match(python_data):
+def test_spark_python_match(python_data, spark):
     # Test on the original data with k = 10.
 
     df_true, df_pred = python_data
 
-    eval_python1 = PythonRankingEvaluation(df_true, df_pred, k=10)
-
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
     eval_spark1 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
 
     match1 = [
-        eval_python1.recall_at_k() == pytest.approx(eval_spark1.recall_at_k(), TOL),
-        eval_python1.precision_at_k()
+        recall_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark1.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=10)
         == pytest.approx(eval_spark1.precision_at_k(), TOL),
-        eval_python1.ndcg_at_k() == pytest.approx(eval_spark1.ndcg_at_k(), TOL),
-        eval_python1.map_at_k() == pytest.approx(eval_spark1.map_at_k(), TOL),
+        ndcg_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark1.ndcg_at_k(), TOL),
+        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark1.map_at_k(), TOL),
     ]
 
     assert all(match1)
 
     # Test on the original data with k = 3.
 
-    eval_python2 = PythonRankingEvaluation(df_true, df_pred, k=3)
-
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
     eval_spark2 = SparkRankingEvaluation(dfs_true, dfs_pred, k=3)
 
     match2 = [
-        eval_python2.recall_at_k() == pytest.approx(eval_spark2.recall_at_k(), TOL),
-        eval_python2.precision_at_k()
+        recall_at_k(df_true, df_pred, k=3)
+        == pytest.approx(eval_spark2.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=3)
         == pytest.approx(eval_spark2.precision_at_k(), TOL),
-        eval_python2.ndcg_at_k() == pytest.approx(eval_spark2.ndcg_at_k(), TOL),
-        eval_python2.map_at_k() == pytest.approx(eval_spark2.map_at_k(), TOL),
+        ndcg_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.ndcg_at_k(), TOL),
+        map_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.map_at_k(), TOL),
     ]
 
     assert all(match2)
@@ -259,20 +245,19 @@ def test_spark_python_match(python_data):
 
     df_pred = df_pred[1:-1]
 
-    eval_python3 = PythonRankingEvaluation(df_true, df_pred, k=10)
-
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
     eval_spark3 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
 
     match3 = [
-        eval_python3.recall_at_k() == pytest.approx(eval_spark3.recall_at_k(), TOL),
-        eval_python3.precision_at_k()
+        recall_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark3.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=10)
         == pytest.approx(eval_spark3.precision_at_k(), TOL),
-        eval_python3.ndcg_at_k() == pytest.approx(eval_spark3.ndcg_at_k(), TOL),
-        eval_python3.map_at_k() == pytest.approx(eval_spark3.map_at_k(), TOL),
+        ndcg_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark3.ndcg_at_k(), TOL),
+        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark3.map_at_k(), TOL),
     ]
 
     assert all(match3)
@@ -282,20 +267,19 @@ def test_spark_python_match(python_data):
     df_pred = df_pred[df_pred["userID"] == 3]
     df_true = df_true[df_true["userID"] == 3]
 
-    eval_python4 = PythonRankingEvaluation(df_true, df_pred, k=10)
-
-    spark = start_or_get_spark()
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
     eval_spark4 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
 
     match4 = [
-        eval_python4.recall_at_k() == pytest.approx(eval_spark4.recall_at_k(), TOL),
-        eval_python4.precision_at_k()
+        recall_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark4.recall_at_k(), TOL),
+        precision_at_k(df_true, df_pred, k=10)
         == pytest.approx(eval_spark4.precision_at_k(), TOL),
-        eval_python4.ndcg_at_k() == pytest.approx(eval_spark4.ndcg_at_k(), TOL),
-        eval_python4.map_at_k() == pytest.approx(eval_spark4.map_at_k(), TOL),
+        ndcg_at_k(df_true, df_pred, k=10)
+        == pytest.approx(eval_spark4.ndcg_at_k(), TOL),
+        map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark4.map_at_k(), TOL),
     ]
 
     assert all(match4)
