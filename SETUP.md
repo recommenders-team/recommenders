@@ -11,8 +11,8 @@ We have three different environments for our algorithms:
 
 - [Anaconda Python 3.6](https://conda.io/miniconda.html)
 - The library dependencies are generated depending on the environment we choose and can be found in this [script](scripts/generate_conda_file.sh).
-- Machine with GPU (optional)
-- Machine with Spark (optional)
+- Machine with GPU (optional).
+- Machine with Spark (optional).
 
 ## Conda environments
 
