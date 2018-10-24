@@ -6,7 +6,11 @@
 
 # Microsoft Recommenders
 
-This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learning to illustrate four key tasks: 1) preparing and loading data for each recommender algorithm, 2) using different algorithms such as SAR, ALS, xDeepFFM, etc., for building recommender models, 3) evaluating algorithms with offline metrics, and 4) operationalizing models in a production environment. The examples work across Python + cpu, Python + gpu, and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements. 
+This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learning to illustrate four key tasks: 
+1. Preparing and loading data for each recommender algorithm. 
+2. Using different algorithms such as SAR, ALS, xDeepFFM, etc., for building recommender models. 
+3. Evaluating algorithms with offline metrics. 
+4. Operationalizing models in a production environment. The examples work across Python + cpu, Python + gpu, and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements. 
 
 Several utilities are provided in [reco_utils](/reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in Spark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications. 
 
