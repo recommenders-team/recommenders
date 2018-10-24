@@ -3,15 +3,13 @@ import numpy as np
 import pandas as pd
 from reco_utils.recommender.sar.sar_pyspark import SARpySparkReference
 from reco_utils.common.constants import PREDICTION_COL
-from tests.unit.sar_common import (
+from tests.sar_common import (
     read_matrix,
     load_userpred,
     load_affinity,
-    _rearrange_to_test_sql,
-    _index_and_fit,
+    rearrange_to_test_sql,
+    index_and_fit,
 )
-from tests.unit.sar_common import demo_usage_data_spark
-
 
 @pytest.mark.spark
 def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
@@ -20,7 +18,7 @@ def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
     # recommender will execute a fit method here
     model = SARpySparkReference(spark, **header)
     # test running indexer
-    _index_and_fit(spark, model, demo_usage_data_spark, header)
+    index_and_fit(spark, model, demo_usage_data_spark, header)
 
     assert model is not None
     assert hasattr(model, "set_index")
@@ -34,7 +32,7 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
 
     # recommender will execute a fit method here
     model = SARpySparkReference(spark, **header)
-    data_indexed = _index_and_fit(spark, model, demo_usage_data_spark, header)
+    data_indexed = index_and_fit(spark, model, demo_usage_data_spark, header)
     top_k_spark = model.recommend_k_items(data_indexed, top_k=10)
     top_k = top_k_spark.toPandas()
 
@@ -43,8 +41,6 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     assert top_k[header["col_user"]].dtype == object
     assert top_k[header["col_item"]].dtype == object
     assert top_k[PREDICTION_COL].dtype == float
-    # TODO: add validation of the topk result
-
 
 # Tests 1-6
 @pytest.mark.spark
@@ -66,13 +62,13 @@ def test_sar_item_similarity(
     model = SARpySparkReference(
         spark, similarity_type=similarity_type, threshold=threshold, **header
     )
-    _index_and_fit(spark, model, demo_usage_data_spark, header)
+    index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_item_similarity, row_ids, col_ids = read_matrix(
         sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
-    test_item_similarity = _rearrange_to_test_sql(
+    test_item_similarity = rearrange_to_test_sql(
         model.get_item_similarity_as_matrix(),
         row_ids,
         col_ids,
@@ -106,14 +102,14 @@ def test_user_affinity(sar_settings, header, spark, demo_usage_data_spark):
         time_decay_coefficient=30,
         **header,
     )
-    _index_and_fit(spark, model, demo_usage_data_spark, header)
+    index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
 
     tester_affinity = model.get_user_affinity_as_vector(sar_settings["TEST_USER_ID"])
 
     test_user_affinity = np.reshape(
-        _rearrange_to_test_sql(tester_affinity, None, items, None, model.item_map_dict),
+        rearrange_to_test_sql(tester_affinity, None, items, None, model.item_map_dict),
         -1,
     )
     assert np.allclose(
@@ -144,7 +140,7 @@ def test_userpred(
         threshold=threshold,
         **header,
     )
-    data_indexed = _index_and_fit(spark, model, demo_usage_data_spark, header)
+    data_indexed = index_and_fit(spark, model, demo_usage_data_spark, header)
 
     true_items, true_scores = load_userpred(
         sar_settings["FILE_DIR"]

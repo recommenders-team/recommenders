@@ -3,14 +3,13 @@ import numpy as np
 import pandas as pd
 from reco_utils.recommender.sar.sar_sql import SARSQLReference
 from reco_utils.common.constants import PREDICTION_COL
-from tests.unit.sar_common import (
+from tests.sar_common import (
     read_matrix,
     load_userpred,
     load_affinity,
-    _rearrange_to_test_sql,
-    _index_and_fit_sql,
+    rearrange_to_test_sql
 )
-from tests.unit.sar_common import demo_usage_data_spark
+from tests.conftest import _index_and_fit_sql
 
 # convenient way to invoke SAR with different parameters on different datasets
 # TODO: pytest class fixtures are not yet supported as of this release
@@ -93,8 +92,6 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     assert top_k[header["col_user"]].dtype == object
     assert top_k[header["col_item"]].dtype == object
     assert top_k[PREDICTION_COL].dtype == float
-    # TODO: add validation of the topk result
-
 
 # Tests 1-6
 @pytest.mark.spark
@@ -125,7 +122,7 @@ def test_sar_item_similarity(
         sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
-    test_item_similarity = _rearrange_to_test_sql(
+    test_item_similarity = rearrange_to_test_sql(
         model.get_item_similarity_as_matrix(),
         row_ids,
         col_ids,
@@ -166,7 +163,7 @@ def test_user_affinity(sar_settings, header, spark, demo_usage_data_spark):
     tester_affinity = model.get_user_affinity_as_vector(sar_settings["TEST_USER_ID"])
 
     test_user_affinity = np.reshape(
-        _rearrange_to_test_sql(tester_affinity, None, items, None, model.item_map_dict),
+        rearrange_to_test_sql(tester_affinity, None, items, None, model.item_map_dict),
         -1,
     )
     assert np.allclose(
