@@ -11,8 +11,8 @@ We have three different environments for our algorithms:
 
 - [Anaconda Python 3.6](https://conda.io/miniconda.html)
 - The library dependencies are generated depending on the environment we choose and can be found in this [script](scripts/generate_conda_file.sh).
-- Machine with GPU (optional)
-- Machine with Spark (optional)
+- Machine with GPU (optional).
+- Machine with Spark (optional).
 
 ## Conda environments
 
@@ -46,7 +46,7 @@ To install the PySpark environment, which by default installs the CPU environmen
 
     cd Recommenders
     ./scripts/generate_conda_file.sh --pyspark
-    conda env create -n reco_pyspark -f conda_gpu.yaml
+    conda env create -n reco_pyspark -f conda_spark.yaml
 
 For this environment, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable. 
 
@@ -58,7 +58,7 @@ export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
 export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
 ```
 
-This will export the variables every time we do `source activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/activate.d/env_vars.sh` and add:
+This will export the variables every time we do `source activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/deactivate.d/env_vars.sh` and add:
 
 ```bash
 #!/bin/sh
