@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 import pandas as pd
 try:
-    from reco_utils.recommender.sar.sar_pyspark import SARpySparkReference
+    from reco_utils.recommender.sar.sar_sql import SARSQLReference
 except ModuleNotFoundError:
     pass  # skip this import if we are in pure python environment
 
@@ -12,7 +12,7 @@ from tests.sar_common import (
     load_userpred,
     load_affinity,
     rearrange_to_test_sql,
-    index_and_fit,
+    index_and_fit_sql,
 )
 
 
@@ -20,10 +20,8 @@ from tests.sar_common import (
 def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
     """Test algorithm initialization"""
 
-    # recommender will execute a fit method here
-    model = SARpySparkReference(spark, **header)
-    # test running indexer
-    index_and_fit(spark, model, demo_usage_data_spark, header)
+    model = SARSQLReference(spark, **header)
+    index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     assert model is not None
     assert hasattr(model, "set_index")
@@ -36,12 +34,15 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     """Test algo recommend top-k"""
 
     # recommender will execute a fit method here
-    model = SARpySparkReference(spark, **header)
-    data_indexed = index_and_fit(spark, model, demo_usage_data_spark, header)
+    model = SARSQLReference(spark, **header)
+    data_indexed = index_and_fit_sql(spark, model, demo_usage_data_spark, header)
+
     top_k_spark = model.recommend_k_items(data_indexed, top_k=10)
     top_k = top_k_spark.toPandas()
 
-    assert 23410 == len(top_k)
+    # in SQL implementation we output zero scores for some users and items, so the user-item count is different to the
+    # pure pySpark SQL implementation
+    assert 23429 == len(top_k)
     assert isinstance(top_k, pd.DataFrame)
     assert top_k[header["col_user"]].dtype == object
     assert top_k[header["col_item"]].dtype == object
@@ -65,10 +66,13 @@ def test_sar_item_similarity(
     threshold, similarity_type, file, demo_usage_data_spark, header, spark, sar_settings
 ):
 
-    model = SARpySparkReference(
-        spark, similarity_type=similarity_type, threshold=threshold, **header
+    model = SARSQLReference(
+        spark,
+        similarity_type=similarity_type,
+        threshold=threshold,
+        **header
     )
-    index_and_fit(spark, model, demo_usage_data_spark, header)
+    index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     true_item_similarity, row_ids, col_ids = read_matrix(
         sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
@@ -100,15 +104,15 @@ def test_sar_item_similarity(
 @pytest.mark.spark
 def test_user_affinity(sar_settings, header, spark, demo_usage_data_spark):
     # time_now None should trigger max value computation from Data
-    model = SARpySparkReference(
+    model = SARSQLReference(
         spark,
         similarity_type="cooccurrence",
         timedecay_formula=True,
         time_now=None,
         time_decay_coefficient=30,
-        **header,
+        **header
     )
-    index_and_fit(spark, model, demo_usage_data_spark, header)
+    index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
 
@@ -134,9 +138,8 @@ def test_user_affinity(sar_settings, header, spark, demo_usage_data_spark):
 def test_userpred(
     threshold, similarity_type, file, header, spark, demo_usage_data_spark, sar_settings
 ):
-
     # time_now None should trigger max value computation from Data
-    model = SARpySparkReference(
+    model = SARSQLReference(
         spark,
         remove_seen=True,
         similarity_type=similarity_type,
@@ -144,9 +147,9 @@ def test_userpred(
         time_now=None,
         time_decay_coefficient=30,
         threshold=threshold,
-        **header,
+        **header
     )
-    data_indexed = index_and_fit(spark, model, demo_usage_data_spark, header)
+    data_indexed = index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     true_items, true_scores = load_userpred(
         sar_settings["FILE_DIR"]
