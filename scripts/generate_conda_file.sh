@@ -90,6 +90,7 @@ ${pyspark}- pyspark==2.3.1
   - pandas>=0.22.0
   - scipy>=1.0.0
   - azure-storage>=0.36.0
+  - matplotlib>=3.0.0
   - tffm==1.0.1
   - pytest==3.6.4
   - papermill>=0.15.0
