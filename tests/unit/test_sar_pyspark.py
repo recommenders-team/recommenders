@@ -11,6 +11,7 @@ from tests.sar_common import (
     index_and_fit,
 )
 
+
 @pytest.mark.spark
 def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
     """Test algorithm initialization"""
@@ -41,6 +42,7 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     assert top_k[header["col_user"]].dtype == object
     assert top_k[header["col_item"]].dtype == object
     assert top_k[PREDICTION_COL].dtype == float
+
 
 # Tests 1-6
 @pytest.mark.spark
