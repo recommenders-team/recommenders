@@ -7,66 +7,17 @@ from tests.sar_common import (
     read_matrix,
     load_userpred,
     load_affinity,
-    rearrange_to_test_sql
+    rearrange_to_test_sql,
+    index_and_fit_sql,
 )
-from tests.conftest import _index_and_fit_sql
-
-# convenient way to invoke SAR with different parameters on different datasets
-# TODO: pytest class fixtures are not yet supported as of this release
-# @pytest.fixture
-class setup_SARSQL:
-    def __init__(
-        self,
-        spark,
-        data,
-        remove_seen=True,
-        similarity_type="jaccard",
-        timedecay_formula=False,
-        time_decay_coefficient=30,
-        time_now=None,
-        **header,
-    ):
-
-        self.data = data
-        model = SARSQLReference(
-            spark,
-            remove_seen=remove_seen,
-            similarity_type=similarity_type,
-            timedecay_formula=timedecay_formula,
-            time_decay_coefficient=time_decay_coefficient,
-            time_now=time_now,
-            **header,
-        )
-
-        data_indexed, unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item = _index_and_fit_sql(
-            spark, data, header
-        )
-
-        # we need to index the train and test sets for SAR matrix operations to work
-        model.set_index(
-            unique_users,
-            unique_items,
-            user_map_dict,
-            item_map_dict,
-            index2user,
-            index2item,
-        )
-        model.fit(data_indexed)
-
-        self.model = model
-        self.data_indexed = data_indexed
-        self.user_map_dict = user_map_dict
-        self.item_map_dict = item_map_dict
 
 
 @pytest.mark.spark
 def test_initializaton_and_fit(header, spark, demo_usage_data_spark):
     """Test algorithm initialization"""
 
-    # recommender will execute a fit method here
-    model = SARSQLReference(spark, demo_usage_data_spark, **header)
-    # test running indexer
-    _index_and_fit_sql(spark, demo_usage_data_spark, header)
+    model = SARSQLReference(spark, **header)
+    index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     assert model is not None
     assert hasattr(model, "set_index")
@@ -79,10 +30,10 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     """Test algo recommend top-k"""
 
     # recommender will execute a fit method here
-    algo = setup_SARSQL(spark, demo_usage_data_spark, **header)
-    model = algo.model
+    model = SARSQLReference(spark, **header)
+    data_indexed = index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
-    top_k_spark = model.recommend_k_items(algo.data_indexed, top_k=10)
+    top_k_spark = model.recommend_k_items(data_indexed, top_k=10)
     top_k = top_k_spark.toPandas()
 
     # in SQL implementation we output zero scores for some users and items, so the user-item count is different to the
@@ -92,6 +43,7 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
     assert top_k[header["col_user"]].dtype == object
     assert top_k[header["col_item"]].dtype == object
     assert top_k[PREDICTION_COL].dtype == float
+
 
 # Tests 1-6
 @pytest.mark.spark
@@ -109,14 +61,14 @@ def test_recommend_top_k(header, spark, demo_usage_data_spark):
 def test_sar_item_similarity(
     threshold, similarity_type, file, demo_usage_data_spark, header, spark, sar_settings
 ):
-    algo = setup_SARSQL(
+
+    model = SARSQLReference(
         spark,
-        demo_usage_data_spark,
         similarity_type=similarity_type,
         threshold=threshold,
-        **header,
+        **header
     )
-    model = algo.model
+    index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     true_item_similarity, row_ids, col_ids = read_matrix(
         sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
@@ -143,20 +95,20 @@ def test_sar_item_similarity(
             atol=sar_settings["ATOL"],
         )
 
+
 # Test 7
 @pytest.mark.spark
 def test_user_affinity(sar_settings, header, spark, demo_usage_data_spark):
     # time_now None should trigger max value computation from Data
-    algo = setup_SARSQL(
+    model = SARSQLReference(
         spark,
-        demo_usage_data_spark,
         similarity_type="cooccurrence",
         timedecay_formula=True,
         time_now=None,
         time_decay_coefficient=30,
-        **header,
+        **header
     )
-    model = algo.model
+    index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
 
@@ -183,18 +135,17 @@ def test_userpred(
     threshold, similarity_type, file, header, spark, demo_usage_data_spark, sar_settings
 ):
     # time_now None should trigger max value computation from Data
-    algo = setup_SARSQL(
+    model = SARSQLReference(
         spark,
-        demo_usage_data_spark,
         remove_seen=True,
         similarity_type=similarity_type,
         timedecay_formula=True,
         time_now=None,
         time_decay_coefficient=30,
         threshold=threshold,
-        **header,
+        **header
     )
-    model = algo.model
+    data_indexed = index_and_fit_sql(spark, model, demo_usage_data_spark, header)
 
     true_items, true_scores = load_userpred(
         sar_settings["FILE_DIR"]
@@ -204,7 +155,7 @@ def test_userpred(
         + "_userid_only.csv"
     )
 
-    algo.data_indexed.createOrReplaceTempView("data_indexed")
+    data_indexed.createOrReplaceTempView("data_indexed")
     test_data = spark.sql(
         "select * from data_indexed where row_id = %d"
         % model.user_map_dict[sar_settings["TEST_USER_ID"]]
