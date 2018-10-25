@@ -1,7 +1,11 @@
 import pytest
 import numpy as np
 import pandas as pd
-from reco_utils.recommender.sar.sar_sql import SARSQLReference
+try:
+    from reco_utils.recommender.sar.sar_sql import SARSQLReference
+except ModuleNotFoundError:
+    pass  # skip this import if we are in pure python environment
+
 from reco_utils.common.constants import PREDICTION_COL
 from tests.sar_common import (
     read_matrix,
