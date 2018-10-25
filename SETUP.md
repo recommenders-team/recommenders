@@ -46,7 +46,7 @@ To install the PySpark environment, which by default installs the CPU environmen
 
     cd Recommenders
     ./scripts/generate_conda_file.sh --pyspark
-    conda env create -n reco_pyspark -f conda_gpu.yaml
+    conda env create -n reco_pyspark -f conda_spark.yaml
 
 For this environment, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable. 
 
