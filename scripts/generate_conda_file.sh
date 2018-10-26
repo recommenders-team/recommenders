@@ -86,6 +86,7 @@ ${pyspark}- pyspark==2.3.1
 - scikit-learn==0.19.1
 - jupyter>=1.0.0
 - fastparquet>=0.1.6
+- seaborn==0.8.1
 - pip:
   - pandas>=0.22.0
   - scipy>=1.0.0
