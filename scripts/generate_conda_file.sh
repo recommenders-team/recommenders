@@ -86,12 +86,12 @@ ${pyspark}- pyspark==2.3.1
 - scikit-learn==0.19.1
 - jupyter>=1.0.0
 - fastparquet>=0.1.6
-- seaborn==0.8.1
 - pip:
   - pandas>=0.22.0
   - scipy>=1.0.0
   - azure-storage>=0.36.0
-  - matplotlib>=3.0.0
+  - matplotlib==2.2.2
+  - seaborn==0.8.1
   - tffm==1.0.1
   - pytest==3.6.4
   - papermill>=0.15.0
