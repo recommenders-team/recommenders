@@ -89,11 +89,9 @@ def test_init_spark(spark):
 @pytest.mark.spark
 def test_init_spark_rating_eval(spark_data):
     df_true, df_pred = spark_data
-
     evaluator = SparkRatingEvaluation(df_true, df_pred)
 
     assert evaluator is not None
-    assert evaluator.get_available_metrics() is not None
 
 
 @pytest.mark.spark

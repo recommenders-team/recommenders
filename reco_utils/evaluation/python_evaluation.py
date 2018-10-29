@@ -1,6 +1,3 @@
-"""
-PythonEvaluation
-"""
 import numpy as np
 import pandas as pd
 from sklearn.metrics import (
@@ -19,15 +16,12 @@ from reco_utils.common.constants import (
     DEFAULT_THRESHOLD,
 )
 
-"""
-Evaluation of rating metrics, based on scikit-learn
-"""
-
 
 def _merge_rating_true_pred(
     rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
 ):
     """Join truth and prediction data frames on userID and itemID
+    
     Args:
         rating_true (pd.DataFrame): True data.
         rating_pred (pd.DataFrame): Predicted data.
@@ -35,8 +29,9 @@ def _merge_rating_true_pred(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
+
     Returns:
-        Merged pd.DataFrame
+        pd.DataFrame: Merged pd.DataFrame
     """
 
     if col_user not in rating_true.columns:
@@ -88,15 +83,17 @@ def rmse(
     col_prediction=PREDICTION_COL,
 ):
     """Calculate Root Mean Squared Error
-        Args:
+
+    Args:
         rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
         rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
         col_user (str): column name for user.
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
+    
     Returns:
-        Root mean squared error (float).
+        float: Root mean squared error.
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -117,6 +114,7 @@ def mae(
     col_prediction=PREDICTION_COL,
 ):
     """Calculate Mean Absolute Error.
+
     Args:
         rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
         rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
@@ -124,8 +122,9 @@ def mae(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
+
     Returns:
-        Mean Absolute Error (float)
+        float: Mean Absolute Error.
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -144,6 +143,7 @@ def rsquared(
     col_prediction=PREDICTION_COL,
 ):
     """Calculate R squared
+
     Args:
         rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
         rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
@@ -151,8 +151,9 @@ def rsquared(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
+    
     Returns:
-        R squared (float <= 1)
+        float: R squared (min=0, max=1).
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -171,6 +172,7 @@ def exp_var(
     col_prediction=PREDICTION_COL,
 ):
     """Calculate explained variance.
+
     Args:
         rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
         rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
@@ -178,8 +180,9 @@ def exp_var(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
+
     Returns:
-        Explained variance (float <= 1)
+        float: Explained variance (min=0, max=1).
     """
     rating_true_pred = _merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -187,11 +190,6 @@ def exp_var(
     return explained_variance_score(
         rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
     )
-
-
-"""
-Evaluation of ranking metrics.
-"""
 
 
 def _merge_ranking_true_pred(
@@ -206,6 +204,7 @@ def _merge_ranking_true_pred(
     threshold=DEFAULT_THRESHOLD,
 ):
     """Filter truth and prediction data frames on common users
+
     Args:
         rating_true (pd.DataFrame): True data.
         rating_pred (pd.DataFrame): Predicted data.
@@ -213,10 +212,10 @@ def _merge_ranking_true_pred(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
+
     Returns:
-        new data frame of true data
-        data frame of recommendation hits
-        number of common users
+        pd.DataFrame: new data frame of true data DataFrame of recommendation hits
+            number of common users
     """
 
     if col_user not in rating_true.columns:
@@ -298,7 +297,8 @@ def precision_at_k(
 ):
     """Precision at K.
 
-    Note we use the same formula to calculate precision@k as that in Spark.
+    Note:
+    We use the same formula to calculate precision@k as that in Spark.
     More details can be found at
     http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
     In particular, the maximum achievable precision may be < 1, if the number of items for a
@@ -314,8 +314,9 @@ def precision_at_k(
         relevancy_method (str): method for getting the most relevant items.
         k (int): number of top k items per user.
         threshold (float): threshold of top items per user (optional).
+    
     Returns:
-        result (float): precision at k (max=1, min=0)
+        float: precision at k (min=0, max=1)
     """
     _, df_hit, n_users = _merge_ranking_true_pred(
         rating_true,
@@ -353,6 +354,7 @@ def recall_at_k(
     threshold=DEFAULT_THRESHOLD,
 ):
     """Recall at K.
+
     Args:
         rating_true (pd.DataFrame): True data.
         rating_pred (pd.DataFrame): Predicted data.
@@ -363,9 +365,10 @@ def recall_at_k(
         relevancy_method (str): method for getting the most relevant items.
         k (int): number of top k items per user.
         threshold (float): threshold of top items per user (optional).
+    
     Returns:
-        result (float): recall at k (max=1, min=0)
-            The maximum value is 1 even when fewer than k items exist for a user in rating_true.
+        float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than 
+            k items exist for a user in rating_true.
     """
     rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
         rating_true,
@@ -412,7 +415,9 @@ def ndcg_at_k(
     threshold=DEFAULT_THRESHOLD,
 ):
     """Normalized Discounted Cumulative Gain (nDCG).
+    
     Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain
+    
     Args:
         rating_true (pd.DataFrame): True data.
         rating_pred (pd.DataFrame): Predicted data.
@@ -423,8 +428,9 @@ def ndcg_at_k(
         relevancy_method (str): method for getting the most relevant items.
         k (int): number of top k items per user.
         threshold (float): threshold of top items per user (optional).
+    
     Returns:
-        result (float): nDCG (max=1, min=0)
+        float: nDCG at k (min=0, max=1).
     """
     rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
         rating_true,
@@ -483,12 +489,11 @@ def map_at_k(
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
 ):
-    # pylint: disable=line-too-long
     """
     Get mean average precision at k. A good reference can be found at
     https://people.cs.umass.edu/~jpjiang/cs646/03_eval_basics.pdf
 
-    NOTE the MAP is at k because the evaluation class takes top k items for
+    NOTE: The MAP is at k because the evaluation class takes top k items for
     the prediction items.
 
     Args:
@@ -501,8 +506,9 @@ def map_at_k(
         relevancy_method (str): method for getting the most relevant items.
         k (int): number of top k items per user.
         threshold (float): threshold of top items per user (optional).
+    
     Return:
-        MAP at k (float in [0, 1])
+        float: MAP at k (min=0, max=1).
     """
     rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
         rating_true,
@@ -557,7 +563,7 @@ def get_top_k_items(dataframe, col_user="customerID", col_rating="rating", k=10)
         k (int): number of items for each user.
 
     Return:
-        Pandas DataFrame of top k items for each user.
+        pd.DataFrame: DataFrame of top k items for each user.
     """
     dataframe.loc[:, col_rating] = dataframe[col_rating].astype(float)
     return (
