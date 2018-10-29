@@ -35,26 +35,23 @@ def min_rating_filter(
     col_item=DEFAULT_ITEM_COL,
 ):
     """Filter rating DataFrame for each user with minimum rating.
-
     Filter rating data frame with minimum number of ratings for user/item is usually useful to
-    generate a
-    new data frame with warm user/item. The warmth is defined by min_rating argument. For
-    example, a user is
-    called warm if he has rated at least 4 items.
+    generate a new data frame with warm user/item. The warmth is defined by min_rating argument. For
+    example, a user is called warm if he has rated at least 4 items.
 
     Args:
-        data (spark.DataFrame or pandas.DataFrame): Spark data frame or Pandas data frame of
-        user-item tuples. Columns of user and item should be
-        present in the data frame while other columns like rating, timestamp, etc. can be optional.
+        data (spark.DataFrame or pandas.DataFrame): Spark DataFrame or Pandas DataFrame of
+            user-item tuples. Columns of user and item should be present in the data 
+            frame while other columns like rating, timestamp, etc. can be optional.
         min_rating (int): minimum number of ratings for user or item.
-        filter_by (str): either "user" or "item", depending on which of the two is to filter with
-        min_rating.
+        filter_by (str): either "user" or "item", depending on which of the two is to 
+            filter with min_rating.
         col_user (str): column name of user ID.
         col_item (str): column name of item ID.
 
     Returns:
-        Spark DataFrame with at least columns of user and item that has been filtered by the
-        given specifications.
+        spark.DataFrame: DataFrame with at least columns of user and item that has been 
+            filtered by the given specifications.
     """
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
@@ -106,13 +103,13 @@ def split_pandas_data_with_ratios(data, ratios, seed=1234, resample=False):
         -validation-and-test
 
     Args:
-        data (pandas.DataFrame): Pandas data frame to be split.
+        data (pd.DataFrame): Pandas data frame to be split.
         ratios (list of floats): list of ratios for split.
         seed (int): random seed.
         resample (bool): whether data will be resampled when being split.
 
     Returns:
-        List of data frames which are split by the given specifications.
+        list: List of pd.DataFrame splitted by the given specifications.
     """
     split_index = np.cumsum(ratios).tolist()[:-1]
 
