@@ -1,4 +1,3 @@
-
 # Default column names
 DEFAULT_USER_COL = "userID"
 DEFAULT_ITEM_COL = "itemID"
