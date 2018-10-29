@@ -13,9 +13,9 @@ from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
-    TIMESTAMP_COL,
+    DEFAULT_TIMESTAMP_COL,
+    PREDICTION_COL,
 )
-from reco_utils.common.constants import PREDICTION_COL
 
 from reco_utils.recommender.sar import (
     SIM_JACCARD,
@@ -50,7 +50,7 @@ class SARSingleNodeReference:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_timestamp=TIMESTAMP_COL,
+        col_timestamp=DEFAULT_TIMESTAMP_COL,
         similarity_type=SIM_JACCARD,
         time_decay_coefficient=TIME_DECAY_COEFFICIENT,
         time_now=TIME_NOW,

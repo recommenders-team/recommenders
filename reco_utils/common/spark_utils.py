@@ -8,6 +8,7 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G"):
         app_name (str): Set name of the application
         url (str): URL for spark master.
         memory (str): Size of memory for spark driver.
+        
     Returns:
         obj: Spark context.
     """
