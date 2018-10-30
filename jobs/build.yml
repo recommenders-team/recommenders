@@ -26,7 +26,7 @@ jobs:
       createCustomEnvironment: true
       environmentName: Recommender
       packageSpecs: 'python=3'
-      createOptions: '-f conda_bare.yml'
+      createOptions: '--file conda_bare.yml'
       updateConda: true
 
   - script: |
