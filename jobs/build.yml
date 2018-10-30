@@ -14,20 +14,20 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
 
-  - script: |
-      ./scripts/generate_conda_file.sh
-      pwd
-      echo $(Build.Repository.LocalPath)
-      ls -l 
-    displayName: 'Create conda environment.yml'
-
   - task: CondaEnvironment@1
     inputs:
       createCustomEnvironment: true
       environmentName: Recommender
       packageSpecs: 'python=3'
-      createOptions: '--file $(Build.Repository.LocalPath)/conda_bare.yml'
       updateConda: true
+
+  - script: |
+      ./scripts/generate_conda_file.sh
+      pwd
+      echo $(Build.Repository.LocalPath)
+      ls -l 
+      conda install -f conda_bare.yml
+    displayName: 'Install conda dependencies'
 
   - script: |
       cd tests/unit
