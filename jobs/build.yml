@@ -27,6 +27,7 @@ jobs:
     displayName: 'Install conda dependencies'
 
   - script: |
+      pip install pytest
       cd tests/unit
       pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
     displayName: 'Unit Tests'
