@@ -30,7 +30,7 @@ jobs:
       ls -l /usr/envs/Recommender/bin
 
       which conda
-
+      which pip 
       pip install -U pytest
  
       cd tests/unit
