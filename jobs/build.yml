@@ -13,7 +13,7 @@ jobs:
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
-
+ 
   - task: CondaEnvironment@1
     inputs:
       createCustomEnvironment: true
