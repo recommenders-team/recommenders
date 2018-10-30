@@ -24,12 +24,10 @@ jobs:
   - script: |
       ./scripts/generate_conda_file.sh
       sudo conda env update -n Recommender -f conda_bare.yaml
-    displayName: 'Install conda dependencies'
-
-  - script: |
+      
       cd tests/unit
       python -m pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
-    displayName: 'Unit Tests'
+    displayName: 'Unit tests'
 
   - task: PublishTestResults@2
     inputs:
