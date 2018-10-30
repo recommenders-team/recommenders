@@ -1,6 +1,5 @@
 import os
 import pytest
-import pandas as pd
 import papermill as pm
 from tests.unit.notebooks_common import path_notebooks, OUTPUT_NOTEBOOK, KERNEL_NAME
 
@@ -11,6 +10,9 @@ def notebooks():
 
     # Path for the notebooks
     paths = {
+        "als_pyspark": os.path.join(
+            folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
+        ),
         "sar_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "sar_pyspark_movielens.ipynb"
         ),
@@ -28,7 +30,14 @@ def notebooks():
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-def test_sar_single_node_runs(notebooks):
+def test_als_pyspark_runs(notebooks):
+    notebook_path = notebooks["als_pyspark"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+
+
+@pytest.mark.notebooks
+@pytest.mark.spark
+def test_sar_pyspark_runs(notebooks):
     notebook_path = notebooks["sar_pyspark"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
