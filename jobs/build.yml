@@ -18,6 +18,7 @@ jobs:
       ./scripts/generate_conda_file.sh
       pwd
       echo $(Build.Repository.LocalPath)
+      ls -l 
     displayName: 'Create conda environment.yml'
 
   - task: CondaEnvironment@1
