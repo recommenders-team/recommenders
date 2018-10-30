@@ -11,14 +11,6 @@
 # $ sh generate_conda_file.sh --gpu --pyspark
 #
 
-# first check if conda is installed
-CONDA_BINARY=$(which conda)
-if [ ! -x "$CONDA_BINARY" ] ; then
-	echo "No conda found!! Please see the README.md file for installation prerequisites."
-	exit 1
-fi
-
-
 # File which contains conda configuration virtual environment name
 CONDA_FILE="conda_bare.yaml"
 
