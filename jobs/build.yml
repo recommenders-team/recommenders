@@ -25,6 +25,7 @@ jobs:
       ./scripts/generate_conda_file.sh
       pwd
       echo $(Build.Repository.LocalPath)
+      cat conda_bare.yaml
       conda install --file conda_bare.yaml
     displayName: 'Install conda dependencies'
 
