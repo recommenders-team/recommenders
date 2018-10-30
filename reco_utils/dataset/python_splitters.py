@@ -15,6 +15,7 @@ from reco_utils.dataset.split_utils import (
 
 def python_random_split(data, ratio=0.75, seed=123):
     """Pandas random splitter
+    The splitter randomly splits the input data.
 
     Args:
         data (pd.DataFrame): Pandas DataFrame to be split.
@@ -46,6 +47,9 @@ def python_chrono_split(
     col_timestamp=DEFAULT_TIMESTAMP_COL,
 ):
     """Pandas chronological splitter
+    This function splits data in a chronological manner. That is, for each user / item, the
+    split function takes proportions of ratings which is specified by the split ratio(s).
+    The split is stratified.
 
     Args:
         data (pd.DataFrame): Pandas DataFrame to be split.
@@ -113,6 +117,8 @@ def python_stratified_split(
         col_item=DEFAULT_ITEM_COL
 ):
     """Pandas stratified splitter
+    For each user / item, the split function takes proportions of ratings which is
+    specified by the split ratio(s). The split is stratified.
 
     Args:
         data (pd.DataFrame): Pandas DataFrame to be split.
