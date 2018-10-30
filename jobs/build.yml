@@ -17,34 +17,21 @@ jobs:
   - script: python -m pip install --upgrade pip && pip install pytest papermill
     displayName: 'Install dependencies'
 
-  - task: CondaEnvironment@1
-    inputs:
-      environmentName: Recommender
-      packageSpecs: 'python=3'
-
   - script: |
       ./scripts/generate_conda_file.sh
     displayName: 'Create conda environment.yml'
 
-  - script: |
-      conda env create -f conda_bare.yml
-      source activate Recommender
-
-      cd tests/unit
-      pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
-
-    condition: not(eq(variables['Agent.OS'], 'Windows_NT'))
-    displayName: 'Unit Tests - Linux'
+  - task: CondaEnvironment@1
+    inputs:
+      environmentName: Recommender
+      packageSpecs: 'python=3'
+      createOptions: '-f conda_bare.yml'
+      updateConda: true
 
   - script: |
-      conda env create -f conda_bare.yml
-      call activate Recommender
-
       cd tests/unit
       pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
-
-    condition: not(eq(variables['Agent.OS'], 'Windows_NT'))
-    displayName: 'Unit Tests - Linux'
+    displayName: 'Unit Tests'
 
   - task: PublishTestResults@2
     inputs:
