@@ -33,4 +33,4 @@ jobs:
     inputs:
       testResultsFiles: '**/test-results.xml'
       testRunTitle: 'Python $(python.version)'
-    condition: succeededOrFailed(
+    condition: succeededOrFailed()
