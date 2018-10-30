@@ -13,6 +13,7 @@ from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filte
 
 def spark_random_split(data, ratio=0.75, seed=123):
     """Spark random splitter
+    Randomly split the data into several splits.
 
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
@@ -44,6 +45,9 @@ def spark_chrono_split(
     col_timestamp=DEFAULT_TIMESTAMP_COL,
 ):
     """Spark chronological splitter
+    This function splits data in a chronological manner. That is, for each user / item, the
+    split function takes proportions of ratings which is specified by the split ratio(s).
+    The split is stratified.
 
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
@@ -121,6 +125,8 @@ def spark_stratified_split(
         col_item=DEFAULT_ITEM_COL,
 ):
     """Spark stratified splitter
+    For each user / item, the split function takes proportions of ratings which is
+    specified by the split ratio(s). The split is stratified.
 
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
