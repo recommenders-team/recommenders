@@ -23,6 +23,7 @@ jobs:
 
   - task: CondaEnvironment@1
     inputs:
+      createCustomEnvironment: true
       environmentName: Recommender
       packageSpecs: 'python=3'
       createOptions: '-f conda_bare.yml'
