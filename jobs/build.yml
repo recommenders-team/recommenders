@@ -31,7 +31,7 @@ jobs:
 
       which conda
 
-      pip install pytest
+      pip install --yes pytest
  
       cd tests/unit
       python3 -m pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
