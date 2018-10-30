@@ -25,6 +25,8 @@ jobs:
       ./scripts/generate_conda_file.sh
       sudo conda env update -n Recommender -f conda_bare.yaml
 
+      ls -l /usr/envs/Recommender
+
       cd tests/unit
       python -m pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
     displayName: 'Unit tests'
