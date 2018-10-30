@@ -16,6 +16,8 @@ jobs:
 
   - script: |
       ./scripts/generate_conda_file.sh
+      pwd
+      echo $(Agent.WorkFolder)
     displayName: 'Create conda environment.yml'
 
   - task: CondaEnvironment@1
@@ -23,7 +25,7 @@ jobs:
       createCustomEnvironment: true
       environmentName: Recommender
       packageSpecs: 'python=3'
-      createOptions: '--file conda_bare.yml'
+      createOptions: '--file $(Agent.WorkFolder)/conda_bare.yml'
       updateConda: true
 
   - script: |
