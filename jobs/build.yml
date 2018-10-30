@@ -26,6 +26,7 @@ jobs:
       pwd
       echo $(Build.Repository.LocalPath)
       ls -l 
+      cat conda_bare.yml
       conda install --file conda_bare.yml
     displayName: 'Install conda dependencies'
 
