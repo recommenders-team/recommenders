@@ -28,7 +28,7 @@ def notebooks():
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-def test_sar_single_node_runs(notebooks):
+def test_sar_pyspark_runs(notebooks):
     notebook_path = notebooks["sar_pyspark"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
