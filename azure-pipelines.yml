@@ -4,11 +4,11 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python 
 
 jobs:
-# - template: jobs/build.yml  
-  # parameters:
-    # name: macOS
-    # pool:
-      # vmImage: 'macOS-10.13'
+- template: jobs/build.yml  
+  parameters:
+    name: macOS
+    pool:
+      vmImage: 'macOS-10.13'
 
 - template: jobs/build.yml  
   parameters:
