@@ -170,7 +170,7 @@ def spark_stratified_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
-    window_spec = Window.partitionBy(split_by_column)
+    window_spec = Window.partitionBy(split_by_column).orderBy()
 
     rating_rank = data.withColumn(
         "rank", row_number().over(window_spec) / col("count")
