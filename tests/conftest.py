@@ -2,6 +2,7 @@ import pytest
 import pandas as pd
 import calendar
 import datetime
+import os
 from sklearn.model_selection import train_test_split
 
 try:
@@ -27,6 +28,9 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .config("spark.network.timeout", "10000000s")
         .config("spark.driver.maxResultSize", memory)
     """
+    SUBMIT_ARGS = "--packages eisber:sarplus:0.2.3 pyspark-shell"
+    os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
+
     return (
         SparkSession.builder.appName(app_name)
         .master(url)
