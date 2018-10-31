@@ -4,7 +4,7 @@
 import numpy as np
 
 from pyspark.sql import Window
-from pyspark.sql.functions import col, row_number, broadcast
+from pyspark.sql.functions import col, row_number, broadcast, rand
 
 from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
@@ -126,6 +126,7 @@ def spark_stratified_split(
         filter_by="user",
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
+        seed=1234
 ):
     """Spark stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -170,7 +171,7 @@ def spark_stratified_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
-    window_spec = Window.partitionBy(split_by_column).orderBy()
+    window_spec = Window.partitionBy(split_by_column).orderBy(rand(seed=seed))
 
     rating_rank = data.withColumn(
         "rank", row_number().over(window_spec) / col("count")
