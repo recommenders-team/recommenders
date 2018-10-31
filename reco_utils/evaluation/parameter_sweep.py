@@ -23,7 +23,7 @@ def generate_param_grid(params):
         param_dict (dict): dictionary of parameters and values (in a list).
 
     Return:
-        A list of parameter dictionary string that can be fed directly into
+        list: A list of parameter dictionary string that can be fed directly into
         model builder as keyword arguments.
     """
     param_new = {}
