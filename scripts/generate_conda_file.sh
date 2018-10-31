@@ -96,7 +96,8 @@ ${pyspark}- pyspark==2.3.1
   - pytest==3.6.4
   - papermill>=0.15.0
   - black>=18.6b4
-  - pysarplus>=0.2.3
+  - pysarplus>=0.2.2
+  - pybind11>=2.2
 EOM
 
 echo "Conda file generated: " $CONDA_FILE
