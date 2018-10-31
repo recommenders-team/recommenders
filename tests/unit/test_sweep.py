@@ -14,9 +14,7 @@ def parameter_dictionary():
     return params
 
 def test_param_sweep(parameter_dictionary):
-    params = parameter_dictionary
-
-    params_grid = generate_param_grid(params)
+    params_grid = generate_param_grid(parameter_dictionary)
 
     assert params_grid == [
         {'param1': 1, 'param2': 4, 'param3': 1}, {'param1': 1, 'param2': 5, 'param3': 1},
