@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pandas as pd
 import numpy as np
 from itertools import product
@@ -7,7 +10,12 @@ from reco_utils.dataset.split_utils import (
     min_rating_filter,
     split_pandas_data_with_ratios,
 )
-from reco_utils.dataset.python_splitters import python_chrono_split, python_random_split
+from reco_utils.dataset.python_splitters import (
+    python_chrono_split,
+    python_random_split,
+    python_stratified_split
+)
+
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -228,3 +236,42 @@ def test_chrono_splitter(test_specs, python_dataset):
         all_later.append(user_later_1)
         all_later.append(user_later_2)
     assert all(all_later)
+
+
+def test_stratified_splitter(test_specs, python_dataset):
+    """Test stratified splitter.
+    """
+    df_rating = python_dataset
+
+    splits = python_stratified_split(
+        df_rating, ratio=test_specs["ratio"], min_rating=10, filter_by="user"
+    )
+
+    assert len(splits[0]) / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratio"], test_specs["tolerance"]
+    )
+    assert len(splits[1]) / test_specs["number_of_rows"] == pytest.approx(
+        1 - test_specs["ratio"], test_specs["tolerance"]
+    )
+
+    # Test if both contains the same user list. This is because stratified split is stratified.
+    users_train = splits[0][DEFAULT_USER_COL].unique()
+    users_test = splits[1][DEFAULT_USER_COL].unique()
+
+    assert set(users_train) == set(users_test)
+
+    splits = python_stratified_split(
+        df_rating, ratio=test_specs["ratios"], min_rating=10, filter_by="user"
+    )
+
+    assert len(splits) == 3
+    assert len(splits[0]) / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][0], test_specs["tolerance"]
+    )
+    assert len(splits[1]) / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][1], test_specs["tolerance"]
+    )
+    assert len(splits[2]) / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][2], test_specs["tolerance"]
+    )
+

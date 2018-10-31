@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.sql import Window, DataFrame
 from pyspark.sql.functions import col, row_number, expr
