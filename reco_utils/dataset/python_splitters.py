@@ -117,7 +117,8 @@ def python_stratified_split(
         min_rating=1,
         filter_by="user",
         col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL
+        col_item=DEFAULT_ITEM_COL,
+        seed=1234
 ):
     """Pandas stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -166,7 +167,7 @@ def python_stratified_split(
     df_grouped = data.groupby(split_by_column)
     for name, group in df_grouped:
         group_splits = split_pandas_data_with_ratios(
-            df_grouped.get_group(name), ratio, resample=True
+            df_grouped.get_group(name), ratio, resample=True, seed=seed
         )
         for x in range(num_of_splits):
             splits[x] = pd.concat([splits[x], group_splits[x]])
