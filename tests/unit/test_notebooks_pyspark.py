@@ -4,31 +4,7 @@
 import os
 import pytest
 import papermill as pm
-from tests.unit.notebooks_common import path_notebooks, OUTPUT_NOTEBOOK, KERNEL_NAME
-
-
-@pytest.fixture(scope="module")
-def notebooks():
-    folder_notebooks = path_notebooks()
-
-    # Path for the notebooks
-    paths = {
-        "als_pyspark": os.path.join(
-            folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
-        ),
-        "sar_pyspark": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_pyspark_movielens.ipynb"
-        ),
-        "data_split": os.path.join(folder_notebooks, "01_data", "data_split.ipynb"),
-        "sar_deep_dive": os.path.join(
-            folder_notebooks, "02_modeling", "sar_deep_dive.ipynb"
-        ),
-        "als_deep_dive": os.path.join(
-            folder_notebooks, "02_modeling", "als_deep_dive.ipynb"
-        ),
-        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
-    }
-    return paths
+from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 @pytest.mark.notebooks
