@@ -1,13 +1,12 @@
-"""
-Reference implementation of SAR in pySpark using Spark-SQL and some dataframe operations.
-This is supposed to be a super-performant implementation of SAR on Spark using pySpark.
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
-PS: there is plenty of room for improvement, especially around the very last step of making a partial sort:
-1) Can be done using UDAFs
-2) UDAFs can be transformed into: pivot, series of UDF operations, pivot
-3) other DF operations.
 """
+Reference implementation of SAR in python/numpy/pandas.
 
+This is not meant to be particularly performant or scalable, just
+as a simple and readable implementation.
+"""
 import numpy as np
 import pandas as pd
 import logging
@@ -17,9 +16,9 @@ from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
-    TIMESTAMP_COL,
+    DEFAULT_TIMESTAMP_COL,
+    PREDICTION_COL,
 )
-from reco_utils.common.constants import PREDICTION_COL
 
 from reco_utils.recommender.sar import (
     SIM_JACCARD,
@@ -54,7 +53,7 @@ class SARSingleNodeReference:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_timestamp=TIMESTAMP_COL,
+        col_timestamp=DEFAULT_TIMESTAMP_COL,
         similarity_type=SIM_JACCARD,
         time_decay_coefficient=TIME_DECAY_COEFFICIENT,
         time_now=TIME_NOW,

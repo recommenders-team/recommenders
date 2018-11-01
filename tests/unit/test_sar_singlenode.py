@@ -1,5 +1,6 @@
-import sys
-import os
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pytest
 import itertools
 import numpy as np
@@ -7,7 +8,7 @@ import pandas as pd
 from reco_utils.common.constants import PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNodeReference
 from reco_utils.recommender.sar import TIME_NOW
-from tests.unit.sar_common import read_matrix, load_userpred, load_affinity
+from tests.sar_common import read_matrix, load_userpred, load_affinity
 
 
 # TODO: DRY with _rearrange_to_test_sql
