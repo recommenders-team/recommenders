@@ -1,8 +1,10 @@
-| Build Type      | Status | Branch |
-| ---             | ---    | ---       |
-| **Linux CPU**   | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/staging_nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | master |
-| **Linux CPU**   | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/staging_nightly?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | staging |
 
+| Build Type | Branch | Status |  | Branch | Status | 
+| --- | --- | --- | --- | --- | --- | 
+| **Linux CPU** |  master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4792)  || staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | 
+| **Linux Spark** | master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4804) | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4805)|
+
+*NOTE: the tests are executed every night, we use pytest for testing python [utilities]((reco_utils)) and papermill for testing [notebooks](notebooks)*.
 
 # Recommenders 
 
@@ -12,7 +14,7 @@ This repository provides examples and best practices for building recommendation
 3. Evaluating algorithms with offline metrics. 
 4. Operationalizing models in a production environment. The examples work across Python + cpu and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements. 
 
-Several utilities are provided in [reco_utils](/reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in Spark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications. 
+Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in Spark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications. 
 
 ## Environment Setup
 * Please see the [setup guide](SETUP.md).
