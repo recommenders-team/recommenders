@@ -1,11 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
+import os
 import pytest
 import pandas as pd
 import calendar
 import datetime
 from sklearn.model_selection import train_test_split
+from tests.notebooks_common import path_notebooks
 
 try:
     from pyspark.sql import SparkSession
@@ -120,3 +121,32 @@ def demo_usage_data_spark(spark, demo_usage_data, header):
     # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
     data = spark.createDataFrame(data_local)
     return data
+
+
+@pytest.fixture(scope="module")
+def notebooks():
+    folder_notebooks = path_notebooks()
+
+    # Path for the notebooks
+    paths = {
+        "template": os.path.join(folder_notebooks, "template.ipynb"),
+        "sar_single_node": os.path.join(
+            folder_notebooks, "00_quick_start", "sar_python_cpu_movielens.ipynb"
+        ),
+        "als_pyspark": os.path.join(
+            folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
+        ),
+        "sar_pyspark": os.path.join(
+            folder_notebooks, "00_quick_start", "sar_pyspark_movielens.ipynb"
+        ),
+        "data_split": os.path.join(folder_notebooks, "01_data", "data_split.ipynb"),
+        "sar_deep_dive": os.path.join(
+            folder_notebooks, "02_modeling", "sar_deep_dive.ipynb"
+        ),
+        "als_deep_dive": os.path.join(
+            folder_notebooks, "02_modeling", "als_deep_dive.ipynb"
+        ),
+        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
+    }
+    return paths
+

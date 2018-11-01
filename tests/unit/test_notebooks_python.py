@@ -5,21 +5,7 @@ import os
 import pytest
 import pandas as pd
 import papermill as pm
-from tests.unit.notebooks_common import path_notebooks, OUTPUT_NOTEBOOK, KERNEL_NAME
-
-
-@pytest.fixture(scope="module")
-def notebooks():
-    folder_notebooks = path_notebooks()
-
-    # Path for the notebooks
-    paths = {
-        "template": os.path.join(folder_notebooks, "template.ipynb"),
-        "sar_single_node": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_python_cpu_movielens.ipynb"
-        ),
-    }
-    return paths
+from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 @pytest.mark.notebooks
