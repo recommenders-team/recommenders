@@ -10,6 +10,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
+    DEFAULT_RATING_COL
 )
 from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filter
 
@@ -126,6 +127,7 @@ def spark_stratified_split(
         filter_by="user",
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
         seed=1234
 ):
     """Spark stratified splitter
@@ -173,8 +175,18 @@ def spark_stratified_split(
 
     window_spec = Window.partitionBy(split_by_column).orderBy(rand(seed=seed))
 
-    rating_rank = data.withColumn(
-        "rank", row_number().over(window_spec)
+    # rating_rank = data.withColumn(
+    #     "rank", row_number().over(window_spec)
+    # )
+    rating_grouped = (
+        data.groupBy(split_by_column)
+            .agg({col_rating: "count"})
+            .withColumnRenamed("count(" + col_rating + ")", "count")
+    )
+    rating_all = data.join(broadcast(rating_grouped), on=split_by_column)
+
+    rating_rank = rating_all.withColumn(
+        "rank", row_number().over(window_spec) / col("count")
     )
 
     splits = []
