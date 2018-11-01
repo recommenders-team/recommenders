@@ -19,7 +19,7 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 ## Environment Setup
 * Please see the [setup guide](SETUP.md).
 
-## Notebooks Overview
+## Notebooks Overview 
 
 - The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
 - The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
