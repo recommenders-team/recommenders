@@ -1,20 +1,26 @@
-"""
-Splitter Tests
-"""
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pandas as pd
 import numpy as np
 from itertools import product
 import pytest
-
 from reco_utils.dataset.split_utils import min_rating_filter
-from reco_utils.dataset.spark_splitters import spark_chrono_split, spark_random_split
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from reco_utils.common.spark_utils import start_or_get_spark
+
+try:
+    from reco_utils.common.spark_utils import start_or_get_spark
+    from reco_utils.dataset.spark_splitters import (
+        spark_chrono_split,
+        spark_random_split,
+    )
+except ModuleNotFoundError:
+    pass  # skip this import if we are in pure python environment
 
 
 @pytest.fixture(scope="module")
