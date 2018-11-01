@@ -25,7 +25,7 @@ def test_als_pyspark_smoke(notebooks):
     result_map = df.loc[df["name"] == "map", "value"].values[0]
     assert result_map == pytest.approx(0.02, TOL)
     result_ndcg = df.loc[df["name"] == "ndcg", "value"].values[0]
-    assert result_ndcg == pytest.approx(0.10, TOL
+    assert result_ndcg == pytest.approx(0.10, TOL)
     result_precision = df.loc[df["name"] == "precision", "value"].values[0]
     assert result_precision == pytest.approx(0.10, TOL)
     result_recall = df.loc[df["name"] == "recall", "value"].values[0]
