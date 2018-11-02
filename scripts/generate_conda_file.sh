@@ -86,6 +86,8 @@ ${pyspark}- pyspark==2.3.1
 - scikit-learn==0.19.1
 - jupyter>=1.0.0
 - fastparquet>=0.1.6
+${pyspark}- pyarrow>=0.8.0
+${pyspark}- pybind11>=2.2
 - pip:
   - pandas>=0.22.0
   - scipy>=1.0.0
@@ -96,6 +98,7 @@ ${pyspark}- pyspark==2.3.1
   - pytest==3.6.4
   - papermill>=0.15.0
   - black>=18.6b4
+${pyspark}  - pysarplus>=0.2.2
 EOM
 
 echo "Conda file generated: " $CONDA_FILE
