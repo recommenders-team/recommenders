@@ -5,6 +5,7 @@ import pytest
 import pandas as pd
 import calendar
 import datetime
+import os
 from sklearn.model_selection import train_test_split
 from tests.notebooks_common import path_notebooks
 
@@ -31,6 +32,9 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .config("spark.network.timeout", "10000000s")
         .config("spark.driver.maxResultSize", memory)
     """
+    SUBMIT_ARGS = "--packages eisber:sarplus:0.2.3 pyspark-shell"
+    os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
+
     return (
         SparkSession.builder.appName(app_name)
         .master(url)
@@ -138,6 +142,9 @@ def notebooks():
         ),
         "sar_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "sar_pyspark_movielens.ipynb"
+        ),
+        "sarplus_movielens": os.path.join(
+            folder_notebooks, "00_quick_start", "sarplus_movielens.ipynb"
         ),
         "data_split": os.path.join(folder_notebooks, "01_data", "data_split.ipynb"),
         "sar_deep_dive": os.path.join(
