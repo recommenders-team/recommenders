@@ -7,13 +7,13 @@ from itertools import product
 import pytest
 
 from reco_utils.dataset.split_utils import (
-    min_rating_filter,
+    min_rating_filter_pandas,
     split_pandas_data_with_ratios,
 )
 from reco_utils.dataset.python_splitters import (
     python_chrono_split,
     python_random_split,
-    python_stratified_split
+    python_stratified_split,
 )
 
 from reco_utils.common.constants import (
@@ -110,8 +110,8 @@ def test_min_rating_filter(python_dataset):
 
         return row_counts
 
-    df_user = min_rating_filter(df_rating, min_rating=5, filter_by="user")
-    df_item = min_rating_filter(df_rating, min_rating=5, filter_by="item")
+    df_user = min_rating_filter_pandas(df_rating, min_rating=5, filter_by="user")
+    df_item = min_rating_filter_pandas(df_rating, min_rating=5, filter_by="item")
 
     user_rating_counts = count_filtered_rows(df_user, filter_by="user")
     item_rating_counts = count_filtered_rows(df_item, filter_by="item")
