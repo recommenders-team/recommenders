@@ -61,7 +61,9 @@ def min_rating_filter_pandas(
         pd.DataFrame: DataFrame with at least columns of user and item that has been 
             filtered by the given specifications.
     """
-    split_by_column, _ = _check_min_rating_filter(filter_by, min_rating)
+    split_by_column, _ = _check_min_rating_filter(
+        filter_by, min_rating, col_user, col_item
+    )
     rating_filtered = data.groupby(split_by_column).filter(
         lambda x: len(x) >= min_rating
     )
@@ -94,7 +96,9 @@ def min_rating_filter_spark(
         spark.DataFrame: DataFrame with at least columns of user and item that has been 
             filtered by the given specifications.
     """
-    split_by_column, split_with_column = _check_min_rating_filter(filter_by, min_rating)
+    split_by_column, split_with_column = _check_min_rating_filter(
+        filter_by, min_rating, col_user, col_item
+    )
     rating_temp = (
         data.groupBy(split_by_column)
         .agg({split_with_column: "count"})
@@ -108,7 +112,7 @@ def min_rating_filter_spark(
     return rating_filtered
 
 
-def _check_min_rating_filter(filter_by, min_rating):
+def _check_min_rating_filter(filter_by, min_rating, col_user, col_item):
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
 
