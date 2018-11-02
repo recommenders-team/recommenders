@@ -175,9 +175,6 @@ def spark_stratified_split(
 
     window_spec = Window.partitionBy(split_by_column).orderBy(rand(seed=seed))
 
-    # rating_rank = data.withColumn(
-    #     "rank", row_number().over(window_spec)
-    # )
     rating_grouped = (
         data.groupBy(split_by_column)
             .agg({col_rating: "count"})
