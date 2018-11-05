@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 from itertools import product
 import pytest
-from reco_utils.dataset.split_utils import min_rating_filter
+from reco_utils.dataset.split_utils import min_rating_filter_spark
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -18,7 +18,7 @@ try:
     from reco_utils.dataset.spark_splitters import (
         spark_chrono_split,
         spark_random_split,
-        spark_stratified_split
+        spark_stratified_split,
     )
 except ModuleNotFoundError:
     pass  # skip this import if we are in pure python environment
@@ -91,8 +91,8 @@ def test_min_rating_filter(spark_dataset):
     """
     dfs_rating = spark_dataset
 
-    dfs_user = min_rating_filter(dfs_rating, min_rating=5, filter_by="user")
-    dfs_item = min_rating_filter(dfs_rating, min_rating=5, filter_by="item")
+    dfs_user = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="user")
+    dfs_item = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="item")
 
     user_rating_counts = [
         x["count"] >= 5 for x in dfs_user.groupBy(DEFAULT_USER_COL).count().collect()
