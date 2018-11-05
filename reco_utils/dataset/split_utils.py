@@ -6,6 +6,11 @@ import numpy as np
 
 from reco_utils.common.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
+try:
+    from pyspark.sql.functions import col, broadcast
+except:
+    pass  # so the environment without spark doesn't break
+
 
 def process_split_ratio(ratio):
     if isinstance(ratio, float):
@@ -30,7 +35,7 @@ def process_split_ratio(ratio):
     return multi, ratio
 
 
-def min_rating_filter(
+def min_rating_filter_pandas(
     data,
     min_rating=1,
     filter_by="user",
@@ -43,9 +48,44 @@ def min_rating_filter(
     example, a user is called warm if he has rated at least 4 items.
 
     Args:
-        data (spark.DataFrame or pandas.DataFrame): Spark DataFrame or Pandas DataFrame of
-            user-item tuples. Columns of user and item should be present in the data 
-            frame while other columns like rating, timestamp, etc. can be optional.
+        data (pd.DataFrame): DataFrame of user-item tuples. Columns of user and item
+            should be present in the DataFrame while other columns like rating, 
+            timestamp, etc. can be optional.
+        min_rating (int): minimum number of ratings for user or item.
+        filter_by (str): either "user" or "item", depending on which of the two is to 
+            filter with min_rating.
+        col_user (str): column name of user ID.
+        col_item (str): column name of item ID.
+
+    Returns:
+        pd.DataFrame: DataFrame with at least columns of user and item that has been 
+            filtered by the given specifications.
+    """
+    split_by_column, _ = _check_min_rating_filter(
+        filter_by, min_rating, col_user, col_item
+    )
+    rating_filtered = data.groupby(split_by_column).filter(
+        lambda x: len(x) >= min_rating
+    )
+    return rating_filtered
+
+
+def min_rating_filter_spark(
+    data,
+    min_rating=1,
+    filter_by="user",
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+):
+    """Filter rating DataFrame for each user with minimum rating.
+    Filter rating data frame with minimum number of ratings for user/item is usually useful to
+    generate a new data frame with warm user/item. The warmth is defined by min_rating argument. For
+    example, a user is called warm if he has rated at least 4 items.
+
+    Args:
+        data (spark.DataFrame): DataFrame of user-item tuples. Columns of user and item
+            should be present in the DataFrame while other columns like rating, 
+            timestamp, etc. can be optional.
         min_rating (int): minimum number of ratings for user or item.
         filter_by (str): either "user" or "item", depending on which of the two is to 
             filter with min_rating.
@@ -56,6 +96,23 @@ def min_rating_filter(
         spark.DataFrame: DataFrame with at least columns of user and item that has been 
             filtered by the given specifications.
     """
+    split_by_column, split_with_column = _check_min_rating_filter(
+        filter_by, min_rating, col_user, col_item
+    )
+    rating_temp = (
+        data.groupBy(split_by_column)
+        .agg({split_with_column: "count"})
+        .withColumnRenamed("count(" + split_with_column + ")", "n" + split_with_column)
+        .where(col("n" + split_with_column) >= min_rating)
+    )
+
+    rating_filtered = data.join(broadcast(rating_temp), split_by_column).drop(
+        "n" + split_with_column
+    )
+    return rating_filtered
+
+
+def _check_min_rating_filter(filter_by, min_rating, col_user, col_item):
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
 
@@ -64,37 +121,7 @@ def min_rating_filter(
 
     split_by_column = col_user if filter_by == "user" else col_item
     split_with_column = col_item if filter_by == "user" else col_user
-
-    if isinstance(data, pd.DataFrame):
-        rating_filtered = data.groupby(split_by_column).filter(
-            lambda x: len(x) >= min_rating
-        )
-
-        return rating_filtered
-    try:
-        import pyspark
-        from pyspark.sql.functions import col, broadcast
-
-        if isinstance(data, pyspark.sql.DataFrame):
-            rating_temp = (
-                data.groupBy(split_by_column)
-                .agg({split_with_column: "count"})
-                .withColumnRenamed(
-                    "count(" + split_with_column + ")", "n" + split_with_column
-                )
-                .where(col("n" + split_with_column) >= min_rating)
-            )
-
-            rating_filtered = data.join(broadcast(rating_temp), split_by_column).drop(
-                "n" + split_with_column
-            )
-
-            return rating_filtered
-    except NameError:
-        raise TypeError("Spark not installed")
-    raise TypeError(
-        "Only Spark and Pandas Data Frames are supported for min rating filter."
-    )
+    return split_by_column, split_with_column
 
 
 def split_pandas_data_with_ratios(data, ratios, seed=1234, resample=False):

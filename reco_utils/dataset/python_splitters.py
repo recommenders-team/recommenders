@@ -11,7 +11,7 @@ from reco_utils.common.constants import (
 )
 from reco_utils.dataset.split_utils import (
     process_split_ratio,
-    min_rating_filter,
+    min_rating_filter_pandas,
     split_pandas_data_with_ratios,
 )
 
@@ -90,7 +90,7 @@ def python_chrono_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
 
     if min_rating > 1:
-        data = min_rating_filter(
+        data = min_rating_filter_pandas(
             data,
             min_rating=min_rating,
             filter_by=filter_by,
@@ -112,13 +112,13 @@ def python_chrono_split(
 
 
 def python_stratified_split(
-        data,
-        ratio=0.75,
-        min_rating=1,
-        filter_by="user",
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        seed=1234
+    data,
+    ratio=0.75,
+    min_rating=1,
+    filter_by="user",
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    seed=1234,
 ):
     """Pandas stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -154,7 +154,7 @@ def python_stratified_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
 
     if min_rating > 1:
-        data = min_rating_filter(
+        data = min_rating_filter_pandas(
             data,
             min_rating=min_rating,
             filter_by=filter_by,

@@ -10,9 +10,9 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
-    DEFAULT_RATING_COL
+    DEFAULT_RATING_COL,
 )
-from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filter
+from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filter_spark
 
 
 def spark_random_split(data, ratio=0.75, seed=123):
@@ -82,7 +82,7 @@ def spark_chrono_split(
     split_by_column = col_user if filter_by == "user" else col_item
 
     if min_rating > 1:
-        data = min_rating_filter(
+        data = min_rating_filter_spark(
             data,
             min_rating=min_rating,
             filter_by=filter_by,
@@ -121,14 +121,14 @@ def spark_chrono_split(
 
 
 def spark_stratified_split(
-        data,
-        ratio=0.75,
-        min_rating=1,
-        filter_by="user",
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        seed=1234
+    data,
+    ratio=0.75,
+    min_rating=1,
+    filter_by="user",
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    seed=1234,
 ):
     """Spark stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -162,7 +162,7 @@ def spark_stratified_split(
     split_by_column = col_user if filter_by == "user" else col_item
 
     if min_rating > 1:
-        data = min_rating_filter(
+        data = min_rating_filter_spark(
             data,
             min_rating=min_rating,
             filter_by=filter_by,
@@ -177,8 +177,8 @@ def spark_stratified_split(
 
     rating_grouped = (
         data.groupBy(split_by_column)
-            .agg({col_rating: "count"})
-            .withColumnRenamed("count(" + col_rating + ")", "count")
+        .agg({col_rating: "count"})
+        .withColumnRenamed("count(" + col_rating + ")", "count")
     )
     rating_all = data.join(broadcast(rating_grouped), on=split_by_column)
 
