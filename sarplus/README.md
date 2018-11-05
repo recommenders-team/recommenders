@@ -5,6 +5,26 @@ Features
 * Fast C++ based [predictions](python/src/pysarplus.cpp)
 * Reduced memory consumption: similarity matrix cached in-memory once per worker, shared accross python executors 
 
+# Installation
+
+## Local Machine
+Run 
+
+```bash
+cd python
+python setup.py install
+
+cd ../scala
+sbt package
+```
+
+Reference the produced scala package in PySpark using spark.jars
+
+## Databricks
+
+As databricks doesn't allow C++ code to be compiled on demand, one must publish a pypi package and then reference it.
+Please follow the "packaging" guide below on how to release a pypi package. 
+
 # Top-K Recommendation Optimization
 
 There are a couple of key optimizations:
@@ -60,7 +80,7 @@ Insert this cell prior to the code above.
 ```python
 import os
 
-SUBMIT_ARGS = "--packages eisber:sarplus:0.2.2 pyspark-shell"
+SUBMIT_ARGS = "--packages your_alias:sarplus:0.2.2 pyspark-shell"
 os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
 from pyspark.sql import SparkSession
@@ -80,7 +100,7 @@ spark = (
 
 ```bash
 pip install pysarplus
-pyspark --packages eisber:sarplus:0.2.2 --conf spark.sql.crossJoin.enabled=true
+pyspark --packages your_alias:sarplus:0.2.2 --conf spark.sql.crossJoin.enabled=true
 ```
 
 ## Databricks
@@ -94,7 +114,7 @@ spark.sql.crossJoin.enabled true
 1. Navigate to your workspace 
 2. Create library
 3. Under 'Source' select 'Maven Coordinate'
-4. Enter 'eisber:sarplus:0.2.2'
+4. Enter 'your_alias:sarplus:0.2.2'
 5. Hit 'Create Library'
 6. Attach to your cluster
 7. Create 2nd library
@@ -147,7 +167,7 @@ twine upload dist/pysarplus-*.tar.gz
 On [Spark](https://spark.apache.org/) one can install all 3 components (C++, Python, Scala) in one pass by creating a [Spark Package](https://spark-packages.org/). Documentation is rather sparse. Steps to install
 
 1. Package and publish the [pip package](python/setup.py) (see above)
-2. Package the [Spark package](scala/build.sbt), which includes the [Scala formatter](scala/src/main/scala/eisber/sarplus) and references the [pip package](scala/python/requirements.txt) (see below)
+2. Package the [Spark package](scala/build.sbt), which includes the [Scala formatter](scala/src/main/scala/your_alias/sarplus) and references the [pip package](scala/python/requirements.txt) (see below)
 3. Upload the zipped Scala package to [Spark Package](https://spark-packages.org/) through a browser. [sbt spPublish](https://github.com/databricks/sbt-spark-package) has a few [issues](https://github.com/databricks/sbt-spark-package/issues/31) so it always fails for me. Don't use spPublishLocal as the packages are not created properly (names don't match up, [issue](https://github.com/databricks/sbt-spark-package/issues/17)) and furthermore fail to install if published to [Spark-Packages.org](https://spark-packages.org/).  
 
 ```bash
