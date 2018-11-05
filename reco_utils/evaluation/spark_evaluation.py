@@ -26,6 +26,9 @@ class SparkRatingEvaluation:
         col_prediction=PREDICTION_COL,
     ):
         """Initializer.
+        This is the Spark version of rating metrics evaluator.
+        The methods of this class, calculate rating metrics such as root mean squared error, mean absolute error,
+        R squared, and explained variance.
 
         Args:
             rating_true (spark.DataFrame): True labels.
@@ -157,6 +160,11 @@ class SparkRankingEvaluation:
         col_prediction=PREDICTION_COL,
     ):
         """Initialization.
+        This is the Spark version of ranking metrics evaluator.
+        The methods of this class, calculate ranking metrics such as precision@k, recall@k, ndcg@k, and mean average
+        precision.
+        The implementations of precision@k, ndcg@k, and mean average precision are referenced from Spark MLlib, which
+        can be found at https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems.
 
         Args:
             rating_true (spark.DataFrame): DataFrame of true rating data (in the
