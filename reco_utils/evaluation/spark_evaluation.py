@@ -125,7 +125,7 @@ class SparkRatingEvaluation:
     def rsquared(self):
         """Calculate R squared
         Returns:
-            R squared
+            float: R squared
         """
         return self.metrics.r2
 
