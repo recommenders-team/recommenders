@@ -4,6 +4,7 @@
 from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
 from pyspark.sql import Window, DataFrame
 from pyspark.sql.functions import col, row_number, expr
+import pyspark.sql.functions as F
 
 from reco_utils.common.constants import (
     PREDICTION_COL,
@@ -258,14 +259,11 @@ class SparkRankingEvaluation:
 
     def _calculate_metrics(self):
         """Calculate ranking metrics."""
-        self._items_for_user_pred = (
-            self.rating_pred.groupBy(self.col_user)
-            .agg(expr("collect_list(" + self.col_item + ") as prediction"))
-            .select(self.col_user, "prediction")
-        )
+        self._items_for_user_pred = self.rating_pred
 
         self._items_for_user_true = (
-            self.rating_true.groupBy(self.col_user)
+            self.rating_true
+            .groupBy(self.col_user)
             .agg(expr("collect_list(" + self.col_item + ") as ground_truth"))
             .select(self.col_user, "ground_truth")
         )
@@ -353,10 +351,15 @@ def get_top_k_items(
     # this does not work for rating of the same value.
     items_for_user = (
         dataframe.select(
-            col_user, col_item, col_rating, row_number().over(window_spec).alias("rank")
+            col_user,
+            col_item,
+            col_rating,
+            row_number().over(window_spec).alias("rank")
         )
         .where(col("rank") <= k)
-        .drop("rank")
+        .withColumn("prediction", F.collect_list(col_item).over(Window.partitionBy(col_user)))
+        .select(col_user, "prediction")
+        .dropDuplicates([col_user, "prediction"])
     )
 
     return items_for_user
@@ -388,8 +391,16 @@ def get_relevant_items_by_threshold(
         spark.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant
             items.
     """
-    items_for_user = dataframe.where(col_rating + " >= " + str(threshold)).select(
-        col_user, col_item, col_rating
+    items_for_user = (
+        dataframe
+        .orderBy(col_rating, ascending=False)
+        .where(col_rating + " >= " + str(threshold))
+        .select(
+            col_user, col_item, col_rating
+        )
+        .withColumn("prediction", F.collect_list(col_item).over(Window.partitionBy(col_user)))
+        .select(col_user, "prediction")
+        .dropDuplicates()
     )
 
     return items_for_user
@@ -427,7 +438,9 @@ def get_relevant_items_by_timestamp(
             col_user, col_item, col_rating, row_number().over(window_spec).alias("rank")
         )
         .where(col("rank") <= k)
-        .drop("rank")
+        .withColumn("prediction", F.collect_list(col_item).over(Window.partitionBy(col_user)))
+        .select(col_user, "prediction")
+        .dropDuplicates([col_user, "prediction"])
     )
 
     return items_for_user
