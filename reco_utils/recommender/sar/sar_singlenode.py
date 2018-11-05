@@ -392,6 +392,9 @@ class SARSingleNodeReference:
 
         Args:
             **kwargs:
+
+        Returns:
+            pd.DataFrame: A DataFrame that contains top k recommendation items for each user.
         """
 
         # pick users from test set and
@@ -475,7 +478,14 @@ class SARSingleNodeReference:
         )
 
     def predict(self, test):
-        """Output SAR scores for only the users-items pairs which are in the test set"""
+        """Output SAR scores for only the users-items pairs which are in the test set
+
+        Args:
+            test (pd.DataFrame): DataFrame that contains ground-truth of user-item ratings.
+
+        Return:
+            pd.DataFrame: DataFrame contains the prediction results.
+        """
         # pick users from test set and
         test_users = test[self.col_user].unique()
         try:
