@@ -1,4 +1,4 @@
-package eisber.sarplus
+package microsoft.sarplus
 
 import org.apache.spark.sql.sources.DataSourceRegister
 import org.apache.spark.sql.SparkSession

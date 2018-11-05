@@ -18,9 +18,9 @@ setup(
     name="pysarplus",
     version="0.2.2",
     description="SAR prediction for use with PySpark",
-    url="https://github.com/eisber/sarplus",
+    url="https://github.com/Microsoft/Recommenders/sarplus",
     author="Markus Cozowicz",
-    author_email="m@cozowicz.at",
+    author_email="marcozo@microsoft.com",
     license="MIT",
     classifiers=[
         "Development Status :: 4 - Beta",

@@ -1,4 +1,4 @@
-package eisber.sarplus
+package microsoft.sarplus
 
 import org.scalatest._
 import java.io.{File, FileInputStream, FileOutputStream}
