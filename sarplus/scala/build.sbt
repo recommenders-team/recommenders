@@ -2,9 +2,9 @@ scalaVersion := "2.11.8"
 
 sparkVersion := "2.3.0"
 
-spName := "eisber/sarplus"
+spName := "microsoft/sarplus"
 
-organization := "eisber"
+organization := "microsoft"
 name := "sarplus"
 
 version := "0.2.4" 
@@ -24,7 +24,7 @@ licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 // doesn't work anyway...
 credentials += Credentials(Path.userHome / ".ivy2" / ".sbtcredentials") // A file containing credentials
 
-spHomepage := "http://github.com/eisber/sarplus"
+spHomepage := "http://github.com/Microsoft/Recommenders"
 
 // If you published your package to Maven Central for this release (must be done prior to spPublish)
 spIncludeMaven := true
