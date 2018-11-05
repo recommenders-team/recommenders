@@ -29,11 +29,14 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 
 | Notebook | Description | 
 | --- | --- | 
-| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a Python+CPU environment
-| [sar_pyspark_movielens](notebooks/00_quick_start/sar_pyspark_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a PySpark environment
-| [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc)
-| [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the Smart Adaptive Rankings algorithm and implementation
-
+| [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
+| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
+| [sar_pyspark_movielens](notebooks/00_quick_start/sar_pyspark_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a PySpark environment.
+| [sarplus_movielens.ipynb](notebooks/00_quick_start/sarplus_movielens.ipynb.ipynb) | Utilizing the SAR+ algorithm to power movie ratings in a PySpark environment.
+| [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
+| [als_deep_dive](notebooks/02_modeling/als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
+| [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
+| [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python+CPU and PySpark environments.
 
 ## Contributing
 
