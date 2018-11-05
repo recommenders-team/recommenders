@@ -13,6 +13,16 @@ except:
 
 
 def process_split_ratio(ratio):
+    '''Generate split ratio lists
+
+    Args:
+        ratio (float or list): a float number that indicates split ratio or a list of float
+        numbers that indicate split ratios (if it is a multi-split).
+
+    Returns:
+        A boolean variable multi which indicates if the split is multi or single, and a normalized
+        split ratio list.
+    '''
     if isinstance(ratio, float):
         if ratio <= 0 or ratio >= 1:
             raise ValueError("Split ratio has to be between 0 and 1")
