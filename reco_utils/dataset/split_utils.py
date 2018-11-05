@@ -20,8 +20,9 @@ def process_split_ratio(ratio):
         numbers that indicate split ratios (if it is a multi-split).
 
     Returns:
-        A boolean variable multi which indicates if the split is multi or single, and a normalized
-        split ratio list.
+        tuple: a tuple containing
+            bool: A boolean variable multi that indicates if the splitting is multi or single.
+            list: A list of normalized split ratios.
     '''
     if isinstance(ratio, float):
         if ratio <= 0 or ratio >= 1:
