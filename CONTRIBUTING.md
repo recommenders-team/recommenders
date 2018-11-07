@@ -23,25 +23,26 @@ All contributions to the repository should have unit tests, we use [pytest](http
 
 Apart from unit tests, we also have nightly builds with smoke and integration tests. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
-**Examples:**
+*Examples:*
 
-* Example of basic asserts with [fixtures comparing structures like list, dictionaries, numpy arrays and pandas dataframes](https://github.com/miguelgfierro/codebase/blob/master/python/test/pytest_fixtures.py).
-* Example of basic use of [common fixtures defined in a conftest file](https://github.com/miguelgfierro/codebase/blob/master/python/test/pytest_fixtures_in_common_file.py).
-* Example of Python unit tests for our [evaluation metrics](tests/unit/test_python_evaluation.py).
-* Example of notebook unit tests for our [PySpark notebooks](tests/unit/test_notebooks_pyspark.py).
+* Basic asserts with [fixtures comparing structures like list, dictionaries, numpy arrays and pandas dataframes](https://github.com/miguelgfierro/codebase/blob/master/python/test/pytest_fixtures.py).
+* Basic use of [common fixtures defined in a conftest file](https://github.com/miguelgfierro/codebase/blob/master/python/test/pytest_fixtures_in_common_file.py).
+* Python unit tests for our [evaluation metrics](tests/unit/test_python_evaluation.py).
+* Notebook unit tests for our [PySpark notebooks](tests/unit/test_notebooks_pyspark.py).
 
 #### Don’t Repeat Yourself (DRY)
 
 DRY by refactoring common code.
 
-**Examples:**
-* Example of how we are using [DRY when testing our notebooks](tests/notebooks_common.py). 
+*Examples:*
+
+* See how we are using [DRY when testing our notebooks](tests/notebooks_common.py). 
 
 #### Single Responsibility
 
 One of the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles, it states that each module or function should have responsibility over a single part of the functionality. 
 
-*Example:*
+*Examples:*
 
 Without single responsibility:
 ```
@@ -63,11 +64,11 @@ We use the automatic style formatter [Black](https://github.com/ambv/black).
 
 We use [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting the docstrings.
 
-*Example:*
+*Examples:*
 
-* Example of [Black formatting on Python files](https://github.com/ambv/black#the-black-code-style). 
-* Example of [Black formatting on Notebooks](https://github.com/csurfer/blackcellmagic).
-* Example of [docstring with Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html).
+* [Black formatting on Python files](https://github.com/ambv/black#the-black-code-style). 
+* [Black formatting on Notebooks](https://github.com/csurfer/blackcellmagic).
+* [Docstring with Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html).
 
 #### The Zen of Python
 We follow the [Zen of Python](https://www.python.org/dev/peps/pep-0020/).
@@ -94,9 +95,9 @@ If the implementation is easy to explain, it may be a good idea.
 Namespaces are one honking great idea -- let's do more of those! 
 ```
 
-*Example:*
+*Examples:*
 
-Example of [explicit is better than implicit](https://miguelgfierro.com/blog/2018/python-pro-tips-understanding-explicit-is-better-than-implicit/):
+Implementation of [explicit is better than implicit](https://miguelgfierro.com/blog/2018/python-pro-tips-understanding-explicit-is-better-than-implicit/) with a read function:
 ```
 #Implicit
 def read(filename):
@@ -117,7 +118,7 @@ def read_json(filename):
 #### Evidence-Based Software Design (EBD)
 Software is developed based on customer inputs, standard libraries in the industry or credible research. For a detailed explanation, see this [post about EBD](https://miguelgfierro.com/blog/2018/evidence-based-software-design/). 
 
-*Example:*
+*Examples:*
 
 When designing the interfaces of the evaluation metrics in Python, we took the decision of using functions instead of classes, following standards in the industry like [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics). See our implementation of [Python metrics](reco_utils/evaluation/python_evaluation.py).
 
@@ -125,9 +126,10 @@ When designing the interfaces of the evaluation metrics in Python, we took the d
 
 We should only implement functionalities when we need them and not when we foresee we might need them.
 
-*Example:*
-Question: should we start developing now computer vision capabilities for when our boss buys us the [SpotMini robot](https://www.youtube.com/watch?v=kHBcVlqpvZ8)?
-Answer: No, SpotMini is not for sale yet and we still need to convince our boss to buy it.
+*Examples:*
+
+* Question: should we start developing now computer vision capabilities for when our boss buys us the [SpotMini robot](https://www.youtube.com/watch?v=kHBcVlqpvZ8)?
+* Answer: No, SpotMini is not for sale yet and we still need to convince our boss to buy it.
 
 ### Practices related to project management
 
@@ -135,7 +137,7 @@ Answer: No, SpotMini is not for sale yet and we still need to convince our boss 
 
 We work through MVPs, which are our milestones. An MVP is that version of a new product which allows a team to collect the maximum amount of validated learning about customers with the least effort. More information about MVPs can be found in the [Lean Startup methodology](http://theleanstartup.com/principles).
 
-*Example:*
+*Examples:*
 
 * [Initial MVP of our repo](https://github.com/Microsoft/Recommenders/milestone/1) with basic functionality.
 * [Second MVP to give early access](https://github.com/Microsoft/Recommenders/milestone/3) to selected users and customers.
@@ -143,7 +145,7 @@ We work through MVPs, which are our milestones. An MVP is that version of a new 
 #### Publish Often Publish Early (PEPO)
 Even before we have an MVP, get the code base working and doing something, even if it is something trivial that everyone can "run" easily. 
 
-*Example:*
+*Examples:*
 
 We make sure that in between MVPs all the code that goes to the branches staging or master passes the tests.
 
@@ -153,7 +155,7 @@ We make sure that in between MVPs all the code that goes to the branches staging
 #### Get customer feedback before making a release
 A product cycle is not finished until we get feedback from a customer/user, we have made changes based on the feedback and all the tests are passing.
 
-*Example:*
+*Examples:*
 
 * See our [branch merging strategy](https://github.com/Microsoft/Recommenders/wiki/Strategy-to-merge-the-code-to-master-branch).
 
@@ -162,7 +164,7 @@ A product cycle is not finished until we get feedback from a customer/user, we h
 #### Don’t point fingers
 Let’s be constructive.
 
-*Example:*
+*Examples:*
 
 "This method is missing docstrings" instead of "YOU forgot to put docstrings".
 
@@ -170,14 +172,14 @@ Let’s be constructive.
 
 When giving feedback about a piece of code, try to support your ideas based on evidence (papers, library documentation, stackoverflow, etc) rather than your personal preferences. 
 
-*Example:*
+*Examples:*
 
 * When reviewing this code, I saw that the Python implementation the metrics are based on classes, however, [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics) use functions. We should follow the standard in the industry.
 
 #### Ask questions, don’t give answers
 Try to be empathic. 
 
-*Example:*
+*Examples:*
 
 * Would it make more sense if ...?
 * Have you considered this ... ?
