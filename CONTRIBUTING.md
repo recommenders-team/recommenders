@@ -1,27 +1,39 @@
 # Contribution Guidelines
 
-Here you will find the contribution guidelines.
+Here you will find the contribution guidelines. This is the content:
 
+* [Microsoft Contributor License Agreement](#microsoft-contributor-license-agreement)
+* [Recommenders Team Contribution Guidelines](#recommenders-team-contribution-guidelines)
+  * [Test Driven Development (TDD)](#test-driven-development-(tdd))
+  * [Don’t Repeat Yourself (DRY)](#don’t-repeat-yourself-(dry))
+  * [Single Responsibility](#single-responsibility)
+  * [Python and Docstrings Style](#python-and-docstrings-style)
+  * [The Zen of Python](#the-zen-of-python)
+  * [Evidence-Based Software Design (EBD)](#evidence-based-software-design-(ebd))
+  * [You aren’t going to need it (YAGNI)](#you-aren’t-going-to-need-it-(yagni))
+  * [Minimum Viable Product (MVP)](#minimum-viable-product-(mvp))
+  * [Publish Often Publish Early (PEPO)](#publish-often-publish-early-(pepo))
+  * [User feedback before making a release](#user-feedback-before-making-a-release)
+* [Code of Conduct](#code-of-conduct)
+  * [Don’t point fingers](#don’t-point-fingers)
+  * [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
+  * [Ask questions don’t give answers](#ask-questions-don’t-give-answers)
 
-## Microsoft CLA
+## Microsoft Contributor License Agreement
 
 Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit https://cla.microsoft.com.
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
-
 ## Recommenders Team Contribution Guidelines
-
-### Practices Related to Coding
 
 #### Test Driven Development (TDD) 
 
-All contributions to the repository should have unit tests, we use [pytest](https://docs.pytest.org/en/latest/) for Python files and [papermill](https://github.com/nteract/papermill) for notebooks. 
+We use [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in our development. All contributions to the repository should have unit tests, we use [pytest](https://docs.pytest.org/en/latest/) for Python files and [papermill](https://github.com/nteract/papermill) for notebooks. 
 
-Apart from unit tests, we also have nightly builds with smoke and integration tests. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
+Apart from unit tests, we also have nightly builds with smoke and integration tests. For more information about the differences, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
+
+You can find a guide on how to manually execute all the tests in the [SETUP.md](SETUP.md)
 
 *Examples:*
 
@@ -32,7 +44,7 @@ Apart from unit tests, we also have nightly builds with smoke and integration te
 
 #### Don’t Repeat Yourself (DRY)
 
-DRY by refactoring common code.
+[DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) by refactoring common code.
 
 *Examples:*
 
@@ -40,7 +52,7 @@ DRY by refactoring common code.
 
 #### Single Responsibility
 
-One of the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles, it states that each module or function should have responsibility over a single part of the functionality. 
+[Single responsibility](https://en.wikipedia.org/wiki/Single_responsibility_principle) is one of the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles, it states that each module or function should have responsibility over a single part of the functionality. 
 
 *Examples:*
 
@@ -60,7 +72,7 @@ def test(test_set):
 ```
 
 #### Python and Docstrings Style
-We use the automatic style formatter [Black](https://github.com/ambv/black). 
+We use the automatic style formatter [Black](https://github.com/ambv/black). See the installation guide for [VSCode](https://github.com/ambv/black#visual-studio-code) and [PyCharm](https://github.com/ambv/black#pycharm).
 
 We use [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting the docstrings.
 
@@ -71,7 +83,7 @@ We use [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/exa
 * [Docstring with Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html).
 
 #### The Zen of Python
-We follow the [Zen of Python](https://www.python.org/dev/peps/pep-0020/).
+We follow the [Zen of Python](https://www.python.org/dev/peps/pep-0020/) when developing general Python code, for PySpark code, please see the note (1) at the end of this section.
 
 ```
 Beautiful is better than ugly.
@@ -113,10 +125,11 @@ def read_json(filename):
 
 ```
 
-### Practices Related to Software Design and Decision Making
+*(1) Note regarding PySpark development*:
+[PySpark](http://spark.apache.org/docs/latest/api/python/index.html) software design is highly influenced by Java. Therefore, in order to follow the industry standards and adapt our code to our users preferences, when developing in PySpark, we don't strictly follow the Zen of Python.
 
 #### Evidence-Based Software Design (EBD)
-Software is developed based on customer inputs, standard libraries in the industry or credible research. For a detailed explanation, see this [post about EBD](https://miguelgfierro.com/blog/2018/evidence-based-software-design/). 
+When using [EBD](https://en.wikipedia.org/wiki/Evidence-based_design), software is developed based on customer inputs, standard libraries in the industry or credible research. For a detailed explanation, see this [post about EBD](https://miguelgfierro.com/blog/2018/evidence-based-software-design/). 
 
 *Examples:*
 
@@ -124,14 +137,12 @@ When designing the interfaces of the evaluation metrics in Python, we took the d
 
 #### You aren’t going to need it (YAGNI)
 
-We should only implement functionalities when we need them and not when we foresee we might need them.
+[YAGNI](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it) principle states that we should only implement functionalities when we need them and not when we foresee we might need them.
 
 *Examples:*
 
-* Question: should we start developing now computer vision capabilities for when our boss buys us the [SpotMini robot](https://www.youtube.com/watch?v=kHBcVlqpvZ8)?
-* Answer: No, SpotMini is not for sale yet and we still need to convince our boss to buy it.
-
-### Practices related to project management
+* Question: should we start developing now computer vision capabilities for the Recommenders project?
+* Answer: No, we will wait until we see a demand of these capabilities.
 
 #### Minimum Viable Product (MVP)
 
@@ -150,16 +161,20 @@ Even before we have an MVP, get the code base working and doing something, even 
 We make sure that in between MVPs all the code that goes to the branches staging or master passes the tests.
 
 
-### Practices related to customer focus
-
-#### Get customer feedback before making a release
-A product cycle is not finished until we get feedback from a customer/user, we have made changes based on the feedback and all the tests are passing.
+#### User feedback before making a release
+A product cycle is not finished until we get feedback from a user, we have made changes based on the feedback and all the tests are passing.
 
 *Examples:*
 
 * See our [branch merging strategy](https://github.com/Microsoft/Recommenders/wiki/Strategy-to-merge-the-code-to-master-branch).
 
-### Practices related to team behavior
+## Code of Conduct
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+
+Apart from the official Code of Conduct developed by Microsoft, in the Recommenders team we adopt the following behaviors, to create a great working environment:
 
 #### Don’t point fingers
 Let’s be constructive.
@@ -170,13 +185,13 @@ Let’s be constructive.
 
 #### Provide code feedback based on evidence 
 
-When giving feedback about a piece of code, try to support your ideas based on evidence (papers, library documentation, stackoverflow, etc) rather than your personal preferences. 
+When making code reviews, try to support your ideas based on evidence (papers, library documentation, stackoverflow, etc) rather than your personal preferences. 
 
 *Examples:*
 
 "When reviewing this code, I saw that the Python implementation the metrics are based on classes, however, [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics) use functions. We should follow the standard in the industry."
 
-#### Ask questions, don’t give answers
+#### Ask questions don’t give answers
 Try to be empathic. 
 
 *Examples:*
