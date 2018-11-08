@@ -19,6 +19,7 @@ try:
         spark_chrono_split,
         spark_random_split,
         spark_stratified_split,
+        spark_timestamp_split
     )
 except ModuleNotFoundError:
     pass  # skip this import if we are in pure python environment
@@ -275,3 +276,50 @@ def test_stratified_splitter(test_specs, spark_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
+
+@pytest.mark.spark
+def test_timestamp_splitter(test_specs, spark_dataset):
+    """Test timestamp splitter for Spark dataframes"""
+    from pyspark.sql.functions import col
+
+    dfs_rating = spark_dataset
+    dfs_rating = dfs_rating.withColumn(DEFAULT_TIMESTAMP_COL, col(DEFAULT_TIMESTAMP_COL).cast("float"))
+
+    splits = spark_timestamp_split(
+        dfs_rating, ratio=test_specs["ratio"], col_timestamp=DEFAULT_TIMESTAMP_COL
+    )
+
+    dfs_rating.show()
+
+    splits[0].show()
+    splits[1].show()
+
+
+    # assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+    #     test_specs["ratio"], test_specs["tolerance"]
+    # )
+    # assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+    #     1 - test_specs["ratio"], test_specs["tolerance"]
+    # )
+    #
+    # # Test if both contains the same user list. This is because stratified split is stratified.
+    # users_train = (
+    #     splits[0].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
+    # )
+    # users_test = (
+    #     splits[1].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
+    # )
+    #
+    # assert set(users_train) == set(users_test)
+    #
+    # splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
+    #
+    # assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+    #     test_specs["ratios"][0], test_specs["tolerance"]
+    # )
+    # assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+    #     test_specs["ratios"][1], test_specs["tolerance"]
+    # )
+    # assert splits[2].count() / test_specs["number_of_rows"] == pytest.approx(
+    #     test_specs["ratios"][2], test_specs["tolerance"]
+    # )
