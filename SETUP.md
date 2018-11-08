@@ -82,6 +82,72 @@ We can register our created conda environment to appear as a kernel in the Jupyt
     source activate my_env_name
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 
+## Tests
+
+This project use unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
+
+### Unit tests
+
+Unit tests ensure that each class or function behaves as it should. Every time a developer makes a pull request to staging or master branch, a battery of unit tests is executed. To manually execute the unit tests in the different environments, first **make sure you are in the correct environment**.
+
+For executing the Python unit tests for the utilities:
+
+    pytest tests/unit -m "not notebooks and not spark and not gpu"
+
+For executing the Python unit tests for the notebooks:
+
+    pytest tests/unit -m "notebooks and not spark and not gpu"
+
+For executing the Python GPU unit tests for the utilities:
+
+    pytest tests/unit -m "not notebooks and not spark and gpu"
+
+For executing the Python GPU unit tests for the notebooks:
+
+    pytest tests/unit -m "notebooks and not spark and gpu"
+
+For executing the PySpark unit tests for the utilities:
+
+    pytest tests/unit -m "not notebooks and spark and not gpu"
+
+For executing the PySpark unit tests for the notebooks:
+
+    pytest tests/unit -m "notebooks and spark and not gpu"
+
+### Smoke tests
+
+Smoke tests make sure that the system works and are executed just before the integration tests every night.
+
+For executing the Python smoke tests:
+
+    pytest tests/smoke -m "smoke and not spark and not gpu"
+
+For executing the Python GPU smoke tests:
+
+    pytest tests/smoke -m "smoke and not spark and gpu"
+
+For executing the PySpark smoke tests:
+
+    pytest tests/smoke -m "smoke and spark and not gpu"
+
+### Integration tests
+
+Integration tests make sure that the program results are acceptable
+
+For executing the Python integration tests:
+
+    pytest tests/integration -m "integration and not spark and not gpu"
+
+For executing the Python GPU integration tests:
+
+    pytest tests/integration -m "integration and not spark and gpu"
+
+For executing the PySpark integration tests:
+
+    pytest tests/integration -m "integration and spark and not gpu"
+
+
+
 ## Troubleshooting
 
 * We found that there could be problems if the Spark version of the machine is not the same as the one in the conda file. You will have to adapt the conda file to your machine. 
