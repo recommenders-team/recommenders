@@ -236,18 +236,10 @@ def spark_timestamp_split(
     window_spec = Window.orderBy(col(col_timestamp).desc())
     rating = data.withColumn("rank", row_number().over(window_spec))
 
-    rating_grouped = (
-        rating.select(*[col_user, col_item, col_timestamp])
-        .agg({col_timestamp: "count"})
-        .withColumnRenamed("count(" + col_timestamp + ")", "count")
+    data_count = rating.count()
+    rating_rank = rating.withColumn(
+        "rank", row_number().over(window_spec) / data_count
     )
-    rating_all = rating.join(broadcast(rating_grouped), on=[col_user, col_item])
-
-    rating_rank = rating_all.withColumn(
-        "rank", row_number().over(window_spec) / col("count")
-    )
-
-    print(rating_rank.show())
 
     splits = []
     for i, _ in enumerate(ratio_index):
