@@ -289,37 +289,22 @@ def test_timestamp_splitter(test_specs, spark_dataset):
         dfs_rating, ratio=test_specs["ratio"], col_timestamp=DEFAULT_TIMESTAMP_COL
     )
 
-    dfs_rating.show()
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratio"], test_specs["tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        1 - test_specs["ratio"], test_specs["tolerance"]
+    )
 
-    splits[0].show()
-    splits[1].show()
+    # Test multi split
+    splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
 
-
-    # assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
-    #     test_specs["ratio"], test_specs["tolerance"]
-    # )
-    # assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
-    #     1 - test_specs["ratio"], test_specs["tolerance"]
-    # )
-    #
-    # # Test if both contains the same user list. This is because stratified split is stratified.
-    # users_train = (
-    #     splits[0].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
-    # )
-    # users_test = (
-    #     splits[1].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
-    # )
-    #
-    # assert set(users_train) == set(users_test)
-    #
-    # splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
-    #
-    # assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
-    #     test_specs["ratios"][0], test_specs["tolerance"]
-    # )
-    # assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
-    #     test_specs["ratios"][1], test_specs["tolerance"]
-    # )
-    # assert splits[2].count() / test_specs["number_of_rows"] == pytest.approx(
-    #     test_specs["ratios"][2], test_specs["tolerance"]
-    # )
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][0], test_specs["tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][1], test_specs["tolerance"]
+    )
+    assert splits[2].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][2], test_specs["tolerance"]
+    )
