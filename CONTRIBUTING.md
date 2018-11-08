@@ -42,9 +42,9 @@ You can find a guide on how to manually execute all the tests in the [SETUP.md](
 * Python unit tests for our [evaluation metrics](tests/unit/test_python_evaluation.py).
 * Notebook unit tests for our [PySpark notebooks](tests/unit/test_notebooks_pyspark.py).
 
-#### Don’t Repeat Yourself
+#### Do not Repeat Yourself
 
-[Don’t Repeat Yourself (DRY)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) by refactoring common code.
+[Don't Repeat Yourself (DRY)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) by refactoring common code.
 
 *Examples:*
 
@@ -135,7 +135,7 @@ When using [Evidence-Based Design (EBD)](https://en.wikipedia.org/wiki/Evidence-
 
 When designing the interfaces of the evaluation metrics in Python, we took the decision of using functions instead of classes, following standards in the industry like [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics). See our implementation of [Python metrics](reco_utils/evaluation/python_evaluation.py).
 
-#### You aren’t going to need it
+#### You are not going to need it
 
 [You aren’t going to need it (YAGNI)](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it) principle states that we should only implement functionalities when we need them and not when we foresee we might need them.
 
