@@ -10,7 +10,7 @@ Here you will find the contribution guidelines. This is the content:
   * [Python and Docstrings Style](#python-and-docstrings-style)
   * [The Zen of Python](#the-zen-of-python)
   * [Evidence-Based Software Design](#evidence-based-software-design)
-  * [You are not going to need it](#you-aren’t-going-to-need-it)
+  * [You are not going to need it](#you-are-not-going-to-need-it)
   * [Minimum Viable Product](#minimum-viable-product)
   * [Publish Often Publish Early](#publish-often-publish-early)
   * [User feedback before making a release](#user-feedback-before-making-a-release)
