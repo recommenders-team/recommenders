@@ -4,20 +4,20 @@ Here you will find the contribution guidelines. This is the content:
 
 * [Microsoft Contributor License Agreement](#microsoft-contributor-license-agreement)
 * [Recommenders Team Contribution Guidelines](#recommenders-team-contribution-guidelines)
-  * [Test Driven Development (TDD)](#test-driven-development-(tdd))
-  * [Don’t Repeat Yourself (DRY)](#don’t-repeat-yourself-(dry))
+  * [Test Driven Development](#test-driven-development)
+  * [Do not Repeat Yourself](#do-not-repeat-yourself)
   * [Single Responsibility](#single-responsibility)
   * [Python and Docstrings Style](#python-and-docstrings-style)
   * [The Zen of Python](#the-zen-of-python)
-  * [Evidence-Based Software Design (EBD)](#evidence-based-software-design-(ebd))
-  * [You aren’t going to need it (YAGNI)](#you-aren’t-going-to-need-it-(yagni))
-  * [Minimum Viable Product (MVP)](#minimum-viable-product-(mvp))
-  * [Publish Often Publish Early (PEPO)](#publish-often-publish-early-(pepo))
+  * [Evidence-Based Software Design](#evidence-based-software-design)
+  * [You are not going to need it](#you-aren’t-going-to-need-it)
+  * [Minimum Viable Product](#minimum-viable-product)
+  * [Publish Often Publish Early](#publish-often-publish-early)
   * [User feedback before making a release](#user-feedback-before-making-a-release)
 * [Code of Conduct](#code-of-conduct)
-  * [Don’t point fingers](#don’t-point-fingers)
+  * [Do not point fingers](#do-not-point-fingers)
   * [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
-  * [Ask questions don’t give answers](#ask-questions-don’t-give-answers)
+  * [Ask questions do not give answers](#ask-questions-do-not-give-answers)
 
 ## Microsoft Contributor License Agreement
 
@@ -27,9 +27,9 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 
 ## Recommenders Team Contribution Guidelines
 
-#### Test Driven Development (TDD) 
+#### Test Driven Development
 
-We use [TDD](https://en.wikipedia.org/wiki/Test-driven_development) in our development. All contributions to the repository should have unit tests, we use [pytest](https://docs.pytest.org/en/latest/) for Python files and [papermill](https://github.com/nteract/papermill) for notebooks. 
+We use [Test Driven Development (TDD)](https://en.wikipedia.org/wiki/Test-driven_development) in our development. All contributions to the repository should have unit tests, we use [pytest](https://docs.pytest.org/en/latest/) for Python files and [papermill](https://github.com/nteract/papermill) for notebooks. 
 
 Apart from unit tests, we also have nightly builds with smoke and integration tests. For more information about the differences, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
@@ -42,9 +42,9 @@ You can find a guide on how to manually execute all the tests in the [SETUP.md](
 * Python unit tests for our [evaluation metrics](tests/unit/test_python_evaluation.py).
 * Notebook unit tests for our [PySpark notebooks](tests/unit/test_notebooks_pyspark.py).
 
-#### Don’t Repeat Yourself (DRY)
+#### Don’t Repeat Yourself
 
-[DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) by refactoring common code.
+[Don’t Repeat Yourself (DRY)](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) by refactoring common code.
 
 *Examples:*
 
@@ -128,32 +128,32 @@ def read_json(filename):
 *(1) Note regarding PySpark development*:
 [PySpark](http://spark.apache.org/docs/latest/api/python/index.html) software design is highly influenced by Java. Therefore, in order to follow the industry standards and adapt our code to our users preferences, when developing in PySpark, we don't strictly follow the Zen of Python.
 
-#### Evidence-Based Software Design (EBD)
-When using [EBD](https://en.wikipedia.org/wiki/Evidence-based_design), software is developed based on customer inputs, standard libraries in the industry or credible research. For a detailed explanation, see this [post about EBD](https://miguelgfierro.com/blog/2018/evidence-based-software-design/). 
+#### Evidence-Based Software Design
+When using [Evidence-Based Design (EBD)](https://en.wikipedia.org/wiki/Evidence-based_design), software is developed based on customer inputs, standard libraries in the industry or credible research. For a detailed explanation, see this [post about EBD](https://miguelgfierro.com/blog/2018/evidence-based-software-design/). 
 
 *Examples:*
 
 When designing the interfaces of the evaluation metrics in Python, we took the decision of using functions instead of classes, following standards in the industry like [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics). See our implementation of [Python metrics](reco_utils/evaluation/python_evaluation.py).
 
-#### You aren’t going to need it (YAGNI)
+#### You aren’t going to need it
 
-[YAGNI](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it) principle states that we should only implement functionalities when we need them and not when we foresee we might need them.
+[You aren’t going to need it (YAGNI)](https://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it) principle states that we should only implement functionalities when we need them and not when we foresee we might need them.
 
 *Examples:*
 
 * Question: should we start developing now computer vision capabilities for the Recommenders project?
 * Answer: No, we will wait until we see a demand of these capabilities.
 
-#### Minimum Viable Product (MVP)
+#### Minimum Viable Product
 
-We work through MVPs, which are our milestones. An MVP is that version of a new product which allows a team to collect the maximum amount of validated learning about customers with the least effort. More information about MVPs can be found in the [Lean Startup methodology](http://theleanstartup.com/principles).
+We work through Minimum Viable Products (MVP), which are our milestones. An MVP is that version of a new product which allows a team to collect the maximum amount of validated learning about customers with the least effort. More information about MVPs can be found in the [Lean Startup methodology](http://theleanstartup.com/principles).
 
 *Examples:*
 
 * [Initial MVP of our repo](https://github.com/Microsoft/Recommenders/milestone/1) with basic functionality.
 * [Second MVP to give early access](https://github.com/Microsoft/Recommenders/milestone/3) to selected users and customers.
 
-#### Publish Often Publish Early (PEPO)
+#### Publish Often Publish Early
 Even before we have an MVP, get the code base working and doing something, even if it is something trivial that everyone can "run" easily. 
 
 *Examples:*
@@ -176,7 +176,7 @@ For more information see the [Code of Conduct FAQ](https://opensource.microsoft.
 
 Apart from the official Code of Conduct developed by Microsoft, in the Recommenders team we adopt the following behaviors, to create a great working environment:
 
-#### Don’t point fingers
+#### Do not point fingers
 Let’s be constructive.
 
 *Examples:*
@@ -191,7 +191,7 @@ When making code reviews, try to support your ideas based on evidence (papers, l
 
 "When reviewing this code, I saw that the Python implementation the metrics are based on classes, however, [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics) use functions. We should follow the standard in the industry."
 
-#### Ask questions don’t give answers
+#### Ask questions do not give answers
 Try to be empathic. 
 
 *Examples:*
