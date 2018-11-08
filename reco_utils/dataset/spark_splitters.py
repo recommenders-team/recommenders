@@ -198,3 +198,66 @@ def spark_stratified_split(
         splits.append(rating_split)
 
     return splits
+
+
+def spark_timestamp_split(
+    data,
+    ratio=0.75,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_timestamp=DEFAULT_TIMESTAMP_COL
+):
+    """Spark timestamp based splitter
+    The splitter splits the data into sets by timestamps without stratification on either
+    user or item.
+    The ratios are applied on the timestamp column which is divided accordingly into
+    several partitions.
+
+    Args:
+        data (spark.DataFrame): Spark DataFrame to be split.
+        ratio (float or list): Ratio for splitting data. If it is a single float number
+            it splits data into two halfs and the ratio argument indicates the ratio of
+            training data set; if it is a list of float numbers, the splitter splits
+            data into several portions corresponding to the split ratios. If a list is
+            provided and the ratios are not summed to 1, they will be normalized.
+        col_user (str): column name of user IDs.
+        col_item (str): column name of item IDs.
+        col_timestamp (str): column name of timestamps. Float number represented in
+        seconds since Epoch.
+
+    Returns:
+        list: Splits of the input data as spark.DataFrame.
+    """
+    multi_split, ratio = process_split_ratio(ratio)
+
+    ratio = ratio if multi_split else [ratio, 1 - ratio]
+    ratio_index = np.cumsum(ratio)
+
+    window_spec = Window.orderBy(col(col_timestamp).desc())
+    rating = data.withColumn("rank", row_number().over(window_spec))
+
+    rating_grouped = (
+        rating.select(*[col_user, col_item, col_timestamp])
+        .agg({col_timestamp: "count"})
+        .withColumnRenamed("count(" + col_timestamp + ")", "count")
+    )
+    rating_all = rating.join(broadcast(rating_grouped), on=[col_user, col_item])
+
+    rating_rank = rating_all.withColumn(
+        "rank", row_number().over(window_spec) / col("count")
+    )
+
+    print(rating_rank.show())
+
+    splits = []
+    for i, _ in enumerate(ratio_index):
+        if i == 0:
+            rating_split = rating_rank.filter(col("rank") <= ratio_index[i]).drop("rank")
+        else:
+            rating_split = rating_rank.filter(
+                (col("rank") <= ratio_index[i]) & (col("rank") > ratio_index[i - 1])
+            ).drop("rank")
+
+        splits.append(rating_split)
+
+    return splits
