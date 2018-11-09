@@ -139,12 +139,12 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR+</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>38 s</td>
+  <td>1min 48s</td>
+  <td>0.278</td>
+  <td>0.108</td>
+  <td>0.064</td>
+  <td>0.309</td>
   <td></td>
   <td></td>
   <td></td>
