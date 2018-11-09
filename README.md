@@ -44,21 +44,21 @@ Here we benchmark all the algorithms available in this repository.
 
 <table>
  <tr>
-  <td >Dataset</td>
-  <td>Algorithm</td>
-  <td>Training time</td>
-  <td>Test time</td>
-  <td>Precision@10</td>
-  <td>Recall@10</td>
-  <td>MAP@10</td>
-  <td>NDCG@10</td>
-  <td>RMSE</td>
-  <td>MAE</td>
-  <td>Exp Var</td>
-  <td>R^2</td>
+  <th>Dataset</th>
+  <th>Algorithm</th>
+  <th>Training time</th>
+  <th>Test time</th>
+  <th>Precision @ 10</th>
+  <th>Recall @ 10</th>
+  <th>MAP @ 10</th>
+  <th>NDCG @ 10</th>
+  <th>RMSE</th>
+  <th>MAE</th>
+  <th>Exp Var</th>
+  <th>R^2</th>
  </tr>
  <tr>
-  <td rowspan=4>Movielens100k</td>
+  <td rowspan=4>Movielens 100k</td>
   <td>ALS</td>
   <td>5.73 s</td>
   <td>326 ms</td>
@@ -111,7 +111,7 @@ Here we benchmark all the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td rowspan=4>Movielens1M</td>
+  <td rowspan=4>Movielens 1M</td>
   <td>ALS</td>
   <td>18s</td>
   <td>339 ms</td>
@@ -164,7 +164,7 @@ Here we benchmark all the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td rowspan=4>Movielens10M</td>
+  <td rowspan=4>Movielens 10M</td>
   <td>ALS</td>
   <td>1min 32s</td>
   <td>169 ms</td>
@@ -217,7 +217,7 @@ Here we benchmark all the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td rowspan=4>Movielens20M</td>
+  <td rowspan=4>Movielens 20M</td>
   <td>ALS</td>
   <td>2min 22s</td>
   <td>345 ms</td>
