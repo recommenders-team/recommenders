@@ -179,8 +179,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR PySpark</td>
-  <td>1min 26s</td>
-  <td>5min 10s</td>
+  <td></td>
+  <td></td>
   <td></td>
   <td></td>
   <td></td>
@@ -192,12 +192,12 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR+</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>2min 50s</td>
+  <td>1min 20s</td>
+  <td>0.256</td>
+  <td>0.129</td>
+  <td>0.081</td>
+  <td>0.295</td>
   <td></td>
   <td></td>
   <td></td>
@@ -245,12 +245,12 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR+</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>6min 40s</td>
+  <td>3min 41s</td>
+  <td>0.203</td>
+  <td>0.071</td>
+  <td>0.041</td>
+  <td>0.226</td>
   <td></td>
   <td></td>
   <td></td>
