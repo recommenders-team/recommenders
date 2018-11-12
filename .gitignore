@@ -110,4 +110,9 @@ Untitled*.ipynb
 *-Copy*.ipynb
 ~$*
 output.ipynb
-
+conda*.yaml
+.idea
+*.npz
+*.data
+*.csv
+.vscode/

@@ -1,0 +1,13 @@
+:paste
+
+var df = spark.read.format("csv")
+    .option("header", "true")
+    .option("inferSchema", "true")
+    .load("tests/sample-input.txt")
+
+df.coalesce(1)
+    .write.format("eisber.sarplus")
+    .mode("overwrite")
+    .save("tests/sample-output.sar")
+
+df.show()
