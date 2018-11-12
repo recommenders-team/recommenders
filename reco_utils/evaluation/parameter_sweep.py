@@ -1,6 +1,10 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
 # Utility functions for parameter sweep.
 
 from itertools import product
+
 
 def generate_param_grid(params):
     """Generator of parameter grids
@@ -45,5 +49,4 @@ def generate_param_grid(params):
         params_exp.append(param_exp)
 
     return params_exp
-
 
