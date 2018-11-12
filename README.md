@@ -41,27 +41,30 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 ## Benchmarks
 
 Here we benchmark all the algorithms available in this repository.
+**NOTES**:
+* Time for training and testing is measured in second.
+* Ranking metrics (i.e., precision, recall, map, and ndcg) are evaluated with `k` equal to 10.
 
 <table>
  <tr>
   <th>Dataset</th>
   <th>Algorithm</th>
   <th>Training time</th>
-  <th>Test time</th>
-  <th>Precision @ 10</th>
-  <th>Recall @ 10</th>
-  <th>MAP @ 10</th>
-  <th>NDCG @ 10</th>
+  <th>Testing time</th>
+  <th>Precision</th>
+  <th>Recall</th>
+  <th>MAP</th>
+  <th>NDCG</th>
   <th>RMSE</th>
   <th>MAE</th>
   <th>Exp Var</th>
-  <th>R^2</th>
+  <th>R squared</th>
  </tr>
  <tr>
   <td rowspan=4>Movielens 100k</td>
   <td>ALS</td>
-  <td>5.73 s</td>
-  <td>326 ms</td>
+  <td>5.730</td>
+  <td>0.326</td>
   <td>0.096</td>
   <td>0.079</td>
   <td>0.026</td>
@@ -73,8 +76,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr >
   <td >SAR PySpark</td>
-  <td>838 ms</td>
-  <td>9.56 s</td>
+  <td>0.838</td>
+  <td>9.560</td>
   <td>0.327</td>
   <td>0.179</td>
   <td>0.110</td>
@@ -86,8 +89,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR+</td>
-  <td>7.66 s</td>
-  <td>16.7 s</td>
+  <td>7.660</td>
+  <td>16.700</td>
   <td>0.327</td>
   <td>0.176</td>
   <td>0.106</td>
@@ -99,8 +102,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR CPU</td>
-  <td>679 ms</td>
-  <td>116 ms</td>
+  <td>0.679</td>
+  <td>0.116</td>
   <td>0.327</td>
   <td>0.176</td>
   <td>0.106</td>
@@ -113,8 +116,8 @@ Here we benchmark all the algorithms available in this repository.
  <tr>
   <td rowspan=4>Movielens 1M</td>
   <td>ALS</td>
-  <td>18s</td>
-  <td>339 ms</td>
+  <td>18.000</td>
+  <td>0.339</td>
   <td>0.120</td>
   <td>0.062</td>
   <td>0.022</td>
@@ -126,8 +129,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR PySpark</td>
-  <td>9.23 s</td>
-  <td>38.3 s</td>
+  <td>9.230</td>
+  <td>38.300</td>
   <td>0.278</td>
   <td>0.108</td>
   <td>0.064</td>
@@ -139,8 +142,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR+</td>
-  <td>38 s</td>
-  <td>1min 48s</td>
+  <td>38.000</td>
+  <td>108.000</td>
   <td>0.278</td>
   <td>0.108</td>
   <td>0.064</td>
@@ -152,8 +155,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR CPU</td>
-  <td>5.83 s</td>
-  <td>586 ms</td>
+  <td>5.830</td>
+  <td>0.586</td>
   <td>0.277</td>
   <td>0.109</td>
   <td>0.064</td>
@@ -166,8 +169,8 @@ Here we benchmark all the algorithms available in this repository.
  <tr>
   <td rowspan=4>Movielens 10M</td>
   <td>ALS</td>
-  <td>1min 32s</td>
-  <td>169 ms</td>
+  <td>92.000</td>
+  <td>0.169</td>
   <td>0.090</td>
   <td>0.057</td>
   <td>0.015</td>
@@ -192,8 +195,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR+</td>
-  <td>2min 50s</td>
-  <td>1min 20s</td>
+  <td>170.000</td>
+  <td>80.000</td>
   <td>0.256</td>
   <td>0.129</td>
   <td>0.081</td>
@@ -205,8 +208,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR CPU</td>
-  <td>1min 51s</td>
-  <td>12.6 s</td>
+  <td>111.000</td>
+  <td>12.600</td>
   <td>0.276</td>
   <td>0.156</td>
   <td>0.101</td>
@@ -219,8 +222,8 @@ Here we benchmark all the algorithms available in this repository.
  <tr>
   <td rowspan=4>Movielens 20M</td>
   <td>ALS</td>
-  <td>2min 22s</td>
-  <td>345 ms</td>
+  <td>142.000</td>
+  <td>0.345</td>
   <td>0.081</td>
   <td>0.052</td>
   <td>0.014</td>
@@ -245,8 +248,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr>
   <td>SAR+</td>
-  <td>6min 40s</td>
-  <td>3min 41s</td>
+  <td>400.000</td>
+  <td>221.000</td>
   <td>0.203</td>
   <td>0.071</td>
   <td>0.041</td>
@@ -258,8 +261,8 @@ Here we benchmark all the algorithms available in this repository.
  </tr>
  <tr >
   <td>SAR CPU</td>
-  <td>9min 19s</td>
-  <td>47.3 s</td>
+  <td>559.000</td>
+  <td>47.300</td>
   <td>0.247</td>
   <td>0.135</td>
   <td>0.085</td>
