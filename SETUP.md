@@ -1,21 +1,40 @@
-# Setup guide
+# Setup guide 
 
-In this guide we show how to setup all the dependencies to run the notebooks of this repo. 
+In this guide we show how to setup all the dependencies to run the notebooks of this repo on an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) and on [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). 
 
-Three environments are supported to run the notebooks in the repo:
+We have different compute environments, depending on the kind of machine
 
+Environments supported to run the notebooks on the DSVM:
 * Python CPU
 * Python GPU
 * PySpark
 
-## Requirements
+Environments supported to run the notebooks on Azure Databricks:
+* PySpark
+
+Table of contents:
+* [Setup guide for the DSVM](#setup-guide-for-the-dsvm)
+  * [Requirements of the DSVM](#requirements-of-the-dsvm)
+  * [Conda environment setup](#conda-environment-setup)
+  * [Register the conda environment in Jupyter notebook](register-the-conda-environment-in-jupyter-notebook)
+  * [Tests](#tests)
+  * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
+* [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
+  * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
+  * 
+  * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
+
+
+## Setup guide for the DSVM
+
+### Requirements of the DSVM
 
 - [Anaconda Python 3.6](https://conda.io/miniconda.html)
 - The Python library dependencies can be found in this [script](scripts/generate_conda_file.sh).
 - Machine with Spark (optional for Python environment but mandatory for PySpark environment).
 - Machine with GPU (optional but desirable for computing acceleration).
 
-## Conda environments
+### Conda environment setup
 
 As a pre-requisite, we may want to make sure that Conda is up-to-date:
 
@@ -25,7 +44,7 @@ We provided a script to [generate a conda file](scripts/generate_conda_file.sh),
 
 To install each environment, first we need to generate a conda yml file and then install the environment. We can specify the environment name with the input `-n`. In the following examples, we provide a name example.
 
-### Python CPU environment
+#### Python CPU environment
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install the Python CPU environment:
 
@@ -33,7 +52,7 @@ Assuming the repo is cloned as `Recommenders` in the local system, to install th
     ./scripts/generate_conda_file.sh
     conda env create -n reco_bare -f conda_bare.yaml 
 
-### Python GPU environment
+#### Python GPU environment
 
 Assuming that you have a GPU machine, to install the Python GPU environment, which by default installs the CPU environment:
 
@@ -41,7 +60,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
     ./scripts/generate_conda_file.sh --gpu
     conda env create -n reco_gpu -f conda_gpu.yaml 
 
-### PySpark environment
+#### PySpark environment
 
 To install the PySpark environment, which by default installs the CPU environment:
 
@@ -67,7 +86,7 @@ unset PYSPARK_PYTHON
 unset PYSPARK_DRIVER_PYTHON
 ```
 
-### All environments
+#### All environments
 
 To install all three environments:
 
@@ -82,11 +101,11 @@ We can register our created conda environment to appear as a kernel in the Jupyt
     source activate my_env_name
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 
-## Tests
+### Tests
 
 This project use unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
-### Unit tests
+#### Unit tests
 
 Unit tests ensure that each class or function behaves as it should. Every time a developer makes a pull request to staging or master branch, a battery of unit tests is executed. To manually execute the unit tests in the different environments, first **make sure you are in the correct environment**.
 
@@ -114,7 +133,7 @@ For executing the PySpark unit tests for the notebooks:
 
     pytest tests/unit -m "notebooks and spark and not gpu"
 
-### Smoke tests
+#### Smoke tests
 
 Smoke tests make sure that the system works and are executed just before the integration tests every night.
 
@@ -130,7 +149,7 @@ For executing the PySpark smoke tests:
 
     pytest tests/smoke -m "smoke and spark and not gpu"
 
-### Integration tests
+#### Integration tests
 
 Integration tests make sure that the program results are acceptable
 
@@ -147,8 +166,36 @@ For executing the PySpark integration tests:
     pytest tests/integration -m "integration and spark and not gpu"
 
 
-
-## Troubleshooting
+### Troubleshooting for the DSVM
 
 * We found that there could be problems if the Spark version of the machine is not the same as the one in the conda file. You will have to adapt the conda file to your machine. 
+
+## Setup guide for Azure Databricks
+
+### Requirements of Azure Databricks
+* Runtime version 4.3 (Apache Spark 2.3.1, Scala 2.11)
+* Python 3
+
+### Repository upload
+We need to zip and upload the repository to be used in Databricks, the steps are the following:
+* Clone Microsoft Recommenders repo in your local computer.
+* Zip the content inside the root folder:
+```
+cd Recommenders
+zip -r Recommenders.zip .
+```
+* Once your cluster has started, go to the Databricks home workspace, then go to your user and press import.
+* In the next menu there is an option to import a library, it says: `To import a library, such as a jar or egg, click here`. Press click here.
+* Then, in language, mark the option `Upload Python egg or PyPI`.
+* Then press on `Drop library egg here to upload` and select the the file `Recommenders.zip` you just created.
+* Then press `Create library`. This will upload the zip and make it available in your workspace.
+* Finally, in the next menu, attach the library to your cluster.
+
+To make sure it works, you can now create a new notebook and import the utilities:
+```
+import reco_utils
+```
+
+### Troubleshooting for Azure Databricks
+* For the [utilities](reco_utils) to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the root folder, if you zip directly the root folder, it won't work.
 
