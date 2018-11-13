@@ -38,6 +38,245 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 | [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
 | [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python+CPU and PySpark environments.
 
+## Benchmarks
+
+Here we benchmark all the algorithms available in this repository.
+
+**NOTES**:
+* Time for training and testing is measured in second.
+* Ranking metrics (i.e., precision, recall, map, and ndcg) are evaluated with `k` equal to 10.
+* The machine we used is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
+
+<table>
+ <tr>
+  <th>Dataset</th>
+  <th>Algorithm</th>
+  <th>Training time</th>
+  <th>Testing time</th>
+  <th>Precision</th>
+  <th>Recall</th>
+  <th>MAP</th>
+  <th>NDCG</th>
+  <th>RMSE</th>
+  <th>MAE</th>
+  <th>Exp Var</th>
+  <th>R squared</th>
+ </tr>
+ <tr>
+  <td rowspan=4>Movielens 100k</td>
+  <td>ALS</td>
+  <td>5.730</td>
+  <td>0.326</td>
+  <td>0.096</td>
+  <td>0.079</td>
+  <td>0.026</td>
+  <td>0.100</td>
+  <td>1.110</td>
+  <td>0.860</td>
+  <td>0.025</td>
+  <td>0.023</td>
+ </tr>
+ <tr >
+  <td >SAR PySpark</td>
+  <td>0.838</td>
+  <td>9.560</td>
+  <td>0.327</td>
+  <td>0.179</td>
+  <td>0.110</td>
+  <td>0.379</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SAR+</td>
+  <td>7.660</td>
+  <td>16.700</td>
+  <td>0.327</td>
+  <td>0.176</td>
+  <td>0.106</td>
+  <td>0.373</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SAR CPU</td>
+  <td>0.679</td>
+  <td>0.116</td>
+  <td>0.327</td>
+  <td>0.176</td>
+  <td>0.106</td>
+  <td>0.373</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td rowspan=4>Movielens 1M</td>
+  <td>ALS</td>
+  <td>18.000</td>
+  <td>0.339</td>
+  <td>0.120</td>
+  <td>0.062</td>
+  <td>0.022</td>
+  <td>0.119</td>
+  <td>0.950</td>
+  <td>0.735</td>
+  <td>0.280</td>
+  <td>0.280</td>
+ </tr>
+ <tr>
+  <td>SAR PySpark</td>
+  <td>9.230</td>
+  <td>38.300</td>
+  <td>0.278</td>
+  <td>0.108</td>
+  <td>0.064</td>
+  <td>0.309</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SAR+</td>
+  <td>38.000</td>
+  <td>108.000</td>
+  <td>0.278</td>
+  <td>0.108</td>
+  <td>0.064</td>
+  <td>0.309</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SAR CPU</td>
+  <td>5.830</td>
+  <td>0.586</td>
+  <td>0.277</td>
+  <td>0.109</td>
+  <td>0.064</td>
+  <td>0.308</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td rowspan=4>Movielens 10M</td>
+  <td>ALS</td>
+  <td>92.000</td>
+  <td>0.169</td>
+  <td>0.090</td>
+  <td>0.057</td>
+  <td>0.015</td>
+  <td>0.084</td>
+  <td>0.850</td>
+  <td>0.647</td>
+  <td>0.359</td>
+  <td>0.359</td>
+ </tr>
+ <tr>
+  <td>SAR PySpark</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SAR+</td>
+  <td>170.000</td>
+  <td>80.000</td>
+  <td>0.256</td>
+  <td>0.129</td>
+  <td>0.081</td>
+  <td>0.295</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SAR CPU</td>
+  <td>111.000</td>
+  <td>12.600</td>
+  <td>0.276</td>
+  <td>0.156</td>
+  <td>0.101</td>
+  <td>0.321</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td rowspan=4>Movielens 20M</td>
+  <td>ALS</td>
+  <td>142.000</td>
+  <td>0.345</td>
+  <td>0.081</td>
+  <td>0.052</td>
+  <td>0.014</td>
+  <td>0.076</td>
+  <td>0.830</td>
+  <td>0.633</td>
+  <td>0.372</td>
+  <td>0.371</td>
+ </tr>
+ <tr>
+  <td>SAR PySpark</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr>
+  <td>SAR+</td>
+  <td>400.000</td>
+  <td>221.000</td>
+  <td>0.203</td>
+  <td>0.071</td>
+  <td>0.041</td>
+  <td>0.226</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+ <tr >
+  <td>SAR CPU</td>
+  <td>559.000</td>
+  <td>47.300</td>
+  <td>0.247</td>
+  <td>0.135</td>
+  <td>0.085</td>
+  <td>0.287</td>
+  <td></td>
+  <td></td>
+  <td></td>
+  <td></td>
+ </tr>
+
+</table>
+
 ## Contributing
 
 This project welcomes contributions and suggestions. Before contributing, please see our [contribution guidelines](CONTRIBUTING.md).
