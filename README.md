@@ -30,7 +30,7 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 | Notebook | Description | 
 | --- | --- | 
 | [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
-| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
+| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a Python+CPU environment.
 | [sar_pyspark_movielens](notebooks/00_quick_start/sar_pyspark_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a PySpark environment.
 | [sarplus_movielens](notebooks/00_quick_start/sarplus_movielens.ipynb) | Utilizing the SAR+ algorithm to power movie ratings in a PySpark environment.
 | [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
