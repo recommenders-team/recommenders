@@ -44,7 +44,7 @@ Here we benchmark all the algorithms available in this repository.
 
 **NOTES**:
 * Time for training and testing is measured in second.
-* Ranking metrics (i.e., precision, recall, map, and ndcg) are evaluated with `k` equal to 10.
+* Ranking metrics (i.e., precision, recall, map, and ndcg) are evaluated with k equal to 10. They are not applied to SAR-family algorithms (SAR PySpark, SAR+, and SAR CPU) because these algorithms do not predict explicit ratings that have the same scale with those in the original input data.
 * The machine we used is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
 
 <table>
