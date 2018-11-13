@@ -12,9 +12,9 @@ This repository provides examples and best practices for building recommendation
 1. Preparing and loading data for each recommender algorithm. 
 2. Using different algorithms such as Smart Adapative Recommendation (SAR), Alternating Least Square (ALS), etc., for building recommender models. 
 3. Evaluating algorithms with offline metrics. 
-4. Operationalizing models in a production environment. The examples work across Python + cpu and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements. 
+4. Operationalizing models in a production environment. The examples work across Python + CPU and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements. 
 
-Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in Spark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications. 
+Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications. 
 
 ## Environment Setup
 * Please see the [setup guide](SETUP.md).
@@ -30,13 +30,13 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 | Notebook | Description | 
 | --- | --- | 
 | [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
-| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a Python+CPU environment.
+| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a Python + CPU environment.
 | [sar_pyspark_movielens](notebooks/00_quick_start/sar_pyspark_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a PySpark environment.
 | [sarplus_movielens](notebooks/00_quick_start/sarplus_movielens.ipynb) | Utilizing the SAR+ algorithm to power movie ratings in a PySpark environment.
 | [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
 | [als_deep_dive](notebooks/02_modeling/als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
 | [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
-| [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python+CPU and PySpark environments.
+| [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python + CPU and PySpark environments.
 
 ## Benchmarks
 
@@ -44,7 +44,7 @@ Here we benchmark all the algorithms available in this repository.
 
 **NOTES**:
 * Time for training and testing is measured in second.
-* Ranking metrics (i.e., precision, recall, map, and ndcg) are evaluated with k equal to 10. They are not applied to SAR-family algorithms (SAR PySpark, SAR+, and SAR CPU) because these algorithms do not predict explicit ratings that have the same scale with those in the original input data.
+* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10. They are not applied to SAR-family algorithms (SAR PySpark, SAR+, and SAR CPU) because these algorithms do not predict explicit ratings that have the same scale with those in the original input data.
 * The machine we used is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
 
 <table>
