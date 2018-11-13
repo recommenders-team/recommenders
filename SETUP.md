@@ -15,13 +15,14 @@ Environments supported to run the notebooks on Azure Databricks:
 Table of contents:
 * [Setup guide for the DSVM](#setup-guide-for-the-dsvm)
   * [Requirements of the DSVM](#requirements-of-the-dsvm)
-  * [Conda environment setup](#conda-environment-setup)
+  * [Dependencies setup for the DSVM](#dependencies-setup-for-the-dsvm)
   * [Register the conda environment in Jupyter notebook](register-the-conda-environment-in-jupyter-notebook)
   * [Tests](#tests)
   * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
 * [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
-  * 
+  * [Repository upload](#repository-upload)
+  * [Dependencies setup for Azure Databricks](#dependencies-setup-for-azure-databricks)
   * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
 
 
@@ -34,9 +35,9 @@ Table of contents:
 - Machine with Spark (optional for Python environment but mandatory for PySpark environment).
 - Machine with GPU (optional but desirable for computing acceleration).
 
-### Conda environment setup
+### Dependencies setup for the DSVM
 
-As a pre-requisite, we may want to make sure that Conda is up-to-date:
+We install the dependencies with Conda. As a pre-requisite, we may want to make sure that Conda is up-to-date:
 
     conda update conda
 
@@ -195,6 +196,9 @@ To make sure it works, you can now create a new notebook and import the utilitie
 ```
 import reco_utils
 ```
+
+### Dependencies setup for Azure Databricks
+The dependencies has to be manually installed in the cluster, they can be found on [this script](scripts/generate_conda_file.sh).
 
 ### Troubleshooting for Azure Databricks
 * For the [utilities](reco_utils) to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the root folder, if you zip directly the root folder, it won't work.
