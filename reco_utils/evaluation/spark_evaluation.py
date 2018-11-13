@@ -360,6 +360,10 @@ def get_top_k_items(
         .dropDuplicates([col_user, "prediction"])
     )
 
+    # Force evaluation but this leads to overhead.
+    # If it does fix any OOM issues owing to lazy evaluation, keep it. Otherwise, remove it.
+    items_for_user.count()
+
     return items_for_user
 
 
@@ -401,6 +405,10 @@ def get_relevant_items_by_threshold(
         .dropDuplicates()
     )
 
+    # Force evaluation but this leads to overhead.
+    # If it does fix any OOM issues owing to lazy evaluation, keep it. Otherwise, remove it.
+    items_for_user.count()
+
     return items_for_user
 
 
@@ -440,5 +448,9 @@ def get_relevant_items_by_timestamp(
         .select(col_user, "prediction")
         .dropDuplicates([col_user, "prediction"])
     )
+
+    # Force evaluation but this leads to overhead.
+    # If it does fix any OOM issues owing to lazy evaluation, keep it. Otherwise, remove it.
+    items_for_user.count()
 
     return items_for_user
