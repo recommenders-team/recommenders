@@ -6,6 +6,7 @@ In this guide we show how to setup all the dependencies to run the notebooks of 
 
 <details>
 <summary><strong><em>Table of Contents</em></strong></summary>
+ 
 * [Compute environments](#compute-environments)
 * [Setup guide for the DSVM](#setup-guide-for-the-dsvm)
   * [Requirements of the DSVM](#requirements-of-the-dsvm)
