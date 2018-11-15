@@ -2,19 +2,11 @@
 
 In this guide we show how to setup all the dependencies to run the notebooks of this repo on an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) and on [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). 
 
-We have different compute environments, depending on the kind of machine
 
-Environments supported to run the notebooks on the DSVM:
-* Python CPU
-* Python GPU
-* PySpark
-
-Environments supported to run the notebooks on Azure Databricks:
-* PySpark
 
 <details>
 <summary><strong><em>Table of Contents</em></strong></summary>
-
+* [Compute environments](#compute-environments)
 * [Setup guide for the DSVM](#setup-guide-for-the-dsvm)
   * [Requirements of the DSVM](#requirements-of-the-dsvm)
   * [Dependencies setup for the DSVM](#dependencies-setup-for-the-dsvm)
@@ -28,6 +20,18 @@ Environments supported to run the notebooks on Azure Databricks:
   * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
 </details>
 
+
+## Compute environments
+
+We have different compute environments, depending on the kind of machine
+
+Environments supported to run the notebooks on the DSVM:
+* Python CPU
+* Python GPU
+* PySpark
+
+Environments supported to run the notebooks on Azure Databricks:
+* PySpark
 
 ## Setup guide for the DSVM
 
