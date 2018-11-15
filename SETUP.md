@@ -187,7 +187,7 @@ zip -r Recommenders.zip .
 ```
 * Once your cluster has started, go to the Databricks home workspace, then go to your user and press import.
 * In the next menu there is an option to import a library, it says: `To import a library, such as a jar or egg, click here`. Press click here.
-* Then, in language, mark the option `Upload Python egg or PyPI`.
+* Then, at the first drop-down menu, mark the option `Upload Python egg or PyPI`.
 * Then press on `Drop library egg here to upload` and select the the file `Recommenders.zip` you just created.
 * Then press `Create library`. This will upload the zip and make it available in your workspace.
 * Finally, in the next menu, attach the library to your cluster.
