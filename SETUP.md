@@ -12,7 +12,9 @@ Environments supported to run the notebooks on the DSVM:
 Environments supported to run the notebooks on Azure Databricks:
 * PySpark
 
-Table of contents:
+<details>
+<summary><strong><em>Table of Contents</em></strong></summary>
+
 * [Setup guide for the DSVM](#setup-guide-for-the-dsvm)
   * [Requirements of the DSVM](#requirements-of-the-dsvm)
   * [Dependencies setup for the DSVM](#dependencies-setup-for-the-dsvm)
@@ -24,6 +26,7 @@ Table of contents:
   * [Repository upload](#repository-upload)
   * [Dependencies setup for Azure Databricks](#dependencies-setup-for-azure-databricks)
   * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
+</details>
 
 
 ## Setup guide for the DSVM
