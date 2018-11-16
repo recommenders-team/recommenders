@@ -1,8 +1,11 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pandas as pd
 import numpy as np
 from itertools import product
 import pytest
-from reco_utils.dataset.split_utils import min_rating_filter
+from reco_utils.dataset.split_utils import min_rating_filter_spark
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -15,6 +18,7 @@ try:
     from reco_utils.dataset.spark_splitters import (
         spark_chrono_split,
         spark_random_split,
+        spark_stratified_split,
     )
 except ModuleNotFoundError:
     pass  # skip this import if we are in pure python environment
@@ -87,8 +91,8 @@ def test_min_rating_filter(spark_dataset):
     """
     dfs_rating = spark_dataset
 
-    dfs_user = min_rating_filter(dfs_rating, min_rating=5, filter_by="user")
-    dfs_item = min_rating_filter(dfs_rating, min_rating=5, filter_by="item")
+    dfs_user = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="user")
+    dfs_item = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="item")
 
     user_rating_counts = [
         x["count"] >= 5 for x in dfs_user.groupBy(DEFAULT_USER_COL).count().collect()
@@ -231,3 +235,43 @@ def test_chrono_splitter(test_specs, spark_dataset):
         all_later.append(user_later_1)
         all_later.append(user_later_2)
     assert all(all_later)
+
+
+@pytest.mark.spark
+def test_stratified_splitter(test_specs, spark_dataset):
+    """Test stratified splitter for Spark dataframes"""
+    dfs_rating = spark_dataset
+
+    splits = spark_stratified_split(
+        dfs_rating, ratio=test_specs["ratio"], filter_by="user", min_rating=10
+    )
+
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratio"], test_specs["tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        1 - test_specs["ratio"], test_specs["tolerance"]
+    )
+
+    # Test if both contains the same user list. This is because stratified split is stratified.
+    users_train = (
+        splits[0].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
+    )
+    users_test = (
+        splits[1].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
+    )
+
+    assert set(users_train) == set(users_test)
+
+    splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
+
+    assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][0], test_specs["tolerance"]
+    )
+    assert splits[1].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][1], test_specs["tolerance"]
+    )
+    assert splits[2].count() / test_specs["number_of_rows"] == pytest.approx(
+        test_specs["ratios"][2], test_specs["tolerance"]
+    )
+

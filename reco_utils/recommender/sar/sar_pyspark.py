@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """
 Reference implementation of SAR in pySpark using Spark-SQL and some dataframe operations.
 This is supposed to be a super-performant implementation of SAR on Spark using pySpark.
@@ -161,7 +164,8 @@ class SARpySparkReference:
         """Used for unit tests only - write the SQL table as a smaller numpy array.
 
         Returns
-            np.array: item similarity as matrix."""
+            np.array: item similarity as matrix.
+        """
 
         if self.item_similarity is None or self.item_similarity.count() == 0:
             return None
@@ -183,7 +187,8 @@ class SARpySparkReference:
             uid (str/int): actual ID of the user (not the index)
 
         Returns:
-            np.array: 1D array of user affinities."""
+            np.array: 1D array of user affinities.
+        """
 
         if self.affinity is None or self.affinity.count() == 0:
             return None
@@ -207,7 +212,7 @@ class SARpySparkReference:
         i.e. contain the sequential integer index of the original alphanumeric user and item IDs.
         Dataframe also contains rating and timestamp as floats; timestamp is in seconds since Epoch by default.
 
-        Arguments:
+        Arg:
             df (pySpark.DataFrame): input dataframe which contains the index of users and items. """
 
         # record the training dataframe
@@ -533,7 +538,11 @@ class SARpySparkReference:
         return top_scores
 
     def predict(self, test):
-        """Output SAR scores for only the users-items pairs which are in the test set"""
+        """Output SAR scores for only the users-items pairs which are in the test set
+
+        Returns:
+            spark.DataFrame: DataFrame of top k recommendations for each user.
+        """
         df = self.recommend_k_items(test, for_predict=True)
         return test.join(
             df,
