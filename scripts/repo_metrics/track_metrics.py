@@ -33,10 +33,7 @@ def parse_args():
         description="Metrics Tracker",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    parser.add_argument("repo", type=str, help="GitHub repository")
-    parser.add_argument(
-        "--github_stats", action="store_true", help="Get today's repo statistics"
-    )
+    parser.add_argument("--github_repo", type=str, help="GitHub repository")
     parser.add_argument(
         "--event",
         type=str,
@@ -126,7 +123,7 @@ def tracker(github, args):
         github (obj): Github object.
         args (obj): Parsed arguments
     """
-    if args.github_stats:
+    if args.github_repo:
         git_doc = github_stats_as_dict(github)
         log.info("GitHub stats -- {}".format(git_doc))
 
@@ -137,7 +134,7 @@ def tracker(github, args):
     if args.save_to_database:
         cli = connect(CONNECTION_STRING)
         db = cli[DATABASE]
-        if args.github_stats:
+        if args.github_repo:
             db[COLLECTION_GITHUB_STATS].insert_one(git_doc)
         if args.event:
             db[COLLECTION_EVENTS].insert_one(event_doc)
@@ -146,7 +143,7 @@ def tracker(github, args):
 if __name__ == "__main__":
     log.info("Starting routine")
     args = parse_args()
-    g = Github(GITHUB_TOKEN, args.repo)
+    g = Github(GITHUB_TOKEN, args.github_repo)
     try:
         log.info("Tracking data")
         tracker(g, args)

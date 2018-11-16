@@ -16,9 +16,9 @@ The first step is to set up the credentials, copy the configuration file and fil
 
 To track the current state of the repository and save it to CosmosDB:
 
-    python scripts/repo_metrics/track_metrics.py https://github.com/microsoft/recommenders --github_stats --save_to_database
+    python scripts/repo_metrics/track_metrics.py --github_repo "https://github.com/Microsoft/Recommenders" --save_to_database
 
 To track an event related to this repository and save it to CosmosDB:
 
-python scripts/repo_metrics/track_metrics.py https://github.com/microsoft/recommenders --event "Today we did our first blog of the project" --save_to_database
+python scripts/repo_metrics/track_metrics.py --event "Today we did our first blog of the project" --save_to_database
 
