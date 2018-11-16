@@ -100,6 +100,7 @@ ${pyspark}- pybind11>=2.2
   - black>=18.6b4
 ${pyspark}  - pysarplus>=0.2.2
   - memory-profiler>=0.54.0
+  - gitpython>=2.1.8
 EOM
 
 echo "Conda file generated: " $CONDA_FILE
