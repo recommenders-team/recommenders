@@ -16,10 +16,11 @@ from scripts.repo_metrics.config import (
     LOG_FILE,
 )
 
-logging.basicConfig(filename=LOG_FILE, level=logging.DEBUG)
 format_str = "%(asctime)s %(levelname)s [%(filename)s:%(lineno)s]: %(message)s"
 format_time = "%Y-%m-%d %H:%M:%S"
-logging.Formatter(format_str, format_time)
+logging.basicConfig(
+    filename=LOG_FILE, level=logging.DEBUG, format=format_str, datefmt=format_time
+)
 log = logging.getLogger()
 
 
@@ -112,9 +113,11 @@ def tracker(github, args):
 
 
 if __name__ == "__main__":
+    log.info("Starting routine")
     args = parse_args()
     g = Github(GITHUB_TOKEN, args.repo)
     try:
+        log.info("Tracking data")
         tracker(g, args)
     except Exception as e:
         trace = traceback.format_exc()
@@ -122,3 +125,4 @@ if __name__ == "__main__":
         log.error("Exception: {}".format(e))
     finally:
         g.clean()
+        log.info("Routine finished")
