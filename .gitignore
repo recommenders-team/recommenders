@@ -116,3 +116,4 @@ conda*.yaml
 *.data
 *.csv
 .vscode/
+scripts/repo_metrics/config.py
