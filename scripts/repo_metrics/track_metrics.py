@@ -25,6 +25,10 @@ log = logging.getLogger()
 
 
 def parse_args():
+    """Argument parser
+    Returns:
+        obj: Parser
+    """
     parser = argparse.ArgumentParser(
         description="Metrics Tracker",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -47,6 +51,12 @@ def parse_args():
 
 
 def connect(uri="mongodb://localhost"):
+    """Mongo connector
+    Args:
+        uri (str): Connection string.
+    Returns:
+        obj: Mongo client.
+    """
     client = MongoClient(uri, serverSelectionTimeoutMS=1000)
 
     # Send a query to the server to see if the connection is working.
@@ -58,14 +68,30 @@ def connect(uri="mongodb://localhost"):
 
 
 def now():
+    """Current date as string
+    Returns:
+        srt: Current date with the format Nov 16 2018 12:31:18
+    """
     return datetime.now().strftime("%b %d %Y %H:%M:%S")
 
 
 def event_as_dict(event):
+    """Encodes an string event input as a dictionary with the date
+    Args:
+        event (str): Details of a event.
+    Returns:
+        dict: Dictionary with the event and the date.
+    """
     return {"date": now(), "event": event}
 
 
 def github_stats_as_dict(github):
+    """Encodes Github statistics as a dictionary with the date
+    Args:
+        obj: Github object.
+    Returns:
+        dict: Dictionary with Github details and the date.
+    """
     return {
         "date": now(),
         "stars": github.stars,
@@ -95,6 +121,11 @@ def github_stats_as_dict(github):
 
 
 def tracker(github, args):
+    """Main function to track metrics
+    Args:
+        github (obj): Github object.
+        args (obj): Parsed arguments
+    """
     if args.github_stats:
         git_doc = github_stats_as_dict(github)
         log.info("GitHub stats -- {}".format(git_doc))
