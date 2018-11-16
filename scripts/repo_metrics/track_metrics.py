@@ -117,14 +117,15 @@ def github_stats_as_dict(github):
     }
 
 
-def tracker(github, args):
+def tracker(args):
     """Main function to track metrics
     Args:
-        github (obj): Github object.
         args (obj): Parsed arguments
     """
     if args.github_repo:
-        git_doc = github_stats_as_dict(github)
+        g = Github(GITHUB_TOKEN, args.github_repo)
+        g.clean()  # clean folder if it exists
+        git_doc = github_stats_as_dict(g)
         log.info("GitHub stats -- {}".format(git_doc))
 
     if args.event:
@@ -143,14 +144,12 @@ def tracker(github, args):
 if __name__ == "__main__":
     log.info("Starting routine")
     args = parse_args()
-    g = Github(GITHUB_TOKEN, args.github_repo)
     try:
         log.info("Tracking data")
-        tracker(g, args)
+        tracker(args)
     except Exception as e:
         trace = traceback.format_exc()
         log.error("Traceback: {}".format(trace))
         log.error("Exception: {}".format(e))
     finally:
-        g.clean()
         log.info("Routine finished")
