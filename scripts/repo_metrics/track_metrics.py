@@ -57,7 +57,7 @@ def connect(uri="mongodb://localhost"):
 
 
 def now():
-    return datetime.datetime.now().strftime("%b %d %Y %H:%M:%S")
+    return datetime.now().strftime("%b %d %Y %H:%M:%S")
 
 
 def event_as_dict(event):
@@ -65,7 +65,7 @@ def event_as_dict(event):
 
 
 def github_stats_as_dict(github):
-    stats = {
+    return {
         "date": now(),
         "stars": github.stars,
         "forks": github.forks,
@@ -76,7 +76,7 @@ def github_stats_as_dict(github):
         "details_views": github.views,
         "unique_clones": github.number_unique_clones,
         "total_clones": github.number_total_clones,
-        "details_clones": github.clones
+        "details_clones": github.clones,
         "last_year_commit_frequency": github.last_year_commit_frequency,
         "details_referrers": github.top_ten_referrers,
         "total_referrers": github.number_total_referrers,
@@ -89,7 +89,7 @@ def github_stats_as_dict(github):
         "tags": github.number_tags,
         "total_lines": github.number_total_lines,
         "added_lines": github.number_added_lines,
-        "deleted_lines": github.number_deleted_lines
+        "deleted_lines": github.number_deleted_lines,
     }
 
 
