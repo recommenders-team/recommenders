@@ -26,7 +26,7 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 - The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
 - The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
 - The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
-- The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
+- The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems.
 
 | Notebook | Description | 
 | --- | --- | 
