@@ -40,12 +40,16 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 
 ## Benchmarks
 
-Here we benchmark all the algorithms available in this repository.
+Here we benchmark the algorithms available in this repository.
 
-**NOTES**:
-* Time for training and testing is measured in second.
-* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10. They are not applied to SAR-family algorithms (SAR PySpark, SAR+, and SAR CPU) because these algorithms do not predict explicit ratings that have the same scale with those in the original input data.
+<details>
+<summary><strong><em>Benchmark notes</em></strong></summary>
+
+* Time for training and testing is measured in seconds.
+* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10. They are not applied to the SAR-family algorithms (SAR PySpark, SAR+, and SAR CPU) because these algorithms do not predict explicit ratings with the same scale of those in the original input data.
 * The machine we used is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
+
+</details>
 
 <table>
  <tr>

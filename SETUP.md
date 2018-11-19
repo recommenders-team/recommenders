@@ -2,8 +2,6 @@
 
 In this guide we show how to setup all the dependencies to run the notebooks of this repo on an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) and on [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). 
 
-
-
 <details>
 <summary><strong><em>Table of Contents</em></strong></summary>
  
@@ -20,7 +18,6 @@ In this guide we show how to setup all the dependencies to run the notebooks of 
   * [Dependencies setup for Azure Databricks](#dependencies-setup-for-azure-databricks)
   * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
 </details>
-
 
 ## Compute environments
 
@@ -53,7 +50,8 @@ We provided a script to [generate a conda file](scripts/generate_conda_file.sh),
 
 To install each environment, first we need to generate a conda yml file and then install the environment. We can specify the environment name with the input `-n`. In the following examples, we provide a name example.
 
-#### Python CPU environment
+<details>
+<summary><strong><em>Python CPU environment</em></strong></summary>
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install the Python CPU environment:
 
@@ -61,7 +59,10 @@ Assuming the repo is cloned as `Recommenders` in the local system, to install th
     ./scripts/generate_conda_file.sh
     conda env create -n reco_bare -f conda_bare.yaml 
 
-#### Python GPU environment
+</details>
+
+<details>
+<summary><strong><em>Python GPU environment</em></strong></summary>
 
 Assuming that you have a GPU machine, to install the Python GPU environment, which by default installs the CPU environment:
 
@@ -69,7 +70,10 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
     ./scripts/generate_conda_file.sh --gpu
     conda env create -n reco_gpu -f conda_gpu.yaml 
 
-#### PySpark environment
+</details>
+
+<details>
+<summary><strong><em>PySpark environment</em></strong></summary>
 
 To install the PySpark environment, which by default installs the CPU environment:
 
@@ -94,14 +98,19 @@ This will export the variables every time we do `source activate reco_pyspark`. 
 unset PYSPARK_PYTHON
 unset PYSPARK_DRIVER_PYTHON
 ```
+</details>
 
-#### All environments
+<details>
+<summary><strong><em>All environments</em></strong></summary>
 
 To install all three environments:
 
     cd Recommenders
     ./scripts/generate_conda_file.sh  --gpu --pyspark
     conda env create -n reco_full -f conda_full.yaml
+
+</details>
+
 
 ### Register the conda environment in Jupyter notebook
 
@@ -114,7 +123,8 @@ We can register our created conda environment to appear as a kernel in the Jupyt
 
 This project use unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
-#### Unit tests
+<details>
+<summary><strong><em>Unit tests</em></strong></summary>
 
 Unit tests ensure that each class or function behaves as it should. Every time a developer makes a pull request to staging or master branch, a battery of unit tests is executed. To manually execute the unit tests in the different environments, first **make sure you are in the correct environment**.
 
@@ -142,7 +152,11 @@ For executing the PySpark unit tests for the notebooks:
 
     pytest tests/unit -m "notebooks and spark and not gpu"
 
-#### Smoke tests
+</details>
+
+
+<details>
+<summary><strong><em>Smoke tests</em></strong></summary>
 
 Smoke tests make sure that the system works and are executed just before the integration tests every night.
 
@@ -158,7 +172,10 @@ For executing the PySpark smoke tests:
 
     pytest tests/smoke -m "smoke and spark and not gpu"
 
-#### Integration tests
+</details>
+
+<details>
+<summary><strong><em>Integration tests</em></strong></summary>
 
 Integration tests make sure that the program results are acceptable
 
@@ -173,6 +190,8 @@ For executing the Python GPU integration tests:
 For executing the PySpark integration tests:
 
     pytest tests/integration -m "integration and spark and not gpu"
+
+</details>
 
 
 ### Troubleshooting for the DSVM
