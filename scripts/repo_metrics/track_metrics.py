@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import os
 import argparse
 import traceback
 import logging
@@ -123,7 +124,9 @@ def tracker(args):
         args (obj): Parsed arguments
     """
     if args.github_repo:
-        g = Github(GITHUB_TOKEN, args.github_repo)
+        # if there is an env variable, overwrite it
+        token = os.environ.get("GITHUB_TOKEN", GITHUB_TOKEN)
+        g = Github(token, args.github_repo)
         g.clean()  # clean folder if it exists
         git_doc = github_stats_as_dict(g)
         log.info("GitHub stats -- {}".format(git_doc))
@@ -133,7 +136,9 @@ def tracker(args):
         log.info("Event -- {}".format(event_doc))
 
     if args.save_to_database:
-        cli = connect(CONNECTION_STRING)
+        # if there is an env variable, overwrite it
+        connection = token = os.environ.get("CONNECTION_STRING", CONNECTION_STRING)
+        cli = connect(connection)
         db = cli[DATABASE]
         if args.github_repo:
             db[COLLECTION_GITHUB_STATS].insert_one(git_doc)
