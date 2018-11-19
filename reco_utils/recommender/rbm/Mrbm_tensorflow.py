@@ -302,8 +302,8 @@ class RBM(object):
     Sampling: In RBM we use Contrastive divergence to sample the parameter space. In order to do that we need
     to initialize the two conditional probabilities:
 
-    P(h|v) --> given a value of the visible unit, return the probability that the i-th hidden unit is active
-    P(v|h) --> given a value of the hidden unit, return the probability that the  i-th visible unit is active
+    P(h=1|phi_v) --> returns the probability that the i-th hidden unit is active
+    P(v=l|phi_h) --> returns the probability that the  i-th visible unit is in state l !=0
 
     '''
 
