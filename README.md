@@ -11,7 +11,7 @@
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learning to illustrate four key tasks: 
 1. Preparing and loading data for each recommender algorithm. 
-2. Using different algorithms such as Smart Adapative Recommendation (SAR), Alternating Least Square (ALS), etc., for building recommender models. 
+2. Using different algorithms such as Smart Adaptative Recommendation (SAR), Alternating Least Square (ALS), etc., for building recommender models. 
 3. Evaluating algorithms with offline metrics. 
 4. Operationalizing models in a production environment. The examples work across Python + CPU and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements. 
 
@@ -22,18 +22,16 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 
 ## Notebooks Overview
 
-- The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the SAR algorithm. 
-- The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
-- The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
-- The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
-- The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems.
+- The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run some recommendation algorithms such as the SAR algorithm. 
+- The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems.
+- The [Modeling Notebooks](notebooks/02_modeling) deep dive into implementations of different recommender algorithms.
+- The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics.
+- The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production.
 
 | Notebook | Description | 
 | --- | --- | 
 | [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
-| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a Python + CPU environment.
-| [sar_pyspark_movielens](notebooks/00_quick_start/sar_pyspark_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a PySpark environment.
-| [sarplus_movielens](notebooks/00_quick_start/sarplus_movielens.ipynb) | Utilizing the SAR+ algorithm to power movie ratings in a PySpark environment.
+| [sar_single_node_movielens](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Utilizing the SAR Single Node algorithm to power movie ratings in a Python + CPU environment.
 | [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
 | [als_deep_dive](notebooks/02_modeling/als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
 | [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.

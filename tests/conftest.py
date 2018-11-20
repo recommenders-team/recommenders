@@ -135,7 +135,7 @@ def notebooks():
     paths = {
         "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_python_cpu_movielens.ipynb"
+            folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
         ),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
