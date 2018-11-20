@@ -11,7 +11,6 @@ from reco_utils.recommender.sar import TIME_NOW
 from tests.sar_common import read_matrix, load_userpred, load_affinity
 
 
-# TODO: DRY with _rearrange_to_test_sql
 def _rearrange_to_test(array, row_ids, col_ids, row_map, col_map):
     """Rearranges SAR array into test array order"""
     if row_ids is not None:
