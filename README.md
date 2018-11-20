@@ -51,16 +51,18 @@ Here we benchmark the algorithms available in this repository.
 * Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10. 
 * The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
 * SAR Single Node only has ranking metrics because these algorithms do not predict explicit ratings with the same scale of those in the original input data. Surprise SVD only has rating metrics.
-
-
+* The hyper parameters of the algorithms are:
+    * `ALS(rank=40,maxIter=15,implicitPrefs=True,alpha=0.1,regParam=0.01,coldStartStrategy='drop',nonnegative=True)`
+    * `SVD(random_state=0, n_factors=200, n_epochs=30, verbose=True)`
+    * `SARSingleNodeReference(remove_seen=True, similarity_type="jaccard", time_decay_coefficient=30, time_now=None, timedecay_formula=True)`
+* **NOTE**: In a benchmark it is difficult to compare apples to apples, we computed the algorithms with the best parameters we found to optimize the performance metrics, not the time metrics. 
 </details>
 
+**Benchmark comparing performance metrics**
 <table>
  <tr>
   <th>Dataset</th>
   <th>Algorithm</th>
-  <th>Training time</th>
-  <th>Testing time</th>
   <th>Precision</th>
   <th>Recall</th>
   <th>MAP</th>
@@ -73,8 +75,6 @@ Here we benchmark the algorithms available in this repository.
  <tr>
   <td rowspan=3>Movielens 100k</td>
   <td>ALS</td>
-  <td>5.730</td>
-  <td>0.326</td>
   <td>0.096</td>
   <td>0.079</td>
   <td>0.026</td>
@@ -84,23 +84,19 @@ Here we benchmark the algorithms available in this repository.
   <td>0.025</td>
   <td>0.023</td>
  </tr>
- <tr >
-  <td >SAR PySpark</td>
-  <td>0.838</td>
-  <td>9.560</td>
-  <td>0.327</td>
-  <td>0.179</td>
-  <td>0.110</td>
-  <td>0.379</td>
+ <tr>
+  <td>Surprise SVD</td>
   <td></td>
   <td></td>
   <td></td>
   <td></td>
+  <td>0.407</td>
+  <td>0.323</td>
+  <td>0.871</td>
+  <td>0.871</td>		
  </tr>
  <tr>
-  <td>SAR CPU</td>
-  <td>0.679</td>
-  <td>0.116</td>
+  <td>SAR Single Node</td>
   <td>0.327</td>
   <td>0.176</td>
   <td>0.106</td>
@@ -113,8 +109,6 @@ Here we benchmark the algorithms available in this repository.
  <tr>
   <td rowspan=3>Movielens 1M</td>
   <td>ALS</td>
-  <td>18.000</td>
-  <td>0.339</td>
   <td>0.120</td>
   <td>0.062</td>
   <td>0.022</td>
@@ -125,22 +119,18 @@ Here we benchmark the algorithms available in this repository.
   <td>0.280</td>
  </tr>
  <tr>
-  <td>SAR PySpark</td>
-  <td>9.230</td>
-  <td>38.300</td>
-  <td>0.278</td>
-  <td>0.108</td>
-  <td>0.064</td>
-  <td>0.309</td>
+  <td>Surprise SVD</td>
   <td></td>
   <td></td>
   <td></td>
   <td></td>
+  <td>0.487</td>
+  <td>0.383</td>
+  <td>0.810</td>
+  <td>0.810</td>
  </tr>
  <tr>
-  <td>SAR CPU</td>
-  <td>5.830</td>
-  <td>0.586</td>
+  <td>SAR Single Node</td>
   <td>0.277</td>
   <td>0.109</td>
   <td>0.064</td>
@@ -153,8 +143,6 @@ Here we benchmark the algorithms available in this repository.
  <tr>
   <td rowspan=3>Movielens 10M</td>
   <td>ALS</td>
-  <td>92.000</td>
-  <td>0.169</td>
   <td>0.090</td>
   <td>0.057</td>
   <td>0.015</td>
@@ -165,22 +153,18 @@ Here we benchmark the algorithms available in this repository.
   <td>0.359</td>
  </tr>
  <tr>
-  <td>SAR PySpark</td>
+  <td>Surprise SVD</td>
   <td></td>
   <td></td>
   <td></td>
   <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>0.557</td>
+  <td>0.430</td>
+  <td>0.724</td>
+  <td>0.724</td>
  </tr>
  <tr>
-  <td>SAR CPU</td>
-  <td>111.000</td>
-  <td>12.600</td>
+  <td>SAR Single Node</td>
   <td>0.276</td>
   <td>0.156</td>
   <td>0.101</td>
@@ -193,8 +177,6 @@ Here we benchmark the algorithms available in this repository.
  <tr>
   <td rowspan=3>Movielens 20M</td>
   <td>ALS</td>
-  <td>142.000</td>
-  <td>0.345</td>
   <td>0.081</td>
   <td>0.052</td>
   <td>0.014</td>
@@ -205,22 +187,18 @@ Here we benchmark the algorithms available in this repository.
   <td>0.371</td>
  </tr>
  <tr>
-  <td>SAR PySpark</td>
+  <td>Surprise SVD</td>
   <td></td>
   <td></td>
   <td></td>
   <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>0.574</td>
+  <td>0.440</td>
+  <td>0.702</td>
+  <td>0.702</td>
  </tr>
  <tr >
-  <td>SAR CPU</td>
-  <td>559.000</td>
-  <td>47.300</td>
+  <td>SAR Single Node</td>
   <td>0.247</td>
   <td>0.135</td>
   <td>0.085</td>
@@ -229,6 +207,82 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
   <td></td>
   <td></td>
+ </tr>
+
+</table>
+
+
+**Benchmark comparing time metrics**
+<table>
+ <tr>
+  <th>Dataset</th>
+  <th>Algorithm</th>
+  <th>Training time</th>
+  <th>Testing time</th>
+ </tr>
+ <tr>
+  <td rowspan=3>Movielens 100k</td>
+  <td>ALS</td>
+  <td>5.73</td>
+  <td>0.33</td>
+ </tr>
+ <tr >
+  <td >Surprise SVD</td>
+  <td>13.30</td>
+  <td>3.39</td>
+ </tr>
+ <tr>
+  <td>SAR Single Node</td>
+  <td>0.68</td>
+  <td>0.12</td>
+ </tr>
+ <tr>
+  <td rowspan=3>Movielens 1M</td>
+  <td>ALS</td>
+  <td>18.00</td>
+  <td>0.34</td>
+ </tr>
+ <tr>
+  <td>Surprise SVD</td>
+  <td>129.00</td>
+  <td>35.70</td>
+ </tr>
+ <tr>
+  <td>SAR Single Node</td>
+  <td>5.83</td>
+  <td>0.59</td>
+ </tr>
+ <tr>
+  <td rowspan=3>Movielens 10M</td>
+  <td>ALS</td>
+  <td>92.00</td>
+  <td>0.17</td>
+ </tr>
+ <tr>
+  <td>Surprise SVD</td>
+  <td>1285.00</td>
+  <td>253.00</td>
+ </tr>
+ <tr>
+  <td>SAR Single Node</td>
+  <td>111.00</td>
+  <td>12.60</td>
+ </tr>
+ <tr>
+  <td rowspan=3>Movielens 20M</td>
+  <td>ALS</td>
+  <td>142.00</td>
+  <td>0.34</td>
+ </tr>
+ <tr>
+  <td>Surprise SVD</td>
+  <td>2562.00</td>
+  <td>506</td>
+ </tr>
+ <tr >
+  <td>SAR Single Node</td>
+  <td>559.00</td>
+  <td>47.30</td>
  </tr>
 
 </table>
