@@ -89,7 +89,6 @@ ${pyspark}- pyspark==2.3.1
 - jupyter>=1.0.0
 - fastparquet>=0.1.6
 ${pyspark}- pyarrow>=0.8.0
-${pyspark}- pybind11>=2.2
 - pip:
   - pandas>=0.22.0
   - scipy>=1.0.0
@@ -100,7 +99,6 @@ ${pyspark}- pybind11>=2.2
   - pytest==3.6.4
   - papermill>=0.15.0
   - black>=18.6b4
-${pyspark}  - pysarplus>=0.2.2
   - memory-profiler>=0.54.0
 ${gpu}  - numba>=0.38.1 
   - gitpython>=2.1.8
