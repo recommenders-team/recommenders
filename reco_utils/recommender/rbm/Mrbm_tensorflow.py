@@ -57,7 +57,7 @@ from reco_utils.common.constants import (
 
 log = logging.getLogger(__name__)
 
-class RBM(object):
+class RBM:
 
     #initialize class parameters
     def __init__(
@@ -65,12 +65,12 @@ class RBM(object):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        hidden_units,
-        keep_prob,
-        init_stdv = 0.01,
-        learning_rate= 0.004,
-        minibatch_size= 100,
-        training_epoch
+        hidden_units= HIDDEN,
+        keep_prob= KEEP_PROB,
+        init_stdv = STDV,
+        learning_rate= ALPHA,
+        minibatch_size= MINIBATCH,
+        training_epoch= EPOCHS,
         save = False,
         save_path = 'saver/rbm_model_saver.ckpt',
         debug = False,
