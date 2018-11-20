@@ -37,18 +37,18 @@ def gen_ranking_matrix(rating):
 
     '''
 
-    rating = rating.sort_values(by=['UserID'])
+    rating = rating.sort_values(by=['userID'])
 
     #find max user and item index
-    Nusers = rating['UserID'].max()
-    Nitems = rating['ItemID'].max()
+    Nusers = rating['userID'].max()
+    Nitems = rating['MovieId'].max()
 
     #extract informations from the dataframe as arrays. Note we substract 1 to itm_id and usr_id
     #in order to map to a matrix format
 
     r_ = rating.Rating.values #ratings
-    itm_id =(rating.ItemID-1).values #itm_id serving as columns
-    usr_id =(rating.UserID-1).values  #usr_id serving as rows
+    itm_id =(rating.MovieId-1).values #itm_id serving as columns
+    usr_id =(rating.userID-1).values  #usr_id serving as rows
 
     #check that all 3 vectors have the same dimensions
     assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))

@@ -9,6 +9,9 @@ The model generates new ratings given the collected ratings. Model performance i
 different choices of the hyper parameter.
 
 '''
+import sys
+sys.path.append("../../")
+
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
@@ -21,11 +24,13 @@ import matplotlib.pyplot as plt
 
 import time as tm
 
-from helperfunct import*
+from reco_utils.recommender.rbm.helperfunct import*
 
 #ML Libraries and methods
 import tensorflow as tf
-import MNrbm as rbm
+from reco_utils.recommender.rbm.Mrbm_tensorflow import RBM
+
+from reco_utils.dataset.python_splitters import python_stratified_split, python_random_split
 
 #For interactive mode only
 %load_ext autoreload
@@ -34,68 +39,42 @@ import MNrbm as rbm
 
 #Load the movielens dataset
 dir = os.getcwd() #optain the absolute path
-path1 = dir + '/movielens_data/movies.dat'
+path1 = dir + '/reco_utils/recommender/rbm/movielens_data/movies.dat'
 
-movies_df = pd.read_csv(path1, sep='::', header= None, engine= 'python' ) #movies dataset
-movies_df.columns = ['ItemID', 'Title', 'Genre']
+movies_df = pd.read_csv(path1, sep='::', header= None, engine= 'python', names =  ['MovieId', 'Title', 'Genre'] ) #movies dataset
 
 #inspect first entries
 movies_df.head()
 
 
-#Number of unique genres
-gen = ['Action','Adventure', 'Animation','Children', 'Comedy','Crime','Documentary','Drama', 'Fantasy', 'Film-Noir','Horror', 'Musical',
-        'Mystery', 'Romance', 'Sci-Fi', 'Thriller','War', 'Western']
-
-len(gen)
-
 #load the ratings
-path2 = dir+ '/movielens_data/ratings.dat'
-ratings_df = pd.read_csv(path2, sep='::', header=None, engine = 'python')
-
-ratings_df.columns = ['UserID', 'ItemID', 'Rating', 'Time']
+path2 = dir+ '/reco_utils/recommender/rbm/movielens_data/ratings.dat'
+ratings_df = pd.read_csv(path2, sep='::', header=None, engine = 'python', names=['userID','MovieId','Rating','Timestamp'])
 
 ratings_df.head()
-
-
 
 
 #==========================
 #Data processing
 #==========================
+
+#train/test split
+
+train, test = python_stratified_split(ratings_df, ratio= 0.80)
+
+train.head()
+
+test.head()
+
+train.shape
+test.shape
+
 #generate the ranking matrix. Movies that haven not been rated yet get a 0 rating.
 
 #generate using scipy method
 #st1= tm.time()
-RX = gen_ranking_matrix(ratings_df)
+X_tst = gen_ranking_matrix(train)
 #ed1= tm.time()
-
-#elapsed time
-#ed1-st1
-
-#generate using the old method with a for loop
-#st2 = tm.time()
-#RM = gen_ranking_matrix_v0(ratings_df)
-#ed2= tm.time()
-
-#ed2-st2
-
-#----------------------------------------------------
-#Need to check the influenc of including the unrated movies
-#this is easly done by using unique. For movielens, there are 256 movies that
-#have not been rated by anyone. Exclude them and compare the result with the inclusion version 
-
-
-unique_users = ratings_df['UserID'].unique()
-unique_items = ratings_df['ItemID'].unique()
-
-unique_users.shape
-unique_items.shape
-
-RX.shape
-
-
-
 
 
 
