@@ -26,6 +26,15 @@ import time as tm
 
 from reco_utils.recommender.rbm.helperfunct import*
 
+from reco_utils.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_TIMESTAMP_COL,
+    PREDICTION_COL,
+)
+
+
 #ML Libraries and methods
 import tensorflow as tf
 from reco_utils.recommender.rbm.Mrbm_tensorflow import RBM
@@ -53,14 +62,13 @@ ratings_df = pd.read_csv(path2, sep='::', header=None, engine = 'python', names=
 
 ratings_df.head()
 
-
 #==========================
 #Data processing
 #==========================
 
 #train/test split
 
-train, test = python_stratified_split(ratings_df, ratio= 0.80)
+train, test = python_stratified_split(ratings_df)
 
 train.head()
 
@@ -73,35 +81,32 @@ test.shape
 
 #generate using scipy method
 #st1= tm.time()
-X_tst = gen_ranking_matrix(train)
-#ed1= tm.time()
+X_train = gen_ranking_matrix(train)
+X_test = gen_ranking_matrix(test)
 
+X_train.shape
+X_test.shape
 
 
 #Distribution of values
-zeros  = (RX == 0).sum()
-total  = RX.shape[0]*RX.shape[1]
+zero_train  = (X_train == 0).sum()
+total  = X_train.shape[0]*X_train.shape[1]
 
-id =np.where(RX !=0)
+id =np.where(X_train !=0)
 
-plt.hist(RX[id], bins=5, density=1)
+plt.hist(X_train[id], bins=5, density=1)
 
 #Percentage of zeros in the matrix
-zeros/total *100
+zero_train/total *100
 
-#cut a % for the test set
-X_tr, X_tst = train_test_split(RX, test_size= 20)
+zero_test  = (X_test == 0).sum()
 
-#Binary rating (optional)
-B_tr = binary_rating(X_tr, 2)
-B_tst= binary_rating(X_tst,2)
+id_tst =np.where(X_test !=0)
 
-ib =np.where(RB !=0)
+plt.hist(X_test[id_tst], bins=5, density=1)
 
-plt.hist(RB[ib], bins=2, density=1)
+zero_test/total *100
 
-#RS = rescale(RX, 5,3)
-#np.save('Xtrain', X_tr)
 
 #==========================
 #Start the training

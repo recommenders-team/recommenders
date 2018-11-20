@@ -111,7 +111,7 @@ class RBM:
     #Generate the Ranking matrix from a pandas DF
     #===============================================
 
-    def gen_ranking_matrix(df):
+    def gen_ranking_matrix(self, df):
 
         '''
         Generate the user/item rating matrix using scipy's sparse matrix method coo_matrix;
@@ -538,82 +538,86 @@ class RBM:
     # Training ops
     #=========================
 
-    def train(self, xtr, xtst, epochs, alpha, minibatch_size):
+    def fit(self, df):
 
         '''
         Training ops
 
+        Args:
+            df: a dataframe containing the training set
+
         '''
+
+        log.info("Building user affinity sparse matrix...")
+
+        xtr = self.gen_ranking_matrix(df) #generate the user_affinity matrix
+
+
         m, _ = xtr.shape #dimension of the input: #examples, #features
-        num_minibatches = int(m / minibatch_size)
+        num_minibatches = int(m / self.minibatch) #number of minibatches
 
         #-------------------Initialize all parameters----------------
-        #Lists to collect the metrics across each epochs
-        Mse_train = []
-
-        k=1 #initialize the G_sampling step
-        epoch_sample = [50, 70, 80,90] #learning percentage to increment the k-step
-        l=0
 
         #instantiate the computational graph
         self.placeholder()
         self.init_parameters()
 
+
+        k=1 #initialize the G_sampling step
+        l=0 #initialize epoch_sample index
+        epoch_sample = [50, 70, 80,90] #learning percentage to increment the k-step
+
+        #main algo
         v_k = self.G_sampling(k)
 
         obj = self.Losses(self.v, v_k) #objective function
-        rate = alpha/minibatch_size #rescaled learning rate
+        rate = self.alpha/self.minibatch  #rescaled learning rate
 
         opt = tf.train.GradientDescentOptimizer(learning_rate = rate).minimize(loss= obj) #optimizer
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns and the related probabilities
 
         #initialize metrics
+        Mse_train = [] #Lists to collect the metrics across each epochs
         Mserr  = self.msr_error(v_k)
-        Clacc  = self.accuracy(v_k)
+        #Clacc  = self.accuracy(v_k)
+        init_g = tf.global_variables_initializer()
 
-        #start loop over training epochs
-        for i in range(epochs):
+        self.epochs = self.epochs +1 #add one epoch (...)
 
-            epoch_tr_err =0
-            per= (i/epochs)*100 #percentage of epochs
+        with tf.Session() as sess:
 
-            #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
-            if per!=0 and per %epoch_sample[l] == 0:
-                k +=1
-                l +=1
-                v_k = self.G_sampling(k)
+            sess.run(init_g)
 
-            #implement minibatches (try using TF data pipeline for performance)
-            minibatches = random_mini_batches(xtr, mini_batch_size= minibatch_size, seed=1)
+            #start loop over training epochs
+            for i in range(self.epochs):
 
-            for minibatch in minibatches:
+                epoch_tr_err =0
+                per= (i/epochs)*100 #percentage of epochs
 
-                _, batch_err = self.session.run([opt, Mserr], feed_dict={self.v:minibatch})
+                #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
+                if per !=0 and per %epoch_sample[l] == 0:
+                    k +=1
+                    l +=1
+                    v_k = self.G_sampling(k)
 
-                epoch_tr_err += batch_err/num_minibatches #mse error per minibatch
+                #implement minibatches (try using TF data pipeline for performance)
+                minibatches = random_mini_batches(xtr, mini_batch_size= self.minibatch, seed=1)
 
-            if i%5==0:
-                print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
+                for minibatch in minibatches:
 
-            #write metrics acros epohcs
-            Mse_train.append(epoch_tr_err) # mse training error per training epoch
+                    _, batch_err = self.session.run([opt, Mserr], feed_dict={self.v:minibatch})
 
-        #Final Classification metrics over the entire dataset
+                    epoch_tr_err += batch_err/num_minibatches #mse error per minibatch
 
-        #MSRE
-        Mse_tr = self.session.run(Mserr, feed_dict={self.v:xtr})
-        Mse_test  = self.session.run(Mserr, feed_dict={self.v:xtst})
+                    if i%5==0:
+                        print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
-        print('MSR error: Train  %f, Test: %f'%(Mse_tr, Mse_test) )
+                    #write metrics acros epohcs
+                    Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-        #Classification
-        train_acc = self.session.run(Clacc, feed_dict={self.v:xtr})
-        test_acc = self.session.run(Clacc, feed_dict={self.v:xtst})
 
-        print('Classification Accuracy: Train  %f, Test: %f'%(train_acc, test_acc) )
-
-        return Mse_train, Mse_test
+            return Mse_train
 
     #=========================
     # load a pretrained model
