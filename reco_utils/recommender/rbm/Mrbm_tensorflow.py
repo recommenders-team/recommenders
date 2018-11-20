@@ -610,16 +610,17 @@ class RBM(object):
     def predict(self, x):
 
         '''
-        Prediction: A training example is used to activate the hidden unit that in turns produce new ratings for the
+        Prediction: A training example is used to activate the hidden units that, in turns, produce new ratings for the
         visible units, both for the rated and unrated examples.
 
-        Argument:
-        x -- example from dataset
+        Args:
+            x: example from dataset
 
         Returns:
-        pred -- inferred values
+            pred: inferred values
 
         '''
+        
         #Sampling
         _, h_ = self.sample_h(self.v) #sample h
 
