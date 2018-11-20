@@ -93,7 +93,7 @@ class RBM(object):
         self.epochs= training_epoch  #number of epochs used to train the model
         self.save = save #If true, it saves a TF model to be used for predictions
         self.save_path = save_path #specify a path where the TF model file is saved
-
+        self.graph = tf.Graph()    #tensor flow graph
 
     #===============================================
     #Generate the Ranking matrix from a pandas DF
@@ -150,45 +150,12 @@ class RBM(object):
 
         return RM
 
-
-    #==================================
-    #Define graph topology
-    #==================================
-
-    #Initialize the placeholders for the visible units
-    def placeholder(self):
-        self.v = tf.placeholder(shape= [None, self.Nv_], dtype= 'float32')
-        return self.v
-
-    #initialize the parameters of the model.
-    def init_parameters(self):
-
-        '''
-        This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and two bias vector to initialize.
-
-        Arguments:
-        Nv -- number of visible units (input layer)
-        Nh -- number of hidden units (latent variables of the model)
-
-        Returns:
-        Initialized weights and biases. We initialize the transition matrix by sampling from a normal distribution with zero mean
-        and given variance. The biases are Initialized to zero.
-        '''
-
-        tf.set_random_seed(1) #set the seed for the random number generator
-
-        with tf.variable_scope('Network_parameters'):
-
-            self.w  = tf.get_variable('weight',  [self.Nv_, self.Nh_], initializer = tf.random_normal_initializer(stddev=self.std, seed=1), dtype= 'float32' )
-            self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
-            self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
-
     #=========================
     #Helper functions
     #========================
 
-    def set_session(self, session):
-        self.session = session
+    #def set_session(self, session):
+    #    self.session = session
 
     def B_sampling(self,p):
         '''
@@ -197,11 +164,13 @@ class RBM(object):
         1) Extract a random number from a uniform distribution (U) and compare it with the unit's probability (P)
         2) Choose 0 if P<U, 1 otherwise
 
-        P -- input conditional probability
-        U -- Bernoulli probability used for comparison
+        Args:
+            P: input conditional probability
+            U: Bernoulli probability used for comparison
 
-        sampled -- sampled units. The value is 1 if P>U and 0 otherwise. It is convenient to implement
-                   this condtivk = reco.G_sampling(k= 1)on using the relu function.
+        Returns:
+            h_samples: sampled units. The value is 1 if P>U and 0 otherwise. It is convenient to implement
+                       this condtivk = reco.G_sampling(k= 1)on using the relu function.
 
         '''
         np.random.seed(1)
@@ -220,20 +189,20 @@ class RBM(object):
         '''
         Multinomial Sampling
 
-        For K classes, we sample K binomial distributions using the acceptance/Rejection method. This is possible
+        For r classes, we sample r binomial distributions using the acceptance/Rejection method. This is possible
         since each class is statistically independent form the otherself. Note that this is the same method used
         in Numpy's random.multinomial() function.
 
         Using broadcasting along the 3rd index, this function can be easily implemented
 
         Args:
-        p -- a distributions of shape (m, n, r), where m is the number of examples, n the number of features and
-             r the number of classes. p needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
+            p:  a distributions of shape (m, n, r), where m is the number of examples, n the number of features and
+                r the number of classes. p needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
 
         Returns:
-        v_samp: an (m,n) array of sampled values from 1 to r . Given the sampled distribution of the type [0,1,0, ..., 0]
-        it returns the index of the value 1 . The outcome is index = argmax() + 1 to account for the fact that array indices
-        start from 0 .
+            v_samp: an (m,n) array of sampled values from 1 to r . Given the sampled distribution of the type [0,1,0, ..., 0]
+            it returns the index of the value 1 . The outcome is index = argmax() + 1 to account for the fact that array indices
+            start from 0 .
 
         '''
         np.random.seed(1)
@@ -252,22 +221,22 @@ class RBM(object):
         '''
         Probability that unit v has value l given phi: P(v=l|phi)
 
-        Argument:
-        phi -- linear combination of values of the previous layer
-        r   -- rating scale, corresponding to the number of classes
+        Args:
+            phi: linear combination of values of the previous layer
+            r  : rating scale, corresponding to the number of classes
 
-        Returns
-        pk -- a tensor of shape (r, m, Nv) . This needs to be reshaped as (m, Nv, r) in the last step
-        to allow for faster sampling when used in the Multinomial function.
+        Returns:
+            pr: a tensor of shape (r, m, Nv) . This needs to be reshaped as (m, Nv, r) in the last step
+                to allow for faster sampling when used in the Multinomial function.
 
         '''
 
         num = [tf.exp(tf.multiply(tf.constant(k, dtype='float32'),phi)) for k in range(1,self.r_+1)]
         den = 1+tf.reduce_sum(num, axis=0)
 
-        pk = tf.div(num, den)
+        pr = tf.div(num, den)
 
-        return tf.transpose(pk, perm= [1,2,0])
+        return tf.transpose(pr, perm= [1,2,0])
 
 
     def Fv(self, x):
@@ -276,11 +245,11 @@ class RBM(object):
         Free energy of the visible units given the hidden units. Since the sum is over the hidden units' states, the
         functional form of the visible units Free energy is the same as the one for the binary model.
 
-        Arguments:
-        x  -- This can be either the sampled value of the visible units (v_k) or the input data
+        Args:
+            x: This can be either the sampled value of the visible units (v_k) or the input data
 
         Returns:
-        F -- Free energy of the model
+            F: Free energy of the model
         '''
 
         b = tf.reshape(self.bv, (self.Nv_, 1))
@@ -294,64 +263,100 @@ class RBM(object):
 
         return F
 
-    #===================
-    #Sampling
-    #===================
 
-    '''
-    Sampling: In RBM we use Contrastive divergence to sample the parameter space. In order to do that we need
-    to initialize the two conditional probabilities:
+    #==================================
+    #Define graph topology
+    #==================================
 
-    P(h|phi_v) --> returns the probability that the i-th hidden unit is active
-    P(v|phi_h) --> returns the probability that the  i-th visible unit is active
+    #Initialize graph
+    with self.graph.as_default():
 
-    '''
+        #Initialize the placeholders for the visible units
+        def placeholder(self):
+            self.v = tf.placeholder(shape= [None, self.Nv_], dtype= 'float32')
+            return self.v
 
-    #sample the hidden units
-    def sample_h(self, vv):
-        '''
-        Sample hidden units given the visibles. This can be thought of as a Forward pass step in a FFN
+        #initialize the parameters of the model.
+        def init_parameters(self):
 
-        Arguments:
-        vv -- visible units tensor
+            '''
+            This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and two bias vector to initialize.
 
-        Returns:
-        phv -- activation probability of the hidden unit
-        h_  -- sampled value of the hidden unit from a Bernoulli distributions having success probability phv
+            Arguments:
+            Nv -- number of visible units (input layer)
+            Nh -- number of hidden units (latent variables of the model)
 
-        Note: we use Bernoulli sampling from TF probability module. It is essential to specify the dtype of the
-        event samples when initializing the distribution. In this case, as phv is float32, dtype = float32 as
-        well.
+            Returns:
+            Initialized weights and biases. We initialize the transition matrix by sampling from a normal distribution with zero mean
+            and given variance. The biases are Initialized to zero.
+            '''
 
-        '''
+            tf.set_random_seed(1) #set the seed for the random number generator
 
-        with tf.name_scope('sample_hidden_units'):
+            with tf.variable_scope('Network_parameters'):
 
-            phi_v = tf.matmul(vv, self.w)+ self.bh #create a linear combination
-            phv   = tf.nn.sigmoid(phi_v) #conditional probability of h given v
-            phv_reg= tf.nn.dropout(phv, self.keep)
+                self.w  = tf.get_variable('weight',  [self.Nv_, self.Nh_], initializer = tf.random_normal_initializer(stddev=self.std, seed=1), dtype= 'float32' )
+                self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
+                self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
 
-            #Sampling
-            h_  = self.B_sampling(phv_reg) #obtain the value of the hidden units via Bernoulli sampling
 
-        return phv, h_
 
-    #sample the visible units
-    def sample_v(self, h):
+        #===================
+        #Sampling
+        #===================
 
         '''
-        Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN (negative phase)
-        Each visible unit can take values in [1,r], while the zero is reserved for missing data; as such the value of the
-        hidden unit is sampled from a multinomial distribution.
+        Sampling: In RBM we use Contrastive divergence to sample the parameter space. In order to do that we need
+        to initialize the two conditional probabilities:
 
-        Arguments:
-        h -- visible units tensor
+        P(h|phi_v) --> returns the probability that the i-th hidden unit is active
+        P(v|phi_h) --> returns the probability that the  i-th visible unit is active
 
-        Returns:
-        pvh -- activation probability of the visible unit given the hidden
-        v_  -- sampled value of the visible unit from a Multinomial distributions having success probability pvh. There are two
-               steps here:
+        '''
 
+        #sample the hidden units
+        def sample_h(self, vv):
+
+            '''
+            Sample hidden units given the visibles. This can be thought of as a Forward pass step in a FFN
+
+            Args:
+                vv: visible units tensor
+
+            Returns:
+                phv: activation probability of the hidden unit
+                h_ : sampled value of the hidden unit from a Bernoulli distributions having success probability phv
+
+            '''
+
+            with tf.name_scope('sample_hidden_units'):
+
+                phi_v = tf.matmul(vv, self.w)+ self.bh #create a linear combination
+                phv   = tf.nn.sigmoid(phi_v) #conditional probability of h given v
+                phv_reg= tf.nn.dropout(phv, self.keep)
+
+                #Sampling
+                h_  = self.B_sampling(phv_reg) #obtain the value of the hidden units via Bernoulli sampling
+
+            return phv, h_
+
+        #sample the visible units
+        def sample_v(self, h):
+
+            '''
+            Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN (negative phase)
+            Each visible unit can take values in [1,r], while the zero is reserved for missing data; as such the value of the
+            hidden unit is sampled from a multinomial distribution.
+
+            Args:
+                h: visible units tensor
+
+            Returns:
+                pvh: activation probability of the visible unit given the hidden
+                v_ : sampled value of the visible unit from a Multinomial distributions having success probability pvh. There are two
+                     steps here:
+
+            Basic mechanics:
                1) For every training example we first sample Nv Multinomial distributions. The result is of the form [0,1,0,0,0,...,0]
                   where the index of the 1 element corresponds to the rth rating. The index is extracted using the argmax function and
                   we need to add 1 at the end since array indeces starts from 0.
@@ -361,76 +366,78 @@ class RBM(object):
 
         '''
 
-        with tf.name_scope('sample_visible_units'):
+            with tf.name_scope('sample_visible_units'):
 
-            phi_h  = tf.matmul(h, tf.transpose(self.w))+ self.bv #linear combination
-            pvh = self.Pm(phi_h) #conditional probability of v given h
+                phi_h  = tf.matmul(h, tf.transpose(self.w))+ self.bv #linear combination
+                pvh = self.Pm(phi_h) #conditional probability of v given h
 
-            #Sampling (modify here )
-            v_tmp  = self.M_sampling(pvh) #sample the value of the visible units
+                #Sampling (modify here )
+                v_tmp  = self.M_sampling(pvh) #sample the value of the visible units
 
-            mask = tf.equal(self.v, 0) #selects the inactive units in the input vector
-            v_ = tf.where(mask, x = self.v, y = v_tmp) #enforce inactive units in the reconstructed vector
+                mask = tf.equal(self.v, 0) #selects the inactive units in the input vector
+                v_ = tf.where(mask, x = self.v, y = v_tmp) #enforce inactive units in the reconstructed vector
 
-        return pvh, v_
+            return pvh, v_
 
-
-    '''
-    Training in generative models takes place in two steps:
-
-    1) Gibbs sampling
-    2) Gradient evaluation and parameters update
-
-    This estimate is later used in the weight update step by minimizing the distance between the
-    model and the empirical free energy. Note that while the unit's configuration space is sampled,
-    the weights are determined via maximum likelihood (saddle point).
-    '''
-
-    #1) Gibbs Sampling
-
-    def G_sampling(self,k):
+        #=======================
+        #Training ops
+        #=======================
         '''
-        Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary RBM we need to
-        impose that unseen movies stay as such, i.e. the sampling phase should not modify the elelments where v =-1.
+        Training in generative models takes place in two steps:
 
-        Arguments:
-        k -- iterator. Number of sampling steps
-        v -- visible units
+        1) Gibbs sampling
+        2) Gradient evaluation and parameters update
 
-        Returns:
-        h_k -- sampled value of the hidden unit at step  k
-        v_k -- sampled value of the visible unit at step k
-
-        '''
-        v_k = self.v #initialize the value of the visible units at step k=0 on the data
-
-        for i in range(k): #k_sampling
-            _, h_k = self.sample_h(v_k)
-            _ ,v_k = self.sample_v(h_k)
-
-        return v_k
-
-    #2 Contrastive divergence
-    def Losses(self, vv, v_k):
-
-        '''
-        Loss functions
-
-        Arguments:
-        v     -- empirical input
-        v_k   -- sampled visible units at step k
-
-        Returns:
-        obj  -- objective function of Contrastive divergence, that is the difference between the
-                free energy clamped on the data (v) and the model Free energy (v_k)
-
+        This estimate is later used in the weight update step by minimizing the distance between the
+        model and the empirical free energy. Note that while the unit's configuration space is sampled,
+        the weights are determined via maximum likelihood (saddle point).
         '''
 
-        with tf.variable_scope('losses'):
+        #1) Gibbs Sampling
 
-            obj  = tf.reduce_mean(self.Fv(vv) - self.Fv(v_k))
+        def G_sampling(self,k):
+            '''
+            Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary RBM we need to
+            impose that unseen movies stay as such, i.e. the sampling phase should not modify the elelments where v =-1.
 
-        return obj
+            Args:
+                k: iterator. Number of sampling steps
+                v: visible units
+
+            Returns:
+                h_k: sampled value of the hidden unit at step  k
+                v_k: sampled value of the visible unit at step k
+
+            '''
+            v_k = self.v #initialize the value of the visible units at step k=0 on the data
+
+            for i in range(k): #k_sampling
+                _, h_k = self.sample_h(v_k)
+                _ ,v_k = self.sample_v(h_k)
+
+            return v_k
+
+        #2 Contrastive divergence
+        def Losses(self, vv, v_k):
+
+            '''
+            Loss functions
+
+            Args:
+                v: empirical input
+                v_k: sampled visible units at step k
+
+            Returns:
+                obj: objective function of Contrastive divergence, that is the difference between the
+                     free energy clamped on the data (v) and the model Free energy (v_k)
+
+            '''
+
+            with tf.variable_scope('losses'):
+
+                obj  = tf.reduce_mean(self.Fv(vv) - self.Fv(v_k))
+
+            return obj
 
     #================================================
     # model performance (online metrics)
@@ -440,13 +447,13 @@ class RBM(object):
     def infere(self):
         '''
         Prediction: A training example is used to activate the hidden unit that in turns produce new ratings for the
-                visible units, both for the rated and unrated examples.
+                        visible units, both for the rated and unrated examples.
 
-        Argument:
-        xtr -- example from dataset. This can be either the test/train set
+        Args:
+            xtr: example from dataset. This can be either the test/train set
 
         Returns:
-        pred -- inferred values
+            pred: inferred values
 
         '''
 
@@ -465,27 +472,27 @@ class RBM(object):
         Evaluates the accuracy over the train/test set in online mode. Note that this needs to be evaluated on the rated
         items only
 
-        Arguments
-        vp -- infereed output (Network prediction)
+        Args:
+            vp: infereed output (Network prediction)
 
-        Returns
-        ac_score =  1/m Sum_{mu, i} I(vp-test = 0)_{mu,i}
+        Returns:
+            ac_score =  1/m Sum_{mu, i} I(vp-test = 0)_{mu,i}
 
         '''
         with tf.name_scope('accuracy'):
 
-        #1) define and apply the mask
+            #1) define and apply the mask
             mask= tf.not_equal(self.v,0)
             n_values= tf.reduce_sum(tf.cast(mask, 'float32'), axis=1)
 
-        #2) Take the difference between the input data and the inferred ones. This value is zero whenever the two
-        #   values coincides
+            #2) Take the difference between the input data and the inferred ones. This value is zero whenever the two
+            #   values coincides
             vd = tf.where(mask, x= tf.abs(tf.subtract(self.v,vp)), y= tf.ones_like(self.v) )
 
             #correct values: find the location where v = vp
             corr = tf.cast(tf.equal(vd, 0), 'float32' )
 
-        #3) evaluate the accuracy
+            #3) evaluate the accuracy
             ac_score = tf.reduce_mean(tf.div(tf.reduce_sum(corr, axis= 1), n_values) )
 
         return ac_score
@@ -518,10 +525,6 @@ class RBM(object):
     # Training ops
     #=========================
 
-    #instantiate the computational graph
-    self.placeholder()
-    self.init_parameters()
-
     def train(self, xtr, xtst, epochs, alpha, minibatch_size):
 
         '''
@@ -538,6 +541,10 @@ class RBM(object):
         k=1 #initialize the G_sampling step
         epoch_sample = [50, 70, 80,90] #learning percentage to increment the k-step
         l=0
+
+        #instantiate the computational graph
+        self.placeholder()
+        self.init_parameters()
 
         v_k = self.G_sampling(k)
 
