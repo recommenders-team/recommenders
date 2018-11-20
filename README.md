@@ -43,7 +43,7 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 Here we benchmark the algorithms available in this repository.
 
 <details>
-<summary><strong><em>Benchmark notes</em></strong></summary>
+<summary><strong><em>Click here to see the benchmark details</em></strong></summary>
 
 * Time for training and testing is measured in seconds.
 * Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10. They are not applied to the SAR-family algorithms (SAR PySpark, SAR+, and SAR CPU) because these algorithms do not predict explicit ratings with the same scale of those in the original input data.

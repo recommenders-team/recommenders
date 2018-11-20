@@ -3,7 +3,7 @@
 In this guide we show how to setup all the dependencies to run the notebooks of this repo on an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) and on [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). 
 
 <details>
-<summary><strong><em>Table of Contents</em></strong></summary>
+<summary><strong><em>Click here to see the Table of Contents</em></strong></summary>
  
 * [Compute environments](#compute-environments)
 * [Setup guide for the DSVM](#setup-guide-for-the-dsvm)
@@ -48,7 +48,7 @@ We install the dependencies with Conda. As a pre-requisite, we may want to make 
 
 We provided a script to [generate a conda file](scripts/generate_conda_file.sh), depending of the environment we want to use.
 
-To install each environment, first we need to generate a conda yml file and then install the environment. We can specify the environment name with the input `-n`. In the following examples, we provide a name example.
+To install each environment, first we need to generate a conda yml file and then install the environment. We can specify the environment name with the input `-n`. Click on the following menus to see more details:
 
 <details>
 <summary><strong><em>Python CPU environment</em></strong></summary>
@@ -121,7 +121,7 @@ We can register our created conda environment to appear as a kernel in the Jupyt
 
 ### Tests
 
-This project use unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
+This project use unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). Click on the following menus to see more details:
 
 <details>
 <summary><strong><em>Unit tests</em></strong></summary>
