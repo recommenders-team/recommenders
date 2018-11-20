@@ -17,6 +17,7 @@ import pyspark.sql.functions as F
 from pyspark.sql.functions import col, lit, create_map, sum
 from pyspark.sql.window import Window
 from itertools import chain
+from time import time
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -64,7 +65,7 @@ class SARpySparkReference:
         time_now=TIME_NOW,
         timedecay_formula=TIMEDECAY_FORMULA,
         threshold=THRESHOLD,
-        debug=False,
+        debug=True,
     ):
 
         self.col_rating = col_rating
@@ -131,6 +132,33 @@ class SARpySparkReference:
 
         # training dataframe reference
         self.df = None
+
+        # start time
+        self.start_time = None
+
+    # stateful time function
+    def time(self):
+        """
+        Time a particular section of the code - call this once to set the state somewhere
+        in the code, then call it again to return the elapsed time since last call.
+        Call again to set the time and so on...
+
+        Returns:
+             None if we're not in debug mode - doesn't do anything
+             False if timer started
+             time in seconds since the last time time function was called
+        """
+        if self.debug:
+            if self.start_time is None:
+                self.start_time = time()
+                return False
+            else:
+                answer = time() - self.start_time
+                # reset state
+                self.start_time = None
+                return answer
+        else:
+            return None
 
     def set_index(
         self,
@@ -207,6 +235,23 @@ class SARpySparkReference:
 
         return affinity_vector
 
+    def trigger(self, df, name):
+
+        if self.debug:
+            # trigger execution
+            self.time()
+            # trigger reload
+            # cnt = self.affinity.cache().count()
+            df.write.parquet(name, mode="overwrite")
+            elapsed_time = self.time()
+            self.timer_log += [
+                name
+                +
+                " calculation time (s)\t%d"
+                % elapsed_time
+            ]
+            df = self.spark.read.parquet(name)
+
     def fit(self, df):
         """Main fit method for SAR. Expects the dataframes to have row_id, col_id columns which are indexes,
         i.e. contain the sequential integer index of the original alphanumeric user and item IDs.
@@ -275,15 +320,8 @@ class SARpySparkReference:
 
         # record affinity scores
         self.affinity = df
-        if self.debug:
-            # trigger execution
-            self.time()
-            cnt = self.affinity.cache().count()
-            elapsed_time = self.time()
-            self.timer_log += [
-                "Affinity calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
-                % (cnt, elapsed_time, float(cnt) / elapsed_time)
-            ]
+
+        self.trigger(self.affinity, "affinity")
 
         # create affinity transpose
         log.info("Calculating item cooccurrence...")
@@ -317,15 +355,7 @@ class SARpySparkReference:
         # filter out cooccurence counts which are below threshold
         item_cooccurrence = item_cooccurrence.filter("value>=" + str(self.threshold))
 
-        if self.debug:
-            # trigger execution
-            self.time()
-            cnt = item_cooccurrence.cache().count()
-            elapsed_time = self.time()
-            self.timer_log += [
-                "Item cooccurrence calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
-                % (cnt, elapsed_time, float(cnt) / elapsed_time)
-            ]
+        self.trigger(item_cooccurrence, "item_cooccurrence")
 
         log.info("Calculating item similarity...")
         similarity_type = (
@@ -361,17 +391,10 @@ class SARpySparkReference:
         else:
             raise ValueError("Unknown similarity type: {0}".format(similarity_type))
 
-        if self.debug and (
+        if  (
             similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
         ):
-            # trigger execution
-            self.time()
-            cnt = self.item_similarity.cache().count()
-            elapsed_time = self.time()
-            self.timer_log += [
-                "Item similarity calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
-                % (cnt, elapsed_time, float(cnt) / elapsed_time)
-            ]
+            self.trigger(self.item_similarity, "item_similarity")
 
         # Calculate raw scores with a matrix multiplication.
         log.info("Calculating recommendation scores...")
@@ -394,15 +417,7 @@ class SARpySparkReference:
             )
         )
 
-        if self.debug:
-            # trigger execution
-            self.time()
-            cnt = self.scores.cache().count()
-            elapsed_time = self.time()
-            self.timer_log += [
-                "Score calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
-                % (cnt, elapsed_time, float(cnt) / elapsed_time)
-            ]
+        self.trigger(self.scores, "scores")
 
         log.info("done training")
 
@@ -453,15 +468,7 @@ class SARpySparkReference:
                 col("row_user_id"), col("col_item_id"), col("score").alias("rating")
             ).distinct()
 
-        if self.debug:
-            # trigger execution
-            self.time()
-            cnt = masked_scores.cache().count()
-            elapsed_time = self.time()
-            self.timer_log += [
-                "Masked score calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
-                % (cnt, elapsed_time, float(cnt) / elapsed_time)
-            ]
+        self.trigger(masked_scores, "masked_scores")
 
         # select scores based on the list of row IDs
         # TODO: this is experimental - supposed to be faster than doing another join unless string list blows up
@@ -490,15 +497,8 @@ class SARpySparkReference:
                 F.row_number().over(window).alias("top")
             ).filter(F.col("top") <= top_k)
 
-            if self.debug:
-                # trigger execution
-                self.time()
-                cnt = top_scores.cache().count()
-                elapsed_time = self.time()
-                self.timer_log += [
-                    "Top-k calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
-                    % (cnt, elapsed_time, float(cnt) / elapsed_time)
-                ]
+            self.trigger(top_scores, "top_scores")
+
         else:
             top_scores = masked_scores
 
@@ -525,15 +525,7 @@ class SARpySparkReference:
         if not for_predict:
             top_scores = top_scores.orderBy(PREDICTION_COL, ascending=False)
 
-        if self.debug:
-            # trigger execution
-            self.time()
-            cnt = top_scores.cache().count()
-            elapsed_time = self.time()
-            self.timer_log += [
-                "Mapping user IDs and formatting:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
-                % (cnt, elapsed_time, float(cnt) / elapsed_time)
-            ]
+        self.trigger(top_scores, "top_scores")
 
         return top_scores
 
