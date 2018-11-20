@@ -11,7 +11,7 @@
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learning to illustrate four key tasks: 
 1. Preparing and loading data for each recommender algorithm. 
-2. Using different algorithms such as Smart Adaptative Recommendation (SAR), Alternating Least Square (ALS), etc., for building recommender models. 
+2. Using different algorithms such as Smart Adaptive Recommendation (SAR), Alternating Least Square (ALS), etc., for building recommender models. 
 3. Evaluating algorithms with offline metrics. 
 4. Operationalizing models in a production environment. The examples work across Python + CPU and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements. 
 
@@ -38,7 +38,7 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 | [surprise_svd_deep_dive](notebooks/02_modeling/surprise_svd_deep_dive.ipynb) | Deep dive on Surprise SVD algorithm and implementation.
 | [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python + CPU and PySpark environments.
 
-The recommended machine to run the Spark algorithms is [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). The recommended one to use the CPU algorithms is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
+The recommended environments to run the Spark algorithms is [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). The recommended one for using the CPU algorithms is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
 
 ## Benchmarks
 
@@ -52,7 +52,7 @@ Here we benchmark the algorithms available in this repository.
 * The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
 * SAR Single Node only has ranking metrics because these algorithms do not predict explicit ratings with the same scale of those in the original input data. Surprise SVD only has rating metrics.
 * The hyper parameters of the algorithms are:
-    * `ALS(rank=40,maxIter=15,implicitPrefs=True,alpha=0.1,regParam=0.01,coldStartStrategy='drop',nonnegative=True)`
+    * `ALS(rank=40,maxIter=15,alpha=0.1,regParam=0.01,coldStartStrategy='drop',nonnegative=True)`
     * `SVD(random_state=0, n_factors=200, n_epochs=30, verbose=True)`
     * `SARSingleNodeReference(remove_seen=True, similarity_type="jaccard", time_decay_coefficient=30, time_now=None, timedecay_formula=True)`
 * **NOTE**: In a benchmark it is difficult to compare apples to apples, we computed the algorithms with the best parameters we found to optimize the performance metrics, not the time metrics. 
@@ -86,10 +86,10 @@ Here we benchmark the algorithms available in this repository.
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
   <td>0.407</td>
   <td>0.323</td>
   <td>0.871</td>
@@ -101,10 +101,10 @@ Here we benchmark the algorithms available in this repository.
   <td>0.176</td>
   <td>0.106</td>
   <td>0.373</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 1M</td>
@@ -120,10 +120,10 @@ Here we benchmark the algorithms available in this repository.
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
   <td>0.487</td>
   <td>0.383</td>
   <td>0.810</td>
@@ -135,10 +135,10 @@ Here we benchmark the algorithms available in this repository.
   <td>0.109</td>
   <td>0.064</td>
   <td>0.308</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 10M</td>
@@ -154,10 +154,10 @@ Here we benchmark the algorithms available in this repository.
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
   <td>0.557</td>
   <td>0.430</td>
   <td>0.724</td>
@@ -169,10 +169,10 @@ Here we benchmark the algorithms available in this repository.
   <td>0.156</td>
   <td>0.101</td>
   <td>0.321</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 20M</td>
@@ -188,10 +188,10 @@ Here we benchmark the algorithms available in this repository.
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
   <td>0.574</td>
   <td>0.440</td>
   <td>0.702</td>
@@ -203,10 +203,10 @@ Here we benchmark the algorithms available in this repository.
   <td>0.135</td>
   <td>0.085</td>
   <td>0.287</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
+  <td>N/A</td>
  </tr>
 
 </table>
@@ -217,72 +217,72 @@ Here we benchmark the algorithms available in this repository.
  <tr>
   <th>Dataset</th>
   <th>Algorithm</th>
-  <th>Training time</th>
-  <th>Testing time</th>
+  <th>Training time (s)</th>
+  <th>Testing time (s)</th>
  </tr>
  <tr>
   <td rowspan=3>Movielens 100k</td>
   <td>ALS</td>
-  <td>5.73</td>
-  <td>0.33</td>
+  <td>5.7</td>
+  <td>0.3</td>
  </tr>
  <tr >
   <td >Surprise SVD</td>
-  <td>13.30</td>
-  <td>3.39</td>
+  <td>13.3</td>
+  <td>3.4</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>0.68</td>
-  <td>0.12</td>
+  <td>0.7</td>
+  <td>0.1</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 1M</td>
   <td>ALS</td>
-  <td>18.00</td>
-  <td>0.34</td>
+  <td>18.0</td>
+  <td>0.3</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>129.00</td>
-  <td>35.70</td>
+  <td>129.0</td>
+  <td>35.7</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>5.83</td>
-  <td>0.59</td>
+  <td>5.8</td>
+  <td>0.6</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 10M</td>
   <td>ALS</td>
-  <td>92.00</td>
-  <td>0.17</td>
+  <td>92.0</td>
+  <td>0.2</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>1285.00</td>
-  <td>253.00</td>
+  <td>1285.0</td>
+  <td>253.0</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>111.00</td>
-  <td>12.60</td>
+  <td>111.0</td>
+  <td>12.6</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 20M</td>
   <td>ALS</td>
-  <td>142.00</td>
-  <td>0.34</td>
+  <td>142.0</td>
+  <td>0.3</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>2562.00</td>
-  <td>506</td>
+  <td>2562.0</td>
+  <td>506.0</td>
  </tr>
  <tr >
   <td>SAR Single Node</td>
-  <td>559.00</td>
-  <td>47.30</td>
+  <td>559.0</td>
+  <td>47.3</td>
  </tr>
 
 </table>
