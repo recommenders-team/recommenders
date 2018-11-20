@@ -38,6 +38,8 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 | [surprise_svd_deep_dive](notebooks/02_modeling/surprise_svd_deep_dive.ipynb) | Deep dive on Surprise SVD algorithm and implementation.
 | [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python + CPU and PySpark environments.
 
+The recommended machine to run the Spark algorithms is [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). The recommended one to use the CPU algorithms is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
+
 ## Benchmarks
 
 Here we benchmark the algorithms available in this repository.
@@ -46,8 +48,10 @@ Here we benchmark the algorithms available in this repository.
 <summary><strong><em>Click here to see the benchmark details</em></strong></summary>
 
 * Time for training and testing is measured in seconds.
-* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10. They are not applied to the SAR-family algorithms (SAR PySpark, SAR+, and SAR CPU) because these algorithms do not predict explicit ratings with the same scale of those in the original input data.
-* The machine we used is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
+* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10. 
+* The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
+* SAR Single Node only has ranking metrics because these algorithms do not predict explicit ratings with the same scale of those in the original input data. Surprise SVD only has rating metrics.
+
 
 </details>
 
@@ -67,7 +71,7 @@ Here we benchmark the algorithms available in this repository.
   <th>R squared</th>
  </tr>
  <tr>
-  <td rowspan=4>Movielens 100k</td>
+  <td rowspan=3>Movielens 100k</td>
   <td>ALS</td>
   <td>5.730</td>
   <td>0.326</td>
@@ -94,19 +98,6 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td>SAR+</td>
-  <td>7.660</td>
-  <td>16.700</td>
-  <td>0.327</td>
-  <td>0.176</td>
-  <td>0.106</td>
-  <td>0.373</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
- </tr>
- <tr>
   <td>SAR CPU</td>
   <td>0.679</td>
   <td>0.116</td>
@@ -120,7 +111,7 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td rowspan=4>Movielens 1M</td>
+  <td rowspan=3>Movielens 1M</td>
   <td>ALS</td>
   <td>18.000</td>
   <td>0.339</td>
@@ -147,19 +138,6 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td>SAR+</td>
-  <td>38.000</td>
-  <td>108.000</td>
-  <td>0.278</td>
-  <td>0.108</td>
-  <td>0.064</td>
-  <td>0.309</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
- </tr>
- <tr>
   <td>SAR CPU</td>
   <td>5.830</td>
   <td>0.586</td>
@@ -173,7 +151,7 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td rowspan=4>Movielens 10M</td>
+  <td rowspan=3>Movielens 10M</td>
   <td>ALS</td>
   <td>92.000</td>
   <td>0.169</td>
@@ -200,19 +178,6 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td>SAR+</td>
-  <td>170.000</td>
-  <td>80.000</td>
-  <td>0.256</td>
-  <td>0.129</td>
-  <td>0.081</td>
-  <td>0.295</td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
- </tr>
- <tr>
   <td>SAR CPU</td>
   <td>111.000</td>
   <td>12.600</td>
@@ -226,7 +191,7 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
  </tr>
  <tr>
-  <td rowspan=4>Movielens 20M</td>
+  <td rowspan=3>Movielens 20M</td>
   <td>ALS</td>
   <td>142.000</td>
   <td>0.345</td>
@@ -247,19 +212,6 @@ Here we benchmark the algorithms available in this repository.
   <td></td>
   <td></td>
   <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
-  <td></td>
- </tr>
- <tr>
-  <td>SAR+</td>
-  <td>400.000</td>
-  <td>221.000</td>
-  <td>0.203</td>
-  <td>0.071</td>
-  <td>0.041</td>
-  <td>0.226</td>
   <td></td>
   <td></td>
   <td></td>
