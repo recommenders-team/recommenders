@@ -45,6 +45,7 @@ import numpy as np
 import tensorflow as tf
 from scipy import sparse #to create the rating matrix
 import logging
+from reco_utils.recommender.rbm.helperfunct import random_mini_batches
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -620,7 +621,7 @@ class RBM(object):
             pred: inferred values
 
         '''
-        
+
         #Sampling
         _, h_ = self.sample_h(self.v) #sample h
 
