@@ -45,6 +45,7 @@ import numpy as np
 import tensorflow as tf
 from scipy import sparse #to create the rating matrix
 import logging
+
 from reco_utils.recommender.rbm.helperfunct import random_mini_batches
 
 from reco_utils.common.constants import (
@@ -54,6 +55,16 @@ from reco_utils.common.constants import (
     DEFAULT_TIMESTAMP_COL,
     PREDICTION_COL,
 )
+
+from reco_utils.recommender.rbm import (
+    HIDDEN,
+    KEEP_PROB,
+    STDV,
+    ALPHA,
+    MINIBATCH,
+    EPOCHS,
+)
+
 
 log = logging.getLogger(__name__)
 
@@ -94,7 +105,7 @@ class RBM:
         self.epochs= training_epoch  #number of epochs used to train the model
         self.save = save #If true, it saves a TF model to be used for predictions
         self.save_path = save_path #specify a path where the TF model file is saved
-        self.graph = tf.Graph()    #tensor flow graph
+        self.graph= tf.Graph()
 
     #===============================================
     #Generate the Ranking matrix from a pandas DF
@@ -270,7 +281,8 @@ class RBM:
     #==================================
 
     #Initialize graph
-    with self.graph.as_default():
+    #self.graph = tf.Graph()    #tensor flow graph
+    #with self.graph.as_default():
 
         #Initialize the placeholders for the visible units
         def placeholder(self):
