@@ -15,11 +15,11 @@ This repository provides examples and best practices for building recommendation
 3. Evaluating algorithms with offline metrics. 
 4. Operationalizing models in a production environment. The examples work across Python + CPU and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements.
 
-The diagram depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
+Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
+
+The diagram belowt ad depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
+
 ![workflow](https://zhledata.blob.core.windows.net/misc/recommender_workflow.png)
-
-
-Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications. 
 
 ## Environment Setup
 * Please see the [setup guide](SETUP.md).
