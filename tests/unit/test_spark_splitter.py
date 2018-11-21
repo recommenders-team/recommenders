@@ -308,3 +308,61 @@ def test_timestamp_splitter(test_specs, spark_dataset):
     assert splits[2].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][2], test_specs["tolerance"]
     )
+
+    # Test if timestamps are correctly split. This is for multi-split case.
+    all_later = []
+    for user in test_specs["user_ids"]:
+        dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
+        dfs_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
+        dfs_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
+
+        p1 = product(
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+        )
+        p2 = product(
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+            [
+                x[DEFAULT_TIMESTAMP_COL]
+                for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
+            ],
+        )
+
+        user_later_1 = [a <= b for (a, b) in p1]
+        user_later_2 = [a <= b for (a, b) in p2]
+
+        all_later.append(user_later_1)
+        all_later.append(user_later_2)
+    assert all(all_later)
+
+
+def _if_later(data1, data2, col_timestamp=DEFAULT_TIMESTAMP_COL):
+    '''Helper function to test if records in data1 are later than that in data2.
+
+    Return:
+        True or False indicating if data1 is later than data2.
+    '''
+    p = product(
+        [
+            x[col_timestamp]
+            for x in data1.select(col_timestamp).collect()
+        ],
+        [
+            x[col_timestamp]
+            for x in data2.select(col_timestamp).collect()
+        ],
+    )
+
+    if_late = [a <= b for (a, b) in p]
+
+    return if_late
+
