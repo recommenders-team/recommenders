@@ -82,6 +82,7 @@ class RBM:
         col_rating=DEFAULT_RATING_COL,
         hidden_units= HIDDEN,
         keep_prob= KEEP_PROB,
+        momentum = MOMENTUM,
         init_stdv = STDV,
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
@@ -100,6 +101,7 @@ class RBM:
         #RBM parameters
         self.Nh_ = hidden_units     #number of hidden units
         self.keep = keep_prob       #keep probability for dropout regularization
+        self.momentum_= momentum    #initial value of the momentum for the optimizer 
         self.std = init_stdv        #standard deviation used to initialize the weights matrices
         self.alpha = learning_rate  #learning rate used in the update method of the optimizer
 
@@ -623,7 +625,7 @@ class RBM:
         obj = self.Losses(self.v, v_k) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = 0.9).minimize(loss= obj) #optimizer
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
@@ -632,6 +634,7 @@ class RBM:
         Mserr  = self.msr_error(v_k)
         #Clacc  = self.accuracy(v_k)
 
+        SAVER = tf.train.Saver()
         init_g = tf.global_variables_initializer() #Initialize all variables
 
         #Start TF session on default graph
@@ -666,6 +669,7 @@ class RBM:
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
+        saver.save(sess, 'saver/rbm_model_saver.ckpt')
         sess.close()
 
         #Print training error as a function of epochs
