@@ -146,7 +146,7 @@ Here we benchmark the algorithms available in this repository.
  </tr>
  <tr>
   <td rowspan=3>Movielens 10M</td>
-  <td align="right">ALS</td>
+  <td>ALS</td>
   <td align="right">0.090</td>
   <td align="right">0.057</td>
   <td align="right">0.015</td>
