@@ -26,20 +26,11 @@ import time as tm
 
 from reco_utils.recommender.rbm.helperfunct import*
 
-from reco_utils.common.constants import (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
-    PREDICTION_COL,
-)
-
-
 #ML Libraries and methods
 import tensorflow as tf
-from reco_utils.recommender.rbm.Mrbm_tensorflow import RBM
 
-from reco_utils.dataset.python_splitters import python_stratified_split, python_random_split
+from reco_utils.recommender.rbm.Mrbm_tensorflow import RBM
+from reco_utils.dataset.python_splitters import python_stratified_split
 
 #For interactive mode only
 %load_ext autoreload

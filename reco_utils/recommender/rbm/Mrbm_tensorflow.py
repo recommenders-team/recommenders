@@ -659,7 +659,6 @@ class RBM:
                     #write metrics acros epohcs
                     Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-
             return Mse_train
 
     #=========================
