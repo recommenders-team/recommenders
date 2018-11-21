@@ -42,6 +42,7 @@ Basic mechanics:
 
 #import libraries
 import numpy as np
+import math
 import tensorflow as tf
 from scipy import sparse #to create the rating matrix
 import logging
@@ -279,6 +280,7 @@ class RBM:
 
         return F
 
+    #Random minibatches function
     def random_mini_batches(self, X, seed = 1):
 
         """
@@ -305,7 +307,7 @@ class RBM:
         num_complete_minibatches = math.floor(m/self.minibatch) # number of mini batches of size mini_batch_size
 
         for k in range(0, num_complete_minibatches):
-            mini_batch_X = shuffled_X[k * self.minibatch : k * slef.minibatch + seld.minibatch]
+            mini_batch_X = shuffled_X[k * self.minibatch : k * self.minibatch + self.minibatch]
             mini_batch = mini_batch_X
             mini_batches.append(mini_batch)
 
@@ -594,19 +596,20 @@ class RBM:
         log.info("Building user affinity sparse matrix...")
 
         xtr = self.gen_ranking_matrix(df) #generate the user_affinity matrix
-        self.r_= X_train.max() #defines the rating scale, e.g. 1 to 5 
+        self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
         num_minibatches = int(m / self.minibatch) #number of minibatches
         self.epochs = self.epochs +1 #add one epoch
 
-        #-------------------Initialize all parameters----------------
+        tf.reset_default_graph()
+        #----------------------Initialize all parameters----------------
 
         log.info("Creating the computational graph")
         #instantiate the computational graph
         self.placeholder()
         self.init_parameters()
 
-        #Sampling protocol
+        #--------------Sampling protocol for Gibbs sampling-----------------------------------
         k=1 #initialize the G_sampling step
         l=0 #initialize epoch_sample index
         #Percentage of the total number of training epochs after which the k-step is increased
@@ -639,7 +642,7 @@ class RBM:
             for i in range(self.epochs):
 
                 epoch_tr_err =0 #initialize the training error for each epoch to zero
-                per= (i/epochs)*100 #curernt percentage of the total #epochs
+                per= (i/self.epochs)*100 #current percentage of the total #epochs
 
                 #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
                 if per !=0 and per %epoch_sample[l] == 0:
@@ -656,15 +659,19 @@ class RBM:
 
                     epoch_tr_err += batch_err/num_minibatches #mse error per minibatch
 
-                    if i % 10==0:
-                        print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
+                if i % 10==0:
+                    print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
-                    #write metrics acros epohcs
-                    Mse_train.append(epoch_tr_err) # mse training error per training epoch
+                #write metrics acros epohcs
+                Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
         sess.close()
 
-        return Mse_train
+        #Print training error as a function of epochs
+        plt.plot(Mse_train, label= 'train')
+        plt.ylabel('msr_error', size= 'x-large')
+        plt.xlabel('epochs', size = 'x-large')
+        plt.legend(ncol=1)
 
     #=========================
     # load a  model

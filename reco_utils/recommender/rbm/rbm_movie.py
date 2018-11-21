@@ -79,6 +79,9 @@ X_train.shape
 X_test.shape
 
 
+
+
+
 #Distribution of values
 zero_train  = (X_train == 0).sum()
 total  = X_train.shape[0]*X_train.shape[1]
@@ -97,6 +100,22 @@ id_tst =np.where(X_test !=0)
 plt.hist(X_test[id_tst], bins=5, density=1)
 
 zero_test/total *100
+
+
+#New method
+
+header = {
+        "col_user": "userID",
+        "col_item": "MovieId",
+        "col_rating": "Rating",
+    }
+
+
+model = RBM(hidden_units= 10, keep_prob= 1, **header)
+model.fit(train)
+
+
+
 
 
 #==========================
