@@ -73,6 +73,7 @@ class RBM:
     #initialize class parameters
     def __init__(
         self,
+        remove_seen=True,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
@@ -85,6 +86,8 @@ class RBM:
         save_path = 'saver/rbm_model_saver.ckpt',
         debug = False,
     ):
+
+        self.remove_seen = remove_seen #if True it removes from predictions elements in the train set
 
         #pandas DF parameters
         self.col_rating = col_rating
@@ -157,7 +160,7 @@ class RBM:
         assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
 
         #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
-        RM = coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
+        RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
 
         return RM
 
@@ -659,10 +662,12 @@ class RBM:
                     #write metrics acros epohcs
                     Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            return Mse_train
+        sess.close()
+
+        return Mse_train
 
     #=========================
-    # load a pretrained model
+    # load a  model
     #=========================
 
     #Inference from a trained model. This can be either loaded from a saved model or in the same sessions as the traiing one
