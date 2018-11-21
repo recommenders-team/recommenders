@@ -46,7 +46,7 @@ import tensorflow as tf
 from scipy import sparse #to create the rating matrix
 import logging
 
-from reco_utils.recommender.rbm.helperfunct import random_mini_batches
+#from reco_utils.recommender.rbm.helperfunct import random_mini_batches
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -274,6 +274,42 @@ class RBM:
 
         return F
 
+    def random_mini_batches(self, X, seed = 1):
+        """
+        Creates a list of random minibatches from X
+
+        Arguments:
+        X -- input data, of shape (input size, number of examples) (m, ne)
+        mini_batch_size - size of the mini-batches, integer
+        seed -- this is only for the purpose of grading, so that you're "random minibatches are the same as ours.
+
+        Returns:
+        mini_batches -- list of synchronous (mini_batch_X, mini_batch_Y)
+        """
+
+        m = X.shape[0]                  # number of training examples
+        mini_batches = []
+        np.random.seed(seed)
+
+        # Step 1: Shuffle
+        permutation = list(np.random.permutation(m))
+        shuffled_X = X[permutation]
+
+        # Step 2: Partition  Minus the end case.
+        num_complete_minibatches = math.floor(m/self.minibatch) # number of mini batches of size mini_batch_size
+
+        for k in range(0, num_complete_minibatches):
+            mini_batch_X = shuffled_X[k * self.minibatch : k * slef.minibatch + seld.minibatch]
+            mini_batch = mini_batch_X
+            mini_batches.append(mini_batch)
+
+        # Handling the end case (last mini-batch < mini_batch_size)
+        if m % self.minibatch != 0:
+            mini_batch_X = shuffled_X[num_complete_minibatches * self.minibatch : m]
+            mini_batch = mini_batch_X
+            mini_batches.append(mini_batch)
+
+        return mini_batches
 
     #==================================
     #Define graph topology
@@ -554,6 +590,7 @@ class RBM:
 
         m, _ = xtr.shape #dimension of the input: #examples, #features
         num_minibatches = int(m / self.minibatch) #number of minibatches
+        self.epochs = self.epochs +1 #add one epoch
 
         #-------------------Initialize all parameters----------------
 
@@ -565,27 +602,28 @@ class RBM:
         #Sampling protocol
         k=1 #initialize the G_sampling step
         l=0 #initialize epoch_sample index
+        #Percentage of the total number of training epochs after which the k-step is increased
         epoch_sample = [50, 70, 80,90]
 
         #-------------------------Main algo---------------------------
 
-        v_k = self.G_sampling(k)
+        v_k = self.G_sampling(k) #sampled value of the visible units
 
         obj = self.Losses(self.v, v_k) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
         opt = tf.train.GradientDescentOptimizer(learning_rate = rate).minimize(loss= obj) #optimizer
 
-        pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns and the related probabilities
+        pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
-        #initialize metrics
+        #initialize online metrics
         Mse_train = [] #Lists to collect the metrics across each epochs
         Mserr  = self.msr_error(v_k)
         #Clacc  = self.accuracy(v_k)
-        init_g = tf.global_variables_initializer()
 
-        self.epochs = self.epochs +1 #add one epoch (...)
+        init_g = tf.global_variables_initializer() #Initialize all variables
 
+        #Start TF session on default graph
         with tf.Session() as sess:
 
             sess.run(init_g)
@@ -593,8 +631,8 @@ class RBM:
             #start loop over training epochs
             for i in range(self.epochs):
 
-                epoch_tr_err =0
-                per= (i/epochs)*100 #percentage of epochs
+                epoch_tr_err =0 #initialize the training error for each epoch to zero
+                per= (i/epochs)*100 #curernt percentage of the total #epochs
 
                 #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
                 if per !=0 and per %epoch_sample[l] == 0:
@@ -602,8 +640,8 @@ class RBM:
                     l +=1
                     v_k = self.G_sampling(k)
 
-                #implement minibatches (try using TF data pipeline for performance)
-                minibatches = random_mini_batches(xtr, mini_batch_size= self.minibatch, seed=1)
+                #implement minibatches (to implement: TF data pipeline for btter performance)
+                minibatches = self.random_mini_batches(xtr, mini_batch_size= self.minibatch, seed=1)
 
                 for minibatch in minibatches:
 
