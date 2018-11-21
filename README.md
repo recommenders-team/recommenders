@@ -18,6 +18,7 @@ This repository provides examples and best practices for building recommendation
 The diagram depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
 ![workflow](https://zhledata.blob.core.windows.net/misc/recommender_workflow.png)
 
+
 Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications. 
 
 ## Environment Setup
@@ -78,138 +79,138 @@ Here we benchmark the algorithms available in this repository.
  <tr>
   <td rowspan=3>Movielens 100k</td>
   <td>ALS</td>
-  <td>0.096</td>
-  <td>0.079</td>
-  <td>0.026</td>
-  <td>0.100</td>
-  <td>1.110</td>
-  <td>0.860</td>
-  <td>0.025</td>
-  <td>0.023</td>
+  <td align="right">0.096</td>
+  <td align="right">0.079</td>
+  <td align="right">0.026</td>
+  <td align="right">0.100</td>
+  <td align="right">1.110</td>
+  <td align="right">0.860</td>
+  <td align="right">0.025</td>
+  <td align="right">0.023</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>0.407</td>
-  <td>0.323</td>
-  <td>0.871</td>
-  <td>0.871</td>		
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">0.407</td>
+  <td align="right">0.323</td>
+  <td align="right">0.871</td>
+  <td align="right">0.871</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>0.327</td>
-  <td>0.176</td>
-  <td>0.106</td>
-  <td>0.373</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
+  <td align="right">0.327</td>
+  <td align="right">0.176</td>
+  <td align="right">0.106</td>
+  <td align="right">0.373</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 1M</td>
   <td>ALS</td>
-  <td>0.120</td>
-  <td>0.062</td>
-  <td>0.022</td>
-  <td>0.119</td>
-  <td>0.950</td>
-  <td>0.735</td>
-  <td>0.280</td>
-  <td>0.280</td>
+  <td align="right">0.120</td>
+  <td align="right">0.062</td>
+  <td align="right">0.022</td>
+  <td align="right">0.119</td>
+  <td align="right">0.950</td>
+  <td align="right">0.735</td>
+  <td align="right">0.280</td>
+  <td align="right">0.280</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>0.487</td>
-  <td>0.383</td>
-  <td>0.810</td>
-  <td>0.810</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">0.487</td>
+  <td align="right">0.383</td>
+  <td align="right">0.810</td>
+  <td align="right">0.810</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>0.277</td>
-  <td>0.109</td>
-  <td>0.064</td>
-  <td>0.308</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
+  <td align="right">0.277</td>
+  <td align="right">0.109</td>
+  <td align="right">0.064</td>
+  <td align="right">0.308</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 10M</td>
-  <td>ALS</td>
-  <td>0.090</td>
-  <td>0.057</td>
-  <td>0.015</td>
-  <td>0.084</td>
-  <td>0.850</td>
-  <td>0.647</td>
-  <td>0.359</td>
-  <td>0.359</td>
+  <td align="right">ALS</td>
+  <td align="right">0.090</td>
+  <td align="right">0.057</td>
+  <td align="right">0.015</td>
+  <td align="right">0.084</td>
+  <td align="right">0.850</td>
+  <td align="right">0.647</td>
+  <td align="right">0.359</td>
+  <td align="right">0.359</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>0.557</td>
-  <td>0.430</td>
-  <td>0.724</td>
-  <td>0.724</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">0.557</td>
+  <td align="right">0.430</td>
+  <td align="right">0.724</td>
+  <td align="right">0.724</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>0.276</td>
-  <td>0.156</td>
-  <td>0.101</td>
-  <td>0.321</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
+  <td align="right">0.276</td>
+  <td align="right">0.156</td>
+  <td align="right">0.101</td>
+  <td align="right">0.321</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 20M</td>
   <td>ALS</td>
-  <td>0.081</td>
-  <td>0.052</td>
-  <td>0.014</td>
-  <td>0.076</td>
-  <td>0.830</td>
-  <td>0.633</td>
-  <td>0.372</td>
-  <td>0.371</td>
+  <td align="right">0.081</td>
+  <td align="right">0.052</td>
+  <td align="right">0.014</td>
+  <td align="right">0.076</td>
+  <td align="right">0.830</td>
+  <td align="right">0.633</td>
+  <td align="right">0.372</td>
+  <td align="right">0.371</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>0.574</td>
-  <td>0.440</td>
-  <td>0.702</td>
-  <td>0.702</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">0.574</td>
+  <td align="right">0.440</td>
+  <td align="right">0.702</td>
+  <td align="right">0.702</td>
  </tr>
  <tr >
   <td>SAR Single Node</td>
-  <td>0.247</td>
-  <td>0.135</td>
-  <td>0.085</td>
-  <td>0.287</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
-  <td>N/A</td>
+  <td align="right">0.247</td>
+  <td align="right">0.135</td>
+  <td align="right">0.085</td>
+  <td align="right">0.287</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
+  <td align="right">N/A</td>
  </tr>
 
 </table>
@@ -226,66 +227,66 @@ Here we benchmark the algorithms available in this repository.
  <tr>
   <td rowspan=3>Movielens 100k</td>
   <td>ALS</td>
-  <td>5.7</td>
-  <td>0.3</td>
+  <td align="right">5.7</td>
+  <td align="right">0.3</td>
  </tr>
  <tr >
   <td >Surprise SVD</td>
-  <td>13.3</td>
-  <td>3.4</td>
+  <td align="right">13.3</td>
+  <td align="right">3.4</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>0.7</td>
-  <td>0.1</td>
+  <td align="right">0.7</td>
+  <td align="right">0.1</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 1M</td>
   <td>ALS</td>
-  <td>18.0</td>
-  <td>0.3</td>
+  <td align="right">18.0</td>
+  <td align="right">0.3</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>129.0</td>
-  <td>35.7</td>
+  <td align="right">129.0</td>
+  <td align="right">35.7</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>5.8</td>
-  <td>0.6</td>
+  <td align="right">5.8</td>
+  <td align="right">0.6</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 10M</td>
   <td>ALS</td>
-  <td>92.0</td>
-  <td>0.2</td>
+  <td align="right">92.0</td>
+  <td align="right">0.2</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>1285.0</td>
-  <td>253.0</td>
+  <td align="right">1285.0</td>
+  <td align="right">253.0</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
-  <td>111.0</td>
-  <td>12.6</td>
+  <td align="right">111.0</td>
+  <td align="right">12.6</td>
  </tr>
  <tr>
   <td rowspan=3>Movielens 20M</td>
   <td>ALS</td>
-  <td>142.0</td>
-  <td>0.3</td>
+  <td align="right">142.0</td>
+  <td align="right">0.3</td>
  </tr>
  <tr>
   <td>Surprise SVD</td>
-  <td>2562.0</td>
-  <td>506.0</td>
+  <td align="right">2562.0</td>
+  <td align="right">506.0</td>
  </tr>
  <tr >
   <td>SAR Single Node</td>
-  <td>559.0</td>
-  <td>47.3</td>
+  <td align="right">559.0</td>
+  <td align="right">47.3</td>
  </tr>
 
 </table>
