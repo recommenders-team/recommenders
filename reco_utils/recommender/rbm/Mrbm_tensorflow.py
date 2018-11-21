@@ -95,10 +95,10 @@ class RBM:
         self.col_user = col_user
 
         #RBM parameters
-        self.Nh_ = hidden_units    #number of hidden units
+        self.Nh_ = hidden_units     #number of hidden units
         self.keep = keep_prob       #keep probability for dropout regularization
-        self.std = init_stdv          #standard deviation used to initialize the weights matrices
-        self.alpha = learning_rate   #learning rate used in the update method of the optimizer
+        self.std = init_stdv        #standard deviation used to initialize the weights matrices
+        self.alpha = learning_rate  #learning rate used in the update method of the optimizer
 
         #size of the minibatch used in the random minibatches training. This should be set
         #approx between  1 - 120. setting to 1 correspods to stochastic gradient descent, and
@@ -594,8 +594,8 @@ class RBM:
         log.info("Building user affinity sparse matrix...")
 
         xtr = self.gen_ranking_matrix(df) #generate the user_affinity matrix
-
-        m, _ = xtr.shape #dimension of the input: #examples, #features
+        self.r_= X_train.max() #defines the rating scale, e.g. 1 to 5 
+        m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
         num_minibatches = int(m / self.minibatch) #number of minibatches
         self.epochs = self.epochs +1 #add one epoch
 
