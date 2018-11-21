@@ -4,6 +4,14 @@ import pydocumentdb.errors as errors
 
 
 def find_collection(client, dbid, id):
+    """Find whether or not a CosmosDB collection exists.
+    Args:
+        client (obj): A pydocumentdb client object.
+        dbid (str): Database ID.
+        id (str): Collection ID.
+    Returns:
+        bool: True if the collection exists, False otherwise.
+    """
     database_link = "dbs/" + dbid
     collections = list(
         client.QueryCollections(
@@ -21,6 +29,14 @@ def find_collection(client, dbid, id):
 
 
 def read_collection(client, dbid, id):
+    """Read a CosmosDB collection.
+    Args:
+        client (obj): A pydocumentdb client object.
+        dbid (str): Database ID.
+        id (str): Collection ID.
+    Returns:
+        obj: A collection.
+    """
     try:
         database_link = "dbs/" + dbid
         collection_link = database_link + "/colls/{0}".format(id)
@@ -34,6 +50,13 @@ def read_collection(client, dbid, id):
 
 
 def read_database(client, id):
+    """Read a CosmosDB database.
+    Args:
+        client (obj): A pydocumentdb client object.
+        id (str): Database ID.
+    Returns:
+        obj: A database.
+    """
     try:
         database_link = "dbs/" + id
         database = client.ReadDatabase(database_link)
@@ -46,6 +69,13 @@ def read_database(client, id):
 
 
 def find_database(client, id):
+    """Find whether or not a CosmosDB database exists.
+    Args:
+        client (obj): A pydocumentdb client object.
+        id (str): Database ID.
+    Returns:
+        bool: True if the database exists, False otherwise.
+    """
     databases = list(
         client.QueryDatabases(
             {
