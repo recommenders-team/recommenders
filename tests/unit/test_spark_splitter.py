@@ -176,17 +176,19 @@ def test_chrono_splitter(test_specs, spark_dataset):
         dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
         dfs_test = splits[1][splits[1][DEFAULT_USER_COL] == user]
 
-        p = product(
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-        )
-        user_later = [a <= b for (a, b) in p]
+        user_later = _if_later(dfs_train, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
+
+        # p = product(
+        #     [
+        #         x[DEFAULT_TIMESTAMP_COL]
+        #         for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
+        #     ],
+        #     [
+        #         x[DEFAULT_TIMESTAMP_COL]
+        #         for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
+        #     ],
+        # )
+        # user_later = [a <= b for (a, b) in p]
 
         all_later.append(user_later)
     assert all(all_later)
@@ -210,29 +212,32 @@ def test_chrono_splitter(test_specs, spark_dataset):
         dfs_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
         dfs_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
 
-        p1 = product(
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-        )
-        p2 = product(
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-        )
+        # p1 = product(
+        #     [
+        #         x[DEFAULT_TIMESTAMP_COL]
+        #         for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
+        #     ],
+        #     [
+        #         x[DEFAULT_TIMESTAMP_COL]
+        #         for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+        #     ],
+        # )
+        # p2 = product(
+        #     [
+        #         x[DEFAULT_TIMESTAMP_COL]
+        #         for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+        #     ],
+        #     [
+        #         x[DEFAULT_TIMESTAMP_COL]
+        #         for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
+        #     ],
+        # )
+        #
+        # user_later_1 = [a <= b for (a, b) in p1]
+        # user_later_2 = [a <= b for (a, b) in p2]
 
-        user_later_1 = [a <= b for (a, b) in p1]
-        user_later_2 = [a <= b for (a, b) in p2]
+        user_later_1 = _if_later(dfs_train, dfs_valid, col_timestamp=DEFAULT_TIMESTAMP_COL)
+        user_later_2 = _if_later(dfs_valid, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
 
         all_later.append(user_later_1)
         all_later.append(user_later_2)
@@ -310,39 +315,50 @@ def test_timestamp_splitter(test_specs, spark_dataset):
     )
 
     # Test if timestamps are correctly split. This is for multi-split case.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        dfs_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
-        dfs_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
+    # all_later = []
+    # for user in test_specs["user_ids"]:
+    #     dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
+    #     dfs_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
+    #     dfs_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
+    #
+    #     p1 = product(
+    #         [
+    #             x[DEFAULT_TIMESTAMP_COL]
+    #             for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
+    #         ],
+    #         [
+    #             x[DEFAULT_TIMESTAMP_COL]
+    #             for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+    #         ],
+    #     )
+    #     p2 = product(
+    #         [
+    #             x[DEFAULT_TIMESTAMP_COL]
+    #             for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
+    #         ],
+    #         [
+    #             x[DEFAULT_TIMESTAMP_COL]
+    #             for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
+    #         ],
+    #     )
+    #
+    #     user_later_1 = [a <= b for (a, b) in p1]
+    #     user_later_2 = [a <= b for (a, b) in p2]
+    #
+    #     all_later.append(user_later_1)
+    #     all_later.append(user_later_2)
 
-        p1 = product(
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_train.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-        )
-        p2 = product(
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_valid.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-            [
-                x[DEFAULT_TIMESTAMP_COL]
-                for x in dfs_test.select(DEFAULT_TIMESTAMP_COL).collect()
-            ],
-        )
+    dfs_train = splits[0]
+    dfs_valid = splits[1]
+    dfs_test = splits[2]
 
-        user_later_1 = [a <= b for (a, b) in p1]
-        user_later_2 = [a <= b for (a, b) in p2]
+    # if valid is later than train.
+    all_later_1 = _if_later(dfs_train, dfs_valid, col_timestamp=DEFAULT_TIMESTAMP_COL)
+    assert all_later_1
 
-        all_later.append(user_later_1)
-        all_later.append(user_later_2)
-    assert all(all_later)
+    # if test is later than valid.
+    all_later_2 = _if_later(dfs_valid, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
+    assert all_later_2
 
 
 def _if_later(data1, data2, col_timestamp=DEFAULT_TIMESTAMP_COL):
