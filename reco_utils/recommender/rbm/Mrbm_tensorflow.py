@@ -623,7 +623,7 @@ class RBM:
         obj = self.Losses(self.v, v_k) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
-        opt = tf.train.GradientDescentOptimizer(learning_rate = rate).minimize(loss= obj) #optimizer
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = 0.9).minimize(loss= obj) #optimizer
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 

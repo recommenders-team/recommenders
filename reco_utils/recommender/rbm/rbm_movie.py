@@ -111,7 +111,7 @@ header = {
     }
 
 
-model = RBM(hidden_units= 10, keep_prob= 1, training_epoch = 10,**header)
+model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10,**header)
 model.fit(train)
 
 
