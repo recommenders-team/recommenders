@@ -137,6 +137,7 @@ class RBM:
             are assigned a value of 0.
 
         '''
+
         log.info("Collecting user affinity matrix...")
 
         rating = df.sort_values(by=[self.col_user])
@@ -169,6 +170,7 @@ class RBM:
 
     #Binomial sampling
     def B_sampling(self,p):
+
         '''
         Sample from a Binomial distribution.
 
@@ -275,16 +277,17 @@ class RBM:
         return F
 
     def random_mini_batches(self, X, seed = 1):
+
         """
         Creates a list of random minibatches from X
 
-        Arguments:
-        X -- input data, of shape (input size, number of examples) (m, ne)
-        mini_batch_size - size of the mini-batches, integer
-        seed -- this is only for the purpose of grading, so that you're "random minibatches are the same as ours.
+        Args:
+            X: input data, of shape (input size, number of examples) (m, ne)
+            self.minibatch: size of the mini-batches (integer)
+            seed: random seed
 
         Returns:
-        mini_batches -- list of synchronous (mini_batch_X, mini_batch_Y)
+            mini_batches: list
         """
 
         m = X.shape[0]                  # number of training examples
@@ -327,15 +330,16 @@ class RBM:
     def init_parameters(self):
 
         '''
-        This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and two bias vector to initialize.
+        This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
+        two bias vector to initialize.
 
         Arguments:
         Nv -- number of visible units (input layer)
         Nh -- number of hidden units (latent variables of the model)
 
         Returns:
-        Initialized weights and biases. We initialize the transition matrix by sampling from a normal distribution with zero mean
-        and given variance. The biases are Initialized to zero.
+        Initialized weights and biases. We initialize the transition matrix by sampling from a
+        normal distribution with zero mean and given variance. The biases are Initialized to zero.
         '''
 
         tf.set_random_seed(1) #set the seed for the random number generator
@@ -641,15 +645,15 @@ class RBM:
                     v_k = self.G_sampling(k)
 
                 #implement minibatches (to implement: TF data pipeline for btter performance)
-                minibatches = self.random_mini_batches(xtr, mini_batch_size= self.minibatch, seed=1)
+                minibatches = self.random_mini_batches(xtr)
 
-                for minibatch in minibatches:
+                for minib in minibatches:
 
-                    _, batch_err = self.session.run([opt, Mserr], feed_dict={self.v:minibatch})
+                    _, batch_err = sess.run([opt, Mserr], feed_dict={self.v:minib})
 
                     epoch_tr_err += batch_err/num_minibatches #mse error per minibatch
 
-                    if i%5==0:
+                    if i % 10==0:
                         print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
                     #write metrics acros epohcs
