@@ -66,6 +66,8 @@ from reco_utils.recommender.rbm import (
     ALPHA,
     MINIBATCH,
     EPOCHS,
+    MOMENTUM,
+    DEFAULTPATH,
 )
 
 
@@ -101,7 +103,7 @@ class RBM:
         #RBM parameters
         self.Nh_ = hidden_units     #number of hidden units
         self.keep = keep_prob       #keep probability for dropout regularization
-        self.momentum_= momentum    #initial value of the momentum for the optimizer 
+        self.momentum_= momentum    #initial value of the momentum for the optimizer
         self.std = init_stdv        #standard deviation used to initialize the weights matrices
         self.alpha = learning_rate  #learning rate used in the update method of the optimizer
 
@@ -110,7 +112,9 @@ class RBM:
         #it is considerably slower.Good performance is achieved for a size of ~100.
         self.minibatch= minibatch_size
         self.epochs= training_epoch  #number of epochs used to train the model
-        self.save_path = save_path #specify a path where the TF model file is saved
+
+        #save TF model
+        self.save_path = DEFAULTPATH + save_path #specify a path where the TF model file is saved
 
     #===============================================
     #Generate the Ranking matrix from a pandas DF
@@ -634,7 +638,7 @@ class RBM:
         Mserr  = self.msr_error(v_k)
         #Clacc  = self.accuracy(v_k)
 
-        SAVER = tf.train.Saver()
+        saver = tf.train.Saver()
         init_g = tf.global_variables_initializer() #Initialize all variables
 
         #Start TF session on default graph
@@ -669,8 +673,8 @@ class RBM:
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-        saver.save(sess, 'saver/rbm_model_saver.ckpt')
-        sess.close()
+            saver.save(sess, self.save_path)
+            sess.close()
 
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
@@ -679,11 +683,11 @@ class RBM:
         plt.legend(ncol=1)
 
     #=========================
-    # load a  model
+    # Inference modules
     #=========================
 
-    #Inference from a trained model. This can be either loaded from a saved model or in the same sessions as the traiing one
-    def predict(self, x):
+    #Inference from a trained model
+    def predict(self, df):
 
         '''
         Prediction: A training example is used to activate the hidden units that, in turns, produce new ratings for the
@@ -696,17 +700,28 @@ class RBM:
             pred: inferred values
 
         '''
+        #Load a model
+        saver = tf.train.Saver()
 
-        #Sampling
-        _, h_ = self.sample_h(self.v) #sample h
+        x = self.gen_ranking_matrix(df) #generate the user_affinity matrix
+        m, n = xtr.shape #dimension of the input: m= N_users, n= N_items
 
-        #sample v
-        phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
-        pvh = self.Pm(phi_h) #conditional probability of v given h
+        with tf.Session() as saved_sess:
 
-        v_  = self.M_sampling(pvh) #sample the value of the visible units
+            saved_files = saver.restore(saved_sess, self.save_path)
 
-        #evaluate v on the data
-        vp, p = self.session.run([v_, pvh], feed_dict={self.v: x})
+            #Sampling
+            _, h_ = self.sample_h(self.v) #sample h
+
+            #sample v
+            phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
+            pvh = self.Pm(phi_h) #conditional probability of v given h
+
+            v_  = self.M_sampling(pvh) #sample the value of the visible units
+
+            #evaluate v on the data
+            vp, p = self.session.run([v_, pvh], feed_dict={self.v: x})
+
+        saved_sess.close()
 
         return vp, p

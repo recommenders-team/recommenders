@@ -1,4 +1,5 @@
 #Default values for the RBM class
+import os
 
 #number of hidden units
 HIDDEN = 10
@@ -17,3 +18,7 @@ ALPHA = 0.004
 MINIBATCH = 100
 #number of epochs for the optimization
 EPOCHS = 20
+
+#Set default directory 
+dir = os.getcwd() #obtain the absolute path
+DEFAULTPATH = dir + '/reco_utils/recommender/rbm/'

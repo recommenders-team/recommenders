@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 
 import time as tm
 
-from reco_utils.recommender.rbm.helperfunct import*
+#from reco_utils.recommender.rbm.helperfunct import*
 
 #ML Libraries and methods
 import tensorflow as tf
@@ -115,7 +115,8 @@ model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10,**header)
 model.fit(train)
 
 
-
+#predict
+out_v, out_pvh = model.predict(train)
 
 
 #==========================
