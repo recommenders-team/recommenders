@@ -4,7 +4,6 @@
 import pandas as pd
 import numpy as np
 from itertools import product
-from pyspark.sql.functions import col
 import pytest
 from reco_utils.dataset.split_utils import min_rating_filter_spark
 from reco_utils.common.constants import (
@@ -250,6 +249,7 @@ def test_stratified_splitter(test_specs, spark_dataset):
 @pytest.mark.spark
 def test_timestamp_splitter(test_specs, spark_dataset):
     """Test timestamp splitter for Spark dataframes"""
+    from pyspark.sql.functions import col
 
     dfs_rating = spark_dataset
     dfs_rating = dfs_rating.withColumn(DEFAULT_TIMESTAMP_COL, col(DEFAULT_TIMESTAMP_COL).cast("float"))
