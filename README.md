@@ -17,7 +17,7 @@ This repository provides examples and best practices for building recommendation
 
 Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
 
-The diagram belowt ad depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
+The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
 
 ![workflow](https://zhledata.blob.core.windows.net/misc/recommender_workflow.png)
 
