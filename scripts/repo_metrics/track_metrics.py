@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import os
 import argparse
 import traceback
 import logging
@@ -25,9 +26,9 @@ log = logging.getLogger()
 
 
 def parse_args():
-    """Argument parser
+    """Argument parser.
     Returns:
-        obj: Parser
+        obj: Parser.
     """
     parser = argparse.ArgumentParser(
         description="Metrics Tracker",
@@ -42,13 +43,13 @@ def parse_args():
     parser.add_argument(
         "--save_to_database",
         action="store_true",
-        help="Whether or not to save the information in the database",
+        help="Whether or not to save the information to the database",
     )
     return parser.parse_args()
 
 
 def connect(uri="mongodb://localhost"):
-    """Mongo connector
+    """Mongo connector.
     Args:
         uri (str): Connection string.
     Returns:
@@ -65,15 +66,15 @@ def connect(uri="mongodb://localhost"):
 
 
 def now():
-    """Current date as string
+    """Current date as string.
     Returns:
-        srt: Current date with the format Nov 16 2018 12:31:18
+        srt: Current date with the format: Nov 16 2018 12:31:18
     """
     return datetime.now().strftime("%b %d %Y %H:%M:%S")
 
 
 def event_as_dict(event):
-    """Encodes an string event input as a dictionary with the date
+    """Encodes an string event input as a dictionary with the date.
     Args:
         event (str): Details of a event.
     Returns:
@@ -83,7 +84,7 @@ def event_as_dict(event):
 
 
 def github_stats_as_dict(github):
-    """Encodes Github statistics as a dictionary with the date
+    """Encodes Github statistics as a dictionary with the date.
     Args:
         obj: Github object.
     Returns:
@@ -118,12 +119,14 @@ def github_stats_as_dict(github):
 
 
 def tracker(args):
-    """Main function to track metrics
+    """Main function to track metrics.
     Args:
-        args (obj): Parsed arguments
+        args (obj): Parsed arguments.
     """
     if args.github_repo:
-        g = Github(GITHUB_TOKEN, args.github_repo)
+        # if there is an env variable, overwrite it
+        token = os.environ.get("GITHUB_TOKEN", GITHUB_TOKEN)
+        g = Github(token, args.github_repo)
         g.clean()  # clean folder if it exists
         git_doc = github_stats_as_dict(g)
         log.info("GitHub stats -- {}".format(git_doc))
@@ -133,7 +136,9 @@ def tracker(args):
         log.info("Event -- {}".format(event_doc))
 
     if args.save_to_database:
-        cli = connect(CONNECTION_STRING)
+        # if there is an env variable, overwrite it
+        connection = token = os.environ.get("CONNECTION_STRING", CONNECTION_STRING)
+        cli = connect(connection)
         db = cli[DATABASE]
         if args.github_repo:
             db[COLLECTION_GITHUB_STATS].insert_one(git_doc)
