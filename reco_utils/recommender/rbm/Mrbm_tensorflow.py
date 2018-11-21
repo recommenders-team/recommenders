@@ -43,6 +43,8 @@ Basic mechanics:
 #import libraries
 import numpy as np
 import math
+import matplotlib.pyplot as plt
+
 import tensorflow as tf
 from scipy import sparse #to create the rating matrix
 import logging
@@ -107,7 +109,6 @@ class RBM:
         self.minibatch= minibatch_size
         self.epochs= training_epoch  #number of epochs used to train the model
         self.save_path = save_path #specify a path where the TF model file is saved
-        #self.graph= tf.Graph()
 
     #===============================================
     #Generate the Ranking matrix from a pandas DF
