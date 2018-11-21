@@ -704,7 +704,7 @@ class RBM:
         saver = tf.train.Saver()
 
         x = self.gen_ranking_matrix(df) #generate the user_affinity matrix
-        m, n = xtr.shape #dimension of the input: m= N_users, n= N_items
+        m, n = x.shape #dimension of the input: m= N_users, n= N_items
 
         with tf.Session() as saved_sess:
 
@@ -720,7 +720,7 @@ class RBM:
             v_  = self.M_sampling(pvh) #sample the value of the visible units
 
             #evaluate v on the data
-            vp, p = self.session.run([v_, pvh], feed_dict={self.v: x})
+            vp, p = saved_sess.run([v_, pvh], feed_dict={self.v: x})
 
         saved_sess.close()
 
