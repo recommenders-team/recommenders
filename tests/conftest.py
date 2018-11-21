@@ -135,23 +135,17 @@ def notebooks():
     paths = {
         "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_python_cpu_movielens.ipynb"
+            folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
         ),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
         ),
-        "sar_pyspark": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_pyspark_movielens.ipynb"
-        ),
-        "sarplus_movielens": os.path.join(
-            folder_notebooks, "00_quick_start", "sarplus_movielens.ipynb"
-        ),
         "data_split": os.path.join(folder_notebooks, "01_data", "data_split.ipynb"),
-        "sar_deep_dive": os.path.join(
-            folder_notebooks, "02_modeling", "sar_deep_dive.ipynb"
-        ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_modeling", "als_deep_dive.ipynb"
+        ),
+        "surprise_svd_deep_dive": os.path.join(
+            folder_notebooks, "02_modeling", "surprise_svd_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }
