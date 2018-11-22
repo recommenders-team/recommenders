@@ -676,7 +676,7 @@ class RBM:
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             saver.save(sess, self.save_path)
-            #sess.close()
+            sess.close()
 
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
