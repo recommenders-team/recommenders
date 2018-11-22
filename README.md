@@ -49,7 +49,9 @@ The recommended environments to run the Spark algorithms is [Azure Databricks](h
 Here we benchmark the algorithms available in this repository.
 
 Following list settings used for the benchmarking experimentation:
-* The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
+* The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
+    * The size of the DSVM is Standard NC6s_v2. It has 6 vCPUs, 112 GB memory and 1 K80 GPU.
+    * Algorithms that do not apply with GPU accelerations are run on CPU instead. Spark ALS is run in local standalone mode.
 * Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10.
 * SAR Single Node only has ranking metrics because these algorithms do not predict explicit ratings with the same scale of those in the original input data. Surprise SVD only has rating metrics.
 * The hyper parameters of the algorithms are:
