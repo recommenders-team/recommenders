@@ -48,18 +48,15 @@ The recommended environments to run the Spark algorithms is [Azure Databricks](h
 
 Here we benchmark the algorithms available in this repository.
 
-<details>
-<summary><strong><em>Click here to see the benchmark details</em></strong></summary>
-
-* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10.
+Following list settings used for the benchmarking experimentation:
 * The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) Standard NC6s_v2 with 6 vcpus, 112 GB memory and 1 K80 GPU.
+* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10.
 * SAR Single Node only has ranking metrics because these algorithms do not predict explicit ratings with the same scale of those in the original input data. Surprise SVD only has rating metrics.
 * The hyper parameters of the algorithms are:
     * `ALS(rank=40,maxIter=15,alpha=0.1,regParam=0.01,coldStartStrategy='drop',nonnegative=True)`
     * `SVD(random_state=0, n_factors=200, n_epochs=30, verbose=True)`
     * `SARSingleNodeReference(remove_seen=True, similarity_type="jaccard", time_decay_coefficient=30, time_now=None, timedecay_formula=True)`
 * **NOTE**: we computed the algorithms with the best parameters we found to optimize the performance metrics.
-</details>
 
 **Benchmark comparing performance metrics**
 <table>
