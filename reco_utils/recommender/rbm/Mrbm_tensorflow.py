@@ -42,6 +42,8 @@ Basic mechanics:
 
 #import libraries
 import numpy as np
+import pandas as pd
+
 import math
 import matplotlib.pyplot as plt
 
@@ -674,7 +676,7 @@ class RBM:
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             saver.save(sess, self.save_path)
-            sess.close()
+            #sess.close()
 
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
@@ -732,12 +734,17 @@ class RBM:
         pvh_= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
         #evaluate the score
-        score =  np.multiply(out_v, pp)
+        score =  np.multiply(vp, pvh_)
 
         top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
-        top_scores = score[np.arange(score.shape[0])[:, None], tst] #get top k scores
+        top_scores = score[np.arange(score.shape[0])[:, None], top_items] #get top k scores
 
-        userids = [i for i in range(1, m+1)]
+        top_items = np.reshape(np.array(top_items), -1)
+        top_scores = np.reshape(np.array(top_scores), -1)
+
+        userids = []
+        for i in range(1, m+1):
+            userids.extend([i]*top_k)
 
         results = pd.DataFrame.from_dict(
             {
@@ -769,7 +776,7 @@ class RBM:
         x = self.gen_ranking_matrix(df) #generate the user_affinity matrix
         m, n = x.shape #dimension of the input: m= N_users, n= N_items
 
-        with tf.Session() as saved_sess:
+        with tf.Session() as sess:
 
             saved_files = saver.restore(saved_sess, self.save_path)
 
@@ -783,7 +790,7 @@ class RBM:
             v_  = self.M_sampling(pvh) #sample the value of the visible units
 
             #evaluate v on the data
-            vp, p = saved_sess.run([v_, pvh], feed_dict={self.v: x})
+            vp, p = sess.run([v_, pvh], feed_dict={self.v: x})
 
         saved_sess.close()
 
