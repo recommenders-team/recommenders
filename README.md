@@ -39,6 +39,7 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 | [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
 | [surprise_svd_deep_dive](notebooks/02_modeling/surprise_svd_deep_dive.ipynb) | Deep dive on Surprise SVD algorithm and implementation.
 | [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python + CPU and PySpark environments.
+| [ALS_databricks_o16n](notebooks/04_operationalize/ALS_Movie_Example.ipynb) | Operationalization of ALS algorithm on Databricks using Azure ML and Kubernetes.
 
 ## Benchmarks
 
