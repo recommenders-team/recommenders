@@ -41,6 +41,7 @@ The diagram below depicts how the best-practice examples help researchers / deve
 | [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
 | [surprise_svd_deep_dive](notebooks/02_modeling/surprise_svd_deep_dive.ipynb) | Deep dive on Surprise SVD algorithm and implementation.
 | [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python + CPU and PySpark environments.
+| [ALS_databricks_o16n](notebooks/04_operationalize/ALS_Movie_Example.ipynb) | Operationalization of ALS algorithm on Databricks using Azure ML and Kubernetes.
 
 The recommended environments to run the Spark algorithms is [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). The recommended one for using the CPU algorithms is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
 
