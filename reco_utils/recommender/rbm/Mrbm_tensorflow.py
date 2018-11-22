@@ -725,14 +725,29 @@ class RBM:
             v_  = self.M_sampling(pvh) #sample the value of the visible units
 
             #evaluate v on the data
-            vp, p = saved_sess.run([v_, pvh], feed_dict={self.v: x})
+            vp, pvh= saved_sess.run([v_, pvh], feed_dict={self.v: x})
 
         saved_sess.close()
 
-                   
+        pvh_= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
+        #evaluate the score
+        score =  np.multiply(out_v, pp)
 
+        top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
+        top_scores = score[np.arange(score.shape[0])[:, None], tst] #get top k scores
 
+        userids = [i for i in range(1, m+1)]
+
+        results = pd.DataFrame.from_dict(
+            {
+                self.col_user: userids,
+                self.col_item: top_items,
+                self.col_rating: top_scores,
+            }
+        )
+
+        return results
 
     #Inference from a trained model
     def predict(self, df):
