@@ -686,6 +686,54 @@ class RBM:
     # Inference modules
     #=========================
 
+    def recommend_k_items(self, df, top_k=10, **kwargs):
+
+        '''
+        Returns the top-k items ordered by a relevancy score
+
+        Args:
+            df: a dataframe containing the input data
+            top_k: the number of elements to display
+
+
+        Returns:
+            top_df:  a pandas dataframe containing a list of top_k recommended items and their score
+
+        Basic mechanics:
+
+        1) Load a trained model and perform inference to predict the ratings.
+
+        '''
+
+        #Load a trained model
+        saver = tf.train.Saver()
+
+        x = self.gen_ranking_matrix(df) #generate the user_affinity matrix
+        m, n = x.shape #dimension of the input: m= N_users, n= N_items
+
+        with tf.Session() as saved_sess:
+
+            saved_files = saver.restore(saved_sess, self.save_path)
+
+            #Sampling
+            _, h_ = self.sample_h(self.v) #sample h
+
+            #sample v
+            phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
+            pvh = self.Pm(phi_h) #conditional probability of v given h
+
+            v_  = self.M_sampling(pvh) #sample the value of the visible units
+
+            #evaluate v on the data
+            vp, p = saved_sess.run([v_, pvh], feed_dict={self.v: x})
+
+        saved_sess.close()
+
+                   
+
+
+
+
     #Inference from a trained model
     def predict(self, df):
 
