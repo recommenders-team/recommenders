@@ -112,70 +112,14 @@ header = {
 
 
 model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10,**header)
+
 model.fit(train)
 
 
 #predict
-out_v, out_pvh = model.predict(train)
+top_k_df =  model.recommend_k_items(train)
 
 
-#==========================
-#Start the training
-#==========================
-
-def main(Xtr, Xtst, rating_scale, keep_prob, N_hidden, n_epochs, minibatch_size, learning_rate, save):
-
-    #Network topology
-    m, Nv= Xtr.shape #m= #of users,  number of visible units Nv = number of movies
-
-    tf.reset_default_graph()  #to be able to rerun the model without overwriting tf variables
-
-    reco= rbm.RBM(Nv, N_hidden, rating_scale, keep_prob) #Initialize the RBM.
-
-    if save == True:
-        saver = tf.train.Saver()
-
-    init_g = tf.global_variables_initializer()
-
-    #Open a TF session
-    with tf.Session() as sess:
-
-        reco.set_session(sess)
-        sess.run(init_g)
-
-        Mse_train, Mse_tst = reco.train(Xtr, Xtst, epochs= n_epochs, alpha = learning_rate, minibatch_size = minibatch_size)
-        vp, pvh = reco.predict(Xtr)
-
-        if save == True:
-            saver.save(sess, 'saver/rbm_model_saver.ckpt')
-
-    plt.plot(Mse_train, label= 'train')
-    plt.ylabel('msr_error', size= 'x-large')
-    plt.xlabel('epochs', size = 'x-large')
-    plt.legend(ncol=1)
-
-    sess.close()
-
-    return Mse_train, Mse_tst, vp, pvh
-
-Mse_train, Mse_test, vp, pvh = main(B_tr,B_tst, rating_scale= 2, keep_prob= 1,  N_hidden= 10, n_epochs= 11, minibatch_size = 100, learning_rate = 0.04, save= False)
-
-#Load model
-tf.reset_default_graph()  #jut for test
-
-_, Nv= X_tr.shape #m= #of users,  number of visible units Nv = number of movies
-N_hidden =10
-rating_scale=2
-
-reco= rbm.RBM(Nv, N_hidden, rating_scale) #Initialize the RBM.
-
-saver = tf.train.Saver()
-
-with tf.Session() as sess:
-
-    reco.set_session(sess)
-    saved_files = saver.restore(sess, 'saver/rbm_model_saver.ckpt')
-    out_v, out_pvh = reco.predict(X_tr)
 
 
 #Create a user report with recommendations
