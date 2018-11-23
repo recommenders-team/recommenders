@@ -338,7 +338,6 @@ class RBM:
     #Initialize the placeholders for the visible units
     def placeholder(self):
         self.v = tf.placeholder(shape= [None, self.Nv_], dtype= 'float32')
-        return self.v
 
     #initialize the parameters of the model.
     def init_parameters(self):
