@@ -151,7 +151,7 @@ class RBM:
 
         '''
 
-        log.info("Collecting user affinity matrix...")
+        #log.info("Collecting user affinity matrix...")
 
         rating = df.sort_values(by=[self.col_user])
 
@@ -601,7 +601,7 @@ class RBM:
 
         '''
 
-        log.info("Building user affinity sparse matrix...")
+        log.info("Generating the user affinity matrix...")
 
         xtr = self.gen_ranking_matrix(df) #generate the user_affinity matrix
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
@@ -636,10 +636,13 @@ class RBM:
 
         #initialize online metrics
         Mse_train = [] #Lists to collect the metrics across each epochs
-        Mserr  = self.msr_error(v_k)
-        #Clacc  = self.accuracy(v_k)
 
-        saver = tf.train.Saver()
+        #Metrics
+        Mserr  = self.msr_error(v_k)
+        Clacc  = self.accuracy(v_k)
+
+        saver = tf.train.Saver() #save the model to file
+
         init_g = tf.global_variables_initializer() #Initialize all variables
 
         #Start TF session on default graph
@@ -659,14 +662,14 @@ class RBM:
                     l +=1
                     v_k = self.G_sampling(k)
 
-                #implement minibatches (to implement: TF data pipeline for btter performance)
+                #minibatches (to implement: TF data pipeline for better performance)
                 minibatches = self.random_mini_batches(xtr)
 
                 for minib in minibatches:
 
                     _, batch_err = sess.run([opt, Mserr], feed_dict={self.v:minib})
 
-                    epoch_tr_err += batch_err/num_minibatches #mse error per minibatch
+                    epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
                 if i % 10==0:
                     print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
@@ -675,8 +678,7 @@ class RBM:
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             saver.save(sess, self.save_path)
-            #sess.close()
-
+            
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
         plt.ylabel('msr_error', size= 'x-large')
