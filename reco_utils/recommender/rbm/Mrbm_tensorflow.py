@@ -678,13 +678,17 @@ class RBM:
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
+            precision_train = sess.run(Clacc, feed_dict={self.v:xtr})    
             saver.save(sess, self.save_path_)
-
+                   
+            
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
         plt.ylabel('msr_error', size= 'x-large')
         plt.xlabel('epochs', size = 'x-large')
         plt.legend(ncol=1)
+        
+        print('Total precision on the train set', precision_train)
 
     #=========================
     # Inference modules
