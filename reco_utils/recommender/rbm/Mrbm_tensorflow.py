@@ -91,7 +91,7 @@ class RBM:
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
-        save_path = 'saver/rbm_model_saver.ckpt',
+        save_path = DEFAULTPATH + 'saver/rbm_model_saver.ckpt',
         debug = False,
     ):
 
@@ -115,9 +115,7 @@ class RBM:
         self.minibatch= minibatch_size
         self.epochs= training_epoch  #number of epochs used to train the model
 
-        #save TF model
-        self.save_path = DEFAULTPATH + save_path #specify a path where the TF model file is saved
-
+    
     #===============================================
     #Generate the Ranking matrix from a pandas DF
     #===============================================
@@ -678,7 +676,7 @@ class RBM:
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             saver.save(sess, self.save_path)
-            
+
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
         plt.ylabel('msr_error', size= 'x-large')
