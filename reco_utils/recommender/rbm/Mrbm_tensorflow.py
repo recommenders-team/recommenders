@@ -611,6 +611,9 @@ class RBM:
         
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
+        
+        print('martrix size', m,self.Nv_)
+        
         num_minibatches = int(m / self.minibatch) #number of minibatches
         self.epochs = self.epochs +1 #add one epoch
 
@@ -635,8 +638,8 @@ class RBM:
         obj = self.Losses(self.v, v_k) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer
-
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer        
+        
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
         #initialize online metrics
@@ -676,7 +679,7 @@ class RBM:
 
                     epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-                if i % 10==0:
+                if i % 50==0:
                     print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
                 #write metrics acros epohcs
