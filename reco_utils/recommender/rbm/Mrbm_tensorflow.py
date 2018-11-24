@@ -119,6 +119,8 @@ class RBM:
 
         self.save_path_ = save_path
 
+        self.model_str = "rbm_ref"
+        
     #===============================================
     #Generate the Ranking matrix from a pandas DF
     #===============================================
@@ -590,7 +592,7 @@ class RBM:
     # Training ops
     #=========================
 
-    def fit(self, df):
+    def fit(self, train_df, test_df):
 
         '''
         Fit method
@@ -604,7 +606,9 @@ class RBM:
 
         log.info("Generating the user affinity matrix...")
 
-        xtr = self.gen_ranking_matrix(df) #generate the user_affinity matrix
+        xtr = self.gen_ranking_matrix(train_df) #generate the user_affinity matrix for the train set 
+        xtst= self.gen_ranking_matrix(test_df)  #generate the user_affinity matrix for the test set
+        
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
         num_minibatches = int(m / self.minibatch) #number of minibatches
@@ -679,6 +683,9 @@ class RBM:
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             precision_train = sess.run(Clacc, feed_dict={self.v:xtr})    
+            precision_test = sess.run(Clacc, feed_dict={self.v:xtst})    
+
+    
             saver.save(sess, self.save_path_)
                    
             
@@ -689,6 +696,8 @@ class RBM:
         plt.legend(ncol=1)
         
         print('Total precision on the train set', precision_train)
+        print('Total precision on the test set', precision_test)
+        print('train/test difference', precision_train - precision_test)
 
     #=========================
     # Inference modules
