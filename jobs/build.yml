@@ -23,7 +23,7 @@ jobs:
 
   - script: |
       sudo install -d -m 0777 /usr/local/miniconda/envs
-      sudo install -d -m 0777 /usr/envs
+      sudo install -d -m 0777 /usr/envs/Recommender
     displayName: Fix Conda permissions
 
   - script: |
