@@ -93,8 +93,8 @@ class RBM:
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
-        save_model= False
-        save_path = 'saver/rbm_model_saver.ckpt',
+        save_model= False,
+        save_path = DEFAULTPATH,
         debug = False,
     ):
 
@@ -119,7 +119,7 @@ class RBM:
         self.epochs= training_epoch  #number of epochs used to train the model
 
         #Options to save the model for future use
-        self.save_model = save_model
+        self.save_model_ = save_model
         self.save_path_ = save_path
 
     #===============================================
@@ -150,10 +150,10 @@ class RBM:
         self.map_back_users = {i:x for i, x in enumerate(unique_users)}
         self.map_back_items = {i:x for i, x in enumerate(unique_items)}
 
-        #optionally save the inverse dictionary to work with trained models 
-        if self.save_model:
-            np.save('user_dict', self.map_back_users)
-            np.save('item_dict', self.map_back_items)
+        #optionally save the inverse dictionary to work with trained models
+        if self.save_model_:
+            np.save(self.save_path_ + '/user_dict', self.map_back_users)
+            np.save(self.save_path_ + '/item_dict', self.map_back_items)
 
 
 
@@ -193,15 +193,15 @@ class RBM:
         assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
 
         #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
-        self.RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
+        self.RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (self.Nusers, self.Nitems)).toarray()
 
         #---------------------print the degree of sparsness of the matrix------------------------------
 
         zero   = (self.RM == 0).sum() # number of unrated items
         total  = self.RM.shape[0]*self.RM.shape[1] #number of elements in the matrix
-        sparsness = zero_train/total *100 #Percentage of zeros in the matrix
+        sparsness = zero/total *100 #Percentage of zeros in the matrix
 
-        print('sparsness of the user/affinity matrix:', sparsness,'%')
+        print('Matrix generated, sparsness %f2:' %sparsness,'%')
 
 
     #=========================
@@ -616,7 +616,7 @@ class RBM:
     # Training ops
     #=========================
 
-    def fit(self, train_df, test_df):
+    def fit(self, train_df):
 
         '''
         Fit method
@@ -628,13 +628,12 @@ class RBM:
 
         '''
 
-        log.info("Generating the user affinity matrix...")
+        self.gen_index(train_df) #generate the index for the dataset
+        self.gen_affinity_matrix(train_df) #generate the user_affinity matrix for the train set
+        #xtst= self.gen_affinity_matrix(test_df)  #generate the user_affinity matrix for the test set
 
-        xtr = self.gen_ranking_matrix(train_df) #generate the user_affinity matrix for the train set
-        xtst= self.gen_ranking_matrix(test_df)  #generate the user_affinity matrix for the test set
-
-        self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
-        m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
+        self.r_= self.RM.max() #defines the rating scale, e.g. 1 to 5
+        m, self.Nv_ = self.RM.shape #dimension of the input: m= N_users, Nv= N_items
 
         print('martrix size', m,self.Nv_)
 
@@ -673,7 +672,8 @@ class RBM:
         Mserr  = self.msr_error(v_k)
         Clacc  = self.accuracy(v_k)
 
-        saver = tf.train.Saver() #save the model to file
+        if self.save_model_:
+            saver = tf.train.Saver() #save the model to file
 
         init_g = tf.global_variables_initializer() #Initialize all variables
 
@@ -695,7 +695,7 @@ class RBM:
                     v_k = self.G_sampling(k)
 
                 #minibatches (to implement: TF data pipeline for better performance)
-                minibatches = self.random_mini_batches(xtr)
+                minibatches = self.random_mini_batches(self.RM)
 
                 for minib in minibatches:
 
@@ -703,18 +703,17 @@ class RBM:
 
                     epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-                if i % 50==0:
+                if i % 10==0:
                     print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            precision_train = sess.run(Clacc, feed_dict={self.v:xtr})
-            precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
+            precision_train = sess.run(Clacc, feed_dict={self.v: self.RM})
+            #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
-
-            saver.save(sess, self.save_path_)
-
+            if self.save_model_:
+                saver.save(sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
@@ -722,9 +721,10 @@ class RBM:
         plt.xlabel('epochs', size = 'x-large')
         plt.legend(ncol=1)
 
+        #Final precision scores
         print('Total precision on the train set', precision_train)
-        print('Total precision on the test set', precision_test)
-        print('train/test difference', precision_train - precision_test)
+        #print('Total precision on the test set', precision_test)
+        #print('train/test difference', precision_train - precision_test)
 
     #=========================
     # Inference modules
