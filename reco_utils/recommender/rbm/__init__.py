@@ -19,9 +19,8 @@ MINIBATCH = 100
 #number of epochs for the optimization
 EPOCHS = 20
 
-#Set default directory 
-dir = os.getcwd() #obtain the absolute path
-DEFAULTPATH = dir + '/reco_utils/recommender/rbm/'
+#Set default directory for saving files
+DEFAULTPATH = 'saver'
 
 def _user_item_return_type():
     return str
