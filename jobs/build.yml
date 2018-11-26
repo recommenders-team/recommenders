@@ -25,7 +25,7 @@ jobs:
     displayName: Fix Conda permissions
 
   - script: sudo install -d -m 0777 /usr/envs
-    condition: eq(variables('Agent.OS'), 'Linux')
+    condition: eq(variables['Agent.OS'], 'Linux')
     displayName: Fix Conda permissions (Linux)
       sudo install -d -m 0777 /usr/envs/Recommender
 
