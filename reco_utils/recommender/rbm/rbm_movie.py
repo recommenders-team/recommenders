@@ -15,12 +15,15 @@ sys.path.append("../../")
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
+from scipy import sparse
+
 
 import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 %matplotlib inline
+import itertools
 
 import time as tm
 
@@ -68,10 +71,61 @@ test.head()
 train.shape
 test.shape
 
+#map
+item_map_dict = {x: i for i, x in enumerate_items_1}
+user_map_dict = {x: i for i, x in enumerate_users_1}
+
+#inverse map
+index2user = dict(enumerate_users_2)
+index2item = dict(enumerate_items_2)
+
+#--------------------Generate user affinity matrix--------------
+
+df = ratings_df.copy()
+
+#sort by userID
+rating = df.sort_values(by=['userID'])
+
+#find unique user and item index
+unique_users = rating["userID"].unique()
+unique_items = rating["MovieId"].unique()
+
+Nusers = len(unique_users)
+Nitems = len(unique_items)
+
+map_users = {x:i for i, x in enumerate(unique_users)}
+map_items = {x:i for i, x in enumerate(unique_items)}
+
+map_back_users = {i:x for i, x in enumerate(unique_users)}
+map_back_items = {i:x for i, x in enumerate(unique_items)}
+
+
+rating.loc[:, 'hashedItems'] = rating['MovieId'].map(map_items)
+rating.loc[:, 'hashedUsers'] = rating['userID'].map(map_users)
+
+
+#extract informations from the dataframe as an array. Note that we substract 1 from itm_id and usr_id
+#in order to map it to matrix format
+
+r_ = rating['Rating'] #ratings
+itm_id =(rating['hashedItems']) #itm_id serving as columns
+usr_id =(rating['hashedUsers'])  #usr_id serving as rows
+
+
+#check that all 3 vectors have the same dimensions
+assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
+
+#generate a sparse matrix representation using scipy's coo_matrix and convert to array format
+RM = sparse.coo_matrix((r_, (usr_id, itm_id )), shape= (Nusers, Nitems)).toarray()
+
+
+
+
 #generate the ranking matrix. Movies that haven not been rated yet get a 0 rating.
 
 #generate using scipy method
 #st1= tm.time()
+
 X_train = gen_ranking_matrix(train)
 X_test = gen_ranking_matrix(test)
 
@@ -102,6 +156,7 @@ plt.hist(X_test[id_tst], bins=5, density=1)
 zero_test/total *100
 
 
+
 #New method
 
 header = {
@@ -111,18 +166,15 @@ header = {
     }
 
 
-model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10,**header)
+model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10, **header)
 
-model.fit(train)
-
+param = model.fit(train)
 
 #predict
 top_k_df =  model.recommend_k_items(train)
 
 
-
-
-#Create a user report with recommendations
+#----------------------------------Create a user report with recommendations-----------------------------------------
 usr_id = 0
 
 usr_mv_like = np.where(vp[usr_id]==2)
