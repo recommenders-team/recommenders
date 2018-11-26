@@ -21,6 +21,9 @@ jobs:
       packageSpecs: 'python=3.6'
       updateConda: true
 
+  - script: sudo install -d -m 0777 /usr/local/miniconda/envs
+    displayName: Fix Conda permissions
+
   - script: |
       ./scripts/generate_conda_file.sh
       # sudo conda env update -n Recommender -f conda_bare.yaml
