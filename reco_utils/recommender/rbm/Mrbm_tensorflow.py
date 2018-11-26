@@ -93,6 +93,7 @@ class RBM:
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
+        save_model= False
         save_path = 'saver/rbm_model_saver.ckpt',
         debug = False,
     ):
@@ -119,13 +120,36 @@ class RBM:
 
         self.save_path_ = save_path
 
-        self.model_str = "rbm_ref"
-        
     #===============================================
     #Generate the Ranking matrix from a pandas DF
     #===============================================
 
-    def gen_ranking_matrix(self, df):
+    def gen_index(self, DF):
+
+        '''
+        Generate the user/item index
+        '''
+        #sort entries by user index
+        df = DF.sort_values(by=[self.col_user])
+
+        #find unique user and item index
+        unique_users = df[self.col_user].unique()
+        unique_items = df[self.col_item].unique()
+
+        #total number of unique users and items
+        self.Nusers = len(unique_users)
+        self.Nitems = len(unique_items)
+
+        #create a dictionary to map unique users/items to hashed values to generate the matrix
+        self.map_users = {x:i for i, x in enumerate(unique_users)}
+        self.map_items = {x:i for i, x in enumerate(unique_items)}
+
+        #map back functions used to get back the original dataframe
+        self.map_back_users = {i:x for i, x in enumerate(unique_users)}
+        self.map_back_items = {i:x for i, x in enumerate(unique_items)}
+
+
+    def gen_affinity_matrix(self, DF):
 
         '''
         Generate the user/item rating matrix using scipy's sparse matrix method coo_matrix;
@@ -134,48 +158,35 @@ class RBM:
 
         The input format is coo_matrix((data, (rows, columns)), shape=(rows, columns))
 
-        Basic mechanics: take the maximum index of both userID and ItemID and generates a
-        [1,max(UserID)]x[1, max(ItemID)] matrix. If the original dataset has no missing values
-        either in UserID or ItemID, the resulting matrix will not contain any rows or columns of
-        all zeroes.
-
-        Example 1: a user is missing, then the matrix RM[missing_user, :] = [0,0,0,...,0]. This
-                    may hurts the perfomance of the rbm, more testing necessary
-        Example 2: No user has rated a particular movie, RM[:, missing_item] = [0,0,0,...,0]. The
-                   rbm will still tries to generate ratings for this movie using the ratings given
-                   by the users on similar movies.
-
         Args:
-            df: A dataframe containing at least UserID, ItemID, Ratings
+            DF: A dataframe containing at least UserID, ItemID, Ratings
 
         Returns:
             RM: user-affinity matrix of dimensions (Nusers, Nitems) in numpy format. Unrated movies
             are assigned a value of 0.
 
         '''
+        df = DF.copy()
 
-        #log.info("Collecting user affinity matrix...")
+        log.info("Generating the user/item affinity matrix...")
 
-        rating = df.sort_values(by=[self.col_user])
+        df.loc[:, 'hashedItems'] = df[self.col_item].map(self.map_items)
+        df.loc[:, 'hashedUsers'] = df[self.col_user].map(self.map_users)
 
-        #find max user and item index
-        Nusers = rating[self.col_user].max()
-        Nitems = rating[self.col_item].max()
 
         #extract informations from the dataframe as an array. Note that we substract 1 from itm_id and usr_id
         #in order to map it to matrix format
 
-        r_ = rating[self.col_rating].values #ratings
-        itm_id =(rating[self.col_item]-1).values #itm_id serving as columns
-        usr_id =(rating[self.col_user]-1).values  #usr_id serving as rows
+        r_ = df[self.col_rating]    #ratings
+        itm_id = df['hashedItems']  #itm_id serving as columns
+        usr_id = df['hashedUsers']  #usr_id serving as rows
 
         #check that all 3 vectors have the same dimensions
         assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
 
         #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
-        RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
+        self.RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
 
-        return RM
 
     #=========================
     #Helper functions
@@ -606,14 +617,14 @@ class RBM:
 
         log.info("Generating the user affinity matrix...")
 
-        xtr = self.gen_ranking_matrix(train_df) #generate the user_affinity matrix for the train set 
+        xtr = self.gen_ranking_matrix(train_df) #generate the user_affinity matrix for the train set
         xtst= self.gen_ranking_matrix(test_df)  #generate the user_affinity matrix for the test set
-        
+
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
-        
+
         print('martrix size', m,self.Nv_)
-        
+
         num_minibatches = int(m / self.minibatch) #number of minibatches
         self.epochs = self.epochs +1 #add one epoch
 
@@ -638,8 +649,8 @@ class RBM:
         obj = self.Losses(self.v, v_k) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer        
-        
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer
+
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
         #initialize online metrics
@@ -685,19 +696,19 @@ class RBM:
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            precision_train = sess.run(Clacc, feed_dict={self.v:xtr})    
-            precision_test = sess.run(Clacc, feed_dict={self.v:xtst})    
+            precision_train = sess.run(Clacc, feed_dict={self.v:xtr})
+            precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
-    
+
             saver.save(sess, self.save_path_)
-                   
-            
+
+
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
         plt.ylabel('msr_error', size= 'x-large')
         plt.xlabel('epochs', size = 'x-large')
         plt.legend(ncol=1)
-        
+
         print('Total precision on the train set', precision_train)
         print('Total precision on the test set', precision_test)
         print('train/test difference', precision_train - precision_test)
@@ -771,7 +782,7 @@ class RBM:
                 self.col_rating: top_scores,
             }
         )
-        
+
         # format the dataframe in the end to conform to Suprise return type
         log.info("Formatting output")
 
@@ -789,7 +800,7 @@ class RBM:
             )
         )
 
-    
+
     #Inference from a trained model
     def predict(self, df):
 
