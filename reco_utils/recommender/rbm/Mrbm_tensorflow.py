@@ -118,6 +118,8 @@ class RBM:
         self.minibatch= minibatch_size
         self.epochs= training_epoch  #number of epochs used to train the model
 
+        #Options to save the model for future use
+        self.save_model = save_model
         self.save_path_ = save_path
 
     #===============================================
@@ -148,6 +150,13 @@ class RBM:
         self.map_back_users = {i:x for i, x in enumerate(unique_users)}
         self.map_back_items = {i:x for i, x in enumerate(unique_items)}
 
+        #optionally save the inverse dictionary to work with trained models 
+        if self.save_model:
+            np.save('user_dict', self.map_back_users)
+            np.save('item_dict', self.map_back_items)
+
+
+
 
     def gen_affinity_matrix(self, DF):
 
@@ -173,7 +182,6 @@ class RBM:
         df.loc[:, 'hashedItems'] = df[self.col_item].map(self.map_items)
         df.loc[:, 'hashedUsers'] = df[self.col_user].map(self.map_users)
 
-
         #extract informations from the dataframe as an array. Note that we substract 1 from itm_id and usr_id
         #in order to map it to matrix format
 
@@ -187,13 +195,18 @@ class RBM:
         #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
         self.RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
 
+        #---------------------print the degree of sparsness of the matrix------------------------------
+
+        zero   = (self.RM == 0).sum() # number of unrated items
+        total  = self.RM.shape[0]*self.RM.shape[1] #number of elements in the matrix
+        sparsness = zero_train/total *100 #Percentage of zeros in the matrix
+
+        print('sparsness of the user/affinity matrix:', sparsness,'%')
+
 
     #=========================
     #Helper functions
     #========================
-
-    #def set_session(self, session):
-    #    self.session = session
 
     #Binomial sampling
     def B_sampling(self,p):
