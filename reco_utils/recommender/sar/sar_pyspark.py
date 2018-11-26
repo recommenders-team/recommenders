@@ -13,9 +13,11 @@ PS: there is plenty of room for improvement, especially around the very last ste
 
 import numpy as np
 import logging
+import heapq
 import pyspark.sql.functions as F
 from pyspark.sql.functions import col, lit, create_map, sum
 from pyspark.sql.window import Window
+from pyspark.sql.types import StructType, StructField, StringType, Row, ArrayType, IntegerType, FloatType
 from itertools import chain
 from time import time
 
@@ -65,6 +67,7 @@ class SARpySparkReference:
         time_now=TIME_NOW,
         timedecay_formula=TIMEDECAY_FORMULA,
         threshold=THRESHOLD,
+        UDF_topk = True,
         debug=True,
     ):
 
@@ -135,6 +138,9 @@ class SARpySparkReference:
 
         # start time
         self.start_time = None
+
+        # boolean to enable UDF-based topk calculation
+        self.UDF_topk = UDF_topk
 
     # stateful time function
     def time(self):
@@ -485,18 +491,54 @@ class SARpySparkReference:
         if not for_predict:
             # Get top K items and scores.
             log.info("Getting top K...")
-            # TODO: try groupby row_user_id with UDF
-            # row_id is the user id
-            # use row_number() and now rank() to avoid situations where you get same scores for different items
-            window = Window.partitionBy(masked_scores["row_user_id"]).orderBy(
-                masked_scores["rating"].desc()
-            )
-            # WARNING: rating is an internal column name here - not passed in the user data's header
-            top_scores = masked_scores.select(
-                *["row_user_id", "col_item_id", "rating"],
-                F.row_number().over(window).alias("top")
-            ).filter(F.col("top") <= top_k)
 
+            if self.UDF_topk:
+                # pivot the ratings by user and item
+                pivoted_scores = masked_scores.withColumn("combined", F.struct("col_item_id", "rating")) \
+                    .groupBy("row_user_id").agg(F.collect_list(F.col("combined")).alias("tuples"))
+
+                # sort the items by their scores
+                def wrapped_fun(tuples, params):
+                    """
+                    Use heapq to sort the items by ratings for each user - complexity analysis provided here:
+
+                    """
+                    # TODO: can add params here if needed
+                    n, sort_key = params
+                    return heapq.nlargest(n, tuples, key=lambda l: l[sort_key])
+
+                # NOTE: UDFItemID and UDFRating are more reserved variable names below
+                # wraps the above function so that we can pass in parameters in UDF
+                def udf_wrapper_fun(params):
+                    # notice that if needed, this can also pass in user_ID to the create_random_ratings function
+                    schema = ArrayType(StructType((StructField("UDFItemID", StringType()),
+                                                   StructField("UDFRating", FloatType()))))
+
+                    return F.udf(lambda tuples: wrapped_fun(tuples, params), schema)
+
+                params = (top_k, 1)
+                sorted_pivoted_scores = pivoted_scores.withColumn("tuples", udf_wrapper_fun(params)(F.col("tuples")))
+
+                exploded_df = sorted_pivoted_scores.select("*", F.explode("tuples").alias("exploded_tuples"))
+                exploded_df = exploded_df \
+                    .withColumn("col_item_id", F.col("exploded_tuples").getItem("UDFItemID")) \
+                    .withColumn(self.col_rating, F.col("exploded_tuples").getItem("UDFRating"))
+
+                top_scores = exploded_df.drop("tuples").drop("exploded_tuples")
+
+            else:
+                # row_id is the user id
+                # use row_number() and now rank() to avoid situations where you get same scores for different items
+                window = Window.partitionBy(masked_scores["row_user_id"]).orderBy(
+                    masked_scores["rating"].desc()
+                )
+                # WARNING: rating is an internal column name here - not passed in the user data's header
+                top_scores = masked_scores.select(
+                    *["row_user_id", "col_item_id", "rating"],
+                    F.row_number().over(window).alias("top")
+                ).filter(F.col("top") <= top_k)
+
+            # trigger the top-score calculation
             self.trigger(top_scores, "top_scores")
 
         else:
