@@ -421,7 +421,7 @@ class SARpySparkReference:
 
         log.info("done training")
 
-    def recommend_k_items(self, test, top_k=10, for_predict=False, **kwargs):
+    def recommend_k_items(self, test, top_k=10, for_predict=False, sort_top_k=False, **kwargs):
         """Recommend top K items for all users which are in the test set.
 
         Args:
@@ -523,6 +523,9 @@ class SARpySparkReference:
 
         # return top scores
         if not for_predict:
+            top_scores = top_scores.orderBy(PREDICTION_COL, ascending=False)
+
+        if sort_top_k:
             top_scores = top_scores.orderBy(PREDICTION_COL, ascending=False)
 
         self.trigger(top_scores, "top_scores")
