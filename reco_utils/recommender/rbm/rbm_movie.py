@@ -71,63 +71,71 @@ test.head()
 train.shape
 test.shape
 
-#map
-item_map_dict = {x: i for i, x in enumerate_items_1}
-user_map_dict = {x: i for i, x in enumerate_users_1}
-
-#inverse map
-index2user = dict(enumerate_users_2)
-index2item = dict(enumerate_items_2)
 
 #--------------------Generate user affinity matrix--------------
 
-df = ratings_df.copy()
+#Generate index
 
-#sort by userID
-rating = df.sort_values(by=['userID'])
+#sort entries by user index
+df = train.sort_values(by=["userID"])
 
 #find unique user and item index
-unique_users = rating["userID"].unique()
-unique_items = rating["MovieId"].unique()
+unique_users = df["userID"].unique()
+unique_items = df["MovieId"].unique()
 
+#total number of unique users and items
 Nusers = len(unique_users)
 Nitems = len(unique_items)
 
+#create a dictionary to map unique users/items to hashed values to generate the matrix
 map_users = {x:i for i, x in enumerate(unique_users)}
 map_items = {x:i for i, x in enumerate(unique_items)}
 
+#map back functions used to get back the original dataframe
 map_back_users = {i:x for i, x in enumerate(unique_users)}
 map_back_items = {i:x for i, x in enumerate(unique_items)}
 
 
-rating.loc[:, 'hashedItems'] = rating['MovieId'].map(map_items)
-rating.loc[:, 'hashedUsers'] = rating['userID'].map(map_users)
+unique_users.shape
 
 
-#extract informations from the dataframe as an array. Note that we substract 1 from itm_id and usr_id
-#in order to map it to matrix format
+#def gen_affinity_matrix(DF):
 
-r_ = rating['Rating'] #ratings
-itm_id =(rating['hashedItems']) #itm_id serving as columns
-usr_id =(rating['hashedUsers'])  #usr_id serving as rows
+    df = test.copy()
 
+    df.loc[:, 'hashedItems'] = df['MovieId'].map(map_items)
+    df.loc[:, 'hashedUsers'] = df['userID'].map(map_users)
 
-#check that all 3 vectors have the same dimensions
-assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
+    #extract informations from the dataframe as an array. Note that we substract 1 from itm_id and usr_id
+    #in order to map it to matrix format
 
-#generate a sparse matrix representation using scipy's coo_matrix and convert to array format
-RM = sparse.coo_matrix((r_, (usr_id, itm_id )), shape= (Nusers, Nitems)).toarray()
+    r_ = df['Rating']    #ratings
+    itm_id = df['hashedItems']  #itm_id serving as columns
+    usr_id = df['hashedUsers']  #usr_id serving as rows
 
+    #check that all 3 vectors have the same dimensions
+    assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
 
+    #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
+    RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
+
+    #---------------------print the degree of sparsness of the matrix------------------------------
+
+    zero   = (RM == 0).sum() # number of unrated items
+    total  = RM.shape[0]*RM.shape[1] #number of elements in the matrix
+    sparsness = zero/total *100 #Percentage of zeros in the matrix
+
+    print('Matrix generated, sparsness %d' %sparsness,'%')
+
+    return RM
 
 
 #generate the ranking matrix. Movies that haven not been rated yet get a 0 rating.
 
-#generate using scipy method
-#st1= tm.time()
 
-X_train = gen_ranking_matrix(train)
-X_test = gen_ranking_matrix(test)
+X_train = gen_affinity_matrix(train)
+
+X_test = gen_affinity_matrix(test)
 
 X_train.shape
 X_test.shape
@@ -159,12 +167,12 @@ zero_test/total *100
 
 #New method
 
+
 header = {
         "col_user": "userID",
         "col_item": "MovieId",
         "col_rating": "Rating",
     }
-
 
 model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10, **header)
 
