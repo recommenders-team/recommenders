@@ -70,6 +70,8 @@ from reco_utils.recommender.rbm import (
     EPOCHS,
     MOMENTUM,
     DEFAULTPATH,
+    _user_item_return_type,
+    _predict_column_type,
 )
 
 
@@ -91,7 +93,7 @@ class RBM:
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
-        save_path = DEFAULTPATH + 'saver/rbm_model_saver.ckpt',
+        save_path = 'saver/rbm_model_saver.ckpt',
         debug = False,
     ):
 
@@ -115,7 +117,10 @@ class RBM:
         self.minibatch= minibatch_size
         self.epochs= training_epoch  #number of epochs used to train the model
 
-    
+        self.save_path_ = save_path
+
+        self.model_str = "rbm_ref"
+        
     #===============================================
     #Generate the Ranking matrix from a pandas DF
     #===============================================
@@ -587,7 +592,7 @@ class RBM:
     # Training ops
     #=========================
 
-    def fit(self, df):
+    def fit(self, train_df, test_df):
 
         '''
         Fit method
@@ -601,9 +606,14 @@ class RBM:
 
         log.info("Generating the user affinity matrix...")
 
-        xtr = self.gen_ranking_matrix(df) #generate the user_affinity matrix
+        xtr = self.gen_ranking_matrix(train_df) #generate the user_affinity matrix for the train set 
+        xtst= self.gen_ranking_matrix(test_df)  #generate the user_affinity matrix for the test set
+        
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
+        
+        print('martrix size', m,self.Nv_)
+        
         num_minibatches = int(m / self.minibatch) #number of minibatches
         self.epochs = self.epochs +1 #add one epoch
 
@@ -628,8 +638,8 @@ class RBM:
         obj = self.Losses(self.v, v_k) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer
-
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer        
+        
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
         #initialize online metrics
@@ -669,19 +679,28 @@ class RBM:
 
                     epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-                if i % 10==0:
+                if i % 50==0:
                     print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            saver.save(sess, self.save_path)
+            precision_train = sess.run(Clacc, feed_dict={self.v:xtr})    
+            precision_test = sess.run(Clacc, feed_dict={self.v:xtst})    
 
+    
+            saver.save(sess, self.save_path_)
+                   
+            
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
         plt.ylabel('msr_error', size= 'x-large')
         plt.xlabel('epochs', size = 'x-large')
         plt.legend(ncol=1)
+        
+        print('Total precision on the train set', precision_train)
+        print('Total precision on the test set', precision_test)
+        print('train/test difference', precision_train - precision_test)
 
     #=========================
     # Inference modules
@@ -714,7 +733,7 @@ class RBM:
 
         with tf.Session() as saved_sess:
 
-            saved_files = saver.restore(saved_sess, self.save_path)
+            saved_files = saver.restore(saved_sess, self.save_path_)
 
             #Sampling
             _, h_ = self.sample_h(self.v) #sample h
@@ -752,9 +771,25 @@ class RBM:
                 self.col_rating: top_scores,
             }
         )
+        
+        # format the dataframe in the end to conform to Suprise return type
+        log.info("Formatting output")
 
-        return results
+        # modify test to make it compatible with
 
+        return (
+            results[[self.col_user, self.col_item, self.col_rating]]
+            .rename(columns={self.col_rating: PREDICTION_COL})
+            .astype(
+                {
+                    self.col_user: _user_item_return_type(),
+                    self.col_item: _user_item_return_type(),
+                    PREDICTION_COL: _predict_column_type(),
+                }
+            )
+        )
+
+    
     #Inference from a trained model
     def predict(self, df):
 
@@ -777,7 +812,7 @@ class RBM:
 
         with tf.Session() as sess:
 
-            saved_files = saver.restore(saved_sess, self.save_path)
+            saved_files = saver.restore(saved_sess, self.save_path_)
 
             #Sampling
             _, h_ = self.sample_h(self.v) #sample h
