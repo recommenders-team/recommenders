@@ -23,7 +23,8 @@ jobs:
 
   - script: |
       ./scripts/generate_conda_file.sh
-      sudo conda env update -n Recommender -f conda_bare.yaml
+      # sudo conda env update -n Recommender -f conda_bare.yaml
+      conda env update -f conda_bare.yaml
  
       cd tests/unit
       python -m pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
