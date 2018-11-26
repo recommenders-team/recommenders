@@ -201,7 +201,7 @@ class RBM:
         total  = self.RM.shape[0]*self.RM.shape[1] #number of elements in the matrix
         sparsness = zero/total *100 #Percentage of zeros in the matrix
 
-        print('Matrix generated, sparsness %f2:' %sparsness,'%')
+        print('Matrix generated, sparsness %d' %sparsness,'%')
 
 
     #=========================
@@ -709,7 +709,7 @@ class RBM:
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            precision_train = sess.run(Clacc, feed_dict={self.v: self.RM})
+            precision_train, self.trained_param = sess.run([Clacc, tf.trainable_variables()], feed_dict={self.v: self.RM})
             #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
             if self.save_model_:
@@ -725,6 +725,8 @@ class RBM:
         print('Total precision on the train set', precision_train)
         #print('Total precision on the test set', precision_test)
         #print('train/test difference', precision_train - precision_test)
+
+        return  self.trained_param
 
     #=========================
     # Inference modules
