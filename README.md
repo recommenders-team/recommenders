@@ -93,10 +93,10 @@ Following list settings used for the benchmarking experimentation:
   <td align="right">N/A</td>
   <td align="right">N/A</td>
   <td align="right">N/A</td>
-  <td align="right">0.407</td>
-  <td align="right">0.323</td>
-  <td align="right">0.871</td>
-  <td align="right">0.871</td>
+  <td align="right">0.958</td>
+  <td align="right">0.755</td>
+  <td align="right">0.287</td>
+  <td align="right">0.287</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
@@ -127,10 +127,10 @@ Following list settings used for the benchmarking experimentation:
   <td align="right">N/A</td>
   <td align="right">N/A</td>
   <td align="right">N/A</td>
-  <td align="right">0.487</td>
-  <td align="right">0.383</td>
-  <td align="right">0.810</td>
-  <td align="right">0.810</td>
+  <td align="right">0.889</td>
+  <td align="right">0.697</td>
+  <td align="right">0.364</td>
+  <td align="right">0.364</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
@@ -161,10 +161,10 @@ Following list settings used for the benchmarking experimentation:
   <td align="right">N/A</td>
   <td align="right">N/A</td>
   <td align="right">N/A</td>
-  <td align="right">0.557</td>
-  <td align="right">0.430</td>
-  <td align="right">0.724</td>
-  <td align="right">0.724</td>
+  <td align="right">0.804</td>
+  <td align="right">0.616</td>
+  <td align="right">0.424</td>
+  <td align="right">0.424</td>
  </tr>
  <tr>
   <td>SAR Single Node</td>
@@ -195,10 +195,10 @@ Following list settings used for the benchmarking experimentation:
   <td align="right">N/A</td>
   <td align="right">N/A</td>
   <td align="right">N/A</td>
-  <td align="right">0.574</td>
-  <td align="right">0.440</td>
-  <td align="right">0.702</td>
-  <td align="right">0.702</td>
+  <td align="right">0.790</td>
+  <td align="right">0.601</td>
+  <td align="right">0.436</td>
+  <td align="right">0.436</td>
  </tr>
  <tr >
   <td>SAR Single Node</td>
