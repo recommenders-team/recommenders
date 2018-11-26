@@ -193,16 +193,17 @@ class RBM:
         assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
 
         #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
-        self.RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (self.Nusers, self.Nitems)).toarray()
+        RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (self.Nusers, self.Nitems)).toarray()
 
         #---------------------print the degree of sparsness of the matrix------------------------------
 
-        zero   = (self.RM == 0).sum() # number of unrated items
-        total  = self.RM.shape[0]*self.RM.shape[1] #number of elements in the matrix
+        zero   = (RM == 0).sum() # number of unrated items
+        total  = RM.shape[0]*self.RM.shape[1] #number of elements in the matrix
         sparsness = zero/total *100 #Percentage of zeros in the matrix
 
         print('Matrix generated, sparsness %d' %sparsness,'%')
 
+        return RM
 
     #=========================
     #Helper functions
@@ -629,11 +630,11 @@ class RBM:
         '''
 
         self.gen_index(train_df) #generate the index for the dataset
-        self.gen_affinity_matrix(train_df) #generate the user_affinity matrix for the train set
+        xtr = self.gen_affinity_matrix(train_df) #generate the user_affinity matrix for the train set
         #xtst= self.gen_affinity_matrix(test_df)  #generate the user_affinity matrix for the test set
 
-        self.r_= self.RM.max() #defines the rating scale, e.g. 1 to 5
-        m, self.Nv_ = self.RM.shape #dimension of the input: m= N_users, Nv= N_items
+        self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
+        m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
 
         print('martrix size', m,self.Nv_)
 
@@ -695,7 +696,7 @@ class RBM:
                     v_k = self.G_sampling(k)
 
                 #minibatches (to implement: TF data pipeline for better performance)
-                minibatches = self.random_mini_batches(self.RM)
+                minibatches = self.random_mini_batches(xtr)
 
                 for minib in minibatches:
 
@@ -709,7 +710,7 @@ class RBM:
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            precision_train, self.trained_param = sess.run([Clacc, tf.trainable_variables()], feed_dict={self.v: self.RM})
+            precision_train, self.trained_param = sess.run([Clacc, tf.trainable_variables()], feed_dict={self.v: xtr})
             #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
             if self.save_model_:
@@ -726,11 +727,26 @@ class RBM:
         #print('Total precision on the test set', precision_test)
         #print('train/test difference', precision_train - precision_test)
 
-        return  self.trained_param
-
     #=========================
     # Inference modules
     #=========================
+
+    def eval_out(self):
+
+        #Sampling
+        _, h_ = self.sample_h(self.v) #sample h
+
+        #sample v
+        phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
+        pvh = self.Pm(phi_h) #conditional probability of v given h
+
+        v_  = self.M_sampling(pvh) #sample the value of the visible units
+
+        #evaluate v on the data
+        vp, pvh= saved_sess.run([v_, pvh], feed_dict={self.v: x})
+
+        return vp, pvh
+
 
     def recommend_k_items(self, df, top_k=10, **kwargs):
 
@@ -751,29 +767,23 @@ class RBM:
 
         '''
 
-        #Load a trained model
-        saver = tf.train.Saver()
+        if self.save_model_:
+            #Load a trained model
+            saver = tf.train.Saver()
 
-        x = self.gen_ranking_matrix(df) #generate the user_affinity matrix
+        x = self.gen_affinity_matrix(df) #generate the user_affinity matrix
         m, n = x.shape #dimension of the input: m= N_users, n= N_items
 
-        with tf.Session() as saved_sess:
+        with tf.Session() as sessk:
 
-            saved_files = saver.restore(saved_sess, self.save_path_)
+            if self.save_model_:
+                saved_files = saver.restore(saved_sess, self.save_path_)
 
-            #Sampling
-            _, h_ = self.sample_h(self.v) #sample h
+            else: sessk.run( tf.global_variables_initializer() )
 
-            #sample v
-            phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
-            pvh = self.Pm(phi_h) #conditional probability of v given h
+            vp, pvh = eval_out(self)
 
-            v_  = self.M_sampling(pvh) #sample the value of the visible units
-
-            #evaluate v on the data
-            vp, pvh= saved_sess.run([v_, pvh], feed_dict={self.v: x})
-
-        saved_sess.close()
+        sessk.close()
 
         pvh_= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
@@ -786,10 +796,12 @@ class RBM:
         top_items = np.reshape(np.array(top_items), -1)
         top_scores = np.reshape(np.array(top_scores), -1)
 
+        #generates userids
         userids = []
         for i in range(1, m+1):
             userids.extend([i]*top_k)
 
+        #create dataframe
         results = pd.DataFrame.from_dict(
             {
                 self.col_user: userids,
@@ -798,11 +810,14 @@ class RBM:
             }
         )
 
+        # remap user and item indices to IDs
+        results[self.col_user] = results[self.col_user].map(self.map_back_users)
+        results[self.col_item] = results[self.col_item].map(self.map_back_items)
+
         # format the dataframe in the end to conform to Suprise return type
         log.info("Formatting output")
 
-        # modify test to make it compatible with
-
+        # reformatting the dataset for the output 
         return (
             results[[self.col_user, self.col_item, self.col_rating]]
             .rename(columns={self.col_rating: PREDICTION_COL})
