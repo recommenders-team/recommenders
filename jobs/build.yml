@@ -21,10 +21,13 @@ jobs:
       packageSpecs: 'python=3.6'
       updateConda: true
 
-  - script: |
-      sudo install -d -m 0777 /usr/local/miniconda/envs
-      sudo install -d -m 0777 /usr/envs/Recommender
+  - script: sudo install -d -m 0777 /usr/local/miniconda/envs
     displayName: Fix Conda permissions
+
+  - script: sudo install -d -m 0777 /usr/envs
+    condition: eq(variables('Agent.OS'), 'Linux')
+    displayName: Fix Conda permissions (Linux)
+      sudo install -d -m 0777 /usr/envs/Recommender
 
   - script: |
       ./scripts/generate_conda_file.sh
