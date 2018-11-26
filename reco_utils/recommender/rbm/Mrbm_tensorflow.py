@@ -198,7 +198,7 @@ class RBM:
         #---------------------print the degree of sparsness of the matrix------------------------------
 
         zero   = (RM == 0).sum() # number of unrated items
-        total  = RM.shape[0]*self.RM.shape[1] #number of elements in the matrix
+        total  = RM.shape[0]*RM.shape[1] #number of elements in the matrix
         sparsness = zero/total *100 #Percentage of zeros in the matrix
 
         print('Matrix generated, sparsness %d' %sparsness,'%')
