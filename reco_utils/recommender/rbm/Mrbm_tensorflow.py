@@ -93,7 +93,7 @@ class RBM:
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
         save_model= False,
-        save_path = 'reco_utils/recommender/rbm/saver',
+        save_path = 'saver',
         debug = False,
     ):
 
@@ -203,7 +203,7 @@ class RBM:
         '''
 
         num = [tf.exp(tf.multiply(tf.constant(k, dtype='float32'),phi)) for k in range(1,self.r_+1)]
-        den = 1+tf.reduce_sum(num, axis=0)
+        den = tf.reduce_sum(num, axis=0)
 
         pr = tf.div(num, den)
 
@@ -536,7 +536,7 @@ class RBM:
     # Training ops
     #=========================
 
-    def fit(self, xtr):
+    def fit(self, xtr, xtst):
 
         '''
         Fit method
@@ -558,7 +558,7 @@ class RBM:
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
 
-        print('martrix size', m,self.Nv_)
+        #print('martrix size', m,self.Nv_)
 
         num_minibatches = int(m / self.minibatch) #number of minibatches
         self.epochs = self.epochs +1 #add one epoch
@@ -593,7 +593,7 @@ class RBM:
 
         #Metrics
         Mserr  = self.msr_error(v_k)
-        #Clacc  = self.map(v_k)
+        Clacc  = self.map(v_k)
 
         if self.save_model_:
             saver = tf.train.Saver() #save the model to file
@@ -632,8 +632,8 @@ class RBM:
                 #write metrics acros epohcs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            #precision_train, self.trained_param = sess.run([Clacc, tf.trainable_variables()], feed_dict={self.v: xtr})
-            #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
+            precision_train = sess.run(Clacc, feed_dict={self.v: xtr})
+            precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
             if self.save_model_:
                 saver.save(sess, self.save_path_ + '/rbm_model_saver.ckpt')
@@ -645,9 +645,9 @@ class RBM:
         plt.legend(ncol=1)
 
         #Final precision scores
-        #print('MAP on the train set', precision_train)
-        #print('Total precision on the test set', precision_test)
-        #print('train/test difference', precision_train - precision_test)
+        print('train set MAP', precision_train)
+        print('test set MAP', precision_test)
+        print('train/test difference', precision_train - precision_test)
 
     #=========================
     # Inference modules
@@ -743,7 +743,7 @@ class RBM:
                     PREDICTION_COL: _predict_column_type(),
                 }
             )
-        , top_items)
+        )
 
 
 
