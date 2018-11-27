@@ -25,8 +25,7 @@ jobs:
   -  bash: ./scripts/generate_conda_file.sh
      displayName: generate yaml
     
-     # -  bash: conda create --yes --quiet --name Recommender --file conda_bare.yaml python=3.6
-  -  bash: conda env create --quiet --file conda_bare.yaml
+  -  bash: conda env create --quiet --name Recommender --file conda_bare.yaml
      displayName: Create Anaconda environment
 
   - bash: |
