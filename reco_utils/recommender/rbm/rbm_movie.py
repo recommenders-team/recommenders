@@ -23,17 +23,16 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 %matplotlib inline
-import itertools
 
 import time as tm
-
-#from reco_utils.recommender.rbm.helperfunct import*
 
 #ML Libraries and methods
 import tensorflow as tf
 
 from reco_utils.recommender.rbm.Mrbm_tensorflow import RBM
-from reco_utils.dataset.python_splitters import python_stratified_split
+from reco_utils.dataset.python_splitters import python_stratified_split, python_random_split
+
+from reco_utils.dataset.rbm_splitters import splitter
 
 #For interactive mode only
 %load_ext autoreload
@@ -60,119 +59,85 @@ ratings_df.head()
 #Data processing
 #==========================
 
-#train/test split
+#train/test split: comparing python_splitters
+
+ratings_df['userID'].unique().shape
+ratings_df['MovieId'].unique().shape
+
 
 train, test = python_stratified_split(ratings_df)
 
-train.head()
+train1, test1= python_random_split(ratings_df)
 
-test.head()
 
+#total number of elements
 train.shape
 test.shape
 
+train1.shape
+test1.shape
 
-#--------------------Generate user affinity matrix--------------
+#stratified
+test['userID'].unique().shape
+train['userID'].unique().shape
 
-#Generate index
+test['MovieId'].unique().shape
+train['MovieId'].unique().shape
 
-#sort entries by user index
-df = train.sort_values(by=["userID"])
+#random
+test1['userID'].unique().shape
+train1['userID'].unique().shape
 
-#find unique user and item index
-unique_users = df["userID"].unique()
-unique_items = df["MovieId"].unique()
-
-#total number of unique users and items
-Nusers = len(unique_users)
-Nitems = len(unique_items)
-
-#create a dictionary to map unique users/items to hashed values to generate the matrix
-map_users = {x:i for i, x in enumerate(unique_users)}
-map_items = {x:i for i, x in enumerate(unique_items)}
-
-#map back functions used to get back the original dataframe
-map_back_users = {i:x for i, x in enumerate(unique_users)}
-map_back_items = {i:x for i, x in enumerate(unique_items)}
+test1['MovieId'].unique().shape
+train1['MovieId'].unique().shape
 
 
-unique_users.shape
+train['MovieId'].shape
+test['MovieId'].shape
 
-
-#def gen_affinity_matrix(DF):
-
-    df = test.copy()
-
-    df.loc[:, 'hashedItems'] = df['MovieId'].map(map_items)
-    df.loc[:, 'hashedUsers'] = df['userID'].map(map_users)
-
-    #extract informations from the dataframe as an array. Note that we substract 1 from itm_id and usr_id
-    #in order to map it to matrix format
-
-    r_ = df['Rating']    #ratings
-    itm_id = df['hashedItems']  #itm_id serving as columns
-    usr_id = df['hashedUsers']  #usr_id serving as rows
-
-    #check that all 3 vectors have the same dimensions
-    assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
-
-    #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
-    RM = sparse.coo_matrix((r_, (usr_id, itm_id)), shape= (Nusers, Nitems)).toarray()
-
-    #---------------------print the degree of sparsness of the matrix------------------------------
-
-    zero   = (RM == 0).sum() # number of unrated items
-    total  = RM.shape[0]*RM.shape[1] #number of elements in the matrix
-    sparsness = zero/total *100 #Percentage of zeros in the matrix
-
-    print('Matrix generated, sparsness %d' %sparsness,'%')
-
-    return RM
-
-
-#generate the ranking matrix. Movies that haven not been rated yet get a 0 rating.
-
-
-X_train = gen_affinity_matrix(train)
-
-X_test = gen_affinity_matrix(test)
-
-X_train.shape
-X_test.shape
-
-
-
-
-
-#Distribution of values
-zero_train  = (X_train == 0).sum()
-total  = X_train.shape[0]*X_train.shape[1]
-
-id =np.where(X_train !=0)
-
-plt.hist(X_train[id], bins=5, density=1)
-
-#Percentage of zeros in the matrix
-zero_train/total *100
-
-zero_test  = (X_test == 0).sum()
-
-id_tst =np.where(X_test !=0)
-
-plt.hist(X_test[id_tst], bins=5, density=1)
-
-zero_test/total *100
-
-
-
-#New method
-
+#----------------------------------------------------------------------------------------------
 
 header = {
         "col_user": "userID",
         "col_item": "MovieId",
         "col_rating": "Rating",
     }
+
+data = splitter(DF = ratings_df, **header)
+
+Xtr, Xtst = data.stratified_split()
+
+#generate the ranking matrix. Movies that haven not been rated yet get a 0 rating.
+Xtr.shape
+Xtst.shape
+
+#Check the number of elements
+(Xtr !=0).sum()
+(Xtst !=0).sum()
+
+
+#Distribution of values
+zero_train  = (Xtr == 0).sum()
+total  = Xtr.shape[0]*Xtr.shape[1]
+
+id =np.where(Xtr !=0)
+
+plt.hist(Xtr[id], bins=5, density=1)
+
+#Percentage of zeros in the matrix
+zero_train/total *100
+
+zero_test  = (Xtst == 0).sum()
+
+id_tst =np.where(Xtst !=0)
+
+plt.hist(Xtst[id_tst], bins=5, density=1)
+
+zero_test/total *100
+
+#===========================
+#Train the model
+#===========================
 
 model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10, **header)
 
