@@ -6,6 +6,7 @@ jobs:
     matrix:
       Python36:
         python.version: '3.6'
+
     maxParallel: 4
 
   steps:
@@ -28,12 +29,13 @@ jobs:
   -  bash: conda env create --quiet --name Recommender --file conda_bare.yaml
      displayName: Create Anaconda environment
 
-  - bash: |
+  -  bash: |
       source activate Recommender
       pip install pytest
  
-      python -m pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml tests/smoke/test_notebooks_python.py tests/integration/test_notebooks_python.py
-    displayName: 'Unit tests'
+      python -m pytest --junitxml=unit/test-results-smoke.xml tests/smoke/test_notebooks_python.py
+      python -m pytest --junitxml=unit/test-results-smoke.xml tests/integration/test_notebooks_python.py
+     displayName: 'Unit tests'
 
   - task: PublishTestResults@2
     inputs:
