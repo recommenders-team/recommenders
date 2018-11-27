@@ -14,29 +14,18 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
  
-  - task: CondaEnvironment@1
-    inputs:
-      createCustomEnvironment: true
-      environmentName: Recommender
-      packageSpecs: 'python=3.6'
-      updateConda: true
-
-  - script: |
-      sudo chmod 777 /usr/local/miniconda/envs/Recommender
-    condition: eq(variables['Agent.OS'], 'Darwin')
-    displayName: Fix Conda permissions
-
-  - script: |
-      sudo chmod 777 /usr/envs/Recommender
-    condition: eq(variables['Agent.OS'], 'Linux')
-    displayName: Fix Conda permissions (Linux)
-      sudo install -d -m 0777 /usr/envs/Recommender
-
   - script: |
       ./scripts/generate_conda_file.sh
       # sudo conda env update -n Recommender -f conda_bare.yaml
-      conda env update -f conda_bare.yaml
+      
+  -  bash: echo "##vso[task.prependpath]/usr/share/miniconda/bin"
+     displayName: Add conda to PATH
+    
+  -  bash: conda create --yes --quiet --name Recommender -f conda_bare.yaml python=3.6
+     displayName: Create Anaconda environment
 
+  - bash: |
+      source activate Recommender
       pip install pytest
  
       cd tests/unit
