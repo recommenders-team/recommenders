@@ -139,12 +139,15 @@ zero_test/total *100
 #Train the model
 #===========================
 
-model = RBM(hidden_units= 1000, keep_prob= .7, training_epoch = 10, **header)
+model = RBM(hidden_units= 500, save_model=True, keep_prob= .7, training_epoch = 10, **header)
 
-param = model.fit(train)
+model.fit(Xtr)
+
+
 
 #predict
-top_k_df =  model.recommend_k_items(train)
+top_k_df =  model.recommend_k_items(Xtr)
+
 
 
 #----------------------------------Create a user report with recommendations-----------------------------------------

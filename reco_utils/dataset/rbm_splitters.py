@@ -159,7 +159,7 @@ class splitter:
         self.AM = coo_matrix((r_, (usr_id, itm_id)), shape= (self.Nusers, self.Nitems)).toarray()
 
         #---------------------print the degree of sparsness of the matrix------------------------------
-        
+
         zero   = (self.AM == 0).sum() # number of unrated items
         total  = self.AM.shape[0]*self.AM.shape[1] #number of elements in the matrix
         sparsness = zero/total *100 #Percentage of zeros in the matrix
@@ -174,6 +174,44 @@ class splitter:
         Map back the user/affinity matrix to a pd dataframe
 
         '''
+        
+        top_items = np.reshape(np.array(top_items), -1)
+        top_scores = np.reshape(np.array(top_scores), -1)
+
+        #generates userids
+        userids = []
+        for i in range(1, m+1):
+            userids.extend([i]*top_k)
+
+        #create dataframe
+        results = pd.DataFrame.from_dict(
+            {
+                self.col_user: userids,
+                self.col_item: top_items,
+                self.col_rating: top_scores,
+            }
+        )
+
+        # remap user and item indices to IDs
+        results[self.col_user] = results[self.col_user].map(self.map_back_users)
+        results[self.col_item] = results[self.col_item].map(self.map_back_items)
+
+        # format the dataframe in the end to conform to Suprise return type
+        log.info("Formatting output")
+
+        # reformatting the dataset for the output
+        return (
+            results[[self.col_user, self.col_item, self.col_rating]]
+            .rename(columns={self.col_rating: PREDICTION_COL})
+            .astype(
+                {
+                    self.col_user: _user_item_return_type(),
+                    self.col_item: _user_item_return_type(),
+                    PREDICTION_COL: _predict_column_type(),
+                }
+            )
+        )
+
     #====================================
     #Data splitters
     #====================================
