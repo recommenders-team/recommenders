@@ -174,7 +174,7 @@ class splitter:
         Map back the user/affinity matrix to a pd dataframe
 
         '''
-        
+
         top_items = np.reshape(np.array(top_items), -1)
         top_scores = np.reshape(np.array(top_scores), -1)
 
@@ -223,6 +223,9 @@ class splitter:
         test_cut = int( (1-ratio)*100 )
 
         self.gen_index()
+
+        map = [self.map_back_users, self.map_back_items]
+
         self.gen_affinity_matrix()
 
         #Test set array
@@ -253,4 +256,4 @@ class splitter:
 
         del idx, sub_el, idx_tst
 
-        return Xtr , Xtst
+        return Xtr , Xtst, map 
