@@ -12,4 +12,3 @@ from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 def test_sar_single_node_runs(notebooks):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
-
