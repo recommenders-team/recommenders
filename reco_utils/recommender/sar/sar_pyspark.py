@@ -243,6 +243,7 @@ class SARpySparkReference:
 
     def trigger(self, df, name):
 
+        print(name)
         if self.debug:
             # trigger execution
             self.time()
@@ -256,7 +257,10 @@ class SARpySparkReference:
                 " calculation time (s)\t%d"
                 % elapsed_time
             ]
+            print ("loading")
             df = self.spark.read.parquet(name)
+            print("done")
+
 
     def fit(self, df):
         """Main fit method for SAR. Expects the dataframes to have row_id, col_id columns which are indexes,
@@ -344,9 +348,13 @@ class SARpySparkReference:
             lit(1).alias("ind"),
         )
 
+        #self.trigger(df_transpose, "df_transpose")
+        self.trigger(df, "df")
+
         # WARNING: we need to rename columns for matrix multiplication to work on pySpark
         # we can keep same name columns here because it's the same matrix being multiplied
         # however when doing Affinity*item_cooccurence we need to rename
+        """
         item_cooccurrence = (
             df_transpose.join(df, df_transpose["col_id"] == df["row_id"])
             .groupBy(df_transpose["row_id"], df["col_id"])
@@ -357,11 +365,49 @@ class SARpySparkReference:
                 col("value"),
             )
         )
+        """
 
-        # filter out cooccurence counts which are below threshold
-        item_cooccurrence = item_cooccurrence.filter("value>=" + str(self.threshold))
+        df.createOrReplaceTempView("affinity")
+        #df_transpose.createOrReplaceTempView("affinity_transpose")
+        # replace sum(1) with sum(A.affinity*B.affinity) if you want to multiply up the ratings
+        query = (
+                "select A.row_id as row_item_id, B.col_id as col_item_id, sum(1) as value "
+                + "from affinity_transpose A inner join affinity B on A.col_id = B.row_id "
+                + "group by A.row_id, B.col_id"
+        )
+        query = (
+                """ select   t1.col_id  as row_item_id
+                            ,t2.col_id  as col_item_id
+                            ,count(*) as value       
+                            from                affinity t1 
+                                      join      affinity t2
+                                      on        t1.row_id = t2.row_id
+                            where t1.col_id <= t2.col_id
+                            group by  t1.col_id
+                                     ,t2.col_id"""
+        )
+
+        query = (
+            """ select   t1.col_id  as row_item_id
+                        ,t2.col_id  as col_item_id
+                        ,count(*) as value       
+                        from                      affinity t1 
+                                  inner join      affinity t2
+                                  on              t1.row_id = t2.row_id
+                        group by t1.col_id, t2.col_id
+                        having count(*) >= %d
+                        cluster by row_item_id, col_item_id"""
+            % self.threshold
+        )
+
+        log.info("Running query -- " + query)
+        item_cooccurrence = self.spark.sql(query)
 
         self.trigger(item_cooccurrence, "item_cooccurrence")
+
+        # filter out cooccurence counts which are below threshold
+        #item_cooccurrence = item_cooccurrence.filter("value>=" + str(self.threshold))
+        #self.trigger(item_cooccurrence, "item_cooccurrence_filter")
 
         log.info("Calculating item similarity...")
         similarity_type = (
@@ -380,7 +426,7 @@ class SARpySparkReference:
             self.item_similarity = item_cooccurrence
         elif similarity_type == SIM_JACCARD:
             query = (
-                "select A.row_item_id, A.col_item_id, (A.value/(B.d+C.d-A.value)) as value "
+                "select A.row_item_id, A.col_item_id, (A.value/(B.d+C.d-A.value))as value "
                 + "from item_cooccurrence as A, diagonal as B, diagonal as C "
                 + "where A.row_item_id = B.i and A.col_item_id=C.i"
             )
@@ -400,7 +446,7 @@ class SARpySparkReference:
         if  (
             similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
         ):
-            self.trigger(self.item_similarity, "item_similarity")
+            self.trigger(self.item_similarity, "item_similarity_final")
 
         # Calculate raw scores with a matrix multiplication.
         log.info("Calculating recommendation scores...")
