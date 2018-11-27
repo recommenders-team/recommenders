@@ -14,13 +14,18 @@ jobs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
  
+  -  bash: echo "##vso[task.prependpath]$CONDA/bin"
+     condition: eq(variables['Agent.OS'], 'Darwin')
+     displayName: Add conda to PATH (Mac)
+
   -  bash: echo "##vso[task.prependpath]/usr/share/miniconda/bin"
-     displayName: Add conda to PATH
+     condition: eq(variables['Agent.OS'], 'Linux')
+     displayName: Add conda to PATH (Linux)
 
   -  bash: ./scripts/generate_conda_file.sh
      displayName: generate yaml
     
-  -  bash: conda create --yes --quiet --name Recommender -f conda_bare.yaml python=3.6
+  -  bash: conda create --yes --quiet --name Recommender --file conda_bare.yaml python=3.6
      displayName: Create Anaconda environment
 
   - bash: |
