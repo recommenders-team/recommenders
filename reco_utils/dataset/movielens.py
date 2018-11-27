@@ -103,7 +103,7 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip"):
 
 
 def load_spark_df(
-    spark, size="100k", header=None, schema=None, local_cache_path="ml.zip"
+    spark, size="100k", header=None, schema=None, local_cache_path="ml.zip", dbutils=None
 ):
     """Loads the MovieLens dataset as pySpark.DataFrame.
 
@@ -125,6 +125,7 @@ def load_spark_df(
                 ]
             )
         local_cache_path (str): Path where to cache the zip file locally
+        dbutils (Databricks.dbutils): Databricks utility object
 
     Returns:
         pySpark.DataFrame: Dataset
@@ -169,7 +170,10 @@ def load_spark_df(
     if is_databricks():
         _, dataname = os.path.split(_data_format[size].path)
         dbfs_datapath = "dbfs:/tmp/" + dataname
-        dbutils.fs.mv(datapath, dbfs_datapath)
+        try:
+            dbutils.fs.mv(datapath, dbfs_datapath)
+        except:
+            raise ValueError("To use on a Databricks notebook, dbutils object should be passed as an argument")
         datapath = dbfs_datapath
 
     # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
