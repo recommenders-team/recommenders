@@ -32,8 +32,7 @@ jobs:
       source activate Recommender
       pip install pytest
  
-      cd tests/unit
-      python -m pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml
+      python -m pytest -m "notebooks and not spark" --doctest-modules --junitxml=junit/test-results.xml tests/smoke/test_notebooks_python.py tests/integration/test_notebooks_python.py
     displayName: 'Unit tests'
 
   - task: PublishTestResults@2
