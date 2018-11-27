@@ -553,8 +553,6 @@ class RBM:
 
         Baic mechanics:
 
-
-
         '''
 
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
@@ -669,7 +667,7 @@ class RBM:
         return v_, pvh_
 
 
-    def recommend_k_items(self, x, top_k=10, **kwargs):
+    def recommend_k_items(self, x, map, top_k=10):
 
         '''
         Returns the top-k items ordered by a relevancy score
@@ -707,7 +705,48 @@ class RBM:
         top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
         top_scores = score[np.arange(score.shape[0])[:, None], top_items] #get top k scores
 
-        return vp
+        top_items_ = np.reshape(np.array(top_items), -1)
+        top_scores_ = np.reshape(np.array(top_scores), -1)
+
+        #generates userids
+        userids = []
+        for i in range(0, m):
+            userids.extend([i]*top_k)
+
+        #create dataframe
+        results = pd.DataFrame.from_dict(
+            {
+                self.col_user: userids,
+                self.col_item: top_items_,
+                self.col_rating: top_scores_,
+            }
+        )
+
+        map_back_users = map[0]
+        map_back_items = map[1]
+
+        # remap user and item indices to IDs
+        results[self.col_user] = results[self.col_user].map(map_back_users)
+        results[self.col_item] = results[self.col_item].map(map_back_items)
+
+        # format the dataframe in the end to conform to Suprise return type
+        log.info("Formatting output")
+
+        # reformatting the dataset for the output
+        return (
+            results[[self.col_user, self.col_item, self.col_rating]]
+            .rename(columns={self.col_rating: PREDICTION_COL})
+            .astype(
+                {
+                    self.col_user: _user_item_return_type(),
+                    self.col_item: _user_item_return_type(),
+                    PREDICTION_COL: _predict_column_type(),
+                }
+            )
+        , top_items)
+
+
+
 
     #Inference from a trained model
     def predict(self, df):
