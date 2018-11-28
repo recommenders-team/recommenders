@@ -12,10 +12,8 @@ import numpy as np
 import random
 import math
 
-<<<<<<< HEAD
-=======
 import itertools
->>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
+
 from scipy.sparse import coo_matrix
 import logging
 
@@ -170,59 +168,15 @@ class splitter:
 
         print('Matrix generated, sparsness: %d' %sparsness,'%', 'size:', (self.AM.shape) )
 
-<<<<<<< HEAD
-                
-
-    def map_back(self, aff_matrix):
-=======
 
 
     def map_back_sparse(self, X):
->>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
 
         '''
         Map back the user/affinity matrix to a pd dataframe
 
         '''
-<<<<<<< HEAD
 
-        top_items = np.reshape(np.array(top_items), -1)
-        top_scores = np.reshape(np.array(top_scores), -1)
-
-        #generates userids
-        userids = []
-        for i in range(1, m+1):
-            userids.extend([i]*top_k)
-
-        #create dataframe
-        results = pd.DataFrame.from_dict(
-            {
-                self.col_user: userids,
-                self.col_item: top_items,
-                self.col_rating: top_scores,
-            }
-        )
-
-        # remap user and item indices to IDs
-        results[self.col_user] = results[self.col_user].map(self.map_back_users)
-        results[self.col_item] = results[self.col_item].map(self.map_back_items)
-
-        # format the dataframe in the end to conform to Suprise return type
-        log.info("Formatting output")
-
-        # reformatting the dataset for the output
-        return (
-            results[[self.col_user, self.col_item, self.col_rating]]
-            .rename(columns={self.col_rating: PREDICTION_COL})
-            .astype(
-                {
-                    self.col_user: _user_item_return_type(),
-                    self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type(),
-                }
-            )
-        )
-=======
         m, n = X.shape
 
         #1) Create a DF from a sparse matrix
@@ -255,7 +209,6 @@ class splitter:
 
         return out_df
 
->>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
 
     #====================================
     #Data splitters
@@ -269,7 +222,7 @@ class splitter:
 
         self.gen_index()
 
-        map = [self.map_back_users, self.map_back_items]
+        maps = [self.map_back_users, self.map_back_items]
 
         self.gen_affinity_matrix()
 
@@ -301,8 +254,4 @@ class splitter:
 
         del idx, sub_el, idx_tst
 
-<<<<<<< HEAD
-        return Xtr , Xtst, map 
-=======
-        return Xtr , Xtst, self.map_back_sparse(Xtr), self.map_back_sparse(Xtst), map
->>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
+        return Xtr , Xtst, self.map_back_sparse(Xtr), self.map_back_sparse(Xtst), maps
