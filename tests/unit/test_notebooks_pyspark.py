@@ -16,29 +16,8 @@ def test_als_pyspark_runs(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-def test_sar_pyspark_runs(notebooks):
-    notebook_path = notebooks["sar_pyspark"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
-
-
-@pytest.mark.notebooks
-@pytest.mark.spark
-def test_sarplus(notebooks):
-    notebook_path = notebooks["sarplus_movielens"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
-
-
-@pytest.mark.notebooks
-@pytest.mark.spark
 def test_data_split_runs(notebooks):
     notebook_path = notebooks["data_split"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
-
-
-@pytest.mark.notebooks
-@pytest.mark.spark
-def test_sar_deep_dive_runs(notebooks):
-    notebook_path = notebooks["sar_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
 
