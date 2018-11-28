@@ -21,7 +21,11 @@ Several utilities are provided in [reco_utils](reco_utils) which will help accel
 
 ## Notebooks Overview
 
-The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
+- The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
+- The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
+- The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
+- The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
+- The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
 
 | Notebook | Description | 
 | --- | --- | 
@@ -29,29 +33,10 @@ The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickl
 | [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
 | [sar_pyspark_movielens](notebooks/00_quick_start/sar_pyspark_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a PySpark environment.
 | [sarplus_movielens](notebooks/00_quick_start/sarplus_movielens.ipynb) | Utilizing the SAR+ algorithm to power movie ratings in a PySpark environment.
-
-The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
-
-| Notebook | Description | 
-| --- | --- | 
-| [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
 | [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
-
-The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
-
-| Notebook | Description | 
-| --- | --- | 
 | [als_deep_dive](notebooks/02_modeling/als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
 | [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
-
-The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
-
-| Notebook | Description | 
-| --- | --- | 
 | [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python+CPU and PySpark environments.
-
-The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
-
 
 ## Benchmarks
 
