@@ -12,6 +12,10 @@ import numpy as np
 import random
 import math
 
+<<<<<<< HEAD
+=======
+import itertools
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
 from scipy.sparse import coo_matrix
 import logging
 
@@ -166,14 +170,21 @@ class splitter:
 
         print('Matrix generated, sparsness: %d' %sparsness,'%', 'size:', (self.AM.shape) )
 
+<<<<<<< HEAD
                 
 
     def map_back(self, aff_matrix):
+=======
+
+
+    def map_back_sparse(self, X):
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
 
         '''
         Map back the user/affinity matrix to a pd dataframe
 
         '''
+<<<<<<< HEAD
 
         top_items = np.reshape(np.array(top_items), -1)
         top_scores = np.reshape(np.array(top_scores), -1)
@@ -211,6 +222,40 @@ class splitter:
                 }
             )
         )
+=======
+        m, n = X.shape
+
+        #1) Create a DF from a sparse matrix
+        #obtain the non zero items
+        items  = [ np.asanyarray(np.where(X[i,:] !=0 )).flatten() for i in range(m)]
+        ratings = [X[i, items[i]] for i in range(m)] #obtain the non-zero ratings
+
+        #reates user ids following the DF format
+        userids = []
+        for i in range(0, m):
+            userids.extend([i]*len(items[i]) )
+
+        #Flatten the lists to follow the DF input format
+        items = list(itertools.chain.from_iterable(items))
+        ratings = list(itertools.chain.from_iterable(ratings))
+
+        #create a df
+        out_df = pd.DataFrame.from_dict(
+            {
+                self.col_user  : userids,
+                self.col_item  : items,
+                self.col_rating: ratings,
+            }
+        )
+
+        #2) map back user/item ids to their original value
+
+        out_df[self.col_user] = out_df[self.col_user].map(self.map_back_users)
+        out_df[self.col_item] = out_df[self.col_item].map(self.map_back_items)
+
+        return out_df
+
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
 
     #====================================
     #Data splitters
@@ -256,4 +301,8 @@ class splitter:
 
         del idx, sub_el, idx_tst
 
+<<<<<<< HEAD
         return Xtr , Xtst, map 
+=======
+        return Xtr , Xtst, self.map_back_sparse(Xtr), self.map_back_sparse(Xtst), map
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
