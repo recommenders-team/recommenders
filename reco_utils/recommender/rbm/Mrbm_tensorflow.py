@@ -93,7 +93,7 @@ class RBM:
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
         save_model= False,
-        save_path = 'reco_utils/recommender/rbm/saver',
+        save_path = 'saver',
         debug = False,
     ):
 
