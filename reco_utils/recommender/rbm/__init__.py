@@ -5,13 +5,13 @@ import os
 HIDDEN = 10
 
 #keep probability for deopout regularization
-KEEP_PROB = 1
+KEEP_PROB = 0.7
 
 #Initial value of the momentum optimizer
 MOMENTUM = 0.9
 
 #standard deviation for initializing the weights from a normal distribution with zero mean
-STDV =  0.01
+STDV =  0.05
 #Learning rate
 ALPHA = 0.004
 #number of minibatches

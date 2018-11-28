@@ -164,7 +164,7 @@ class splitter:
         total  = self.AM.shape[0]*self.AM.shape[1] #number of elements in the matrix
         sparsness = zero/total *100 #Percentage of zeros in the matrix
 
-        print('Matrix generated, sparsness %d' %sparsness,'%')
+        print('Matrix generated, sparsness: %d' %sparsness,'%', 'size:', (self.AM.shape) )
 
 
 
@@ -256,4 +256,4 @@ class splitter:
 
         del idx, sub_el, idx_tst
 
-        return Xtr , Xtst, map 
+        return Xtr , Xtst, map
