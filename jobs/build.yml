@@ -34,17 +34,19 @@ jobs:
     
   -  bash: |
       conda env create --quiet --name Recommender --file $(condafile)
-      source activate Recommender
-      pip install pytest
      displayName: Create and activate anaconda environment
 
   -  bash: |
+      source activate Recommender
+      pip install pytest
       python -m pytest --junitxml=unit/test-results-smoke-cpu.xml tests/smoke/test_notebooks_python.py
       python -m pytest --junitxml=unit/test-results-integration-cpu.xml tests/integration/test_notebooks_python.py
      displayName: 'Unit tests - CPU'
      condition: eq(variables['mode'], '')
 
   -  bash: |
+      source activate Recommender
+      pip install pytest
       python -m pytest --junitxml=unit/test-results-smoke-pyspark.xml tests/smoke/test_notebooks_pyspark.py
       python -m pytest --junitxml=unit/test-results-integration-pyspark.xml tests/integration/test_notebooks_pyspark.py
      displayName: 'Unit tests - PySpark'
