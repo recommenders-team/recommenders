@@ -7,9 +7,11 @@ jobs:
       Python36-cpu:
         python.version: '3.6'
         mode: 
+        condafile: conda_bare.yaml
       Python36-spark:
         python.version: '3.6'
         mode: --pyspark
+        condafile: conda_pyspark.yaml
 
     maxParallel: 4
 
@@ -30,16 +32,24 @@ jobs:
   -  bash: ./scripts/generate_conda_file.sh $(mode)
      displayName: generate yaml
     
-  -  bash: conda env create --quiet --name Recommender --file conda_bare.yaml
-     displayName: Create Anaconda environment
-
   -  bash: |
+      conda env create --quiet --name Recommender --file $(condafile)
       source activate Recommender
       pip install pytest
- 
-      python -m pytest --junitxml=unit/test-results-smoke.xml tests/smoke/test_notebooks_python.py
-      python -m pytest --junitxml=unit/test-results-smoke.xml tests/integration/test_notebooks_python.py
-     displayName: 'Unit tests'
+     displayName: Create and activate anaconda environment
+
+  -  bash: |
+      python -m pytest --junitxml=unit/test-results-smoke-cpu.xml tests/smoke/test_notebooks_python.py
+      python -m pytest --junitxml=unit/test-results-integration-cpu.xml tests/integration/test_notebooks_python.py
+     displayName: 'Unit tests - CPU'
+     condition: eq(variables['mode'], '')
+
+  -  bash: |
+      python -m pytest --junitxml=unit/test-results-smoke-pyspark.xml tests/smoke/test_notebooks_pyspark.py
+      python -m pytest --junitxml=unit/test-results-integration-pyspark.xml tests/integration/test_notebooks_pyspark.py
+     displayName: 'Unit tests - PySpark'
+     condition: eq(variables['mode'], '--pyspark')
+
 
   - task: PublishTestResults@2
     inputs:
