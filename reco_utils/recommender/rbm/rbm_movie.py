@@ -80,6 +80,18 @@ test1.shape
 #stratified
 test['userID'].unique().shape
 train['userID'].unique().shape
+<<<<<<< HEAD
+
+test['MovieId'].unique().shape
+train['MovieId'].unique().shape
+
+#random
+test1['userID'].unique().shape
+train1['userID'].unique().shape
+
+test1['MovieId'].unique().shape
+train1['MovieId'].unique().shape
+=======
 
 test['MovieId'].unique().shape
 train['MovieId'].unique().shape
@@ -106,12 +118,39 @@ header = {
 data = splitter(DF = ratings_df, **header)
 
 Xtr, Xtst, train_df, test_df, map = data.stratified_split()
+<<<<<<< HEAD
+=======
+
+
+train_df.head()
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
+
+test_df.head()
+
+<<<<<<< HEAD
+train['MovieId'].shape
+test['MovieId'].shape
+
+#----------------------------------------------------------------------------------------------
+
+header = {
+        "col_user": "userID",
+        "col_item": "MovieId",
+        "col_rating": "Rating",
+    }
+
+data = splitter(DF = ratings_df, **header)
+
+Xtr, Xtst = data.stratified_split()
+>>>>>>> 3e56b7b20f83c9080d1b2ccfc68c834e27ebc64d
 
 
 train_df.head()
 
 test_df.head()
 
+=======
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
 #Check the number of elements
 (Xtr !=0).sum()
 (Xtst !=0).sum()
@@ -141,22 +180,45 @@ zero_test/total *100
 #===========================
 
 model = RBM(hidden_units= 500, save_model=True, keep_prob= .7, training_epoch = 10, **header)
+<<<<<<< HEAD
 
 model.fit(Xtr,Xtst)
 
 
 
 #predict
+<<<<<<< HEAD
+=======
+top_k_df =  model.recommend_k_items(Xtr)
+=======
+
+model.fit(Xtr,Xtst)
+
+
+
+#predict
+>>>>>>> 3e56b7b20f83c9080d1b2ccfc68c834e27ebc64d
 top_k = 10
 results, top_items =  model.recommend_k_items(Xtr, map)
 
 results.head(10)
+<<<<<<< HEAD
+=======
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
+>>>>>>> 3e56b7b20f83c9080d1b2ccfc68c834e27ebc64d
 
 #Check if the mapping is correct
 [ map[1][top_items[0][i]] for i in range(10) ]
 
 
 #----------------------------------Create a user report with recommendations-----------------------------------------
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+usr_id = 0
+=======
+>>>>>>> 067ef48d3a6cf61d910955dac2e2a792e5ae92f7
+>>>>>>> 3e56b7b20f83c9080d1b2ccfc68c834e27ebc64d
 
 usr_mv_like = np.where(vp[usr_id]==2)
 mv_id = (np.asanyarray(usr_mv_like)+1).flatten()

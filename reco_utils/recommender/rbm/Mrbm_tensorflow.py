@@ -347,7 +347,7 @@ class RBM:
 
         return phv, h_
 
-        #sample the visible units
+    #sample the visible units
     def sample_v(self, h):
 
         '''
@@ -633,6 +633,7 @@ class RBM:
             #precision_train, self.trained_param = sess.run([Clacc, tf.trainable_variables()], feed_dict={self.v: xtr})
             #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
+
             if self.save_model_:
                 saver.save(sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
@@ -646,6 +647,7 @@ class RBM:
         #print('MAP on the train set', precision_train)
         #print('Total precision on the test set', precision_test)
         #print('train/test difference', precision_train - precision_test)
+
 
     #=========================
     # Inference modules
@@ -742,7 +744,6 @@ class RBM:
                 }
             )
         , top_items)
-
 
 
 

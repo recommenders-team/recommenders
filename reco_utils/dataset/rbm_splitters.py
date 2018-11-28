@@ -13,6 +13,7 @@ import random
 import math
 
 import itertools
+
 from scipy.sparse import coo_matrix
 import logging
 
@@ -220,7 +221,7 @@ class splitter:
 
         self.gen_index()
 
-        map = [self.map_back_users, self.map_back_items]
+        maps = [self.map_back_users, self.map_back_items]
 
         self.gen_affinity_matrix()
 
