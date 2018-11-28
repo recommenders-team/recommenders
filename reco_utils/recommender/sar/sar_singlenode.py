@@ -459,7 +459,13 @@ class SARSingleNodeReference:
 
         # do final sort
         if sort_top_k:
-            results = results.sort_values(by=self.col_rating, ascending=False)
+            results = (
+                results.sort_values(
+                    by=[self.col_user, self.col_rating], ascending=False
+                )
+                .groupby(self.col_user)
+                .apply(lambda x: x)
+            )
 
         # format the dataframe in the end to conform to Suprise return type
         log.info("Formatting output")
