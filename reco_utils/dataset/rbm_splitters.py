@@ -12,6 +12,7 @@ import numpy as np
 import random
 import math
 
+import itertools
 from scipy.sparse import coo_matrix
 import logging
 
@@ -168,49 +169,44 @@ class splitter:
 
 
 
-    def map_back(self, aff_matrix):
+    def map_back_sparse(self, X):
 
         '''
         Map back the user/affinity matrix to a pd dataframe
 
         '''
+        m, n = X.shape
 
-        top_items = np.reshape(np.array(top_items), -1)
-        top_scores = np.reshape(np.array(top_scores), -1)
+        #1) Create a DF from a sparse matrix
+        #obtain the non zero items
+        items  = [ np.asanyarray(np.where(X[i,:] !=0 )).flatten() for i in range(m)]
+        ratings = [X[i, items[i]] for i in range(m)] #obtain the non-zero ratings
 
-        #generates userids
+        #reates user ids following the DF format
         userids = []
-        for i in range(1, m+1):
-            userids.extend([i]*top_k)
+        for i in range(0, m):
+            userids.extend([i]*len(items[i]) )
 
-        #create dataframe
-        results = pd.DataFrame.from_dict(
+        #Flatten the lists to follow the DF input format
+        items = list(itertools.chain.from_iterable(items))
+        ratings = list(itertools.chain.from_iterable(ratings))
+
+        #create a df
+        out_df = pd.DataFrame.from_dict(
             {
-                self.col_user: userids,
-                self.col_item: top_items,
-                self.col_rating: top_scores,
+                self.col_user  : userids,
+                self.col_item  : items,
+                self.col_rating: ratings,
             }
         )
 
-        # remap user and item indices to IDs
-        results[self.col_user] = results[self.col_user].map(self.map_back_users)
-        results[self.col_item] = results[self.col_item].map(self.map_back_items)
+        #2) map back user/item ids to their original value
 
-        # format the dataframe in the end to conform to Suprise return type
-        log.info("Formatting output")
+        out_df[self.col_user] = out_df[self.col_user].map(self.map_back_users)
+        out_df[self.col_item] = out_df[self.col_item].map(self.map_back_items)
 
-        # reformatting the dataset for the output
-        return (
-            results[[self.col_user, self.col_item, self.col_rating]]
-            .rename(columns={self.col_rating: PREDICTION_COL})
-            .astype(
-                {
-                    self.col_user: _user_item_return_type(),
-                    self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type(),
-                }
-            )
-        )
+        return out_df
+
 
     #====================================
     #Data splitters
@@ -256,4 +252,4 @@ class splitter:
 
         del idx, sub_el, idx_tst
 
-        return Xtr , Xtst, map
+        return Xtr , Xtst, self.map_back_sparse(Xtr), self.map_back_sparse(Xtst), map
