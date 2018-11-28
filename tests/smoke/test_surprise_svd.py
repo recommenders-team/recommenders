@@ -24,10 +24,10 @@ def test_surprise_svd_smoke(notebooks):
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
     df = nb.dataframe
     result_rmse = df.loc[df["name"] == "rmse", "value"].values[0]
-    assert result_rmse == pytest.approx(0.40, TOL)
+    assert result_rmse == pytest.approx(0.96, TOL)
     result_mae = df.loc[df["name"] == "mae", "value"].values[0]
-    assert result_mae == pytest.approx(0.32, TOL)
+    assert result_mae == pytest.approx(0.75, TOL)
     result_rsquared = df.loc[df["name"] == "rsquared", "value"].values[0]
-    assert result_rsquared == pytest.approx(0.87, TOL)
+    assert result_rsquared == pytest.approx(0.29, TOL)
     result_exp_var = df.loc[df["name"] == "exp_var", "value"].values[0]
-    assert result_exp_var == pytest.approx(0.87, TOL)
+    assert result_exp_var == pytest.approx(0.29, TOL)

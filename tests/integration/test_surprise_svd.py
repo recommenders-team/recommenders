@@ -14,7 +14,7 @@ TOL = 0.5
 @pytest.mark.parametrize(
     "size, result_list",
     [
-        ("1m", [0.48, 0.38, 0.80, 0.80]),
+        ("1m", [0.89, 0.70, 0.36, 0.36]),
         # ("10m", [0.56, 0.43, 0.72, 0.72]),  # works but pretty long
     ],
 )
