@@ -238,6 +238,7 @@ def test_userpred(
             demo_usage_data[header["col_user"]] == sar_settings["TEST_USER_ID"]
         ],
         top_k=10,
+        sort_top_k=True
     )
     test_items = list(test_results[header["col_item"]])
     test_scores = np.array(test_results["prediction"])
