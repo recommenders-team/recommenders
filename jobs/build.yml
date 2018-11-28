@@ -4,8 +4,12 @@ jobs:
   pool: ${{ parameters.pool }}
   strategy:
     matrix:
-      Python36:
+      Python36-cpu:
         python.version: '3.6'
+        mode: 
+      Python36-spark:
+        python.version: '3.6'
+        mode: --pyspark
 
     maxParallel: 4
 
@@ -23,7 +27,7 @@ jobs:
      condition: eq(variables['Agent.OS'], 'Linux')
      displayName: Add conda to PATH (Linux)
 
-  -  bash: ./scripts/generate_conda_file.sh
+  -  bash: ./scripts/generate_conda_file.sh $(mode)
      displayName: generate yaml
     
   -  bash: conda env create --quiet --name Recommender --file conda_bare.yaml
