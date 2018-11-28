@@ -6,11 +6,13 @@ jobs:
     matrix:
       Python36-cpu:
         python.version: '3.6'
-        mode: 
+        args: 
+        mode: python
         condafile: conda_bare.yaml
       Python36-spark:
         python.version: '3.6'
-        mode: --pyspark
+        args: --pyspark
+        mode: pyspark
         condafile: conda_pyspark.yaml
 
     maxParallel: 4
@@ -29,7 +31,7 @@ jobs:
      condition: eq(variables['Agent.OS'], 'Linux')
      displayName: Add conda to PATH (Linux)
 
-  -  bash: ./scripts/generate_conda_file.sh $(mode)
+  -  bash: ./scripts/generate_conda_file.sh $(args)
      displayName: generate yaml
     
   -  bash: |
@@ -39,22 +41,13 @@ jobs:
   -  bash: |
       source activate Recommender
       pip install pytest
-      python -m pytest --junitxml=unit/test-results-smoke-cpu.xml tests/smoke/test_notebooks_python.py
-      python -m pytest --junitxml=unit/test-results-integration-cpu.xml tests/integration/test_notebooks_python.py
-     displayName: 'Unit tests - CPU'
-     condition: eq(variables['mode'], '')
-
-  -  bash: |
-      source activate Recommender
-      pip install pytest
-      python -m pytest --junitxml=unit/test-results-smoke-pyspark.xml tests/smoke/test_notebooks_pyspark.py
-      python -m pytest --junitxml=unit/test-results-integration-pyspark.xml tests/integration/test_notebooks_pyspark.py
-     displayName: 'Unit tests - PySpark'
-     condition: eq(variables['mode'], '--pyspark')
+      python -m pytest --junitxml=unit/test-results-smoke-$(mode).xml tests/smoke/test_notebooks_$(mode).py
+      python -m pytest --junitxml=unit/test-results-integration-$(mode).xml tests/integration/test_notebooks_$(mode).py
+     displayName: 'Unit tests'
 
 
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: '**/test-results.xml'
+      testResultsFiles: '**/test-results*.xml'
       testRunTitle: 'Python $(python.version)'
     condition: succeededOrFailed()
