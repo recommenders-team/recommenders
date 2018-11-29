@@ -707,7 +707,7 @@ class RBM:
             then item2 will be recommended. Finally, a dataframe is generated containing the first top_k items,
             in decreasing score order. A map_back dictionary is used to relate the recommended matrix elements
             to their IDs in the original dataframe.
-             
+
         '''
 
         if self.save_model_: #if true, restore the computational graph from a trained session
@@ -782,45 +782,3 @@ class RBM:
                 }
             )
         )
-
-
-
-    #Inference from a trained model
-    def predict(self, df):
-
-        '''
-        Prediction: A training example is used to activate the hidden units that, in turns, produce new ratings for the
-        visible units, both for the rated and unrated examples.
-
-        Args:
-            x: example from dataset
-
-        Returns:
-            pred: inferred values
-
-        '''
-        #Load a model
-        saver = tf.train.Saver()
-
-        x = self.gen_ranking_matrix(df) #generate the user_affinity matrix
-        m, n = x.shape #dimension of the input: m= N_users, n= N_items
-
-        with tf.Session() as sess:
-
-            saved_files = saver.restore(saved_sess, self.save_path_)
-
-            #Sampling
-            _, h_ = self.sample_h(self.v) #sample h
-
-            #sample v
-            phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
-            pvh = self.Pm(phi_h) #conditional probability of v given h
-
-            v_  = self.M_sampling(pvh) #sample the value of the visible units
-
-            #evaluate v on the data
-            vp, p = sess.run([v_, pvh], feed_dict={self.v: x})
-
-        saved_sess.close()
-
-        return vp, p
