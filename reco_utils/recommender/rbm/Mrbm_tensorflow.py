@@ -648,7 +648,7 @@ class RBM:
         #print('Total precision on the test set', precision_test)
         #print('train/test difference', precision_train - precision_test)
 
-        return self.sess
+        
 
     #=========================
     # Inference modules
