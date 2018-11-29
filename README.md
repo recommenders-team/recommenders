@@ -41,7 +41,6 @@ The [Data Notebooks](notebooks/01_data) detail how to prepare and split data pro
 
 | Notebook | Description | 
 | --- | --- | 
-| [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
 | [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
 
 The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
