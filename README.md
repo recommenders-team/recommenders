@@ -17,7 +17,9 @@ This repository provides examples and best practices for building recommendation
 
 Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
 
-The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
+The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow - both AI and operationalization (O16N) parts. 
+
+A few Azure services / products are recommended for scalable data storage ([Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)), model development ([Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/), [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/), [Azure Machine Learning Services](https://azure.microsoft.com/en-us/services/machine-learning-service/)), and model opertionalization ([Azure Kubernetes Services]()https://azure.microsoft.com/en-us/services/kubernetes-service/). 
 
 ![workflow](https://zhledata.blob.core.windows.net/misc/recommender_workflow.png)
 
