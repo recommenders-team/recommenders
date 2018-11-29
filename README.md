@@ -61,7 +61,7 @@ The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deplo
 
 ## Benchmarks
 
-Here we benchmark the algorithms available in this repository.
+Here we benchmark the algorithms available in this repository. A notebook for reproducing the benchmarking results can be found [here](notebooks/00_quick_start/benchmark.ipynb).
 
 **Benchmark setup**
 * Objective
