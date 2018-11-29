@@ -308,6 +308,7 @@ class RBM:
             self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
             self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
 
+
     #===================
     #Sampling
     #===================
@@ -599,43 +600,42 @@ class RBM:
         init_g = tf.global_variables_initializer() #Initialize all variables
 
         #Start TF session on default graph
-        with tf.Session() as sess:
+        self.sess = tf.Session()
 
-            sess.run(init_g)
+        self.sess.run(init_g)
 
-            #start loop over training epochs
-            for i in range(self.epochs):
+        #start loop over training epochs
+        for i in range(self.epochs):
 
-                epoch_tr_err =0 #initialize the training error for each epoch to zero
-                per= (i/self.epochs)*100 #current percentage of the total #epochs
+            epoch_tr_err =0 #initialize the training error for each epoch to zero
+            per= (i/self.epochs)*100 #current percentage of the total #epochs
 
-                #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
-                if per !=0 and per %epoch_sample[l] == 0:
-                    k +=1
-                    l +=1
-                    v_k = self.G_sampling(k)
+            #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
+            if per !=0 and per %epoch_sample[l] == 0:
+                k +=1
+                l +=1
+                v_k = self.G_sampling(k)
 
-                #minibatches (to implement: TF data pipeline for better performance)
-                minibatches = self.random_mini_batches(xtr)
+            #minibatches (to implement: TF data pipeline for better performance)
+            minibatches = self.random_mini_batches(xtr)
 
-                for minib in minibatches:
+            for minib in minibatches:
 
-                    _, batch_err = sess.run([opt, Mserr], feed_dict={self.v:minib})
+                _, batch_err = self.sess.run([opt, Mserr], feed_dict={self.v:minib})
 
-                    epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
+                epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-                if i % 10==0:
-                    print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
+            if i % 10==0:
+                print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
-                #write metrics acros epohcs
-                Mse_train.append(epoch_tr_err) # mse training error per training epoch
+            #write metrics acros epohcs
+            Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             #precision_train, self.trained_param = sess.run([Clacc, tf.trainable_variables()], feed_dict={self.v: xtr})
             #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
-
-            if self.save_model_:
-                saver.save(sess, self.save_path_ + '/rbm_model_saver.ckpt')
+        if self.save_model_:
+            saver.save(sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
@@ -648,10 +648,21 @@ class RBM:
         #print('Total precision on the test set', precision_test)
         #print('train/test difference', precision_train - precision_test)
 
+        return self.sess
 
     #=========================
     # Inference modules
     #=========================
+
+    def trained_param(self,x):
+
+        with tf.variable_scope('Network_parameters', reuse = True):
+
+            self.w  = tf.get_variable('weight')
+            self.bv = tf.get_variable('v_bias')
+            self.bh = tf.get_variable('h_bias')
+
+        return self.w, self.bv, self.bh
 
     def eval_out(self,x):
 
@@ -667,7 +678,7 @@ class RBM:
         return v_, pvh_
 
 
-    def recommend_k_items(self, x, map, top_k=10):
+    def recommend_k_items(self, x, maps, top_k=10):
 
         '''
         Returns the top-k items ordered by a relevancy score
@@ -683,24 +694,24 @@ class RBM:
 
         '''
 
-        if self.save_model_:
-            #if True, load a trained model
-            saver = tf.train.Saver()
-
         m, n = x.shape #dimension of the input: m= N_users, n= N_items
 
-        with tf.Session() as sess:
+        if self.save_model_: #if true, restore the computational graph from a trained session
+            saver = tf.train.Saver()
+            self.sess = tf.Session()
+            saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
 
-            saved_files = saver.restore(sess,  self.save_path_ + '/rbm_model_saver.ckpt')
-            v_, pvh_ = self.eval_out(x)
+        v_, pvh_ = self.eval_out(x) #evaluate the ratings and the associated probabilities
 
-            #evaluate v on the data
-            vp, pvh= sess.run([v_, pvh_], feed_dict={self.v: x})
+        #evaluate v_ and pvh_ on the input data
+        vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.v: x})
 
         pv= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
         #evaluate the score
         score =  np.multiply(vp, pv)
+
+        #----------------------Return the results as a P dataframe------------------------------------
 
         top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
         top_scores = score[np.arange(score.shape[0])[:, None], top_items] #get top k scores
@@ -722,8 +733,8 @@ class RBM:
             }
         )
 
-        map_back_users = map[0]
-        map_back_items = map[1]
+        map_back_users = maps[0]
+        map_back_items = maps[1]
 
         # remap user and item indices to IDs
         results[self.col_user] = results[self.col_user].map(map_back_users)
@@ -743,7 +754,7 @@ class RBM:
                     PREDICTION_COL: _predict_column_type(),
                 }
             )
-        , top_items)
+        )
 
 
 
