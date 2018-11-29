@@ -49,7 +49,7 @@ The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations o
 | --- | --- | 
 | [als_deep_dive](notebooks/02_modeling/als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
 | [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
-
+| [surprise_deep_dive](notebooks/02_modeling/surprise_svd_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
 
 The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
 
