@@ -542,7 +542,8 @@ class RBM:
         '''
         Fit method
 
-        Main component of the algo; once instantiate, it generates the computational graph
+        Main component of the algo; once instantiate, it generates the computational graph and performs
+        model training
 
         Args:
             Xtr: the user/affinity matrix for the train set
@@ -553,6 +554,7 @@ class RBM:
             precision: the mean average precision over the entire dataset
 
         Baic mechanics:
+
 
         '''
 
@@ -648,7 +650,6 @@ class RBM:
         #print('Total precision on the test set', precision_test)
         #print('train/test difference', precision_train - precision_test)
 
-        
 
     #=========================
     # Inference modules
