@@ -203,7 +203,7 @@ class RBM:
         '''
 
         num = [tf.exp(tf.multiply(tf.constant(k, dtype='float32'),phi)) for k in range(1,self.r_+1)]
-        den = 1+tf.reduce_sum(num, axis=0)
+        den = tf.reduce_sum(num, axis=0)
 
         pr = tf.div(num, den)
 
