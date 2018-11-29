@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 '''
-Splitters and user/affinity matrix generation utilities
+Splitters and user/affinity matrix generation utilities for the RBM algo
 
 '''
 
@@ -253,4 +253,4 @@ class splitter:
 
         del idx, sub_el, idx_tst
 
-        return Xtr , Xtst, self.map_back_sparse(Xtr), self.map_back_sparse(Xtst), map
+        return Xtr , Xtst, self.map_back_sparse(Xtr), self.map_back_sparse(Xtst), maps
