@@ -75,7 +75,7 @@ Here we benchmark the algorithms available in this repository. A notebook for re
   * The splitting is random. 
 * Model training
   * A recommendation model is trained by using each of the collaborative filtering algorithms. 
-  * It is known that exhaustive search of the hyper parameter space is cubersome. Instead, empirical parameter values reported in the literature that generated optimal results are used.
+  * It is known that exhaustive search of the hyper parameter space is cubersome. Instead, empirical parameter values reported in the literature that generated optimal results are used. These parameter values are obtained from [here](http://mymedialite.net/examples/datasets.html).
   * In the recommendations, items that have been rated by the users are removed.
 * Evaluation metrics
   * Ranking metrics 
