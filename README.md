@@ -63,19 +63,42 @@ The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deplo
 
 Here we benchmark the algorithms available in this repository.
 
-Following list settings used for the benchmarking experimentation:
+**Benchmark setup**
+* Objective
+  * To compare how each collaborative filtering algorithm perform in recommending list of items.
+* Datasets
+  * Movielens 100K.
+  * Movielens 1M.
+  * Movielens 10M.
+  * Movielens 20M.
+* Data split
+  * The data is split into train and test sets.
+  * The split ratios are 75-25 for train and test datasets.
+  * The splitting is random. 
+* Model training
+  * A recommendation model is trained by using each of the collaborative filtering algorithms. 
+  * It is known that exhaustive search of the hyper parameter space is cubersome. Instead, empirical parameter values reported in the literature that generated optimal results are used.
+  * In the recommendations, items that have been rated by the users are removed.
+* Evaluation metrics
+  * Ranking metrics 
+    * Precision@k.
+    * Recall@k.
+    * Normalized discounted cumulative gain@k (NDCG@k).
+    * Mean-average-precision (MAP). 
+  * Rating metrics
+    * Root Mean Squared Error (RMSE).
+    * Mean Average Error (MAE).
+    * R Squared.
+    * Explained Variance.
+  * In the ranking evaluation metrics above, k = 10. 
+  * Rating metrics do not apply to SAR algorithm, because it does not predict ratings in the same scale as that in the original data.
+  
+**Benchmark environment**
 * The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
-    * The size of the DSVM is Standard NC6s_v2. It has 6 vCPUs, 112 GB memory and 1 K80 GPU.
-    * Algorithms that do not apply with GPU accelerations are run on CPU instead. Spark ALS is run in local standalone mode.
-* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10.
-* SAR Single Node only has ranking metrics because these algorithms do not predict explicit ratings with the same scale of those in the original input data. Surprise SVD only has rating metrics.
-* The hyper parameters of the algorithms are:
-   * `ALS(rank=40,maxIter=15,alpha=0.1,regParam=0.01,coldStartStrategy='drop',nonnegative=True)`
-   * `SVD(random_state=0, n_factors=200, n_epochs=30, verbose=True)`
-   * `SARSingleNodeReference(remove_seen=True, similarity_type="jaccard", time_decay_coefficient=30, time_now=None, timedecay_formula=True)`
-   * **NOTE**: We selected these parameters to roughly indicate the performance of these algorithms. However, the parameters we used are not necessarily optimal.
+  * The size of the DSVM is Standard NC6s_v2. It has 6 vCPUs, 112 GB memory and 1 K80 GPU.
+  * Algorithms that do not apply with GPU accelerations are run on CPU instead. Spark ALS is run in local standalone mode.
 
-**Benchmark comparing performance metrics**
+**Benchmark results**
 <table>
  <tr>
   <th>Dataset</th>
