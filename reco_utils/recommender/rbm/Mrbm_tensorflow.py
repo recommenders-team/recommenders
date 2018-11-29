@@ -654,18 +654,15 @@ class RBM:
     # Inference modules
     #=========================
 
-    def trained_param(self,x):
-
-        with tf.variable_scope('Network_parameters', reuse = True):
-
-            self.w  = tf.get_variable('weight')
-            self.bv = tf.get_variable('v_bias')
-            self.bh = tf.get_variable('h_bias')
-
-        return self.w, self.bv, self.bh
-
     def eval_out(self,x):
 
+        '''
+        Implement multinomial sampling from a trained model
+
+        Args:
+
+
+        '''
         #Sampling
         _, h_ = self.sample_h(self.v) #sample h
 
@@ -688,18 +685,29 @@ class RBM:
             top_k: the number of items to recommend
 
         Returns:
-            top_x:
+            results: a pd dataframe containing the top_k elements togetehr with their score
 
         Basic mechanics:
 
         '''
 
-        m, n = x.shape #dimension of the input: m= N_users, n= N_items
-
         if self.save_model_: #if true, restore the computational graph from a trained session
+
+            m, self.Nv_ = x.shape #dimension of the input: m= N_users, Nv= N_items
+
+            self.r_= x.max() #defines the rating scale, e.g. 1 to 5
+
+            tf.reset_default_graph()
+
+            self.placeholder()
+            self.init_parameters()
+
             saver = tf.train.Saver()
+
             self.sess = tf.Session()
             saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
+
+        else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
 
         v_, pvh_ = self.eval_out(x) #evaluate the ratings and the associated probabilities
 
