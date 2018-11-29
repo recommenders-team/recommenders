@@ -681,14 +681,33 @@ class RBM:
         Returns the top-k items ordered by a relevancy score
 
         Args:
-            x: input user/affinity matrix. Note that this can be a single vector, i.e. the ratings of a single user
+            x: input user/affinity matrix. Note that this can be a single vector, i.e. the ratings of a single user.
             top_k: the number of items to recommend
+            maps : dictionaries used to associate the original item/user IDs when constructing the pd dataframe
 
         Returns:
             results: a pd dataframe containing the top_k elements togetehr with their score
 
         Basic mechanics:
+            The method can be called either within the same session or by restoring a previous session from file.
+            If save_model is true, a graph is generated and then populated with the pre trained values of the
+            parameters. Otherwise, the default session used during training is usedself.
 
+            The method samples new ratings from the learned joint distribution, together with their probabilities.
+            The input x must have the same number of columns of the one used for training the model, i.e. the same
+            number of items, but it can have an arbitrary number of rows (users).
+
+            A recommendation score is evaluated by taking the element-wise product between the rating and the
+            associated probability. For example, we could have the following situation:
+
+                    rating     probaility     score
+            item1     5           0.5          2.5
+            item2     4           0.8          3.2
+
+            then item2 will be recommended. Finally, a dataframe is generated containing the first top_k items,
+            in decreasing score order. A map_back dictionary is used to relate the recommended matrix elements
+            to their IDs in the original dataframe.
+             
         '''
 
         if self.save_model_: #if true, restore the computational graph from a trained session
