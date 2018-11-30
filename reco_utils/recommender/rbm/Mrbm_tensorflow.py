@@ -92,7 +92,7 @@ class RBM:
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
-        CD_protocol = [50, 70, 80,90]
+        CD_protocol = [50, 70, 80,90,100],
         save_model= False,
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
@@ -124,7 +124,7 @@ class RBM:
         self.save_model_ = save_model
         self.save_path_ = save_path
 
-        self.debug_ = debug #if true, functions print their control paramters and/or outputs 
+        self.debug_ = debug #if true, functions print their control paramters and/or outputs
 
     #=========================
     #Helper functions
@@ -326,7 +326,7 @@ class RBM:
 
     '''
 
-    #sample the hidden units
+    #sample the hidden units given the visibles
     def sample_h(self, vv):
 
         '''
@@ -352,7 +352,7 @@ class RBM:
 
         return phv, h_
 
-    #sample the visible units
+    #sample the visible units given the hidden
     def sample_v(self, h):
 
         '''
@@ -407,7 +407,7 @@ class RBM:
 
     #1) Gibbs Sampling
 
-    def G_sampling(self,k):
+    def G_sampling(self):
 
         '''
         Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary RBM we need to
@@ -422,19 +422,19 @@ class RBM:
             v_k: sampled value of the visible unit at step k
 
         '''
-        v_k = self.v #initialize the value of the visible units at step k=0 on the data
+        self.v_k = self.v #initialize the value of the visible units at step k=0 on the data
 
         if self.debug_:
-            print('CV step', k)
+            print('CD step', self.k)
 
-        for i in range(k): #k_sampling
-            _, h_k = self.sample_h(v_k)
-            _ ,v_k = self.sample_v(h_k)
+        for i in range(self.k): #k_sampling
+            _, h_k = self.sample_h(self.v_k)
+            _ ,self.v_k = self.sample_v(h_k)
 
-        return v_k
+        #return v_k
 
     #2) Contrastive divergence
-    def Losses(self, vv, v_k):
+    def Losses(self, vv):
 
         '''
         Loss functions
@@ -451,7 +451,7 @@ class RBM:
 
         with tf.variable_scope('losses'):
 
-            obj  = tf.reduce_mean(self.Fv(vv) - self.Fv(v_k))
+            obj  = tf.reduce_mean(self.Fv(vv) - self.Fv(self.v_k))
 
         return obj
 
@@ -481,7 +481,7 @@ class RBM:
         return pvh, vp
 
     #Metrics
-    def map(self, vp):
+    def precision(self, vp):
 
         '''
         Train/Test Mean average precision
@@ -498,7 +498,7 @@ class RBM:
             elements per row.
 
         '''
-        with tf.name_scope('accuracy'):
+        with tf.name_scope('precision'):
 
             #1) define and apply the mask
             mask= tf.not_equal(self.v,0)
@@ -539,15 +539,23 @@ class RBM:
 
         return err
 
-    def CD(self, i):
 
+    def Gibbs_protocol(self, i):
+        '''
+        Gibbs protocol
+
+        '''
         per= (i/self.epochs)*100 #current percentage of the total #epochs
 
-
-
+        if per !=0:
+            if per >= self.CD_protol_[self.l] and per <= self.CD_protol_[self.l+1] :
+                self.k +=1
+                self.l +=1
+                self.G_sampling()
 
         if self.debug_:
-            print('percentage of epochs covered so far', per)
+            print('percentage of epochs covered so far %f2' %(per))
+
 
     #=========================
     # Training ops
@@ -589,33 +597,30 @@ class RBM:
         self.init_parameters()
 
         #--------------Sampling protocol for Gibbs sampling-----------------------------------
-        k=1 #initialize the G_sampling step
-        l=0 #initialize epoch_sample index
-        #Percentage of the total number of training epochs after which the k-step is increased
-
-
+        self.k=1 #initialize the G_sampling step
+        self.l=0 #initialize epoch_sample index
         #-------------------------Main algo---------------------------
 
-        v_k = self.G_sampling(k) #sampled value of the visible units
+        self.G_sampling() #sampled value of the visible units
 
-        obj = self.Losses(self.v, v_k) #objective function
+        obj = self.Losses(self.v) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
         opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
-        #initialize online metrics
         Mse_train = [] #Lists to collect the metrics across each epochs
 
         #Metrics
-        Mserr  = self.msr_error(v_k)
-        #Clacc  = self.map(v_k)
+        Mserr  = self.msr_error(self.v_k)
+        #Clacc  = self.precision(v_k)
 
         if self.save_model_:
             saver = tf.train.Saver() #save the model to file
 
-        init_g = tf.global_variables_initializer() #Initialize all variables
+        init_g = tf.global_variables_initializer() #Initialize all variables in the graph
+
         #Start TF session on default graph
         self.sess = tf.Session()
         self.sess.run(init_g)
@@ -624,14 +629,7 @@ class RBM:
         for i in range(self.epochs):
 
             epoch_tr_err =0 #initialize the training error for each epoch to zero
-
-
-            #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
-            if per !=0 and per %epoch_sample[l] == 0:
-                k +=1
-                l +=1
-                v_k = self.G_sampling(k)
-
+            self.Gibbs_protocol(i) #updates the number of sampling steps in Gibb sampling
 
             #minibatches (to implement: TF data pipeline for better performance)
             minibatches = self.random_mini_batches(xtr)
