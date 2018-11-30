@@ -24,7 +24,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 %matplotlib inline
 
-import time as tm
+#import time as tm
 
 #ML Libraries and methods
 import tensorflow as tf
@@ -102,6 +102,13 @@ header = {
 data = splitter(DF = ratings_df, **header)
 
 Xtr, Xtst, train_df, test_df, map = data.stratified_split()
+
+mask = np.not_equal(Xtr,0)
+
+X = Xtr.copy()
+
+X[mask] =10
+
 
 train['MovieId'].shape
 test['MovieId'].shape
