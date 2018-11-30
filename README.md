@@ -17,7 +17,9 @@ This repository provides examples and best practices for building recommendation
 
 Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
 
-The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
+The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow - both AI and operationalization (O16N) parts. 
+
+A few Azure services / products are recommended for scalable data storage ([Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)), model development ([Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/), [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (DSVM), [Azure Machine Learning Services](https://azure.microsoft.com/en-us/services/machine-learning-service/)), and model opertionalization ([Azure Kubernetes Services](https://azure.microsoft.com/en-us/services/kubernetes-service/) (AKS)). 
 
 ![workflow](https://zhledata.blob.core.windows.net/misc/recommender_workflow.png)
 
@@ -31,15 +33,12 @@ The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickl
 | Notebook | Description | 
 | --- | --- | 
 | [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
-| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
-| [sar_pyspark_movielens](notebooks/00_quick_start/sar_pyspark_movielens.ipynb) | Utilizing the SAR algorithm to power movie ratings in a PySpark environment.
-| [sarplus_movielens](notebooks/00_quick_start/sarplus_movielens.ipynb) | Utilizing the SAR+ algorithm to power movie ratings in a PySpark environment.
+| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
 
 The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
 
 | Notebook | Description | 
 | --- | --- | 
-| [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
 | [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
 
 The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
@@ -47,8 +46,7 @@ The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations o
 | Notebook | Description | 
 | --- | --- | 
 | [als_deep_dive](notebooks/02_modeling/als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
-| [sar_deep_dive](notebooks/02_modeling/sar_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
-
+| [surprise_deep_dive](notebooks/02_modeling/surprise_svd_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
 
 The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
 
@@ -58,24 +56,50 @@ The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommen
 
 The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
 
+| Notebook | Description | 
+| --- | --- | 
+| [als_movie_o16n](notebooks/04_operationalize/als_movie_o16n.ipynb) | End-to-end examples demonstrate how to build, evaluate, and deploye a Spark ALS based movie recommender with Azure services such as [Databricks](https://azure.microsoft.com/en-us/services/databricks/), [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction), and [Kubernetes Services](https://azure.microsoft.com/en-us/services/kubernetes-service/).
 
 ## Benchmarks
 
-Here we benchmark the algorithms available in this repository.
+Here we benchmark the algorithms available in this repository. A notebook for reproducing the benchmarking results can be found [here](notebooks/00_quick_start/benchmark.ipynb).
 
-Following list settings used for the benchmarking experimentation:
+**Benchmark setup**
+* Objective
+  * To compare how each collaborative filtering algorithm perform in recommending list of items.
+* Datasets
+  * Movielens 100K.
+  * Movielens 1M.
+  * Movielens 10M.
+  * Movielens 20M.
+* Data split
+  * The data is split into train and test sets.
+  * The split ratios are 75-25 for train and test datasets.
+  * The splitting is random. 
+* Model training
+  * A recommendation model is trained by using each of the collaborative filtering algorithms. 
+  * It is known that exhaustive search of the hyper parameter space is cubersome. Instead, empirical parameter values reported in the literature that generated optimal results are used. These parameter values are obtained from [here](http://mymedialite.net/examples/datasets.html).
+  * In the recommendations, items that have been rated by the users are removed.
+* Evaluation metrics
+  * Ranking metrics 
+    * Precision@k.
+    * Recall@k.
+    * Normalized discounted cumulative gain@k (NDCG@k).
+    * Mean-average-precision (MAP). 
+  * Rating metrics
+    * Root Mean Squared Error (RMSE).
+    * Mean Average Error (MAE).
+    * R Squared.
+    * Explained Variance.
+  * In the ranking evaluation metrics above, k = 10. 
+  * Rating metrics do not apply to SAR algorithm, because it does not predict ratings in the same scale as that in the original data.
+  
+**Benchmark environment**
 * The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
-    * The size of the DSVM is Standard NC6s_v2. It has 6 vCPUs, 112 GB memory and 1 K80 GPU.
-    * Algorithms that do not apply with GPU accelerations are run on CPU instead. Spark ALS is run in local standalone mode.
-* Ranking metrics (i.e., precision, recall, MAP, and NDCG) are evaluated with k equal to 10.
-* SAR Single Node only has ranking metrics because these algorithms do not predict explicit ratings with the same scale of those in the original input data. Surprise SVD only has rating metrics.
-* The hyper parameters of the algorithms are:
-   * `ALS(rank=40,maxIter=15,alpha=0.1,regParam=0.01,coldStartStrategy='drop',nonnegative=True)`
-   * `SVD(random_state=0, n_factors=200, n_epochs=30, verbose=True)`
-   * `SARSingleNodeReference(remove_seen=True, similarity_type="jaccard", time_decay_coefficient=30, time_now=None, timedecay_formula=True)`
-   * **NOTE**: We selected these parameters to roughly indicate the performance of these algorithms. However, the parameters we used are not necessarily optimal.
+  * The size of the DSVM is Standard NC6s_v2. It has 6 vCPUs, 112 GB memory and 1 K80 GPU.
+  * Algorithms that do not apply with GPU accelerations are run on CPU instead. Spark ALS is run in local standalone mode.
 
-**Benchmark comparing performance metrics**
+**Benchmark results**
 <table>
  <tr>
   <th>Dataset</th>

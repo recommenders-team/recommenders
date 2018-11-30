@@ -212,9 +212,9 @@ class SARSingleNodeReference:
 
             # optimization - pre-compute time decay exponential which multiplies the ratings
             expo_fun = lambda x: np.exp(
-                -np.log(2.)
+                -np.log(2.0)
                 * (self.time_now - x)
-                / (self.time_decay_coefficient * 24. * 3600)
+                / (self.time_decay_coefficient * 24.0 * 3600)
             )
             df["exponential"] = expo_fun(df[self.col_timestamp].values)
 
@@ -387,7 +387,7 @@ class SARSingleNodeReference:
 
         log.info("done training")
 
-    def recommend_k_items(self, test, top_k=10, **kwargs):
+    def recommend_k_items(self, test, top_k=10, sort_top_k=False, **kwargs):
         """Recommend top K items for all users which are in the test set
 
         Args:
@@ -458,7 +458,14 @@ class SARSingleNodeReference:
         results[self.col_item] = results[self.col_item].map(self.index2item)
 
         # do final sort
-        results = results.sort_values(by=self.col_rating, ascending=False)
+        if sort_top_k:
+            results = (
+                results.sort_values(
+                    by=[self.col_user, self.col_rating], ascending=False
+                )
+                .groupby(self.col_user)
+                .apply(lambda x: x)
+            )
 
         # format the dataframe in the end to conform to Suprise return type
         log.info("Formatting output")
@@ -551,3 +558,4 @@ class SARSingleNodeReference:
                 }
             )
         )
+
