@@ -630,7 +630,7 @@ class RBM:
 
         #Metrics
         Mserr  = self.msr_error(self.v_k)
-        #Clacc  = self.precision(v_k)
+        Clacc  = self.precision(self.v_k)
 
         if self.save_model_:
             saver = tf.train.Saver() #save the model to file
@@ -645,7 +645,8 @@ class RBM:
         for i in range(self.epochs):
 
             epoch_tr_err =0 #initialize the training error for each epoch to zero
-            self.Gibbs_protocol(i) #updates the number of sampling steps in Gibb sampling
+
+            self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
             #minibatches (to implement: TF data pipeline for better performance)
             minibatches = self.random_mini_batches(xtr)
@@ -662,11 +663,12 @@ class RBM:
             #write metrics acros epohcs
             Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-        #precision_train = sess.run(Clacc, feed_dict={self.v: xtr})
-        #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
+        #Evaluates precision on the train and test set     
+        precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
+        precision_test = self.sess.run(Clacc, feed_dict={self.v:xtst})
 
         if self.save_model_:
-            saver.save(sess, self.save_path_ + '/rbm_model_saver.ckpt')
+            saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
         #Print training error as a function of epochs
         plt.plot(Mse_train, label= 'train')
@@ -675,9 +677,9 @@ class RBM:
         plt.legend(ncol=1)
 
         #Final precision scores
-        #print('MAP on the train set', precision_train)
-        #print('Total precision on the test set', precision_test)
-        #print('train/test difference', precision_train - precision_test)
+        print('precision on the train set', precision_train)
+        print('precision on the test set', precision_test)
+        print('train/test difference', precision_train - precision_test)
 
 
     #=========================
