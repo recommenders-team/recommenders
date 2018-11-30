@@ -601,7 +601,6 @@ class RBM:
             self.seen_mask = np.not_equal(xtr,0)
 
         num_minibatches = int(m / self.minibatch) #number of minibatches
-        #self.epochs = self.epochs +1 #add one epoch
 
         tf.reset_default_graph()
         #----------------------Initialize all parameters----------------
@@ -663,7 +662,7 @@ class RBM:
             #write metrics acros epohcs
             Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-        #Evaluates precision on the train and test set     
+        #Evaluates precision on the train and test set
         precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
         precision_test = self.sess.run(Clacc, feed_dict={self.v:xtst})
 
@@ -762,10 +761,6 @@ class RBM:
 
         v_, pvh_ = self.eval_out(x) #evaluate the ratings and the associated probabilities
 
-        if self.remove_seen_:
-            v_   = tf.where(self.seen_mask, x= tf.squared_difference(self.v, vp), y= tf.zeros_like(self.v) )
-            pvh_ = tf.where(self.seen_mask, x= tf.squared_difference(self.v, vp), y= tf.zeros_like(self.v) )
-
         #evaluate v_ and pvh_ on the input data
         vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.v: x})
 
@@ -775,6 +770,11 @@ class RBM:
         score =  np.multiply(vp, pv)
 
         #----------------------Return the results as a P dataframe------------------------------------
+        if self.remove_seen:
+            #is true removes items from the train set by seeting them to zero
+            vp[self.seen_mask] = 0
+            pv[self.seen_mask] = 0
+            score[self.seen_mask] = 0
 
         top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
         top_scores = score[np.arange(score.shape[0])[:, None], top_items] #get top k scores
