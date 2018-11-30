@@ -15,7 +15,7 @@ sys.path.append("../../")
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import division
-from scipy import sparse
+#from scipy import sparse
 
 
 import os
@@ -132,7 +132,7 @@ zero_test/total *100
 #Train the model
 #===========================
 
-model = RBM(hidden_units= 500, save_model= False, keep_prob= .7, training_epoch = 10, **header)
+model = RBM(hidden_units= 500, save_model= False, keep_prob= .7, debug = True, training_epoch = 13, **header)
 
 model.fit(Xtr,Xtst)
 
