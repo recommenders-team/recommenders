@@ -132,7 +132,7 @@ zero_test/total *100
 #Train the model
 #===========================
 
-model = RBM(hidden_units= 500, save_model= False, keep_prob= .7, debug = True, training_epoch = 13, **header)
+model = RBM(hidden_units= 500, save_model= False, keep_prob= .7, training_epoch = 10, **header)
 
 model.fit(Xtr,Xtst)
 

@@ -81,7 +81,7 @@ class RBM:
     #initialize class parameters
     def __init__(
         self,
-        remove_seen=True,
+        remove_seen= False,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
@@ -92,13 +92,14 @@ class RBM:
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
+        display_epoch = 10,
         CD_protocol = [50, 70, 80,90,100],
         save_model= False,
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
     ):
 
-        self.remove_seen = remove_seen #if True it removes from predictions elements in the train set
+        self.remove_seen_ = remove_seen #if True it removes from predictions elements in the train set
 
         #pandas DF parameters
         self.col_rating = col_rating
@@ -116,7 +117,9 @@ class RBM:
         #approx between  1 - 120. setting to 1 correspods to stochastic gradient descent, and
         #it is considerably slower.Good performance is achieved for a size of ~100.
         self.minibatch= minibatch_size
-        self.epochs= training_epoch  #number of epochs used to train the model
+        self.epochs= training_epoch+1  #number of epochs used to train the model
+        self.display = display_epoch #number of epochs to show the mse error during training
+
         self.CD_protol_ = CD_protocol #protocol to increase Gibbs samplin's step. Array containing the
                                       #percentage of the total training epoch when the step increases by 1
 
@@ -544,6 +547,15 @@ class RBM:
         '''
         Gibbs protocol
 
+        Args:
+            i: current epoch in the loop
+
+        Returns: G_sampling --> v_k evaluated at k steps
+
+        Basic mechanics:
+            If the current epoch i is in the interval specified in the training protocol CD_protol_, the number of
+            steps in Gibbs sampling (k) is incremented by one and G_sampling is updated accordingly.
+
         '''
         per= (i/self.epochs)*100 #current percentage of the total #epochs
 
@@ -585,6 +597,9 @@ class RBM:
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
 
+        if self.remove_seen_:
+            self.seen_mask = np.not_equal(xtr,0)
+
         num_minibatches = int(m / self.minibatch) #number of minibatches
         #self.epochs = self.epochs +1 #add one epoch
 
@@ -606,7 +621,8 @@ class RBM:
         obj = self.Losses(self.v) #objective function
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj) #optimizer
+        #Instantiate the optimizer
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj)
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
@@ -640,14 +656,14 @@ class RBM:
 
                 epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-            if i % 1==0:
+            if i % self.display ==0:
                 print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
             #write metrics acros epohcs
             Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-            #precision_train, self.trained_param = sess.run([Clacc, tf.trainable_variables()], feed_dict={self.v: xtr})
-            #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
+        #precision_train = sess.run(Clacc, feed_dict={self.v: xtr})
+        #precision_test = sess.run(Clacc, feed_dict={self.v:xtst})
 
         if self.save_model_:
             saver.save(sess, self.save_path_ + '/rbm_model_saver.ckpt')
@@ -743,6 +759,10 @@ class RBM:
         else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
 
         v_, pvh_ = self.eval_out(x) #evaluate the ratings and the associated probabilities
+
+        if self.remove_seen_:
+            v_   = tf.where(self.seen_mask, x= tf.squared_difference(self.v, vp), y= tf.zeros_like(self.v) )
+            pvh_ = tf.where(self.seen_mask, x= tf.squared_difference(self.v, vp), y= tf.zeros_like(self.v) )
 
         #evaluate v_ and pvh_ on the input data
         vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.v: x})
