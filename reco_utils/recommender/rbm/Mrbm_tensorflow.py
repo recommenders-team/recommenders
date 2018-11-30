@@ -92,6 +92,7 @@ class RBM:
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
+        CD_protocol = [50, 70, 80,90]
         save_model= False,
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
@@ -116,11 +117,14 @@ class RBM:
         #it is considerably slower.Good performance is achieved for a size of ~100.
         self.minibatch= minibatch_size
         self.epochs= training_epoch  #number of epochs used to train the model
+        self.CD_protol_ = CD_protocol #protocol to increase Gibbs samplin's step. Array containing the
+                                      #percentage of the total training epoch when the step increases by 1
 
         #Options to save the model for future use
         self.save_model_ = save_model
         self.save_path_ = save_path
 
+        self.debug_ = debug #if true, functions print their control paramters and/or outputs 
 
     #=========================
     #Helper functions
@@ -420,6 +424,9 @@ class RBM:
         '''
         v_k = self.v #initialize the value of the visible units at step k=0 on the data
 
+        if self.debug_:
+            print('CV step', k)
+
         for i in range(k): #k_sampling
             _, h_k = self.sample_h(v_k)
             _ ,v_k = self.sample_v(h_k)
@@ -532,6 +539,15 @@ class RBM:
 
         return err
 
+    def CD(self, i):
+
+        per= (i/self.epochs)*100 #current percentage of the total #epochs
+
+
+
+
+        if self.debug_:
+            print('percentage of epochs covered so far', per)
 
     #=========================
     # Training ops
@@ -562,7 +578,7 @@ class RBM:
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
 
         num_minibatches = int(m / self.minibatch) #number of minibatches
-        self.epochs = self.epochs +1 #add one epoch
+        #self.epochs = self.epochs +1 #add one epoch
 
         tf.reset_default_graph()
         #----------------------Initialize all parameters----------------
@@ -576,7 +592,7 @@ class RBM:
         k=1 #initialize the G_sampling step
         l=0 #initialize epoch_sample index
         #Percentage of the total number of training epochs after which the k-step is increased
-        epoch_sample = [50, 70, 80,90]
+
 
         #-------------------------Main algo---------------------------
 
@@ -600,23 +616,22 @@ class RBM:
             saver = tf.train.Saver() #save the model to file
 
         init_g = tf.global_variables_initializer() #Initialize all variables
-
         #Start TF session on default graph
         self.sess = tf.Session()
-
         self.sess.run(init_g)
 
         #start loop over training epochs
         for i in range(self.epochs):
 
             epoch_tr_err =0 #initialize the training error for each epoch to zero
-            per= (i/self.epochs)*100 #current percentage of the total #epochs
+
 
             #Increase the G_sampling step k at each learning percentage specified in the epoch_sample vector (to improve)
             if per !=0 and per %epoch_sample[l] == 0:
                 k +=1
                 l +=1
                 v_k = self.G_sampling(k)
+
 
             #minibatches (to implement: TF data pipeline for better performance)
             minibatches = self.random_mini_batches(xtr)
@@ -627,7 +642,7 @@ class RBM:
 
                 epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-            if i % 10==0:
+            if i % 1==0:
                 print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
             #write metrics acros epohcs
