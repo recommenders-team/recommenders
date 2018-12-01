@@ -81,7 +81,7 @@ class RBM:
     #initialize class parameters
     def __init__(
         self,
-        remove_seen= False,
+        remove_seen= True,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
