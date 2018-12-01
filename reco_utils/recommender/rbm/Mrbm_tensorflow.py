@@ -133,6 +133,30 @@ class RBM:
     #Helper functions
     #========================
 
+    # stateful time function
+    def time(self):
+        """
+        Time a particular section of the code - call this once to set the state somewhere
+        in the code, then call it again to return the elapsed time since last call.
+        Call again to set the time and so on...
+
+        Returns:
+             None if we're not in debug mode - doesn't do anything
+             False if timer started
+             time in seconds since the last time time function was called
+        """
+        if self.debug:
+            if self.start_time is None:
+                self.start_time = time()
+                return False
+            else:
+                answer = time() - self.start_time
+                # reset state
+                self.start_time = None
+                return answer
+        else:
+            return None
+
     #Binomial sampling
     def B_sampling(self,p):
 
@@ -594,6 +618,8 @@ class RBM:
 
         '''
 
+        self.time()
+
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
 
@@ -661,6 +687,10 @@ class RBM:
 
             #write metrics acros epohcs
             Mse_train.append(epoch_tr_err) # mse training error per training epoch
+
+        self.time()
+
+        log.info("done training")
 
         #Evaluates precision on the train and test set
         precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
@@ -740,6 +770,7 @@ class RBM:
             to their IDs in the original dataframe.
 
         '''
+        self.time()
 
         if self.save_model_: #if true, restore the computational graph from a trained session
 
@@ -769,7 +800,13 @@ class RBM:
         #evaluate the score
         score =  np.multiply(vp, pv)
 
+        self.time()
+
         #----------------------Return the results as a P dataframe------------------------------------
+        log.info('Formatting ouput')
+
+        self.time()
+
         if self.remove_seen:
             #is true removes items from the train set by seeting them to zero
             vp[self.seen_mask] = 0
@@ -804,9 +841,6 @@ class RBM:
         results[self.col_item] = results[self.col_item].map(map_back_items)
 
         # format the dataframe in the end to conform to Suprise return type
-        log.info("Formatting output")
-
-        # reformatting the dataset for the output
         return (
             results[[self.col_user, self.col_item, self.col_rating]]
             .rename(columns={self.col_rating: PREDICTION_COL})
@@ -818,3 +852,4 @@ class RBM:
                 }
             )
         )
+        self.time()
