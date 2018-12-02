@@ -81,7 +81,6 @@ class RBM:
     #initialize class parameters
     def __init__(
         self,
-        remove_seen= True,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
@@ -98,8 +97,6 @@ class RBM:
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
     ):
-
-        self.remove_seen_ = remove_seen #if True it removes from predictions elements in the train set
 
         #pandas DF parameters
         self.col_rating = col_rating
@@ -736,7 +733,7 @@ class RBM:
         return v_, pvh_
 
 
-    def recommend_k_items(self, x, maps, top_k=10):
+    def recommend_k_items(self, x, maps, top_k=10, remove_seen = True):
 
         '''
         Returns the top-k items ordered by a relevancy score
@@ -807,7 +804,7 @@ class RBM:
 
         self.time()
 
-        if self.remove_seen:
+        if remove_seen:
             #is true removes items from the train set by seeting them to zero
             vp[self.seen_mask] = 0
             pv[self.seen_mask] = 0
