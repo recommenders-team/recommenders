@@ -50,6 +50,8 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
 
+import time as tm 
+
 #import default parameters
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -96,6 +98,7 @@ class RBM:
         save_model= False,
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
+        with_metrics = True,
     ):
 
         #pandas DF parameters
@@ -125,7 +128,11 @@ class RBM:
         self.save_path_ = save_path
 
         self.debug_ = debug #if true, functions print their control paramters and/or outputs
-
+        self.with_metrics_ = with_metrics #compute msre and accuracy during training 
+        
+        #Initialize the start time 
+        self.start_time = None
+        
     #=========================
     #Helper functions
     #========================
@@ -142,17 +149,20 @@ class RBM:
              False if timer started
              time in seconds since the last time time function was called
         """
-        if self.debug:
-            if self.start_time is None:
-                self.start_time = time()
-                return False
-            else:
-                answer = time() - self.start_time
-                # reset state
-                self.start_time = None
-                return answer
+        #if self.debug_:
+                       
+        if self.start_time is None:
+            self.start_time = tm.time()
+            return False
+        
         else:
-            return None
+            answer = tm.time() - self.start_time
+            # reset state
+            self.start_time = None
+            return answer
+        
+        #else:
+        #    return None
 
     #Binomial sampling
     def B_sampling(self,p):
@@ -455,7 +465,6 @@ class RBM:
             _, h_k = self.sample_h(self.v_k)
             _ ,self.v_k = self.sample_v(h_k)
 
-        #return v_k
 
     #2) Contrastive divergence
     def Losses(self, vv):
@@ -478,7 +487,33 @@ class RBM:
             obj  = tf.reduce_mean(self.Fv(vv) - self.Fv(self.v_k))
 
         return obj
+    
+    
+    def Gibbs_protocol(self, i):
+        '''
+        Gibbs protocol
 
+        Args:
+            i: current epoch in the loop
+
+        Returns: G_sampling --> v_k evaluated at k steps
+
+        Basic mechanics:
+            If the current epoch i is in the interval specified in the training protocol CD_protol_, the number of
+            steps in Gibbs sampling (k) is incremented by one and G_sampling is updated accordingly.
+
+        '''
+        per= (i/self.epochs)*100 #current percentage of the total #epochs
+
+        if per !=0:
+            if per >= self.CD_protol_[self.l] and per <= self.CD_protol_[self.l+1] :
+                self.k +=1
+                self.l +=1
+                self.G_sampling()
+
+        if self.debug_:
+            print('percentage of epochs covered so far %f2' %(per))
+            
     #================================================
     # model performance (online metrics)
     #================================================
@@ -564,32 +599,6 @@ class RBM:
         return err
 
 
-    def Gibbs_protocol(self, i):
-        '''
-        Gibbs protocol
-
-        Args:
-            i: current epoch in the loop
-
-        Returns: G_sampling --> v_k evaluated at k steps
-
-        Basic mechanics:
-            If the current epoch i is in the interval specified in the training protocol CD_protol_, the number of
-            steps in Gibbs sampling (k) is incremented by one and G_sampling is updated accordingly.
-
-        '''
-        per= (i/self.epochs)*100 #current percentage of the total #epochs
-
-        if per !=0:
-            if per >= self.CD_protol_[self.l] and per <= self.CD_protol_[self.l+1] :
-                self.k +=1
-                self.l +=1
-                self.G_sampling()
-
-        if self.debug_:
-            print('percentage of epochs covered so far %f2' %(per))
-
-
     #=========================
     # Training ops
     #=========================
@@ -614,14 +623,13 @@ class RBM:
 
 
         '''
-
+        
+        self.seen_mask = np.not_equal(xtr,0)
+        
         self.time()
 
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
-
-        if self.remove_seen_:
-            self.seen_mask = np.not_equal(xtr,0)
 
         num_minibatches = int(m / self.minibatch) #number of minibatches
 
@@ -648,64 +656,87 @@ class RBM:
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
-        Mse_train = [] #Lists to collect the metrics across each epochs
+        if self.with_metrics_:#if true (default) returns evaluation metrics 
+        
+            Mse_train = [] #Lists to collect the metrics across each epochs
 
-        #Metrics
-        Mserr  = self.msr_error(self.v_k)
-        Clacc  = self.precision(self.v_k)
+            #Metrics
+            Mserr  = self.msr_error(self.v_k)
+            Clacc  = self.precision(self.v_k)
 
-        if self.save_model_:
-            saver = tf.train.Saver() #save the model to file
+        if self.save_model_: #save the model to file
+            saver = tf.train.Saver() 
 
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
         #Start TF session on default graph
         self.sess = tf.Session()
         self.sess.run(init_g)
+        
+        if self.with_metrics_: #this condition is for benchmarking, remove for production 
 
-        #start loop over training epochs
-        for i in range(self.epochs):
+            #start loop over training epochs
+            for i in range(self.epochs):
 
-            epoch_tr_err =0 #initialize the training error for each epoch to zero
+                epoch_tr_err =0 #initialize the training error for each epoch to zero
 
-            self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
+                self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
-            #minibatches (to implement: TF data pipeline for better performance)
-            minibatches = self.random_mini_batches(xtr)
+                #minibatches (to implement: TF data pipeline for better performance)
+                minibatches = self.random_mini_batches(xtr)
 
-            for minib in minibatches:
+                for minib in minibatches:
 
-                _, batch_err = self.sess.run([opt, Mserr], feed_dict={self.v:minib})
+                    _, batch_err = self.sess.run([opt, Mserr], feed_dict={self.v:minib})
 
-                epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
+                    epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-            if i % self.display ==0:
-                print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
+                if i % self.display ==0:
+                    print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
 
-            #write metrics acros epohcs
-            Mse_train.append(epoch_tr_err) # mse training error per training epoch
+                #write metrics acros epochs
+                Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-        self.time()
+            #Evaluates precision on the train and test set
+            precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
+            precision_test = self.sess.run(Clacc, feed_dict={self.v:xtst})
+        
+            elapsed = self.time()
+            
+            log.info("done training, Training time %f2" %elapsed)
+        
+            #Display training error as a function of epochs
+            plt.plot(Mse_train, label= 'train')
+            plt.ylabel('msr_error', size= 'x-large')
+            plt.xlabel('epochs', size = 'x-large')
+            plt.legend(ncol=1)
 
-        log.info("done training")
+            #Final precision scores
+            print('precision on the train set', precision_train)
+            print('precision on the test set', precision_test)
+            print('train/test difference', precision_train - precision_test)
+        
+        else:
+            
+            #start loop over training epochs
+            for i in range(self.epochs):
 
-        #Evaluates precision on the train and test set
-        precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
-        precision_test = self.sess.run(Clacc, feed_dict={self.v:xtst})
+                self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
-        if self.save_model_:
+                #minibatches (to implement: TF data pipeline for better performance)
+                minibatches = self.random_mini_batches(xtr)
+
+                for minib in minibatches:
+
+                    _ = self.sess.run(opt, feed_dict={self.v:minib})
+
+            elapsed = self.time()
+
+            log.info("done training, Training time %f2" %elapsed)
+                        
+        if self.save_model_: #if true, save the model to specified path 
             saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
-        #Print training error as a function of epochs
-        plt.plot(Mse_train, label= 'train')
-        plt.ylabel('msr_error', size= 'x-large')
-        plt.xlabel('epochs', size = 'x-large')
-        plt.legend(ncol=1)
-
-        #Final precision scores
-        print('precision on the train set', precision_train)
-        print('precision on the test set', precision_test)
-        print('train/test difference', precision_train - precision_test)
 
 
     #=========================
@@ -797,12 +828,12 @@ class RBM:
         #evaluate the score
         score =  np.multiply(vp, pv)
 
-        self.time()
+        elapsed = self.time()
+        
+        log.info("Done recommending items, time %f2" %elapsed)
 
         #----------------------Return the results as a P dataframe------------------------------------
         log.info('Formatting ouput')
-
-        self.time()
 
         if remove_seen:
             #is true removes items from the train set by seeting them to zero
@@ -849,4 +880,3 @@ class RBM:
                 }
             )
         )
-        self.time()
