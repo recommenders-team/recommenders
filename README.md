@@ -1,41 +1,39 @@
-
-| Build Type | Branch | Status |  | Branch | Status | 
-| --- | --- | --- | --- | --- | --- | 
-| **Linux CPU** |  master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4792)  || staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | 
-| **Linux GPU** | master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_gpu?branchName=master)](https://msdata.visualstudio.com/DefaultCollection/AlgorithmsAndDataScience/_build/latest?definitionId=4997) | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_gpu_staging?branchName=staging)](https://msdata.visualstudio.com/DefaultCollection/AlgorithmsAndDataScience/_build/latest?definitionId=4998)|
-| **Linux Spark** | master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4804) | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4805)|
-
-*NOTE: the tests are executed every night, we use pytest for testing python [utilities]((reco_utils)) and papermill for testing [notebooks](notebooks)*.
-
 # Recommenders 
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learning to illustrate four key tasks: 
 1. Preparing and loading data for each recommender algorithm. 
 2. Using different algorithms such as Smart Adaptive Recommendation (SAR), Alternating Least Square (ALS), etc., for building recommender models. 
 3. Evaluating algorithms with offline metrics. 
-4. Operationalizing models in a production environment. The examples work across Python + CPU and PySpark environments, and contain guidance as to which algorithm to run in which environment based on scale and other requirements.
+4. Operationalizing models in a production environment on Azure.
 
-Several utilities are provided in [reco_utils](reco_utils) which will help accelerate experimenting with and building recommendation systems. These utility functions are used to load datasets (i.e., via Pandas DataFrames in python and via Spark DataFrames in PySpark) in the manner expected by different algorithms, evaluate different model outputs, split training data, and perform other common tasks. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
+Several utilities are provided in [reco_utils](reco_utils) to do common tasks such as loading datasets in the manner expected by different algorithms, evaluate model outputs, and split training data. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
 
-The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow - both AI and operationalization (O16N) parts. 
-
-A few Azure services / products are recommended for scalable data storage ([Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)), model development ([Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/), [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (DSVM), [Azure Machine Learning Services](https://azure.microsoft.com/en-us/services/machine-learning-service/)), and model opertionalization ([Azure Kubernetes Services](https://azure.microsoft.com/en-us/services/kubernetes-service/) (AKS)). 
-
-![workflow](https://zhledata.blob.core.windows.net/misc/recommender_workflow.png)
-
-## Environment Setup
-* Please see the [setup guide](SETUP.md).
+## Getting Started
+Please see the [setup guide](SETUP.md) to setup including GPU or Spark dependencies or to [setup on Azure Databricks](/SETUP.md#setup-guide-for-azure-databricks). To setup on your local machine:
+1. Install [Anaconda Python 3.6](https://conda.io/miniconda.html)
+2. Run the generate conda file script and create a conda environment:   
+    ```
+    cd Recommenders
+    ./scripts/generate_conda_file.sh
+    conda env create -n reco -f conda_bare.yaml  
+    ```
+3. Activate the conda environment and register it with Jupyter:
+    ```
+    source activate my_env_name
+    python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
+    ```
+4. Run the [ALS Movielens Quickstart](notebooks/00_quick_start/als_pyspark_movielens.ipynb) notebook.
 
 ## Notebooks Overview
 
-The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
+[Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
 
 | Notebook | Description | 
 | --- | --- | 
 | [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
 | [sar_python_cpu_movielens](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
 
-The [Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
+[Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
 
 | Notebook | Description | 
 | --- | --- | 
@@ -60,44 +58,21 @@ The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deplo
 | --- | --- | 
 | [als_movie_o16n](notebooks/04_operationalize/als_movie_o16n.ipynb) | End-to-end examples demonstrate how to build, evaluate, and deploye a Spark ALS based movie recommender with Azure services such as [Databricks](https://azure.microsoft.com/en-us/services/databricks/), [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction), and [Kubernetes Services](https://azure.microsoft.com/en-us/services/kubernetes-service/).
 
+## Workflow
+The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
+
+![workflow](/reco_workflow.png)
+
+A few Azure services are recommended for scalable data storage ([Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction)), model development ([Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/), [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (DSVM), [Azure Machine Learning Services](https://azure.microsoft.com/en-us/services/machine-learning-service/)), and model opertionalization ([Azure Kubernetes Services](https://azure.microsoft.com/en-us/services/kubernetes-service/) (AKS)). 
+
+![architecture](/reco-arch.png)
+
+
 ## Benchmarks
 
 Here we benchmark the algorithms available in this repository. A notebook for reproducing the benchmarking results can be found [here](notebooks/00_quick_start/benchmark.ipynb).
 
-**Benchmark setup**
-* Objective
-  * To compare how each collaborative filtering algorithm perform in recommending list of items.
-* Datasets
-  * Movielens 100K.
-  * Movielens 1M.
-  * Movielens 10M.
-  * Movielens 20M.
-* Data split
-  * The data is split into train and test sets.
-  * The split ratios are 75-25 for train and test datasets.
-  * The splitting is random. 
-* Model training
-  * A recommendation model is trained by using each of the collaborative filtering algorithms. 
-  * It is known that exhaustive search of the hyper parameter space is cubersome. Instead, empirical parameter values reported in the literature that generated optimal results are used. These parameter values are obtained from [here](http://mymedialite.net/examples/datasets.html).
-  * In the recommendations, items that have been rated by the users are removed.
-* Evaluation metrics
-  * Ranking metrics 
-    * Precision@k.
-    * Recall@k.
-    * Normalized discounted cumulative gain@k (NDCG@k).
-    * Mean-average-precision (MAP). 
-  * Rating metrics
-    * Root Mean Squared Error (RMSE).
-    * Mean Average Error (MAE).
-    * R Squared.
-    * Explained Variance.
-  * In the ranking evaluation metrics above, k = 10. 
-  * Rating metrics do not apply to SAR algorithm, because it does not predict ratings in the same scale as that in the original data.
-  
-**Benchmark environment**
-* The machine we used for the benchmark is an [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/).
-  * The size of the DSVM is Standard NC6s_v2. It has 6 vCPUs, 112 GB memory and 1 K80 GPU.
-  * Algorithms that do not apply with GPU accelerations are run on CPU instead. Spark ALS is run in local standalone mode.
+We benchmark on the Movielens dataset at 100K, 1M, 10M, and 20M sizes. Data is split into train/test sets at at 75/25 ratio and splitting is random. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Algorithms that do not apply with GPU accelerations are run on CPU instead. Spark ALS is run in local standalone mode.
 
 **Benchmark results**
 <table>
@@ -252,7 +227,6 @@ Here we benchmark the algorithms available in this repository. A notebook for re
 
 </table>
 
-
 **Benchmark comparing time metrics**
 
 In order to benchmark the run-time performance, the algorithms are run on the same data set and the elapsed time for training and testing are collected as follows.
@@ -332,7 +306,15 @@ In order to benchmark the run-time performance, the algorithms are run on the sa
 </table>
 
 ## Contributing
-
 This project welcomes contributions and suggestions. Before contributing, please see our [contribution guidelines](CONTRIBUTING.md).
 
+
+## Build Status
+| Build Type | Branch | Status |  | Branch | Status | 
+| --- | --- | --- | --- | --- | --- | 
+| **Linux CPU** |  master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4792)  || staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | 
+| **Linux GPU** | master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_gpu?branchName=master)](https://msdata.visualstudio.com/DefaultCollection/AlgorithmsAndDataScience/_build/latest?definitionId=4997) | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_gpu_staging?branchName=staging)](https://msdata.visualstudio.com/DefaultCollection/AlgorithmsAndDataScience/_build/latest?definitionId=4998)|
+| **Linux Spark** | master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4804) | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4805)|
+
+*NOTE: the tests are executed every night, we use pytest for testing python [utilities]((reco_utils)) and papermill for testing [notebooks](notebooks)*.
 
