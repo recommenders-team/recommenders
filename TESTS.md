@@ -1,6 +1,6 @@
 # Tests
 
-This project use unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [setup](/SETUP.md)**. Click on the following menus to see more details:
+This project uses unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [setup](/SETUP.md)**. Click on the following menus to see more details:
 
 <details>
 <summary><strong><em>Unit tests</em></strong></summary>
