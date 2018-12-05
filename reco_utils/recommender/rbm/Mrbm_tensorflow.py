@@ -50,7 +50,7 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
 
-import time as tm 
+import time as tm
 
 #import default parameters
 from reco_utils.common.constants import (
@@ -128,11 +128,11 @@ class RBM:
         self.save_path_ = save_path
 
         self.debug_ = debug #if true, functions print their control paramters and/or outputs
-        self.with_metrics_ = with_metrics #compute msre and accuracy during training 
-        
-        #Initialize the start time 
+        self.with_metrics_ = with_metrics #compute msre and accuracy during training
+
+        #Initialize the start time
         self.start_time = None
-        
+
     #=========================
     #Helper functions
     #========================
@@ -145,50 +145,50 @@ class RBM:
         Call again to set the time and so on...
 
         Returns:
-             None if we're not in debug mode - doesn't do anything
-             False if timer started
-             time in seconds since the last time time function was called
+             if timer started time in seconds since the last time time function was called
         """
         #if self.debug_:
-                       
+
         if self.start_time is None:
             self.start_time = tm.time()
             return False
-        
+
         else:
             answer = tm.time() - self.start_time
             # reset state
             self.start_time = None
             return answer
-        
+
         #else:
         #    return None
 
     #Binomial sampling
-    def B_sampling(self,p):
+    def B_sampling(self,pr):
 
         '''
-        Sample from a Binomial distribution.
+        Sample from a Binomial distribution using acceptance/rejection method.
 
-        1) Extract a random number from a uniform distribution (U) and compare it with the unit's probability (P)
-        2) Choose 0 if P<U, 1 otherwise
+        1) Extract a random number from a uniform distribution (g) and compare it with
+            the unit's probability (pr)
+
+        2) Choose 0 if pr<g, 1 otherwise
 
         Args:
-            P: input conditional probability
-            U: Bernoulli probability used for comparison
+            pr: input conditional probability
+            g:  conditional probability used for comparison
 
         Returns:
-            h_samples: sampled units. The value is 1 if P>U and 0 otherwise. It is convenient to implement
-                       this condtivk = reco.G_sampling(k= 1)on using the relu function.
+            h_samples: sampled units. The value is 1 if pr>g and 0 otherwise. It is convenient
+                       to implement this condtion using the relu function.
 
         '''
         np.random.seed(1)
 
         #sample from a Bernoulli distribution with same dimensions as input distribution
-        g = np.random.uniform(size=p.shape[1] )
+        g = np.random.uniform(size= pr.shape[1] )
 
         #sample the
-        h_sampled = tf.nn.relu(tf.sign(p-g) )
+        h_sampled = tf.nn.relu(tf.sign(pr-g) )
 
         return h_sampled
 
@@ -487,8 +487,8 @@ class RBM:
             obj  = tf.reduce_mean(self.Fv(vv) - self.Fv(self.v_k))
 
         return obj
-    
-    
+
+
     def Gibbs_protocol(self, i):
         '''
         Gibbs protocol
@@ -513,7 +513,7 @@ class RBM:
 
         if self.debug_:
             print('percentage of epochs covered so far %f2' %(per))
-            
+
     #================================================
     # model performance (online metrics)
     #================================================
@@ -623,9 +623,9 @@ class RBM:
 
 
         '''
-        
+
         self.seen_mask = np.not_equal(xtr,0)
-        
+
         self.time()
 
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
@@ -656,8 +656,8 @@ class RBM:
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
-        if self.with_metrics_:#if true (default) returns evaluation metrics 
-        
+        if self.with_metrics_:#if true (default) returns evaluation metrics
+
             Mse_train = [] #Lists to collect the metrics across each epochs
 
             #Metrics
@@ -665,15 +665,15 @@ class RBM:
             Clacc  = self.precision(self.v_k)
 
         if self.save_model_: #save the model to file
-            saver = tf.train.Saver() 
+            saver = tf.train.Saver()
 
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
         #Start TF session on default graph
         self.sess = tf.Session()
         self.sess.run(init_g)
-        
-        if self.with_metrics_: #this condition is for benchmarking, remove for production 
+
+        if self.with_metrics_: #this condition is for benchmarking, remove for production
 
             #start loop over training epochs
             for i in range(self.epochs):
@@ -700,11 +700,11 @@ class RBM:
             #Evaluates precision on the train and test set
             precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
             precision_test = self.sess.run(Clacc, feed_dict={self.v:xtst})
-        
+
             elapsed = self.time()
-            
+
             log.info("done training, Training time %f2" %elapsed)
-        
+
             #Display training error as a function of epochs
             plt.plot(Mse_train, label= 'train')
             plt.ylabel('msr_error', size= 'x-large')
@@ -715,9 +715,9 @@ class RBM:
             print('precision on the train set', precision_train)
             print('precision on the test set', precision_test)
             print('train/test difference', precision_train - precision_test)
-        
+
         else:
-            
+
             #start loop over training epochs
             for i in range(self.epochs):
 
@@ -733,8 +733,8 @@ class RBM:
             elapsed = self.time()
 
             log.info("done training, Training time %f2" %elapsed)
-                        
-        if self.save_model_: #if true, save the model to specified path 
+
+        if self.save_model_: #if true, save the model to specified path
             saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
 
@@ -829,7 +829,7 @@ class RBM:
         score =  np.multiply(vp, pv)
 
         elapsed = self.time()
-        
+
         log.info("Done recommending items, time %f2" %elapsed)
 
         #----------------------Return the results as a P dataframe------------------------------------
