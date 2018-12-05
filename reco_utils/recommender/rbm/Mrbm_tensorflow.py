@@ -193,7 +193,7 @@ class RBM:
         return h_sampled
 
     #Multinomial sampling
-    def M_sampling(self, p):
+    def M_sampling(self, pr):
 
         '''
         Multinomial Sampling
@@ -216,9 +216,9 @@ class RBM:
         '''
         np.random.seed(1)
 
-        g = np.random.uniform(size=p.shape[2] )
+        g = np.random.uniform(size= pr.shape[2] )
 
-        samp = tf.nn.relu(tf.sign(p - g) )
+        samp = tf.nn.relu(tf.sign(pr - g) )
 
         v_samp = tf.cast( tf.argmax(samp, axis= 2)+1, 'float32')
 
