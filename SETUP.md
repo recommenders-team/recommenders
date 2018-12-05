@@ -98,6 +98,11 @@ We can register our created conda environment to appear as a kernel in the Jupyt
 ### Troubleshooting for the DSVM
 
 * We found that there could be problems if the Spark version of the machine is not the same as the one in the conda file. You will have to adapt the conda file to your machine. 
+* When running Spark on a single local node it is possible to run out of disk space as temporary files are written to the user's home directory. To avoid this we attached an additional disk to the DSVM and made modifications to the Spark configuration. This is done by including the following lines in the file at `/dsvm/tools/spark/current/conf/spark-env.sh`.
+```
+SPARK_LOCAL_DIRS=/mnt/.spark/scratch
+SPARK_MASTER_OPTS="-Dspark.worker.cleanup.enabled=true
+```
 
 ## Setup guide for Azure Databricks
 
