@@ -332,12 +332,17 @@ class RBM:
         during the training phase.
 
         Arguments:
-        Nv -- number of visible units (input layer)
-        Nh -- number of hidden units (latent variables of the model)
+            Nv: number of visible units (input layer)
+            Nh: number of hidden units (latent variables of the model)
 
         Returns:
-        Initialized weights and biases. We initialize the transition matrix by sampling from a
-        normal distribution with zero mean and given variance. The biases are Initialized to zero.
+            w: (Nv, Nh) correlation matrix initialized by sampling from a normal distribution with
+               zero mean and given variance init_stdv.
+           bv: (1, Nv) visible units' bias, initialized to zero.
+           bh: (1, Nh) hidden units' bias, initiliazed to zero.
+        
+            p: () momentum variable, initialized to a constant value = momentum. Note that this
+                variable is not trainable, i.e. is not going to be optimized.
 
         '''
 
@@ -349,7 +354,7 @@ class RBM:
             self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
             self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
 
-            self.p = tf.get_variable('momentum', shape= (), initializer = tf.constant_initializer(self.momentum), dtype= 'float32',trainable= False)
+            self.p = tf.get_variable('momentum', shape= (), initializer = tf.constant_initializer(self.momentum), dtype= 'float32', trainable= False)
 
 
     #===================
