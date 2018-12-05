@@ -1,8 +1,8 @@
 # Recommenders 
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on four key tasks: 
-1. [Data Prep](notebooks/01_data/README.md): Preparing and loading data for each recommender algorithm
-2. [Model](notebooks/02_modeling/README.md): Building models using various recommender algorithms such as Smart Adaptive Recommendation (SAR), Alternating Least Square (ALS), etc.
+1. [Data Prep](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
+2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Smart Adaptive Recommendation (SAR), Alternating Least Square (ALS), etc.
 3. [Evalute](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
 4. [Operationalize](notebooks/04_operationalize/README.md): Operationalizing models in a production environment on Azure
 
@@ -35,11 +35,11 @@ To setup on your local machine:
 | [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
 | [sar_python_cpu_movielens](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
 
-[Data Notebooks](notebooks/01_data) detail how to prepare and split data properly for recommendation systems
+[Data Notebooks](notebooks/01_prepare_data) detail how to prepare and split data properly for recommendation systems
 
 | Notebook | Description | 
 | --- | --- | 
-| [data_split](notebooks/01_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
+| [data_split](notebooks/01_prepare_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
 
 The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
 
