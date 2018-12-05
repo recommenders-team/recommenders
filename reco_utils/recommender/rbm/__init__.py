@@ -8,7 +8,7 @@ HIDDEN = 10
 KEEP_PROB = 0.7
 
 #Initial value of the momentum optimizer
-MOMENTUM = 0.9
+#MOMENTUM = 0.5
 
 #standard deviation for initializing the weights from a normal distribution with zero mean
 STDV =  0.05

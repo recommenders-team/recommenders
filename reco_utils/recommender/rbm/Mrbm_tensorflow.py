@@ -69,7 +69,7 @@ from reco_utils.recommender.rbm import (
     ALPHA,
     MINIBATCH,
     EPOCHS,
-    MOMENTUM,
+    #MOMENTUM,
     DEFAULTPATH,
     _user_item_return_type,
     _predict_column_type,
@@ -88,7 +88,7 @@ class RBM:
         col_rating=DEFAULT_RATING_COL,
         hidden_units= HIDDEN,
         keep_prob= KEEP_PROB,
-        momentum = MOMENTUM,
+        momentum = 0.92,
         init_stdv = STDV,
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
@@ -328,8 +328,7 @@ class RBM:
 
         '''
         This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
-        two bias vectors to initialize. We also initialize the momentum variable to be used
-        during the training phase.
+        two bias vectors to initialize. 
 
         Arguments:
             Nv: number of visible units (input layer)
@@ -341,9 +340,6 @@ class RBM:
            bv: (1, Nv) visible units' bias, initialized to zero.
            bh: (1, Nh) hidden units' bias, initiliazed to zero.
 
-            p: () momentum variable, initialized to a constant value = momentum. Note that this
-                variable is not trainable, i.e. is not going to be optimized.
-
         '''
 
         tf.set_random_seed(1) #set the seed for the random number generator
@@ -354,8 +350,7 @@ class RBM:
             self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
             self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
 
-            self.p = tf.get_variable('momentum', shape= (), initializer = tf.constant_initializer(self.momentum_), dtype= 'float32', trainable= False)
-
+            
 
     #===================
     #Sampling
@@ -521,7 +516,6 @@ class RBM:
                 self.k +=1
                 self.l +=1
                 self.G_sampling()
-                self.p_ = tf.assign_sub(self.p_, 0.1)
 
         if self.debug_:
             print('percentage of epochs covered so far %f2' %(per))
@@ -664,7 +658,7 @@ class RBM:
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
         #Instantiate the optimizer
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.p).minimize(loss= obj)
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj)
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
@@ -699,16 +693,16 @@ class RBM:
 
                 for minib in minibatches:
 
-                    _, batch_err, mom = self.sess.run([opt, Mserr, self.p_], feed_dict={self.v:minib})
+                    _, batch_err = self.sess.run([opt, Mserr], feed_dict={self.v:minib})
 
                     epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
                 if i % self.display ==0:
-                    print('training epoch %i rmse Train %f momentum %f' %(i, epoch_tr_err, mom) )
+                    print('training epoch %i rmse Train %f' %(i, epoch_tr_err) )
 
-                #write metrics acros epochs
+                #write metrics across epochs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
-
+                
             #Evaluates precision on the train and test set
             precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
             precision_test = self.sess.run(Clacc, feed_dict={self.v:xtst})
@@ -740,7 +734,7 @@ class RBM:
 
                 for minib in minibatches:
 
-                    _, mom_ = self.sess.run([opt, self.p_], feed_dict={self.v:minib})
+                    _, = self.sess.run(opt, feed_dict={self.v:minib})
 
             elapsed = self.time()
 
