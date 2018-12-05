@@ -116,7 +116,7 @@ class RBM:
         #size of the minibatch used in the random minibatches training. This should be set
         #approx between  1 - 120. setting to 1 correspods to stochastic gradient descent, and
         #it is considerably slower.Good performance is achieved for a size of ~100.
-        self.minibatch= minibatch_size
+        self.minibatch = minibatch_size
         self.epochs= training_epoch+1  #number of epochs used to train the model
         self.display = display_epoch #number of epochs to show the mse error during training
 
@@ -321,15 +321,15 @@ class RBM:
 
     #Initialize the placeholders for the visible units
     def placeholder(self):
-        self.v = tf.placeholder(shape= [None, self.Nv_], dtype= 'float32')
-        
-        
+        self.vu = tf.placeholder(shape= [None, self.Nv_], dtype= 'float32')
+
+
     #initialize the parameters of the model.
     def init_parameters(self):
 
         '''
         This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
-        two bias vectors to initialize. 
+        two bias vectors to initialize.
 
         Arguments:
             Nv: number of visible units (input layer)
@@ -351,7 +351,7 @@ class RBM:
             self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
             self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
 
-            
+
 
     #===================
     #Sampling
@@ -644,10 +644,19 @@ class RBM:
         #----------------------Initialize all parameters----------------
 
         log.info("Creating the computational graph")
-        #instantiate the computational graph
+
+        #create the visible units placeholder
         self.placeholder()
-        dataset = tf.data.Dataset.from_tensor_slices(self.v) 
-        
+
+        #Create data pipeline
+        dataset = tf.data.Dataset.from_tensor_slices(self.vu)
+        dataset = dataset.shuffle(buffer_size=100)
+        dataset = dataset.batch(batch_size= self.minibatch)
+
+        iter = dataset.make_initializable_iterator()
+        self.v = iter.get_next()
+
+        #initialize Network paramters
         self.init_parameters()
 
         #--------------Sampling protocol for Gibbs sampling-----------------------------------
@@ -682,6 +691,8 @@ class RBM:
         self.sess = tf.Session()
         self.sess.run(init_g)
 
+        self.sess.run(iter.initializer, feed_dict={self.vu: xtr})
+
         if self.with_metrics_: #this condition is for benchmarking, remove for production
 
             #start loop over training epochs
@@ -692,11 +703,11 @@ class RBM:
                 self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
                 #minibatches (to implement: TF data pipeline for better performance)
-                minibatches = self.random_mini_batches(xtr)
+                #minibatches = self.random_mini_batches(xtr)
 
-                for minib in minibatches:
+                for l in range(num_minibatches):
 
-                    _, batch_err = self.sess.run([opt, Mserr], feed_dict={self.v:minib})
+                    _, batch_err = self.sess.run([opt, Mserr])
 
                     epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
@@ -705,10 +716,12 @@ class RBM:
 
                 #write metrics across epochs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
-                
+
             #Evaluates precision on the train and test set
-            precision_train = self.sess.run(Clacc, feed_dict={self.v: xtr})
-            precision_test = self.sess.run(Clacc, feed_dict={self.v:xtst})
+            precision_train = self.sess.run(Clacc)
+
+            self.sess.run(iter.initializer, feed_dict={self.vu: xtst})
+            precision_test = self.sess.run(Clacc)
 
             elapsed = self.time()
 
