@@ -26,7 +26,7 @@ We use [Test Driven Development (TDD)](https://en.wikipedia.org/wiki/Test-driven
 
 Apart from unit tests, we also have nightly builds with smoke and integration tests. For more information about the differences, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
-You can find a guide on how to manually execute all the tests in the [TESTs.md](TESTS.md)
+You can find a guide on how to manually execute all the tests in the [TESTS.md](TESTS.md)
 
 #### Python and Docstrings Style
 We use the automatic style formatter [Black](https://github.com/ambv/black). See the installation guide for [VSCode](https://github.com/ambv/black#visual-studio-code) and [PyCharm](https://github.com/ambv/black#pycharm).

@@ -28,15 +28,15 @@ To setup on your local machine:
 
 ## Notebooks Overview
 
-The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
+- [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
 
-The [Data Notebooks](notebooks/01_prepare_data) detail how to prepare and split data properly for recommendation systems
+- [Data Notebooks](notebooks/01_prepare_data) detail how to prepare and split data properly for recommendation systems
 
-The [Modeling Notebooks](notebooks/02_modeling) deep dive into implementations of different recommender algorithms
+- [Modeling Notebooks](notebooks/02_modeling) deep dive into implementations of different recommender algorithms
 
-The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
+- [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
 
-The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
+- [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
 
 ## Benchmarks
 
