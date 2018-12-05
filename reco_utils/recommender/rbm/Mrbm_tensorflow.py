@@ -94,7 +94,7 @@ class RBM:
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
         display_epoch = 10,
-        CD_protocol = [50, 70, 80,90,100],
+        CD_protocol = [50, 70, 80, 90, 100],
         save_model= False,
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
@@ -120,7 +120,7 @@ class RBM:
         self.epochs= training_epoch+1  #number of epochs used to train the model
         self.display = display_epoch #number of epochs to show the mse error during training
 
-        self.CD_protol_ = CD_protocol #protocol to increase Gibbs samplin's step. Array containing the
+        self.CD_protol_ = CD_protocol #protocol to increase Gibbs sampling's step. Array containing the
                                       #percentage of the total training epoch when the step increases by 1
 
         #Options to save the model for future use
@@ -198,20 +198,21 @@ class RBM:
         '''
         Multinomial Sampling
 
-        For r classes, we sample r binomial distributions using the acceptance/Rejection method. This is possible
-        since each class is statistically independent form the otherself. Note that this is the same method used
-        in Numpy's random.multinomial() function.
+        For r classes, we sample r binomial distributions using the acceptance/Rejection method.
+        This is possible since each class is statistically independent from the other. Note that
+        this is the same method used in numpy's random.multinomial() function.
 
         Using broadcasting along the 3rd index, this function can be easily implemented
 
         Args:
-            p:  a distributions of shape (m, n, r), where m is the number of examples, n the number of features and
-                r the number of classes. p needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
+            pr:  a distributions of shape (m, n, r), where m is the number of examples, n the number
+                 of features and r the number of classes. pr needs to be normalized, i.e.
+                 sum_k p(k) = 1 for all m, at fixed n.
 
         Returns:
-            v_samp: an (m,n) array of sampled values from 1 to r . Given the sampled distribution of the type [0,1,0, ..., 0]
-            it returns the index of the value 1 . The outcome is index = argmax() + 1 to account for the fact that array indices
-            start from 0 .
+            v_samp: an (m,n) array of sampled values from 1 to r . Given the sampled distribution of
+            the type [0,1,0, ..., 0] it returns the index of the value 1 . The outcome is
+            index = argmax() + 1 to account for the fact that array indices start from 0 .
 
         '''
         np.random.seed(1)
@@ -327,7 +328,8 @@ class RBM:
 
         '''
         This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
-        two bias vector to initialize.
+        two bias vectors to initialize. We also initialize the momentum variable to be used
+        during the training phase.
 
         Arguments:
         Nv -- number of visible units (input layer)
@@ -336,6 +338,7 @@ class RBM:
         Returns:
         Initialized weights and biases. We initialize the transition matrix by sampling from a
         normal distribution with zero mean and given variance. The biases are Initialized to zero.
+
         '''
 
         tf.set_random_seed(1) #set the seed for the random number generator
@@ -345,6 +348,8 @@ class RBM:
             self.w  = tf.get_variable('weight',  [self.Nv_, self.Nh_], initializer = tf.random_normal_initializer(stddev=self.std, seed=1), dtype= 'float32' )
             self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
             self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
+
+            self.p = tf.get_variable('momentum', shape= (), initializer = tf.constant_initializer(self.momentum), dtype= 'float32',trainable= False)
 
 
     #===================
