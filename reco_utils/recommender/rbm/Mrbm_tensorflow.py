@@ -88,7 +88,7 @@ class RBM:
         col_rating=DEFAULT_RATING_COL,
         hidden_units= HIDDEN,
         keep_prob= KEEP_PROB,
-        momentum = 0.92,
+        momentum = 0.93,
         init_stdv = STDV,
         learning_rate= ALPHA,
         minibatch_size= MINIBATCH,
@@ -272,45 +272,6 @@ class RBM:
         F  = bias + f #free energy density per training example
 
         return F
-
-    #Random minibatches function
-    def random_mini_batches(self, X, seed = 1):
-
-        """
-        Creates a list of random minibatches from X
-
-        Args:
-            X: input data, of shape (input size, number of examples) (m, ne)
-            self.minibatch: size of the mini-batches (integer)
-            seed: random seed
-
-        Returns:
-            mini_batches: list
-        """
-
-        m = X.shape[0]                  # number of training examples
-        mini_batches = []
-        np.random.seed(seed)
-
-        # Step 1: Shuffle
-        permutation = list(np.random.permutation(m))
-        shuffled_X = X[permutation]
-
-        # Step 2: Partition  Minus the end case.
-        num_complete_minibatches = math.floor(m/self.minibatch) # number of mini batches of size mini_batch_size
-
-        for k in range(0, num_complete_minibatches):
-            mini_batch_X = shuffled_X[k * self.minibatch : k * self.minibatch + self.minibatch]
-            mini_batch = mini_batch_X
-            mini_batches.append(mini_batch)
-
-        # Handling the end case (last mini-batch < mini_batch_size)
-        if m % self.minibatch != 0:
-            mini_batch_X = shuffled_X[num_complete_minibatches * self.minibatch : m]
-            mini_batch = mini_batch_X
-            mini_batches.append(mini_batch)
-
-        return mini_batches
 
     #==================================
     #Define graph topology
@@ -637,7 +598,7 @@ class RBM:
 
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
-
+        
         num_minibatches = int(m / self.minibatch) #number of minibatches
 
         tf.reset_default_graph()
@@ -647,14 +608,16 @@ class RBM:
 
         #create the visible units placeholder
         self.placeholder()
+        
+        self.batch_size_ = tf.placeholder(tf.int64)
 
         #Create data pipeline
-        dataset = tf.data.Dataset.from_tensor_slices(self.vu)
-        dataset = dataset.shuffle(buffer_size=100)
-        dataset = dataset.batch(batch_size= self.minibatch)
+        self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
+        self.dataset = self.dataset.shuffle(buffer_size= 50)
+        self.dataset = self.dataset.batch(batch_size= self.batch_size_).repeat()
 
-        iter = dataset.make_initializable_iterator()
-        self.v = iter.get_next()
+        self.iter = self.dataset.make_initializable_iterator()
+        self.v = self.iter.get_next()
 
         #initialize Network paramters
         self.init_parameters()
@@ -691,7 +654,7 @@ class RBM:
         self.sess = tf.Session()
         self.sess.run(init_g)
 
-        self.sess.run(iter.initializer, feed_dict={self.vu: xtr})
+        self.sess.run(self.iter.initializer, feed_dict={self.vu: xtr, self.batch_size_: self.minibatch})
 
         if self.with_metrics_: #this condition is for benchmarking, remove for production
 
@@ -701,9 +664,6 @@ class RBM:
                 epoch_tr_err =0 #initialize the training error for each epoch to zero
 
                 self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
-
-                #minibatches (to implement: TF data pipeline for better performance)
-                #minibatches = self.random_mini_batches(xtr)
 
                 for l in range(num_minibatches):
 
@@ -720,7 +680,7 @@ class RBM:
             #Evaluates precision on the train and test set
             precision_train = self.sess.run(Clacc)
 
-            self.sess.run(iter.initializer, feed_dict={self.vu: xtst})
+            self.sess.run(self.iter.initializer, feed_dict={self.vu: xtst, self.batch_size_: xtst.shape[0]})
             precision_test = self.sess.run(Clacc)
 
             elapsed = self.time()
@@ -745,12 +705,9 @@ class RBM:
 
                 self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
-                #minibatches (to implement: TF data pipeline for better performance)
-                minibatches = self.random_mini_batches(xtr)
-
                 for minib in minibatches:
 
-                    _, = self.sess.run(opt, feed_dict={self.v:minib})
+                    _, = self.sess.run(opt)
 
             elapsed = self.time()
 
@@ -765,7 +722,7 @@ class RBM:
     # Inference modules
     #=========================
 
-    def eval_out(self,x):
+    def eval_out(self):
 
         '''
         Implement multinomial sampling from a trained model
@@ -775,7 +732,7 @@ class RBM:
 
         '''
         #Sampling
-        _, h_ = self.sample_h(self.v) #sample h
+        _, h_ = self.sample_h(self.vu) #sample h
 
         #sample v
         phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
@@ -840,10 +797,12 @@ class RBM:
 
         else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
 
-        v_, pvh_ = self.eval_out(x) #evaluate the ratings and the associated probabilities
+        v_, pvh_ = self.eval_out() #evaluate the ratings and the associated probabilities
 
         #evaluate v_ and pvh_ on the input data
-        vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.v: x})
+        #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
+
+        vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.vu: x})
 
         pv= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
