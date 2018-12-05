@@ -340,7 +340,7 @@ class RBM:
                zero mean and given variance init_stdv.
            bv: (1, Nv) visible units' bias, initialized to zero.
            bh: (1, Nh) hidden units' bias, initiliazed to zero.
-        
+
             p: () momentum variable, initialized to a constant value = momentum. Note that this
                 variable is not trainable, i.e. is not going to be optimized.
 
@@ -354,7 +354,7 @@ class RBM:
             self.bv = tf.get_variable('v_bias',  [1, self.Nv_], initializer= tf.zeros_initializer(), dtype= 'float32' )
             self.bh = tf.get_variable('h_bias',  [1, self.Nh_], initializer= tf.zeros_initializer(), dtype='float32')
 
-            self.p = tf.get_variable('momentum', shape= (), initializer = tf.constant_initializer(self.momentum), dtype= 'float32', trainable= False)
+            self.p = tf.get_variable('momentum', shape= (), initializer = tf.constant_initializer(self.momentum_), dtype= 'float32', trainable= False)
 
 
     #===================
@@ -509,8 +509,9 @@ class RBM:
         Returns: G_sampling --> v_k evaluated at k steps
 
         Basic mechanics:
-            If the current epoch i is in the interval specified in the training protocol CD_protol_, the number of
-            steps in Gibbs sampling (k) is incremented by one and G_sampling is updated accordingly.
+            If the current epoch i is in the interval specified in the training protocol CD_protol_,
+            the number of steps in Gibbs sampling (k) is incremented by one and G_sampling is updated
+            accordingly.
 
         '''
         per= (i/self.epochs)*100 #current percentage of the total #epochs
@@ -520,6 +521,7 @@ class RBM:
                 self.k +=1
                 self.l +=1
                 self.G_sampling()
+                self.p_ = tf.assign_sub(self.p_, 0.1)
 
         if self.debug_:
             print('percentage of epochs covered so far %f2' %(per))
@@ -662,7 +664,7 @@ class RBM:
         rate = self.alpha/self.minibatch  #rescaled learning rate
 
         #Instantiate the optimizer
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj)
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.p).minimize(loss= obj)
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
@@ -697,12 +699,12 @@ class RBM:
 
                 for minib in minibatches:
 
-                    _, batch_err = self.sess.run([opt, Mserr], feed_dict={self.v:minib})
+                    _, batch_err, mom = self.sess.run([opt, Mserr, self.p_], feed_dict={self.v:minib})
 
                     epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
                 if i % self.display ==0:
-                    print('training epoch %i rmse Train %f ' %(i, epoch_tr_err) )
+                    print('training epoch %i rmse Train %f momentum %f' %(i, epoch_tr_err, mom) )
 
                 #write metrics acros epochs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
@@ -738,7 +740,7 @@ class RBM:
 
                 for minib in minibatches:
 
-                    _ = self.sess.run(opt, feed_dict={self.v:minib})
+                    _, mom_ = self.sess.run([opt, self.p_], feed_dict={self.v:minib})
 
             elapsed = self.time()
 
