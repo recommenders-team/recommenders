@@ -2,7 +2,7 @@
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on four key tasks: 
 1. [Prepare Data](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
-2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)), Alternating Least Square ([ALS](https://spark.apache.org/docs/latest/mllib-collaborative-filtering.html)), etc.
+2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)), Alternating Least Square ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)), etc.
 3. [Evalute](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
 4. [Operationalize](notebooks/04_operationalize/README.md): Operationalizing models in a production environment on Azure
 
@@ -28,37 +28,15 @@ To setup on your local machine:
 
 ## Notebooks Overview
 
-[Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
+The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
 
-| Notebook | Description | 
-| --- | --- | 
-| [als_pyspark_movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to power movie ratings in a PySpark environment.
-| [sar_python_cpu_movielens](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to power movie ratings in a Python+CPU environment.
-
-[Data Notebooks](notebooks/01_prepare_data) detail how to prepare and split data properly for recommendation systems
-
-| Notebook | Description | 
-| --- | --- | 
-| [data_split](notebooks/01_prepare_data/data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
+The [Data Notebooks](notebooks/01_prepare_data) detail how to prepare and split data properly for recommendation systems
 
 The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
 
-| Notebook | Description | 
-| --- | --- | 
-| [als_deep_dive](notebooks/02_modeling/als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
-| [surprise_deep_dive](notebooks/02_modeling/surprise_svd_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
-
 The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
 
-| Notebook | Description | 
-| --- | --- | 
-| [evaluation](notebooks/03_evaluate/evaluation.ipynb) | Examples of different rating and ranking metrics in Python+CPU and PySpark environments.
-
 The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
-
-| Notebook | Description | 
-| --- | --- | 
-| [als_movie_o16n](notebooks/04_operationalize/als_movie_o16n.ipynb) | End-to-end examples demonstrate how to build, evaluate, and deploye a Spark ALS based movie recommender with Azure services such as [Databricks](https://azure.microsoft.com/en-us/services/databricks/), [Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction), and [Kubernetes Services](https://azure.microsoft.com/en-us/services/kubernetes-service/).
 
 ## Benchmarks
 
