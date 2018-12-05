@@ -131,5 +131,5 @@ import reco_utils
 ```
 
 ### Troubleshooting for Azure Databricks
-* For the [utilities](reco_utils) to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the root folder, if you zip directly the root folder, it won't work.
+* For the [utilities](reco_utils) to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the root folder, if you zip directly above the root folder, it won't work.
 
