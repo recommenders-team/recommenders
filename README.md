@@ -2,7 +2,7 @@
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on four key tasks: 
 1. [Prepare Data](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
-2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)), Alternating Least Square ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)), etc.
+2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)), Singular Value Decomposition ([SVD](https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)), etc.
 3. [Evalute](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
 4. [Operationalize](notebooks/04_operationalize/README.md): Operationalizing models in a production environment on Azure
 
@@ -28,11 +28,11 @@ To setup on your local machine:
 
 ## Notebooks Overview
 
-The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation (SAR) algorithm. 
+The [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
 
 The [Data Notebooks](notebooks/01_prepare_data) detail how to prepare and split data properly for recommendation systems
 
-The [Modeling Notebooks](notebooks/02_modeling) deep dive into implemetnations of different recommender algorithms
+The [Modeling Notebooks](notebooks/02_modeling) deep dive into implementations of different recommender algorithms
 
 The [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
 
