@@ -322,7 +322,8 @@ class RBM:
     #Initialize the placeholders for the visible units
     def placeholder(self):
         self.v = tf.placeholder(shape= [None, self.Nv_], dtype= 'float32')
-
+        
+        
     #initialize the parameters of the model.
     def init_parameters(self):
 
@@ -645,6 +646,8 @@ class RBM:
         log.info("Creating the computational graph")
         #instantiate the computational graph
         self.placeholder()
+        dataset = tf.data.Dataset.from_tensor_slices(self.v) 
+        
         self.init_parameters()
 
         #--------------Sampling protocol for Gibbs sampling-----------------------------------
