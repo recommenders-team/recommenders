@@ -1,18 +1,18 @@
 # Recommenders 
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on four key tasks: 
-1. [Data Prep](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
-2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Smart Adaptive Recommendation (SAR), Alternating Least Square (ALS), etc.
+1. [Prepare Data](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
+2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)), Alternating Least Square ([ALS](https://spark.apache.org/docs/latest/mllib-collaborative-filtering.html)), etc.
 3. [Evalute](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
 4. [Operationalize](notebooks/04_operationalize/README.md): Operationalizing models in a production environment on Azure
 
 Several utilities are provided in [reco_utils](reco_utils) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting train/test data. Reference implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
 
 ## Getting Started
-Please see the [setup guide](SETUP.md) to setup your machine locally, on Spark, or on [Azure Databricks](/SETUP.md#setup-guide-for-azure-databricks). 
+Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on Spark, or on [Azure Databricks](/SETUP.md#setup-guide-for-azure-databricks). 
 
 To setup on your local machine:
-1. Install [Anaconda Python 3.6](https://conda.io/miniconda.html)
+1. Install [Anaconda Python 3](https://conda.io/miniconda.html)
 2. Run the generate conda file script and create a conda environment:   
     ```
     cd Recommenders
@@ -62,9 +62,7 @@ The [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deplo
 
 ## Benchmarks
 
-Here we benchmark the algorithms available in this repository. A notebook for reproducing the benchmarking results can be found [here](notebooks/00_quick_start/benchmark.ipynb).
-
-We benchmark on the Movielens 1M dataset. Data is split into train/test sets at at 75/25 ratio and splitting is random. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode.
+We benchmark algorithm performance on the Movielens 1M dataset. Data is split into train/test sets at at 75/25 ratio and splitting is random. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode.
 
 **Benchmark results**
 <table>
@@ -122,7 +120,7 @@ This project welcomes contributions and suggestions. Before contributing, please
 ## Build Status
 | Build Type | Branch | Status |  | Branch | Status | 
 | --- | --- | --- | --- | --- | --- | 
-| **Linux CPU** |  master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4792)  || staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | 
+| **Linux CPU** |  master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4792)  | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4594) | 
 | **Linux GPU** | master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_gpu?branchName=master)](https://msdata.visualstudio.com/DefaultCollection/AlgorithmsAndDataScience/_build/latest?definitionId=4997) | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_gpu_staging?branchName=staging)](https://msdata.visualstudio.com/DefaultCollection/AlgorithmsAndDataScience/_build/latest?definitionId=4998)|
 | **Linux Spark** | master | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark?branchName=master)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4804) | | staging | [![Status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/nightly_spark_staging?branchName=staging)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=4805)|
 
