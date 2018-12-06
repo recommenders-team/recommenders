@@ -3,7 +3,7 @@
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on four key tasks: 
 1. [Prepare Data](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
 2. [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)), Singular Value Decomposition ([SVD](https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)), etc.
-3. [Evalute](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
+3. [Evaluate](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
 4. [Operationalize](notebooks/04_operationalize/README.md): Operationalizing models in a production environment on Azure
 
 Several utilities are provided in [reco_utils](reco_utils) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting train/test data. Implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
@@ -12,31 +12,40 @@ Several utilities are provided in [reco_utils](reco_utils) to support common tas
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on Spark, or on [Azure Databricks](/SETUP.md#setup-guide-for-azure-databricks). 
 
 To setup on your local machine:
-1. Install [Anaconda Python 3](https://conda.io/miniconda.html)
-2. Run the generate conda file script and create a conda environment:   
+1. Install Anaconda with Python >= 3.6. [Miniconda](https://conda.io/miniconda.html) is a quick way to get started.
+2. Clone the repository
+    ```
+    git clone https://github.com/Microsoft/Recommenders
+    ```
+3. Run the generate conda file script and create a conda environment:   
     ```
     cd Recommenders
     ./scripts/generate_conda_file.sh
     conda env create -n reco -f conda_bare.yaml  
     ```
-3. Activate the conda environment and register it with Jupyter:
+4. Activate the conda environment and register it with Jupyter:
     ```
     conda activate reco
     python -m ipykernel install --user --name reco --display-name "Python (reco)"
     ```
-4. Run the [ALS Movielens Quickstart](notebooks/00_quick_start/als_pyspark_movielens.ipynb) notebook.
+5. Start the Jupyter notebook server
+    ```
+    cd notebooks
+    jupyter notebook
+    ```
+5. Run the [ALS Movielens Quickstart](notebooks/00_quick_start/als_pyspark_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to select the kernel you attached "Python (reco)".
 
 ## Notebooks Overview
 
-- [Quick-Start Notebooks](notebooks/00_quick_start/) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
+- The [Quick-Start Notebooks](notebooks/00_quick_start) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
 
-- [Data Notebooks](notebooks/01_prepare_data) detail how to prepare and split data properly for recommendation systems
+- The [Data Preparation Notebook](notebooks/01_prepare_data) shows how to prepare and split data properly for recommendation systems.
 
-- [Modeling Notebooks](notebooks/02_modeling) deep dive into implementations of different recommender algorithms
+- The [Modeling Notebooks](notebooks/02_model) provide a deep dive into implementations of different recommender algorithms.
 
-- [Evaluate Notebooks](notebooks/03_evaluate) discuss how to evaluate recommender algorithms for different ranking and rating metrics
+- The [Evaluation Notebook](notebooks/03_evaluate) shows how to evaluate recommender algorithms for different ranking and rating metrics.
 
-- [Operationalize Notebooks](notebooks/04_operationalize) discuss how to deploy models in production systems
+- The [Operationalizion Notebook](notebooks/04_operationalize) demonstrates how to deploy models in production systems.
 
 ## Benchmarks
 
@@ -53,7 +62,7 @@ We benchmark algorithm performance on the Movielens 1M dataset. Data is split in
   <th>RMSE</th>
   <th>MAE</th>
   <th>Explained Variance</th>
-  <th>R squared</th>
+  <th>R<sup>2</sup></th>
  </tr>
  <tr>
   <td>ALS</td>

@@ -9,7 +9,7 @@ In this directory, a notebook is provided to illustrate evaluating models using 
 Two approaches for evaluating model performance are demonstrated along with their respective metrics.
 1. Rating Metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items
     * Root Mean Square Error (RMSE) - measure of average error in predicted ratings
-    * R Squared (R2) - essentially how much of the total variation is explained by the model
+    * R Squared (R<sup>2</sup>) - essentially how much of the total variation is explained by the model
     * Mean Absolute Error (MAE) - similar to RMSE but uses absolute value instead of squaring and taking the root of the average
     * Explained Variance - how much of the variance in the data is explained by the model
 2. Ranking Metrics: These are used to evaluate how relevant recommendations are for users

@@ -8,8 +8,7 @@ data preparation tasks witnessed in recommendation system development.
 | --- | --- | 
 | [data_split](data_split.ipynb) | Details on splitting data (randomly, chronologically, etc).
 
-Four methods of splitting the data for training and testing are demonstrated in this notebook.
+Three methods of splitting the data for training and testing are demonstrated in this notebook. Each support both Spark and pandas DataFrames.
 1. Random Split: this is the simplest way to split the data, it randomly assigns entries to either the training set or the test set based on the allocation ratio desired.
 2. Chronological Split: in many cases accounting for temporal variations when evaluating your model can provide more realistic measures of performance. This approach will split the train and test set based on timestamps for the user or item data.
 3. Stratified Split: it may be preferable to ensure the same number of users or items are in the training and test sets, this method of splitting will ensure that is the case.
-4. DataFrame Split: this approach provides an efficient implementation of splitting large scale data stored in Spark DataFrames.
