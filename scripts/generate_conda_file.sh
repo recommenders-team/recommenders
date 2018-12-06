@@ -90,6 +90,7 @@ ${pyspark}- pyspark==2.3.1
 - fastparquet>=0.1.6
 ${pyspark}- pyarrow>=0.8.0
 - pip:
+  - idna==2.7
   - pandas>=0.22.0
   - scipy>=1.0.0
   - azure-storage>=0.36.0
