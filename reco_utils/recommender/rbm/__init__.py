@@ -23,7 +23,7 @@ EPOCHS = 20
 DEFAULTPATH = 'saver'
 
 def _user_item_return_type():
-    return str
+    return float
 
 
 def _predict_column_type():
