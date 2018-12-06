@@ -598,7 +598,7 @@ class RBM:
 
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
         m, self.Nv_ = xtr.shape #dimension of the input: m= N_users, Nv= N_items
-        
+
         num_minibatches = int(m / self.minibatch) #number of minibatches
 
         tf.reset_default_graph()
@@ -608,7 +608,7 @@ class RBM:
 
         #create the visible units placeholder
         self.placeholder()
-        
+
         self.batch_size_ = tf.placeholder(tf.int64)
 
         #Create data pipeline
@@ -861,3 +861,61 @@ class RBM:
                 }
             )
         )
+
+
+def predict(self, x):
+
+    '''
+    Returns the inferred ratings. This method is similar to recommend_k_items() with the followingexceptions:
+
+    - It returns a matrix
+    - It returns all the inferred ratings
+
+    Args:
+        x: input user/affinity matrix. Note that this can be a single vector, i.e. the ratings of a single user.
+
+    Returns:
+        results: a matrix with the inferred ratings
+
+    Basic mechanics:
+        The method can be called either within the same session or by restoring a previous session from file.
+        If save_model is true, a graph is generated and then populated with the pre trained values of the
+        parameters. Otherwise, the default session used during training is usedself.
+
+        The method samples new ratings from the learned joint distribution, together with their probabilities.
+        The input x must have the same number of columns of the one used for training the model, i.e. the same
+        number of items, but it can have an arbitrary number of rows (users).
+
+    '''
+    self.time()
+
+    if self.save_model_: #if true, restore the computational graph from a trained session
+
+        m, self.Nv_ = x.shape #dimension of the input: m= N_users, Nv= N_items
+
+        self.r_= x.max() #defines the rating scale, e.g. 1 to 5
+
+        tf.reset_default_graph()
+
+        self.placeholder()
+        self.init_parameters()
+
+        saver = tf.train.Saver()
+
+        self.sess = tf.Session()
+        saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
+
+    else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
+
+    v_, _ = self.eval_out() #evaluate the ratings and the associated probabilities
+
+    #evaluate v_ and pvh_ on the input data
+    #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
+
+    vp = self.sess.run(v_, feed_dict={self.vu: x})
+
+    elapsed = self.time()
+
+    log.info("Done inference, time %f2" %elapsed)
+
+    return vp
