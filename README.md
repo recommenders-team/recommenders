@@ -33,7 +33,7 @@ To setup on your local machine:
     cd notebooks
     jupyter notebook
     ```
-5. Run the [ALS Movielens Quickstart](notebooks/00_quick_start/als_pyspark_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to select the kernel you attached "Python (reco)".
+5. Run the [ALS PySpark Movielens](notebooks/00_quick_start/als_pyspark_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to change the kernel to "Python (reco)".
 
 ## Notebooks Overview
 
