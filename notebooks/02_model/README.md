@@ -7,6 +7,6 @@ In this directory, notebooks are provided to give a deep dive into training mode
 | Notebook | Description | 
 | --- | --- | 
 | [als_deep_dive](als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation
-| [surprise_deep_dive](surprise_svd_deep_dive.ipynb) | Deep dive on a SVD algorithm and implementation
+| [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Deep dive on a SVD algorithm and implementation
 
 Details on model training are best found inside each notebook.

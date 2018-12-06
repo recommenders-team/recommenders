@@ -9,7 +9,7 @@ In this guide we show how to setup all the dependencies to run the notebooks of 
 * [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
   * [Setup Requirements](#setup-requirements)
   * [Dependencies setup](#dependencies-setup)
-  * [Register the conda environment in Jupyter notebook](register-the-conda-environment-in-jupyter-notebook)
+  * [Register the conda environment in Jupyter notebook](#register-the-conda-environment-in-jupyter-notebook)
   * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
 * [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
