@@ -51,8 +51,6 @@ To setup on your local machine:
 
 Below we show benchmark algorithm performance on the Movielens 1M dataset. Data is randomly split into train/test sets at at 75/25 ratio. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
 
-A [benchmark notebook](notebooks/03_evaluate/notebook_benchmark.ipynb) is provided to check out results on larger datasets, and/or reproduce the results under a custom settings. 
-
 **Benchmark results**
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance | 
@@ -60,6 +58,8 @@ A [benchmark notebook](notebooks/03_evaluate/notebook_benchmark.ipynb) is provid
 | ALS | 0.002020 | 0.024313 | 0.030677 | 0.009649 | 0.860502 | 0.680608 | 0.406014 | 0.411603 | 
 | SAR | 0.064013 | 0.308012 | 0.277215 | 0.109292 | NaN | NaN | NaN | NaN | 
 | SVD | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
+
+A [benchmark notebook](notebooks/03_evaluate/notebook_benchmark.ipynb) is provided to check out results on larger datasets, and/or reproduce the results under a custom settings. 
 
 ## Contributing
 This project welcomes contributions and suggestions. Before contributing, please see our [contribution guidelines](CONTRIBUTING.md).
