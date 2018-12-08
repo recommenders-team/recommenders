@@ -109,7 +109,7 @@ SPARK_MASTER_OPTS="-Dspark.worker.cleanup.enabled=true
 ## Setup guide for Azure Databricks
 
 ### Requirements of Azure Databricks
-* Runtime version 4.3 (Apache Spark 2.3.1, Scala 2.11)
+* Runtime version 4.1 (Apache Spark 2.3.0, Scala 2.11)
 * Python 3
 
 ### Repository upload
