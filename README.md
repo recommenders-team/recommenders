@@ -51,7 +51,7 @@ To setup on your local machine:
 
 Below we show benchmark algorithm performance on the Movielens 1M dataset. Data is randomly split into train/test sets at at 75/25 ratio. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
 
-A [benchmark notebook](notebooks/03_evaluate/benchmark_notebook.ipynb) is provided to check out results on larger datasets, and/or reproduce the results under a custom settings. 
+A [benchmark notebook](notebooks/03_evaluate/notebook_benchmark.ipynb) is provided to check out results on larger datasets, and/or reproduce the results under a custom settings. 
 
 **Benchmark results**
 
