@@ -59,7 +59,7 @@ Below we show benchmark algorithm performance on the Movielens 1M dataset. Data 
 | SAR | 0.064013 | 0.308012 | 0.277215 | 0.109292 | NaN | NaN | NaN | NaN | 
 | SVD | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
 
-A [benchmark notebook](notebooks/03_evaluate/notebook_benchmark.ipynb) is provided to check out results on larger datasets, and/or reproduce the results under a custom settings. 
+A [benchmark notebook](notebooks/03_evaluate/notebook_benchmark.ipynb) is provided to check out results on larger datasets, and/or reproduce the results under custom settings. 
 
 ## Contributing
 This project welcomes contributions and suggestions. Before contributing, please see our [contribution guidelines](CONTRIBUTING.md).
