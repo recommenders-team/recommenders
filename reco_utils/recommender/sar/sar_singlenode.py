@@ -44,7 +44,7 @@ disabling because logging output contaminates stdout output on Databricsk Spark 
 log = logging.getLogger(__name__)
 
 
-class SARSingleNodeReference:
+class SARSingleNode:
     """SAR reference implementation"""
 
     def __init__(
