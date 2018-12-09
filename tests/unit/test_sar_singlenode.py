@@ -6,7 +6,7 @@ import itertools
 import numpy as np
 import pandas as pd
 from reco_utils.common.constants import PREDICTION_COL
-from reco_utils.recommender.sar.sar_singlenode import SARSingleNodeReference
+from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 from reco_utils.recommender.sar import TIME_NOW
 from tests.sar_common import read_matrix, load_userpred, load_affinity
 
@@ -57,7 +57,7 @@ def _apply_sar_hash_index(model, train, test, header, pandas_new=False):
 
 
 def test_init(header):
-    model = SARSingleNodeReference(
+    model = SARSingleNode(
         remove_seen=True, similarity_type="jaccard", **header
     )
 
@@ -71,7 +71,7 @@ def test_init(header):
     "similarity_type, timedecay_formula", [("jaccard", False), ("lift", True)]
 )
 def test_fit(similarity_type, timedecay_formula, train_test_dummy_timestamp, header):
-    model = SARSingleNodeReference(
+    model = SARSingleNode(
         remove_seen=True,
         similarity_type=similarity_type,
         timedecay_formula=timedecay_formula,
@@ -89,7 +89,7 @@ def test_fit(similarity_type, timedecay_formula, train_test_dummy_timestamp, hea
 def test_predict(
     similarity_type, timedecay_formula, train_test_dummy_timestamp, header
 ):
-    model = SARSingleNodeReference(
+    model = SARSingleNode(
         remove_seen=True,
         similarity_type=similarity_type,
         timedecay_formula=timedecay_formula,
@@ -129,7 +129,7 @@ def test_sar_item_similarity(
     threshold, similarity_type, file, demo_usage_data, sar_settings, header
 ):
 
-    model = SARSingleNodeReference(
+    model = SARSingleNode(
         remove_seen=True,
         similarity_type=similarity_type,
         timedecay_formula=False,
@@ -177,7 +177,7 @@ def test_sar_item_similarity(
 # Test 7
 def test_user_affinity(demo_usage_data, sar_settings, header):
     time_now = demo_usage_data[header["col_timestamp"]].max()
-    model = SARSingleNodeReference(
+    model = SARSingleNode(
         remove_seen=True,
         similarity_type="cooccurrence",
         timedecay_formula=True,
@@ -214,7 +214,7 @@ def test_userpred(
     threshold, similarity_type, file, header, sar_settings, demo_usage_data
 ):
     time_now = demo_usage_data[header["col_timestamp"]].max()
-    model = SARSingleNodeReference(
+    model = SARSingleNode(
         remove_seen=True,
         similarity_type=similarity_type,
         timedecay_formula=True,
