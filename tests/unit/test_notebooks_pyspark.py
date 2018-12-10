@@ -7,11 +7,11 @@ import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
-@pytest.mark.notebooks
-@pytest.mark.spark
-def test_als_pyspark_runs(notebooks):
-    notebook_path = notebooks["als_pyspark"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+#@pytest.mark.notebooks
+#@pytest.mark.spark
+#def test_als_pyspark_runs(notebooks):
+#    notebook_path = notebooks["als_pyspark"]
+#    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
 
 @pytest.mark.notebooks
@@ -21,11 +21,11 @@ def test_data_split_runs(notebooks):
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
 
-@pytest.mark.notebooks
-@pytest.mark.spark
-def test_als_deep_dive_runs(notebooks):
-    notebook_path = notebooks["als_deep_dive"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+#@pytest.mark.notebooks
+#@pytest.mark.spark
+#def test_als_deep_dive_runs(notebooks):
+#    notebook_path = notebooks["als_deep_dive"]
+#    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
 
 @pytest.mark.notebooks
