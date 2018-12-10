@@ -19,9 +19,6 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G"):
         SparkSession.builder.appName(app_name)
         .master(url)
         .config("spark.driver.memory", memory)
-	.config("spark.local.dir", "/mnt")
-	.conifg("spark.worker.cleanup", "true")
-	.config("spark.worker.cleanup.appDataTtl", "120")
         .getOrCreate()
     )
 
