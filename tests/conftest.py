@@ -40,6 +40,9 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .master(url)
         .config("spark.driver.memory", memory)
         .config("spark.sql.shuffle.partitions", "1")
+	.config("spark.local.dir", "/mnt")
+	.config("spark.worker.cleanup.enabled", "true")
+	.config("spark.worker.cleanup.appDataTtl", "3600")
         .getOrCreate()
     )
 
@@ -140,12 +143,12 @@ def notebooks():
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
         ),
-        "data_split": os.path.join(folder_notebooks, "01_data", "data_split.ipynb"),
+        "data_split": os.path.join(folder_notebooks, "01_prepare_data", "data_split.ipynb"),
         "als_deep_dive": os.path.join(
-            folder_notebooks, "02_modeling", "als_deep_dive.ipynb"
+            folder_notebooks, "02_model", "als_deep_dive.ipynb"
         ),
         "surprise_svd_deep_dive": os.path.join(
-            folder_notebooks, "02_modeling", "surprise_svd_deep_dive.ipynb"
+            folder_notebooks, "02_model", "surprise_svd_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }
