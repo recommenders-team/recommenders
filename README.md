@@ -47,11 +47,13 @@ To setup on your local machine:
 
 - The [Operationalizion Notebook](notebooks/04_operationalize) demonstrates how to deploy models in production systems.
 
-## Benchmarks
+## Algorithm Comparison
 
-Below we show benchmark algorithm performance on the Movielens 1M dataset. Data is randomly split into train/test sets at at 75/25 ratio. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
+We provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to show how to evaluate and compare included algorithms on the MovieLens 1M dataset. The included algorithms are usable in a variety of recommendation tasks (including product or news recommendations). The comparison notebook serves as a guide on how to evaluate results on other or larger datasets and/or reproduce results under custom settings.
 
-**Benchmark results**
+In our preliminary comparison, data is randomly split into train/test sets at at 75/25 ratio. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
+
+**Preliminary Comparison**
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance | 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
@@ -59,7 +61,6 @@ Below we show benchmark algorithm performance on the Movielens 1M dataset. Data 
 | SAR | 0.064013 | 0.308012 | 0.277215 | 0.109292 | NaN | NaN | NaN | NaN | 
 | SVD | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
 
-A [benchmark notebook](notebooks/03_evaluate/notebook_benchmark.ipynb) is provided to check out results on larger datasets, and/or reproduce the results under custom settings. 
 
 ## Contributing
 This project welcomes contributions and suggestions. Before contributing, please see our [contribution guidelines](CONTRIBUTING.md).
