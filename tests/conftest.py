@@ -40,6 +40,7 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .master(url)
         .config("spark.driver.memory", memory)
         .config("spark.sql.shuffle.partitions", "1")
+	.config("spark.local.dirs", "/mnt")
         .getOrCreate()
     )
 
