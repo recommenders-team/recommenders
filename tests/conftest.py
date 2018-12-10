@@ -34,15 +34,17 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
     """
     SUBMIT_ARGS = "--packages eisber:sarplus:0.2.3 pyspark-shell"
     os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
+    os.environ["SPARK_LOCAL_DIRS"] = "/mnt"
+    os.environ["SPARK_WORKER_DIR"] = "/mnt"
 
     return (
         SparkSession.builder.appName(app_name)
         .master(url)
         .config("spark.driver.memory", memory)
         .config("spark.sql.shuffle.partitions", "1")
-	.config("spark.local.dir", "/mnt")
-	.config("spark.worker.cleanup.enabled", "true")
-	.config("spark.worker.cleanup.appDataTtl", "3600")
+        .config("spark.local.dir", "/mnt")
+        .config("spark.worker.cleanup.enabled", "true")
+        .config("spark.worker.cleanup.appDataTtl", "3600")
         .getOrCreate()
     )
 
