@@ -86,6 +86,7 @@ class RBM:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
+        col_prediction = PREDICTION_COL,
         hidden_units= HIDDEN,
         keep_prob= KEEP_PROB,
         momentum = 0.93,
@@ -103,6 +104,7 @@ class RBM:
 
         #pandas DF parameters
         self.col_rating = col_rating
+        self.col_prediction = col_prediction
         self.col_item = col_item
         self.col_user = col_user
 
@@ -716,7 +718,7 @@ class RBM:
         if self.save_model_: #if true, save the model to specified path
             saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
-
+        return elapsed
 
     #=========================
     # Inference modules
@@ -824,23 +826,22 @@ class RBM:
 
         top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
         top_scores = score[np.arange(score.shape[0])[:, None], top_items] #get top k scores
+        top_ratings = vp[np.arange(vp.shape[0])[:, None], top_items] #get top ratings
 
         top_items_ = np.reshape(np.array(top_items), -1)
         top_scores_ = np.reshape(np.array(top_scores), -1)
+        top_ratings_ = np.reshape(np.array(top_ratings), -1)
 
-        #generates userids
+        #generate userids
         userids = []
         for i in range(0, m):
             userids.extend([i]*top_k)
 
         #create dataframe
-        results = pd.DataFrame.from_dict(
-            {
-                self.col_user: userids,
-                self.col_item: top_items_,
-                self.col_rating: top_scores_,
-            }
-        )
+        results = pd.DataFrame.from_dict({ self.col_user: userids,
+                                           self.col_item: top_items_,
+                                           self.col_prediction: top_scores_,
+                                           self.col_rating: top_ratings_ })
 
         map_back_users = maps[0]
         map_back_items = maps[1]
@@ -849,73 +850,63 @@ class RBM:
         results[self.col_user] = results[self.col_user].map(map_back_users)
         results[self.col_item] = results[self.col_item].map(map_back_items)
 
-        # format the dataframe in the end to conform to Suprise return type
-        return (
-            results[[self.col_user, self.col_item, self.col_rating]]
-            .rename(columns={self.col_rating: PREDICTION_COL})
-            .astype(
-                {
-                    self.col_user: _user_item_return_type(),
-                    self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type(),
-                }
-            )
-        )
+        return (results, elapsed) 
 
 
-def predict(self, x):
+    def predict(self, x):
 
-    '''
-    Returns the inferred ratings. This method is similar to recommend_k_items() with the followingexceptions:
+        '''
+        Returns the inferred ratings. This method is similar to recommend_k_items() with the followingexceptions:
 
-    - It returns a matrix
-    - It returns all the inferred ratings
+        - It returns a matrix
+        - It returns all the inferred ratings
 
-    Args:
-        x: input user/affinity matrix. Note that this can be a single vector, i.e. the ratings of a single user.
+        Args:
+            x: input user/affinity matrix. Note that this can be a single vector, i.e. the ratings of a single user.
 
-    Returns:
-        results: a matrix with the inferred ratings
+        Returns:
+            results: a matrix with the inferred ratings
 
-    Basic mechanics:
-        The method can be called either within the same session or by restoring a previous session from file.
-        If save_model is true, a graph is generated and then populated with the pre trained values of the
-        parameters. Otherwise, the default session used during training is usedself.
+        Basic mechanics:
+            The method can be called either within the same session or by restoring a previous session from file.
+            If save_model is true, a graph is generated and then populated with the pre trained values of the
+            parameters. Otherwise, the default session used during training is usedself.
 
-        The method samples new ratings from the learned joint distribution, together with their probabilities.
-        The input x must have the same number of columns of the one used for training the model, i.e. the same
-        number of items, but it can have an arbitrary number of rows (users).
+            The method samples new ratings from the learned joint distribution, together with their probabilities.
+            The input x must have the same number of columns of the one used for training the model, i.e. the same
+            number of items, but it can have an arbitrary number of rows (users).
 
-    '''
-    self.time()
+        '''
+    
+        self.time()
 
-    if self.save_model_: #if true, restore the computational graph from a trained session
+        if self.save_model_: #if true, restore the computational graph from a trained session
 
-        m, self.Nv_ = x.shape #dimension of the input: m= N_users, Nv= N_items
+            m, self.Nv_ = x.shape #dimension of the input: m= N_users, Nv= N_items
 
-        self.r_= x.max() #defines the rating scale, e.g. 1 to 5
+            self.r_= x.max() #defines the rating scale, e.g. 1 to 5
 
-        tf.reset_default_graph()
+            tf.reset_default_graph()
 
-        self.placeholder()
-        self.init_parameters()
+            self.placeholder()
+            self.init_parameters()
 
-        saver = tf.train.Saver()
+            saver = tf.train.Saver()
 
-        self.sess = tf.Session()
-        saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
+            self.sess = tf.Session()
+            saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
 
-    else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
+        else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
 
-    v_, _ = self.eval_out() #evaluate the ratings and the associated probabilities
+        v_, _ = self.eval_out() #evaluate the ratings and the associated probabilities
 
-    #evaluate v_ and pvh_ on the input data
-    #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
+        #evaluate v_ and pvh_ on the input data
+        #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
 
-    vp = self.sess.run(v_, feed_dict={self.vu: x})
+        vp = self.sess.run(v_, feed_dict={self.vu: x})
 
-    elapsed = self.time()
+        elapsed = self.time()
 
-    log.info("Done inference, time %f2" %elapsed)
+        log.info("Done inference, time %f2" %elapsed)
 
-    return vp
+        return vp

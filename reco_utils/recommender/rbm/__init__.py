@@ -28,3 +28,6 @@ def _user_item_return_type():
 
 def _predict_column_type():
     return float
+
+def _predict_column_type():
+    return float
