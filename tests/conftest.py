@@ -43,6 +43,8 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .config("spark.local.dir", "/mnt")
         .config("spark.worker.cleanup.enabled", "true")
         .config("spark.worker.cleanup.appDataTtl", "3600")
+        .config("spark.worker.cleanup.interval", "300")
+        .config("spark.storage.cleanupFilesAfterExecutorExit", "true")
         .getOrCreate()
     )
 
