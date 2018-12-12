@@ -4,6 +4,8 @@
 import sys
 sys.path.append('..')
 sys.path.append('../..')
+sys.path.append('/data/home/recocat/cicd/21/s/scripts')
+sys.path.append('/data/home/recocat/cicd/21/s')
 print(sys.path)
 import os
 import argparse
