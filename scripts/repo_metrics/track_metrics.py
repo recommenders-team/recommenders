@@ -6,6 +6,8 @@ import sys
 # This seems to be an issue from Azure DevOps command line task.
 # NOTE this does not affect running directly in the shell.
 sys.path.append('cicdworkdir')
+sys.path.append('cicdworkdir/scripts')
+print(sys.path)
 import os
 import argparse
 import traceback
