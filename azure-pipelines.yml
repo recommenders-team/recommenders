@@ -1,0 +1,17 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+jobs:
+- template: jobs/build.yml  
+  parameters:
+    name: macOS
+    pool:
+      vmImage: 'macOS-10.13'
+
+- template: jobs/build.yml  
+  parameters:
+    name: Linux
+    pool:
+      vmImage: 'Ubuntu-16.04'
