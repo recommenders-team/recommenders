@@ -102,6 +102,7 @@ We can register our created conda environment to appear as a kernel in the Jupyt
 * When running Spark on a single local node it is possible to run out of disk space as temporary files are written to the user's home directory. To avoid this we attached an additional disk to the DSVM and made modifications to the Spark configuration. This is done by including the following lines in the file at `/dsvm/tools/spark/current/conf/spark-env.sh`.
 ```
 SPARK_LOCAL_DIRS="/mnt"
+SPARK_WORKER_DIR="/mnt"
 SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.appDataTtl=3600, -Dspark.worker.cleanup.interval=300, -Dspark.storage.cleanupFilesAfterExecutorExit=true"
 ```
 
