@@ -9,11 +9,12 @@ jobs:
         args: 
         mode: python
         condafile: conda_bare.yaml
-      Python36-spark:
-        python.version: '3.6'
-        args: --pyspark
-        mode: pyspark
-        condafile: conda_pyspark.yaml
+      # disabled pyspark since we're running out-of-memory
+      # Python36-spark:
+        # python.version: '3.6'
+        # args: --pyspark
+        # mode: pyspark
+        # condafile: conda_pyspark.yaml
 
     maxParallel: 4
 
