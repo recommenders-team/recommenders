@@ -118,3 +118,4 @@ conda*.yaml
 .vscode/
 scripts/repo_metrics/config.py
 Recommenders.zip
+Recommenders.egg
