@@ -2,11 +2,10 @@
 # Licensed under the MIT License.
 
 import sys
-sys.path.append('..')
-sys.path.append('../..')
-sys.path.append('/data/home/recocat/cicd/21/s/scripts')
-sys.path.append('/data/home/recocat/cicd/21/s')
-print(sys.path)
+# Need to append a full path instead of relative path.
+# This seems to be an issue from Azure DevOps command line task.
+# NOTE this does not affect running directly in the shell.
+sys.path.append('cicdworkdir/scripts')
 import os
 import argparse
 import traceback
