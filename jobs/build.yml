@@ -15,7 +15,6 @@ jobs:
         # args: --pyspark
         # mode: pyspark
         # condafile: conda_pyspark.yaml
-
     maxParallel: 4
 
   steps:
