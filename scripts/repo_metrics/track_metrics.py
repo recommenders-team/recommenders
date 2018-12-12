@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import sys
+sys.path.append('..')
+sys.path.append('../..')
 import os
 import argparse
 import traceback
