@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import os
-import pytest
-import pandas as pd
+
 import calendar
 import datetime
 import os
+import pandas as pd
+import pytest
 from sklearn.model_selection import train_test_split
 from tests.notebooks_common import path_notebooks
 
@@ -40,6 +40,11 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .master(url)
         .config("spark.driver.memory", memory)
         .config("spark.sql.shuffle.partitions", "1")
+        .config("spark.local.dir", "/mnt")
+        .config("spark.worker.cleanup.enabled", "true")
+        .config("spark.worker.cleanup.appDataTtl", "3600")
+        .config("spark.worker.cleanup.interval", "300")
+        .config("spark.storage.cleanupFilesAfterExecutorExit", "true")
         .getOrCreate()
     )
 
@@ -135,23 +140,17 @@ def notebooks():
     paths = {
         "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_python_cpu_movielens.ipynb"
+            folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
         ),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
         ),
-        "sar_pyspark": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_pyspark_movielens.ipynb"
-        ),
-        "sarplus_movielens": os.path.join(
-            folder_notebooks, "00_quick_start", "sarplus_movielens.ipynb"
-        ),
-        "data_split": os.path.join(folder_notebooks, "01_data", "data_split.ipynb"),
-        "sar_deep_dive": os.path.join(
-            folder_notebooks, "02_modeling", "sar_deep_dive.ipynb"
-        ),
+        "data_split": os.path.join(folder_notebooks, "01_prepare_data", "data_split.ipynb"),
         "als_deep_dive": os.path.join(
-            folder_notebooks, "02_modeling", "als_deep_dive.ipynb"
+            folder_notebooks, "02_model", "als_deep_dive.ipynb"
+        ),
+        "surprise_svd_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "surprise_svd_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }

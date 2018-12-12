@@ -559,8 +559,8 @@ def get_top_k_items(dataframe, col_user="customerID", col_rating="rating", k=10)
         ratings.
 
     Args:
-        dataframe (pandas.DataFrame): DataFrame of rating data (in the format of
-        customerID-itemID-rating tuple).
+        dataframe (pandas.DataFrame): DataFrame of rating data (in the format
+        customerID-itemID-rating).
         col_user (str): column name for user.
         col_rating (str): column name for rating.
         k (int): number of items for each user.
