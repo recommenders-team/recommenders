@@ -108,3 +108,13 @@ venv.bak/
 Untitled*.ipynb
 *-Copy*.ipynb
 ~$*
+output.ipynb
+conda*.yaml
+.idea
+*.npz
+*.data
+*.csv
+.vscode/
+scripts/repo_metrics/config.py
+Recommenders.zip
+Recommenders.egg
