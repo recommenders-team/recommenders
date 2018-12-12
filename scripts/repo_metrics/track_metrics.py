@@ -4,6 +4,7 @@
 import sys
 sys.path.append('..')
 sys.path.append('../..')
+print(sys.path)
 import os
 import argparse
 import traceback
