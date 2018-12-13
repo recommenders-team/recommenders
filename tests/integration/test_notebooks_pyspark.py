@@ -11,7 +11,7 @@ TOL = 0.5
 
 
 @pytest.mark.spark
-@pytest.mark.integration
+#@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, result_list",
     [
