@@ -707,9 +707,9 @@ class RBM:
 
                 self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
-                for minib in minibatches:
+                for l in range(num_minibatches):
 
-                    _, = self.sess.run(opt)
+                    _ = self.sess.run(opt)
 
             elapsed = self.time()
 
@@ -717,7 +717,7 @@ class RBM:
 
         if self.save_model_: #if true, save the model to specified path
             saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
-
+            
         return elapsed
 
     #=========================
@@ -806,6 +806,10 @@ class RBM:
 
         vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.vu: x})
 
+        self.sess.close
+            
+        tf.reset_default_graph()
+
         pv= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
         #evaluate the score
@@ -819,18 +823,18 @@ class RBM:
         log.info('Formatting ouput')
 
         if remove_seen:
-            #is true removes items from the train set by seeting them to zero
+            #if true, it removes items from the train set by setting them to zero
             vp[self.seen_mask] = 0
             pv[self.seen_mask] = 0
             score[self.seen_mask] = 0
 
         top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
         top_scores = score[np.arange(score.shape[0])[:, None], top_items] #get top k scores
-        top_ratings = vp[np.arange(vp.shape[0])[:, None], top_items] #get top ratings
+        #top_ratings = vp[np.arange(vp.shape[0])[:, None], top_items] #get top ratings
 
         top_items_ = np.reshape(np.array(top_items), -1)
         top_scores_ = np.reshape(np.array(top_scores), -1)
-        top_ratings_ = np.reshape(np.array(top_ratings), -1)
+        #top_ratings_ = np.reshape(np.array(top_ratings), -1)
 
         #generate userids
         userids = []
@@ -840,8 +844,7 @@ class RBM:
         #create dataframe
         results = pd.DataFrame.from_dict({ self.col_user: userids,
                                            self.col_item: top_items_,
-                                           self.col_prediction: top_scores_,
-                                           self.col_rating: top_ratings_ })
+                                           self.col_prediction: top_scores_ })
 
         map_back_users = maps[0]
         map_back_items = maps[1]
