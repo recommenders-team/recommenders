@@ -659,8 +659,12 @@ class RBM:
 
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
+        #Config GPU memory 
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth=True
+
         #Start TF training session on default graph
-        self.sess = tf.Session()
+        self.sess =  tf.Session(config=config)
         self.sess.run(init_g)
 
         self.sess.run(self.iter.initializer, feed_dict={self.vu: xtr, self.batch_size_: self.minibatch})
