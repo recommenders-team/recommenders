@@ -10,8 +10,8 @@ from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 TOL = 0.5
 
 
+@pytest.mark.skip.(reason="disabling test with large datasets")
 @pytest.mark.spark
-#@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, result_list",
     [
