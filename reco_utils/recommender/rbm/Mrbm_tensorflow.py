@@ -48,6 +48,9 @@ import math
 import matplotlib.pyplot as plt
 
 import tensorflow as tf
+import reco_utils.recommender.rbm.memory_saving_gradients as new_gradients
+tf.__dict__["gradients"] = new_gradients.gradients_memory
+
 import logging
 
 import time as tm
@@ -660,11 +663,11 @@ class RBM:
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
         #Config GPU memory 
-        config = tf.ConfigProto()
-        config.gpu_options.allow_growth=True
+        #config = tf.ConfigProto()
+        #config.gpu_options.allow_growth=True
 
         #Start TF training session on default graph
-        self.sess =  tf.Session(config=config)
+        self.sess =  tf.Session()
         self.sess.run(init_g)
 
         self.sess.run(self.iter.initializer, feed_dict={self.vu: xtr, self.batch_size_: self.minibatch})
@@ -742,8 +745,6 @@ class RBM:
         Implement multinomial sampling from a trained model
 
         Args:
-
-
 
         '''
         #Sampling
