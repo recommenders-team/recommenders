@@ -425,14 +425,17 @@ class RBM:
             v_k: sampled value of the visible unit at step k
 
         '''
-        self.v_k = self.v #initialize the value of the visible units at step k=0 on the data
 
-        if self.debug_:
-            print('CD step', self.k)
+        with tf.name_scope('gibbs_sampling'):
 
-        for i in range(self.k): #k_sampling
-            _, h_k = self.sample_h(self.v_k)
-            _ ,self.v_k = self.sample_v(h_k)
+            self.v_k = self.v #initialize the value of the visible units at step k=0 on the data
+
+            if self.debug_:
+                print('CD step', self.k)
+
+            for i in range(self.k): #k_sampling
+                _, h_k = self.sample_h(self.v_k)
+                _ ,self.v_k = self.sample_v(h_k)
 
 
     #2) Contrastive divergence
@@ -473,16 +476,19 @@ class RBM:
             accordingly.
 
         '''
-        per= (i/self.epochs)*100 #current percentage of the total #epochs
 
-        if per !=0:
-            if per >= self.CD_protol_[self.l] and per <= self.CD_protol_[self.l+1] :
-                self.k +=1
-                self.l +=1
-                self.G_sampling()
+        with tf.name_scope('gibbs_protocol'):
 
-        if self.debug_:
-            print('percentage of epochs covered so far %f2' %(per))
+            per= (i/self.epochs)*100 #current percentage of the total #epochs
+
+            if per !=0:
+                if per >= self.CD_protol_[self.l] and per <= self.CD_protol_[self.l+1] :
+                    self.k +=1
+                    self.l +=1
+                    self.G_sampling()
+
+            if self.debug_:
+                print('percentage of epochs covered so far %f2' %(per))
 
     #================================================
     # model performance (online metrics)
@@ -503,9 +509,10 @@ class RBM:
 
         '''
 
-        #predict a new value
-        _, h_p = self.sample_h(self.v)
-        pvh ,vp = self.sample_v(h_p)
+        with tf.name_scope('inference'):
+            #predict a new value
+            _, h_p = self.sample_h(self.v)
+            pvh ,vp = self.sample_v(h_p)
 
         return pvh, vp
 
@@ -594,8 +601,10 @@ class RBM:
 
         '''
 
+        #keep the position of the items in the train set so that they can be optionally exluded from recommendation
         self.seen_mask = np.not_equal(xtr,0)
 
+        #start timing the methos
         self.time()
 
         self.r_= xtr.max() #defines the rating scale, e.g. 1 to 5
@@ -615,7 +624,7 @@ class RBM:
 
         #Create data pipeline
         self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
-        self.dataset = self.dataset.shuffle(buffer_size= 50)
+        self.dataset = self.dataset.shuffle(buffer_size= 50, reshuffle_each_iteration=True, seed = 1) #randomize the batch
         self.dataset = self.dataset.batch(batch_size= self.batch_size_).repeat()
 
         self.iter = self.dataset.make_initializable_iterator()
@@ -629,20 +638,18 @@ class RBM:
         self.l=0 #initialize epoch_sample index
         #-------------------------Main algo---------------------------
 
-        self.G_sampling() #sampled value of the visible units
+        self.G_sampling() #returns the sampled value of the visible units
 
         obj = self.Losses(self.v) #objective function
-        rate = self.alpha/self.minibatch  #rescaled learning rate
+        rate = self.alpha/self.minibatch  #learning rate rescaled by the batch size
 
-        #Instantiate the optimizer
+        #Instantiate the momentum optimizer
         opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj)
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
         if self.with_metrics_:#if true (default) returns evaluation metrics
-
-            Mse_train = [] #Lists to collect the metrics across each epochs
-
+            Mse_train = [] #Lists to collect the metrics across epochs
             #Metrics
             Mserr  = self.msr_error(self.v_k)
             Clacc  = self.precision(self.v_k)
@@ -652,8 +659,12 @@ class RBM:
 
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
-        #Start TF session on default graph
-        self.sess = tf.Session()
+        #Config GPU memory 
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth=True
+
+        #Start TF training session on default graph
+        self.sess =  tf.Session(config=config)
         self.sess.run(init_g)
 
         self.sess.run(self.iter.initializer, feed_dict={self.vu: xtr, self.batch_size_: self.minibatch})
@@ -680,7 +691,7 @@ class RBM:
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             #Evaluates precision on the train and test set
-            precision_train = self.sess.run(Clacc)
+            precision_train = train_sess.run(Clacc)
 
             self.sess.run(self.iter.initializer, feed_dict={self.vu: xtst, self.batch_size_: xtst.shape[0]})
             precision_test = self.sess.run(Clacc)
@@ -715,6 +726,7 @@ class RBM:
 
             log.info("done training, Training time %f2" %elapsed)
 
+        #--------------Save learning parameters and close session----------------------------
         if self.save_model_: #if true, save the model to specified path
             saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
             
@@ -732,9 +744,10 @@ class RBM:
         Args:
 
 
+
         '''
         #Sampling
-        _, h_ = self.sample_h(self.vu) #sample h
+        _, h_ = self.sample_h(self.v) #sample h
 
         #sample v
         phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
@@ -784,17 +797,15 @@ class RBM:
         if self.save_model_: #if true, restore the computational graph from a trained session
 
             m, self.Nv_ = x.shape #dimension of the input: m= N_users, Nv= N_items
-
             self.r_= x.max() #defines the rating scale, e.g. 1 to 5
-
             tf.reset_default_graph()
 
             self.placeholder()
             self.init_parameters()
 
             saver = tf.train.Saver()
-
             self.sess = tf.Session()
+
             saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
 
         else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
@@ -802,9 +813,8 @@ class RBM:
         v_, pvh_ = self.eval_out() #evaluate the ratings and the associated probabilities
 
         #evaluate v_ and pvh_ on the input data
-        #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
-
-        vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.vu: x})
+        self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
+        vp, pvh= self.sess.run([v_, pvh_])
 
         self.sess.close
             
@@ -814,7 +824,7 @@ class RBM:
 
         #evaluate the score
         score =  np.multiply(vp, pv)
-
+        #elapsed time
         elapsed = self.time()
 
         log.info("Done recommending items, time %f2" %elapsed)
@@ -853,7 +863,7 @@ class RBM:
         results[self.col_user] = results[self.col_user].map(map_back_users)
         results[self.col_item] = results[self.col_item].map(map_back_items)
 
-        return (results, elapsed) 
+        return (results, elapsed)
 
 
     def predict(self, x):
@@ -880,7 +890,7 @@ class RBM:
             number of items, but it can have an arbitrary number of rows (users).
 
         '''
-    
+
         self.time()
 
         if self.save_model_: #if true, restore the computational graph from a trained session

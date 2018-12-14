@@ -11,7 +11,7 @@ KEEP_PROB = 0.7
 #MOMENTUM = 0.5
 
 #standard deviation for initializing the weights from a normal distribution with zero mean
-STDV =  0.05
+STDV =  0.1
 #Learning rate
 ALPHA = 0.004
 #number of minibatches
