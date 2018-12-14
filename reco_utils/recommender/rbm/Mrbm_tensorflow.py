@@ -691,7 +691,7 @@ class RBM:
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
             #Evaluates precision on the train and test set
-            precision_train = train_sess.run(Clacc)
+            precision_train = self.sess.run(Clacc)
 
             self.sess.run(self.iter.initializer, feed_dict={self.vu: xtst, self.batch_size_: xtst.shape[0]})
             precision_test = self.sess.run(Clacc)
@@ -747,7 +747,7 @@ class RBM:
 
         '''
         #Sampling
-        _, h_ = self.sample_h(self.v) #sample h
+        _, h_ = self.sample_h(self.vu) #sample h
 
         #sample v
         phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
@@ -813,8 +813,8 @@ class RBM:
         v_, pvh_ = self.eval_out() #evaluate the ratings and the associated probabilities
 
         #evaluate v_ and pvh_ on the input data
-        self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
-        vp, pvh= self.sess.run([v_, pvh_])
+        #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
+        vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.vu: x})
 
         self.sess.close
             
