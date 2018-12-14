@@ -139,12 +139,16 @@ zero_test/total *100
 #Train the model
 #===========================
 
-model = RBM(hidden_units= 500, save_model= False, keep_prob= .7, training_epoch = 10, **header)
+model = RBM(hidden_units= 1000, training_epoch = 5, minibatch_size= 500, with_metrics = False,**header)
 
-model.fit(Xtr,Xtst)
+train_time = model.fit(Xtr,Xtst)
+
+train_time
 
 top_k = 10
-results =  model.recommend_k_items(Xtr, map)
+results, test_time =  model.recommend_k_items(Xtr, map)
+
+test_time
 
 results.head(10)
 

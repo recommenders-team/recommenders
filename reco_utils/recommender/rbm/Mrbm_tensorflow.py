@@ -617,159 +617,120 @@ class RBM:
 
         log.info("Creating the computational graph")
 
-        train_graph = tf.Graph()
+        #create the visible units placeholder
+        self.placeholder()
 
-        with train_graph.as_default():
+        self.batch_size_ = tf.placeholder(tf.int64)
 
+        #Create data pipeline
+        self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
+        self.dataset = self.dataset.shuffle(buffer_size= 50, reshuffle_each_iteration=True, seed = 1) #randomize the batch
+        self.dataset = self.dataset.batch(batch_size= self.batch_size_).repeat()
 
-            #create the visible units placeholder
-            self.placeholder()
+        self.iter = self.dataset.make_initializable_iterator()
+        self.v = self.iter.get_next()
 
-            self.batch_size_ = tf.placeholder(tf.int64)
+        #initialize Network paramters
+        self.init_parameters()
 
-            #Create data pipeline
-            self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
-            self.dataset = self.dataset.shuffle(buffer_size= 50, reshuffle_each_iteration=True, seed = 1) #randomize the batch
-            self.dataset = self.dataset.batch(batch_size= self.batch_size_).repeat()
+        #--------------Sampling protocol for Gibbs sampling-----------------------------------
+        self.k=1 #initialize the G_sampling step
+        self.l=0 #initialize epoch_sample index
+        #-------------------------Main algo---------------------------
 
-            self.iter = self.dataset.make_initializable_iterator()
-            self.v = self.iter.get_next()
+        self.G_sampling() #returns the sampled value of the visible units
 
-            #initialize Network paramters
-            self.init_parameters()
+        obj = self.Losses(self.v) #objective function
+        rate = self.alpha/self.minibatch  #learning rate rescaled by the batch size
 
-            #--------------Sampling protocol for Gibbs sampling-----------------------------------
-            self.k=1 #initialize the G_sampling step
-            self.l=0 #initialize epoch_sample index
-            #-------------------------Main algo---------------------------
+        #Instantiate the momentum optimizer
+        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj)
 
-            self.G_sampling() #returns the sampled value of the visible units
+        pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
-            obj = self.Losses(self.v) #objective function
-            rate = self.alpha/self.minibatch  #learning rate rescaled by the batch size
+        if self.with_metrics_:#if true (default) returns evaluation metrics
+            Mse_train = [] #Lists to collect the metrics across epochs
+            #Metrics
+            Mserr  = self.msr_error(self.v_k)
+            Clacc  = self.precision(self.v_k)
 
-            #Instantiate the momentum optimizer
-            opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj)
+        if self.save_model_: #save the model to file
+            saver = tf.train.Saver()
 
-            pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
+        init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
-            if self.with_metrics_:#if true (default) returns evaluation metrics
-                Mse_train = [] #Lists to collect the metrics across epochs
-                #Metrics
-                Mserr  = self.msr_error(self.v_k)
-                Clacc  = self.precision(self.v_k)
+        #Start TF training session on default graph
+        self.sess = tf.Session()
+        self.sess.run(init_g)
 
-            #if self.save_model_: #save the model to file
-            #saver = tf.train.Saver()
+        self.sess.run(self.iter.initializer, feed_dict={self.vu: xtr, self.batch_size_: self.minibatch})
 
-            init_g = tf.global_variables_initializer() #Initialize all variables in the graph
+        if self.with_metrics_: #this condition is for benchmarking, remove for production
 
-            #Start TF training session on default graph
-            train_sess = tf.Session(graph= train_graph)
-            train_sess.run(init_g)
+            #start loop over training epochs
+            for i in range(self.epochs):
 
-            train_sess.run(self.iter.initializer, feed_dict={self.vu: xtr, self.batch_size_: self.minibatch})
+                epoch_tr_err =0 #initialize the training error for each epoch to zero
 
-            if self.with_metrics_: #this condition is for benchmarking, remove for production
+                self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
-                #start loop over training epochs
-                for i in range(self.epochs):
+                for l in range(num_minibatches):
 
-                    epoch_tr_err =0 #initialize the training error for each epoch to zero
+                    _, batch_err = self.sess.run([opt, Mserr])
 
-                    self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
+                    epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
 
-                    for l in range(num_minibatches):
-
-                        _, batch_err = train_sess.run([opt, Mserr])
-
-                        epoch_tr_err += batch_err/num_minibatches #average mse error per minibatch
-
-                    if i % self.display ==0:
-                        print('training epoch %i rmse Train %f' %(i, epoch_tr_err) )
+                if i % self.display ==0:
+                    print('training epoch %i rmse Train %f' %(i, epoch_tr_err) )
 
                 #write metrics across epochs
                 Mse_train.append(epoch_tr_err) # mse training error per training epoch
 
-                #Evaluates precision on the train and test set
-                precision_train = train_sess.run(Clacc)
+            #Evaluates precision on the train and test set
+            precision_train = train_sess.run(Clacc)
 
-                train_sess.run(self.iter.initializer, feed_dict={self.vu: xtst, self.batch_size_: xtst.shape[0]})
-                precision_test = train_sess.run(Clacc)
+            self.sess.run(self.iter.initializer, feed_dict={self.vu: xtst, self.batch_size_: xtst.shape[0]})
+            precision_test = self.sess.run(Clacc)
 
-                elapsed = self.time()
+            elapsed = self.time()
 
-                log.info("done training, Training time %f2" %elapsed)
+            log.info("done training, Training time %f2" %elapsed)
 
-                #Display training error as a function of epochs
-                plt.plot(Mse_train, label= 'train')
-                plt.ylabel('msr_error', size= 'x-large')
-                plt.xlabel('epochs', size = 'x-large')
-                plt.legend(ncol=1)
+            #Display training error as a function of epochs
+            plt.plot(Mse_train, label= 'train')
+            plt.ylabel('msr_error', size= 'x-large')
+            plt.xlabel('epochs', size = 'x-large')
+            plt.legend(ncol=1)
 
-                #Final precision scores
-                print('precision on the train set', precision_train)
-                print('precision on the test set', precision_test)
-                print('train/test difference', precision_train - precision_test)
+            #Final precision scores
+            print('precision on the train set', precision_train)
+            print('precision on the test set', precision_test)
+            print('train/test difference', precision_train - precision_test)
 
-            else:
+        else:
 
-                #start loop over training epochs
-                for i in range(self.epochs):
+            #start loop over training epochs
+            for i in range(self.epochs):
 
-                    self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
+                self.Gibbs_protocol(i) #updates the number of sampling steps in Gibbs sampling
 
-                    for l in range(num_minibatches):
+                for l in range(num_minibatches):
 
-                        _ = train_sess.run(opt)
+                    _ = self.sess.run(opt)
 
-                elapsed = self.time()
+            elapsed = self.time()
 
-                log.info("done training, Training time %f2" %elapsed)
+            log.info("done training, Training time %f2" %elapsed)
 
         #--------------Save learning parameters and close session----------------------------
-
-            #evaluate the learning paramters
-            self.w_ , self.bv_, self.bh_ = train_sess.run([self.w, self.bv, self.bh])
-
-            if self.save_model_: #if true, save the model to specified path
-                #saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
-                np.save(self.save_path_ + '/weights' , self.w_)
-                np.save(self.save_path_ + '/visbias' , self.bv_)
-                np.save(self.save_path_ + '/hidbias' , self.bh_)
-
-        #train_sess.reset(target, ['model_train']) #close the session to free memry
-        train_sess.close()
-
-        del(train_sess, self.vu, self.dataset, self.w, self.bv, self.bh )
+        if self.save_model_: #if true, save the model to specified path
+            saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
 
         return elapsed
 
     #=========================
     # Inference modules
     #=========================
-
-
-    def init_learned_param(self):
-
-        '''
-        Initialize weight and biases on the learned parameters
-
-        Args:
-            w_ , bv_, bh_: learned weight matrix, visible and hidden bias. These can be loaded within the
-            same session or loaded from file
-
-        Returns: tensors initialized to the learned paramters
-
-        '''
-
-        with tf.name_scope('init_learned_paramters'):
-
-            self.w  = tf.constant_initializer(self.w_)
-            self.bv = tf.constant_initializer(self.bv_)
-            self.bh = tf.constant_initializer(self.bh_)
-
-
 
     def eval_out(self):
 
@@ -782,7 +743,7 @@ class RBM:
 
         '''
         #Sampling
-        _, h_ = self.sample_h(self.vu) #sample h
+        _, h_ = self.sample_h(self.v) #sample h
 
         #sample v
         phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
@@ -829,46 +790,33 @@ class RBM:
         '''
         self.time()
 
-        m, self.Nv_ = x.shape #dimension of the input: m= N_users, Nv= N_items
-        self.r_= x.max() #defines the rating scale, e.g. 1 to 5
+        if self.save_model_: #if true, restore the computational graph from a trained session
 
-        reco_graph = tf.Graph()
-        with reco_graph.as_default():
+            m, self.Nv_ = x.shape #dimension of the input: m= N_users, Nv= N_items
+            self.r_= x.max() #defines the rating scale, e.g. 1 to 5
+            tf.reset_default_graph()
 
-            self.placeholder() #initialize the input placeholder
+            self.placeholder()
+            self.init_parameters()
 
-            #Create data pipeline
-            self.dataset = tf.data.Dataset.from_tensor_slices(self.vu).repeat()
-            self.iter = self.dataset.make_initializable_iterator()
-            self.v = self.iter.get_next()
+            saver = tf.train.Saver()
+            self.sess = tf.Session()
 
-            if self.save_model_: #if true, load the learning parameters from file
-                self.w_  = np.load(self.save_path_ + '/weights')
-                self.bv_ = np.load(self.save_path_ + '/visbias')
-                self.bh_ = np.load(self.save_path_ + '/hidbias')
+            saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
 
-            #init parameters to learned ones
-            self.init_learned_param()
+        else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
 
-            v_, pvh_ = self.eval_out() #evaluate the ratings and the associated probabilities
+        v_, pvh_ = self.eval_out() #evaluate the ratings and the associated probabilities
 
-            init_g = tf.global_variables_initializer() #Initialize all variables in the graph
-
-            #Start recommendation session
-            reco_sess = tf.Session(graph= reco_graph)
-            reco_sess.run(init_g)
-
-            #evaluate v_ and pvh_ on the input data
-            reco_sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
-            vp, pvh= reco_sess.run([v_, pvh_])
-
-            reco_sess.close()
+        #evaluate v_ and pvh_ on the input data
+        self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
+        vp, pvh= self.sess.run([v_, pvh_])
 
         pv= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
         #evaluate the score
         score =  np.multiply(vp, pv)
-
+        #elapsed time
         elapsed = self.time()
 
         log.info("Done recommending items, time %f2" %elapsed)
