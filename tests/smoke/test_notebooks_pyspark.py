@@ -7,7 +7,7 @@ import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
-TOL = 0.05
+TOL = 0.1
 
 
 @pytest.mark.smoke
