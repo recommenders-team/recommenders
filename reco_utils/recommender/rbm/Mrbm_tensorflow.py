@@ -425,14 +425,17 @@ class RBM:
             v_k: sampled value of the visible unit at step k
 
         '''
-        self.v_k = self.v #initialize the value of the visible units at step k=0 on the data
 
-        if self.debug_:
-            print('CD step', self.k)
+        with tf.name_scope('gibbs sampling'):
 
-        for i in range(self.k): #k_sampling
-            _, h_k = self.sample_h(self.v_k)
-            _ ,self.v_k = self.sample_v(h_k)
+            self.v_k = self.v #initialize the value of the visible units at step k=0 on the data
+
+            if self.debug_:
+                print('CD step', self.k)
+
+            for i in range(self.k): #k_sampling
+                _, h_k = self.sample_h(self.v_k)
+                _ ,self.v_k = self.sample_v(h_k)
 
 
     #2) Contrastive divergence
@@ -473,16 +476,19 @@ class RBM:
             accordingly.
 
         '''
-        per= (i/self.epochs)*100 #current percentage of the total #epochs
 
-        if per !=0:
-            if per >= self.CD_protol_[self.l] and per <= self.CD_protol_[self.l+1] :
-                self.k +=1
-                self.l +=1
-                self.G_sampling()
+        with tf,name_scope('gibbs protocol')""
 
-        if self.debug_:
-            print('percentage of epochs covered so far %f2' %(per))
+            per= (i/self.epochs)*100 #current percentage of the total #epochs
+
+            if per !=0:
+                if per >= self.CD_protol_[self.l] and per <= self.CD_protol_[self.l+1] :
+                    self.k +=1
+                    self.l +=1
+                    self.G_sampling()
+
+            if self.debug_:
+                print('percentage of epochs covered so far %f2' %(per))
 
     #================================================
     # model performance (online metrics)
@@ -503,9 +509,10 @@ class RBM:
 
         '''
 
-        #predict a new value
-        _, h_p = self.sample_h(self.v)
-        pvh ,vp = self.sample_v(h_p)
+        with tf.name_scope('inference'):
+            #predict a new value
+            _, h_p = self.sample_h(self.v)
+            pvh ,vp = self.sample_v(h_p)
 
         return pvh, vp
 
@@ -590,8 +597,6 @@ class RBM:
             precision: the mean average precision over the entire dataset
 
         Baic mechanics:
-
-
         '''
 
         self.seen_mask = np.not_equal(xtr,0)
@@ -850,7 +855,7 @@ class RBM:
         results[self.col_user] = results[self.col_user].map(map_back_users)
         results[self.col_item] = results[self.col_item].map(map_back_items)
 
-        return (results, elapsed) 
+        return (results, elapsed)
 
 
     def predict(self, x):
@@ -877,7 +882,7 @@ class RBM:
             number of items, but it can have an arbitrary number of rows (users).
 
         '''
-    
+
         self.time()
 
         if self.save_model_: #if true, restore the computational graph from a trained session
