@@ -7,8 +7,6 @@ import os
 # This seems to be an issue from Azure DevOps command line task.
 # NOTE this does not affect running directly in the shell.
 sys.path.append(os.getcwd())
-print(sys.path)
-import os
 import argparse
 import traceback
 import logging
