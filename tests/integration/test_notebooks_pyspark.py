@@ -7,19 +7,20 @@ import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
-TOL = 0.5
+TOL_RANK = 0.5
+TOL_RATE = 0.05
 
 
-@pytest.mark.skip.(reason="disabling test with large datasets")
+@pytest.mark.integration
 @pytest.mark.spark
 @pytest.mark.parametrize(
     "size, result_list",
     [
-        ("1m", [0.02, 0.15, 0.14, 0.07, 0.95, 0.73, 0.28, 0.28]),
-        ("10m", [0.03, 0.15, 0.14, 0.09, 0.85, 0.65, 0.36, 0.36]),
-        ("20m", [0.03, 0.15, 0.14, 0.08, 0.84, 0.63, 0.37, 0.37]),
+        ("1m", [0.002020, 0.024312, 0.030677, 0.009649, 0.860502, 0.680608, 0.411603, 0.406014]),
     ],
 )
+
+
 def test_als_pyspark_integration(notebooks, size, result_list):
     notebook_path = notebooks["als_pyspark"]
     pm.execute_notebook(
@@ -31,20 +32,20 @@ def test_als_pyspark_integration(notebooks, size, result_list):
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
     df = nb.dataframe
     result_map = df.loc[df["name"] == "map", "value"].values[0]
-    assert result_map == pytest.approx(result_list[0], TOL)
+    assert result_map == pytest.approx(result_list[0], TOL_RANK)
     result_ndcg = df.loc[df["name"] == "ndcg", "value"].values[0]
-    assert result_ndcg == pytest.approx(result_list[1], TOL)
+    assert result_ndcg == pytest.approx(result_list[1], TOL_RANK)
     result_precision = df.loc[df["name"] == "precision", "value"].values[0]
-    assert result_precision == pytest.approx(result_list[2], TOL)
+    assert result_precision == pytest.approx(result_list[2], TOL_RANK)
     result_recall = df.loc[df["name"] == "recall", "value"].values[0]
-    assert result_recall == pytest.approx(result_list[3], TOL)
+    assert result_recall == pytest.approx(result_list[3], TOL_RANK)
 
     result_rmse = df.loc[df["name"] == "rmse", "value"].values[0]
-    assert result_rmse == pytest.approx(result_list[4], TOL)
+    assert result_rmse == pytest.approx(result_list[4], TOL_RATE)
     result_mae = df.loc[df["name"] == "mae", "value"].values[0]
-    assert result_mae == pytest.approx(result_list[5], TOL)
+    assert result_mae == pytest.approx(result_list[5], TOL_RATE)
     result_exp_var = df.loc[df["name"] == "exp_var", "value"].values[0]
-    assert result_exp_var == pytest.approx(result_list[6], TOL)
+    assert result_exp_var == pytest.approx(result_list[6], TOL_RATE)
     result_rsquared = df.loc[df["name"] == "rsquared", "value"].values[0]
-    assert result_rsquared == pytest.approx(result_list[7], TOL)
+    assert result_rsquared == pytest.approx(result_list[7], TOL_RATE)
 
