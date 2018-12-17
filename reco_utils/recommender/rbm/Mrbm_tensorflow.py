@@ -814,12 +814,7 @@ class RBM:
         v_, pvh_ = self.eval_out() #evaluate the ratings and the associated probabilities
 
         #evaluate v_ and pvh_ on the input data
-        #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
-        vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.vu: x})
-
-        self.sess.close
-            
-        tf.reset_default_graph()
+        vp, pvh= self.sess.run([v_, pvh_],  feed_dict={self.vu: x})
 
         pv= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
