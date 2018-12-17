@@ -48,8 +48,8 @@ import math
 import matplotlib.pyplot as plt
 
 import tensorflow as tf
-import reco_utils.recommender.rbm.memory_saving_gradients as new_gradients
-tf.__dict__["gradients"] = new_gradients.gradients_memory
+#import reco_utils.recommender.rbm.memory_saving_gradients as new_gradients
+#tf.__dict__["gradients"] = new_gradients.gradients_memory
 
 import logging
 
@@ -662,10 +662,6 @@ class RBM:
 
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
-        #Config GPU memory 
-        #config = tf.ConfigProto()
-        #config.gpu_options.allow_growth=True
-
         #Start TF training session on default graph
         self.sess =  tf.Session()
         self.sess.run(init_g)
@@ -714,6 +710,8 @@ class RBM:
             print('precision on the test set', precision_test)
             print('train/test difference', precision_train - precision_test)
 
+            w_ = self.sess.run(self.w)
+
         else:
 
             #start loop over training epochs
@@ -726,13 +724,18 @@ class RBM:
                     _ = self.sess.run(opt)
 
             elapsed = self.time()
+            self.w_, self.bv_, self.bh_  = self.sess.run([self.w,self.bv, self.bh])
 
             log.info("done training, Training time %f2" %elapsed)
 
         #--------------Save learning parameters and close session----------------------------
         if self.save_model_: #if true, save the model to specified path
             saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
-            
+
+        self.sess.close
+
+        tf.reset_default_graph()
+
         return elapsed
 
     #=========================
@@ -747,8 +750,18 @@ class RBM:
         Args:
 
         '''
+        tf.reset_default_graph()
+
+        self.vu = tf.placeholder(shape= [None, self.Nv_], dtype= 'float32')
+
+        self.w  = tf.get_variable('trained_weight', [self.Nv_, self.Nh_], initializer= tf.constant_initializer(self.w_)  )
+        self.bv = tf.get_variable('trained_vis_biase', [1,self.Nv_], initializer= tf.constant_initializer(self.bv_) )
+        self.bh = tf.get_variable('trained_hidd_bias', [1, self.Nh_], initializer= tf.constant_initializer(self.bh_))
+
         #Sampling
-        _, h_ = self.sample_h(self.vu) #sample h
+        phi_v = tf.matmul(self.vu, self.w)+ self.bh #create a linear combination
+        phv   = tf.nn.sigmoid(phi_v) #conditional probability of h given v
+        h_  = self.B_sampling(phv) #ob
 
         #sample v
         phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
@@ -757,6 +770,7 @@ class RBM:
         v_  = self.M_sampling(pvh_) #sample the value of the visible units
 
         return v_, pvh_
+
 
 
     def recommend_k_items(self, x, maps, top_k=10, remove_seen = True):
@@ -794,6 +808,7 @@ class RBM:
 
         '''
         self.time()
+        m, _ = x.shape
 
         if self.save_model_: #if true, restore the computational graph from a trained session
 
@@ -809,17 +824,18 @@ class RBM:
 
             saved_files = saver.restore(self.sess,  self.save_path_ + '/rbm_model_saver.ckpt')
 
-        else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
+        #else: m, _ = x.shape #dimension of the input: m= N_users, Nv= N_items
 
         v_, pvh_ = self.eval_out() #evaluate the ratings and the associated probabilities
 
         #evaluate v_ and pvh_ on the input data
-        #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
-        vp, pvh= self.sess.run([v_, pvh_], feed_dict={self.vu: x})
+        init = tf.global_variables_initializer()
+        test_sess = tf.Session()
+        test_sess.run(init)
 
-        self.sess.close
-            
-        tf.reset_default_graph()
+        vp, pvh= test_sess.run([v_, pvh_], feed_dict={self.vu: x})
+
+        test_sess.close
 
         pv= np.max(pvh, axis= 2) #returns only the probabilities for the predicted ratings in vp
 
