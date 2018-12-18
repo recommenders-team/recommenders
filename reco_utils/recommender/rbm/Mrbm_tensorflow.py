@@ -102,12 +102,13 @@ class RBM:
         save_model= False,
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
-        with_metrics = True,
+        with_metrics = False,
     ):
 
         #pandas DF parameters
         self.col_rating = col_rating
         self.col_prediction = col_prediction
+        
         self.col_item = col_item
         self.col_user = col_user
 
@@ -118,9 +119,9 @@ class RBM:
         self.std = init_stdv        #standard deviation used to initialize the weights matrices
         self.alpha = learning_rate  #learning rate used in the update method of the optimizer
 
-        #size of the minibatch used in the random minibatches training. This should be set
-        #approx between  1 - 120. setting to 1 correspods to stochastic gradient descent, and
-        #it is considerably slower.Good performance is achieved for a size of ~100.
+        #size of the minibatch used in the random minibatches training; setting to 1 correspods to 
+        #stochastic gradient descent, and it is considerably slower.Good performance is achieved 
+        #for a size of ~100.
         self.minibatch = minibatch_size
         self.epochs= training_epoch+1  #number of epochs used to train the model
         self.display = display_epoch #number of epochs to show the mse error during training
@@ -663,11 +664,11 @@ class RBM:
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
         #Config GPU memory 
-        #config = tf.ConfigProto()
-        #config.gpu_options.allow_growth=True
+        Config = tf.ConfigProto(log_device_placement = True, allow_soft_placement=True)
+        Config.gpu_options.per_process_gpu_memory_fraction = 0.5
 
         #Start TF training session on default graph
-        self.sess =  tf.Session()
+        self.sess =  tf.Session(config = Config)
         self.sess.run(init_g)
 
         self.sess.run(self.iter.initializer, feed_dict={self.vu: xtr, self.batch_size_: self.minibatch})
@@ -698,6 +699,7 @@ class RBM:
 
             self.sess.run(self.iter.initializer, feed_dict={self.vu: xtst, self.batch_size_: xtst.shape[0]})
             precision_test = self.sess.run(Clacc)
+            rmse_test = self.sess.run(Mserr)
 
             elapsed = self.time()
 
@@ -747,11 +749,12 @@ class RBM:
         Args:
 
         '''
+        
         #Sampling
         _, h_ = self.sample_h(self.vu) #sample h
 
         #sample v
-        phi_h  = tf.matmul(h_, tf.transpose(self.w))+ self.bv #linear combination
+        phi_h  = tf.transpose(tf.matmul(self.w, tf.transpose(h_)) ) + self.bv #linear combination
         pvh_ = self.Pm(phi_h) #conditional probability of v given h
 
         v_  = self.M_sampling(pvh_) #sample the value of the visible units
@@ -836,11 +839,9 @@ class RBM:
 
         top_items  = np.argpartition(-score, range(top_k), axis= 1)[:,:top_k] #get the top k items
         top_scores = score[np.arange(score.shape[0])[:, None], top_items] #get top k scores
-        #top_ratings = vp[np.arange(vp.shape[0])[:, None], top_items] #get top ratings
 
         top_items_ = np.reshape(np.array(top_items), -1)
         top_scores_ = np.reshape(np.array(top_scores), -1)
-        #top_ratings_ = np.reshape(np.array(top_ratings), -1)
 
         #generate userids
         userids = []
@@ -862,7 +863,7 @@ class RBM:
         return (results, elapsed)
 
 
-    def predict(self, x):
+    def predict(self, x, maps):
 
         '''
         Returns the inferred ratings. This method is similar to recommend_k_items() with the followingexceptions:
@@ -913,9 +914,32 @@ class RBM:
         #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
 
         vp = self.sess.run(v_, feed_dict={self.vu: x})
-
+        
         elapsed = self.time()
 
         log.info("Done inference, time %f2" %elapsed)
+        
+        #generate userids
+        userids = []
+        
+        for i in range(0, m):
+            userids.extend([i]*self.Nv_)
+            
+         
+        itemids = itemids = [i for i in range(0, self.Nv_)]*m
+        ratings= np.reshape(vp, -1)
+          
+        #create dataframe
+        results = pd.DataFrame.from_dict({ self.col_user: userids,
+                                           self.col_item: itemids,
+                                           self.col_rating: ratings })
 
-        return vp
+        map_back_users = maps[0]
+        map_back_items = maps[1]
+
+        # remap user and item indices to IDs
+        results[self.col_user] = results[self.col_user].map(map_back_users)
+        results[self.col_item] = results[self.col_item].map(map_back_items)
+
+        return (results, vp, elapsed)
+
