@@ -111,11 +111,10 @@ Untitled*.ipynb
 ~$*
 output.ipynb
 conda*.yaml
-.idea
+.idea/
 *.npz
 *.data
 *.csv
+*.zip
 .vscode/
 scripts/repo_metrics/config.py
-Recommenders.zip
-Recommenders.egg
