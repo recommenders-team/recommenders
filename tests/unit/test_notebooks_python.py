@@ -1,9 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import os
 import pytest
-import pandas as pd
 import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
@@ -27,4 +25,10 @@ def test_template_runs(notebooks):
 @pytest.mark.notebooks
 def test_sar_single_node_runs(notebooks):
     notebook_path = notebooks["sar_single_node"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+
+
+@pytest.mark.notebooks
+def test_baseline_estimation_runs(notebooks):
+    notebook_path = notebooks["baseline_estimation"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)

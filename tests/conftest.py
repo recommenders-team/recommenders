@@ -153,6 +153,9 @@ def notebooks():
             folder_notebooks, "02_model", "surprise_svd_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
+        "baseline_estimation": os.path.join(
+            folder_notebooks, "03_evaluate", "baseline_estimation.ipynb"
+        ),
     }
     return paths
 
