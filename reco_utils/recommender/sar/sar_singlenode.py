@@ -254,19 +254,19 @@ class SARSingleNode:
             rating_series = grouped.sum()
 
             # update df with the affinities after the timestamp calculation
-            df = rating_series.rename(self.col_rating).to_frame()
-            df.reset_index(inplace=True)
+            newdf = rating_series.rename(self.col_rating).to_frame()
+            newdf.reset_index(inplace=True)
         else:
             # without time decay we take the last user-provided rating supplied in the dataset as the
             # final rating for the user-item pair
             log.info("Deduplicating the user-item counts")
-            df = df.drop_duplicates([self.col_user, self.col_item])[
+            newdf = df.drop_duplicates([self.col_user, self.col_item])[
                 [self.col_user, self.col_item, self.col_rating]
             ]
 
         if self.debug:
             elapsed_time = self.time()
-            cnt = df.shape[0]
+            cnt = newdf.shape[0]
             self.timer_log += [
                 "Affinity calculation:\t%d\trows in\t%s\tseconds -\t%f\trows per second."
                 % (cnt, elapsed_time, float(cnt) / elapsed_time)
@@ -274,13 +274,13 @@ class SARSingleNode:
 
         self.time()
         log.info("Creating index columns...")
-        # Hash users and items according to the two dicts. Add the two new columns to df.
-        df.loc[:, self._col_hashed_items] = df[self.col_item].map(self.item_map_dict)
-        df.loc[:, self._col_hashed_users] = df[self.col_user].map(self.user_map_dict)
+        # Hash users and items according to the two dicts. Add the two new columns to newdf.
+        newdf.loc[:, self._col_hashed_items] = newdf[self.col_item].map(self.item_map_dict)
+        newdf.loc[:, self._col_hashed_users] = newdf[self.col_user].map(self.user_map_dict)
 
         # store training set index for future use during prediction
         # DO NOT USE .values as the warning message suggests
-        self.index = df.as_matrix([self._col_hashed_users, self._col_hashed_items])
+        self.index = newdf.as_matrix([self._col_hashed_users, self._col_hashed_items])
 
         n_items = len(self.unique_items)
         n_users = len(self.unique_users)
@@ -293,8 +293,8 @@ class SARSingleNode:
         self.user_affinity = (
             sparse.coo_matrix(
                 (
-                    df[self.col_rating],
-                    (df[self._col_hashed_users], df[self._col_hashed_items]),
+                    newdf[self.col_rating],
+                    (newdf[self._col_hashed_users], newdf[self._col_hashed_items]),
                 ),
                 shape=(n_users, n_items),
             )
@@ -317,8 +317,8 @@ class SARSingleNode:
         user_item_hits = (
             sparse.coo_matrix(
                 (
-                    [1] * len(df[self._col_hashed_users]),
-                    (df[self._col_hashed_users], df[self._col_hashed_items]),
+                    [1] * len(newdf[self._col_hashed_users]),
+                    (newdf[self._col_hashed_users], newdf[self._col_hashed_items]),
                 ),
                 shape=(n_users, n_items),
             )
