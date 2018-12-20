@@ -280,7 +280,7 @@ class SARSingleNode:
 
         # store training set index for future use during prediction
         # DO NOT USE .values as the warning message suggests
-        self.index = newdf.as_matrix([self._col_hashed_users, self._col_hashed_items])
+        self.index = newdf[[self._col_hashed_users, self._col_hashed_items]].values
 
         n_items = len(self.unique_items)
         n_users = len(self.unique_users)
@@ -418,9 +418,6 @@ class SARSingleNode:
         else:
             scores_dense = scores.todense()
 
-        # take the intersection between train test items and items we actually need
-        test[self._col_hashed_users] = test[self.col_user].map(self.user_map_dict)
-
         # Mask out items in the train set.  This only makes sense for some
         # problems (where a user wouldn't interact with an item more than once).
         if self.remove_seen:
@@ -514,10 +511,10 @@ class SARSingleNode:
             scores_dense = scores.todense()
 
         # take the intersection between train test items and items we actually need
-        test[self._col_hashed_users] = test[self.col_user].map(self.user_map_dict)
-        test[self._col_hashed_items] = test[self.col_item].map(self.item_map_dict)
+        test_col_hashed_users = test[self.col_user].map(self.user_map_dict)
+        test_col_hashed_items = test[self.col_item].map(self.item_map_dict)
 
-        test_index = test.as_matrix([self._col_hashed_users, self._col_hashed_items])
+        test_index = pd.concat([test_col_hashed_users, test_col_hashed_items], axis=1).values
         aset = set([tuple(x) for x in self.index])
         bset = set([tuple(x) for x in test_index])
 
