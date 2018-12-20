@@ -18,7 +18,7 @@ Basic mechanics:
         -- visible units: The number Nv of visible units equals the number of items
         -- hidden units : hyperparameter to fix during training
 
-2) Sampling via Contrastive Divergence (Bernoulli sampling)
+2) Gibbs Sampling:
         2.1) for each training epoch, the visible units are first clamped on the data
         2.2) The activation probability of the hidden units, given a linear combination of
              the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
@@ -29,9 +29,9 @@ Basic mechanics:
         2.4) This step is repeated k times, where k increases as optimization converges. It is
              essential to fix to zero the original unrated items during the all learning process.
 
-3) Optimization
+3) Optimization:
          The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
-          and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
+         and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
           minimizing the differene F_0 - F_k.
 
 4) Inference
@@ -48,8 +48,11 @@ import math
 import matplotlib.pyplot as plt
 
 import tensorflow as tf
-import reco_utils.recommender.rbm.memory_saving_gradients as new_gradients
-tf.__dict__["gradients"] = new_gradients.gradients_memory
+import tensorflow_probability as tfp
+tfd = tfp.distributions
+
+#import reco_utils.recommender.rbm.memory_saving_gradients as new_gradients
+#0tf.__dict__["gradients"] = new_gradients.gradients_memory
 
 import logging
 
@@ -108,7 +111,7 @@ class RBM:
         #pandas DF parameters
         self.col_rating = col_rating
         self.col_prediction = col_prediction
-        
+
         self.col_item = col_item
         self.col_user = col_user
 
@@ -119,8 +122,8 @@ class RBM:
         self.std = init_stdv        #standard deviation used to initialize the weights matrices
         self.alpha = learning_rate  #learning rate used in the update method of the optimizer
 
-        #size of the minibatch used in the random minibatches training; setting to 1 correspods to 
-        #stochastic gradient descent, and it is considerably slower.Good performance is achieved 
+        #size of the minibatch used in the random minibatches training; setting to 1 correspods to
+        #stochastic gradient descent, and it is considerably slower.Good performance is achieved
         #for a size of ~100.
         self.minibatch = minibatch_size
         self.epochs= training_epoch+1  #number of epochs used to train the model
@@ -188,13 +191,18 @@ class RBM:
                        to implement this condtion using the relu function.
 
         '''
-        np.random.seed(1)
+        #np.random.seed(1)
 
         #sample from a Bernoulli distribution with same dimensions as input distribution
-        g = np.random.uniform(size= pr.shape[1] )
+        #g = np.random.uniform(size= pr.shape[1] )
 
         #sample the
-        h_sampled = tf.nn.relu(tf.sign(pr-g) )
+        #h_sampled = tf.nn.relu(tf.sign(pr-g) )
+
+        tf.set_random_seed(1)
+
+        b = tfd.Bernoulli(probs=pr, dtype=tf.float32)
+        h_sampled= b.sample()
 
         return h_sampled
 
@@ -221,11 +229,12 @@ class RBM:
             index = argmax() + 1 to account for the fact that array indices start from 0 .
 
         '''
-        np.random.seed(1)
+        #np.random.seed(1)
+        #g = np.random.uniform(size= pr.shape[2] )
+        #samp = tf.nn.relu(tf.sign(pr - g) )
 
-        g = np.random.uniform(size= pr.shape[2] )
-
-        samp = tf.nn.relu(tf.sign(pr - g) )
+        m = tfd.Multinomial(total_count =1., probs = pr)
+        samp = m.sample()
 
         v_samp = tf.cast( tf.argmax(samp, axis= 2)+1, 'float32')
 
@@ -663,7 +672,7 @@ class RBM:
 
         init_g = tf.global_variables_initializer() #Initialize all variables in the graph
 
-        #Config GPU memory 
+        #Config GPU memory
         Config = tf.ConfigProto(log_device_placement = True, allow_soft_placement=True)
         Config.gpu_options.per_process_gpu_memory_fraction = 0.5
 
@@ -734,7 +743,7 @@ class RBM:
         #--------------Save learning parameters and close session----------------------------
         if self.save_model_: #if true, save the model to specified path
             saver.save(self.sess, self.save_path_ + '/rbm_model_saver.ckpt')
-            
+
         return elapsed
 
     #=========================
@@ -749,7 +758,7 @@ class RBM:
         Args:
 
         '''
-        
+
         #Sampling
         _, h_ = self.sample_h(self.vu) #sample h
 
@@ -914,21 +923,21 @@ class RBM:
         #self.sess.run(self.iter.initializer, feed_dict={self.vu: x, self.batch_size_: x.shape[0]})
 
         vp = self.sess.run(v_, feed_dict={self.vu: x})
-        
+
         elapsed = self.time()
 
         log.info("Done inference, time %f2" %elapsed)
-        
+
         #generate userids
         userids = []
-        
+
         for i in range(0, m):
             userids.extend([i]*self.Nv_)
-            
-         
+
+
         itemids = itemids = [i for i in range(0, self.Nv_)]*m
         ratings= np.reshape(vp, -1)
-          
+
         #create dataframe
         results = pd.DataFrame.from_dict({ self.col_user: userids,
                                            self.col_item: itemids,
@@ -942,4 +951,3 @@ class RBM:
         results[self.col_item] = results[self.col_item].map(map_back_items)
 
         return (results, vp, elapsed)
-
