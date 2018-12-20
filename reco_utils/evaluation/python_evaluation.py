@@ -56,6 +56,10 @@ def _merge_rating_true_pred(
             + str(rating_pred.columns)
         )
 
+    # Select the columns needed for evaluations
+    rating_true = rating_true[[col_user, col_item, col_rating]]
+    rating_pred = rating_true[[col_user, col_item, col_prediction]]
+
     if col_rating == col_prediction:
         rating_true_pred = pd.merge(
             rating_true,
