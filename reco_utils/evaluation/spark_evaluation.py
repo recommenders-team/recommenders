@@ -223,6 +223,18 @@ class SparkRankingEvaluation:
         if self.col_prediction not in pred_columns:
             raise ValueError("Schema of rating_pred not valid. Missing Prediction Col")
 
+        # Select the relevant columns for calculating evaluation metrics.
+        self.rating_true = self.rating_true.select(
+            col(self.col_user).cast("double"),
+            col(self.col_item).cast("double"),
+            col(self.col_rating).cast("double").alias("label"),
+        )
+        self.rating_pred = self.rating_pred.select(
+            col(self.col_user).cast("double"),
+            col(self.col_item).cast("double"),
+            col(self.col_prediction).cast("double").alias("prediction"),
+        )
+
         self.k = k
 
         relevant_func = {
