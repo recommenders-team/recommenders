@@ -29,6 +29,6 @@ def test_sar_single_node_runs(notebooks):
 
 
 @pytest.mark.notebooks
-def test_baseline_estimation_runs(notebooks):
-    notebook_path = notebooks["baseline_estimation"]
+def test_baseline_deep_dive_runs(notebooks):
+    notebook_path = notebooks["baseline_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
