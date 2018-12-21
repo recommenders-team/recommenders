@@ -23,6 +23,3 @@ HASHED_USERS = "hashedUsers"
 def _user_item_return_type():
     return str
 
-
-def _predict_column_type():
-    return float
