@@ -8,3 +8,5 @@ Recommenders contributors (sorted alphabetically)
   * SAR notebooks
   * SAR unit / integration / smoke tests
 
+* **[Scott Graham](https://github.com/gramhagen)**
+  * documentation / testing
