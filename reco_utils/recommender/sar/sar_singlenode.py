@@ -26,8 +26,7 @@ from reco_utils.recommender.sar import (
     SIM_COOCCUR,
     HASHED_USERS,
     HASHED_ITEMS,
-    _user_item_return_type,
-    _predict_column_type,
+    _user_item_return_type
 )
 from reco_utils.recommender.sar import (
     TIME_DECAY_COEFFICIENT,
@@ -194,6 +193,12 @@ class SARSingleNode:
 
         log.info("Collecting user affinity matrix...")
         self.time()
+        # use the same floating type for the computations as input
+        float_type = df[self.col_rating].dtype
+        if not np.issubdtype(float_type, np.floating):
+            raise ValueError("Only floating point data types are accepted for the rating column. Data type was {} "
+                             "instead.".format(float_type))
+
         if self.timedecay_formula:
             # WARNING: previously we would take the last value in training dataframe and set it
             # as a matrix U element
@@ -218,12 +223,13 @@ class SARSingleNode:
                 / (self.time_decay_coefficient * 24.0 * 3600)
             )
 
-            rating_exponential = df[self.col_rating].values * expo_fun(df[self.col_timestamp].values)
+            rating_exponential = df[self.col_rating].values * expo_fun(df[self.col_timestamp].values).astype(float_type)
+            # update df with the affinities after the timestamp calculation
             # copy part of the data frame to avoid modification of the input
-            temp_df = pd.DataFrame(data=np.hstack(
-                [np.expand_dims(df[self.col_user].values, axis=1), np.expand_dims(df[self.col_item].values, axis=1),
-                 np.expand_dims(rating_exponential, axis=1)]), columns=[self.col_user, self.col_item, self.col_rating])
-            newdf = temp_df.groupby([self.col_user, self.col_item]).sum()
+            temp_df = pd.DataFrame(data={self.col_user: df[self.col_user],
+                                         self.col_item: df[self.col_item],
+                                         self.col_rating: rating_exponential})
+            newdf = temp_df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
             """
             # experimental implementation of multiprocessing - in practice for smaller datasets this is not needed
@@ -254,8 +260,6 @@ class SARSingleNode:
                     self.time_decay_coefficient * 24. * 3600))))
             """
 
-            # update df with the affinities after the timestamp calculation
-            newdf.reset_index(inplace=True)
         else:
             # without time decay we take the last user-provided rating supplied in the dataset as the
             # final rating for the user-item pair
@@ -363,6 +367,8 @@ class SARSingleNode:
             self.item_similarity = self.__lift(item_cooccurrence)
         else:
             raise ValueError("Unknown similarity type: {0}".format(similarity_type))
+
+        self.item_similarity = self.item_similarity.astype(float_type, copy=False)
 
         if self.debug and (
                 similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
@@ -476,7 +482,7 @@ class SARSingleNode:
                 {
                     self.col_user: _user_item_return_type(),
                     self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type(),
+                    PREDICTION_COL: self.scores.dtype,
                 }
             )
         )
@@ -551,7 +557,7 @@ class SARSingleNode:
                 {
                     self.col_user: _user_item_return_type(),
                     self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type(),
+                    PREDICTION_COL: self.scores.dtype,
                 }
             )
         )

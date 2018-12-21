@@ -106,7 +106,7 @@ def test_predict(
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == object
     assert preds[header["col_item"]].dtype == object
-    assert preds[PREDICTION_COL].dtype == float
+    assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
 """
