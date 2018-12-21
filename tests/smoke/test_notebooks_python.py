@@ -28,8 +28,8 @@ def test_sar_single_node_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_baseline_estimation_smoke(notebooks):
-    notebook_path = notebooks["baseline_estimation"]
+def test_baseline_deep_dive_smoke(notebooks):
+    notebook_path = notebooks["baseline_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
