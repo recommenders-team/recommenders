@@ -48,12 +48,6 @@ import math
 import matplotlib.pyplot as plt
 
 import tensorflow as tf
-import tensorflow_probability as tfp
-tfd = tfp.distributions
-
-#import reco_utils.recommender.rbm.memory_saving_gradients as new_gradients
-#0tf.__dict__["gradients"] = new_gradients.gradients_memory
-
 import logging
 
 import time as tm
@@ -156,7 +150,6 @@ class RBM:
         Returns:
              if timer started time in seconds since the last time time function was called
         """
-        #if self.debug_:
 
         if self.start_time is None:
             self.start_time = tm.time()
@@ -175,34 +168,31 @@ class RBM:
     def B_sampling(self,pr):
 
         '''
-        Sample from a Binomial distribution using acceptance/rejection method.
-
-        1) Extract a random number from a uniform distribution (g) and compare it with
-            the unit's probability (pr)
-
-        2) Choose 0 if pr<g, 1 otherwise
+        Binomial sampling of hidden units activations using a rejection method.
 
         Args:
             pr: input conditional probability
-            g:  conditional probability used for comparison
+            g:  uniform probability used for comparison
 
         Returns:
-            h_samples: sampled units. The value is 1 if pr>g and 0 otherwise. It is convenient
-                       to implement this condtion using the relu function.
+            h_sampled: sampled units. The value is 1 if pr>g and 0 otherwise.
+
+        Basic mechanics:
+            1) Extract a random number from a uniform distribution (g) and compare it with
+                the unit's probability (pr)
+
+            2) Choose 0 if pr<g, 1 otherwise. It is convenient to implement this condtion using
+               the relu function.
 
         '''
-        #np.random.seed(1)
+
+        np.random.seed(1)
 
         #sample from a Bernoulli distribution with same dimensions as input distribution
-        #g = np.random.uniform(size= pr.shape[1] )
+        g = np.random.uniform(size= pr.shape[1] )
 
-        #sample the
-        #h_sampled = tf.nn.relu(tf.sign(pr-g) )
-
-        tf.set_random_seed(1)
-
-        b = tfd.Bernoulli(probs=pr, dtype=tf.float32)
-        h_sampled= b.sample()
+        #sample the value of the hidden units
+        h_sampled = tf.nn.relu(tf.sign(pr-g) )
 
         return h_sampled
 
@@ -210,33 +200,41 @@ class RBM:
     def M_sampling(self, pr):
 
         '''
-        Multinomial Sampling
-
-        For r classes, we sample r binomial distributions using the acceptance/Rejection method.
-        This is possible since each class is statistically independent from the other. Note that
-        this is the same method used in numpy's random.multinomial() function.
-
-        Using broadcasting along the 3rd index, this function can be easily implemented
+        Multinomial Sampling of ratings
 
         Args:
             pr:  a distributions of shape (m, n, r), where m is the number of examples, n the number
                  of features and r the number of classes. pr needs to be normalized, i.e.
                  sum_k p(k) = 1 for all m, at fixed n.
+            f:   normalized, uniform probability used for comparison.
 
         Returns:
-            v_samp: an (m,n) array of sampled values from 1 to r . Given the sampled distribution of
-            the type [0,1,0, ..., 0] it returns the index of the value 1 . The outcome is
-            index = argmax() + 1 to account for the fact that array indices start from 0 .
+            v_samp: an (m,n) array of sampled rankings from 1 to r .
+
+        Basic mechanics:
+                For r classes, we sample r binomial distributions using the rejection method. This is possible
+                since each class is statistically independent from the other. Note that this is the same method
+                used in numpy's random.multinomial() function.
+
+                1) extract a size r array of random numbers from a uniform distribution (g). As pr is normalized,
+                   we need to normalize g as well.
+
+                2) For each user and item, compare pr with the reference distribution. Note that the latter needs
+                   to be the same for ALL the user/item pairs in the dataset, as by assumptions they are sampled
+                   from a common distribution. The result of this step (samp) is used as a mask on pr.
+
+                3) Take the element-wise produt samp*pr and select the element with highest probability using
+                    the argmax() function. The rating is obtained as v_samp = argmax() + 1 to account for the fact
+                    that array indices start from 0 .
 
         '''
-        #np.random.seed(1)
-        #g = np.random.uniform(size= pr.shape[2] )
-        #samp = tf.nn.relu(tf.sign(pr - g) )
+        np.random.seed(1)
 
-        m = tfd.Multinomial(total_count =1., probs = pr)
-        samp = m.sample()
+        g = np.random.uniform(size= pr.shape[2] ) #sample from a uniform distribution
+        g_norm= tf.convert_to_tensor(g/g.sum(), dtype=np.float32 ) #normalize and convert to tensor
 
-        v_samp = tf.cast( tf.argmax(samp, axis= 2)+1, 'float32')
+        samp = tf.nn.relu(tf.sign(pr - g_norm) ) #apply rejection method
+        v_samp = tf.cast( tf.argmax(tf.multiply(samp, pr) , axis=2)+1, 'float32') #select sampled element
 
         return v_samp
 
