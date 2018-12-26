@@ -10,18 +10,9 @@ as a simple and readable implementation.
 import os
 import numpy as np
 import pandas as pd
-import logging
 import tensorflow as tf
 
 from time import time
-
-
-"""
-enable or set manually with --log=INFO when running example file if you want logging:
-disabling because logging output contaminates stdout output on Databricsk Spark clusters
-"""
-# logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
 
 
 class NCF:
@@ -262,7 +253,6 @@ class NCF:
         self.id2item = data.id2item
 
         # output the model type
-        log.info("Training model: %s" % self.model_type)
         print("Training model: %s" % self.model_type)
 
         # loop for n_epochs
@@ -296,9 +286,6 @@ class NCF:
             # output every self.verbose
             if self.verbose and epoch_count % self.verbose == 0:
 
-                # logging
-                log.info("Epoch %d: [%.2fs] train_loss = %.6f " % (
-                    epoch_count, train_time, sum(train_loss) / len(train_loss)))
                 print("Epoch %d [%.2fs]: train_loss = %.6f " % (
                     epoch_count, train_time, sum(train_loss) / len(train_loss)))
 
