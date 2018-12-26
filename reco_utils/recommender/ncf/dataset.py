@@ -3,22 +3,12 @@ import numpy as np
 import pandas as pd
 import warnings
 
-
-# from reco_utils.common.constants import (
-#     DEFAULT_ITEM_COL,
-#     DEFAULT_USER_COL,
-#     DEFAULT_RATING_COL,
-#     DEFAULT_TIMESTAMP_COL,
-# )
-
-###
-
-DEFAULT_ITEM_COL = "itemID"
-DEFAULT_USER_COL = "userID"
-DEFAULT_RATING_COL = "rating"
-DEFAULT_TIMESTAMP_COL = "timestamp"
-
-###
+from reco_utils.common.constants import (
+    DEFAULT_ITEM_COL,
+    DEFAULT_USER_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_TIMESTAMP_COL,
+)
 
 
 class Dataset(object):
@@ -233,7 +223,6 @@ class Dataset(object):
             train_ratings[self.col_item + '_negative'] = train_ratings[self.col_item + '_negative'].apply(
                 lambda x: random.sample(x, self.n_neg))
         except:
-            raise ValueError
             min_num = min(map(len, list(train_ratings[self.col_item + '_negative'])))
             warnings.warn("n_neg is larger than negative items set size! We will set n_neg as the smallest size: %d" % min_num)
             train_ratings[self.col_item + '_negative'] = train_ratings[self.col_item + '_negative'].apply(
