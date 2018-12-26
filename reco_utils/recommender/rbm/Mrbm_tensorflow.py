@@ -135,6 +135,8 @@ class RBM:
 
         #Initialize the start time
         self.start_time = None
+        
+        print("TensorFlow version: {}".format(tf.__version__))
 
     #=========================
     #Helper functions
@@ -221,19 +223,17 @@ class RBM:
 
                 2) For each user and item, compare pr with the reference distribution. Note that the latter needs
                    to be the same for ALL the user/item pairs in the dataset, as by assumptions they are sampled
-                   from a common distribution. The result of this step (samp) is used as a mask on pr.
-
-                3) Take the element-wise produt samp*pr and select the element with highest probability using
-                    the argmax() function. The rating is obtained as v_samp = argmax() + 1 to account for the fact
-                    that array indices start from 0 .
+                   from a common distribution.
 
         '''
+
         np.random.seed(1)
 
-        g = tf.convert_to_tensor(np.random.uniform(size= pr.shape[2] ), dtype= tf.float32 )  #sample from a uniform distribution
+        g = np.random.uniform(size= pr.shape[2]) #sample from a uniform distribution
+        f = tf.convert_to_tensor(g/g.sum(), dtype= tf.float32 )#normalize and convert to tensor
 
-        samp = tf.nn.relu(tf.sign(pr - g) ) #apply rejection method
-        v_samp = tf.cast( tf.argmax(tf.multiply(samp, pr) , axis=2)+1, 'float32') #select sampled element
+        samp = tf.nn.relu(tf.sign(pr - f) ) #apply rejection method
+        v_samp = tf.cast( tf.argmax(samp , axis=2)+1, 'float32') #select sampled element
 
         return v_samp
 

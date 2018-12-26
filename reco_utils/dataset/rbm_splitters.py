@@ -27,11 +27,6 @@ from reco_utils.common.constants import (
     PREDICTION_COL,
 )
 
-from reco_utils.dataset.split_utils import (
-    process_split_ratio,
-    min_rating_filter_pandas,
-    split_pandas_data_with_ratios,
-)
 
 #for logging
 log = logging.getLogger(__name__)
