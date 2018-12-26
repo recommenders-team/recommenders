@@ -135,7 +135,7 @@ class RBM:
 
         #Initialize the start time
         self.start_time = None
-        
+
         print("TensorFlow version: {}".format(tf.__version__))
 
     #=========================
@@ -932,8 +932,8 @@ class RBM:
             userids.extend([i]*self.Nv_)
 
 
-        itemids = itemids = [i for i in range(0, self.Nv_)]*m
-        ratings= np.reshape(vp, -1)
+        itemids = [i for i in range(0, self.Nv_)]*m
+        ratings = np.reshape(vp, -1)
 
         #create dataframe
         results = pd.DataFrame.from_dict({ self.col_user: userids,
