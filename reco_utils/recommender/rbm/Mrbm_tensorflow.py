@@ -189,7 +189,7 @@ class RBM:
         np.random.seed(1)
 
         #sample from a Bernoulli distribution with same dimensions as input distribution
-        g = np.random.uniform(size= pr.shape[1] )
+        g = tf.convert_to_tensor(np.random.uniform(size= pr.shape[1] ), dtype=tf.float32)
 
         #sample the value of the hidden units
         h_sampled = tf.nn.relu(tf.sign(pr-g) )
@@ -230,10 +230,9 @@ class RBM:
         '''
         np.random.seed(1)
 
-        g = np.random.uniform(size= pr.shape[2] ) #sample from a uniform distribution
-        g_norm= tf.convert_to_tensor(g/g.sum(), dtype=np.float32 ) #normalize and convert to tensor
+        g = tf.convert_to_tensor(np.random.uniform(size= pr.shape[2] ), dtype= tf.float32 )  #sample from a uniform distribution
 
-        samp = tf.nn.relu(tf.sign(pr - g_norm) ) #apply rejection method
+        samp = tf.nn.relu(tf.sign(pr - g) ) #apply rejection method
         v_samp = tf.cast( tf.argmax(tf.multiply(samp, pr) , axis=2)+1, 'float32') #select sampled element
 
         return v_samp
