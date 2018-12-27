@@ -90,6 +90,9 @@ def python_dataset(test_specs):
 
 
 def test_random_stratified_splitter(test_specs, python_dataset ):
+    '''
+    Test the random stratified splitter. No time information is used in this case  
+    '''
 
     #generate a syntetic dataset
     df_rating = python_dataset
