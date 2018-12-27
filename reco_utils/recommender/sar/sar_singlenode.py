@@ -26,8 +26,7 @@ from reco_utils.recommender.sar import (
     SIM_COOCCUR,
     HASHED_USERS,
     HASHED_ITEMS,
-    _user_item_return_type,
-    _predict_column_type,
+    _user_item_return_type
 )
 from reco_utils.recommender.sar import (
     TIME_DECAY_COEFFICIENT,
@@ -48,18 +47,18 @@ class SARSingleNode:
     """SAR reference implementation"""
 
     def __init__(
-        self,
-        remove_seen=True,
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        col_timestamp=DEFAULT_TIMESTAMP_COL,
-        similarity_type=SIM_JACCARD,
-        time_decay_coefficient=TIME_DECAY_COEFFICIENT,
-        time_now=TIME_NOW,
-        timedecay_formula=TIMEDECAY_FORMULA,
-        threshold=THRESHOLD,
-        debug=False,
+            self,
+            remove_seen=True,
+            col_user=DEFAULT_USER_COL,
+            col_item=DEFAULT_ITEM_COL,
+            col_rating=DEFAULT_RATING_COL,
+            col_timestamp=DEFAULT_TIMESTAMP_COL,
+            similarity_type=SIM_JACCARD,
+            time_decay_coefficient=TIME_DECAY_COEFFICIENT,
+            time_now=TIME_NOW,
+            timedecay_formula=TIMEDECAY_FORMULA,
+            threshold=THRESHOLD,
+            debug=False,
     ):
 
         self.col_rating = col_rating
@@ -116,13 +115,13 @@ class SARSingleNode:
         self.scores = None
 
     def set_index(
-        self,
-        unique_users,
-        unique_items,
-        user_map_dict,
-        item_map_dict,
-        index2user,
-        index2item,
+            self,
+            unique_users,
+            unique_items,
+            user_map_dict,
+            item_map_dict,
+            index2user,
+            index2item,
     ):
         """MVP2 temporary function to set the index of the sparse dataframe.
         In future releases this will be carried out into the data object and index will be provided
@@ -177,6 +176,7 @@ class SARSingleNode:
              time in seconds since the last time time function was called
         """
         if self.debug:
+            from time import time
             if self.start_time is None:
                 self.start_time = time()
                 return False
@@ -193,6 +193,12 @@ class SARSingleNode:
 
         log.info("Collecting user affinity matrix...")
         self.time()
+        # use the same floating type for the computations as input
+        float_type = df[self.col_rating].dtype
+        if not np.issubdtype(float_type, np.floating):
+            raise ValueError("Only floating point data types are accepted for the rating column. Data type was {} "
+                             "instead.".format(float_type))
+
         if self.timedecay_formula:
             # WARNING: previously we would take the last value in training dataframe and set it
             # as a matrix U element
@@ -216,11 +222,14 @@ class SARSingleNode:
                 * (self.time_now - x)
                 / (self.time_decay_coefficient * 24.0 * 3600)
             )
-            df["exponential"] = expo_fun(df[self.col_timestamp].values)
 
-            df["rating_exponential"] = df[self.col_rating] * df["exponential"]
-
-            grouped = df.groupby([self.col_user, self.col_item])["rating_exponential"]
+            rating_exponential = df[self.col_rating].values * expo_fun(df[self.col_timestamp].values).astype(float_type)
+            # update df with the affinities after the timestamp calculation
+            # copy part of the data frame to avoid modification of the input
+            temp_df = pd.DataFrame(data={self.col_user: df[self.col_user],
+                                         self.col_item: df[self.col_item],
+                                         self.col_rating: rating_exponential})
+            newdf = temp_df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
             """
             # experimental implementation of multiprocessing - in practice for smaller datasets this is not needed
@@ -251,11 +260,6 @@ class SARSingleNode:
                     self.time_decay_coefficient * 24. * 3600))))
             """
 
-            rating_series = grouped.sum()
-
-            # update df with the affinities after the timestamp calculation
-            newdf = rating_series.rename(self.col_rating).to_frame()
-            newdf.reset_index(inplace=True)
         else:
             # without time decay we take the last user-provided rating supplied in the dataset as the
             # final rating for the user-item pair
@@ -280,7 +284,7 @@ class SARSingleNode:
 
         # store training set index for future use during prediction
         # DO NOT USE .values as the warning message suggests
-        self.index = newdf.as_matrix([self._col_hashed_users, self._col_hashed_items])
+        self.index = newdf[[self._col_hashed_users, self._col_hashed_items]].values
 
         n_items = len(self.unique_items)
         n_users = len(self.unique_users)
@@ -298,8 +302,8 @@ class SARSingleNode:
                 ),
                 shape=(n_users, n_items),
             )
-            .todok()
-            .tocsr()
+                .todok()
+                .tocsr()
         )
 
         if self.debug:
@@ -322,8 +326,8 @@ class SARSingleNode:
                 ),
                 shape=(n_users, n_items),
             )
-            .todok()
-            .tocsr()
+                .todok()
+                .tocsr()
         )
 
         fname = "user_item_hits.npz"
@@ -364,8 +368,10 @@ class SARSingleNode:
         else:
             raise ValueError("Unknown similarity type: {0}".format(similarity_type))
 
+        self.item_similarity = self.item_similarity.astype(float_type, copy=False)
+
         if self.debug and (
-            similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
+                similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
         ):
             elapsed_time = self.time()
             self.timer_log += [
@@ -418,9 +424,6 @@ class SARSingleNode:
         else:
             scores_dense = scores.todense()
 
-        # take the intersection between train test items and items we actually need
-        test[self._col_hashed_users] = test[self.col_user].map(self.user_map_dict)
-
         # Mask out items in the train set.  This only makes sense for some
         # problems (where a user wouldn't interact with an item more than once).
         if self.remove_seen:
@@ -463,8 +466,8 @@ class SARSingleNode:
                 results.sort_values(
                     by=[self.col_user, self.col_rating], ascending=False
                 )
-                .groupby(self.col_user)
-                .apply(lambda x: x)
+                    .groupby(self.col_user)
+                    .apply(lambda x: x)
             )
 
         # format the dataframe in the end to conform to Suprise return type
@@ -474,12 +477,12 @@ class SARSingleNode:
 
         return (
             results[[self.col_user, self.col_item, self.col_rating]]
-            .rename(columns={self.col_rating: PREDICTION_COL})
-            .astype(
+                .rename(columns={self.col_rating: PREDICTION_COL})
+                .astype(
                 {
                     self.col_user: _user_item_return_type(),
                     self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type(),
+                    PREDICTION_COL: self.scores.dtype,
                 }
             )
         )
@@ -514,10 +517,10 @@ class SARSingleNode:
             scores_dense = scores.todense()
 
         # take the intersection between train test items and items we actually need
-        test[self._col_hashed_users] = test[self.col_user].map(self.user_map_dict)
-        test[self._col_hashed_items] = test[self.col_item].map(self.item_map_dict)
+        test_col_hashed_users = test[self.col_user].map(self.user_map_dict)
+        test_col_hashed_items = test[self.col_item].map(self.item_map_dict)
 
-        test_index = test.as_matrix([self._col_hashed_users, self._col_hashed_items])
+        test_index = pd.concat([test_col_hashed_users, test_col_hashed_items], axis=1).values
         aset = set([tuple(x) for x in self.index])
         bset = set([tuple(x) for x in test_index])
 
@@ -549,13 +552,12 @@ class SARSingleNode:
         # modify test to make it compatible with
         return (
             results[[self.col_user, self.col_item, self.col_rating]]
-            .rename(columns={self.col_rating: PREDICTION_COL})
-            .astype(
+                .rename(columns={self.col_rating: PREDICTION_COL})
+                .astype(
                 {
                     self.col_user: _user_item_return_type(),
                     self.col_item: _user_item_return_type(),
-                    PREDICTION_COL: _predict_column_type(),
+                    PREDICTION_COL: self.scores.dtype,
                 }
             )
         )
-
