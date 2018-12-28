@@ -68,7 +68,7 @@ class splitter:
         Generate the user/item index
 
         Args:
-            DF: a dataframe containing the data
+            DF (pandas.DataFrame): a dataframe containing the data
 
         Returns:
             map_users, map_items: dictionaries mapping the original user/item index to matrix indices

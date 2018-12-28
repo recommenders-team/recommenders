@@ -95,7 +95,7 @@ class RBM:
         minibatch_size= MINIBATCH,
         training_epoch= EPOCHS,
         display_epoch = 10,
-        CD_protocol = [50, 70, 80, 90, 100],
+        cd_protocol = [50, 70, 80, 90, 100],
         save_model= False,
         save_path = 'reco_utils/recommender/rbm/saver',
         debug = False,
@@ -123,7 +123,7 @@ class RBM:
         self.epochs= training_epoch+1  #number of epochs used to train the model
         self.display = display_epoch #number of epochs to show the mse error during training
 
-        self.CD_protol_ = CD_protocol #protocol to increase Gibbs sampling's step. Array containing the
+        self.CD_protol_ = cd_protocol #protocol to increase Gibbs sampling's step. Array containing the
                                       #percentage of the total training epoch when the step increases by 1
 
         #Options to save the model for future use
