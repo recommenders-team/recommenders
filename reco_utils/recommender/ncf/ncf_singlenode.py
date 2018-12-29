@@ -1,12 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""
-Reference implementation of SAR in python/numpy/pandas.
-
-This is not meant to be particularly performant or scalable, just
-as a simple and readable implementation.
-"""
 import os
 import numpy as np
 import pandas as pd
@@ -38,9 +32,9 @@ class NCF:
         # number of items in dataset
         self.n_items = n_items
         # model type
-        assert model_type.lower() in {"gmf", "mlp", "neumf"}
-
-        self.model_type = model_type
+        self.model_type = model_type.lower()
+        # check model type
+        assert self.model_type in {"gmf", "mlp", "neumf"}
         # dimension of latent space
         self.n_factors = n_factors
         # number of layers for mlp
@@ -125,19 +119,19 @@ class NCF:
 
         with tf.variable_scope("ncf", reuse=tf.AUTO_REUSE):
 
-            if self.model_type.lower() == "gmf":
+            if self.model_type == "gmf":
                 # GMF only
                 output = tf.contrib.layers.fully_connected(self.gmf_vector, num_outputs=1,
                                                        activation_fn=None, biases_initializer=None)
                 self.output = tf.sigmoid(output)
 
-            elif self.model_type.lower() == "mlp":
+            elif self.model_type == "mlp":
                 # MLP only
                 output = tf.contrib.layers.fully_connected(self.mlp_vector, num_outputs=1,
                                                        activation_fn=None, biases_initializer=None)
                 self.output = tf.sigmoid(output)
 
-            elif self.model_type.lower() == "neumf":
+            elif self.model_type == "neumf":
                 # concatenate GMF and MLP vector
                 self.ncf_vector = tf.concat([self.gmf_vector, self.mlp_vector], 1)
                 # get predicted rating score
@@ -179,19 +173,19 @@ class NCF:
         """
 
         # load pre-trained model
-        if self.model_type.lower() == "gmf" and gmf_dir is not None:
+        if self.model_type == "gmf" and gmf_dir is not None:
             saver = tf.train.Saver()
             saver.restore(self.sess, os.path.join(gmf_dir, "model.ckpt"))
 
-        elif self.model_type.lower() == "mlp" and mlp_dir is not None:
+        elif self.model_type == "mlp" and mlp_dir is not None:
             saver = tf.train.Saver()
             saver.restore(self.sess, os.path.join(mlp_dir, "model.ckpt"))
 
-        elif self.model_type.lower() == "neumf" and neumf_dir is not None:
+        elif self.model_type == "neumf" and neumf_dir is not None:
             saver = tf.train.Saver()
             saver.restore(self.sess, os.path.join(neumf_dir, "model.ckpt"))
 
-        elif self.model_type.lower() == "neumf" and gmf_dir is not None and mlp_dir is not None:
+        elif self.model_type == "neumf" and gmf_dir is not None and mlp_dir is not None:
             # load neumf using gmf and mlp
             self._load_neumf(gmf_dir, mlp_dir, alpha)
 

@@ -26,6 +26,7 @@ class Dataset(object):
             col_item=DEFAULT_ITEM_COL,
             col_rating=DEFAULT_RATING_COL,
             col_timestamp=DEFAULT_TIMESTAMP_COL,
+            seed=1234,
     ):
         '''
         Constructor
@@ -47,6 +48,8 @@ class Dataset(object):
         # initialize negative sampling for training and test data
         self._init_train_data()
         self._init_test_data()
+        # set random seed
+        random.seed(seed)
 
     def _data_processing(self, train, test, implicit=True):
         """ process the dataset to reindex userID and itemID, also set rating as implicit feedback
@@ -258,11 +261,16 @@ class Dataset(object):
 
         indices = np.arange(len(self.users))
         if shuffle:
-            np.random.shuffle(indices)
+            random.shuffle(indices)
         for i in range(len(indices) // batch_size):
             begin_idx = i * batch_size
             end_idx = (i + 1) * batch_size
             batch_indices = indices[begin_idx: end_idx]
+
+            # train_loader() could be called and used by our users in other situations, 
+            # who expect the not re-indexed data. So we convert id --> orignal user and item
+            # when returning batch
+            
             yield [
                 [self.id2user[x] for x in self.users[batch_indices]],
                 [self.id2item[x] for x in self.items[batch_indices]],

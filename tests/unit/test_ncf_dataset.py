@@ -141,25 +141,26 @@ def test_train_loader(python_dataset):
 
     label_list = []
 
-    for shuffle in [True, False]:
+    batches = []
 
-        for batch in data.train_loader(batch_size=1, shuffle=shuffle):
-            user, item, labels = batch
-            assert len(user) == 1
-            assert len(item) == 1
-            assert len(labels) == 1
 
-            # right labels
-            for u, i, is_pos in zip(user, item, labels):
-                if is_pos:
-                    assert i in positive_pool[u] 
-                else: 
-                    assert i not in positive_pool[u] 
+    for idx, batch in enumerate(data.train_loader(batch_size=1)):
+        user, item, labels = batch
+        assert len(user) == 1
+        assert len(item) == 1
+        assert len(labels) == 1
 
-                label_list.append(is_pos)
+        # right labels
+        for u, i, is_pos in zip(user, item, labels):
+            if is_pos:
+                assert i in positive_pool[u] 
+            else: 
+                assert i not in positive_pool[u] 
 
-        # neagtive smapling
-        assert len(label_list) == (N_NEG + 1) * sum(label_list)
+            label_list.append(is_pos)
+
+    # neagtive smapling
+    assert len(label_list) == (N_NEG + 1) * sum(label_list)
 
 
 def test_test_loader(python_dataset):
