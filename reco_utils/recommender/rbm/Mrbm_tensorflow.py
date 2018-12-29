@@ -527,7 +527,7 @@ class RBM:
         return pvh, vp
 
     #Metrics
-    def precision(self, vp):
+    def accuracy(self, vp):
 
         '''
         Train/Test Mean average precision
@@ -544,7 +544,7 @@ class RBM:
             elements per row.
 
         '''
-        with tf.name_scope('precision'):
+        with tf.name_scope('accuracy'):
 
             #1) define and apply the mask
             mask= tf.not_equal(self.v,0)
@@ -662,7 +662,7 @@ class RBM:
             Mse_train = [] #Lists to collect the metrics across epochs
             #Metrics
             Mserr  = self.msr_error(self.v_k)
-            Clacc  = self.precision(self.v_k)
+            Clacc  = self.accuracy(self.v_k)
 
         if self.save_model_: #save the model to file
             saver = tf.train.Saver()
@@ -718,9 +718,9 @@ class RBM:
             plt.legend(ncol=1)
 
             #Final precision scores
-            print('precision on the train set', precision_train)
-            print('precision on the test set', precision_test)
-            print('train/test difference', precision_train - precision_test)
+            print('Train set accuracy', precision_train)
+            print('Test set accuracy', precision_test)
+            print('Train/Test difference', precision_train - precision_test)
 
         else:
 
