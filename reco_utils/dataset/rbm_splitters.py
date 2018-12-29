@@ -37,6 +37,18 @@ log = logging.getLogger(__name__)
 
 
 class splitter:
+    '''
+
+    Args:
+        DF (pandas.DataFrame): a dataframe containing the data
+        col_user: default name for user column
+        col_item: default name for item column
+        col_rating: default name for rating columns
+        col_time: default name for timestamp columns
+        save_model: if True it saves the item/user maps
+        save_path: default path to save item/user maps
+
+    '''
 
     #initialize class parameters
     def __init__(
@@ -66,9 +78,6 @@ class splitter:
 
         '''
         Generate the user/item index
-
-        Args:
-            DF (pandas.DataFrame): a dataframe containing the data
 
         Returns:
             map_users, map_items: dictionaries mapping the original user/item index to matrix indices
