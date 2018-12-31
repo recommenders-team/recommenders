@@ -650,7 +650,7 @@ class RBM:
         rate = self.alpha/self.minibatch  #learning rate rescaled by the batch size
 
         #Instantiate the momentum optimizer
-        opt = tf.contrib.optimizer_v2.MomentumOptimizer(learning_rate = rate, momentum = self.momentum_).minimize(loss= obj)
+        opt = tf.contrib.optimizer_v2.AdamOptimizer(learning_rate = rate).minimize(loss= obj)
 
         pvh, vp = self.infere() #sample the value of the visible units given the hidden. Also returns  the related probabilities
 
