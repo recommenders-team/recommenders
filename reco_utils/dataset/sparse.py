@@ -25,7 +25,6 @@ from reco_utils.common.constants import (
     PREDICTION_COL,
 )
 
-
 #for logging
 log = logging.getLogger(__name__)
 
@@ -106,6 +105,9 @@ class affinity_matrix:
         self.map_back_users = {i:x for i, x in enumerate(unique_users)}
         self.map_back_items = {i:x for i, x in enumerate(unique_items)}
 
+        self.df_.loc[:, 'hashedItems'] = self.df_[self.col_item].map(self.map_items)
+        self.df_.loc[:, 'hashedUsers'] = self.df_[self.col_user].map(self.map_users)
+
         #optionally save the inverse dictionary to work with trained models
         if self.save_model_:
             np.save(self.save_path_ + '/user_dict', self.map_users)
@@ -142,11 +144,7 @@ class affinity_matrix:
 
         log.info("Generating the user/item affinity matrix...")
 
-        self.df_.loc[:, 'hashedItems'] = self.df_[self.col_item].map(self.map_items)
-        self.df_.loc[:, 'hashedUsers'] = self.df_[self.col_user].map(self.map_users)
-
-        #extract informations from the dataframe as an array. Note that we substract 1 from itm_id and usr_id
-        #in order to map it to matrix format
+        self.gen_index()
 
         r_ = self.df_[self.col_rating]    #ratings
         itm_id = self.df_['hashedItems']  #itm_id serving as columns
@@ -165,6 +163,8 @@ class affinity_matrix:
         sparsness = zero/total *100 #Percentage of zeros in the matrix
 
         print('Matrix generated, sparsness: %d' %sparsness,'%', 'size:', (self.AM.shape) )
+
+        return self.AM
 
 
 
