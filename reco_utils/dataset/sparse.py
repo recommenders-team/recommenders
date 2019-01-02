@@ -2,8 +2,7 @@
 # Licensed under the MIT License.
 
 '''
-Splitters and user/affinity matrix generation utilities for the RBM algo
-
+Generate the user/item affinity matrix from a pandas dataframe and vice versa
 '''
 
 import pandas as pd
@@ -16,7 +15,6 @@ import itertools
 
 from scipy.sparse import coo_matrix
 import logging
-
 
 #import default parameters
 from reco_utils.common.constants import (
@@ -31,12 +29,8 @@ from reco_utils.common.constants import (
 #for logging
 log = logging.getLogger(__name__)
 
-#========================================================
-#Generate the User/Item affinity matrix from a pandas DF
-#========================================================
 
-
-class splitter:
+class affinity_matrix:
     '''
 
     Args:
@@ -211,50 +205,3 @@ class splitter:
         out_df[self.col_item] = out_df[self.col_item].map(self.map_back_items)
 
         return out_df
-
-
-    #====================================
-    #Data splitters
-    #====================================
-
-    def stratified_split(self, ratio= 0.75, seed= 1234):
-
-        np.random.seed(seed)
-
-        test_cut = int( (1-ratio)*100 )
-
-        self.gen_index()
-
-        maps = [self.map_back_users, self.map_back_items]
-
-        self.gen_affinity_matrix()
-
-        #Test set array
-        Xtr  = self.AM.copy()
-        Xtst = self.AM.copy()
-
-        #find the number of rated movies per user
-        rated = np.sum(Xtr !=0, axis=1)
-
-        #for each user, cut down a test_size% for the test set
-        tst = (rated*test_cut)//100
-
-        for u in range(self.Nusers):
-            #For each user obtain the index of rated movies
-            idx_tst = []
-            idx = np.asarray(np.where(np.logical_not(Xtr[u,0:] == 0) )).flatten().tolist()
-
-            #extract a random subset of size n from the set of rated movies without repetition
-            for i in range(tst[u]):
-                sub_el = random.choice(idx)
-                idx.remove(sub_el)
-                idx_tst.append(sub_el)
-
-            Xtr[u, idx_tst] = 0  #change the selected rated movies to unrated in the train set
-            Xtst[u, idx] = 0  #set the movies that appear already in the train set as 0
-
-            assert(np.sum(Xtr[u,:] != 0) + np.sum(Xtst[u,:] !=0) == rated[u])
-
-        del idx, sub_el, idx_tst
-
-        return Xtr , Xtst, self.map_back_sparse(Xtr), self.map_back_sparse(Xtst), maps
