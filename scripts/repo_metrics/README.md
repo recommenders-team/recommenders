@@ -1,5 +1,7 @@
 # Repository Metrics
 
+[![Build status](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_apis/build/status/Recommenders/Recommenders%20repo%20stats)](https://msdata.visualstudio.com/AlgorithmsAndDataScience/_build/latest?definitionId=5206)
+
 We developed a script that allows us to track the metrics of the Recommenders repo. Some of the metrics we can track are listed here:
 
 * Number of stars
