@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-'''
+"""
 Generate the user/item affinity matrix from a pandas dataframe and vice versa
-'''
+"""
 
 import pandas as pd
 
@@ -16,7 +16,7 @@ import itertools
 from scipy.sparse import coo_matrix
 import logging
 
-#import default parameters
+# import default parameters
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -25,51 +25,51 @@ from reco_utils.common.constants import (
     PREDICTION_COL,
 )
 
-#for logging
+# for logging
 log = logging.getLogger(__name__)
 
 
-class affinity_matrix:
-    '''
+class AffinityMatrix:
+    """
 
     Args:
-        DF (pandas.DataFrame): a dataframe containing the data
-        col_user: default name for user column
-        col_item: default name for item column
-        col_rating: default name for rating columns
-        col_time: default name for timestamp columns
-        save_model: if True it saves the item/user maps
-        save_path: default path to save item/user maps
+        df (pd.DataFrame): a dataframe containing the data
+        col_user (str): default name for user column
+        col_item (str): default name for item column
+        col_rating (str): default name for rating columns
+        col_time (str): default name for timestamp columns
+        save_model (Bool): if True it saves the item/user maps
+        save_path (str): default path to save item/user maps
 
-    '''
+    """
 
-    #initialize class parameters
+    # initialize class parameters
     def __init__(
         self,
         DF,
-        col_user = DEFAULT_USER_COL,
-        col_item = DEFAULT_ITEM_COL,
-        col_rating = DEFAULT_RATING_COL,
-        col_time = DEFAULT_TIMESTAMP_COL,
-        save_model = False,
-        save_path = 'saver',
-        debug = False,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_pred=PREDICTION_COL,
+        col_time=DEFAULT_TIMESTAMP_COL,
+        save_path=None,
+        debug=False,
     ):
 
-        self.df = DF #dataframe
+        self.df = DF  # dataframe
 
-        #pandas DF parameters
-        self.col_rating = col_rating
+        # pandas DF parameters
         self.col_item = col_item
         self.col_user = col_user
+        self.col_rating = col_rating
+        self.col_pred = col_pred
 
-        #Options to save the model for future use
-        self.save_model_ = save_model
-        self.save_path_ = save_path
+        # Options to save the model for future use
+        self.save_path = save_path
 
     def gen_index(self):
 
-        '''
+        """
         Generate the user/item index
 
         Returns:
@@ -86,41 +86,40 @@ class affinity_matrix:
             Functions to map back to the original indices are also provided and can be saved in order to use
             a pretrained model.
 
-        '''
-        #sort entries by user index
+        """
+        # sort entries by user index
         self.df_ = self.df.sort_values(by=[self.col_user])
 
-        #find unique user and item index
+        # find unique user and item index
         unique_users = self.df_[self.col_user].unique()
         unique_items = self.df_[self.col_item].unique()
 
         self.Nusers = len(unique_users)
         self.Nitems = len(unique_items)
 
-        #create a dictionary to map unique users/items to hashed values to generate the matrix
-        self.map_users = {x:i for i, x in enumerate(unique_users)}
-        self.map_items = {x:i for i, x in enumerate(unique_items)}
+        # create a dictionary to map unique users/items to hashed values to generate the matrix
+        self.map_users = {x: i for i, x in enumerate(unique_users)}
+        self.map_items = {x: i for i, x in enumerate(unique_items)}
 
-        #map back functions used to get back the original dataframe
-        self.map_back_users = {i:x for i, x in enumerate(unique_users)}
-        self.map_back_items = {i:x for i, x in enumerate(unique_items)}
+        # map back functions used to get back the original dataframe
+        self.map_back_users = {i: x for i, x in enumerate(unique_users)}
+        self.map_back_items = {i: x for i, x in enumerate(unique_items)}
 
-        self.df_.loc[:, 'hashedItems'] = self.df_[self.col_item].map(self.map_items)
-        self.df_.loc[:, 'hashedUsers'] = self.df_[self.col_user].map(self.map_users)
+        self.df_.loc[:, "hashedItems"] = self.df_[self.col_item].map(self.map_items)
+        self.df_.loc[:, "hashedUsers"] = self.df_[self.col_user].map(self.map_users)
 
-        #optionally save the inverse dictionary to work with trained models
-        if self.save_model_:
-            np.save(self.save_path_ + '/user_dict', self.map_users)
-            np.save(self.save_path_ + '/item_dict', self.map_items)
+        # optionally save the inverse dictionary to work with trained models
+        if self.save_path != None:
 
-            np.save(self.save_path_ + '/user_back_dict', self.map_back_users)
-            np.save(self.save_path_ + '/item_back_dict', self.map_back_items)
+            np.save(self.save_path_ + "/user_dict", self.map_users)
+            np.save(self.save_path_ + "/item_dict", self.map_items)
 
-
+            np.save(self.save_path_ + "/user_back_dict", self.map_back_users)
+            np.save(self.save_path_ + "/item_back_dict", self.map_back_items)
 
     def gen_affinity_matrix(self):
 
-        '''
+        """
         Generate the user/item affinity matrix
 
         Args:
@@ -140,66 +139,64 @@ class affinity_matrix:
 
             The input format is coo_matrix((data, (rows, columns)), shape=(rows, columns))
 
-        '''
+        """
 
         log.info("Generating the user/item affinity matrix...")
 
         self.gen_index()
 
-        r_ = self.df_[self.col_rating]    #ratings
-        itm_id = self.df_['hashedItems']  #itm_id serving as columns
-        usr_id = self.df_['hashedUsers']  #usr_id serving as rows
+        r_ = self.df_[self.col_rating]  # ratings
+        itm_id = self.df_["hashedItems"]  # itm_id serving as columns
+        usr_id = self.df_["hashedUsers"]  # usr_id serving as rows
 
-        #check that all 3 vectors have the same dimensions
-        assert((usr_id.shape[0]== r_.shape[0]) & (itm_id.shape[0] == r_.shape[0]))
+        # generate a sparse matrix representation using scipy's coo_matrix and convert to array format
+        self.AM = coo_matrix(
+            (r_, (usr_id, itm_id)), shape=(self.Nusers, self.Nitems)
+        ).toarray()
 
-        #generate a sparse matrix representation using scipy's coo_matrix and convert to array format
-        self.AM = coo_matrix((r_, (usr_id, itm_id)), shape= (self.Nusers, self.Nitems)).toarray()
+        # ---------------------print the degree of sparsness of the matrix------------------------------
 
-        #---------------------print the degree of sparsness of the matrix------------------------------
+        zero = (self.AM == 0).sum()  # number of unrated items
+        total = self.AM.shape[0] * self.AM.shape[1]  # number of elements in the matrix
+        sparsness = zero / total * 100  # Percentage of zeros in the matrix
 
-        zero   = (self.AM == 0).sum() # number of unrated items
-        total  = self.AM.shape[0]*self.AM.shape[1] #number of elements in the matrix
-        sparsness = zero/total *100 #Percentage of zeros in the matrix
-
-        print('Matrix generated, sparsness: %d' %sparsness,'%', 'size:', (self.AM.shape) )
+        log.info("Matrix generated, sparsness percentage: %d" % sparsness)
 
         return self.AM
 
+    def map_back_sparse(self, X, kind):
 
-
-    def map_back_sparse(self, X):
-
-        '''
+        """
         Map back the user/affinity matrix to a pd dataframe
 
-        '''
+        """
         m, n = X.shape
 
-        #1) Create a DF from a sparse matrix
-        #obtain the non zero items
-        items  = [ np.asanyarray(np.where(X[i,:] !=0 )).flatten() for i in range(m)]
-        ratings = [X[i, items[i]] for i in range(m)] #obtain the non-zero ratings
+        # 1) Create a DF from a sparse matrix
+        # obtain the non zero items
+        items = [np.asanyarray(np.where(X[i, :] != 0)).flatten() for i in range(m)]
+        ratings = [X[i, items[i]] for i in range(m)]  # obtain the non-zero ratings
 
-        #reates user ids following the DF format
+        # reates user ids following the DF format
         userids = []
         for i in range(0, m):
-            userids.extend([i]*len(items[i]) )
+            userids.extend([i] * len(items[i]))
 
-        #Flatten the lists to follow the DF input format
+        # Flatten the lists to follow the DF input format
         items = list(itertools.chain.from_iterable(items))
         ratings = list(itertools.chain.from_iterable(ratings))
 
-        #create a df
+        if kind == "ratings":
+            col_out = self.col_rating
+        else:
+            col_out = self.col_pred
+
+        # create a df
         out_df = pd.DataFrame.from_dict(
-            {
-                self.col_user  : userids,
-                self.col_item  : items,
-                self.col_rating: ratings,
-            }
+            {self.col_user: userids, self.col_item: items, col_out: ratings}
         )
 
-        #2) map back user/item ids to their original value
+        # 2) map back user/item ids to their original value
 
         out_df[self.col_user] = out_df[self.col_user].map(self.map_back_users)
         out_df[self.col_item] = out_df[self.col_item].map(self.map_back_items)
