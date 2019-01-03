@@ -1,65 +1,30 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-'''
+"""
 Collection of numpy based splitters
 
-'''
+"""
 
 import numpy as np
 import random
 import math
-from decimal import Decimal
 
 
-X = np.random.randint(low= 0, high=6, size= ( 20, 50) )
+def numpy_stratified_split(X, ratio=0.75, seed=123):
 
-def round(s):
-
-    '''
-    rounding function
-
-    Args:
-        s: numpy array of floats
-
-    Returns:
-        a: numpy arrays of integers
-
-    Basic mechanics:
-        Implement the following rounding scheme for a float x:
-        if x is lesser or equal to 0.5, x is rounded to its lower integer, otherwise to the upper
-        integer.
-
-    '''
-
-    a = []
-    for i in s:
-        f, _ = math.modf(i)
-
-        if f<= 0.5:
-            t = np.floor(i)
-        else: t = np.ceil(i)
-
-        a.append(t)
-
-    a = np.array(a, dtype = np.int32)
-    return a
-
-
-def random_stratified(X, ratio= 0.75, seed= 123):
-
-    '''
+    """
     Split the user/item affinity matrix into train and test set matrices while mantaining
     local (i.e. per user) ratios.
 
     Args:
-        X: a sparse matrix
-        ratio: fraction of the entire dataset to constitute the train set
-        seed: random seed
+        X (np.array, int): a sparse matrix
+        ratio (scalar, float): fraction of the entire dataset to constitute the train set
+        seed (scalar, int): random seed
 
     Returns:
-        Xtr: train set user/item affinity matrix
-        Xtst: test set user/item affinity matrix
+        Xtr (np.array, int): train set user/item affinity matrix
+        Xtst (np.array, int): test set user/item affinity matrix
 
     Basic mechanics:
         Main points :
@@ -90,42 +55,41 @@ def random_stratified(X, ratio= 0.75, seed= 123):
            sample of local size ratio (point 1) and erase the remaining ratings, obtaining in this way the
            train set matrix Xtst. The train set matrix is obtained in the opposite way.
 
-           
-    '''
 
-    np.random.seed(seed) #set the random seed
+    """
 
-    test_cut = int( (1-ratio)*100 ) #percentage of ratings to go in the test set
+    np.random.seed(seed)  # set the random seed
 
-    #initialize train and test set matrices
-    Xtr  = X.copy()
+    test_cut = int((1 - ratio) * 100)  # percentage of ratings to go in the test set
+
+    # initialize train and test set matrices
+    Xtr = X.copy()
     Xtst = X.copy()
 
-    #find the number of rated movies per user
-    rated = np.sum(Xtr !=0, axis=1)
+    # find the number of rated movies per user
+    rated = np.sum(Xtr != 0, axis=1)
 
-    #for each user, cut down a test_size% for the test set
-    tst = round( (rated*test_cut)/100 )
+    # for each user, cut down a test_size% for the test set
+    tst = np.around((rated * test_cut) / 100).astype(np.int)
 
-    Nusers, Nitems = X.shape #total number of users and items
+    Nusers, Nitems = X.shape  # total number of users and items
 
     for u in range(Nusers):
-        #For each user obtain the index of rated movies
+        # For each user obtain the index of rated movies
         idx_tst = []
-        idx = np.asarray(np.where(np.logical_not(Xtr[u,0:] == 0) )).flatten().tolist()
+        idx = np.asarray(np.where(np.logical_not(Xtr[u, 0:] == 0))).flatten().tolist()
 
-        #extract a random subset of size n from the set of rated movies without repetition
+        # extract a random subset of size n from the set of rated movies without repetition
         for i in range(tst[u]):
             sub_el = random.choice(idx)
             idx.remove(sub_el)
             idx_tst.append(sub_el)
 
-        Xtr[u, idx_tst] = 0  #change the selected rated movies to unrated in the train set
-        Xtst[u, idx] = 0  #set the movies that appear already in the train set as 0
-
-        #verify that the number or ratings is conserved by the split function
-        assert(np.sum(Xtr[u,:] != 0) + np.sum(Xtst[u,:] !=0) == rated[u])
+        Xtr[
+            u, idx_tst
+        ] = 0  # change the selected rated movies to unrated in the train set
+        Xtst[u, idx] = 0  # set the movies that appear already in the train set as 0
 
     del idx, sub_el, idx_tst
 
-    return Xtr , Xtst
+    return Xtr, Xtst
