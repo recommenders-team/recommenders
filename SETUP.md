@@ -13,7 +13,6 @@ In this guide we show how to setup all the dependencies to run the notebooks of 
 * [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
   * [Repository upload](#repository-upload)
-  * [Dependencies setup for Azure Databricks](#dependencies-setup-for-azure-databricks)
   * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
 </details>
 
@@ -24,7 +23,7 @@ We have different compute environments, depending on the kind of machine
 Environments supported to run the notebooks on the DSVM:
 * Python CPU
 * PySpark
-b
+
 Environments supported to run the notebooks on Azure Databricks:
 * PySpark
 
