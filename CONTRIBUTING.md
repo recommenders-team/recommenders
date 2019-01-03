@@ -1,16 +1,11 @@
 # Contribution Guidelines
 
-Here you will find the contribution guidelines.
-
-<details>
-<summary><strong><em>Click here to see the Table of Contents</em></strong></summary>
+Contribution are welcome! Here's a few things to know:
 
 * [Microsoft Contributor License Agreement](#microsoft-contributor-license-agreement)
-* [Recommenders Team Contribution Guidelines](#recommenders-team-contribution-guidelines)
-  * [Test Driven Development](#test-driven-development)
-  * [Python and Docstrings Style](#python-and-docstrings-style)
+* [Steps to Contributing](#steps-to-contributing)
+* [Coding Guidelines](#recommenders-team-contribution-guidelines)
 * [Code of Conduct](#code-of-conduct)
-</details>
 
 ## Microsoft Contributor License Agreement
 
@@ -18,20 +13,22 @@ Most contributions require you to agree to a Contributor License Agreement (CLA)
 
 When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
 
-## Recommenders Team Contribution Guidelines
+## Steps to Contributing
 
-#### Test Driven Development
+Here are the basic steps to get started with your first contribution. Please reach out with any questions.
+1. Use [open issues](https://github.com/Microsoft/Recommenders/issues) to discuss the proposed changes (create an issue describing changes if necessary to collect feedback).
+2. [Fork the repo](https://help.github.com/articles/fork-a-repo/)
+3. Create a new branch to contain changes for the issue. We suggest prefixing the branch with your username and then a descriptive title: (e.g. gramhagen/update_contributing_docs)
+4. Create a test that replicates the issue
+5. Make code changes
+6. Ensure unit tests pass and code style / formatting is consistent (see [wiki](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details)
+7. Create a pull request against staging branch
 
-We use [Test Driven Development (TDD)](https://en.wikipedia.org/wiki/Test-driven_development) in our development. All contributions to the repository should have unit tests, we use [pytest](https://docs.pytest.org/en/latest/) for Python files and [papermill](https://github.com/nteract/papermill) for notebooks. 
+## Coding Guidelines
 
-Apart from unit tests, we also have nightly builds with smoke and integration tests. For more information about the differences, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
+We strive to maintain high quality code to make the utilities in the repository easy to understand, use, and extend. We also work hard to maintain a friendly and constructive environment. We've found that having clear expectations on the development process and consistent style helps to ensure everyone can contribute and collaborate effectively.
 
-You can find a guide on how to manually execute all the tests in the [TESTS.md](TESTS.md)
-
-#### Python and Docstrings Style
-We use the automatic style formatter [Black](https://github.com/ambv/black). See the installation guide for [VSCode](https://github.com/ambv/black#visual-studio-code) and [PyCharm](https://github.com/ambv/black#pycharm).
-
-We use [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting the docstrings.
+Please review the [coding guidelines](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines) wiki page to see more details about the expectations for development approach and style.
 
 ## Code of Conduct
 
@@ -39,9 +36,38 @@ This project has adopted the [Microsoft Open Source Code of Conduct](https://ope
 
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-Apart from the official Code of Conduct developed by Microsoft, in the Recommenders team we adopt the following behaviors, to create a great working environment:
-- Focus on improvement not blame
-- Be empathetic, ask questions don't make demands
-- Provide constructive feedback with supporting evidence when applicable
+Apart from the official Code of Conduct developed by Microsoft, in the Recommenders team we adopt the following behaviors, to ensure a great working environment:
 
+#### Do not point fingers
+Let’s be constructive.
+
+<details>
+<summary><em>Click here to see some examples</em></summary>
+
+"This method is missing docstrings" instead of "YOU forgot to put docstrings".
+
+</details>
+
+#### Provide code feedback based on evidence 
+
+When making code reviews, try to support your ideas based on evidence (papers, library documentation, stackoverflow, etc) rather than your personal preferences. 
+
+<details>
+<summary><em>Click here to see some examples</em></summary>
+
+"When reviewing this code, I saw that the Python implementation the metrics are based on classes, however, [scikit-learn](https://scikit-learn.org/stable/modules/classes.html#sklearn-metrics-metrics) and [tensorflow](https://www.tensorflow.org/api_docs/python/tf/metrics) use functions. We should follow the standard in the industry."
+
+</details>
+
+
+#### Ask questions do not give answers
+Try to be empathic. 
+
+<details>
+<summary><em>Click here to see some examples</em></summary>
+
+* Would it make more sense if ...?
+* Have you considered this ... ?
+
+</details>
 
