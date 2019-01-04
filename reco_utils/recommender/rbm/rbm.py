@@ -660,10 +660,10 @@ class RBM:
 
         self.batch_size_ = tf.placeholder(tf.int64)
 
-        # Create data pipeline
+        # Create the data pipeline for faster training
         self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
         self.dataset = self.dataset.shuffle(
-            buffer_size=50, reshuffle_each_iteration=True, seed=1
+            buffer_size=50, reshuffle_each_iteration=True, seed=123
         )  # randomize the batch
         self.dataset = self.dataset.batch(batch_size=self.batch_size_).repeat()
 
@@ -707,7 +707,7 @@ class RBM:
 
         # Config GPU memory
         Config = tf.ConfigProto(log_device_placement=True, allow_soft_placement=True)
-        Config.gpu_options.per_process_gpu_memory_fraction = 0.5
+        Config.gpu_options.allow_growth = True  # dynamics memory allocation
 
         # Start TF training session on default graph
         self.sess = tf.Session(config=Config)
