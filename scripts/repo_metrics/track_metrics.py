@@ -3,6 +3,7 @@
 
 import sys
 import os
+
 # Need to append a full path instead of relative path.
 # This seems to be an issue from Azure DevOps command line task.
 # NOTE this does not affect running directly in the shell.
@@ -10,6 +11,7 @@ sys.path.append(os.getcwd())
 import argparse
 import traceback
 import logging
+from datetime import datetime
 from pymongo import MongoClient
 from datetime import datetime
 from scripts.repo_metrics.git_stats import Github
@@ -50,7 +52,25 @@ def parse_args():
         action="store_true",
         help="Whether or not to save the information to the database",
     )
+    parser.add_argument(
+        "--event_date",
+        type=_valid_date,
+        default="now",
+        help="Date for an event (format: YYYY-MM-DD or now)",
+    )
     return parser.parse_args()
+
+
+def _valid_date(s):
+    """ Source: https://stackoverflow.com/a/25470943/5620182 """
+    try:
+        if s == "now":
+            return datetime.now()
+        else:
+            return datetime.strptime(s, "%Y-%m-%d")
+    except ValueError:
+        msg = "{} is not a valid date, use YYYY-MM-DD or now".format(s)
+        raise argparse.ArgumentTypeError(msg)
 
 
 def connect(uri="mongodb://localhost"):
@@ -70,22 +90,15 @@ def connect(uri="mongodb://localhost"):
     return client
 
 
-def now():
-    """Current date as string.
-    Returns:
-        srt: Current date with the format: Nov 16 2018 12:31:18
-    """
-    return datetime.now().strftime("%b %d %Y %H:%M:%S")
-
-
-def event_as_dict(event):
+def event_as_dict(event, date):
     """Encodes an string event input as a dictionary with the date.
     Args:
         event (str): Details of a event.
+        date (datetime): Date of the event.
     Returns:
         dict: Dictionary with the event and the date.
     """
-    return {"date": now(), "event": event}
+    return {"date": date.strftime("%b %d %Y %H:%M:%S"), "event": event}
 
 
 def github_stats_as_dict(github):
@@ -96,7 +109,7 @@ def github_stats_as_dict(github):
         dict: Dictionary with Github details and the date.
     """
     return {
-        "date": now(),
+        "date": datetime.now().strftime("%b %d %Y %H:%M:%S"),
         "stars": github.stars,
         "forks": github.forks,
         "watchers": github.watchers,
@@ -137,7 +150,7 @@ def tracker(args):
         log.info("GitHub stats -- {}".format(git_doc))
 
     if args.event:
-        event_doc = event_as_dict(args.event)
+        event_doc = event_as_dict(args.event, args.event_date)
         log.info("Event -- {}".format(event_doc))
 
     if args.save_to_database:
