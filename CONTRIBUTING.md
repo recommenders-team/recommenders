@@ -16,13 +16,17 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 ## Steps to Contributing
 
 Here are the basic steps to get started with your first contribution. Please reach out with any questions.
-1. Use [open issues](https://github.com/Microsoft/Recommenders/issues) to discuss the proposed changes (create an issue describing changes if necessary to collect feedback).
-2. [Fork the repo](https://help.github.com/articles/fork-a-repo/)
-3. Create a new branch to contain changes for the issue. We suggest prefixing the branch with your username and then a descriptive title: (e.g. gramhagen/update_contributing_docs)
-4. Create a test that replicates the issue
-5. Make code changes
-6. Ensure unit tests pass and code style / formatting is consistent (see [wiki](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details)
-7. Create a pull request against staging branch
+1. Use [open issues](https://github.com/Microsoft/Recommenders/issues) to discuss the proposed changes. Create an issue describing changes if necessary to collect feedback. Also, please use provided labels to tag issues so everyone can easily sort issues of interest.
+2. [Fork the repo](https://help.github.com/articles/fork-a-repo/) so you can make and test local changes.
+3. Create a new branch for the issue. We suggest prefixing the branch with your username and then a descriptive title: (e.g. gramhagen/update_contributing_docs)
+4. Create a test that replicates the issue.
+5. Make code changes.
+6. Ensure unit tests pass and code style / formatting is consistent (see [wiki](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details).
+7. Create a pull request against <b>staging</b> branch.
+
+Note: We use the staging branch to land all new features, so please remember to create the Pull Request against staging. 
+
+Once the features included in a milestone are complete we will merge staging into master and make a release. See the wiki for more detail about our [merge strategy](https://github.com/Microsoft/Recommenders/wiki/Strategy-to-merge-the-code-to-master-branch).
 
 ## Coding Guidelines
 
