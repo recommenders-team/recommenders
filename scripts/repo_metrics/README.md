@@ -22,5 +22,5 @@ To track the current state of the repository and save it to CosmosDB:
 
 To track an event related to this repository and save it to CosmosDB:
 
-    python scripts/repo_metrics/track_metrics.py --event "Today we did our first blog of the project" --save_to_database
+    python scripts/repo_metrics/track_metrics.py --event "Today we did our first blog of the project" --event_date 2018-12-01 --save_to_database
 
