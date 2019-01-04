@@ -7,8 +7,6 @@ Collection of numpy based splitters
 """
 
 import numpy as np
-import random
-import math
 
 
 def numpy_stratified_split(X, ratio=0.75, seed=123):
@@ -70,26 +68,25 @@ def numpy_stratified_split(X, ratio=0.75, seed=123):
     rated = np.sum(Xtr != 0, axis=1)
 
     # for each user, cut down a test_size% for the test set
-    tst = np.around((rated * test_cut) / 100).astype(np.int)
+    tst = np.around((rated * test_cut) / 100).astype(int)
 
     Nusers, Nitems = X.shape  # total number of users and items
 
     for u in range(Nusers):
         # For each user obtain the index of rated movies
-        idx_tst = []
-        idx = np.asarray(np.where(np.logical_not(Xtr[u, 0:] == 0))).flatten().tolist()
+        idx = np.asarray(np.where(Xtr[u] != 0))[0].tolist()
 
         # extract a random subset of size n from the set of rated movies without repetition
-        for i in range(tst[u]):
-            sub_el = random.choice(idx)
-            idx.remove(sub_el)
-            idx_tst.append(sub_el)
+        idx_tst = np.random.choice(idx, tst[u], replace=False)
+        idx_train = list(set(idx).difference(set(idx_tst)))
 
         Xtr[
             u, idx_tst
         ] = 0  # change the selected rated movies to unrated in the train set
-        Xtst[u, idx] = 0  # set the movies that appear already in the train set as 0
+        Xtst[
+            u, idx_train
+        ] = 0  # set the movies that appear already in the train set as 0
 
-    del idx, sub_el, idx_tst
+    del idx, idx_train, idx_tst
 
     return Xtr, Xtst
