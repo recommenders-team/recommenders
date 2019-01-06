@@ -25,9 +25,10 @@ except:
 
 # MovieLens data have a different format for each size
 class DataFormat:
-    def __init__(self, sep, path, has_header=False):
+    def __init__(self, sep, path, items, has_header=False):
         self._sep = sep
         self._path = path
+        self._items = items
         self._has_header = has_header
 
     @property
@@ -37,6 +38,10 @@ class DataFormat:
     @property
     def path(self):
         return self._path
+    
+    @property
+    def items(self):
+        return self._items
 
     @property
     def has_header(self):
@@ -44,10 +49,10 @@ class DataFormat:
 
 
 _data_format = {
-    "100k": DataFormat("\t", "ml-100k/u.data"),
-    "1m": DataFormat("::", "ml-1m/ratings.dat"),
-    "10m": DataFormat("::", "ml-10M100K/ratings.dat"),
-    "20m": DataFormat(",", "ml-20m/ratings.csv", True),
+    "100k": DataFormat("\t", "ml-100k/u.data", "ml-100k/u.item"),
+    "1m": DataFormat("::", "ml-1m/ratings.dat", "ml-1m/movies.dat"),
+    "10m": DataFormat("::", "ml-10/ratings.dat",  "ml-10/movies.dat"),
+    "20m": DataFormat(",", "ml-20m/ratings.csv", "ml-20m/movies.csv", True),
 }
 
 # Warning and error messages
@@ -216,11 +221,19 @@ def _load_datafile(size, local_cache_path):
         # this will never happen unless someone changes _data_format
         raise ValueError("Invalid data file name.")
     datapath = os.path.join(path, dataname)
+    
+    _, itemsname = os.path.split(_data_format[size].items)
+    if itemsname == "":
+        # this will never happen unless someone changes _data_format
+        raise ValueError("Invalid items file name.")
+    itemspath = os.path.join(path, itemsname)
 
     with ZipFile(local_cache_path, "r") as z:
         with z.open(_data_format[size].path) as zf, open(datapath, 'wb') as f:
             shutil.copyfileobj(zf, f)
-
+        with z.open(_data_format[size].items) as zf, open(itemspath, 'wb') as f:
+            shutil.copyfileobj(zf, f)
+           
     _clean_up(local_cache_path)
 
     # Make sure a temporal data file get cleaned up when done
