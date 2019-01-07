@@ -18,7 +18,9 @@ try:
         FloatType,
         DoubleType,
         LongType,
+        StringType,
     )
+    from pyspark.sql.functions import concat_ws, col
 except:
     pass  # so the environment without spark doesn't break
 
@@ -130,7 +132,12 @@ ERROR_MOVIE_ID_TYPE = "Movie id should be IntegerType"
 ERROR_RATING_TYPE = "Rating should be FloatType or DoubleType"
 
 
-def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip", load_genres=False):
+def load_pandas_df(
+    size="100k",
+    header=None,
+    genres_col=None,
+    local_cache_path="ml.zip",
+):
     """Loads the MovieLens dataset as pd.DataFrame.
 
     Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
@@ -138,9 +145,9 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip", load_gen
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m")
         header (list): Dataset header. If None, use ["UserId", "MovieId", "Rating", "Timestamp"] by default.
+        genres_col (str): Genres column name. Genres are '|' separated string.
+            If None, genres is not loaded.
         local_cache_path (str): Path where to cache the zip file locally
-        load_genres (bool): Load movie genres or not.
-            If True, genres ('|' separated string) will be added as "Genres" column
 
     Returns:
         pd.DataFrame: Dataset
@@ -166,8 +173,8 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip", load_gen
     if len(header) > 2:
         df[header[2]] = df[header[2]].astype(float)
 
-    # If len(header) == 1, will return only userIds and thus no need to load genres
-    if load_genres and len(header) > 1:
+    # Load genres. If len(header) == 1, movie id will not be loaded and thus no need to load genres
+    if genres_col is not None and len(header) > 1:
         if size == "100k":
             # 100k data's movie genres are encoded as a binary array (the last 19 fields)
             # For details, see http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
@@ -184,8 +191,8 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip", load_gen
             )
 
             # Convert binary-encoded genres as a '|' separated string, same to the other datasets
-            item_df["Genres"] = item_df[genres_header].values.tolist()
-            item_df["Genres"] = item_df["Genres"].map(
+            item_df[genres_col] = item_df[genres_header].values.tolist()
+            item_df[genres_col] = item_df[genres_col].map(
                 lambda l: '|'.join([_genres[i] for i, v in enumerate(l) if v == 1])
             )
 
@@ -196,7 +203,7 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip", load_gen
                 item_datapath,
                 sep=_data_format[size].item_separator,
                 engine='python',
-                names=[header[1], "Genres"],
+                names=[header[1], genres_col],
                 usecols=[0, 2],
                 header=0 if _data_format[size].item_has_header else None,
             )
@@ -207,9 +214,14 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip", load_gen
     return df
 
 
-# TODO genres
 def load_spark_df(
-    spark, size="100k", header=None, schema=None, local_cache_path="ml.zip", load_genres=False, dbutils=None
+    spark,
+    size="100k",
+    header=None,
+    schema=None,
+    genres_col=None,
+    local_cache_path="ml.zip",
+    dbutils=None,
 ):
     """Loads the MovieLens dataset as pySpark.DataFrame.
 
@@ -230,9 +242,9 @@ def load_spark_df(
                     StructField("Timestamp", LongType()),
                 ]
             )
+        genres_col (str): Genres column name. Genres are '|' separated string.
+            If None, genres is not loaded.
         local_cache_path (str): Path where to cache the zip file locally
-        load_genres (bool): Load movie genres or not.
-            If True, genres ('|' separated string) will be added as "Genres" column
         dbutils (Databricks.dbutils): Databricks utility object
 
     Returns:
@@ -274,16 +286,23 @@ def load_spark_df(
         except IndexError:
             pass
 
-    datapath, item_datapath = _load_datafile(size, local_cache_path)
-    datapath = "file:" + datapath
+    data_path, item_datapath = _load_datafile(size, local_cache_path)
+    datapath = "file:" + data_path
+    item_datapath = "file:" + item_datapath  # genres file path
     if is_databricks():
+        # Move files from driver to DBFS
         _, dataname = os.path.split(_data_format[size].path)
         dbfs_datapath = "dbfs:/tmp/" + dataname
+        _, item_dataname = os.path.split(_data_format[size].item_path)
+        dbfs_item_datapath = "dbfs:/tmp/" + item_dataname
+
         try:
             dbutils.fs.mv(datapath, dbfs_datapath)
+            dbutils.fs.mv(item_datapath, dbfs_item_datapath)
         except:
             raise ValueError("To use on a Databricks notebook, dbutils object should be passed as an argument")
         datapath = dbfs_datapath
+        item_datapath = dbfs_item_datapath
 
     # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
     separator = _data_format[size].separator
@@ -297,47 +316,53 @@ def load_spark_df(
         df = spark.read.csv(
             datapath, schema=schema, sep=separator, header=_data_format[size].has_header
         )
-    return df
-"""TODO
-    item_datapath = "file:" + item_datapath
-    # If len(header) == 1, will return only userIds and thus no need to load genres
-    if load_genres and len(header) > 1:
+
+    # Load genres. If len(header) == 1, movie id will not be loaded and thus no need to load genres
+    if genres_col is not None and len(header) > 1:
         if size == "100k":
             # 100k data's movie genres are encoded as a binary array (the last 19 fields)
             # For details, see http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
             genres_header = [*(str(i) for i in range(19))]
             item_header = [header[1]] + genres_header
+            item_schema = StructType([StructField(h, IntegerType()) for h in item_header])
 
-            item_df = pd.read_csv(
+            item_df = spark.read.csv(
                 item_datapath,
+                schema=item_schema,
                 sep=_data_format[size].item_separator,
-                engine='python',
-                names=item_header,
-                usecols=[0, *range(5, 24)],
-                header=0 if _data_format[size].item_has_header else None,
+                header=_data_format[size].item_has_header
             )
 
             # Convert binary-encoded genres as a '|' separated string, same to the other datasets
-            genres = df[genres_header].values.tolist()
-            item_df["Genres"] = genres.map(
-                lambda l: '|'.join([_genres[i] for i, v in enumerate(l) if v == 1])
+            item_df = item_df.select(
+                header[1],
+                concat_ws('|', *(col(c) for c in genres_header)).alias(genres_col)
             )
-
-            item_df.drop(genres_header, axis=1, inplace=True)
         else:
-            # [MovieId, Genres] from [MovieId, Title, Genres]
-            item_df = pd.read_csv(
-                item_datapath,
-                sep=_data_format[size].item_separator,
-                engine='python',
-                names=[header[1], "Genres"],
-                usecols=[0, 2],
-                header=0 if _data_format[size].item_has_header else None,
-            )
+            item_schema = StructType([
+                StructField(header[1], IntegerType()),
+                StructField(genres_col, StringType()),
+            ])
+
+            item_separator = _data_format[size].item_separator
+            if len(item_separator) > 1:
+                raw_item_data = spark.sparkContext.textFile(item_datapath)
+                item_data_rdd = raw_item_data.map(lambda l: l.split(item_separator)).map(
+                    lambda c: [int(c[0]), str(c[1])][:]
+                )
+                item_df = spark.createDataFrame(item_data_rdd, item_schema)
+            else:
+                item_df = spark.read.csv(
+                    item_datapath,
+                    schema=item_schema,
+                    sep=item_separator,
+                    header=_data_format[size].item_has_header
+                )
 
         # Merge to rating DataFrame
-        df.merge(item_df, on=header[1])
-"""
+        df = df.join(item_df, header[1], 'left')
+
+    return df
 
 
 def _load_datafile(size, local_cache_path):
