@@ -12,6 +12,7 @@ import argparse
 import traceback
 import logging
 from datetime import datetime
+from dateutil.parser import isoparse
 from pymongo import MongoClient
 from datetime import datetime
 from scripts.repo_metrics.git_stats import Github
@@ -54,23 +55,11 @@ def parse_args():
     )
     parser.add_argument(
         "--event_date",
-        type=_valid_date,
-        default="now",
-        help="Date for an event (format: YYYY-MM-DD or now)",
+        default=datetime.now().isoformat(),
+        type=isoparse,
+        help="Date for an event (format: YYYY-MM-DD)",
     )
     return parser.parse_args()
-
-
-def _valid_date(s):
-    """ Source: https://stackoverflow.com/a/25470943/5620182 """
-    try:
-        if s == "now":
-            return datetime.now()
-        else:
-            return datetime.strptime(s, "%Y-%m-%d")
-    except ValueError:
-        msg = "{} is not a valid date, use YYYY-MM-DD or now".format(s)
-        raise argparse.ArgumentTypeError(msg)
 
 
 def connect(uri="mongodb://localhost"):
@@ -169,7 +158,8 @@ if __name__ == "__main__":
     args = parse_args()
     try:
         log.info("Tracking data")
-        tracker(args)
+        print(args)
+        # tracker(args)
     except Exception as e:
         trace = traceback.format_exc()
         log.error("Traceback: {}".format(trace))
