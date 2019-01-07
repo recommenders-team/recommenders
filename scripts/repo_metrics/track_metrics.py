@@ -103,6 +103,7 @@ def github_stats_as_dict(github):
         "forks": github.forks,
         "watchers": github.watchers,
         "open_issues": github.open_issues,
+        "open_pull_requests": github.open_pull_requests,
         "unique_views": github.number_unique_views,
         "total_views": github.number_total_views,
         "details_views": github.views,
