@@ -2,8 +2,7 @@
 
 In this guide we show how to setup all the dependencies to run the notebooks of this repo on a local environment or [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) and on [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/). 
 
-<details>
-<summary><strong><em>Click here to see the Table of Contents</em></strong></summary>
+## Table of Contents
  
 * [Compute environments](#compute-environments)
 * [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
@@ -14,7 +13,6 @@ In this guide we show how to setup all the dependencies to run the notebooks of 
 * [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
   * [Repository upload](#repository-upload)
-  * [Dependencies setup for Azure Databricks](#dependencies-setup-for-azure-databricks)
   * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
 </details>
 
@@ -45,7 +43,7 @@ We install the dependencies with Conda. As a pre-requisite, we may want to make 
 
 We provided a script to [generate a conda file](scripts/generate_conda_file.sh), depending of the environment we want to use. This will create the environment using the Python version 3.6 with all the correct dependencies.
 
-To install each environment, first we need to generate a conda yml file and then install the environment. We can specify the environment name with the input `-n`. 
+To install each environment, first we need to generate a conda yaml file and then install the environment. We can specify the environment name with the input `-n`. 
 
 Click on the following menus to see more details:
 
@@ -102,8 +100,9 @@ We can register our created conda environment to appear as a kernel in the Jupyt
 * We found that there could be problems if the Spark version of the machine is not the same as the one in the conda file. You will have to adapt the conda file to your machine. 
 * When running Spark on a single local node it is possible to run out of disk space as temporary files are written to the user's home directory. To avoid this we attached an additional disk to the DSVM and made modifications to the Spark configuration. This is done by including the following lines in the file at `/dsvm/tools/spark/current/conf/spark-env.sh`.
 ```
-SPARK_LOCAL_DIRS=/mnt/.spark/scratch
-SPARK_MASTER_OPTS="-Dspark.worker.cleanup.enabled=true
+SPARK_LOCAL_DIRS="/mnt"
+SPARK_WORKER_DIR="/mnt"
+SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.appDataTtl=3600, -Dspark.worker.cleanup.interval=300, -Dspark.storage.cleanupFilesAfterExecutorExit=true"
 ```
 
 ## Setup guide for Azure Databricks
