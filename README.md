@@ -35,7 +35,9 @@ To setup on your local machine:
     ```
 5. Run the [SAR Python CPU Movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to change the kernel to "Python (reco)".
 
-## Notebooks Overview
+## Notebooks
+
+We provide several notebooks to show how recommendation algorithms can be designed, evaluated and operationalized.
 
 - The [Quick-Start Notebooks](notebooks/00_quick_start) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
 
@@ -43,22 +45,18 @@ To setup on your local machine:
 
 - The [Modeling Notebooks](notebooks/02_model) provide a deep dive into implementations of different recommender algorithms.
 
-- The [Evaluation Notebook](notebooks/03_evaluate) shows how to evaluate recommender algorithms for different ranking and rating metrics.
+- The [Evaluation Notebooks](notebooks/03_evaluate) show how to evaluate recommender algorithms for different ranking and rating metrics.
 
 - The [Operationalizion Notebook](notebooks/04_operationalize) demonstrates how to deploy models in production systems.
 
-## Algorithm Comparison
-
-We provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to show how to evaluate and compare included algorithms on the MovieLens 1M dataset. The included algorithms are usable in a variety of recommendation tasks (including product or news recommendations). The comparison notebook serves as a guide on how to evaluate results on other or larger datasets and/or reproduce results under custom settings.
-
-In our preliminary comparison, data is randomly split into train/test sets at at 75/25 ratio. A recommendation model is trained using each of the below collaborative filtering algorithms. We utilize empirical parameter values reported in literature that generated optimal results as reported [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We benchmark on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
+In addition, we also provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, data (MovieLens 1M) is randomly split into train/test sets at a 75/25 ratio. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
 
 **Preliminary Comparison**
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance | 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
 | ALS | 0.002020 | 0.024313 | 0.030677 | 0.009649 | 0.860502 | 0.680608 | 0.406014 | 0.411603 | 
-| SAR | 0.064013 | 0.308012 | 0.277215 | 0.109292 | NaN | NaN | NaN | NaN | 
+| SAR | 0.064013 | 0.308012 | 0.277215 | 0.109292 | N/A | N/A | N/A | N/A | 
 | SVD | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
 
 

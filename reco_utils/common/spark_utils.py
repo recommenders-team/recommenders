@@ -1,7 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from pyspark.sql import SparkSession
+try:
+    from pyspark.sql import SparkSession
+except ModuleNotFoundError:
+    pass  # skip this import if we are in pure python environment
 
 
 def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G"):
@@ -19,9 +22,6 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G"):
         SparkSession.builder.appName(app_name)
         .master(url)
         .config("spark.driver.memory", memory)
-	.config("spark.local.dir", "/mnt")
-	.conifg("spark.worker.cleanup", "true")
-	.config("spark.worker.cleanup.appDataTtl", "120")
         .getOrCreate()
     )
 

@@ -11,7 +11,7 @@ from tests.notebooks_common import path_notebooks
 
 try:
     from pyspark.sql import SparkSession
-except:
+except ModuleNotFoundError:
     pass  # so the environment without spark doesn't break
 
 
@@ -40,9 +40,11 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .master(url)
         .config("spark.driver.memory", memory)
         .config("spark.sql.shuffle.partitions", "1")
-	.config("spark.local.dir", "/mnt")
-	.config("spark.worker.cleanup.enabled", "true")
-	.config("spark.worker.cleanup.appDataTtl", "3600")
+        .config("spark.local.dir", "/mnt")
+        .config("spark.worker.cleanup.enabled", "true")
+        .config("spark.worker.cleanup.appDataTtl", "3600")
+        .config("spark.worker.cleanup.interval", "300")
+        .config("spark.storage.cleanupFilesAfterExecutorExit", "true")
         .getOrCreate()
     )
 
@@ -75,7 +77,7 @@ def pandas_dummy(header):
     ratings_dict = {
         header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
         header["col_item"]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        header["col_rating"]: [1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
+        header["col_rating"]: [1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0],
     }
     df = pd.DataFrame(ratings_dict)
     return df
@@ -99,7 +101,7 @@ def train_test_dummy_timestamp(pandas_dummy_timestamp):
 def demo_usage_data(header, sar_settings):
     # load the data
     data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv")
-    data["rating"] = pd.Series([1] * data.shape[0])
+    data["rating"] = pd.Series([1.0] * data.shape[0])
     data = data.rename(
         columns={
             "userId": header["col_user"],
@@ -143,12 +145,17 @@ def notebooks():
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
         ),
-        "data_split": os.path.join(folder_notebooks, "01_prepare_data", "data_split.ipynb"),
+        "data_split": os.path.join(
+            folder_notebooks, "01_prepare_data", "data_split.ipynb"
+        ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_model", "als_deep_dive.ipynb"
         ),
         "surprise_svd_deep_dive": os.path.join(
             folder_notebooks, "02_model", "surprise_svd_deep_dive.ipynb"
+        ),
+        "baseline_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "baseline_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }
