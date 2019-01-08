@@ -323,7 +323,8 @@ def load_spark_df(
         )
 
         # Merge rating df w/ item_df
-        df = df.join(item_df, movie_col, 'left')
+        if item_df is not None:
+            df = df.join(item_df, movie_col, 'left')
 
     return df
 
