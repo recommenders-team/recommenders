@@ -224,6 +224,7 @@ def _load_item_df(size, movie_col, title_col, genres_col, item_datapath):
         names=item_header,
         usecols=usecols,
         header=0 if _data_format[size].item_has_header else None,
+        encoding="ISO-8859-1"
     )
 
     # Convert 100k data's format: '0|0|1|...' to 'Action|Romance|..."
