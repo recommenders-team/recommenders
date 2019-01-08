@@ -307,26 +307,26 @@ def load_spark_df(
             # MovieID should be loaded to merge rating df w/ item_df
             schema.add(StructField(movie_col, IntegerType()))
 
-    # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
-    separator = _data_format[size].separator
-    if len(separator) > 1:
-        raw_data = spark.sparkContext.textFile(datapath)
-        data_rdd = raw_data.map(
-            lambda l: l.split(separator)
-        ).map(
-            lambda c: [int(c[0]), int(c[1]), float(c[2]), int(c[3])][: len(schema)]
-        )
-        df = spark.createDataFrame(data_rdd, schema)
-    else:
-        df = spark.read.csv(
-            datapath, schema=schema, sep=separator, header=_data_format[size].has_header
-        )
+        # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
+        separator = _data_format[size].separator
+        if len(separator) > 1:
+            raw_data = spark.sparkContext.textFile(datapath)
+            data_rdd = raw_data.map(
+                lambda l: l.split(separator)
+            ).map(
+                lambda c: [int(c[0]), int(c[1]), float(c[2]), int(c[3])][: len(schema)]
+            )
+            df = spark.createDataFrame(data_rdd, schema)
+        else:
+            df = spark.read.csv(
+                datapath, schema=schema, sep=separator, header=_data_format[size].has_header
+            )
 
         # Merge rating df w/ item_df
         if item_df is not None:
             df = df.join(item_df, movie_col, 'left')
 
-    return df
+        return df
 
 
 def _get_schema(header, schema):
