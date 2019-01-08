@@ -294,8 +294,10 @@ def load_spark_df(
 
     # Load title and genres
     movie_col = "MovieId" if schema is None or len(schema) < 2 else schema[1].name
-    item_pd_df = _load_item_df(size, movie_col, title_col, genres_col, item_datapath)
-    item_df = spark.createDataFrame(item_pd_df)
+    item_df = _load_item_df(size, movie_col, title_col, genres_col, item_datapath)
+    if item_df is not None:
+        # Convert to spark DataFrame
+        item_df = spark.createDataFrame(item_df)
 
     # Load rating data
     if schema is None:
