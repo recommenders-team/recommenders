@@ -21,7 +21,7 @@ processes. Visit [MLHub.ai](https://mlhub.ai) for details.
 To install and run the pre-built scripts:
 
     $ pip3 install mlhub
-    $ ml install   gjwgit/sar
+    $ ml install   sar
     $ ml configure sar
     $ ml demo      sar
 
