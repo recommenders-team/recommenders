@@ -77,7 +77,7 @@ channels:
 - conda-forge
 - defaults
 dependencies:
-- python==3.6
+- python==3.6.7
 - numpy>=1.13.3
 - dask>=0.17.1
 ${pyspark}- pyspark==2.3.1
@@ -90,14 +90,12 @@ ${pyspark}- pyspark==2.3.1
 - fastparquet>=0.1.6
 ${pyspark}- pyarrow>=0.8.0
 - pip:
-  - idna==2.7
-  - pandas>=0.22.0
+  - pandas>=0.23.4
   - scipy>=1.0.0
   - azure-storage>=0.36.0
-  - matplotlib==2.2.2
-  - seaborn==0.8.1
-  - tffm==1.0.1
-  - pytest==3.6.4
+  - matplotlib>=2.2.2
+  - seaborn>=0.8.1
+  - pytest>=3.6.4
   - papermill>=0.15.0
   - black>=18.6b4
   - memory-profiler>=0.54.0
