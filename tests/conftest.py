@@ -11,7 +11,7 @@ from tests.notebooks_common import path_notebooks
 
 try:
     from pyspark.sql import SparkSession
-except:
+except ModuleNotFoundError:
     pass  # so the environment without spark doesn't break
 
 
@@ -145,12 +145,17 @@ def notebooks():
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
         ),
-        "data_split": os.path.join(folder_notebooks, "01_prepare_data", "data_split.ipynb"),
+        "data_split": os.path.join(
+            folder_notebooks, "01_prepare_data", "data_split.ipynb"
+        ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_model", "als_deep_dive.ipynb"
         ),
         "surprise_svd_deep_dive": os.path.join(
             folder_notebooks, "02_model", "surprise_svd_deep_dive.ipynb"
+        ),
+        "baseline_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "baseline_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }
