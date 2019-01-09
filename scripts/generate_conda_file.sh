@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script generates a conda file for python, pyspark, gpu or
-# all libraries.
+# all environments.
 # For generating a conda file for running only python code:
 # $ sh generate_conda_file.sh
 # For generating a conda file for running python gpu:
