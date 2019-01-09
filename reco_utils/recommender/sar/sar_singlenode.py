@@ -26,7 +26,6 @@ from reco_utils.recommender.sar import (
     SIM_COOCCUR,
     HASHED_USERS,
     HASHED_ITEMS,
-    _user_item_return_type,
 )
 from reco_utils.recommender.sar import (
     TIME_DECAY_COEFFICIENT,
@@ -603,3 +602,7 @@ class SARSingleNode:
                 }
             )
         )
+
+
+def _user_item_return_type():
+    return str
