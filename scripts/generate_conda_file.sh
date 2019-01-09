@@ -14,7 +14,7 @@
 # first check if conda is installed
 CONDA_BINARY=$(which conda)
 if [ ! -x "$CONDA_BINARY" ] ; then
-	echo "No conda found!! Please see the README.md file for installation prerequisites."
+	echo "No conda found!! Please see the SETUP.md file for installation prerequisites."
 	exit 1
 fi
 
