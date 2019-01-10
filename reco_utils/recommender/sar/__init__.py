@@ -19,7 +19,3 @@ SIM_LIFT = "lift"
 HASHED_ITEMS = "hashedItems"
 HASHED_USERS = "hashedUsers"
 
-
-def _user_item_return_type():
-    return str
-
