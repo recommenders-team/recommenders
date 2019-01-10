@@ -75,6 +75,8 @@ fi
 
 channels:
 - conda-forge
+- pytorch
+- fastai
 - defaults
 dependencies:
 - python==3.6.7
@@ -89,6 +91,7 @@ ${pyspark}- pyspark==2.3.1
 - jupyter>=1.0.0
 - fastparquet>=0.1.6
 ${pyspark}- pyarrow>=0.8.0
+- fastai>=1.0.39
 - pip:
   - pandas>=0.23.4
   - hyperopt==0.1.1
