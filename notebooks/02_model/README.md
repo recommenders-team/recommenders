@@ -6,8 +6,10 @@ In this directory, notebooks are provided to give a deep dive into training mode
 
 | Notebook | Description | 
 | --- | --- | 
-| [als_deep_dive](als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation
-| [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Deep dive on a SVD algorithm and implementation
-| [sar_single_node_deep_dive](sar_single_node_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation
+| [als_deep_dive](als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
+| [baseline_deep_dive](baseline_deep_dive.ipynb) | Deep dive on baseline performance estimation.
+| [ncf_deep_dive](ncf_deep_dive.ipynb) | Deep dive on a NCF algorithm and implementation.
+| [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Deep dive on a SVD algorithm and implementation.
+| [sar_single_node_deep_dive](sar_single_node_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
 
 Details on model training are best found inside each notebook.

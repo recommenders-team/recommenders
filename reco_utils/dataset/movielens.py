@@ -19,7 +19,7 @@ try:
         DoubleType,
         LongType,
     )
-except:
+except ModuleNotFoundError:
     pass  # so the environment without spark doesn't break
 
 
@@ -94,7 +94,7 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip"):
     df = pd.read_csv(
         datapath,
         sep=_data_format[size].separator,
-        engine='python',
+        engine="python",
         names=header,
         usecols=[*range(len(header))],
         header=0 if _data_format[size].has_header else None,
@@ -108,7 +108,12 @@ def load_pandas_df(size="100k", header=None, local_cache_path="ml.zip"):
 
 
 def load_spark_df(
-    spark, size="100k", header=None, schema=None, local_cache_path="ml.zip", dbutils=None
+    spark,
+    size="100k",
+    header=None,
+    schema=None,
+    local_cache_path="ml.zip",
+    dbutils=None,
 ):
     """Loads the MovieLens dataset as pySpark.DataFrame.
 
@@ -166,7 +171,9 @@ def load_spark_df(
             if not isinstance(schema[1].dataType, IntegerType):
                 raise ValueError(ERROR_MOVIE_ID_TYPE)
             # Ratings should be float type
-            if not isinstance(schema[2].dataType, FloatType) and not isinstance(schema[2].dataType, DoubleType):
+            if not isinstance(schema[2].dataType, FloatType) and not isinstance(
+                schema[2].dataType, DoubleType
+            ):
                 raise ValueError(ERROR_RATING_TYPE)
         except IndexError:
             pass
@@ -178,7 +185,9 @@ def load_spark_df(
         try:
             dbutils.fs.mv(datapath, dbfs_datapath)
         except:
-            raise ValueError("To use on a Databricks notebook, dbutils object should be passed as an argument")
+            raise ValueError(
+                "To use on a Databricks notebook, dbutils object should be passed as an argument"
+            )
         datapath = dbfs_datapath
 
     # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
@@ -229,7 +238,7 @@ def _load_datafile(size, local_cache_path):
     itemspath = os.path.join(path, itemsname)
 
     with ZipFile(local_cache_path, "r") as z:
-        with z.open(_data_format[size].path) as zf, open(datapath, 'wb') as f:
+        with z.open(_data_format[size].path) as zf, open(datapath, "wb") as f:
             shutil.copyfileobj(zf, f)
         with z.open(_data_format[size].items) as zf, open(itemspath, 'wb') as f:
             shutil.copyfileobj(zf, f)
