@@ -24,7 +24,8 @@ dependencies:
     - reco_utils/
     - mlhub/sar.py: demo.py
     - mlhub/recutils.py
-    - mlhub/na.jpg 
+    - mlhub/na.jpg
+    - mlhub/sample.png
     - mlhub/sar.md: README.md
     - http://files.grouplens.org/datasets/movielens/ml-100k/u.item: titles.txt
 commands:
