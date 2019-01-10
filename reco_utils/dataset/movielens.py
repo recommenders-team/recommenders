@@ -34,17 +34,17 @@ class _DataFormat:
             sep, path, has_header=False,
             item_sep=None, item_path=None, item_has_header=False,
     ):
-    """ MovieLens data format container as a different size of MovieLens data file
-    has a different format
-    
-    Args:
-        sep (str): Rating data delimiter
-        path (str): Rating data path within the original zip file
-        has_header (bool): Whether the rating data contains a header line or not
-        item_sep (str): Item data delimiter
-        item_path (str): Item data path within the original zip file
-        item_has_header (bool): Whether the item data contains a header line or not
-    """
+        """ MovieLens data format container as a different size of MovieLens data file
+        has a different format
+
+        Args:
+            sep (str): Rating data delimiter
+            path (str): Rating data path within the original zip file
+            has_header (bool): Whether the rating data contains a header line or not
+            item_sep (str): Item data delimiter
+            item_path (str): Item data path within the original zip file
+            item_has_header (bool): Whether the item data contains a header line or not
+        """
     
         # Rating file
         self._sep = sep
