@@ -50,4 +50,6 @@ def plot_recommendations():
         ax  = fig.add_subplot(gg2[0:3, :])
         _plot_image(ax, images[i])
 
+    # fig = plt.figure()
+    # fig.savefig("sample.png")
     plt.show()
