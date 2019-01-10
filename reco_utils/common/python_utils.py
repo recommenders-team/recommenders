@@ -7,9 +7,9 @@ def jaccard(cooccurrence):
     cooccurrence: scipy.sparse.csc_matrix
     """
     coo = cooccurrence.tocoo()
-    denom = coo.row + coo.col - coo.data
+    denom = coo.diagonal()[coo.row] + coo.diagonal()[coo.col] - coo.data
     return coo_matrix((np.divide(coo.data, denom, out=np.zeros_like(coo.data), where=(denom != 0.0)),
-                       (coo.row, coo.col)),
+                        (coo.row, coo.col)),
                       shape=coo.shape).tocsc()
 
 
@@ -18,7 +18,7 @@ def lift(cooccurrence):
     cooccurrence: scipy.sparse.csc_matrix
     """
     coo = cooccurrence.tocoo()
-    denom = coo.row * coo.col
+    denom = coo.diagonal()[coo.row] * coo.diagonal()[coo.col]
     return coo_matrix((np.divide(coo.data, denom, out=np.zeros_like(coo.data), where=(denom != 0.0)),
                         (coo.row, coo.col)),
                        shape=coo.shape).tocsc()
