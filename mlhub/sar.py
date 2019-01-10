@@ -254,7 +254,7 @@ if len(answer) == 0 or answer.lower()[0] != "n":
 
     recutils.plot_recommendations()
 
-sys,stdout.write("""
+sys.stdout.write("""
 We will display a sample image that was generated previously.
     
 Press Enter to continue on to the model performance evaluation: """)
