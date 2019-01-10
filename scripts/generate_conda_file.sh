@@ -91,6 +91,8 @@ ${pyspark}- pyspark==2.3.1
 ${pyspark}- pyarrow>=0.8.0
 - pip:
   - pandas>=0.23.4
+  - hyperopt==0.1.1
+  - idna==2.7
   - scipy>=1.0.0
   - azure-storage>=0.36.0
   - matplotlib>=2.2.2
