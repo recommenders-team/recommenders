@@ -71,13 +71,7 @@ def build_feature_columns(
     return columns
 
 
-def build_optimizer(name, lr):
-    """
-
-    :param name:
-    :param lr: Learning rate
-    :return:
-    """
+def build_optimizer(name, lr, ftrl_l1_reg=None):
     if name == 'Adagrad':
         optimizer = tf.train.AdagradOptimizer(learning_rate=lr)
     elif name == 'Adam':
@@ -87,7 +81,7 @@ def build_optimizer(name, lr):
     elif name == 'SGD':
         optimizer = tf.train.GradientDescentOptimizer(learning_rate=lr)
     elif name == 'Ftrl':
-        optimizer = tf.train.FtrlOptimizer(learning_rate=lr)
+        optimizer = tf.train.FtrlOptimizer(learning_rate=lr, l1_regularization_strength=ftrl_l1_reg)
     else:
         raise ValueError("Optimizer type should be either 'Adagrad', 'Adam', 'Ftrl', 'RMSProp', or 'SGD'")
 
