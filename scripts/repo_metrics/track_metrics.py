@@ -22,14 +22,11 @@ from scripts.repo_metrics.config import (
     DATABASE,
     COLLECTION_GITHUB_STATS,
     COLLECTION_EVENTS,
-    LOG_FILE,
 )
 
 format_str = "%(asctime)s %(levelname)s [%(filename)s:%(lineno)s]: %(message)s"
 format_time = "%Y-%m-%d %H:%M:%S"
-logging.basicConfig(
-    filename=LOG_FILE, level=logging.DEBUG, format=format_str, datefmt=format_time
-)
+logging.basicConfig(level=logging.INFO, format=format_str, datefmt=format_time)
 log = logging.getLogger()
 
 
@@ -158,9 +155,8 @@ if __name__ == "__main__":
     log.info("Starting routine")
     args = parse_args()
     try:
-        log.info("Tracking data")
-        print(args)
-        # tracker(args)
+        log.info("Arguments: {}".format(args))
+        tracker(args)
     except Exception as e:
         trace = traceback.format_exc()
         log.error("Traceback: {}".format(trace))
