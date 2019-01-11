@@ -184,7 +184,7 @@ def test_spark_precision(spark_data, target_metrics, spark):
         }
     )
     df_same = spark.createDataFrame(same_items)
-    evaluator3 = SparkRankingEvaluation(df_same, df_same, k=5, col_prediction="rating")
+    evaluator3 = SparkRankingEvaluation(df_same, df_same, k=3, col_prediction="rating")
     assert evaluator3.precision_at_k() == 1
 
 
