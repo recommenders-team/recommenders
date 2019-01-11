@@ -132,9 +132,9 @@ def tracker(args):
         # if there is an env variable, overwrite it
         token = os.environ.get("GITHUB_TOKEN", GITHUB_TOKEN)
         g = Github(token, args.github_repo)
-        g.clean()  # clean folder if it exists
         git_doc = github_stats_as_dict(g)
         log.info("GitHub stats -- {}".format(git_doc))
+        g.clean()
 
     if args.event:
         event_doc = event_as_dict(args.event, args.event_date)
