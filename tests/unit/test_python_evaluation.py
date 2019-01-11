@@ -95,7 +95,6 @@ def python_data():
                 5,
             ],
         }
-
     )
 
     return rating_true, rating_pred, rating_nohit
@@ -173,7 +172,6 @@ def test_python_map_at_k(python_data, target_metrics):
 
 def test_python_precision(python_data, target_metrics):
     rating_true, rating_pred, rating_nohit = python_data
-
     assert (
         precision_at_k(
             k=10,
@@ -185,6 +183,33 @@ def test_python_precision(python_data, target_metrics):
     )
     assert precision_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert precision_at_k(rating_true, rating_pred, k=10) == target_metrics["precision"]
+
+    # check normalization
+    single_user = pd.DataFrame(
+        {"userID": [1, 1, 1], "itemID": [1, 2, 3], "rating": [5, 4, 3]}
+    )
+    assert (
+        precision_at_k(
+            k=3,
+            rating_true=single_user,
+            rating_pred=single_user,
+            col_prediction="rating",
+        )
+        == 1
+    )
+    same_items = pd.DataFrame(
+        {
+            "userID": [1, 1, 1, 2, 2, 2],
+            "itemID": [1, 2, 3, 1, 2, 3],
+            "rating": [5, 4, 3, 5, 5, 3],
+        }
+    )
+    assert (
+        precision_at_k(
+            k=3, rating_true=same_items, rating_pred=same_items, col_prediction="rating"
+        )
+        == 1
+    )
 
 
 def test_python_recall(python_data, target_metrics):

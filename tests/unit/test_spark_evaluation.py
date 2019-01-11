@@ -166,6 +166,27 @@ def test_spark_precision(spark_data, target_metrics):
     )
     assert evaluator1.precision_at_k() == target_metrics["precision"]
 
+    # check normalization
+    single_user = pd.DataFrame(
+        {"userID": [1, 1, 1], "itemID": [1, 2, 3], "rating": [5, 4, 3]}
+    )
+    df_single = spark.createDataFrame(single_user)
+    evaluator2 = SparkRankingEvaluation(
+        df_single, df_single, k=3, col_prediction="rating"
+    )
+    assert evaluator2.precision_at_k() == 1
+
+    same_items = pd.DataFrame(
+        {
+            "userID": [1, 1, 1, 2, 2, 2],
+            "itemID": [1, 2, 3, 1, 2, 3],
+            "rating": [5, 4, 3, 5, 5, 3],
+        }
+    )
+    df_same = spark.createDataFrame(same_items)
+    evaluator3 = SparkRankingEvaluation(df_same, df_same, k=5, col_prediction="rating")
+    assert evaluator3.precision_at_k() == 1
+
 
 @pytest.mark.spark
 def test_spark_ndcg(spark_data, target_metrics):
