@@ -155,7 +155,7 @@ def test_spark_recall(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_spark_precision(spark_data, target_metrics):
+def test_spark_precision(spark_data, target_metrics, spark):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
