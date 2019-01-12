@@ -3,6 +3,7 @@
 import os
 import argparse
 import itertools
+import shutil
 
 import pandas as pd
 import numpy as np
@@ -18,7 +19,7 @@ try:
             map_at_k, ndcg_at_k, precision_at_k, recall_at_k
     )
 except ModuleNotFoundError:
-    # When upload to the cloud compute
+    # If upload 'reco_utils' folder to the aml remote compute, root folder goes up one level
     from aml.tf_log_hook import AmlTfLogHook
     from common import tf_utils
     from evaluation.python_evaluation import (
@@ -39,7 +40,6 @@ parser.add_argument('--user-col', type=str, dest='user_col', default='UserId')
 parser.add_argument('--item-col', type=str, dest='item_col', default='ItemId')
 parser.add_argument('--rating-col', type=str, dest='rating_col', default='Rating')
 # Optional feature columns. If not provided, not used
-parser.add_argument('--timestamp-col', type=str, dest='timestamp_col')
 parser.add_argument('--item-feat-col', type=str, dest='item_feat_col')
 # Model type: either 'wide', 'deep', or 'wide_deep'
 parser.add_argument('--model-type', type=str, dest='model_type', default='wide_deep')
@@ -57,12 +57,9 @@ parser.add_argument('--dnn-batch-norm', type=bool, dest='dnn_batch_norm', defaul
 # Training parameters
 parser.add_argument('--batch-size', type=int, dest='batch_size', default=256)
 parser.add_argument('--epochs', type=int, dest='epochs', default=20)
-parser.add_argument('--metrics-list', type=str, nargs='*', dest='metrics_list', default=['RMSE'])
+parser.add_argument('--metrics-list', type=str, nargs='*', dest='metrics_list', default=['rmse'])
 
 args = parser.parse_args()
-
-# Model checkpoints folder
-MODEL_DIR = './models'
 
 MODEL_TYPE = args.model_type
 if MODEL_TYPE not in {'wide', 'deep', 'wide_deep'}:
@@ -77,7 +74,7 @@ USER_COL = args.user_col
 ITEM_COL = args.item_col
 RATING_COL = args.rating_col
 ITEM_FEAT_COL = args.item_feat_col  # e.g. genres, as a list of 0 or 1 (a movie may have multiple genres)
-TIMESTAMP_COL = args.timestamp_col
+
 PREDICTION_COL = 'prediction'
 
 # Recommendation evaluator columns
@@ -114,19 +111,18 @@ user_list = np.unique(
 item_list = np.unique(
     np.concatenate((X_train[ITEM_COL].unique(), X_rate_eval[ITEM_COL].unique()), axis=None)
 )
+# Shuffle so that evaluation sample's order may not affect on test results
+np.random.shuffle(user_list)
+np.random.shuffle(item_list)
 
 # Prepare ranking evaluation set, i.e. get the cross join of all user-item pairs
 user_item_col = [USER_COL, ITEM_COL]
 user_item_list = list(itertools.product(user_list, item_list))
 users_items = pd.DataFrame(user_item_list, columns=user_item_col)
 # Remove seen items (items in the train set)
-users_items_exclude_train = users_items.loc[
+X_rank_eval = users_items.loc[
     ~users_items.set_index(user_item_col).index.isin(X_train.set_index(user_item_col).index)
 ]
-# Add timestamp info
-X_rank_eval = pd.merge(X_rate_eval, users_items_exclude_train, on=user_item_col, how='outer')
-X_rank_eval.fillna(X_rate_eval[TIMESTAMP_COL].max(), inplace=True)
-# TODO add other columns too if needed
 
 # Get AML run context
 root_run = Run.get_context()
@@ -135,45 +131,51 @@ arguments = str(vars(args))
 print("Args:", arguments, sep='\n')
 root_run.log("Args", arguments)
 
-# Exhaustive search for regularization param to see how it affects
+# Exhaustive search for learning rate and regularization param
 if MODEL_TYPE == 'deep' or MODEL_TYPE == 'wide_deep':
     reg_name = 'dropout'
-    regs = np.linspace(0.0, 0.5, 5)
+    regs = np.linspace(0.0, 0.5, 10)
 elif LINEAR_OPTIMIZER == 'Ftrl':
     reg_name = 'l1_reg'
-    regs = np.linspace(0.0, 0.1, 5)
+    regs = np.linspace(0.0, 0.1, 10)
 else:
-    reg_name = None
+    # No regularization
+    reg_name = 'reg'
     regs = [0.0]
 
+MODEL_DIR = './model_checkpoint'
+if os.path.exists(MODEL_DIR):
+    shutil.rmtree(MODEL_DIR)
+
 for reg in regs:
-    if reg_name is not None:
-        print("{}: {}".format(reg_name, reg))
-        root_run.log(reg_name, reg)
+    session_name = "{}_{}".format(reg_name, reg)
+    checkpoint_dir = os.path.join(MODEL_DIR, session_name)
+    root_run.log(reg_name, reg)
+    print(session_name)
 
     # Feature columns
     wide_columns = []
     deep_columns = []
     if MODEL_TYPE == 'wide' or MODEL_TYPE == 'wide_deep':
         wide_columns = tf_utils.build_feature_columns(
-            'wide', user_list, item_list, 'UserId', 'MovieId'
+            'wide', user_list, item_list, USER_COL, ITEM_COL
         )
     if MODEL_TYPE == 'deep' or MODEL_TYPE == 'wide_deep':
-        deep_columns = tf_utils.build_feature_columns(
-            'deep', user_list, item_list, 'UserId', 'MovieId', None, 'Timestamp',
+        deep_columns = tf_utils.build_feature_columns(  # TODO Genres
+            'deep', user_list, item_list, USER_COL, ITEM_COL, None, None,
             DNN_USER_DIM, DNN_ITEM_DIM, 0
         )
 
     # Model (Estimator). Note, if you want an Estimator optimized for a specific metrics, write a custom one.
     if MODEL_TYPE == 'wide':
         model = tf.estimator.LinearRegressor(  # LinearClassifier(
-            model_dir=MODEL_DIR,
+            model_dir=checkpoint_dir,
             feature_columns=wide_columns,
             optimizer=tf_utils.build_optimizer(LINEAR_OPTIMIZER, LINEAR_OPTIMIZER_LR, ftrl_l1_reg=reg)
         )
     elif MODEL_TYPE == 'deep':
         model = tf.estimator.DNNRegressor(  # DNNClassifier(
-            model_dir=MODEL_DIR,
+            model_dir=checkpoint_dir,
             feature_columns=deep_columns,
             hidden_units=DNN_HIDDEN_UNITS,
             optimizer=tf_utils.build_optimizer(DNN_OPTIMIZER, DNN_OPTIMIZER_LR),
@@ -182,7 +184,7 @@ for reg in regs:
         )
     elif MODEL_TYPE == 'wide_deep':
         model = tf.estimator.DNNLinearCombinedRegressor(  # DNNLinearCombinedClassifier(
-            model_dir=MODEL_DIR,
+            model_dir=checkpoint_dir,
             # wide settings
             linear_feature_columns=wide_columns,
             linear_optimizer=tf_utils.build_optimizer(LINEAR_OPTIMIZER, LINEAR_OPTIMIZER_LR, ftrl_l1_reg=reg),
@@ -197,8 +199,7 @@ for reg in regs:
         # This should not happen
         model = None
 
-    # start an Azure ML run
-    # with root_run.child_run("reg-{}".format(reg)) as run:
+    # start an Azure ML run (TODO TensorBoard)
     train_input_fn = tf.estimator.inputs.pandas_input_fn(
         x=X_train,
         y=y_train,
@@ -208,21 +209,13 @@ for reg in regs:
         num_threads=1
     )
     model = tf.contrib.estimator.add_metrics(model, tf_utils.eval_metrics('mae'))
-    # aml_hook = AmlTfLogHook(
-    #     aml_run=run,
-    #     model=model,
-    #     X_eval=X_rate_eval,
-    #     y_eval=y_rate_eval,
-    #     metrics=['loss', 'mae'],
-    #     every_n_iter=200
-    # )
+
     try:
-        model.train(input_fn=train_input_fn)  #, hooks=[aml_hook])
+        model.train(input_fn=train_input_fn)
 
-        # TODO maybe drop the cold users and items
-
+        # Evaluation
         # TODO for now, just ndcg and rmse
-        if 'NDCG' in METRICS_LIST:
+        if 'ndcg' in METRICS_LIST:
             predictions = list(model.predict(
                 input_fn=tf.estimator.inputs.pandas_input_fn(
                     x=X_rank_eval,
@@ -238,10 +231,10 @@ for reg in regs:
             TOP_K = 10
             eval_ndcg = ndcg_at_k(rate_eval, reco, k=TOP_K, **cols)
 
-            print("NDCG:", eval_ndcg)
-            root_run.log("NDCG", eval_ndcg)
+            print("ndcg:", eval_ndcg)
+            root_run.log("ndcg", eval_ndcg)
 
-        if 'RMSE' in METRICS_LIST:
+        if 'rmse' in METRICS_LIST:
             predictions = list(model.predict(
                 input_fn=tf.estimator.inputs.pandas_input_fn(
                     x=X_rate_eval,
@@ -255,30 +248,21 @@ for reg in regs:
 
             eval_rmse = rmse(rate_eval, rate, **cols)
 
-            print("RMSE:", eval_rmse)
-            root_run.log("RMSE", eval_rmse)
+            print("rmse:", eval_rmse)
+            root_run.log("rmse", eval_rmse)
+
+        # TODO save model and checkpoint
+        # Note, AML automatically upload the files saved in the "./outputs" folder into run history
+        # MODEL_OUTPUT_DIR = './outputs/model'
+        # os.makedirs(MODEL_OUTPUT_DIR, exist_ok=True)
+        #
+        # feature_spec = tf.feature_column.make_parse_example_spec(col)
+        # export_input_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)
+        #
+        # For details of examples of export and load models,
+        # https://github.com/MtDersvan/tf_playground/blob/master/wide_and_deep_tutorial/wide_and_deep_basic_serving.md
+        # https://www.tensorflow.org/guide/saved_model
+        # https://github.com/monk1337/DNNClassifier-example/
 
     except tf.train.NanLossDuringTrainingError as e:
         print(e.message)
-
-
-
-
-# Save model. Note, AML automatically upload the files saved in the "./outputs" folder into run history
-# MODEL_OUTPUT_DIR = './outputs/model'
-# os.makedirs(MODEL_OUTPUT_DIR, exist_ok=True)
-#
-# feature_spec = tf.feature_column.make_parse_example_spec(col)
-# export_input_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)
-#
-# probablly save checkpoint or export model
-
-# TODO clean up MODEL_DIR and MODEL_OUTPUT_DIR
-
-
-"""
-For details of examples of export and load models,
-https://github.com/MtDersvan/tf_playground/blob/master/wide_and_deep_tutorial/wide_and_deep_basic_serving.md
-https://www.tensorflow.org/guide/saved_model
-https://github.com/monk1337/DNNClassifier-example/
-"""
