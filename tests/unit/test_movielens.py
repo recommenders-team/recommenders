@@ -3,6 +3,7 @@
 
 import pytest
 from reco_utils.dataset import movielens
+from reco_utils.common.constants import DEFAULT_ITEM_COL
 
 try:
     from pyspark.sql.types import (
@@ -15,7 +16,7 @@ try:
     )
     from pyspark.sql.functions import col
     from reco_utils.common.spark_utils import start_or_get_spark
-except:
+except ModuleNotFoundError:
     pass  # skip this import if we are in pure python environment
 
 
@@ -49,7 +50,7 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     df = movielens.load_pandas_df(size=size, title_col="Title")
     assert len(df.columns) == 5
     # Movie 1 is Toy Story
-    title = df.loc[df["MovieId"] == 1][:2]["Title"].values
+    title = df.loc[df[DEFAULT_ITEM_COL] == 1][:2]["Title"].values
     assert title[0] == title[1]
     assert title[0] == title_example
 
@@ -57,7 +58,7 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     df = movielens.load_pandas_df(size=size, genres_col="Genres")
     assert len(df.columns) == 5
     # Movie 1 is Toy Story
-    genres = df.loc[df["MovieId"] == 1][:2]["Genres"].values
+    genres = df.loc[df[DEFAULT_ITEM_COL] == 1][:2]["Genres"].values
     assert genres[0] == genres[1]
     assert genres[0] == genres_example
 
@@ -101,7 +102,7 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
     df = movielens.load_spark_df(spark, size=size, title_col="Title")
     assert len(df.columns) == 5
     # Movie 1 is Toy Story
-    title = df.filter(col("MovieId") == 1).select("Title").limit(2).collect()
+    title = df.filter(col(DEFAULT_ITEM_COL) == 1).select("Title").limit(2).collect()
     assert title[0][0] == title[1][0]
     assert title[0][0] == title_example
 
@@ -109,7 +110,7 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
     df = movielens.load_spark_df(spark, size=size, genres_col="Genres")
     assert len(df.columns) == 5
     # Movie 1 is Toy Story
-    genres = df.filter(col("MovieId") == 1).select("Genres").limit(2).collect()
+    genres = df.filter(col(DEFAULT_ITEM_COL) == 1).select("Genres").limit(2).collect()
     assert genres[0][0] == genres[1][0]
     assert genres[0][0] == genres_example
 
