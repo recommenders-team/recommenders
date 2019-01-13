@@ -80,6 +80,7 @@ def test_regular_save_load(model_type, n_users, n_items):
         P_ = model.sess.run(model.embedding_mlp_P)
         Q_ = model.sess.run(model.embedding_mlp_Q)
 
+    # test load function
     assert np.array_equal(P, P_)
     assert np.array_equal(Q, Q_)
 
@@ -145,6 +146,7 @@ def test_fit(python_dataset_ncf, model_type):
     "model_type", ["NeuMF", "GMF", "MLP"]
 )
 def test_predict(python_dataset_ncf, model_type):
+    # test data format
     train, test = python_dataset_ncf
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
     model = NCF(n_users=data.n_users, n_items=data.n_items, model_type=model_type)
