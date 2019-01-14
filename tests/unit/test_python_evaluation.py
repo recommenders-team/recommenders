@@ -1,12 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""
-Test evaluation
-"""
 import pandas as pd
 import pytest
-
 from reco_utils.evaluation.python_evaluation import (
     rmse,
     mae,
