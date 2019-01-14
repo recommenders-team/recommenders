@@ -184,7 +184,7 @@ def test_python_precision(python_data, target_metrics):
     assert precision_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert precision_at_k(rating_true, rating_pred, k=10) == target_metrics["precision"]
 
-    # check normalization
+    # Check normalization
     single_user = pd.DataFrame(
         {"userID": [1, 1, 1], "itemID": [1, 2, 3], "rating": [5, 4, 3]}
     )
@@ -209,6 +209,15 @@ def test_python_precision(python_data, target_metrics):
             k=3, rating_true=same_items, rating_pred=same_items, col_prediction="rating"
         )
         == 1
+    )
+
+    # Check that if the sample size is smaller than k, the maximum precision can not be 1
+    # if we do precision@5 when there is only 3 items, we can get a maximum of 3/5.
+    assert (
+        precision_at_k(
+            k=5, rating_true=same_items, rating_pred=same_items, col_prediction="rating"
+        )
+        == 0.6
     )
 
 
