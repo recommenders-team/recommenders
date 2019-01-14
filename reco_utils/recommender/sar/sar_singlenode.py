@@ -48,18 +48,18 @@ class SARSingleNode:
     """SAR reference implementation"""
 
     def __init__(
-            self,
-            remove_seen=True,
-            col_user=DEFAULT_USER_COL,
-            col_item=DEFAULT_ITEM_COL,
-            col_rating=DEFAULT_RATING_COL,
-            col_timestamp=DEFAULT_TIMESTAMP_COL,
-            similarity_type=SIM_JACCARD,
-            time_decay_coefficient=TIME_DECAY_COEFFICIENT,
-            time_now=TIME_NOW,
-            timedecay_formula=TIMEDECAY_FORMULA,
-            threshold=THRESHOLD,
-            debug=False,
+        self,
+        remove_seen=True,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_timestamp=DEFAULT_TIMESTAMP_COL,
+        similarity_type=SIM_JACCARD,
+        time_decay_coefficient=TIME_DECAY_COEFFICIENT,
+        time_now=TIME_NOW,
+        timedecay_formula=TIMEDECAY_FORMULA,
+        threshold=THRESHOLD,
+        debug=False,
     ):
 
         self.col_rating = col_rating
@@ -116,13 +116,13 @@ class SARSingleNode:
         self.scores = None
 
     def set_index(
-            self,
-            unique_users,
-            unique_items,
-            user_map_dict,
-            item_map_dict,
-            index2user,
-            index2item,
+        self,
+        unique_users,
+        unique_items,
+        user_map_dict,
+        item_map_dict,
+        index2user,
+        index2item,
     ):
         """MVP2 temporary function to set the index of the sparse dataframe.
         In future releases this will be carried out into the data object and index will be provided
@@ -190,8 +190,8 @@ class SARSingleNode:
                 ),
                 shape=(n_users, n_items),
             )
-                .todok()
-                .tocsr()
+            .todok()
+            .tocsr()
         )
         return user_affinity
 
@@ -252,7 +252,8 @@ class SARSingleNode:
         if not np.issubdtype(float_type, np.floating):
             raise ValueError(
                 "Only floating point data types are accepted for the rating column. Data type was {} "
-                "instead.".format(float_type))
+                "instead.".format(float_type)
+            )
 
         if self.timedecay_formula:
             # WARNING: previously we would take the last value in training dataframe and set it
@@ -284,10 +285,11 @@ class SARSingleNode:
             # update df with the affinities after the timestamp calculation
             # copy part of the data frame to avoid modification of the input
             temp_df = pd.DataFrame(
-                data={self.col_user: df[self.col_user],
-                      self.col_item: df[self.col_item],
-                      self.col_rating: rating_exponential
-                      }
+                data={
+                    self.col_user: df[self.col_user],
+                    self.col_item: df[self.col_item],
+                    self.col_rating: rating_exponential,
+                }
             )
             newdf = temp_df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
@@ -386,7 +388,7 @@ class SARSingleNode:
             raise ValueError("Unknown similarity type: {0}".format(similarity_type))
 
         if self.debug and (
-                similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
+            similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
         ):
             elapsed_time = self.time()
             self.timer_log += [
@@ -480,8 +482,8 @@ class SARSingleNode:
                 results.sort_values(
                     by=[self.col_user, self.col_rating], ascending=False
                 )
-                    .groupby(self.col_user)
-                    .apply(lambda x: x)
+                .groupby(self.col_user)
+                .apply(lambda x: x)
             )
 
         # format the dataframe in the end to conform to Suprise return type
@@ -491,8 +493,8 @@ class SARSingleNode:
 
         return (
             results[[self.col_user, self.col_item, self.col_rating]]
-                .rename(columns={self.col_rating: PREDICTION_COL})
-                .astype(
+            .rename(columns={self.col_rating: PREDICTION_COL})
+            .astype(
                 {
                     self.col_user: _user_item_return_type(),
                     self.col_item: _user_item_return_type(),
@@ -531,7 +533,9 @@ class SARSingleNode:
         test_col_hashed_users = test[self.col_user].map(self.user_map_dict)
         test_col_hashed_items = test[self.col_item].map(self.item_map_dict)
 
-        test_index = pd.concat([test_col_hashed_users, test_col_hashed_items], axis=1).values
+        test_index = pd.concat(
+            [test_col_hashed_users, test_col_hashed_items], axis=1
+        ).values
         aset = set([tuple(x) for x in self.index])
         bset = set([tuple(x) for x in test_index])
 
@@ -563,8 +567,8 @@ class SARSingleNode:
         # modify test to make it compatible with
         return (
             results[[self.col_user, self.col_item, self.col_rating]]
-                .rename(columns={self.col_rating: PREDICTION_COL})
-                .astype(
+            .rename(columns={self.col_rating: PREDICTION_COL})
+            .astype(
                 {
                     self.col_user: _user_item_return_type(),
                     self.col_item: _user_item_return_type(),
