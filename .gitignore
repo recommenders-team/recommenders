@@ -118,3 +118,7 @@ conda*.yaml
 *.zip
 .vscode/
 scripts/repo_metrics/config.py
+ml-100k/
+ml-10M100K/
+ml-1m/
+ml-20m/
