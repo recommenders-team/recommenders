@@ -166,7 +166,7 @@ def test_spark_precision(spark_data, target_metrics, spark):
     )
     assert evaluator1.precision_at_k() == target_metrics["precision"]
 
-    # check normalization
+    # Check normalization
     single_user = pd.DataFrame(
         {"userID": [1, 1, 1], "itemID": [1, 2, 3], "rating": [5, 4, 3]}
     )
@@ -186,6 +186,11 @@ def test_spark_precision(spark_data, target_metrics, spark):
     df_same = spark.createDataFrame(same_items)
     evaluator3 = SparkRankingEvaluation(df_same, df_same, k=3, col_prediction="rating")
     assert evaluator3.precision_at_k() == 1
+
+    # Check that if the sample size is smaller than k, the maximum precision can not be 1
+    # if we do precision@5 when there is only 3 items, we can get a maximum of 3/5.
+    evaluator4 = SparkRankingEvaluation(df_same, df_same, k=5, col_prediction="rating")
+    assert evaluator4.precision_at_k() == 0.6
 
 
 @pytest.mark.spark
