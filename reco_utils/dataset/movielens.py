@@ -9,6 +9,12 @@ import pandas as pd
 from zipfile import ZipFile
 from reco_utils.dataset.url_utils import maybe_download
 from reco_utils.common.notebook_utils import is_databricks
+from reco_utils.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_TIMESTAMP_COL,
+)
 
 try:
     from pyspark.sql.types import (
@@ -24,18 +30,28 @@ try:
         concat_ws,
         col,
     )
-except:
+except ModuleNotFoundError:
     pass  # so the environment without spark doesn't break
 
 
-# MovieLens data have a different format for each size
 class _DataFormat:
     def __init__(
             self,
             sep, path, has_header=False,
             item_sep=None, item_path=None, item_has_header=False,
-            # user_sep=None, user_path=None, user_has_header=False
     ):
+        """ MovieLens data format container as a different size of MovieLens data file
+        has a different format
+
+        Args:
+            sep (str): Rating data delimiter
+            path (str): Rating data path within the original zip file
+            has_header (bool): Whether the rating data contains a header line or not
+            item_sep (str): Item data delimiter
+            item_path (str): Item data path within the original zip file
+            item_has_header (bool): Whether the item data contains a header line or not
+        """
+    
         # Rating file
         self._sep = sep
         self._path = path
@@ -45,11 +61,6 @@ class _DataFormat:
         self._item_sep = item_sep
         self._item_path = item_path
         self._item_has_header = item_has_header
-
-        # User file
-        # self._user_sep = user_sep
-        # self._user_path = user_path
-        # self._user_has_header = user_has_header
 
     """ Rating file """
 
@@ -79,31 +90,16 @@ class _DataFormat:
     def item_has_header(self):
         return self._item_has_header
 
-    # """ User file """
-    # @property
-    # def user_separator(self):
-    #     return self._user_sep
-    #
-    # @property
-    # def user_path(self):
-    #     return self._user_path
-    #
-    # @property
-    # def user_has_header(self):
-    #     return self._user_has_header
-
 
 # 10m and 20m data do not have user data
-_data_format = {
+DATA_FORMAT = {
     "100k": _DataFormat(
         "\t", "ml-100k/u.data", False,
         "|", "ml-100k/u.item", False,
-        # "|", "ml-100k/u.user", False,
     ),
     "1m": _DataFormat(
         "::", "ml-1m/ratings.dat", False,
         "::", "ml-1m/movies.dat", False,
-        # "::", "ml-1m/users.dat", False,
     ),
     "10m": _DataFormat(
         "::", "ml-10M100K/ratings.dat", False,
@@ -116,7 +112,7 @@ _data_format = {
 }
 
 # 100K data genres index to string
-_genres = (
+GENRES = (
     "unknown", "Action", "Adventure", "Animation",
     "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
     "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi",
@@ -136,7 +132,12 @@ ERROR_LOCAL_CACHE_PATH = """Local cache path only accepts a zip file path:
 
 def load_pandas_df(
     size="100k",
-    header=("UserId", "MovieId", "Rating", "Timestamp"),
+    header=(
+        DEFAULT_USER_COL,
+        DEFAULT_ITEM_COL,
+        DEFAULT_RATING_COL,
+        DEFAULT_TIMESTAMP_COL
+    ),
     local_cache_path="ml.zip",
     title_col=None,
     genres_col=None,
@@ -161,7 +162,7 @@ def load_pandas_df(
     datapath, item_datapath = _load_datafile(size, local_cache_path)
 
     # Load title and genres
-    movie_col = "MovieId" if header is None or len(header) < 2 else header[1]
+    movie_col = DEFAULT_ITEM_COL if header is None or len(header) < 2 else header[1]
     item_df = _load_item_df(size, movie_col, title_col, genres_col, item_datapath)
 
     # Load rating data
@@ -177,11 +178,11 @@ def load_pandas_df(
 
         df = pd.read_csv(
             datapath,
-            sep=_data_format[size].separator,
+            sep=DATA_FORMAT[size].separator,
             engine='python',
             names=header,
             usecols=[*range(len(header))],
-            header=0 if _data_format[size].has_header else None,
+            header=0 if DATA_FORMAT[size].has_header else None,
         )
 
         # Convert 'rating' type to float
@@ -219,11 +220,11 @@ def _load_item_df(size, movie_col, title_col, genres_col, item_datapath):
 
     item_df = pd.read_csv(
         item_datapath,
-        sep=_data_format[size].item_separator,
+        sep=DATA_FORMAT[size].item_separator,
         engine='python',
         names=item_header,
         usecols=usecols,
-        header=0 if _data_format[size].item_has_header else None,
+        header=0 if DATA_FORMAT[size].item_has_header else None,
         encoding="ISO-8859-1"
     )
 
@@ -231,7 +232,7 @@ def _load_item_df(size, movie_col, title_col, genres_col, item_datapath):
     if genres_header_100k is not None:
         item_df[genres_col] = item_df[genres_header_100k].values.tolist()
         item_df[genres_col] = item_df[genres_col].map(
-            lambda l: '|'.join([_genres[i] for i, v in enumerate(l) if v == 1])
+            lambda l: '|'.join([GENRES[i] for i, v in enumerate(l) if v == 1])
         )
 
         item_df.drop(genres_header_100k, axis=1, inplace=True)
@@ -242,7 +243,12 @@ def _load_item_df(size, movie_col, title_col, genres_col, item_datapath):
 def load_spark_df(
     spark,
     size="100k",
-    header=("UserId", "MovieId", "Rating", "Timestamp"),
+    header=(
+        DEFAULT_USER_COL,
+        DEFAULT_ITEM_COL,
+        DEFAULT_RATING_COL,
+        DEFAULT_TIMESTAMP_COL
+    ),
     schema=None,
     local_cache_path="ml.zip",
     dbutils=None,
@@ -261,10 +267,10 @@ def load_spark_df(
         schema (pySpark.StructType): Dataset schema. By default,
             StructType(
                 [
-                    StructField("UserId", IntegerType()),
-                    StructField("MovieId", IntegerType()),
-                    StructField("Rating", FloatType()),
-                    StructField("Timestamp", LongType()),
+                    StructField(DEFAULT_USER_COL, IntegerType()),
+                    StructField(DEFAULT_ITEM_COL, IntegerType()),
+                    StructField(DEFAULT_RATING_COL, FloatType()),
+                    StructField(DEFAULT_TIMESTAMP_COL, LongType()),
                 ]
             )
         local_cache_path (str): Path where to cache the zip file locally
@@ -294,7 +300,7 @@ def load_spark_df(
     schema = _get_schema(header, schema)
 
     # Load title and genres
-    movie_col = "MovieId" if schema is None or len(schema) < 2 else schema[1].name
+    movie_col = DEFAULT_ITEM_COL if schema is None or len(schema) < 2 else schema[1].name
     item_df = _load_item_df(size, movie_col, title_col, genres_col, item_datapath)
     if item_df is not None:
         # Convert to spark DataFrame
@@ -309,7 +315,7 @@ def load_spark_df(
             schema.add(StructField(movie_col, IntegerType()))
 
         # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
-        separator = _data_format[size].separator
+        separator = DATA_FORMAT[size].separator
         if len(separator) > 1:
             raw_data = spark.sparkContext.textFile(datapath)
             data_rdd = raw_data.map(
@@ -320,7 +326,7 @@ def load_spark_df(
             df = spark.createDataFrame(data_rdd, schema)
         else:
             df = spark.read.csv(
-                datapath, schema=schema, sep=separator, header=_data_format[size].has_header
+                datapath, schema=schema, sep=separator, header=DATA_FORMAT[size].has_header
             )
 
         # Merge rating df w/ item_df
@@ -366,7 +372,7 @@ def _get_schema(header, schema):
 def _load_datafile(size, local_cache_path):
     """ Download and extract file """
 
-    if size not in _data_format:
+    if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
     if not local_cache_path.endswith(".zip"):
         raise ValueError(ERROR_LOCAL_CACHE_PATH)
@@ -382,15 +388,15 @@ def _load_datafile(size, local_cache_path):
         work_directory=path,
     )
 
-    _, dataname = os.path.split(_data_format[size].path)
+    _, dataname = os.path.split(DATA_FORMAT[size].path)
     datapath = os.path.join(path, dataname)
-    _, item_dataname = os.path.split(_data_format[size].item_path)
+    _, item_dataname = os.path.split(DATA_FORMAT[size].item_path)
     item_datapath = os.path.join(path, item_dataname)
 
     with ZipFile(local_cache_path, "r") as z:
-        with z.open(_data_format[size].path) as zf, open(datapath, 'wb') as f:
+        with z.open(DATA_FORMAT[size].path) as zf, open(datapath, 'wb') as f:
             shutil.copyfileobj(zf, f)
-        with z.open(_data_format[size].item_path) as zf, open(item_datapath, 'wb') as f:
+        with z.open(DATA_FORMAT[size].item_path) as zf, open(item_datapath, 'wb') as f:
             shutil.copyfileobj(zf, f)
 
     _clean_up(local_cache_path)
