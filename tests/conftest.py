@@ -158,6 +158,7 @@ def notebooks():
             folder_notebooks, "02_model", "baseline_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
+        "fastai": os.path.join(folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"),    
     }
     return paths
 
