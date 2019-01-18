@@ -6,18 +6,23 @@ from reco_utils.recommender.deeprec.models.xDeepFM import *
 from reco_utils.recommender.deeprec.IO.iterator import *
 
 if __name__ == '__main__':
+    cur_dirname = os.path.dirname(os.path.realpath(__file__))
+    yaml_file = os.path.join(cur_dirname, r'../tests/resources/deeprec/xDeepFM.yaml')
+    train_file = os.path.join(cur_dirname, r'../tests/resources/deeprec/synthetic/part_0')
+    valid_file = os.path.join(cur_dirname, r'../tests/resources/deeprec/synthetic/part_1')
+    test_file = os.path.join(cur_dirname, r'../tests/resources/deeprec/synthetic/part_1')
+    output_file = os.path.join(cur_dirname, r'../tests/resources/deeprec/synthetic/output.txt')
 
-    hparams = prepare_hparams(r'D:\projects\TKDD\deeprec\data\FFM_simulated\max_order_2\tmp\xDeepFM.yaml')
-
+    hparams = prepare_hparams(yaml_file, FEATURE_COUNT=1000, FIELD_COUNT=10, cross_l2=0.0001, embed_l2=0.0001, learning_rate=0.001)
     print(hparams)
 
     input_creator = FFMTextIterator
 
     model = XDeepFMModel(hparams, input_creator)
 
-    model.load_model(r'D:\projects\TKDD\deeprec\data\FFM_simulated\max_order_2\tmp\epoch_8')
+    #model.load_model(r'your_model_path')
 
-    print(model.run_eval(r'D:\projects\TKDD\deeprec\data\FFM_simulated\max_order_2\valid2.txt'))
-    #model.fit(r'D:\projects\TKDD\deeprec\data\FFM_simulated\max_order_2\train2.txt', r'D:\projects\TKDD\deeprec\data\FFM_simulated\max_order_2\valid2.txt')
+    print(model.run_eval(train_file))
+    model.fit(train_file, valid_file)
 
-    model.predict(r'D:\projects\TKDD\deeprec\data\FFM_simulated\max_order_2\valid2.txt', r'D:\projects\TKDD\deeprec\data\FFM_simulated\max_order_2\tmp\output\valid2.pred')
+    model.predict(test_file, output_file)
