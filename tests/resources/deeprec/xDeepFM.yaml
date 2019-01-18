@@ -1,0 +1,57 @@
+#data
+#data format:ffm
+data: 
+    FIELD_COUNT :  20
+    FEATURE_COUNT : 10000
+    data_format : ffm
+    load_saved_model : False 
+    load_model_name : 'you model path'
+
+#model
+#model_type:deepFM or deepWide or dnn or ipnn or opnn or fm or lr
+model:
+    method : classification
+    model_type : exDeepFM
+    dim : 10
+    layer_sizes : [100,100]
+    activation : [relu, relu]
+    user_dropout: False
+    dropout : [0.0, 0.0]
+    cross_layer_sizes : [1]
+    cross_activation : 'identity'
+    user_Linear_part : False
+    use_FM_part : False
+    use_CIN_part: True 
+    use_DNN_part: False
+    #infer_model_name : epoch_2
+#    load_model_name : ./checkpoint/epoch_1
+ 
+
+#train
+#init_method: normal,tnormal,uniform,he_normal,he_uniform,xavier_normal,xavier_uniform
+train:
+    init_method: tnormal
+    init_value : 0.3 #0.3   0.1
+    embed_l2 : 0.0001 #0.001, 0.0001
+    embed_l1 : 0.0000
+    layer_l2 : 0.0001 #0.001, 0.0001
+    layer_l1 : 0.0000
+    cross_l2 : 0.0000  #0.0005
+    cross_l1 : 0.000
+    learning_rate : 0.0005 # 0.0005
+    loss : log_loss
+    optimizer : adam
+    epochs : 50
+    batch_size : 128  #128
+    enable_BN : False
+    fast_CIN_d: 0
+
+#show info
+#metric :'auc','logloss', 'group_auc'
+info:
+    show_step : 200000
+    save_model: False
+    save_epoch : 2
+    metrics : ['auc','logloss']
+    
+
