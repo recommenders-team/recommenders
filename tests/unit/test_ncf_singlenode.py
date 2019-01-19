@@ -22,6 +22,7 @@ from reco_utils.common.constants import (
 
 from tests.ncf_common import python_dataset_ncf, test_specs_ncf
 
+@pytest.mark.gpu
 @pytest.mark.parametrize(
     "model_type, n_users, n_items", [("NeuMF", 1, 1), ("GMF", 10, 10), ("MLP", 4, 8)]
 )
@@ -44,6 +45,7 @@ def test_init(model_type, n_users, n_items):
     
     # TODO: more parameters
 
+@pytest.mark.gpu
 @pytest.mark.parametrize(
     "model_type, n_users, n_items", [("NeuMF", 5, 5), ("GMF", 5, 5), ("MLP", 5, 5)]
 )
@@ -87,6 +89,7 @@ def test_regular_save_load(model_type, n_users, n_items):
     if os.path.exists(ckpt):
         shutil.rmtree(ckpt)
 
+@pytest.mark.gpu
 @pytest.mark.parametrize(
     "n_users, n_items", [(5, 5), (4, 8)]
 )
@@ -133,6 +136,7 @@ def test_neumf_save_load(n_users, n_items):
 
     # TODO: test loading fc-concat
 
+@pytest.mark.gpu
 @pytest.mark.parametrize(
     "model_type", ["NeuMF", "GMF", "MLP"]
 )
@@ -142,6 +146,7 @@ def test_fit(python_dataset_ncf, model_type):
     model = NCF(n_users=data.n_users, n_items=data.n_items, model_type=model_type)
     model.fit(data)
 
+@pytest.mark.gpu
 @pytest.mark.parametrize(
     "model_type", ["NeuMF", "GMF", "MLP"]
 )
