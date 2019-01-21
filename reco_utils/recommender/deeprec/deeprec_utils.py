@@ -12,12 +12,76 @@ import yaml
 def flat_config(config):
     """flat config to a dict"""
     f_config = {}
-    category = ['data', 'model', 'train', 'info']
+    category = config.keys()
     for cate in category:
         for key, val in config[cate].items():
             f_config[key] = val
     return f_config
 
+
+def check_type(config):
+    """check config type"""
+    # check parameter type
+    int_parameters = ['word_size', 'entity_size', 'doc_size', 'FEATURE_COUNT', 'FIELD_COUNT', 'dim', 'epochs', 'batch_size', 'show_step', \
+                      'save_epoch', 'PAIR_NUM', 'DNN_FIELD_NUM', 'attention_layer_sizes', \
+                      'n_user', 'n_item', 'n_user_attr', 'n_item_attr']
+    for param in int_parameters:
+        if param in config and not isinstance(config[param], int):
+            raise TypeError("parameters {0} must be int".format(param))
+
+    float_parameters = ['init_value', 'learning_rate', 'embed_l2',
+                        'embed_l1', 'layer_l2', 'layer_l1', 'mu']
+    for param in float_parameters:
+        if param in config and not isinstance(config[param], float):
+            raise TypeError("parameters {0} must be float".format(param))
+
+    str_parameters = ['train_file', 'eval_file', 'test_file', 'infer_file', 'method',
+                      'load_model_name', 'infer_model_name', 'loss', 'optimizer', 'init_method', 'attention_activation']
+    for param in str_parameters:
+        if param in config and not isinstance(config[param], str):
+            raise TypeError("parameters {0} must be str".format(param))
+
+    list_parameters = ['layer_sizes', 'activation', 'dropout']
+    for param in list_parameters:
+        if param in config and not isinstance(config[param], list):
+            raise TypeError("parameters {0} must be list".format(param))
+
+
+def check_nn_config(f_config):
+    """check neural networks config"""
+    if f_config['model_type'] in ['fm', 'FM']:
+        required_parameters = ['FEATURE_COUNT', 'dim', 'loss', 'data_format', 'method']
+    elif f_config['model_type'] in ['lr', 'LR']:
+        required_parameters = ['FEATURE_COUNT', 'loss', 'data_format', 'method']
+    elif f_config['model_type'] in ['dkn', 'DKN']:
+        required_parameters = ['doc_size', 'wordEmb_file', 'entityEmb_file',
+                               'word_size', 'entity_size', 'data_format', 'dim', 'layer_sizes', 'activation',
+                               'attention_activation', 'attention_activation', 'attention_dropout', 'loss',
+                               'data_format', 'dropout', 'method', 'num_filters', 'filter_sizes']
+    elif f_config['model_type'] in ['exDeepFM', 'xDeepFM']:
+        required_parameters = ['FIELD_COUNT', 'FEATURE_COUNT', 'method',
+                               'dim', 'layer_sizes', 'cross_layer_sizes', 'activation', 'loss', 'data_format', 'dropout']
+    else:
+        required_parameters = ['FIELD_COUNT', 'FEATURE_COUNT', 'method',
+                               'dim', 'layer_sizes', 'activation', 'loss', 'data_format', 'dropout']
+
+    # check required parameters
+    for param in required_parameters:
+        if param not in f_config:
+            raise ValueError("parameters {0} must be set".format(param))
+
+    if f_config['model_type'] in ['exDeepFM', 'xDeepFM']:
+        if f_config['data_format'] != 'ffm':
+            raise ValueError(
+                "for xDeepFM model, data format must be 'ffm', but your set is {0}".format(f_config['data_format']))
+    elif f_config['model_type'] in ['dkn', 'DKN']:
+        if f_config['data_format'] != 'dkn':
+            raise ValueError(
+                "for dkn model, data format must be 'dkn', but your set is {0}".format(f_config['data_format']))
+    else:
+        if f_config['data_format'] not in ['fm']:
+            raise ValueError("The default data format should be fm, but your set is {0}".format(f_config['data_format']))
+    check_type(f_config)
 
 
 def check_file_exist(filename):
@@ -41,7 +105,6 @@ def load_yaml(yaml_name):
     return config
 
 
-
 def create_hparams(FLAGS):
     return tf.contrib.training.HParams(
         # data
@@ -60,15 +123,9 @@ def create_hparams(FLAGS):
         SUMMARIES_DIR=FLAGS['SUMMARIES_DIR'] if 'SUMMARIES_DIR' in FLAGS else None,
         MODEL_DIR=FLAGS['MODEL_DIR'] if 'MODEL_DIR' in FLAGS else None,
 
-        ### ripple
-        n_entity = FLAGS['n_entity'] if 'n_entity' in FLAGS else None,
-        n_memory = FLAGS['n_memory'] if 'n_memory' in FLAGS else None,
-        n_relation = FLAGS['n_relation'] if 'n_relation' in FLAGS else None,
-        n_users = FLAGS['n_users'] if 'n_users' in FLAGS else None,
-        n_items = FLAGS['n_items'] if 'n_items' in FLAGS else None,
-        entity_limit = FLAGS['entity_limit'] if 'entity_limit' in FLAGS else None,
-        user_click_limit = FLAGS['user_click_limit'] if 'user_click_limit' in FLAGS else None,
         # dkn
+        wordEmb_file=FLAGS['wordEmb_file'] if 'wordEmb_file' in FLAGS else None,
+        entityEmb_file=FLAGS['entityEmb_file'] if 'entityEmb_file' in FLAGS else None,
         doc_size=FLAGS['doc_size'] if 'doc_size' in FLAGS else None,
         word_size=FLAGS['word_size'] if 'word_size' in FLAGS else None,
         entity_size=FLAGS['entity_size'] if 'entity_size' in FLAGS else None,
@@ -89,8 +146,7 @@ def create_hparams(FLAGS):
         dropout=FLAGS['dropout'] if 'dropout' in FLAGS else [0.0],
         attention_layer_sizes=FLAGS['attention_layer_sizes'] if 'attention_layer_sizes' in FLAGS else None,
         attention_activation=FLAGS['attention_activation'] if 'attention_activation' in FLAGS else None,
-        attention_dropout=FLAGS['attention_dropout'] \
-            if 'attention_dropout' in FLAGS else 0.0,
+        attention_dropout=FLAGS['attention_dropout'] if 'attention_dropout' in FLAGS else 0.0,
         model_type=FLAGS['model_type'] if 'model_type' in FLAGS else None,
         method=FLAGS['method'] if 'method' in FLAGS else None,
         load_saved_model=FLAGS['load_saved_model'] if 'load_saved_model' in FLAGS else False,
@@ -103,20 +159,6 @@ def create_hparams(FLAGS):
         use_FM_part=FLAGS['use_FM_part'] if 'use_FM_part' in FLAGS else False,
         use_CIN_part=FLAGS['use_CIN_part'] if 'use_CIN_part' in FLAGS else False,
         use_DNN_part=FLAGS['use_DNN_part'] if 'use_DNN_part' in FLAGS else False,
-
-        ###ripple
-        is_use_relation = FLAGS["is_use_relation"] if "is_use_relation" in FLAGS else False,
-        n_entity_emb=FLAGS["n_entity_emb"] if "n_entity_emb" in FLAGS else None,
-        n_relation_emb=FLAGS["n_relation_emb"] if "n_relation_emb" in FLAGS else None,
-        n_map_emb=FLAGS["n_map_emb"] if "n_map_emb" in FLAGS else None,
-        n_hops=FLAGS["n_hops"] if "n_hops" in FLAGS else None,
-        item_update_mode=FLAGS["update_item_embedding"] if "update_item_embedding" in FLAGS else None,
-        predict_mode=FLAGS["predict_mode"] if "predict_mode" in FLAGS else None,
-        n_DCN_layer=FLAGS["n_DCN_layer"] if "n_DCN_layer" in FLAGS else None,
-        is_map_feature=FLAGS["is_map_feature"] if "is_map_feature" in FLAGS else False,
-        kg_ratio=FLAGS["kg_ratio"] if "kg_ratio" in FLAGS else 1.0,
-        output_using_all_hops =FLAGS["output_using_all_hops"] if "output_using_all_hops" in FLAGS else False,
-        enable_BN=FLAGS['enable_BN'] if 'enable_BN' in FLAGS else False,
 
         # train
         init_method=FLAGS['init_method'] if 'init_method' in FLAGS else 'tnormal',
@@ -139,6 +181,7 @@ def create_hparams(FLAGS):
         optimizer=FLAGS['optimizer'] if 'optimizer' in FLAGS else 'adam',
         epochs=FLAGS['epochs'] if 'epochs' in FLAGS else 10,
         batch_size=FLAGS['batch_size'] if 'batch_size' in FLAGS else 1,
+        enable_BN=FLAGS['enable_BN'] if 'enable_BN' in FLAGS else False,
 
         # show info
         show_step=FLAGS['show_step'] if 'show_step' in FLAGS else 1,
@@ -160,6 +203,7 @@ def prepare_hparams(yaml_file=None, **kwargs):
         for name, value in six.iteritems(kwargs):
             config[name] = value
 
+    check_nn_config(config)
     hparams = create_hparams(config)
     return hparams
 
@@ -179,6 +223,18 @@ def cal_metric(labels, preds, metrics):
             preds = [max(min(p, 1. - 10e-12), 10e-12) for p in preds]
             logloss = log_loss(np.asarray(labels), np.asarray(preds))
             res['logloss'] = round(logloss, 4)
+        elif metric == 'acc':
+            pred = np.asarray(preds)
+            pred[pred >= 0.5] = 1
+            pred[pred < 0.5] = 0
+            acc = accuracy_score(np.asarray(labels), pred)
+            res['acc'] = round(acc, 4)
+        elif metric == 'f1':
+            pred = np.asarray(preds)
+            pred[pred >= 0.5] = 1
+            pred[pred < 0.5] = 0
+            f1 = f1_score(np.asarray(labels), pred)
+            res['f1'] = round(f1, 4)
         else:
             raise ValueError("not define this metric {0}".format(metric))
     return res

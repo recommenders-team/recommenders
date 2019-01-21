@@ -12,14 +12,18 @@ __all__ = ["BaseModel"]
 
 class BaseModel(object):
 
-    def __init__(self, hparams, iterator_creator):
+    def __init__(self, hparams, iterator_creator, graph=None):
         """
         Initializing the model. Create common logics which are needed by all deeprec models, such as loss function, parameter set.
         :param hparams:  a tf.contrib.training.HParams object, hold the entire set of hyperparameters.
         """
+        if not graph:
+            self.graph = tf.Graph()
+        else:
+            self.graph = graph
 
-        self.graph = tf.Graph()
-        self.iterator = iterator_creator(hparams.FEATURE_COUNT, hparams.FIELD_COUNT, self.graph)
+        self.iterator = iterator_creator(hparams, self.graph)
+
         with self.graph.as_default():
             self.hparams = hparams
 

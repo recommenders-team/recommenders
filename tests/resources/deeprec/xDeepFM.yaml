@@ -11,7 +11,7 @@ data:
 #model_type:deepFM or deepWide or dnn or ipnn or opnn or fm or lr
 model:
     method : classification
-    model_type : exDeepFM
+    model_type : xDeepFM
     dim : 10
     layer_sizes : [100,100]
     activation : [relu, relu]
