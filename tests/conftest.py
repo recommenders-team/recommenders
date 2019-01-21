@@ -142,6 +142,9 @@ def notebooks():
         "sar_single_node": os.path.join(
             folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
         ),
+        "ncf": os.path.join(
+            folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"
+        ),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
         ),
