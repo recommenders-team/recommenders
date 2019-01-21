@@ -4,15 +4,31 @@ import tensorflow as tf
 import abc
 
 
+class BaseIterator(object):
+    @abc.abstractmethod
+    def parser_one_line(self, line):
+        pass
 
-class FFMTextIterator(object):
+    @abc.abstractmethod
+    def load_data_from_file(self, infile):
+        pass
 
-    def __init__(self,  feature_cnt, field_cnt,  graph, col_spliter=' ', ID_spliter = '%', batch_size=128):
-        self.feature_cnt = feature_cnt
-        self.field_cnt = field_cnt
+    @abc.abstractmethod
+    def _convert_data(self, labels, features):
+        pass
+
+    @abc.abstractmethod
+    def gen_feed_dict(self, data_dict):
+        pass
+
+
+class FFMTextIterator(BaseIterator):
+    def __init__(self,  hparams, graph, col_spliter=' ', ID_spliter = '%'):
+        self.feature_cnt = hparams.FEATURE_COUNT
+        self.field_cnt = hparams.FIELD_COUNT
         self.col_spliter = col_spliter
         self.ID_spliter = ID_spliter
-        self.batch_size = batch_size
+        self.batch_size = hparams.batch_size
 
         self.graph = graph
         with self.graph.as_default():
@@ -31,13 +47,9 @@ class FFMTextIterator(object):
         if len(words) == 2:
             impression_id = words[1].strip()
 
-        cols = words[0].strip().split(' ')
+        cols = words[0].strip().split(self.col_spliter)
 
         label = float(cols[0])
-        # if label > 0:
-        #     label = 1
-        # else:
-        #     label = 0
 
         features = []
         for word in cols[1:]:
