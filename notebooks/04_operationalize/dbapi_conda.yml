@@ -1,0 +1,16 @@
+
+name: databricksapi
+
+# use conda-forge for much more current versions.
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - python=3.6   
+  - python-dotenv
+  - requests
+  - ipykernel
+# uncomment the following lines if you want the databricks CLI as well.
+#  - pip: 
+#    - databricks-cli
