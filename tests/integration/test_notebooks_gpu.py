@@ -21,8 +21,7 @@ def test_gpu_vm():
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", {"map": 0.064012679, "ndcg": 0.308012195, "precision": 0.277214771, "recall": 0.109291553}),
-        ("10m", {"map": 0.101402403, "ndcg": 0.321072689, "precision": 0.275765514, "recall": 0.156483292}),
+        ("1m", {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590}),
     ],
 )
 def test_ncf_integration(notebooks, size, expected_values):
