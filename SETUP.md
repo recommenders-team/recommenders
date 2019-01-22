@@ -108,30 +108,50 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 
 ## Setup guide for Azure Databricks
 
-### Requirements of Azure Databricks
+The setup for Azure Databricks can be completed by running the [create_and_configure_cluster.ipynb notebook](./notebooks/04_operationalize/create_and_configure_cluster.ipynb)
+on any jupyter instance that has the `requests` python module installed. It requires a few additional parameters to be configured; 
+please see the full details in that notebook.
+
+The following are the steps that notebook takes to prepare Azure Databricks.
+
+### Requirements for Azure Databricks
+
 * Runtime version 4.1 (Apache Spark 2.3.0, Scala 2.11)
 * Python 3
 
+**Please note:** This configuration is no longer available via the *Clusters* tab of the databricks interface, and you 
+**must** either use the API to create this configuration or clone a pre-existing cluster of this configuration. Please see the [setup notebook](./notebooks/04_operationalize/create_and_configure_cluster.ipynb) for details.
+
 ### Repository upload
+
 We need to zip and upload the repository to be used in Databricks, the steps are the following:
-* Clone Microsoft Recommenders repo in your local computer.
-* Zip the contents inside the Recommenders folder (Azure Databricks requires compressed folders to have the .egg suffix, so we don't use the standard .zip):
-```
+
+* Clone [Microsoft Recommenders](https://github.com/Microsoft/Recommenders) repository to your local computer.
+* Zip the contents inside the Recommenders folder (Azure Databricks requires compressed folders to have the `.egg` suffix, so we don't use the standard `.zip` suffix):
+
+```{shell}
 cd Recommenders
 zip -r Recommenders.egg .
 ```
-* Once your cluster has started, go to the Databricks home workspace, then go to your user and press import.
-* In the next menu there is an option to import a library, it says: `To import a library, such as a jar or egg, click here`. Press click here.
-* Then, at the first drop-down menu, mark the option `Upload Python egg or PyPI`.
-* Then press on `Drop library egg here to upload` and select the the file `Recommenders.egg` you just created.
-* Then press `Create library`. This will upload the zip and make it available in your workspace.
+
+Once your cluster has started:
+
+* Log into your Databricks Workspace.
+* Select the `Home` tab on the left.
+* Inside the panel that represents your home directory, right click, and select `Import`.
+* At the bottom of the pop-up window, it says: `To import a library, such as a jar or egg, click here`. Click `click here`.
+* At the first drop-down menu, select `Upload Python egg or PyPI`.
+* Click on the box that says `Drop library egg here to upload`.
+* Navigate to the location of the `Recommenders.egg` file you just created, and select it.
+* Click `Create library`.
 * Finally, in the next menu, attach the library to your cluster.
 
 To make sure it works, you can now create a new notebook and import the utilities:
-```
+
+```{python}
 import reco_utils
 ```
 
 ### Troubleshooting for Azure Databricks
-* For the [reco_utils](reco_utils) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
 
+* For the [reco_utils](reco_utils) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
