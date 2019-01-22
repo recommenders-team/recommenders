@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script generates a conda file for python, pyspark, gpu or
-# all libraries.
+# all environments.
 # For generating a conda file for running only python code:
 # $ sh generate_conda_file.sh
 # For generating a conda file for running python gpu:
@@ -14,7 +14,7 @@
 # first check if conda is installed
 CONDA_BINARY=$(which conda)
 if [ ! -x "$CONDA_BINARY" ] ; then
-	echo "No conda found!! Please see the README.md file for installation prerequisites."
+	echo "No conda found!! Please see the SETUP.md file for installation prerequisites."
 	exit 1
 fi
 
@@ -75,9 +75,11 @@ fi
 
 channels:
 - conda-forge
+- pytorch
+- fastai
 - defaults
 dependencies:
-- python==3.6
+- python==3.6.7
 - numpy>=1.13.3
 - dask>=0.17.1
 ${pyspark}- pyspark==2.3.1
@@ -89,19 +91,20 @@ ${pyspark}- pyspark==2.3.1
 - jupyter>=1.0.0
 - fastparquet>=0.1.6
 ${pyspark}- pyarrow>=0.8.0
+- fastai>=1.0.40
 - pip:
+  - pandas>=0.23.4
   - hyperopt==0.1.1
   - idna==2.7
-  - pandas>=0.22.0
   - scipy>=1.0.0
   - azure-storage>=0.36.0
-  - matplotlib==2.2.2
-  - seaborn==0.8.1
-  - tffm==1.0.1
-  - pytest==3.6.4
+  - matplotlib>=2.2.2
+  - seaborn>=0.8.1
+  - pytest>=3.6.4
   - papermill>=0.15.0
   - black>=18.6b4
   - memory-profiler>=0.54.0
+  - azureml-sdk[notebooks,contrib]>=1.0.8
 ${gpu}  - numba>=0.38.1 
   - gitpython>=2.1.8
   - pydocumentdb>=2.3.3
