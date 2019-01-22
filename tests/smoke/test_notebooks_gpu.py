@@ -29,7 +29,7 @@ def test_ncf_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["map"] == pytest.approx(0.048396, TOL)
-    assert results["ndcg"] == pytest.approx(0.193960, TOL)
-    assert results["precision"] == pytest.approx(0.172428, TOL)
-    assert results["recall"] == pytest.approx(0.097780, TOL)
+    assert results["map"] == pytest.approx(0.047037, TOL)
+    assert results["ndcg"] == pytest.approx(0.193496, TOL)
+    assert results["precision"] == pytest.approx(0.175504, TOL)
+    assert results["recall"] == pytest.approx(0.100301, TOL)
