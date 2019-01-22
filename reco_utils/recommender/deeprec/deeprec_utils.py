@@ -7,6 +7,8 @@ import os
 from sklearn.metrics import roc_auc_score, log_loss, mean_squared_error, accuracy_score, f1_score
 import numpy as np
 import yaml
+from reco_utils.dataset.url_utils import *
+import zipfile
 
 
 def flat_config(config):
@@ -206,6 +208,16 @@ def prepare_hparams(yaml_file=None, **kwargs):
     check_nn_config(config)
     hparams = create_hparams(config)
     return hparams
+
+
+def download_deeprec_resources(azure_container_url, data_path, remote_resource_name):
+    os.makedirs(data_path, exist_ok=True)
+    remote_path = azure_container_url + remote_resource_name
+    maybe_download(remote_path, remote_resource_name, data_path)
+    zip_ref = zipfile.ZipFile(os.path.join(data_path, remote_resource_name), 'r')
+    zip_ref.extractall(data_path)
+    zip_ref.close()
+    os.remove(os.path.join(data_path, remote_resource_name))
 
 
 def cal_metric(labels, preds, metrics):
