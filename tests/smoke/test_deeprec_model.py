@@ -8,6 +8,7 @@ from reco_utils.recommender.deeprec.models.dkn import *
 from reco_utils.recommender.deeprec.IO.iterator import *
 from reco_utils.recommender.deeprec.IO.dkn_iterator import *
 
+
 @pytest.fixture
 def resource_path():
     return os.path.dirname(os.path.realpath(__file__))
@@ -16,9 +17,13 @@ def resource_path():
 @pytest.mark.gpu
 @pytest.mark.deeprec
 def test_model_xdeepfm(resource_path):
-    yaml_file = os.path.join(resource_path, r'../resources/deeprec/xDeepFM.yaml')
-    data_file = os.path.join(resource_path, r'../resources/deeprec/sample_FFM_data.txt')
-    output_file = os.path.join(resource_path, r'../resources/deeprec/output.txt')
+    data_path = os.path.join(resource_path, '../resources/deeprec/xdeepfm')
+    yaml_file = os.path.join(data_path, r'xDeepFM.yaml')
+    data_file = os.path.join(data_path, r'sample_FFM_data.txt')
+    output_file = os.path.join(data_path, r'output.txt')
+
+    if not os.path.exists(yaml_file):
+        download_deeprec_resources(r'https://recodatasets.blob.core.windows.net/deeprec/', data_path, 'xdeepfmresources.zip')
 
     hparams = prepare_hparams(yaml_file, learning_rate=0.01)
     assert hparams is not None
@@ -34,11 +39,15 @@ def test_model_xdeepfm(resource_path):
 @pytest.mark.gpu
 @pytest.mark.deeprec
 def test_model_dkn(resource_path):
-    yaml_file = os.path.join(resource_path, r'../resources/deeprec/dkn/dkn.yaml')
-    train_file = os.path.join(resource_path, r'../resources/deeprec/dkn/final_test_with_entity.txt')
-    valid_file = os.path.join(resource_path, r'../resources/deeprec/dkn/final_test_with_entity.txt')
-    wordEmb_file = os.path.join(resource_path, r'../resources/deeprec/dkn/word_embeddings_100.npy')
-    entityEmb_file = os.path.join(resource_path, r'../resources/deeprec/dkn/TransE_entity2vec_100.npy')
+    data_path = os.path.join(resource_path, '../resources/deeprec/dkn')
+    yaml_file = os.path.join(data_path, r'dkn.yaml')
+    train_file = os.path.join(data_path, r'final_test_with_entity.txt')
+    valid_file = os.path.join(data_path, r'final_test_with_entity.txt')
+    wordEmb_file = os.path.join(data_path, r'word_embeddings_100.npy')
+    entityEmb_file = os.path.join(data_path, r'TransE_entity2vec_100.npy')
+
+    if not os.path.exists(yaml_file):
+        download_deeprec_resources(r'https://recodatasets.blob.core.windows.net/deeprec/', data_path, 'dknresources.zip')
 
     hparams = prepare_hparams(yaml_file, wordEmb_file=wordEmb_file,
                               entityEmb_file=entityEmb_file, epochs=2, learning_rate=0.0001)
@@ -49,9 +58,3 @@ def test_model_dkn(resource_path):
     assert model.run_eval(valid_file) is not None
 
 
-# if __name__ == '__main__':
-#     cur_file_path = os.path.dirname(os.path.realpath(__file__))
-#     yaml_file = os.path.join(cur_file_path, r'../resources/deeprec/xDeepFM.yaml')
-#     print(os.path.dirname(yaml_file))
-#     print(os.path.basename(yaml_file))
-#     print(os.path.abspath(yaml_file))
