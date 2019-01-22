@@ -1,4 +1,4 @@
-# Operationalize
+# Model Select and Optimize
 
 In this directory, notebooks are provided to demonstrate how to tune and optimize hyperparameters of recommender algorithms with the utility functions ([reco_utils](../../reco_utils)) provided in the repository. 
 
