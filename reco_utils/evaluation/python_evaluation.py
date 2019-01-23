@@ -56,6 +56,10 @@ def _merge_rating_true_pred(
             + str(rating_pred.columns)
         )
 
+    # Select the columns needed for evaluations
+    rating_true = rating_true[[col_user, col_item, col_rating]]
+    rating_pred = rating_pred[[col_user, col_item, col_prediction]]
+
     if col_rating == col_prediction:
         rating_true_pred = pd.merge(
             rating_true,
@@ -282,8 +286,6 @@ def _merge_ranking_true_pred(
         rating_true_new, df_rating_pred, how="inner", on=[col_user, col_item]
     )[[col_user, col_item, "ranking"]]
 
-    assert df_hit.shape[0] > 0
-
     return rating_true_new, df_hit, n_users
 
 
@@ -332,6 +334,9 @@ def precision_at_k(
         k,
         threshold,
     )
+
+    if df_hit.shape[0] == 0:
+        return 0.0
 
     df_count_hit = (
         df_hit.groupby(col_user)
@@ -384,6 +389,9 @@ def recall_at_k(
         k,
         threshold,
     )
+
+    if df_hit.shape[0] == 0:
+        return 0.0
 
     df_count_hit = (
         df_hit.groupby(col_user)
@@ -446,6 +454,9 @@ def ndcg_at_k(
         k,
         threshold,
     )
+
+    if df_hit.shape[0] == 0:
+        return 0.0
 
     # Calculate gain for hit items.
     df_dcg = df_hit.sort_values([col_user, "ranking"])
@@ -524,6 +535,9 @@ def map_at_k(
         k,
         threshold,
     )
+
+    if df_hit.shape[0] == 0:
+        return 0.0
 
     # Calculate inverse of rank of items for each user, use the inverse ranks to penalize
     # precision,

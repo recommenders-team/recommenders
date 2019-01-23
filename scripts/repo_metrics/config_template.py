@@ -11,5 +11,3 @@ DATABASE = "reco_stats"
 COLLECTION_GITHUB_STATS = "github_stats"
 COLLECTION_EVENTS = "events"
 
-# Misc
-LOG_FILE = "reco_stats.log"
