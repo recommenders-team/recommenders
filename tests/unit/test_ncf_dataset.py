@@ -4,16 +4,6 @@ import numpy as np
 from itertools import product
 import pytest
 
-from reco_utils.dataset.split_utils import (
-    min_rating_filter_pandas,
-    split_pandas_data_with_ratios,
-)
-from reco_utils.dataset.python_splitters import (
-    python_chrono_split,
-    python_random_split,
-    python_stratified_split,
-)
-
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -23,71 +13,16 @@ from reco_utils.common.constants import (
 
 from reco_utils.recommender.ncf.dataset import Dataset
 
+from tests.ncf_common import python_dataset_ncf, test_specs_ncf
+
 N_NEG = 5
 N_NEG_TEST = 10
 BATCH_SIZE = 32
 
-# data generation
-
-@pytest.fixture(scope="module")
-def test_specs():
-    return {
-        "number_of_rows": 1000,
-        "user_ids": [1, 2, 3, 4, 5],
-        "seed": 123,
-        "ratio": 0.6,
-        "ratios": [0.2, 0.3, 0.5],
-        "split_numbers": [2, 3, 5],
-        "tolerance": 0.01,
-    }
-
-
-@pytest.fixture(scope="module")
-def python_dataset(test_specs):
-    """Get Python labels"""
-
-    def random_date_generator(start_date, range_in_days):
-        """Helper function to generate random timestamps.
-
-        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a
-        -range-in-numpy
-        """
-        days_to_add = np.arange(0, range_in_days)
-        random_dates = []
-        for i in range(range_in_days):
-            random_date = np.datetime64(start_date) + np.random.choice(days_to_add)
-            random_dates.append(random_date)
-
-        return random_dates
-
-    np.random.seed(test_specs["seed"])
-
-    rating = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: np.random.randint(
-                1, 100, test_specs["number_of_rows"]
-            ),
-            DEFAULT_ITEM_COL: np.random.randint(
-                1, 100, test_specs["number_of_rows"]
-            ),
-            DEFAULT_RATING_COL: np.random.randint(
-                1, 5, test_specs["number_of_rows"]
-            ),
-            DEFAULT_TIMESTAMP_COL: random_date_generator(
-                "2018-01-01", test_specs["number_of_rows"]
-            ),
-        }
-    )
-
-    train, test = python_chrono_split(rating, ratio=np.random.choice(test_specs["ratios"]))
-
-    return (train, test)
-
-
-def test_data_preprocessing(python_dataset):
+def test_data_preprocessing(python_dataset_ncf):
     # test dataset._data_preprocessing and dataset._reindex
 
-    train, test = python_dataset
+    train, test = python_dataset_ncf
     
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
     
@@ -108,10 +43,10 @@ def test_data_preprocessing(python_dataset):
         assert data_row[1][DEFAULT_ITEM_COL] == data.item2id[row[1][DEFAULT_ITEM_COL]]
         assert row[1][DEFAULT_ITEM_COL] == data.id2item[data_row[1][DEFAULT_ITEM_COL]]
 
-def test_train_loader(python_dataset):
+def test_train_loader(python_dataset_ncf):
     # test dataset.train_loader()
 
-    train, test = python_dataset
+    train, test = python_dataset_ncf
     
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
 
@@ -163,10 +98,10 @@ def test_train_loader(python_dataset):
     assert len(label_list) == (N_NEG + 1) * sum(label_list)
 
 
-def test_test_loader(python_dataset):
+def test_test_loader(python_dataset_ncf):
     # test for dataset.test_loader()
 
-    train, test = python_dataset
+    train, test = python_dataset_ncf
     
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
 
