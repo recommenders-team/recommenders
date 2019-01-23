@@ -19,21 +19,13 @@ def test_surprise_svd_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    nb = pm.read_notebook(OUTPUT_NOTEBOOK)
-    df = nb.dataframe
-    result_rmse = df.loc[df["name"] == "rmse", "value"].values[0]
-    assert result_rmse == pytest.approx(0.96, TOL)
-    result_mae = df.loc[df["name"] == "mae", "value"].values[0]
-    assert result_mae == pytest.approx(0.75, TOL)
-    result_rsquared = df.loc[df["name"] == "rsquared", "value"].values[0]
-    assert result_rsquared == pytest.approx(0.29, TOL)
-    result_exp_var = df.loc[df["name"] == "exp_var", "value"].values[0]
-    assert result_exp_var == pytest.approx(0.29, TOL)
-    result_map = df.loc[df["name"] == "MAP", "value"].values[0]
-    assert result_map == pytest.approx(0.013, TOL)
-    result_ndcg = df.loc[df["name"] == "NDCG", "value"].values[0]
-    assert result_ndcg == pytest.approx(0.1, TOL)
-    result_precision = df.loc[df["name"] == "precision", "value"].values[0]
-    assert result_precision == pytest.approx(0.095, TOL)
-    result_recall = df.loc[df["name"] == "recall", "value"].values[0]
-    assert result_recall == pytest.approx(0.032, TOL)
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["rmse"] == pytest.approx(0.96, TOL)
+    assert results["mae"] == pytest.approx(0.75, TOL)
+    assert results["rsquared"] == pytest.approx(0.29, TOL)
+    assert results["exp_var"] == pytest.approx(0.29, TOL)
+    assert results["map"] == pytest.approx(0.013, TOL)
+    assert results["ndcg"] == pytest.approx(0.1, TOL)
+    assert results["precision"] == pytest.approx(0.095, TOL)
+    assert results["recall"] == pytest.approx(0.032, TOL)
