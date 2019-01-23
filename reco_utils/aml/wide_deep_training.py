@@ -1,31 +1,30 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import os
+import sys
+sys.path.append("../../")
+
 import argparse
-import itertools
+import atexit
+import os
 import shutil
+import time
 
 import pandas as pd
-import numpy as np
-
 import tensorflow as tf
-from azureml.core import Run
 
 try:
-    from reco_utils.aml.tf_log_hook import AmlTfLogHook
-    from reco_utils.common import tf_utils
-    from reco_utils.evaluation.python_evaluation import (
-            rmse, mae, rsquared, exp_var,
-            map_at_k, ndcg_at_k, precision_at_k, recall_at_k
-    )
+    from azureml.core import Run
+    HAS_AML = True
 except ModuleNotFoundError:
-    # If upload 'reco_utils' folder to the aml remote compute, root folder goes up one level
-    from aml.tf_log_hook import AmlTfLogHook
-    from common import tf_utils
-    from evaluation.python_evaluation import (
-        rmse, mae, rsquared, exp_var,
-        map_at_k, ndcg_at_k, precision_at_k, recall_at_k
-    )
+    HAS_AML = False
+
+from reco_utils.dataset.pandas_df_utils import user_item_pairs
+from reco_utils.dataset.python_splitters import python_random_split
+from reco_utils.common import tf_utils
+from reco_utils.evaluation.python_evaluation import (
+    rmse, mae, rsquared, exp_var,
+    map_at_k, ndcg_at_k, precision_at_k, recall_at_k
+)
 
 
 print("TensorFlow version:", tf.VERSION, sep="\n")
@@ -34,13 +33,13 @@ parser = argparse.ArgumentParser()
 # Data path
 parser.add_argument('--datastore', type=str, dest='datastore', help="Datastore path")
 parser.add_argument('--train-datapath', type=str, dest='train_datapath')
-parser.add_argument('--eval-datapath', type=str, dest='eval_datapath')
 # Data column names
 parser.add_argument('--user-col', type=str, dest='user_col', default='UserId')
 parser.add_argument('--item-col', type=str, dest='item_col', default='ItemId')
 parser.add_argument('--rating-col', type=str, dest='rating_col', default='Rating')
 # Optional feature columns. If not provided, not used
 parser.add_argument('--item-feat-col', type=str, dest='item_feat_col')
+parser.add_argument('--metrics', type=str, nargs='*', dest='metrics', default=['rmse'])
 # Model type: either 'wide', 'deep', or 'wide_deep'
 parser.add_argument('--model-type', type=str, dest='model_type', default='wide_deep')
 # Wide model params
@@ -55,9 +54,10 @@ parser.add_argument('--dnn-item-embedding-dim', type=int, dest='dnn_item_embeddi
 
 parser.add_argument('--dnn-batch-norm', type=bool, dest='dnn_batch_norm', default=False)
 # Training parameters
-parser.add_argument('--batch-size', type=int, dest='batch_size', default=256)
 parser.add_argument('--epochs', type=int, dest='epochs', default=20)
-parser.add_argument('--metrics-list', type=str, nargs='*', dest='metrics_list', default=['rmse'])
+parser.add_argument('--batch-size', type=int, dest='batch_size', default=256)
+parser.add_argument('--l1-reg', type=float, dest='l1_reg', default=0.0)
+parser.add_argument('--dropout', type=float, dest='dropout', default=0.0)
 
 args = parser.parse_args()
 
@@ -66,23 +66,55 @@ if MODEL_TYPE not in {'wide', 'deep', 'wide_deep'}:
     raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
 
 BATCH_SIZE = args.batch_size
-EPOCHS = args.epochs
-METRICS_LIST = args.metrics_list
+NUM_EPOCHS = args.epochs
+
+# Metrics validity check
+RATING_METRICS = set()
+RANKING_METRICS = set()
+_SUPPORTED_METRICS = {
+    'rmse': rmse,
+    'mae': mae,
+    'rsquared': rsquared,
+    'exp_var': exp_var,
+    'map': map_at_k,
+    'ndcg': ndcg_at_k,
+    'precision': precision_at_k,
+    'recall': recall_at_k
+}
+if args.metrics is None:
+    raise ValueError(
+        """Metrics should be 'rmse', 'mae', 'rsquared', 'exp_var'
+            'map@k', 'ndcg@k', 'precision@k', or 'recall@k' where k is a number.
+        """
+    )
+
+for m in args.metrics:
+    name_k = m.split('@')
+    if name_k[0] not in _SUPPORTED_METRICS:
+        raise ValueError("{} is not a valid metrics name".format(name_k[0]))
+    else:
+        if len(name_k) == 1:
+            RATING_METRICS.add(m)
+        else:
+            # Check if we have a valid 'top_k' number
+            if name_k[1].isdigit():
+                RANKING_METRICS.add(m)
+            else:
+                raise ValueError("{} is not a valid number".format(name_k[1]))
+PRIMARY_METRIC = args.metrics[0]
 
 # Features
 USER_COL = args.user_col
 ITEM_COL = args.item_col
 RATING_COL = args.rating_col
 ITEM_FEAT_COL = args.item_feat_col  # e.g. genres, as a list of 0 or 1 (a movie may have multiple genres)
-
 PREDICTION_COL = 'prediction'
-
-# Recommendation evaluator columns
+# Evaluation columns kwargs
 cols = {
     'col_user': USER_COL,
     'col_item': ITEM_COL,
     'col_rating': RATING_COL,
-    'col_prediction': PREDICTION_COL,
+    'col_prediction': PREDICTION_COL
 }
 
 # Wide model hyperparameters
@@ -96,173 +128,192 @@ DNN_ITEM_DIM = args.dnn_item_embedding_dim
 DNN_HIDDEN_UNITS = [int(l) for l in args.dnn_hidden_units.split(',')]
 DNN_BATCH_NORM = args.dnn_batch_norm
 
-# Load data
-X_train = pd.read_pickle(path=os.path.join(args.datastore, args.train_datapath))
-y_train = X_train.pop(RATING_COL)
-
-rate_eval = pd.read_pickle(path=os.path.join(args.datastore, args.eval_datapath))
-X_rate_eval = rate_eval.copy()
-y_rate_eval = X_rate_eval.pop(RATING_COL)
-
-# Get full list of users and items (movies)
-user_list = np.unique(
-    np.concatenate((X_train[USER_COL].unique(), X_rate_eval[USER_COL].unique()), axis=None)
-)
-item_list = np.unique(
-    np.concatenate((X_train[ITEM_COL].unique(), X_rate_eval[ITEM_COL].unique()), axis=None)
-)
-# Shuffle so that evaluation sample's order may not affect on test results
-np.random.shuffle(user_list)
-np.random.shuffle(item_list)
-
-# Prepare ranking evaluation set, i.e. get the cross join of all user-item pairs
-user_item_col = [USER_COL, ITEM_COL]
-user_item_list = list(itertools.product(user_list, item_list))
-users_items = pd.DataFrame(user_item_list, columns=user_item_col)
-# Remove seen items (items in the train set)
-X_rank_eval = users_items.loc[
-    ~users_items.set_index(user_item_col).index.isin(X_train.set_index(user_item_col).index)
-]
-
-# Get AML run context
-root_run = Run.get_context()
+L1_REG = args.l1_reg
+DROPOUT = args.dropout
 
 arguments = str(vars(args))
 print("Args:", arguments, sep='\n')
-root_run.log("Args", arguments)
 
-# Exhaustive search for learning rate and regularization param
-if MODEL_TYPE == 'deep' or MODEL_TYPE == 'wide_deep':
-    reg_name = 'dropout'
-    regs = np.linspace(0.0, 0.5, 10)
-elif LINEAR_OPTIMIZER == 'Ftrl':
-    reg_name = 'l1_reg'
-    regs = np.linspace(0.0, 0.1, 10)
+# Get AML run context
+if HAS_AML:
+    run = Run.get_context()
+    run.log("Args", arguments)
+
+if args.datastore is not None:
+    data = pd.read_pickle(path=os.path.join(args.datastore, args.train_datapath))
 else:
-    # No regularization
-    reg_name = 'reg'
-    regs = [0.0]
+    # For unit testing w/o AML
+    from reco_utils.dataset import movielens
+    data = movielens.load_pandas_df(
+        size='100k',
+        header=[USER_COL, ITEM_COL, RATING_COL]
+    )
 
-MODEL_DIR = './model_checkpoint'
-if os.path.exists(MODEL_DIR):
-    shutil.rmtree(MODEL_DIR)
+# Unique users and items
+if ITEM_FEAT_COL is None:
+    items = data.drop_duplicates(ITEM_COL)[[ITEM_COL]].reset_index(drop=True)
+else:
+    items = data.drop_duplicates(ITEM_COL)[[ITEM_COL, ITEM_FEAT_COL]].reset_index(drop=True)
+users = data.drop_duplicates(USER_COL)[[USER_COL]].reset_index(drop=True)
 
-for reg in regs:
-    session_name = "{}_{}".format(reg_name, reg)
-    checkpoint_dir = os.path.join(MODEL_DIR, session_name)
-    root_run.log(reg_name, reg)
-    print(session_name)
+# Split train and evaluation sets
+train, test = python_random_split(data, ratio=0.75, seed=123)
 
-    # Feature columns
-    wide_columns = []
-    deep_columns = []
-    if MODEL_TYPE == 'wide' or MODEL_TYPE == 'wide_deep':
-        wide_columns = tf_utils.build_feature_columns(
-            'wide', user_list, item_list, USER_COL, ITEM_COL
+# Prepare ranking evaluation set, i.e. get the cross join of all user-item pairs
+ranking_pool = user_item_pairs(
+    user_df=users,
+    item_df=items,
+    user_col=USER_COL,
+    item_col=ITEM_COL,
+    user_item_filter_df=train,
+    shuffle=True
+)
+
+
+def _build_optimizer(name, lr):
+    """Get an optimizer for TensorFlow high-level API Estimator.
+    """
+    if name == 'Adagrad':
+        _optimizer = tf.train.AdagradOptimizer(learning_rate=lr)
+    elif name == 'Adam':
+        _optimizer = tf.train.AdamOptimizer(learning_rate=lr)
+    elif name == 'RMSProp':
+        _optimizer = tf.train.RMSPropOptimizer(learning_rate=lr)
+    elif name == 'SGD':
+        _optimizer = tf.train.GradientDescentOptimizer(learning_rate=lr)
+    elif name == 'Ftrl':
+        _optimizer = tf.train.FtrlOptimizer(learning_rate=lr, l1_regularization_strength=L1_REG)
+    else:
+        raise ValueError("Optimizer type should be either 'Adagrad', 'Adam', 'Ftrl', 'RMSProp', or 'SGD'")
+
+    return _optimizer
+
+
+user_id = tf.feature_column.categorical_column_with_vocabulary_list(USER_COL, users[USER_COL].values)
+item_id = tf.feature_column.categorical_column_with_vocabulary_list(ITEM_COL, items[ITEM_COL].values)
+
+
+def _build_wide_columns():
+    """Build wide feature columns
+    """
+    return [
+        tf.feature_column.crossed_column([user_id, item_id], hash_bucket_size=1000)
+    ]
+
+
+def _build_deep_columns():
+    """Build deep feature columns
+    """
+    _deep_columns = [
+        # User embedding
+        tf.feature_column.embedding_column(
+            categorical_column=user_id,
+            dimension=DNN_USER_DIM,
+            max_norm=DNN_USER_DIM ** .5
+        ),
+        # Item embedding
+        tf.feature_column.embedding_column(
+            categorical_column=item_id,
+            dimension=DNN_ITEM_DIM,
+            max_norm=DNN_ITEM_DIM ** .5
         )
-    if MODEL_TYPE == 'deep' or MODEL_TYPE == 'wide_deep':
-        deep_columns = tf_utils.build_feature_columns(  # TODO Genres
-            'deep', user_list, item_list, USER_COL, ITEM_COL, None, None,
-            DNN_USER_DIM, DNN_ITEM_DIM, 0
+    ]
+    # Item feature
+    if ITEM_FEAT_COL is not None:
+        _deep_columns.append(
+            tf.feature_column.numeric_column(
+                ITEM_FEAT_COL,
+                shape=len(items[ITEM_FEAT_COL][0]),
+                dtype=tf.float32
+            )
         )
+    return _deep_columns
 
-    # Model (Estimator). Note, if you want an Estimator optimized for a specific metrics, write a custom one.
+
+def _build_model(model_dir):
+    # Log less-frequently
+    _config = tf.estimator.RunConfig()
+    _config = _config.replace(log_step_count_steps=1000)
+
     if MODEL_TYPE == 'wide':
-        model = tf.estimator.LinearRegressor(  # LinearClassifier(
-            model_dir=checkpoint_dir,
-            feature_columns=wide_columns,
-            optimizer=tf_utils.build_optimizer(LINEAR_OPTIMIZER, LINEAR_OPTIMIZER_LR, ftrl_l1_reg=reg)
+        return tf.estimator.LinearRegressor(
+            model_dir=model_dir,
+            config=_config,
+            feature_columns=_build_wide_columns(),
+            optimizer=_build_optimizer(LINEAR_OPTIMIZER, LINEAR_OPTIMIZER_LR)
         )
     elif MODEL_TYPE == 'deep':
-        model = tf.estimator.DNNRegressor(  # DNNClassifier(
-            model_dir=checkpoint_dir,
-            feature_columns=deep_columns,
+        return tf.estimator.DNNRegressor(
+            model_dir=model_dir,
+            config=_config,
+            feature_columns=_build_deep_columns(),
             hidden_units=DNN_HIDDEN_UNITS,
-            optimizer=tf_utils.build_optimizer(DNN_OPTIMIZER, DNN_OPTIMIZER_LR),
-            dropout=reg,
+            optimizer=_build_optimizer(DNN_OPTIMIZER, DNN_OPTIMIZER_LR),
+            dropout=DROPOUT,
             batch_norm=DNN_BATCH_NORM
         )
     elif MODEL_TYPE == 'wide_deep':
-        model = tf.estimator.DNNLinearCombinedRegressor(  # DNNLinearCombinedClassifier(
-            model_dir=checkpoint_dir,
+        return tf.estimator.DNNLinearCombinedRegressor(
+            model_dir=model_dir,
+            config=_config,
             # wide settings
-            linear_feature_columns=wide_columns,
-            linear_optimizer=tf_utils.build_optimizer(LINEAR_OPTIMIZER, LINEAR_OPTIMIZER_LR, ftrl_l1_reg=reg),
+            linear_feature_columns=_build_wide_columns(),
+            linear_optimizer=_build_optimizer(LINEAR_OPTIMIZER, LINEAR_OPTIMIZER_LR),
             # deep settings
-            dnn_feature_columns=deep_columns,
+            dnn_feature_columns=_build_deep_columns(),
             dnn_hidden_units=DNN_HIDDEN_UNITS,
-            dnn_optimizer=tf_utils.build_optimizer(DNN_OPTIMIZER, DNN_OPTIMIZER_LR),
-            dnn_dropout=reg,
+            dnn_optimizer=_build_optimizer(DNN_OPTIMIZER, DNN_OPTIMIZER_LR),
+            dnn_dropout=DROPOUT,
             batch_norm=DNN_BATCH_NORM
         )
     else:
-        # This should not happen
-        model = None
+        raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
 
-    # start an Azure ML run (TODO TensorBoard)
-    train_input_fn = tf.estimator.inputs.pandas_input_fn(
-        x=X_train,
-        y=y_train,
-        batch_size=BATCH_SIZE,
-        num_epochs=EPOCHS,
-        shuffle=True,
-        num_threads=1
-    )
-    model = tf.contrib.estimator.add_metrics(model, tf_utils.eval_metrics('mae'))
 
+def _clean_up(dir_path):
+    """ Remove cached file. Be careful not to erase anything else. """
     try:
-        model.train(input_fn=train_input_fn)
+        shutil.rmtree(dir_path)
+    except OSError:
+        pass
 
-        # Evaluation
-        # TODO for now, just ndcg and rmse
-        if 'ndcg' in METRICS_LIST:
-            predictions = list(model.predict(
-                input_fn=tf.estimator.inputs.pandas_input_fn(
-                    x=X_rank_eval,
-                    batch_size=100,
-                    num_epochs=1,
-                    shuffle=False
-                )
-            ))
-            reco = X_rank_eval.copy()
-            reco[PREDICTION_COL] = pd.Series([p['predictions'][0] for p in predictions]).values
 
-            # TODO for now, fix TOP_K
-            TOP_K = 10
-            eval_ndcg = ndcg_at_k(rate_eval, reco, k=TOP_K, **cols)
+MODEL_DIR = os.path.join('.', 'models_'+str(int(time.time())))
+print(MODEL_DIR)
 
-            print("ndcg:", eval_ndcg)
-            root_run.log("ndcg", eval_ndcg)
+model = _build_model(MODEL_DIR)
 
-        if 'rmse' in METRICS_LIST:
-            predictions = list(model.predict(
-                input_fn=tf.estimator.inputs.pandas_input_fn(
-                    x=X_rate_eval,
-                    batch_size=100,
-                    num_epochs=1,
-                    shuffle=False
-                )
-            ))
-            rate = X_rate_eval.copy()
-            rate[PREDICTION_COL] = pd.Series([p['predictions'][0] for p in predictions]).values
+print("Start training...")
+model.train(
+    input_fn=tf_utils.pandas_input_fn(
+        df=train,
+        y_col=RATING_COL,
+        batch_size=BATCH_SIZE,
+        num_epochs=NUM_EPOCHS,
+        shuffle=True
+    )
+)
 
-            eval_rmse = rmse(rate_eval, rate, **cols)
+print("Evaluating...")
+if len(RATING_METRICS) > 0:
+    predictions = list(model.predict(input_fn=tf_utils.pandas_input_fn(df=test)))
+    prediction_df = test.drop(RATING_COL, axis=1)
+    prediction_df[PREDICTION_COL] = [p['predictions'][0] for p in predictions]
+    for m in RATING_METRICS:
+        result = _SUPPORTED_METRICS[m](test, prediction_df, **cols)
+        print(m, result)
+        if HAS_AML:
+            run.log(m, result)
 
-            print("rmse:", eval_rmse)
-            root_run.log("rmse", eval_rmse)
+if len(RANKING_METRICS) > 0:
+    predictions = list(model.predict(input_fn=tf_utils.pandas_input_fn(df=ranking_pool)))
+    prediction_df = ranking_pool.copy()
+    prediction_df[PREDICTION_COL] = [p['predictions'][0] for p in predictions]
+    for m in RANKING_METRICS:
+        name_k = m.split('@')
+        result = _SUPPORTED_METRICS[name_k[0]](test, prediction_df, k=int(name_k[1]), **cols)
+        print(m, result)
+        if HAS_AML:
+            run.log(m, result)
 
-        # TODO save model and checkpoint
-        # Note, AML automatically upload the files saved in the "./outputs" folder into run history
-        # MODEL_OUTPUT_DIR = './outputs/model'
-        # os.makedirs(MODEL_OUTPUT_DIR, exist_ok=True)
-        #
-        # feature_spec = tf.feature_column.make_parse_example_spec(col)
-        # export_input_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)
-        #
-        # For details of examples of export and load models,
-        # https://github.com/MtDersvan/tf_playground/blob/master/wide_and_deep_tutorial/wide_and_deep_basic_serving.md
-        # https://www.tensorflow.org/guide/saved_model
-        # https://github.com/monk1337/DNNClassifier-example/
-
-    except tf.train.NanLossDuringTrainingError as e:
-        print(e.message)
+atexit.register(_clean_up, MODEL_DIR)
