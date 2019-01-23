@@ -67,3 +67,22 @@ def test_fastai(notebooks):
     assert results["ndcg"] == pytest.approx(0.153864, TOL)
     assert results["precision"] == pytest.approx(0.139236, TOL)
     assert results["recall"] == pytest.approx(0.054513, TOL)
+
+@pytest.mark.smoke
+def test_adb_setup(notebooks):
+    notebook_path = notebooks["adb_setup"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(path_to_recommenders_repo_root="./", 
+            record_for_tests=True, 
+            TOKEN="",
+            autotermination_minutes=15
+        )
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["lib_install_code"] == 200 
+    assert results["lib_status_code"] == 200 
+    assert results["nb_upload_code"] == 200 or (results["nb_upload_code"] == 400 and results["nb_upload_json"].error_code == "RESOURCE_ALREADY_EXISTS")
