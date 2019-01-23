@@ -4,7 +4,10 @@ from scipy.sparse import coo_matrix
 
 def jaccard(cooccurrence):
     """Helper method to calculate the Jaccard similarity of a matrix of cooccurrences
-    cooccurrence: scipy.sparse.csc_matrix
+    Args:
+        cooccurrence (scipy.sparse.csc_matrix): the symmetric matrix of cooccurrences of items
+    Returns:
+        scipy.sparse.coo_matrix: The matrix of Jaccard similarities between any two items
     """
     coo = cooccurrence.tocoo()
     denom = coo.diagonal()[coo.row] + coo.diagonal()[coo.col] - coo.data
@@ -15,7 +18,10 @@ def jaccard(cooccurrence):
 
 def lift(cooccurrence):
     """Helper method to calculate the Lift of a matrix of cooccurrences
-    cooccurrence: scipy.sparse.csc_matrix
+    Args:
+        cooccurrence (scipy.sparse.csc_matrix): the symmetric matrix of cooccurrences of items
+    Returns:
+        scipy.sparse.coo_matrix: The matrix of Lifts between any two items
     """
     coo = cooccurrence.tocoo()
     denom = coo.diagonal()[coo.row] * coo.diagonal()[coo.col]
