@@ -10,4 +10,3 @@ from reco_utils.common.gpu_utils import get_number_gpus
 def test_gpu_vm():
     assert get_number_gpus() >= 1
 
-
