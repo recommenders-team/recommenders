@@ -131,7 +131,7 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 
 ## Setup guide for Azure Databricks
 
-The setup for Azure Databricks can be completed by running the [create_and_configure_cluster.ipynb notebook](./notebooks/04_operationalize/create_and_configure_cluster.ipynb)
+The setup for Azure Databricks can be completed by running the [create_and_configure_cluster.ipynb notebook](./notebooks/05_operationalize/create_and_configure_cluster.ipynb)
 on any jupyter instance that has the `requests` python module installed. It requires a few additional parameters to be configured; 
 please see the full details in that notebook.
 
