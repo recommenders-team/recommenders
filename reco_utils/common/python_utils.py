@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import coo_matrix, csc_matrix
+from scipy.sparse import coo_matrix
 
 
 def jaccard(cooccurrence):
