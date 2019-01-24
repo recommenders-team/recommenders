@@ -85,7 +85,7 @@ dependencies:
 ${pyspark}- pyspark==2.3.1
 - pymongo>=3.6.1
 - ipykernel>=4.6.1
-- ${tensorflow}==1.5.0
+- ${tensorflow}==1.12.0
 - scikit-surprise>=1.0.6
 - scikit-learn==0.19.1
 - jupyter>=1.0.0
