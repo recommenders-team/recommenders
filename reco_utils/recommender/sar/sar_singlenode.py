@@ -12,6 +12,8 @@ import pandas as pd
 import logging
 from scipy import sparse
 
+from reco_utils.common.python_utils import jaccard, lift
+
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -141,27 +143,6 @@ class SARSingleNode:
         self.index2user = index2user
         self.index2item = index2item
 
-    # private methods
-    @staticmethod
-    def __jaccard(cooccurrence):
-        """Helper method to calculate teh Jaccard cooccurrence of the item-item similarity"""
-        log.info("Calculating jaccard...")
-        diag = cooccurrence.diagonal()
-        diag_rows = np.expand_dims(diag, axis=0)
-        diag_cols = np.expand_dims(diag, axis=1)
-        # this essentially does vstack(diag_rows).T + vstack(diag_rows) - cooccurrence
-        denom = diag_rows + diag_cols - cooccurrence
-        return cooccurrence / denom
-
-    @staticmethod
-    def __lift(cooccurrence):
-        """Helper method to calculate the Lift of the item-item similarity"""
-        diag = cooccurrence.diagonal()
-        diag_rows = np.expand_dims(diag, axis=0)
-        diag_cols = np.expand_dims(diag, axis=1)
-        denom = diag_rows * diag_cols
-        return cooccurrence / denom
-
     # stateful time function
     def time(self):
         """
@@ -223,27 +204,24 @@ class SARSingleNode:
             n_users (int): Number of users.
             n_items (int): Number of items.
         Returns:
-            np.array: Coocurrence matrix        
+            np.array: Coocurrence matrix
         """
         self.time()
+        float_type = df[self.col_rating].dtype
         user_item_hits = (
             sparse.coo_matrix(
                 (
-                    [1] * len(df[self._col_hashed_users]),
+                    np.array([1.0] * len(df[self._col_hashed_users])).astype(float_type),
                     (df[self._col_hashed_users], df[self._col_hashed_items]),
                 ),
-                shape=(n_users, n_items),
+                shape=(n_users, n_items)
             )
-            .todok()
-            .tocsr()
+                .todok()
+                .tocsr()
         )
 
-        # FIXME: workaround to avoid odd memory problem
-        fname = "user_item_hits.npz"
-        sparse.save_npz(fname, user_item_hits)
-        user_item_hits = sparse.load_npz(fname)
-
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
+
         if self.debug:
             cnt = df.shape[0]
             elapsed_time = self.time()
@@ -401,13 +379,13 @@ class SARSingleNode:
         if similarity_type == SIM_COOCCUR:
             self.item_similarity = item_cooccurrence
         elif similarity_type == SIM_JACCARD:
-            self.item_similarity = self.__jaccard(item_cooccurrence)
+            log.info("Calculating jaccard ...")
+            self.item_similarity = jaccard(item_cooccurrence)
         elif similarity_type == SIM_LIFT:
-            self.item_similarity = self.__lift(item_cooccurrence)
+            log.info("Calculating lift ...")
+            self.item_similarity = lift(item_cooccurrence)
         else:
             raise ValueError("Unknown similarity type: {0}".format(similarity_type))
-
-        self.item_similarity = self.item_similarity.astype(float_type, copy=False)
 
         if self.debug and (
             similarity_type == SIM_JACCARD or similarity_type == SIM_LIFT
@@ -432,11 +410,10 @@ class SARSingleNode:
 
         log.info("done training")
 
-    def recommend_k_items(self, test, top_k=10, sort_top_k=False, **kwargs):
+    def recommend_k_items(self, test, top_k=10, sort_top_k=False):
         """Recommend top K items for all users which are in the test set
 
         Args:
-            **kwargs:
 
         Returns:
             pd.DataFrame: A DataFrame that contains top k recommendation items for each user.
@@ -549,11 +526,8 @@ class SARSingleNode:
         scores = self.scores
 
         # Convert to dense, the following operations are easier.
-        log.info("Converting to dense matrix...")
-        if isinstance(scores, np.matrixlib.defmatrix.matrix):
-            scores_dense = np.array(scores)
-        else:
-            scores_dense = scores.todense()
+        log.info("Converting to dense array ...")
+        scores_dense = scores.toarray()
 
         # take the intersection between train test items and items we actually need
         test_col_hashed_users = test[self.col_user].map(self.user_map_dict)
@@ -579,7 +553,7 @@ class SARSingleNode:
             {
                 self.col_user: test_index[:, 0],
                 self.col_item: test_index[:, 1],
-                self.col_rating: final_scores,
+                self.col_rating: final_scores
             }
         )
 
