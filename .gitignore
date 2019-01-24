@@ -103,6 +103,14 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# Tensorflow
+model_checkpoints
+
+# Azure ML
+aml_config
+aml_scripts
+aml_data
+
 ##########################
 .DS_Store
 .~*
