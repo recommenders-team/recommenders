@@ -39,14 +39,14 @@ def test_sar_single_node_integration(notebooks, size, expected_values):
         #("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
     ],
 )
-def test_baseline_deep_dive_integration(notebooks):
+def test_baseline_deep_dive_integration(notebooks, size, expected_values):
     notebook_path = notebooks["baseline_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
