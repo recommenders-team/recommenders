@@ -4,6 +4,7 @@
 import calendar
 import datetime
 import os
+import numpy as np
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
@@ -141,6 +142,9 @@ def notebooks():
         "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
             folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
+        ),
+        "ncf": os.path.join(
+            folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"
         ),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"

@@ -91,7 +91,7 @@ ${pyspark}- pyspark==2.3.1
 - jupyter>=1.0.0
 - fastparquet>=0.1.6
 ${pyspark}- pyarrow>=0.8.0
-- fastai>=1.0.39
+- fastai>=1.0.40
 - pip:
   - pandas>=0.23.4
   - hyperopt==0.1.1
@@ -104,10 +104,12 @@ ${pyspark}- pyarrow>=0.8.0
   - papermill>=0.15.0
   - black>=18.6b4
   - memory-profiler>=0.54.0
+  - azureml-sdk[notebooks,contrib]>=1.0.8
 ${gpu}  - numba>=0.38.1 
   - gitpython>=2.1.8
   - pydocumentdb>=2.3.3
-  - azureml-core>=0.1.74
+  - nvidia-ml-py3>=7.352.0
+  - dataclasses>=0.6
 EOM
 
 echo "Conda file generated: " $CONDA_FILE
