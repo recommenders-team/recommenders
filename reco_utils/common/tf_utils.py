@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
+import itertools
 import tensorflow as tf
 import numpy as np
 import pandas as pd
@@ -144,7 +144,7 @@ class _TrainLogHook(tf.train.SessionRunHook):
         else:
             self.step += 1
 
-        if self.step % self.every_n_iter == 0:
+        if self.step > 1 and self.step % self.every_n_iter == 0:
             eval_log = []
 
             loss = self.model.evaluate(
@@ -159,7 +159,14 @@ class _TrainLogHook(tf.train.SessionRunHook):
             self._write_simple_value_summary('evaluation/average_loss', loss)
 
             if self.eval_fn is not None:
-                predictions = list(self.model.predict(input_fn=pandas_input_fn(df=self.eval_df)))
+                predictions = list(itertools.islice(
+                    self.model.predict(input_fn=pandas_input_fn(
+                        df=self.eval_df,
+                        batch_size=10000,
+                    )),
+                    len(self.eval_df)
+                ))
+
                 prediction_df = self.eval_df.copy()
                 prediction_df['prediction'] = [p['predictions'][0] for p in predictions]
                 result = self.eval_fn(self.true_df, prediction_df, **self.eval_kwargs)
