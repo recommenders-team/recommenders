@@ -4,10 +4,10 @@ import sys
 sys.path.append("../../")
 
 import argparse
-import atexit
+import itertools
 import os
 import shutil
-import time
+import warnings
 
 import pandas as pd
 import tensorflow as tf
@@ -48,13 +48,15 @@ parser.add_argument('--linear-optimizer-lr', type=float, dest='linear_optimizer_
 # Deep model params
 parser.add_argument('--dnn-optimizer', type=str, dest='dnn_optimizer', default='Adagrad')
 parser.add_argument('--dnn-optimizer-lr', type=float, dest='dnn_optimizer_lr', default=0.1)
-parser.add_argument('--dnn-hidden-units', type=str, dest='dnn_hidden_units', default="256,256,128")
-parser.add_argument('--dnn-user-embedding-dim', type=int, dest='dnn_user_embedding_dim', default=4)
-parser.add_argument('--dnn-item-embedding-dim', type=int, dest='dnn_item_embedding_dim', default=5)
-
-parser.add_argument('--dnn-batch-norm', type=bool, dest='dnn_batch_norm', default=False)
+parser.add_argument('--dnn-hidden-layer-1', type=int, dest='dnn_hidden_layer_1', default=0)
+parser.add_argument('--dnn-hidden-layer-2', type=int, dest='dnn_hidden_layer_2', default=0)
+parser.add_argument('--dnn-hidden-layer-3', type=int, dest='dnn_hidden_layer_3', default=128)
+parser.add_argument('--dnn-hidden-layer-4', type=int, dest='dnn_hidden_layer_4', default=128)
+parser.add_argument('--dnn-user-embedding-dim', type=int, dest='dnn_user_embedding_dim', default=8)
+parser.add_argument('--dnn-item-embedding-dim', type=int, dest='dnn_item_embedding_dim', default=8)
+parser.add_argument('--dnn-batch-norm', type=int, dest='dnn_batch_norm', default=0)
 # Training parameters
-parser.add_argument('--epochs', type=int, dest='epochs', default=20)
+parser.add_argument('--epochs', type=int, dest='epochs', default=10)
 parser.add_argument('--batch-size', type=int, dest='batch_size', default=256)
 parser.add_argument('--l1-reg', type=float, dest='l1_reg', default=0.0)
 parser.add_argument('--dropout', type=float, dest='dropout', default=0.0)
@@ -125,19 +127,38 @@ DNN_OPTIMIZER = args.dnn_optimizer
 DNN_OPTIMIZER_LR = args.dnn_optimizer_lr
 DNN_USER_DIM = args.dnn_user_embedding_dim
 DNN_ITEM_DIM = args.dnn_item_embedding_dim
-DNN_HIDDEN_UNITS = [int(l) for l in args.dnn_hidden_units.split(',')]
-DNN_BATCH_NORM = args.dnn_batch_norm
+DNN_HIDDEN_UNITS = []
+if args.dnn_hidden_layer_1 > 0:
+    DNN_HIDDEN_UNITS.append(args.dnn_hidden_layer_1)
+if args.dnn_hidden_layer_2 > 0:
+    DNN_HIDDEN_UNITS.append(args.dnn_hidden_layer_2)
+if args.dnn_hidden_layer_3 > 0:
+    DNN_HIDDEN_UNITS.append(args.dnn_hidden_layer_3)
+if args.dnn_hidden_layer_4 > 0:
+    DNN_HIDDEN_UNITS.append(args.dnn_hidden_layer_4)
+DNN_BATCH_NORM = (args.dnn_batch_norm == 1)
 
 L1_REG = args.l1_reg
 DROPOUT = args.dropout
 
-arguments = str(vars(args))
-print("Args:", arguments, sep='\n')
+LOG_STEPS = 1000
+print("Args:", str(vars(args)), sep='\n')
 
 # Get AML run context
 if HAS_AML:
     run = Run.get_context()
-    run.log("Args", arguments)
+    run.log('model_type', MODEL_TYPE)
+    run.log('linear_optimizer', LINEAR_OPTIMIZER)
+    run.log('linear_optimizer_lr', LINEAR_OPTIMIZER_LR)
+    run.log('dnn_optimizer', DNN_OPTIMIZER)
+    run.log('dnn_optimizer_lr', DNN_OPTIMIZER_LR)
+    run.log('dnn_hidden_layer', str(DNN_HIDDEN_UNITS))
+    run.log('dnn_user_embedding_dim', DNN_USER_DIM)
+    run.log('dnn_item_embedding_dim', DNN_ITEM_DIM)
+    run.log('dnn_batch_norm', DNN_BATCH_NORM)
+    run.log('batch_size', BATCH_SIZE)
+    run.log('l1_reg', L1_REG)
+    run.log('dropout', DROPOUT)
 
 if args.datastore is not None:
     data = pd.read_pickle(path=os.path.join(args.datastore, args.train_datapath))
@@ -156,18 +177,85 @@ else:
     items = data.drop_duplicates(ITEM_COL)[[ITEM_COL, ITEM_FEAT_COL]].reset_index(drop=True)
 users = data.drop_duplicates(USER_COL)[[USER_COL]].reset_index(drop=True)
 
-# Split train and evaluation sets
-train, test = python_random_split(data, ratio=0.75, seed=123)
+user_id = tf.feature_column.categorical_column_with_vocabulary_list(USER_COL, users[USER_COL].values)
+item_id = tf.feature_column.categorical_column_with_vocabulary_list(ITEM_COL, items[ITEM_COL].values)
 
-# Prepare ranking evaluation set, i.e. get the cross join of all user-item pairs
-ranking_pool = user_item_pairs(
-    user_df=users,
-    item_df=items,
-    user_col=USER_COL,
-    item_col=ITEM_COL,
-    user_item_filter_df=train,
-    shuffle=True
-)
+
+def aml_wide_deep_training():
+    """Train wide and deep model by using the given hyper-parameters
+    """
+    # Split train and evaluation sets
+    train, test = python_random_split(data, ratio=0.75, seed=123)
+
+    # Prepare ranking evaluation set, i.e. get the cross join of all user-item pairs
+    ranking_pool = user_item_pairs(
+        user_df=users,
+        item_df=items,
+        user_col=USER_COL,
+        item_col=ITEM_COL,
+        user_item_filter_df=train,
+        shuffle=True
+    )
+
+    _MODEL_DIR = 'model_checkpoints'
+    print(_MODEL_DIR)
+    try:
+        # Clean-up previous model dir if exists
+        shutil.rmtree(_MODEL_DIR)
+    except FileNotFoundError:
+        pass
+
+    model = _build_model(_MODEL_DIR)
+
+    print("Start training...")
+    try:
+        model.train(
+            input_fn=tf_utils.pandas_input_fn(
+                df=train,
+                y_col=RATING_COL,
+                batch_size=BATCH_SIZE,
+                num_epochs=NUM_EPOCHS,
+                shuffle=True
+            ),
+            # Somehow hooks cause DataLossError in AML
+        )
+
+        print("Evaluating...")
+        if len(RATING_METRICS) > 0:
+            predictions = list(itertools.islice(
+                model.predict(input_fn=tf_utils.pandas_input_fn(
+                    df=test,
+                    batch_size=10000,
+                )),
+                len(test)
+            ))
+            prediction_df = test.drop(RATING_COL, axis=1)
+            prediction_df[PREDICTION_COL] = [p['predictions'][0] for p in predictions]
+            for m in RATING_METRICS:
+                result = _SUPPORTED_METRICS[m](test, prediction_df, **cols)
+                print(m, result)
+                if HAS_AML:
+                    run.log(m, result)
+
+        if len(RANKING_METRICS) > 0:
+            predictions = list(itertools.islice(
+                model.predict(input_fn=tf_utils.pandas_input_fn(
+                    df=ranking_pool,
+                    batch_size=10000,
+                )),
+                len(ranking_pool)
+            ))
+            prediction_df = ranking_pool.copy()
+            prediction_df[PREDICTION_COL] = [p['predictions'][0] for p in predictions]
+            for m in RANKING_METRICS:
+                name_k = m.split('@')
+                result = _SUPPORTED_METRICS[name_k[0]](test, prediction_df, k=int(name_k[1]), **cols)
+                print(m, result)
+                if HAS_AML:
+                    run.log(m, result)
+
+    except tf.train.NanLossDuringTrainingError:
+        warnings.warn("NanLossDuringTrainingError")
 
 
 def _build_optimizer(name, lr):
@@ -187,10 +275,6 @@ def _build_optimizer(name, lr):
         raise ValueError("Optimizer type should be either 'Adagrad', 'Adam', 'Ftrl', 'RMSProp', or 'SGD'")
 
     return _optimizer
-
-
-user_id = tf.feature_column.categorical_column_with_vocabulary_list(USER_COL, users[USER_COL].values)
-item_id = tf.feature_column.categorical_column_with_vocabulary_list(ITEM_COL, items[ITEM_COL].values)
 
 
 def _build_wide_columns():
@@ -231,9 +315,10 @@ def _build_deep_columns():
 
 
 def _build_model(model_dir):
-    # Log less-frequently
+    # Set logging frequency
+    tf.logging.set_verbosity(tf.logging.INFO)
     _config = tf.estimator.RunConfig()
-    _config = _config.replace(log_step_count_steps=1000)
+    _config = _config.replace(log_step_count_steps=LOG_STEPS)
 
     if MODEL_TYPE == 'wide':
         return tf.estimator.LinearRegressor(
@@ -270,50 +355,4 @@ def _build_model(model_dir):
         raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
 
 
-def _clean_up(dir_path):
-    """ Remove cached file. Be careful not to erase anything else. """
-    try:
-        shutil.rmtree(dir_path)
-    except OSError:
-        pass
-
-
-MODEL_DIR = os.path.join('.', 'models_'+str(int(time.time())))
-print(MODEL_DIR)
-
-model = _build_model(MODEL_DIR)
-
-print("Start training...")
-model.train(
-    input_fn=tf_utils.pandas_input_fn(
-        df=train,
-        y_col=RATING_COL,
-        batch_size=BATCH_SIZE,
-        num_epochs=NUM_EPOCHS,
-        shuffle=True
-    )
-)
-
-print("Evaluating...")
-if len(RATING_METRICS) > 0:
-    predictions = list(model.predict(input_fn=tf_utils.pandas_input_fn(df=test)))
-    prediction_df = test.drop(RATING_COL, axis=1)
-    prediction_df[PREDICTION_COL] = [p['predictions'][0] for p in predictions]
-    for m in RATING_METRICS:
-        result = _SUPPORTED_METRICS[m](test, prediction_df, **cols)
-        print(m, result)
-        if HAS_AML:
-            run.log(m, result)
-
-if len(RANKING_METRICS) > 0:
-    predictions = list(model.predict(input_fn=tf_utils.pandas_input_fn(df=ranking_pool)))
-    prediction_df = ranking_pool.copy()
-    prediction_df[PREDICTION_COL] = [p['predictions'][0] for p in predictions]
-    for m in RANKING_METRICS:
-        name_k = m.split('@')
-        result = _SUPPORTED_METRICS[name_k[0]](test, prediction_df, k=int(name_k[1]), **cols)
-        print(m, result)
-        if HAS_AML:
-            run.log(m, result)
-
-atexit.register(_clean_up, MODEL_DIR)
+aml_wide_deep_training()
