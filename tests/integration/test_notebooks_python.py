@@ -35,6 +35,29 @@ def test_sar_single_node_integration(notebooks, size, expected_values):
 @pytest.mark.parametrize(
     "size, expected_values",
     [
+        ("1m", {"map": 0.033914, "ndcg": 0.231570, "precision": 0.211923, "recall": 0.064663}),
+        #("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
+    ],
+)
+def test_baseline_deep_dive_integration(notebooks):
+    notebook_path = notebooks["baseline_deep_dive"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL)
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
         ("1m", dict(rmse=0.89,
                     mae=0.70,
                     rsquared=0.36,
