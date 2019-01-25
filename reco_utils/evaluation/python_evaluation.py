@@ -564,7 +564,7 @@ def map_at_k(
     return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
 
 
-def get_top_k_items(dataframe, col_user="customerID", col_rating="rating", k=10):
+def get_top_k_items(dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RATING_COL, k=DEFAULT_K):
     """Get the input customer-item-rating tuple in the format of Pandas
     DataFrame, output a Pandas DataFrame in the dense format of top k items
     for each user.
@@ -582,9 +582,10 @@ def get_top_k_items(dataframe, col_user="customerID", col_rating="rating", k=10)
     Return:
         pd.DataFrame: DataFrame of top k items for each user.
     """
-    dataframe.loc[:, col_rating] = dataframe[col_rating].astype(float)
+    tmp = dataframe
+    tmp[col_rating] = dataframe[col_rating].astype(float)
     return (
-        dataframe.groupby(col_user, as_index=False)
+        tmp.groupby(col_user, as_index=False)
         .apply(lambda x: x.nlargest(k, col_rating))
-        .reset_index()[dataframe.columns]
+        .reset_index()
     )
