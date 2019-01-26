@@ -162,6 +162,9 @@ def notebooks():
         "baseline_deep_dive": os.path.join(
             folder_notebooks, "02_model", "baseline_deep_dive.ipynb"
         ),
+	"ncf_deep_dive": os.path.join(
+	    folder_notebooks, "02_model", "ncf_deep_dive.ipynb"
+	),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }
     return paths
