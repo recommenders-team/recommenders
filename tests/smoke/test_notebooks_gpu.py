@@ -34,6 +34,27 @@ def test_ncf_smoke(notebooks):
     assert results["precision"] == pytest.approx(0.175504, TOL)
     assert results["recall"] == pytest.approx(0.100301, TOL)
 
+
+@pytest.mark.notebooks
+@pytest.mark.gpu
+def test_ncf_deep_dive(notebooks):
+    notebook_path = notebooks["ncf_deep_dive"]
+    pm.execute_notebook(notebook_path, 
+                        OUTPUT_NOTEBOOK, 
+                        kernel_name=KERNEL_NAME,
+                        parameters=dict(TOP_K=10, 
+                                        MOVIELENS_DATA_SIZE="100k",
+                                        EPOCHS=1,
+                                        BATCH_SIZE=1024),
+                       )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["map"] == pytest.approx(0.047037, TOL)
+    assert results["ndcg"] == pytest.approx(0.193496, TOL)
+    assert results["precision"] == pytest.approx(0.175504, TOL)
+    assert results["recall"] == pytest.approx(0.100301, TOL)
+    
+
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_fastai(notebooks):
