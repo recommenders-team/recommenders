@@ -157,7 +157,7 @@ def create_hparams(FLAGS):
         num_filters=FLAGS['num_filters'] if 'num_filters' in FLAGS else None,
         mu=FLAGS['mu'] if 'mu' in FLAGS else None,
         fast_CIN_d=FLAGS['fast_CIN_d'] if 'fast_CIN_d' in FLAGS else 0,
-        user_Linear_part=FLAGS['user_Linear_part'] if 'user_Linear_part' in FLAGS else False,
+        use_Linear_part=FLAGS['use_Linear_part'] if 'use_Linear_part' in FLAGS else False,
         use_FM_part=FLAGS['use_FM_part'] if 'use_FM_part' in FLAGS else False,
         use_CIN_part=FLAGS['use_CIN_part'] if 'use_CIN_part' in FLAGS else False,
         use_DNN_part=FLAGS['use_DNN_part'] if 'use_DNN_part' in FLAGS else False,

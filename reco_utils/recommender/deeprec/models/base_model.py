@@ -90,6 +90,11 @@ class BaseModel(object):
         pass
 
     def _l2_loss(self):
+        """
+        Construct L2-norm for loss function.
+        Returns:
+            l2 regular terms
+        """
         l2_loss = tf.zeros([1], dtype=tf.float32)
         # embedding_layer l2 loss
         for param in self.embed_params:
@@ -100,6 +105,11 @@ class BaseModel(object):
         return l2_loss
 
     def _l1_loss(self):
+        """
+        Construct L1-norm for loss function.
+        Returns:
+            l1 regular terms
+        """
         l1_loss = tf.zeros([1], dtype=tf.float32)
         # embedding_layer l2 loss
         for param in self.embed_params:
@@ -110,13 +120,23 @@ class BaseModel(object):
         return l1_loss
 
     def _cross_l_loss(self):
+        """
+        Construct L1-norm and L2-norm on cross network parameters for loss function.
+        Returns:
+            Regular loss value on cross network parameters.
+        """
         cross_l_loss = tf.zeros([1], dtype=tf.float32)
         for param in self.cross_params:
             cross_l_loss = tf.add(cross_l_loss, tf.multiply(self.hparams.cross_l1, tf.norm(param, ord=1)))
-            cross_l_loss = tf.add(cross_l_loss, tf.multiply(self.hparams.cross_l2, tf.norm(param, ord=1)))
+            cross_l_loss = tf.add(cross_l_loss, tf.multiply(self.hparams.cross_l2, tf.norm(param, ord=2)))
         return cross_l_loss
 
     def _get_initializer(self):
+        """
+        Get an initializer method for parameters.
+        Returns:
+            An initializer according to config.
+        """
         if self.hparams.init_method == 'tnormal':
             return tf.truncated_normal_initializer(stddev=self.hparams.init_value)
         elif self.hparams.init_method == 'uniform':
@@ -156,47 +176,65 @@ class BaseModel(object):
         return data_loss
 
     def _compute_regular_loss(self):
+        """
+        Construct regular loss. Usually it's comprised of l1 and l2 norm.
+        Users can designate which norm to be included via config file.
+        Returns:
+            Regular loss.
+        """
         regular_loss = self._l2_loss() + self._l1_loss() + self._cross_l_loss()
         regular_loss = tf.reduce_sum(regular_loss)
         return regular_loss
 
     def _train_opt(self):
+        """
+        Get the optimizer according to configuration. Usually we will use Adam.
+        Returns:
+            An optimizer.
+        """
         lr = self.hparams.learning_rate
         optimizer = self.hparams.optimizer
 
         if optimizer == 'adadelta':
             train_step = tf.train.AdadeltaOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         elif optimizer == 'adagrad':
             train_step = tf.train.AdagradOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         elif optimizer == 'sgd':
             train_step = tf.train.GradientDescentOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         elif optimizer == 'adam':
             train_step = tf.train.AdamOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         elif optimizer == 'ftrl':
             train_step = tf.train.FtrlOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         elif optimizer == 'gd':
             train_step = tf.train.GradientDescentOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         elif optimizer == 'padagrad':
             train_step = tf.train.ProximalAdagradOptimizer(
                 lr)  # .minimize(self.loss)
         elif optimizer == 'pgd':
             train_step = tf.train.ProximalGradientDescentOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         elif optimizer == 'rmsprop':
             train_step = tf.train.RMSPropOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         else:
             train_step = tf.train.GradientDescentOptimizer(
-                lr)  # .minimize(self.loss)
+                lr)
         return train_step
 
     def _build_train_opt(self):
+        """
+        Construct gradient descent based optimization step
+        In this step, we provide gradient clipping option. Sometimes we what to clip the gradients
+        when their absolute values are too large to avoid gradient explosion.
+        Returns:
+            An operation that applies the specified optimization step.
+        """
         train_step = self._train_opt()
         gradients, variables = zip(*train_step.compute_gradients(self.loss))
         if self.hparams.is_clip_norm:
@@ -219,6 +257,14 @@ class BaseModel(object):
         return logit
 
     def _activate(self, logit, activation):
+        """
+        Apply an activation function upon the input value.
+        Args:
+            logit: the input value.
+            activation: a string indicating the activation function type.
+        Returns:
+            A tensor after applying activation function on logit.
+        """
         if activation == 'sigmoid':
             return tf.nn.sigmoid(logit)
         elif activation == 'softmax':
@@ -235,28 +281,74 @@ class BaseModel(object):
             raise ValueError("this activations not defined {0}".format(activation))
 
     def _dropout(self, logit, keep_prob):
+        """
+        Apply drops upon the input value.
+        Args:
+            logit: the input value.
+            keep_prob: a scalar probability that each element is kept.
+
+        Returns:
+            A tensor of the same shape of logit.
+
+        """
         logit = tf.nn.dropout(x=logit, keep_prob=keep_prob)
         return logit
 
     def train(self, sess, feed_dict):
-        feed_dict[self.layer_keeps]=self.keep_prob_train
-        feed_dict[self.is_train_stage]=True
+        """
+        Go through the optimization step once with training data in feed_dict.
+        Args:
+            sess: the model session object.
+            feed_dict: feed values to train the model. This is a dictionary that maps graph elements to values.
+
+        Returns:
+            A list of values, including update operation, total loss, data loss, and merged summary.
+        """
+        feed_dict[self.layer_keeps] = self.keep_prob_train
+        feed_dict[self.is_train_stage] = True
         return sess.run([self.update, self.loss, self.data_loss, self.merged],
                         feed_dict=feed_dict)
 
     def eval(self, sess, feed_dict):
+        """
+        Evaluate the data in feed_dict with current model.
+        Args:
+            sess: the model session object.
+            feed_dict: feed values for evaluation. This is a dictionary that maps graph elements to values.
+
+        Returns:
+            A list of evaluated results, including total loss value, data loss value,
+            predicted scores, and ground-truth labels.
+
+        """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False
         return sess.run([self.loss, self.data_loss, self.pred, self.iterator.labels],
                         feed_dict=feed_dict)
 
     def infer(self, sess, feed_dict):
+        """
+        Given feature data (in feed_dict), get predicted scores with current model.
+        Args:
+            sess: the model session object.
+            feed_dict: Instances to predict. This is a dictionary that maps graph elements to values.
+
+        Returns:
+            Predicted scores for the given instances.
+        """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False
         return sess.run([self.pred],
                         feed_dict=feed_dict)
 
     def load_model(self, model_path=None):
+        """
+        Load an existing model.
+        Args:
+            model_path: model path.
+        Raises:
+            IOError if the restore operation is failed.
+        """
         act_path = self.hparams.load_saved_model
         if model_path is not None:
             act_path = model_path
@@ -267,6 +359,17 @@ class BaseModel(object):
             raise IOError("Failed to find any matching files for {0}".format(act_path))
 
     def fit(self, train_file, valid_file, test_file=None):
+        """
+        Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
+        If test_file is not None, evaluate it too.
+        Args:
+            train_file: training data set.
+            valid_file: validation set.
+            test_file: test set.
+
+        Returns:
+            An instance of self.
+        """
         if self.hparams.write_tfevents:
             self.writer = tf.summary.FileWriter(self.hparams.SUMMARIES_DIR, self.sess.graph)
 
@@ -327,6 +430,14 @@ class BaseModel(object):
         return self
 
     def run_eval(self, filename):
+        """
+        Evaluate the given file and returns some evaluation metrics.
+        Args:
+            filename: A file name that will be evaluated.
+
+        Returns:
+            A dictionary contains evaluation metrics.
+        """
         load_sess = self.sess
         preds = []
         labels = []
@@ -335,17 +446,24 @@ class BaseModel(object):
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
         res = cal_metric(labels, preds, self.hparams.metrics)
-        #print(preds[0:10])
         return res
 
     def predict(self, infile_name, outfile_name):
+        """
+        Make predictions on the given data, and output predicted scores to a file.
+        Args:
+            infile_name: Input file name.
+            outfile_name: Output file name.
+
+        Returns:
+            An instance of self.
+        """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, 'w') as wt:
             for batch_data_input in self.iterator.load_data_from_file(infile_name):
                 step_pred = self.infer(load_sess, batch_data_input)
                 step_pred = np.reshape(step_pred, -1)
                 wt.write('\n'.join(map(str, step_pred)))
-
         return self
 
 
