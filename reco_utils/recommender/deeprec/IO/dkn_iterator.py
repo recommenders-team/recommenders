@@ -6,7 +6,24 @@ from .iterator import BaseIterator
 __all__ = ["DKNTextIterator"]
 
 class DKNTextIterator(BaseIterator):
-    def __init__(self, hparams, graph, col_spliter=' ', ID_spliter = '%', batch_size=128):
+    """
+      Data loader for the DKN model.
+      DKN requires a special type of data format, where each instance contains a label, the candidate news article,
+      and user's clicked news article. Articles are represented by title words and title entities. Words and entities
+      are aligned.
+
+      Iterator will not load the whole data into memory. Instead, it loads data into memory
+      per mini-batch, so that large files can be used as input data.
+    """
+    def __init__(self, hparams, graph, col_spliter=' ', ID_spliter = '%'):
+        """
+        Initialize an iterator. Create necessary placeholders for the model.
+        Args:
+            hparams: Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
+            graph: the running graph. All created placeholder will be added to this graph.
+            col_spliter: column spliter in one line.
+            ID_spliter: ID spliter in one line.
+        """
         self.col_spliter = col_spliter
         self.ID_spliter = ID_spliter
         self.batch_size = hparams.batch_size
@@ -25,6 +42,16 @@ class DKNTextIterator(BaseIterator):
             self.click_news_entity_values = tf.placeholder(tf.int64, [None], name='click_news_entity')
 
     def parser_one_line(self, line):
+        """
+        Parse one string line into feature values.
+        Args:
+            line: a string indicating one instance
+
+        Returns:
+            Parsed results,including label, candidate_news_index, candidate_news_val, click_news_index, click_news_val,
+            candidate_news_entity_index, click_news_entity_index, impression_id
+
+        """
         impression_id = None
         words = line.strip().split(self.ID_spliter)
         if len(words) == 2:
@@ -66,6 +93,14 @@ class DKNTextIterator(BaseIterator):
 
 
     def load_data_from_file(self, infile):
+        """
+        Read and parse data from a file.
+        Args:
+            infile: text input file. Each line in this file is an instance.
+
+        Returns:
+            An iterator that will yields parsed results, in the format of graph feed_dict.
+        """
         candidate_news_index_batch = []
         candidate_news_val_batch = []
         click_news_index_batch = []
@@ -108,13 +143,23 @@ class DKNTextIterator(BaseIterator):
                     label_list = []
                     impression_id_list = []
                     cnt = 0
-            # if cnt > 0:
-            #     res = self._convert_data(label_list, candidate_news_index_batch, candidate_news_val_batch, click_news_index_batch,
-            #                                  click_news_val_batch, candidate_news_entity_index_batch, click_news_entity_index_batch)
-            #     yield self.gen_feed_dict(res)
 
     def _convert_data(self, label_list, candidate_news_index_batch, candidate_news_val_batch, click_news_index_batch,
                                              click_news_val_batch, candidate_news_entity_index_batch, click_news_entity_index_batch):
+        """
+        Convert data into numpy arrays that are good for further model operation.
+        Args:
+            label_list: a list of ground-truth labels.
+            candidate_news_index_batch: the candidate news article's words indices
+            candidate_news_val_batch: the candidate news article's word values. For now the values are always 1.0
+            click_news_index_batch: words indices for user's clicked news articles
+            click_news_val_batch: words values for user's clicked news articles. For now the values are always 1.0
+            candidate_news_entity_index_batch: the candidate news article's entities indices
+            click_news_entity_index_batch: the user's clicked news article's entities indices
+
+        Returns:
+            A dictionary, contains multiple numpy arrays that are convenient for further operation.
+        """
         instance_cnt = len(label_list)
 
         click_news_indices = []
@@ -148,6 +193,15 @@ class DKNTextIterator(BaseIterator):
         return res
 
     def gen_feed_dict(self, data_dict):
+        """
+        Construct a dictionary that maps graph elements to values.
+        Args:
+            data_dict: a dictionary that maps string name to numpy arrays.
+
+        Returns:
+            a dictionary that maps graph elements to numpy arrays.
+
+        """
         feed_dict = {
             self.labels: data_dict['labels'].reshape([-1, 1]),
             self.candidate_news_index_batch: data_dict['candidate_news_index_batch'].reshape([self.batch_size, self.doc_size]),

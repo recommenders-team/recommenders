@@ -7,8 +7,16 @@ __all__ = ["DKN"]
 
 
 class DKN(BaseModel):
-
     def __init__(self, hparams, iterator_creator):
+        """
+        Initialization steps for DKN.
+        Compared with the BaseModel, DKN requires two different pre-computed embeddings,
+        i.e. word embedding and entity embedding.
+        After creating these two embedding variables, BaseModel's __init__ method will be called.
+        Args:
+            hparams: global hyper-parameters
+            iterator_creator:  DKN data loader class
+        """
         self.graph = tf.Graph()
         with self.graph.as_default():
             with tf.name_scope("embedding"):
@@ -39,6 +47,14 @@ class DKN(BaseModel):
         super().__init__(hparams, iterator_creator, graph=self.graph)
 
     def _init_embedding(self, file_path):
+        """
+        Load pre-trained embeddings as a constant tensor.
+        Args:
+            file_path: the pre-trained embeddings filename.
+
+        Returns:
+            a constant tensor.
+        """
         return tf.constant(
             np.load(file_path).astype(np.float32)
         )
@@ -72,19 +88,23 @@ class DKN(BaseModel):
         self.keep_prob_train = 1 - np.array(hparams.dropout)
         self.keep_prob_test = np.ones_like(hparams.dropout)
         with tf.variable_scope("DKN") as scope:
-            logit = self._build_dkn(hparams)
+            logit = self._build_dkn()
             return logit
 
-    def _build_dkn(self, hparams):
-
+    def _build_dkn(self):
+        """
+        The main function to create DKN's logic.
+        Returns:
+            Prediction score made by the DKN model.
+        """
+        hparams = self.hparams
         # build attention model for clicked news and candidate news
         click_news_embed_batch, candidate_news_embed_batch =\
             self._build_pair_attention(
                 self.iterator.click_news_indices,
                 self.iterator.click_news_values,
                 self.iterator.click_news_shape,
-                hparams,
-                flag='click_news')
+                hparams)
 
         nn_input = tf.concat([click_news_embed_batch, candidate_news_embed_batch], axis=1)
 
@@ -122,8 +142,22 @@ class DKN(BaseModel):
             nn_output = tf.nn.xw_plus_b(hidden_nn_layers[-1], w_nn_output, b_nn_output)
             return nn_output
 
-    #build attention network
-    def _build_pair_attention(self, field_indices, field_values, field_shape, hparams, flag):
+    def _build_pair_attention(self, field_indices, field_values, field_shape, hparams):
+        """
+        This function learns the candidate news article's embedding and user embedding.
+        User embedding is generated from click history and also depends on the candidate news article via attention mechanism.
+        Article embedding is generated via KCNN module.
+        Args:
+            field_indices: sparse tensor indices for constructing user clicked history
+            field_values: sparse tensor values for constructing user clicked history
+            field_shape: sparse tensor shape for constructing user clicked history
+            hparams: global hyper-parameters
+
+        Returns:
+            click_field_embed_final_batch: user embedding
+            news_field_embed_final_batch: candidate news article embedding
+
+        """
         doc_size = hparams.doc_size
         attention_hidden_sizes = hparams.attention_layer_sizes
 
@@ -231,6 +265,17 @@ class DKN(BaseModel):
         return click_field_embed_final_batch, news_field_embed_final_batch
 
     def _kims_cnn(self, word, entity, hparams):
+        """
+        the KCNN module. KCNN is an extension of traditional CNN that incorporates symbolic knowledge from
+        a knowledge graph into sentence representation learning.
+        Args:
+            word: word indices for the sentence.
+            entity: entity indices for the sentence. entities are aligned with words in the sentence.
+            hparams: global hyper-parameters.
+
+        Returns:
+            Sentence representation.
+        """
         # kims cnn parameter
         filter_sizes = hparams.filter_sizes
         num_filters = hparams.num_filters

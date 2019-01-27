@@ -9,6 +9,11 @@ __all__ = ["XDeepFMModel"]
 class XDeepFMModel(BaseModel):
 
     def _build_graph(self):
+        """
+        The main function to create xdeepfm's logic.
+        Returns:
+            the prediction score make by the model.
+        """
         hparams = self.hparams
         self.keep_prob_train = 1 - np.array(hparams.dropout)
         self.keep_prob_test = np.ones_like(hparams.dropout)
@@ -23,7 +28,7 @@ class XDeepFMModel(BaseModel):
 
             logit = 0
 
-            if hparams.user_Linear_part:
+            if hparams.use_Linear_part:
                 print('Add linear part.')
                 logit = logit + self._build_linear()
 
@@ -45,6 +50,13 @@ class XDeepFMModel(BaseModel):
             return logit
 
     def _build_embedding(self):
+        """
+        The field embedding layer. MLP requires fixed-length vectors as input.
+        This function makes sum pooling of feature embeddings for each field.
+        Returns:
+            embedding:  the result of field embedding layer, with size of #_fields * #_dim
+            embedding_size: #_fields * #_dim
+        """
         hparams = self.hparams
         fm_sparse_index = tf.SparseTensor(self.iterator.dnn_feat_indices,
                                           self.iterator.dnn_feat_values,
@@ -61,6 +73,12 @@ class XDeepFMModel(BaseModel):
         return embedding, embedding_size
 
     def _build_linear(self):
+        """
+        Construct the linear part for the model.
+        This is a linear regression.
+        Returns:
+            prediction score made by linear regression.
+        """
         with tf.variable_scope("linear_part", initializer=self.initializer) as scope:
             w = tf.get_variable(name='w',
                                        shape=[self.hparams.FEATURE_COUNT, 1],
@@ -80,6 +98,12 @@ class XDeepFMModel(BaseModel):
             return linear_output
 
     def _build_fm(self):
+        """
+        Construct the factorization machine part for the model.
+        This is a traditional 2-order FM module.
+        Returns:
+            prediction score made by factorization machine.
+        """
         with tf.variable_scope("fm_part") as scope:
             x = tf.SparseTensor(self.iterator.fm_feat_indices,
                                 self.iterator.fm_feat_values,
@@ -95,6 +119,19 @@ class XDeepFMModel(BaseModel):
             return fm_output
 
     def _build_CIN(self, nn_input, res=False, direct=False, bias=False, is_masked=False):
+        """
+        Construct the compressed interaction network.
+        This component provides explicit and vector-wise higher-order feature interactions.
+        Args:
+            nn_input: The output of field-embedding layer. This is the input for CIN.
+            res: Whether use residual structure to fuse the results from each layer of CIN.
+            direct: If true, then all hidden units are connected to both next layer and output layer;
+                    otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
+            bias:   Whether to add bais term when calculating the feature maps.
+            is_masked: Controls whether to remove self-interaction in the first layer of CIN.
+        Returns:
+            prediction score made by CIN.
+        """
         hparams = self.hparams
         hidden_nn_layers = []
         field_nums = []
@@ -109,43 +146,28 @@ class XDeepFMModel(BaseModel):
             for idx, layer_size in enumerate(hparams.cross_layer_sizes):
                 split_tensor = tf.split(hidden_nn_layers[-1], hparams.dim * [1], 2)
                 dot_result_m = tf.matmul(split_tensor0, split_tensor, transpose_b=True) # shape :  (Dim, Batch, FieldNum, HiddenNum), a.k.a (D,B,F,H)
-                dot_result_o = tf.reshape(dot_result_m, shape=[hparams.dim, -1, field_nums[0]*field_nums[-1]])  #(D,B,FH)
+                dot_result_o = tf.reshape(dot_result_m, shape=[hparams.dim, -1, field_nums[0]*field_nums[-1]])  # shape: (D,B,FH)
                 dot_result = tf.transpose(dot_result_o, perm=[1, 0, 2]) #(B,D,FH)
 
                 filters = tf.get_variable(name="f_"+str(idx),
-                                         shape=[1, field_nums[-1]*field_nums[0], layer_size],
-                                         dtype=tf.float32)
+                                          shape=[1, field_nums[-1]*field_nums[0], layer_size],
+                                          dtype=tf.float32)
 
                 if is_masked and idx == 0:
                     ones = tf.ones([field_nums[0], field_nums[0]], dtype=tf.float32)
                     mask_matrix = tf.matrix_band_part(ones, 0, -1) - tf.diag(tf.ones(field_nums[0]))
                     mask_matrix = tf.reshape(mask_matrix, shape=[1, field_nums[0] * field_nums[0]])
 
-
-
-                    #######
-                    ### to plot pair-wise interaction weights for exploring simulated dataset, output the filter weights
-                    ### for simplicity, view interaction weights by masking the filter
-                    # mask_matrix = tf.reshape(mask_matrix, shape=[1, 1, field_nums[0] * field_nums[0]])
-                    # mask_matrix = tf.transpose(mask_matrix, perm=[0, 2, 1])
-                    # filters_in_use = tf.multiply(filters, mask_matrix) * 2
-                    # self.filter_weights_at_layer1 = tf.reshape(filters_in_use, [field_nums[0], field_nums[0]])
-                    #######
-
                     dot_result = tf.multiply(dot_result, mask_matrix) * 2
                     self.dot_result = dot_result
 
-                # else:
-                #     filters_in_use = filters
+                curr_out = tf.nn.conv1d(dot_result, filters=filters, stride=1, padding='VALID')  # shape : (B,D,H`)
 
-                curr_out = tf.nn.conv1d(dot_result, filters=filters, stride=1, padding='VALID') #(B,D,H`)
-
-                # BIAS ADD
                 if bias:
                     b = tf.get_variable(name="f_b" + str(idx),
-                                    shape=[layer_size],
-                                    dtype=tf.float32,
-                                    initializer=tf.zeros_initializer())
+                                        shape=[layer_size],
+                                        dtype=tf.float32,
+                                        initializer=tf.zeros_initializer())
                     curr_out = tf.nn.bias_add(curr_out, b)
                     self.cross_params.append(b)
 
@@ -154,7 +176,7 @@ class XDeepFMModel(BaseModel):
 
                 curr_out = self._activate(curr_out, hparams.cross_activation)
 
-                curr_out = tf.transpose(curr_out, perm=[0, 2, 1]) #(B,H,D)
+                curr_out = tf.transpose(curr_out, perm=[0, 2, 1]) # shape : (B,H,D)
 
                 if direct:
                     direct_connect = curr_out
@@ -178,7 +200,7 @@ class XDeepFMModel(BaseModel):
                 self.cross_params.append(filters)
 
             result = tf.concat(final_result, axis=1)
-            result = tf.reduce_sum(result, -1) #(B,H)
+            result = tf.reduce_sum(result, -1) # shape : (B,H)
 
             if res:
                 base_score = tf.reduce_sum(result, 1, keepdims=True)  # (B,1)
@@ -195,19 +217,24 @@ class XDeepFMModel(BaseModel):
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
             exFM_out = base_score + tf.nn.xw_plus_b(result, w_nn_output, b_nn_output)
-
-            ## DEBUG MODE: output interactions directly without regression
-            #exFM_out = tf.reduce_sum(result, 1, keepdims=True)  # (B,1)
-
-
-            #######
-            ## to plot weights for exploring simulated dataset, disable the final regression layer
-            # exFM_out = tf.reduce_sum(result, 1, keepdims=True)  # (B,1)
-            #######
-
             return exFM_out
 
     def _build_fast_CIN(self, nn_input, res=False, direct=False, bias=False):
+        """
+        Construct the compressed interaction network with reduced parameters.
+        This component provides explicit and vector-wise higher-order feature interactions.
+        Parameters from the filters are reduced via a matrix decomposition method.
+        Fast CIN is more space and time efficient than CIN.
+        Args:
+            nn_input: The output of field-embedding layer. This is the input for CIN.
+            res: Whether use residual structure to fuse the results from each layer of CIN.
+            direct: If true, then all hidden units are connected to both next layer and output layer;
+                    otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
+            bias:   Whether to add bais term when calculating the feature maps.
+
+        Returns:
+            prediction score made by fast CIN.
+        """
         hparams = self.hparams
         hidden_nn_layers = []
         field_nums = []
@@ -227,11 +254,10 @@ class XDeepFMModel(BaseModel):
                                                dtype=tf.float32)
 
                     self.cross_params.append(fast_w)
-                    dot_result_1 = tf.nn.conv1d(nn_input, filters=fast_w, stride=1, padding='VALID')  #(B,D,d*H)
-                    dot_result_2 = tf.nn.conv1d(tf.pow(nn_input,2), filters=tf.pow(fast_w,2), stride=1, padding='VALID')  #(B,D,d*H)
+                    dot_result_1 = tf.nn.conv1d(nn_input, filters=fast_w, stride=1, padding='VALID')  # shape: (B,D,d*H)
+                    dot_result_2 = tf.nn.conv1d(tf.pow(nn_input,2), filters=tf.pow(fast_w,2), stride=1, padding='VALID')  #shape: ((B,D,d*H)
                     dot_result = tf.reshape(0.5*(dot_result_1-dot_result_2),shape=[-1,hparams.dim,layer_size,fast_CIN_d])
-                    curr_out = tf.reduce_sum(dot_result, 3, keepdims=False) #(B,D,H)
-
+                    curr_out = tf.reduce_sum(dot_result, 3, keepdims=False) #shape: ((B,D,H)
                 else:
                     fast_w = tf.get_variable("fast_CIN_w_" + str(idx),
                                              shape=[1, field_nums[0], fast_CIN_d*layer_size],
@@ -240,22 +266,19 @@ class XDeepFMModel(BaseModel):
                                              shape=[1, field_nums[-1], fast_CIN_d*layer_size],
                                              dtype=tf.float32)
 
-
                     self.cross_params.append(fast_w)
                     self.cross_params.append(fast_v)
 
-                    dot_result_1 = tf.nn.conv1d(nn_input, filters=fast_w, stride=1, padding='VALID')  # (B,D,d*H)
-                    dot_result_2 = tf.nn.conv1d(hidden_nn_layers[-1], filters=fast_v, stride=1, padding='VALID')  # (B,D,d*H)
+                    dot_result_1 = tf.nn.conv1d(nn_input, filters=fast_w, stride=1, padding='VALID')  # shape: ((B,D,d*H)
+                    dot_result_2 = tf.nn.conv1d(hidden_nn_layers[-1], filters=fast_v, stride=1, padding='VALID')  # shape: ((B,D,d*H)
                     dot_result = tf.reshape(tf.multiply(dot_result_1, dot_result_2), shape=[-1,hparams.dim,layer_size,fast_CIN_d])
-                    curr_out=tf.reduce_sum(dot_result,3, keepdims=False) #(B,D,H)
+                    curr_out=tf.reduce_sum(dot_result,3, keepdims=False) #shape: ((B,D,H)
 
-
-                # BIAS ADD
                 if bias:
                     b = tf.get_variable(name="f_b" + str(idx),
-                                    shape=[1, 1, layer_size],
-                                    dtype=tf.float32,
-                                    initializer=tf.zeros_initializer())
+                                        shape=[1, 1, layer_size],
+                                        dtype=tf.float32,
+                                        initializer=tf.zeros_initializer())
                     curr_out = tf.nn.bias_add(curr_out, b)
                     self.cross_params.append(b)
 
@@ -306,6 +329,16 @@ class XDeepFMModel(BaseModel):
         return exFM_out
 
     def _build_dnn(self, embed_out, embed_layer_size):
+        """
+        Construct the MLP part for the model.
+        This components provides implicit higher-order feature interactions.
+        Args:
+            embed_out: The output of field-embedding layer. This is the input for DNN.
+            embed_layer_size: shape of the embed_out
+
+        Returns:
+            prediction score made by fast CIN.
+        """
         hparams = self.hparams
         w_fm_nn_input = embed_out
         last_layer_size = embed_layer_size

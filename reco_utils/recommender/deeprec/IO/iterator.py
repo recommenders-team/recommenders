@@ -23,7 +23,20 @@ class BaseIterator(object):
 
 
 class FFMTextIterator(BaseIterator):
+    """
+    Data loader for FFM format based models, such as xDeepFM.
+    Iterator will not load the whole data into memory. Instead, it loads data into memory
+    per mini-batch, so that large files can be used as input data.
+    """
     def __init__(self,  hparams, graph, col_spliter=' ', ID_spliter = '%'):
+        """
+        Initialize an iterator. Create necessary placeholders for the model.
+        Args:
+            hparams: Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
+            graph: the running graph. All created placeholder will be added to this graph.
+            col_spliter: column spliter in one line.
+            ID_spliter: ID spliter in one line.
+        """
         self.feature_cnt = hparams.FEATURE_COUNT
         self.field_cnt = hparams.FIELD_COUNT
         self.col_spliter = col_spliter
@@ -42,6 +55,15 @@ class FFMTextIterator(BaseIterator):
             self.dnn_feat_shape = tf.placeholder(tf.int64, [None], name='dnn_feat_shape')
 
     def parser_one_line(self, line):
+        """
+        Parse one string line into feature values.
+        Args:
+            line: a string indicating one instance
+
+        Returns:
+            Parsed results,including label, features and impression_id
+
+        """
         impression_id = None
         words = line.strip().split(self.ID_spliter)
         if len(words) == 2:
@@ -64,6 +86,14 @@ class FFMTextIterator(BaseIterator):
         return label, features, impression_id
 
     def load_data_from_file(self, infile):
+        """
+        Read and parse data from a file.
+        Args:
+            infile: text input file. Each line in this file is an instance.
+
+        Returns:
+            An iterator that will yields parsed results, in the format of graph feed_dict.
+        """
         label_list = []
         features_list = []
         impression_id_list = []
@@ -94,6 +124,16 @@ class FFMTextIterator(BaseIterator):
                 yield self.gen_feed_dict(res)
 
     def _convert_data(self, labels, features):
+        """
+        Convert data into numpy arrays that are good for further operation.
+        Args:
+            labels: a list of ground-truth labels.
+            features: a 3-dimensional list, carrying a list (batch_size) of feature array,
+                    where each feature array is a list of [field_idx, feature_idx, feature_value] tuple.
+
+        Returns:
+            A dictionary, contains multiple numpy arrays that are convenient for further operation.
+        """
         dim = self.feature_cnt
         FIELD_COUNT = self.field_cnt
         instance_cnt = len(labels)
@@ -142,6 +182,15 @@ class FFMTextIterator(BaseIterator):
         return res
 
     def gen_feed_dict(self, data_dict):
+        """
+        Construct a dictionary that maps graph elements to values.
+        Args:
+            data_dict: a dictionary that maps string name to numpy arrays.
+
+        Returns:
+            a dictionary that maps graph elements to numpy arrays.
+
+        """
         feed_dict = {
             self.labels: data_dict['labels'],
             self.fm_feat_indices: data_dict['fm_feat_indices'],
