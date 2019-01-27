@@ -1,4 +1,3 @@
-
 import numpy as np
 import tensorflow as tf
 import abc
@@ -28,7 +27,8 @@ class FFMTextIterator(BaseIterator):
     Iterator will not load the whole data into memory. Instead, it loads data into memory
     per mini-batch, so that large files can be used as input data.
     """
-    def __init__(self,  hparams, graph, col_spliter=' ', ID_spliter = '%'):
+
+    def __init__(self, hparams, graph, col_spliter=" ", ID_spliter="%"):
         """
         Initialize an iterator. Create necessary placeholders for the model.
         Args:
@@ -45,14 +45,26 @@ class FFMTextIterator(BaseIterator):
 
         self.graph = graph
         with self.graph.as_default():
-            self.labels = tf.placeholder(tf.float32, [None, 1], name='label')
-            self.fm_feat_indices = tf.placeholder(tf.int64, [None, 2], name='fm_feat_indices')
-            self.fm_feat_values = tf.placeholder(tf.float32, [None], name='fm_feat_values')
-            self.fm_feat_shape = tf.placeholder(tf.int64, [None], name='fm_feat_shape')
-            self.dnn_feat_indices = tf.placeholder(tf.int64, [None, 2], name='dnn_feat_indices')
-            self.dnn_feat_values = tf.placeholder(tf.int64, [None], name='dnn_feat_values')
-            self.dnn_feat_weights = tf.placeholder(tf.float32, [None], name='dnn_feat_weights')
-            self.dnn_feat_shape = tf.placeholder(tf.int64, [None], name='dnn_feat_shape')
+            self.labels = tf.placeholder(tf.float32, [None, 1], name="label")
+            self.fm_feat_indices = tf.placeholder(
+                tf.int64, [None, 2], name="fm_feat_indices"
+            )
+            self.fm_feat_values = tf.placeholder(
+                tf.float32, [None], name="fm_feat_values"
+            )
+            self.fm_feat_shape = tf.placeholder(tf.int64, [None], name="fm_feat_shape")
+            self.dnn_feat_indices = tf.placeholder(
+                tf.int64, [None, 2], name="dnn_feat_indices"
+            )
+            self.dnn_feat_values = tf.placeholder(
+                tf.int64, [None], name="dnn_feat_values"
+            )
+            self.dnn_feat_weights = tf.placeholder(
+                tf.float32, [None], name="dnn_feat_weights"
+            )
+            self.dnn_feat_shape = tf.placeholder(
+                tf.int64, [None], name="dnn_feat_shape"
+            )
 
     def parser_one_line(self, line):
         """
@@ -77,11 +89,8 @@ class FFMTextIterator(BaseIterator):
         for word in cols[1:]:
             if not word.strip():
                 continue
-            tokens = word.split(':')
-            features.append(
-                [int(tokens[0]) - 1,
-                 int(tokens[1]) - 1,
-                 float(tokens[2])])
+            tokens = word.split(":")
+            features.append([int(tokens[0]) - 1, int(tokens[1]) - 1, float(tokens[2])])
 
         return label, features, impression_id
 
@@ -99,7 +108,7 @@ class FFMTextIterator(BaseIterator):
         impression_id_list = []
         cnt = 0
 
-        with tf.gfile.GFile(infile, 'r') as rd:
+        with tf.gfile.GFile(infile, "r") as rd:
             while True:
                 line = rd.readline()
                 if not line:
@@ -157,28 +166,39 @@ class FFMTextIterator(BaseIterator):
                     dnn_feat_dic[features[i][j][0]] = 0
                 else:
                     dnn_feat_dic[features[i][j][0]] += 1
-                dnn_feat_indices.append([i * FIELD_COUNT + features[i][j][0],
-                                         dnn_feat_dic[features[i][j][0]]])
+                dnn_feat_indices.append(
+                    [
+                        i * FIELD_COUNT + features[i][j][0],
+                        dnn_feat_dic[features[i][j][0]],
+                    ]
+                )
                 dnn_feat_values.append(features[i][j][1])
                 dnn_feat_weights.append(features[i][j][2])
                 if dnn_feat_shape[1] < dnn_feat_dic[features[i][j][0]]:
                     dnn_feat_shape[1] = dnn_feat_dic[features[i][j][0]]
         dnn_feat_shape[1] += 1
 
-        sorted_index = sorted(range(len(dnn_feat_indices)),
-                              key=lambda k: (dnn_feat_indices[k][0],
-                                             dnn_feat_indices[k][1]))
+        sorted_index = sorted(
+            range(len(dnn_feat_indices)),
+            key=lambda k: (dnn_feat_indices[k][0], dnn_feat_indices[k][1]),
+        )
 
         res = {}
-        res['fm_feat_indices'] = np.asarray(fm_feat_indices, dtype=np.int64)
-        res['fm_feat_values'] = np.asarray(fm_feat_values, dtype=np.float32)
-        res['fm_feat_shape'] = np.asarray(fm_feat_shape, dtype=np.int64)
-        res['labels'] = np.asarray([[label] for label in labels], dtype=np.float32)
+        res["fm_feat_indices"] = np.asarray(fm_feat_indices, dtype=np.int64)
+        res["fm_feat_values"] = np.asarray(fm_feat_values, dtype=np.float32)
+        res["fm_feat_shape"] = np.asarray(fm_feat_shape, dtype=np.int64)
+        res["labels"] = np.asarray([[label] for label in labels], dtype=np.float32)
 
-        res['dnn_feat_indices'] = np.asarray(dnn_feat_indices, dtype=np.int64)[sorted_index]
-        res['dnn_feat_values'] = np.asarray(dnn_feat_values, dtype=np.int64)[sorted_index]
-        res['dnn_feat_weights'] = np.asarray(dnn_feat_weights, dtype=np.float32)[sorted_index]
-        res['dnn_feat_shape'] = np.asarray(dnn_feat_shape, dtype=np.int64)
+        res["dnn_feat_indices"] = np.asarray(dnn_feat_indices, dtype=np.int64)[
+            sorted_index
+        ]
+        res["dnn_feat_values"] = np.asarray(dnn_feat_values, dtype=np.int64)[
+            sorted_index
+        ]
+        res["dnn_feat_weights"] = np.asarray(dnn_feat_weights, dtype=np.float32)[
+            sorted_index
+        ]
+        res["dnn_feat_shape"] = np.asarray(dnn_feat_shape, dtype=np.int64)
         return res
 
     def gen_feed_dict(self, data_dict):
@@ -192,14 +212,13 @@ class FFMTextIterator(BaseIterator):
 
         """
         feed_dict = {
-            self.labels: data_dict['labels'],
-            self.fm_feat_indices: data_dict['fm_feat_indices'],
-            self.fm_feat_values: data_dict['fm_feat_values'],
-            self.fm_feat_shape: data_dict['fm_feat_shape'],
-
-            self.dnn_feat_indices: data_dict['dnn_feat_indices'],
-            self.dnn_feat_values: data_dict['dnn_feat_values'],
-            self.dnn_feat_weights: data_dict['dnn_feat_weights'],
-            self.dnn_feat_shape: data_dict['dnn_feat_shape']
+            self.labels: data_dict["labels"],
+            self.fm_feat_indices: data_dict["fm_feat_indices"],
+            self.fm_feat_values: data_dict["fm_feat_values"],
+            self.fm_feat_shape: data_dict["fm_feat_shape"],
+            self.dnn_feat_indices: data_dict["dnn_feat_indices"],
+            self.dnn_feat_values: data_dict["dnn_feat_values"],
+            self.dnn_feat_weights: data_dict["dnn_feat_weights"],
+            self.dnn_feat_shape: data_dict["dnn_feat_shape"],
         }
         return feed_dict
