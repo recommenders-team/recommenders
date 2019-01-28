@@ -52,16 +52,6 @@ import logging
 
 import time as tm
 
-# import default parameters
-from reco_utils.common.constants import (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
-    PREDICTION_COL,
-)
-
-
 # for logging
 log = logging.getLogger(__name__)
 
@@ -71,10 +61,6 @@ class RBM:
     # initialize class parameters
     def __init__(
         self,
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
         hidden_units=500,
         keep_prob=0.7,
         init_stdv=0.1,
@@ -82,50 +68,43 @@ class RBM:
         minibatch_size=100,
         training_epoch=20,
         display_epoch=10,
-        cd_protocol=[50, 70, 80, 90, 100],
+        sampling_protocol=[50, 70, 80, 90, 100],
         save_path=None,
         debug=False,
         with_metrics=False,
     ):
 
-        # pandas DF parameters
-        self.col_rating = col_rating
-        self.col_prediction = col_prediction
-
-        self.col_item = col_item
-        self.col_user = col_user
-
         # RBM parameters
-        self.Nh_ = hidden_units  # number of hidden units
+        self.Nhidden = hidden_units  # number of hidden units
         self.keep = keep_prob  # keep probability for dropout regularization
-        self.std = (
-            init_stdv
-        )  # standard deviation used to initialize the weights matrices
-        self.alpha = (
-            learning_rate
-        )  # learning rate used in the update method of the optimizer
+
+        # standard deviation used to initialize the weights matrices
+        self.stdv = init_stdv
+
+        # learning rate used in the update method of the optimizer
+        self.learning_rate = learning_rate
 
         # size of the minibatch used in the random minibatches training; setting to 1 correspods to
         # stochastic gradient descent, and it is considerably slower.Good performance is achieved
         # for a size of ~100.
         self.minibatch = minibatch_size
         self.epochs = training_epoch + 1  # number of epochs used to train the model
-        self.display = (
-            display_epoch
-        )  # number of epochs to show the mse error during training
 
-        self.cd_protol = (
-            cd_protocol
-        )  # protocol to increase Gibbs sampling's step. Array containing the
+        # number of epochs to show the mse error during training
+        self.display = display_epoch
+
+        # protocol to increase Gibbs sampling's step. Array containing the
         # percentage of the total training epoch when the step increases by 1
+        self.sampling_protocol = sampling_protocol
 
         # Options to save the model for future use
         self.save_path = save_path
 
-        self.debug = (
-            debug
-        )  # if true, functions print their control paramters and/or outputs
-        self.with_metrics = with_metrics  # compute msre and accuracy during training
+        # if true, functions print their control paramters and/or outputs
+        self.debug = debug
+
+        # if true, compute msre and accuracy during training
+        self.with_metrics = with_metrics
 
         # Initialize the start time
         self.start_time = None
@@ -161,7 +140,7 @@ class RBM:
         #    return None
 
     # Binomial sampling
-    def B_sampling(self, pr):
+    def binomial_sampling(self, pr):
 
         """
         Binomial sampling of hidden units activations using a rejection method.
@@ -193,7 +172,7 @@ class RBM:
         return h_sampled
 
     # Multinomial sampling
-    def M_sampling(self, pr):
+    def multinomial_sampling(self, pr):
 
         """
         Multinomial Sampling of ratings
@@ -235,7 +214,7 @@ class RBM:
         return v_samp
 
     # Multinomial distribution
-    def Pm(self, phi):
+    def multinomial_distribution(self, phi):
 
         """
         Probability that unit v has value l given phi: P(v=l|phi)
@@ -250,15 +229,16 @@ class RBM:
 
         """
 
-        num = [
+        numerator = [
             tf.exp(tf.multiply(tf.constant(k, dtype="float32"), phi))
             for k in range(1, self.r_ + 1)
         ]
-        den = tf.reduce_sum(num, axis=0)
 
-        pr = tf.div(num, den)
+        denominator = tf.reduce_sum(numerator, axis=0)
 
-        return tf.transpose(pr, perm=[1, 2, 0])
+        prob = tf.div(numerator, denominator)
+
+        return tf.transpose(prob, perm=[1, 2, 0])
 
     # Free energy
     def free_energy(self, x):
@@ -287,12 +267,9 @@ class RBM:
     # Define graph topology
     # ==================================
 
-    # Initialize graph
-    # with self.graph.as_default():
-
     # Initialize the placeholders for the visible units
     def placeholder(self):
-        self.vu = tf.placeholder(shape=[None, self.Nv_], dtype="float32")
+        self.vu = tf.placeholder(shape=[None, self.Nvisible], dtype="float32")
 
     # initialize the parameters of the model.
     def init_parameters(self):
@@ -308,8 +285,8 @@ class RBM:
         Returns:
             w (tensor, float32): (Nv, Nh) correlation matrix initialized by sampling from a normal distribution with
                zero mean and given variance init_stdv.
-           bv (tensor, float32): (1, Nv) visible units' bias, initialized to zero.
-           bh (tensor, float32): (1, Nh) hidden units' bias, initiliazed to zero.
+           bv (tensor, float32): (1, Nvisible) visible units' bias, initialized to zero.
+           bh (tensor, float32): (1, Nhidden) hidden units' bias, initiliazed to zero.
 
         """
 
@@ -319,19 +296,19 @@ class RBM:
 
             self.w = tf.get_variable(
                 "weight",
-                [self.Nv_, self.Nh_],
-                initializer=tf.random_normal_initializer(stddev=self.std, seed=1),
+                [self.Nvisible, self.Nhidden],
+                initializer=tf.random_normal_initializer(stddev=self.stdv, seed=1),
                 dtype="float32",
             )
             self.bv = tf.get_variable(
                 "v_bias",
-                [1, self.Nv_],
+                [1, self.Nvisible],
                 initializer=tf.zeros_initializer(),
                 dtype="float32",
             )
             self.bh = tf.get_variable(
                 "h_bias",
-                [1, self.Nh_],
+                [1, self.Nhidden],
                 initializer=tf.zeros_initializer(),
                 dtype="float32",
             )
@@ -350,7 +327,7 @@ class RBM:
     """
 
     # sample the hidden units given the visibles
-    def sample_h(self, vv):
+    def sample_hidden_units(self, vv):
 
         """
         Sample hidden units given the visibles. This can be thought of as a Forward pass step in a FFN
@@ -371,14 +348,14 @@ class RBM:
             phv_reg = tf.nn.dropout(phv, self.keep)
 
             # Sampling
-            h_ = self.B_sampling(
+            h_ = self.binomial_sampling(
                 phv_reg
             )  # obtain the value of the hidden units via Bernoulli sampling
 
         return phv, h_
 
     # sample the visible units given the hidden
-    def sample_v(self, h):
+    def sample_visible_units(self, h):
 
         """
         Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN (negative phase)
@@ -405,12 +382,17 @@ class RBM:
         with tf.name_scope("sample_visible_units"):
 
             phi_h = tf.matmul(h, tf.transpose(self.w)) + self.bv  # linear combination
-            pvh = self.Pm(phi_h)  # conditional probability of v given h
+            pvh = self.multinomial_distribution(
+                phi_h
+            )  # conditional probability of v given h
 
             # Sampling (modify here )
-            v_tmp = self.M_sampling(pvh)  # sample the value of the visible units
+            v_tmp = self.multinomial_sampling(
+                pvh
+            )  # sample the value of the visible units
 
             mask = tf.equal(self.v, 0)  # selects the inactive units in the input vector
+
             v_ = tf.where(
                 mask, x=self.v, y=v_tmp
             )  # enforce inactive units in the reconstructed vector
@@ -433,7 +415,7 @@ class RBM:
 
     # 1) Gibbs Sampling
 
-    def G_sampling(self):
+    def gibbs_sampling(self):
 
         """
         Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary RBM we need to
@@ -459,11 +441,11 @@ class RBM:
                 print("CD step", self.k)
 
             for i in range(self.k):  # k_sampling
-                _, h_k = self.sample_h(self.v_k)
-                _, self.v_k = self.sample_v(h_k)
+                _, h_k = self.sample_hidden_units(self.v_k)
+                _, self.v_k = self.sample_visible_units(h_k)
 
     # 2) Contrastive divergence
-    def Losses(self, vv):
+    def losses(self, vv):
 
         """
         Loss functions
@@ -484,34 +466,40 @@ class RBM:
 
         return obj
 
-    def Gibbs_protocol(self, i):
+    def gibbs_protocol(self, i):
+
         """
         Gibbs protocol
 
         Args:
             i (scalar, integer): current epoch in the loop
 
-        Returns: G_sampling --> v_k (tensor, float32) evaluated at k steps
+        Returns: gibbs_sampling --> v_k (tensor, float32) evaluated at k steps
 
         Basic mechanics:
             If the current epoch i is in the interval specified in the training protocol cd_protocol_,
-            the number of steps in Gibbs sampling (k) is incremented by one and G_sampling is updated
+            the number of steps in Gibbs sampling (k) is incremented by one and gibbs_sampling is updated
             accordingly.
 
         """
 
         with tf.name_scope("gibbs_protocol"):
 
-            per = (i / self.epochs) * 100  # current percentage of the total #epochs
+            epoch_percentage = (
+                i / self.epochs
+            ) * 100  # current percentage of the total #epochs
 
-            if per != 0:
-                if per >= self.cd_protol[self.l] and per <= self.cd_protol[self.l + 1]:
+            if epoch_percentage != 0:
+                if (
+                    epoch_percentage >= self.sampling_protocol[self.l]
+                    and epoch_percentage <= self.sampling_protocol[self.l + 1]
+                ):
                     self.k += 1
                     self.l += 1
-                    self.G_sampling()
+                    self.gibbs_sampling()
 
             if self.debug:
-                log.info("percentage of epochs covered so far %f2" % (per))
+                log.info("percentage of epochs covered so far %f2" % (epoch_percentage))
 
     # ================================================
     # model performance (online metrics)
@@ -535,8 +523,8 @@ class RBM:
 
         with tf.name_scope("inference"):
             # predict a new value
-            _, h_p = self.sample_h(self.v)
-            pvh, vp = self.sample_v(h_p)
+            _, h_p = self.sample_hidden_units(self.v)
+            pvh, vp = self.sample_visible_units(h_p)
 
         return pvh, vp
 
@@ -578,10 +566,10 @@ class RBM:
 
         return ac_score
 
-    def msr_error(self, vp):
+    def msre(self, vp):
 
         """
-        Mean square root error
+        Mean Square Root Error
 
         Note that this needs to be evaluated on the rated items only
 
@@ -595,7 +583,7 @@ class RBM:
 
         """
 
-        with tf.name_scope("msr_error"):
+        with tf.name_scope("msre"):
 
             mask = tf.not_equal(self.v, 0)  # selects only the rated items
             n_values = tf.reduce_sum(
@@ -646,7 +634,9 @@ class RBM:
         self.time()
 
         self.r_ = xtr.max()  # defines the rating scale, e.g. 1 to 5
-        m, self.Nv_ = xtr.shape  # dimension of the input: m= N_users, Nv= N_items
+        m, self.Nvisible = (
+            xtr.shape
+        )  # dimension of the input: m= N_users, Nvisible= N_items
 
         num_minibatches = int(m / self.minibatch)  # number of minibatches
 
@@ -658,14 +648,14 @@ class RBM:
         # create the visible units placeholder
         self.placeholder()
 
-        self.batch_size_ = tf.placeholder(tf.int64)
+        self.batch_size = tf.placeholder(tf.int64)
 
         # Create the data pipeline for faster training
         self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
         self.dataset = self.dataset.shuffle(
             buffer_size=50, reshuffle_each_iteration=True, seed=123
         )  # randomize the batch
-        self.dataset = self.dataset.batch(batch_size=self.batch_size_).repeat()
+        self.dataset = self.dataset.batch(batch_size=self.batch_size).repeat()
 
         self.iter = self.dataset.make_initializable_iterator()
         self.v = self.iter.get_next()
@@ -678,10 +668,12 @@ class RBM:
         self.l = 0  # initialize epoch_sample index
         # -------------------------Main algo---------------------------
 
-        self.G_sampling()  # returns the sampled value of the visible units
+        self.gibbs_sampling()  # returns the sampled value of the visible units
 
-        obj = self.Losses(self.v)  # objective function
-        rate = self.alpha / self.minibatch  # learning rate rescaled by the batch size
+        obj = self.losses(self.v)  # objective function
+        rate = (
+            self.learning_rate / self.minibatch
+        )  # learning rate rescaled by the batch size
 
         # Instantiate the optimizer
         opt = tf.contrib.optimizer_v2.AdamOptimizer(learning_rate=rate).minimize(
@@ -695,7 +687,7 @@ class RBM:
         if self.with_metrics:  # if true (default) returns evaluation metrics
             Mse_train = []  # Lists to collect the metrics across epochs
             # Metrics
-            Mserr = self.msr_error(self.v_k)
+            Mserr = self.msre(self.v_k)
             Clacc = self.accuracy(self.v_k)
 
         if self.save_path != None:  # save the model to file
@@ -715,7 +707,7 @@ class RBM:
 
         self.sess.run(
             self.iter.initializer,
-            feed_dict={self.vu: xtr, self.batch_size_: self.minibatch},
+            feed_dict={self.vu: xtr, self.batch_size: self.minibatch},
         )
 
         if (
@@ -727,7 +719,7 @@ class RBM:
 
                 epoch_tr_err = 0  # initialize the training error for each epoch to zero
 
-                self.Gibbs_protocol(
+                self.gibbs_protocol(
                     i
                 )  # updates the number of sampling steps in Gibbs sampling
 
@@ -750,7 +742,7 @@ class RBM:
 
             self.sess.run(
                 self.iter.initializer,
-                feed_dict={self.vu: xtst, self.batch_size_: xtst.shape[0]},
+                feed_dict={self.vu: xtst, self.batch_size: xtst.shape[0]},
             )
             precision_test = self.sess.run(Clacc)
             rmse_test = self.sess.run(Mserr)
