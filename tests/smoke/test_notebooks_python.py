@@ -83,6 +83,8 @@ def test_adb_setup(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["lib_install_code"] == 200 
+    ## 200 if the cluster is avail, 400 if the cluster is off
+    assert results["lib_install_code"] == 200 or results["lib_install_code"] == 400
+    ## this should always be able to be 200
     assert results["lib_status_code"] == 200 
     assert results["nb_upload_code"] == 200 or (results["nb_upload_code"] == 400 and results["nb_upload_json"].error_code == "RESOURCE_ALREADY_EXISTS")
