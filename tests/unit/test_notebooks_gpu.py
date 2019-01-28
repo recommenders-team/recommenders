@@ -16,7 +16,11 @@ def test_gpu_vm():
 @pytest.mark.gpu
 def test_fastai(notebooks):
     notebook_path = notebooks["fastai"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+    pm.execute_notebook(notebook_path, 
+                        OUTPUT_NOTEBOOK, 
+                        kernel_name=KERNEL_NAME,
+                        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1)
+                        )
 
 
 @pytest.mark.notebooks
