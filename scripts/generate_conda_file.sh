@@ -88,6 +88,8 @@ fi
 # $ python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 #
 
+name: recommenders
+
 channels:
 - conda-forge
 - pytorch
