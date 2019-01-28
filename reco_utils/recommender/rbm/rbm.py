@@ -14,7 +14,7 @@ the paper.This means that the weights are rank 2 (matrices) instead of rank 3 te
 Basic mechanics:
 
 1) A computational graph is created when the RBM class is instantiated;
-        For an items based recommender this consists of:
+        For an item based recommender this consists of:
         -- visible units: The number Nv of visible units equals the number of items
         -- hidden units : hyperparameter to fix during training
 
@@ -32,7 +32,7 @@ Basic mechanics:
 3) Optimization:
          The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
          and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
-          minimizing the differene F_0 - F_k.
+         minimizing the differene F_0 - F_k.
 
 4) Inference
         Once the joint probability distribution P(v,h) is learned, this is used to generate ratings
@@ -84,7 +84,7 @@ class RBM:
         # learning rate used in the update method of the optimizer
         self.learning_rate = learning_rate
 
-        # size of the minibatch used in the random minibatches training; setting to 1 correspods to
+        # size of the minibatch used in the random minibatches training; setting to 1 correspoNds to
         # stochastic gradient descent, and it is considerably slower.Good performance is achieved
         # for a size of ~100.
         self.minibatch = minibatch_size
@@ -115,7 +115,6 @@ class RBM:
     # Helper functions
     # ========================
 
-    # stateful time function
     def time(self):
         """
         Time a particular section of the code - call this once to set the state somewhere
@@ -139,18 +138,10 @@ class RBM:
         # else:
         #    return None
 
-    # Binomial sampling
     def binomial_sampling(self, pr):
 
         """
         Binomial sampling of hidden units activations using a rejection method.
-
-        Args:
-            pr (tensor, float32): input conditional probability
-            g  (np.array, float32):  uniform probability used for comparison
-
-        Returns:
-            h_sampled (tensor, float32): sampled units. The value is 1 if pr>g and 0 otherwise.
 
         Basic mechanics:
             1) Extract a random number from a uniform distribution (g) and compare it with
@@ -158,6 +149,13 @@ class RBM:
 
             2) Choose 0 if pr<g, 1 otherwise. It is convenient to implement this condtion using
                the relu function.
+
+        Args:
+            pr (tensor, float32): input conditional probability
+            g  (np.array, float32):  uniform probability used for comparison
+
+        Returns:
+            h_sampled (tensor, float32): sampled units. The value is 1 if pr>g and 0 otherwise.
 
         """
 
@@ -171,19 +169,10 @@ class RBM:
 
         return h_sampled
 
-    # Multinomial sampling
     def multinomial_sampling(self, pr):
 
         """
         Multinomial Sampling of ratings
-
-        Args:
-            pr (tensor, float32): a distributions of shape (m, n, r), where m is the number of examples, n the number
-                 of features and r the number of classes. pr needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
-            f (tensor, float32): normalized, uniform probability used for comparison.
-
-        Returns:
-            v_samp (tensor, float32): an (m,n) tensor of sampled rankings from 1 to r .
 
         Basic mechanics:
                 For r classes, we sample r binomial distributions using the rejection method. This is possible
@@ -196,6 +185,14 @@ class RBM:
                 2) For each user and item, compare pr with the reference distribution. Note that the latter needs
                    to be the same for ALL the user/item pairs in the dataset, as by assumptions they are sampled
                    from a common distribution.
+
+        Args:
+            pr (tensor, float32): a distributions of shape (m, n, r), where m is the number of examples, n the number
+                 of features and r the number of classes. pr needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
+            f (tensor, float32): normalized, uniform probability used for comparison.
+
+        Returns:
+            v_samp (tensor, float32): an (m,n) tensor of sampled rankings from 1 to r .
 
         """
 
@@ -213,7 +210,6 @@ class RBM:
 
         return v_samp
 
-    # Multinomial distribution
     def multinomial_distribution(self, phi):
 
         """
@@ -231,7 +227,7 @@ class RBM:
 
         numerator = [
             tf.exp(tf.multiply(tf.constant(k, dtype="float32"), phi))
-            for k in range(1, self.r_ + 1)
+            for k in range(1, self.ratings + 1)
         ]
 
         denominator = tf.reduce_sum(numerator, axis=0)
@@ -240,7 +236,6 @@ class RBM:
 
         return tf.transpose(prob, perm=[1, 2, 0])
 
-    # Free energy
     def free_energy(self, x):
 
         """
@@ -300,12 +295,14 @@ class RBM:
                 initializer=tf.random_normal_initializer(stddev=self.stdv, seed=1),
                 dtype="float32",
             )
+
             self.bv = tf.get_variable(
                 "v_bias",
                 [1, self.Nvisible],
                 initializer=tf.zeros_initializer(),
                 dtype="float32",
             )
+
             self.bh = tf.get_variable(
                 "h_bias",
                 [1, self.Nhidden],
@@ -362,13 +359,6 @@ class RBM:
         Each visible unit can take values in [1,r], while the zero is reserved for missing data; as such the value of the
         hidden unit is sampled from a multinomial distribution.
 
-        Args:
-            h (tensor, float32): visible units
-
-        Returns:
-            pvh (tensor, float32): activation probability of the visible unit given the hidden
-            v_ (tensor, float32): sampled value of the visible unit from a Multinomial distributions having success probability pvh.
-
         Basic mechanics:
            1) For every training example we first sample Nv Multinomial distributions. The result is of the form [0,1,0,0,0,...,0]
               where the index of the 1 element corresponds to the rth rating. The index is extracted using the argmax function and
@@ -376,6 +366,13 @@ class RBM:
 
            2) Selects only those units that have been sampled. During the training phase it is important to not use the reconstructed
               inputs, so we beed to enforce a zero value in the reconstructed ratings in the same position as the original input.
+
+        Args:
+            h (tensor, float32): visible units
+
+        Returns:
+            pvh (tensor, float32): activation probability of the visible unit given the hidden
+            v_ (tensor, float32): sampled value of the visible unit from a Multinomial distributions having success probability pvh.
 
         """
 
@@ -471,15 +468,15 @@ class RBM:
         """
         Gibbs protocol
 
-        Args:
-            i (scalar, integer): current epoch in the loop
-
-        Returns: gibbs_sampling --> v_k (tensor, float32) evaluated at k steps
-
         Basic mechanics:
             If the current epoch i is in the interval specified in the training protocol cd_protocol_,
             the number of steps in Gibbs sampling (k) is incremented by one and gibbs_sampling is updated
             accordingly.
+
+        Args:
+            i (scalar, integer): current epoch in the loop
+
+        Returns: gibbs_sampling --> v_k (tensor, float32) evaluated at k steps
 
         """
 
@@ -510,7 +507,7 @@ class RBM:
 
         """
         Prediction: A training example is used to activate the hidden unit that in turns produce new ratings for the
-                        visible units, both for the rated and unrated examples.
+                    visible units, both for the rated and unrated examples.
 
         Args:
             xtr (np.array, float32): example from dataset. This can be either the test/train set
@@ -579,8 +576,6 @@ class RBM:
         Returns:
             err (tensor, float32): msr error
 
-        Returns:
-
         """
 
         with tf.name_scope("msre"):
@@ -606,8 +601,157 @@ class RBM:
     # Training ops
     # =========================
 
-    def fit(self, xtr, xtst):
+    def data_pipeline(self):
 
+        """
+        Define the data pipeline
+        """
+
+        # placeholder for the batch_size
+        self.batch_size = tf.placeholder(tf.int64)
+
+        # Create the data pipeline for faster training
+        self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
+
+        self.dataset = self.dataset.shuffle(
+            buffer_size=50, reshuffle_each_iteration=True, seed=123
+        )  # randomize the batch
+
+        self.dataset = self.dataset.batch(batch_size=self.batch_size).repeat()
+
+        # define iterator
+        self.iter = self.dataset.make_initializable_iterator()
+        self.v = self.iter.get_next()
+
+    def init_metrics(self):
+
+        if self.with_metrics:  # if true (default) returns evaluation metrics
+            self.Mserr = self.msre(self.v_k)
+            self.Clacc = self.accuracy(self.v_k)
+
+    def train_test_precision(self, xtst):
+        """
+        Evaluates precision on the train and test set
+
+        Args:
+            xtst (np.array, integer32): the user/affinity matrix for the test set
+
+        Returns:
+            precision_train (scalar, float32): precision on the train set
+            precision_test  (scalar, float32): precision on the test set
+        """
+
+        if self.with_metrics:
+
+            precision_train = self.sess.run(self.Clacc)
+
+            self.sess.run(
+                self.iter.initializer,
+                feed_dict={self.vu: xtst, self.batch_size: xtst.shape[0]},
+            )
+
+            precision_test = self.sess.run(self.Clacc)
+
+        else:
+            precision_train = None
+            precision_test = None
+
+        return precision_train, precision_test
+
+    def display_metrics(self, Mse_train, precision_train, precision_test):
+
+        """
+        Display training/test metrics and plots the msre error as a function
+        of the training epochs
+
+        Args:
+            Mse_train (list, float32): per epoch msre on the train set
+            precision_train (scalar, float32): precision on the train set
+            precision_test  (scalar, float32): precision on the test set
+
+        """
+        if self.with_metrics:
+
+            # Display training error as a function of epochs
+            plt.plot(Mse_train, label="train")
+            plt.ylabel("msr_error", size="x-large")
+            plt.xlabel("epochs", size="x-large")
+            plt.legend(ncol=1)
+
+            # Final precision scores
+            log.info("Train set accuracy %f2" % precision_train)
+            log.info("Test set accuracy %f2" % precision_test)
+
+    def generate_graph(self):
+
+        """
+        Call the different RBM modules to generate the computational graph
+        """
+        log.info("Creating the computational graph")
+
+        self.placeholder()  # create the visible units placeholder
+        self.data_pipeline()  # data_pipeline
+        self.init_parameters()  # initialize Network parameters
+
+        # --------------Initialize protocol for Gibbs sampling------------------
+        log.info("Initialize Gibbs protocol")
+        self.k = 1  # initialize the G_sampling step
+        self.l = 0  # initialize epoch_sample index
+        self.gibbs_sampling()  # returns the sampled value of the visible units
+
+        # ---Instantiate loss function and optimizer----------------------------
+        obj = self.losses(self.v)  # objective function
+        rate = (
+            self.learning_rate / self.minibatch
+        )  # learning rate rescaled by the batch size
+        self.opt = tf.contrib.optimizer_v2.AdamOptimizer(learning_rate=rate).minimize(
+            loss=obj
+        )  # Instantiate the optimizer
+
+    def init_gpu(self):
+        """
+        Config GPU memory
+        """
+
+        self.config_gpu = tf.ConfigProto(
+            log_device_placement=True, allow_soft_placement=True
+        )
+        self.config_gpu.gpu_options.allow_growth = True  # dynamic memory allocation
+
+    def init_training_session(self, xtr):
+        """
+        Initialize the TF session on training data
+        """
+
+        init_graph = tf.global_variables_initializer()
+
+        # Start TF training session on default graph
+        self.sess = tf.Session(config=self.config_gpu)
+        self.sess.run(init_graph)
+
+        self.sess.run(
+            self.iter.initializer,
+            feed_dict={self.vu: xtr, self.batch_size: self.minibatch},
+        )
+
+    def batch_training(self, num_minibatches):
+
+        epoch_tr_err = 0  # initialize the training error for each epoch to zero
+
+        if self.with_metrics:
+
+            for l in range(num_minibatches):  # minibatch loop
+                _, batch_err = self.sess.run([self.opt, self.Mserr])
+                # average msr error per minibatch
+                epoch_tr_err += batch_err / num_minibatches
+
+        else:
+            for l in range(num_minibatches):  # minibatch loop
+                _ = self.sess.run(self.opt)
+
+        return epoch_tr_err
+
+    def fit(self, xtr, xtst):
         """
         Fit method
 
@@ -620,165 +764,48 @@ class RBM:
 
         Returns:
             elapsed (scalar, float32): elapsed time during training
-
-            optional:
-            msre (scalar, float32): the mean square root error per training epoch
-            precision (scalar, float32): the mean average precision over the entire dataset
-
         """
 
         # keep the position of the items in the train set so that they can be optionally exluded from recommendation
         self.seen_mask = np.not_equal(xtr, 0)
-
-        # start timing the methos
         self.time()
+        self.ratings = xtr.max()  # obtain the rating scale, e.g. 1 to 5
 
-        self.r_ = xtr.max()  # defines the rating scale, e.g. 1 to 5
-        m, self.Nvisible = (
-            xtr.shape
-        )  # dimension of the input: m= N_users, Nvisible= N_items
-
+        m, self.Nvisible = xtr.shape  # m= # users, Nvisible= # items
         num_minibatches = int(m / self.minibatch)  # number of minibatches
 
         tf.reset_default_graph()
-        # ----------------------Initialize all parameters----------------
-
-        log.info("Creating the computational graph")
-
-        # create the visible units placeholder
-        self.placeholder()
-
-        self.batch_size = tf.placeholder(tf.int64)
-
-        # Create the data pipeline for faster training
-        self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
-        self.dataset = self.dataset.shuffle(
-            buffer_size=50, reshuffle_each_iteration=True, seed=123
-        )  # randomize the batch
-        self.dataset = self.dataset.batch(batch_size=self.batch_size).repeat()
-
-        self.iter = self.dataset.make_initializable_iterator()
-        self.v = self.iter.get_next()
-
-        # initialize Network paramters
-        self.init_parameters()
-
-        # --------------Sampling protocol for Gibbs sampling-----------------------------------
-        self.k = 1  # initialize the G_sampling step
-        self.l = 0  # initialize epoch_sample index
-        # -------------------------Main algo---------------------------
-
-        self.gibbs_sampling()  # returns the sampled value of the visible units
-
-        obj = self.losses(self.v)  # objective function
-        rate = (
-            self.learning_rate / self.minibatch
-        )  # learning rate rescaled by the batch size
-
-        # Instantiate the optimizer
-        opt = tf.contrib.optimizer_v2.AdamOptimizer(learning_rate=rate).minimize(
-            loss=obj
-        )
-
-        pvh, vp = (
-            self.infere()
-        )  # sample the value of the visible units given the hidden. Also returns  the related probabilities
-
-        if self.with_metrics:  # if true (default) returns evaluation metrics
-            Mse_train = []  # Lists to collect the metrics across epochs
-            # Metrics
-            Mserr = self.msre(self.v_k)
-            Clacc = self.accuracy(self.v_k)
 
         if self.save_path != None:  # save the model to file
             saver = tf.train.Saver()
 
-        init_g = (
-            tf.global_variables_initializer()
-        )  # Initialize all variables in the graph
+        # ----------------------Initializers-------------------------------------
+        self.generate_graph()
+        self.init_metrics()
+        self.init_gpu()
+        self.init_training_session(xtr)
 
-        # Config GPU memory
-        Config = tf.ConfigProto(log_device_placement=True, allow_soft_placement=True)
-        Config.gpu_options.allow_growth = True  # dynamics memory allocation
+        Mse_train = []  # List to collect the metrics across epochs
 
-        # Start TF training session on default graph
-        self.sess = tf.Session(config=Config)
-        self.sess.run(init_g)
+        # start loop over training epochs
+        for i in range(self.epochs):
 
-        self.sess.run(
-            self.iter.initializer,
-            feed_dict={self.vu: xtr, self.batch_size: self.minibatch},
-        )
+            self.gibbs_protocol(i)  # Gibbs sampling update
+            epoch_tr_err = self.batch_training(num_minibatches)  # model train
 
-        if (
-            self.with_metrics
-        ):  # this condition is for benchmarking, remove for production
+            if self.with_metrics == True and i % self.display == 0:
+                log.info("training epoch %i rmse Train %f" % (i, epoch_tr_err))
 
-            # start loop over training epochs
-            for i in range(self.epochs):
+            Mse_train.append(epoch_tr_err)  # mse training error per training epoch
 
-                epoch_tr_err = 0  # initialize the training error for each epoch to zero
+        # optionally evaluate precision metrics
+        precision_train, precision_test = self.train_test_precision(xtst)
+        elapsed = self.time()
 
-                self.gibbs_protocol(
-                    i
-                )  # updates the number of sampling steps in Gibbs sampling
+        log.info("done training, Training time %f2" % elapsed)
 
-                for l in range(num_minibatches):
+        self.display_metrics(Mse_train, precision_train, precision_test)
 
-                    _, batch_err = self.sess.run([opt, Mserr])
-
-                    epoch_tr_err += (
-                        batch_err / num_minibatches
-                    )  # average msr error per minibatch
-
-                if i % self.display == 0:
-                    log.info("training epoch %i rmse Train %f" % (i, epoch_tr_err))
-
-                # write metrics across epochs
-                Mse_train.append(epoch_tr_err)  # mse training error per training epoch
-
-            # Evaluates precision on the train and test set
-            precision_train = self.sess.run(Clacc)
-
-            self.sess.run(
-                self.iter.initializer,
-                feed_dict={self.vu: xtst, self.batch_size: xtst.shape[0]},
-            )
-            precision_test = self.sess.run(Clacc)
-            rmse_test = self.sess.run(Mserr)
-
-            elapsed = self.time()
-
-            log.info("done training, Training time %f2" % elapsed)
-
-            # Display training error as a function of epochs
-            plt.plot(Mse_train, label="train")
-            plt.ylabel("msr_error", size="x-large")
-            plt.xlabel("epochs", size="x-large")
-            plt.legend(ncol=1)
-
-            # Final precision scores
-            log.info("Train set accuracy %f2" % precision_train)
-            log.info("Test set accuracy %f2" % precision_test)
-
-        else:
-
-            # start loop over training epochs
-            for i in range(self.epochs):
-
-                self.Gibbs_protocol(
-                    i
-                )  # updates the number of sampling steps in Gibbs sampling
-
-                for l in range(num_minibatches):
-
-                    _ = self.sess.run(opt)
-
-            elapsed = self.time()
-
-            log.info("done training, Training time %f2" % elapsed)
-
-        # --------------Save learning parameters and close session----------------------------
         if self.save_path != None:  # save the model to specified path
             saver.save(self.sess, self.save_path_ + "/rbm_model_saver.ckpt")
 
@@ -813,14 +840,6 @@ class RBM:
         """
         Returns the top-k items ordered by a relevancy score.
 
-        Args:
-            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
-            of a single user.
-            top_k (scalar, int32): the number of items to recommend.
-
-        Returns:
-            top_scores (np.array, float32): a sparse matrix containing the top_k elements ordered by their score.
-
         Basic mechanics:
             The method can be called either within the same session or by restoring a previous session from file.
             If save_path is defined, a graph is generated and then populated with the pre-trained values of the
@@ -839,7 +858,16 @@ class RBM:
 
             then item2 will be recommended.
 
+        Args:
+            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
+            of a single user.
+            top_k (scalar, int32): the number of items to recommend.
+
+        Returns:
+            top_scores (np.array, float32): a sparse matrix containing the top_k elements ordered by their score.
+
         """
+
         self.time()
 
         if (
@@ -910,14 +938,6 @@ class RBM:
         - It returns a matrix
         - It returns all the inferred ratings
 
-        Args:
-            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
-                                 of a single user.
-
-        Returns:
-            vp (np.array, int32): a matrix with the inferred ratings.
-            elapsed (scalar, float32): elapsed time for predediction.
-
         Basic mechanics:
             The method can be called either within the same session or by restoring a previous session from file.
             If save_path is specifie, a graph is generated and then populated with the pre-trained values of the
@@ -927,6 +947,13 @@ class RBM:
             The input x must have the same number of columns as the one used for training the model, i.e. the same
             number of items, but it can have an arbitrary number of rows (users).
 
+        Args:
+            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
+                                 of a single user.
+
+        Returns:
+            vp (np.array, int32): a matrix with the inferred ratings.
+            elapsed (scalar, float32): elapsed time for predediction.
         """
 
         self.time()
