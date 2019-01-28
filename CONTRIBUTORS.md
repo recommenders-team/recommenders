@@ -17,10 +17,10 @@ They have write access to the repo and provide support reviewing issues and pull
 * **[Markus Cosowicz](https://github.com/eisber)**
     * SAR improvements on Spark
 * **[Miguel González-Fierro](https://github.com/miguelfierro)**
-    * ALS Spark notebook
-    * Reco Utils
-    * Github statistics
-    * Continuous integration build / test setup
+    * Recomendation algorithms review, development and optimization.
+    * Reco utils review, development and optimization.
+    * Github statistics.
+    * Continuous integration build / test setup.
 * **[Scott Graham](https://github.com/gramhagen)**
     * Improving documentation
 * **[Nikhil Joglekar](https://github.com/nikhilrj)**
