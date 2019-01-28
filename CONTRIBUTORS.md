@@ -1,12 +1,70 @@
-Recommenders contributors (sorted alphabetically)
-=================================================
+Contributors to Recommenders 
+============================
+Recommenders is developed and maintained by a community of people interested in exploring recommendation algorithms and how best to deploy them in industry settings. The goal is to accelerate the workflow of any individual or organization working on recommender systems. Everyone is encouraged to contribute at any level to add and improve the implemented algorithms, notebooks and utilities. 
 
-* **[Max Kaznady](https://github.com/maxkazmsft)**
-  * early SAR single node code and port from another project
-  * unreleased SAR pySpark implementation
-  * early SAR on Spark-SQL implementation
-  * SAR notebooks
-  * SAR unit / integration / smoke tests
+Committers (sorted alphabetically)
+----------------------------------
 
+Committers are actively supporting the project and have made substantial contributions to the repository.<br>
+They have write access to the repo and provide support reviewing issues and pull requests.
+
+* **[Andreas Argyriou](https://github.com/anargyri)**
+    * SAR single node improvements
+    * ALS deep dive notebook
+    * Reco Utils metric computation
+* **[Dan Ciborowski](https://github.com/dciborow)**
+    * ALS movie example notebook
+    * SAR Pyspark wrapper
+* **[Markus Cosowicz](https://github.com/eisber)**
+    * SAR improvements on Spark
+* **[Miguel González-Fierro](https://github.com/miguelfierro)**
+    * ALS Spark notebook
+    * Reco Utils
+    * Github statistics
+    * Continuous integration build / test setup
 * **[Scott Graham](https://github.com/gramhagen)**
-  * documentation / testing
+    * Improving documentation
+    * Vowpal Wabbit deep dive notebook
+* **[Nikhil Joglekar](https://github.com/nikhilrj)**
+    * Improving documentation
+    * Quick start notebook
+    * Operationalization notebook
+* **[Max Kaznady](https://github.com/maxkazmsft)**
+    * Early SAR single node code and port from another project
+    * Unreleased SAR pySpark implementation
+    * Early SAR on Spark-SQL implementation
+    * SAR notebooks
+    * SAR unit / integration / smoke tests
+* **[Zhang Le](https://github.com/yueguoguo)**
+    * Reco Utils
+    * Continuous integration build / test setup
+    * Algorithm comparison notebook
+    * Spark hyper-parameter tuning
+* **[Jun Ki Min](https://github.com/loomlike)**
+    * TensorFlow Wide & Deep recommendation implementation
+    * Azure ML hyper-paramter tuning 
+    * Data loaders for movielens
+* **[Jeremy Reynolds](https://github.com/jreynolds01)**
+    * Improving documentation
+* **[Mirco Milletarì](https://github.com/WessZumino)**
+    * Restricted Boltzman Machine implementation and deep dive notebook
+* **[Ye Xing](https://github.com/yexing99)**
+* **[Tao Wu](https://github.com/wutao)**
+    * Improving documentation
+
+
+Contributors
+------------
+[Full List of Contributors](https://github.com/Microsoft/Recommenders/graphs/contributors)
+- To contributors: please add your name to the list when you submit a patch to the project
+---
+* **[Aaron He](https://github.com/AaronHeee)**
+    * NCF deep-learning recommender algorithm implementation and notebook
+* **[Nicolas Hug](https://github.com/NicolasHug)**
+    * Jupyter notebook demonstrating use of [surprise](https://github.com/NicolasHug/Surprise) library for recommendations
+* **[Jianxun Lian](https://github.com/Leavingseason)**
+    * xDeepFM algorithm implementation and notebook
+* **[Daniel Shneider](https://github.com/danielsc)**
+    * Fastai for recommendations notebook  
+* **[Graham Williams](https://github.com/gjwgit)**
+    * Support using recommenders through [MLHub](https://mlhub.ai)
