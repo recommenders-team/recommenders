@@ -30,11 +30,12 @@ They have write access to the repo and provide support reviewing issues and pull
     * Quick start notebook
     * Operationalization notebook
 * **[Max Kaznady](https://github.com/maxkazmsft)**
-    * Early SAR single node code and port from another project
+    * Early SAR single node code and port from another internal codebase
     * Unreleased SAR pySpark implementation
     * Early SAR on Spark-SQL implementation
     * SAR notebooks
     * SAR unit / integration / smoke tests
+    * Early infrastructure design based on collapsing another internal project
 * **[Zhang Le](https://github.com/yueguoguo)**
     * Reco Utils
     * Continuous integration build / test setup
