@@ -22,7 +22,7 @@ def test_gpu_vm():
     "size, epochs, expected_values",
     [
         ("1m", 10, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590}),
-        ("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})
+        #("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})# takes too long
     ],
 )
 def test_ncf_integration(notebooks, size, epochs, expected_values):
@@ -45,34 +45,29 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
-    "size, expected_values",
+    "size, epochs, expected_values",
     [
-        ("1m", {"map": 0.025445, "ndcg": 0.157695, "precision": 0.147301, "recall": 0.056457}),
+        ("100k", 50, {"map": 0.051398, "ndcg": 0.204228, "precision": 0.183987, "recall": 0.105546,
+                  "map2": 0.049723, "ndcg2": 0.201361, "precision2": 0.180276, "recall2": 0.103631}),
     ],
 )
 @pytest.mark.skip(reason="as of now, it takes too long to do a integration test")
-def test_ncf_deep_dive_integration(notebooks, size, expected_values):
+def test_ncf_deep_dive_integration(notebooks, size, epochs, expected_values):
     notebook_path = notebooks["ncf_deep_dive"]
     pm.execute_notebook(notebook_path, 
                         OUTPUT_NOTEBOOK, 
                         kernel_name=KERNEL_NAME,
                         parameters=dict(TOP_K=10, 
                                         MOVIELENS_DATA_SIZE=size,
-                                        EPOCHS=10,
-                                        BATCH_SIZE=256),
+                                        EPOCHS=epochs,
+                                        BATCH_SIZE=512),
                        )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL)
-    
-    assert results["map"] == pytest.approx(0.047037, TOL)
-    assert results["ndcg"] == pytest.approx(0.193496, TOL)
-    assert results["precision"] == pytest.approx(0.175504, TOL)
-    assert results["recall"] == pytest.approx(0.100301, TOL)
 
 
-    
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
