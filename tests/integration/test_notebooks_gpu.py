@@ -30,7 +30,10 @@ def test_ncf_integration(notebooks, size, expected_values):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
+        parameters=dict(TOP_K=10, 
+                        MOVIELENS_DATA_SIZE=size,
+                        EPOCHS=50,
+                        BATCH_SIZE=256),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -40,18 +43,28 @@ def test_ncf_integration(notebooks, size, expected_values):
 
 @pytest.mark.integration
 @pytest.mark.gpu
-def test_ncf_deep_dive(notebooks):
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
+        ("1m", {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590}),
+    ],
+)
+@pytest.mark.skip(reason="as of now, it takes too long to do a integration test")
+def test_ncf_deep_dive(notebooks, size, expected_values):
     notebook_path = notebooks["ncf_deep_dive"]
     pm.execute_notebook(notebook_path, 
                         OUTPUT_NOTEBOOK, 
                         kernel_name=KERNEL_NAME,
                         parameters=dict(TOP_K=10, 
-                                        MOVIELENS_DATA_SIZE="100k",
-                                        EPOCHS=5,
-                                        BATCH_SIZE=1024),
+                                        MOVIELENS_DATA_SIZE=size,
+                                        EPOCHS=10,
+                                        BATCH_SIZE=256),
                        )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL)
+    
     assert results["map"] == pytest.approx(0.047037, TOL)
     assert results["ndcg"] == pytest.approx(0.193496, TOL)
     assert results["precision"] == pytest.approx(0.175504, TOL)
