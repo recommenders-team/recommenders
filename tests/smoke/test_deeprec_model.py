@@ -69,7 +69,7 @@ def test_notebook_xdeepfm(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epochs_for_synthetic_run=10, epochs_for_criteo_run=1),
+        parameters=dict(epochs_for_synthetic_run=20, epochs_for_criteo_run=1),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
