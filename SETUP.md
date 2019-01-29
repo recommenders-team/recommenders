@@ -12,9 +12,8 @@ In this guide we show how to setup all the dependencies to run the notebooks of 
   * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
 * [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
-  * [Repository upload](#repository-upload)
+  * [Repository installation](#repository-installation)
   * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
-</details>
 
 ## Compute environments
 
@@ -134,24 +133,57 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 * Runtime version 4.1 (Apache Spark 2.3.0, Scala 2.11)
 * Python 3
 
-### Repository upload
-We need to zip and upload the repository to be used in Databricks, the steps are the following:
-* Clone Microsoft Recommenders repo in your local computer.
-* Zip the contents inside the Recommenders folder (Azure Databricks requires compressed folders to have the .egg suffix, so we don't use the standard .zip):
-```
-cd Recommenders
-zip -r Recommenders.egg .
-```
-* Once your cluster has started, go to the Databricks home workspace, then go to your user and press import.
-* In the next menu there is an option to import a library, it says: `To import a library, such as a jar or egg, click here`. Press click here.
-* Then, at the first drop-down menu, mark the option `Upload Python egg or PyPI`.
-* Then press on `Drop library egg here to upload` and select the the file `Recommenders.egg` you just created.
-* Then press `Create library`. This will upload the zip and make it available in your workspace.
-* Finally, in the next menu, attach the library to your cluster.
+### Repository installation
+You can setup the repository as a library on Databricks either manually or by simply running an installation script. 
 
-To make sure it works, you can now create a new notebook and import the utilities:
+
+<details>
+<summary><strong><em>Quick install</em></strong></summary>
+
+Prerequisite
+* Install [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli)
+and setup CLI [authentication](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication).
+
+1. Start a target cluster and copy the target cluster id. Cluster id can be found with following script:
+    ```
+    databricks clusters list
+    
+    <CLUSTER_ID> <CLUSTER_NAME> <STATUS>
+    ...
+    ```
+2. If the cluster status is not *RUNNING*, start it with the command `databricks clusters start --cluster-id <CLUSTER_ID>`.
+If the cluster is already running, skip this step.
+3. Once the cluster status turns into *RUNNING*, use following commands to install the repository:
+    ```
+    cd Recommenders
+    ./scripts/databricks_install.sh <CLUSTER_ID>
+    ```
+
+</details> 
+
+<details>
+<summary><strong><em>Manual setup</em></strong></summary>
+
+To install the repo manually onto Databricks, follow the steps:
+1. Clone Microsoft Recommenders repo in your local computer.
+2. Zip the contents inside the Recommenders folder (Azure Databricks requires compressed folders to have the .egg suffix, so we don't use the standard .zip):
+    ```
+    cd Recommenders
+    zip -r Recommenders.egg .
+    ```
+3. Once your cluster has started, go to the Databricks home workspace, then go to your user and press import.
+4. In the next menu there is an option to import a library, it says: `To import a library, such as a jar or egg, click here`. Press click here.
+5. Then, at the first drop-down menu, mark the option `Upload Python egg or PyPI`.
+6. Then press on `Drop library egg here to upload` and select the the file `Recommenders.egg` you just created.
+7. Then press `Create library`. This will upload the zip and make it available in your workspace.
+8. Finally, in the next menu, attach the library to your cluster.
+
+</details>
+
+To make sure it works, you can now create a new notebook and import the utilities from Databricks:
 ```
 import reco_utils
+...
 ```
 
 ### Troubleshooting for Azure Databricks
