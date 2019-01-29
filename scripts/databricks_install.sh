@@ -21,7 +21,10 @@ CLUSTER_EXIST=false
 while IFS=' ' read -ra ARR; do
     if [ ${ARR[0]} = $CLUSTER_ID ]; then
         CLUSTER_EXIST=true
-        if [ ${ARR[2]} = RUNNING ]; then
+
+        STATUS=${ARR[2]}
+        STATUS=${STATUS//[^a-zA-Z]/}
+        if [ $STATUS = RUNNING ]; then
             echo
             echo "Preparing Recommenders library file (egg)..."
             zip -r -q Recommenders.egg . -i *.py -x tests/\* scripts/\*
