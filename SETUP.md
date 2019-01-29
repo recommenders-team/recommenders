@@ -134,30 +134,32 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 * Python 3
 
 ### Repository installation
-You can setup the repository as a library on Databricks either manually or by simply running an installation script. 
-
+You can setup the repository as a library on Databricks either manually or by simply running an installation script. Both options assume you have created a Databricks workspace and cluster.
 
 <details>
 <summary><strong><em>Quick install</em></strong></summary>
 
-Prerequisite
-* Install [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli)
-and setup CLI [authentication](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication).
+This option utilizes an installation script to setup and does not handle dependencies.
+> To run the script, following **prerequisites** are required:
+> * Install [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli) and setup CLI authentication. Please find details about how to create a token and set authentication from [here](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication).
+>     ```
+>     pip install databricks-cli
+>     databricks configure --token
+>     ```
+> * Get the target **cluster id** and **start** the cluster if it's status is *TERMINATED*.
+>     * To get the cluster id, run `databricks clusters list` which returns `<CLUSTER_ID> <CLUSTER_NAME> <STATUS>` for all clusters in the Databricks workspace.
+>     * To start the cluster, `databricks clusters start --cluster-id <CLUSTER_ID>`.
+> * Zip (if you do not have already)
+>     ```
+>     sudo apt-get update
+>     sudo apt-get install zip
+>     ```
 
-1. Start a target cluster and copy the target cluster id. Cluster id can be found with following script:
-    ```
-    databricks clusters list
-    
-    <CLUSTER_ID> <CLUSTER_NAME> <STATUS>
-    ...
-    ```
-2. If the cluster status is not *RUNNING*, start it with the command `databricks clusters start --cluster-id <CLUSTER_ID>`.
-If the cluster is already running, skip this step.
-3. Once the cluster status turns into *RUNNING*, use following commands to install the repository:
-    ```
-    cd Recommenders
-    ./scripts/databricks_install.sh <CLUSTER_ID>
-    ```
+To install Recommenders repository on the Databricks cluster, make sure if the cluster status is *RUNNING* (see above prerequisite #2), and run
+```
+cd Recommenders
+./scripts/databricks_install.sh <CLUSTER_ID>
+```
 
 </details> 
 
