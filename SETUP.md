@@ -140,8 +140,6 @@ You can setup the repository as a library on Databricks either manually or by si
 <details>
 <summary><strong><em>Quick install</em></strong></summary>
 
-> This method only works for **Azure** Databricks.
-
 Prerequisite
 * Install [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli)
 and setup CLI [authentication](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication).
