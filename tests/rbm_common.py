@@ -1,0 +1,58 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+import numpy as np
+import pytest
+
+from reco_utils.dataset.numpy_splitter import numpy_stratified_split
+
+
+@pytest.fixture(scope="module")
+def test_specs():
+
+    return {
+        "number_of_users": 30,
+        "number of items": 53,
+        "ratings": 5,
+        "seed": 123,
+        "sparsness": 80,
+        "ratio": 0.7,
+    }
+
+
+@pytest.fixture(scope="module")
+def affinity_matrix(test_specs):
+
+    """
+    Generate a random user/item affinity matrix. By increasing the likehood of 0 elements we simulate
+    a typical recommeding situation where the input matrix is highly sparse.
+
+    Args:
+        users (int): number of users (rows).
+        items (int): number of items (columns).
+        ratings (int): rating scale, e.g. 5 meaning rates are from 1 to 5.
+        spars: probablity of obtaining zero. This roughly correponds to the sparsness.
+               of the generated matrix. If spars = 0 then the affinity matrix is dense.
+
+    Returns:
+        X (np array, int): sparse user/affinity matrix
+
+    """
+
+    np.random.seed(test_specs["seed"])
+
+    # uniform probability for the 5 ratings
+    s = [(1 - test_specs["sparsness"]) / test_specs["ratings"]] * test_specs["ratings"]
+    s.append(test_specs["sparsness"])
+    P = s[::-1]
+
+    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
+    X = np.random.choice(
+        test_specs["ratings"] + 1, (test_specs["users"], test_specs["items"]), p=P
+    )
+
+    Xtr, Xtst = numpy_stratified_split(
+        X, ratio=test_specs["ratio"], seed=test_specs["seed"]
+    )
+
+    return (Xtr, Xtst)
