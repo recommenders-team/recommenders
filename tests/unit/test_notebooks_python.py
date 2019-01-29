@@ -12,7 +12,7 @@ def test_template_runs(notebooks):
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
-        parameters=dict(pm_version=pm.__version__),
+        parameters=dict(PM_VERSION=pm.__version__),
         kernel_name=KERNEL_NAME,
     )
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
