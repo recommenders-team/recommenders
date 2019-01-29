@@ -69,7 +69,6 @@ class RBM:
         training_epoch=20,
         display_epoch=10,
         sampling_protocol=[50, 70, 80, 90, 100],
-        save_path=None,
         debug=False,
         with_metrics=False,
     ):
@@ -96,9 +95,6 @@ class RBM:
         # protocol to increase Gibbs sampling's step. Array containing the
         # percentage of the total training epoch when the step increases by 1
         self.sampling_protocol = sampling_protocol
-
-        # Options to save the model for future use
-        self.save_path = save_path
 
         # if true, functions print their control paramters and/or outputs
         self.debug = debug
@@ -156,7 +152,6 @@ class RBM:
 
         Returns:
             h_sampled (tensor, float32): sampled units. The value is 1 if pr>g and 0 otherwise.
-
         """
 
         np.random.seed(1)
@@ -193,7 +188,6 @@ class RBM:
 
         Returns:
             v_samp (tensor, float32): an (m,n) tensor of sampled rankings from 1 to r .
-
         """
 
         np.random.seed(1)
@@ -239,8 +233,9 @@ class RBM:
     def free_energy(self, x):
 
         """
-        Free energy of the visible units given the hidden units. Since the sum is over the hidden units' states, the
-        functional form of the visible units Free energy is the same as the one for the binary model.
+        Free energy of the visible units given the hidden units. Since the sum is over the hidden units'
+        states, the functional form of the visible units Free energy is the same as the one for the binary
+        model.
 
         Args:
             x: This can be either the sampled value of the visible units (v_k) or the input data
@@ -278,11 +273,10 @@ class RBM:
             Nh (int): number of hidden units (latent variables of the model)
 
         Returns:
-            w (tensor, float32): (Nv, Nh) correlation matrix initialized by sampling from a normal distribution with
-               zero mean and given variance init_stdv.
+            w (tensor, float32): (Nv, Nh) correlation matrix initialized by sampling from a normal
+                        distribution with zero mean and given variance init_stdv.
            bv (tensor, float32): (1, Nvisible) visible units' bias, initialized to zero.
            bh (tensor, float32): (1, Nhidden) hidden units' bias, initiliazed to zero.
-
         """
 
         tf.set_random_seed(1)  # set the seed for the random number generator
@@ -320,7 +314,6 @@ class RBM:
 
     P(h|phi_v) --> returns the probability that the i-th hidden unit is active
     P(v|phi_h) --> returns the probability that the  i-th visible unit is active
-
     """
 
     # sample the hidden units given the visibles
@@ -334,8 +327,8 @@ class RBM:
 
         Returns:
             phv (tensor, float32): activation probability of the hidden unit
-            h_ (tensor, float32): sampled value of the hidden unit from a Bernoulli distributions having success probability phv
-
+            h_ (tensor, float32): sampled value of the hidden unit from a Bernoulli distributions having
+                        success probability phv
         """
 
         with tf.name_scope("sample_hidden_units"):
@@ -355,25 +348,27 @@ class RBM:
     def sample_visible_units(self, h):
 
         """
-        Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN (negative phase)
-        Each visible unit can take values in [1,r], while the zero is reserved for missing data; as such the value of the
-        hidden unit is sampled from a multinomial distribution.
+        Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN
+        (negative phase). Each visible unit can take values in [1,rating], while the zero is reserved
+        for missing data; as such the value of the hidden unit is sampled from a multinomial distribution.
 
         Basic mechanics:
-           1) For every training example we first sample Nv Multinomial distributions. The result is of the form [0,1,0,0,0,...,0]
-              where the index of the 1 element corresponds to the rth rating. The index is extracted using the argmax function and
-              we need to add 1 at the end since array indeces starts from 0.
+           1) For every training example we first sample Nv Multinomial distributions. The result is of the
+              form [0,1,0,0,0,...,0] where the index of the 1 element corresponds to the rth rating. The index
+              is extracted using the argmax function and we need to add 1 at the end since array indeces starts
+              from 0.
 
-           2) Selects only those units that have been sampled. During the training phase it is important to not use the reconstructed
-              inputs, so we beed to enforce a zero value in the reconstructed ratings in the same position as the original input.
+           2) Selects only those units that have been sampled. During the training phase it is important to not
+              use the reconstructed inputs, so we beed to enforce a zero value in the reconstructed ratings in
+              the same position as the original input.
 
         Args:
-            h (tensor, float32): visible units
+            h (tensor, float32): visible units.
 
         Returns:
             pvh (tensor, float32): activation probability of the visible unit given the hidden
-            v_ (tensor, float32): sampled value of the visible unit from a Multinomial distributions having success probability pvh.
-
+            v_ (tensor, float32): sampled value of the visible unit from a Multinomial distributions having success
+                        probability pvh.
         """
 
         with tf.name_scope("sample_visible_units"):
@@ -410,22 +405,20 @@ class RBM:
     the weights are determined via maximum likelihood (saddle point).
     """
 
-    # 1) Gibbs Sampling
-
     def gibbs_sampling(self):
 
         """
-        Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary RBM we need to
-        impose that unseen movies stay as such, i.e. the sampling phase should not modify the elelments where v =0.
+        Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary
+        RBM we need to impose that unseen movies stay as such, i.e. the sampling phase should not modify
+        the elelments where v =0.
 
         Args:
-            k (scalar, integer): iterator. Number of sampling steps
-            v (tensor, float32): visible units
+            k (scalar, integer): iterator. Number of sampling steps.
+            v (tensor, float32): visible units.
 
         Returns:
-            h_k (tensor, float32): sampled value of the hidden unit at step  k
-            v_k (tensor, float32): sampled value of the visible unit at step k
-
+            h_k (tensor, float32): sampled value of the hidden unit at step k.
+            v_k (tensor, float32): sampled value of the visible unit at step k.
         """
 
         with tf.name_scope("gibbs_sampling"):
@@ -441,7 +434,6 @@ class RBM:
                 _, h_k = self.sample_hidden_units(self.v_k)
                 _, self.v_k = self.sample_visible_units(h_k)
 
-    # 2) Contrastive divergence
     def losses(self, vv):
 
         """
@@ -452,9 +444,8 @@ class RBM:
             v_k (tensor, float32): sampled visible units at step k
 
         Returns:
-            obj (tensor, float32): objective function of Contrastive divergence, that is the difference between the
-                 free energy clamped on the data (v) and the model Free energy (v_k)
-
+            obj (tensor, float32): objective function of Contrastive divergence, that is the difference
+                        between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
         with tf.variable_scope("losses"):
@@ -502,55 +493,31 @@ class RBM:
     # model performance (online metrics)
     # ================================================
 
-    # Inference
-    def infere(self):
-
-        """
-        Prediction: A training example is used to activate the hidden unit that in turns produce new ratings for the
-                    visible units, both for the rated and unrated examples.
-
-        Args:
-            xtr (np.array, float32): example from dataset. This can be either the test/train set
-
-        Returns:
-            vp (tensor, float32) : inferred values
-            pvh (tensor, float32): probability of observing v given h
-
-        """
-
-        with tf.name_scope("inference"):
-            # predict a new value
-            _, h_p = self.sample_hidden_units(self.v)
-            pvh, vp = self.sample_visible_units(h_p)
-
-        return pvh, vp
-
-    # Metrics
     def accuracy(self, vp):
 
         """
         Train/Test Mean average precision
 
-        Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on the rated
-        items only
+        Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on
+        the rated items only
 
         Args:
             vp (tensor, float32): inferred output (Network prediction)
 
         Returns:
             ac_score (tensor, float32)=  1/m Sum_{mu=1}^{m} Sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i},
-            where m = Nusers, Nv = number of items = number of visible units and s(i) is the number of non-zero
-            elements per row.
-
+            where m = Nusers, Nv = number of items = number of visible units and s(i) is the number of
+            non-zero elements per row.
         """
+
         with tf.name_scope("accuracy"):
 
             # 1) define and apply the mask
             mask = tf.not_equal(self.v, 0)
             n_values = tf.reduce_sum(tf.cast(mask, "float32"), axis=1)
 
-            # 2) Take the difference between the input data and the inferred ones. This value is zero whenever the two
-            #   values coincides
+            # 2) Take the difference between the input data and the inferred ones. This value is zero whenever
+            #    the two values coincides
             vd = tf.where(
                 mask, x=tf.abs(tf.subtract(self.v, vp)), y=tf.ones_like(self.v)
             )
@@ -625,6 +592,10 @@ class RBM:
 
     def init_metrics(self):
 
+        """
+        Initialize metrics
+        """
+
         if self.with_metrics:  # if true (default) returns evaluation metrics
             self.Mserr = self.msre(self.v_k)
             self.Clacc = self.accuracy(self.v_k)
@@ -668,8 +639,8 @@ class RBM:
             Mse_train (list, float32): per epoch msre on the train set
             precision_train (scalar, float32): precision on the train set
             precision_test  (scalar, float32): precision on the test set
-
         """
+
         if self.with_metrics:
 
             # Display training error as a function of epochs
@@ -687,6 +658,7 @@ class RBM:
         """
         Call the different RBM modules to generate the computational graph
         """
+
         log.info("Creating the computational graph")
 
         self.placeholder()  # create the visible units placeholder
@@ -701,9 +673,11 @@ class RBM:
 
         # ---Instantiate loss function and optimizer----------------------------
         obj = self.losses(self.v)  # objective function
+
         rate = (
             self.learning_rate / self.minibatch
         )  # learning rate rescaled by the batch size
+
         self.opt = tf.contrib.optimizer_v2.AdamOptimizer(learning_rate=rate).minimize(
             loss=obj
         )  # Instantiate the optimizer
@@ -721,6 +695,9 @@ class RBM:
     def init_training_session(self, xtr):
         """
         Initialize the TF session on training data
+
+        Args:
+            xtr (np.array, int32): the user/affinity matrix for the train set
         """
 
         init_graph = tf.global_variables_initializer()
@@ -735,6 +712,18 @@ class RBM:
         )
 
     def batch_training(self, num_minibatches):
+
+        """
+        Perform training over input minibatches. If with_metrics is False,
+        no online metrics are evaluated.
+
+        Args:
+            num_minibatches (scalar, int32): number of training minibatches
+
+        Returns:
+            epoch_tr_err (scalar, float32): training error per single epoch
+                            Note, if with_metrics is False, this is zero.
+        """
 
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
 
@@ -776,9 +765,6 @@ class RBM:
 
         tf.reset_default_graph()
 
-        if self.save_path != None:  # save the model to file
-            saver = tf.train.Saver()
-
         # ----------------------Initializers-------------------------------------
         self.generate_graph()
         self.init_metrics()
@@ -806,9 +792,6 @@ class RBM:
 
         self.display_metrics(Mse_train, precision_train, precision_test)
 
-        if self.save_path != None:  # save the model to specified path
-            saver.save(self.sess, self.save_path_ + "/rbm_model_saver.ckpt")
-
         return elapsed
 
     # =========================
@@ -823,17 +806,19 @@ class RBM:
         """
 
         # Sampling
-        _, h_ = self.sample_h(self.vu)  # sample h
+        _, h = self.sample_hidden_units(self.vu)  # sample h
 
         # sample v
         phi_h = (
-            tf.transpose(tf.matmul(self.w, tf.transpose(h_))) + self.bv
+            tf.transpose(tf.matmul(self.w, tf.transpose(h))) + self.bv
         )  # linear combination
-        pvh_ = self.Pm(phi_h)  # conditional probability of v given h
+        pvh = self.multinomial_distribution(
+            phi_h
+        )  # conditional probability of v given h
 
-        v_ = self.M_sampling(pvh_)  # sample the value of the visible units
+        v = self.multinomial_sampling(pvh)  # sample the value of the visible units
 
-        return v_, pvh_
+        return v, pvh
 
     def recommend_k_items(self, x, top_k=10, remove_seen=True):
 
@@ -841,16 +826,12 @@ class RBM:
         Returns the top-k items ordered by a relevancy score.
 
         Basic mechanics:
-            The method can be called either within the same session or by restoring a previous session from file.
-            If save_path is defined, a graph is generated and then populated with the pre-trained values of the
-            parameters. Otherwise, the default session used during training is used.
+            The method samples new ratings from the learned joint distribution, together with their
+            probabilities. The input x must have the same number of columns as the one used for training
+            the model (i.e. the same number of items) but it can have an arbitrary number of rows (users).
 
-            The method samples new ratings from the learned joint distribution, together with their probabilities.
-            The input x must have the same number of columns as the one used for training the model (i.e. the same
-            number of items) but it can have an arbitrary number of rows (users).
-
-            A recommendation score is evaluated by taking the element-wise product between the ratings and the
-            associated probabilities. For example, we could have the following situation:
+            A recommendation score is evaluated by taking the element-wise product between the ratings and
+            the associated probabilities. For example, we could have the following situation:
 
                     rating     probability     score
             item1     5           0.5          2.5
@@ -865,51 +846,22 @@ class RBM:
 
         Returns:
             top_scores (np.array, float32): a sparse matrix containing the top_k elements ordered by their score.
-
+            elapsed (scalar, float32): time taken to recommend k items
         """
 
         self.time()
-
-        if (
-            self.save_path != None
-        ):  # if true, restore the computational graph from a trained session
-
-            m, self.Nv_ = x.shape  # dimension of the input: m= N_users, Nv= N_items
-            self.r_ = x.max()  # defines the rating scale, e.g. 1 to 5
-            tf.reset_default_graph()
-
-            self.placeholder()
-            self.init_parameters()
-
-            saver = tf.train.Saver()
-            self.sess = tf.Session()
-
-            saved_files = saver.restore(
-                self.sess, self.save_path_ + "/rbm_model_saver.ckpt"
-            )
-
-        else:
-            m, _ = x.shape  # dimension of the input: m= N_users, Nv= N_items
-
-        v_, pvh_ = (
-            self.eval_out()
-        )  # evaluate the ratings and the associated probabilities
+        # evaluate the ratings and the associated probabilities
+        v_, pvh_ = self.eval_out()
 
         # evaluate v_ and pvh_ on the input data
         vp, pvh = self.sess.run([v_, pvh_], feed_dict={self.vu: x})
-
-        pv = np.max(
-            pvh, axis=2
-        )  # returns only the probabilities for the predicted ratings in vp
+        # returns only the probabilities for the predicted ratings in vp
+        pv = np.max(pvh, axis=2)
 
         # evaluate the score
         score = np.multiply(vp, pv)
-        # elapsed time
-        elapsed = self.time()
-
-        log.info("Done recommending items, time %f2" % elapsed)
-
         # ----------------------Return the results as a P dataframe------------------------------------
+
         log.info("Extracting top %i elements" % top_k)
 
         if remove_seen:
@@ -921,35 +873,34 @@ class RBM:
         top_items = np.argpartition(-score, range(top_k), axis=1)[
             :, :top_k
         ]  # get the top k items
+
         score_c = score.copy()  # get a copy of the score matrix
+
         score_c[
             np.arange(score_c.shape[0])[:, None], top_items
         ] = 0  # set to zero the top_k elements
 
         top_scores = score - score_c  # set to zeros all elements other then the top_k
+        elapsed = self.time()
 
+        log.info("Done recommending items, time %f2" % elapsed)
         return top_scores, elapsed
 
     def predict(self, x, maps):
 
         """
-        Returns the inferred ratings. This method is similar to recommend_k_items() with the following exceptions:
-
-        - It returns a matrix
-        - It returns all the inferred ratings
+        Returns the inferred ratings. This method is similar to recommend_k_items() with the
+        exceptions that it returns all the inferred ratings
 
         Basic mechanics:
-            The method can be called either within the same session or by restoring a previous session from file.
-            If save_path is specifie, a graph is generated and then populated with the pre-trained values of the
-            parameters. Otherwise, the default session used during training is used.
-
-            The method samples new ratings from the learned joint distribution, together with their probabilities.
-            The input x must have the same number of columns as the one used for training the model, i.e. the same
-            number of items, but it can have an arbitrary number of rows (users).
+            The method samples new ratings from the learned joint distribution, together with
+            their probabilities. The input x must have the same number of columns as the one used
+            for training the model, i.e. the same number of items, but it can have an arbitrary number
+            of rows (users).
 
         Args:
-            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
-                                 of a single user.
+            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e.
+                        the ratings of a single user.
 
         Returns:
             vp (np.array, int32): a matrix with the inferred ratings.
@@ -958,33 +909,8 @@ class RBM:
 
         self.time()
 
-        if (
-            self.save_model_
-        ):  # if true, restore the computational graph from a trained session
-
-            m, self.Nv_ = x.shape  # dimension of the input: m= N_users, Nv= N_items
-
-            self.r_ = x.max()  # defines the rating scale, e.g. 1 to 5
-
-            tf.reset_default_graph()
-
-            self.placeholder()
-            self.init_parameters()
-
-            saver = tf.train.Saver()
-
-            self.sess = tf.Session()
-            saved_files = saver.restore(
-                self.sess, self.save_path_ + "/rbm_model_saver.ckpt"
-            )
-
-        else:
-            m, _ = x.shape  # dimension of the input: m= N_users, Nv= N_items
-
         v_, _ = self.eval_out()  # evaluate the ratings and the associated probabilities
-
         vp = self.sess.run(v_, feed_dict={self.vu: x})
-
         elapsed = self.time()
 
         log.info("Done inference, time %f2" % elapsed)
