@@ -5,8 +5,9 @@ In this directory, notebooks are provided to demonstrate the use of different al
 data preparation, model building, and model evaluation by using the utility functions ([reco_utils](../../reco_utils))
  available in the repo.
  
- | Notebook | Description | 
+| Notebook | Description | 
 | --- | --- | 
-| [als_pyspark_movielens](als_pyspark_movielens.ipynb) | Utilizing the ALS algorithm to predict movie ratings in a PySpark environment.
-| [sar_python_cpu_movielens](sar_single_node_movielens.ipynb) | Utilizing the Smart Adaptive Recommendations (SAR) algorithm to predict movie ratings in a Python+CPU environment.
-
+| [als_pyspark_movielens](als_pyspark_movielens.ipynb) | Utilizing ALS algorithm to predict movie ratings in a PySpark environment.
+| [fastai_recommendation](fastai_recommendation.ipynb) | Utilizing FastAI recommender to predict movie ratings in a Python+GPU (PyTorch) environment.
+| [ncf_movielens](ncf_movielens.ipynb) | Utilizing Neural Collaborative Filtering (NCF) to predict movie ratings in a Python+GPU (TensorFlow) environment.
+| [sar_python_cpu_movielens](sar_single_node_movielens.ipynb) | Utilizing Smart Adaptive Recommendations (SAR) algorithm to predict movie ratings in a Python+CPU environment.
