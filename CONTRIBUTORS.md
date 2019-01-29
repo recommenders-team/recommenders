@@ -11,6 +11,7 @@ They have write access to the repo and provide support reviewing issues and pull
     * SAR single node improvements
     * ALS deep dive notebook
     * Reco Utils metric computation
+    * Tests for Surprise
 * **[Dan Ciborowski](https://github.com/dciborow)**
     * ALS movie example notebook
     * SAR Pyspark wrapper
