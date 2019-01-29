@@ -12,7 +12,7 @@ from tests.notebooks_common import path_notebooks
 
 try:
     from pyspark.sql import SparkSession
-except ModuleNotFoundError:
+except ImportError:
     pass  # so the environment without spark doesn't break
 
 

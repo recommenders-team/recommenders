@@ -16,7 +16,7 @@ try:
     )
     from pyspark.sql.functions import col
     from reco_utils.common.spark_utils import start_or_get_spark
-except ModuleNotFoundError:
+except ImportError:
     pass  # skip this import if we are in pure python environment
 
 
