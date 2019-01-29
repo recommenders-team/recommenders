@@ -52,7 +52,7 @@ while IFS=' ' read -ra ARR; do
             rm Recommenders.egg
             exit 0
         else
-            echo "Cluster $CLUSTER_ID found, but it is not running. Status=${ARR[2]}"
+            echo "Cluster $CLUSTER_ID found, but it is not running. Status=${STATUS}"
             echo "You can start the cluster with 'databricks clusters start --cluster-id $CLUSTER_ID'."
             echo "Then, check the cluster status by using 'databricks clusters list' and"
             echo "re-try installation once the status turns into RUNNING."
