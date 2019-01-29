@@ -151,10 +151,12 @@ and setup CLI [authentication](https://docs.azuredatabricks.net/user-guide/dev-t
     <CLUSTER_ID> <CLUSTER_NAME> <STATUS>
     ...
     ```
-2. Run following commands replacing CLUSTER_ID with the id you copied from the previous step:
+2. If the cluster status is not *RUNNING*, start it with the command `databricks clusters start --cluster-id <CLUSTER_ID>`.
+If the cluster is already running, skip this step.
+3. Once the cluster status turns into *RUNNING*, use following commands to install the repository:
     ```
     cd Recommenders
-    ./scripts/databricks_install.sh CLUSTER_ID
+    ./scripts/databricks_install.sh <CLUSTER_ID>
     ```
 
 </details> 
