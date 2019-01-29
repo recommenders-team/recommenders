@@ -12,7 +12,7 @@ fi
 
 CLUSTER_ID=$1
 if [ -z $CLUSTER_ID ]; then
-    echo "Please provide the target cluster id: 'databricks_install.sh <CLUSTER_ID>'."
+    echo "Please provide the target cluster id: 'prepare_databricks_for_016n.sh <CLUSTER_ID>'."
     echo "Cluster id can be found by running 'databricks clusters list'"
     echo "which returns a list of <CLUSTER_ID> <CLUSTER_NAME> <STATUS>."
     exit 1
