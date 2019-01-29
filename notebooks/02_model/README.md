@@ -11,5 +11,5 @@ In this directory, notebooks are provided to give a deep dive into training mode
 | [ncf_deep_dive](ncf_deep_dive.ipynb) | Deep dive on a NCF algorithm and implementation.
 | [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Deep dive on a SVD algorithm and implementation.
 | [sar_single_node_deep_dive](sar_single_node_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
-
+| [vowpal_wabbit_deep_dive](vowpal_wabbit_deep_dive.ipynb) | Deep dive into using Vowpal Wabbit for regression and matrix factorization.
 Details on model training are best found inside each notebook.
