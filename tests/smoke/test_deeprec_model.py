@@ -7,6 +7,8 @@ from reco_utils.recommender.deeprec.models.xDeepFM import *
 from reco_utils.recommender.deeprec.models.dkn import *
 from reco_utils.recommender.deeprec.IO.iterator import *
 from reco_utils.recommender.deeprec.IO.dkn_iterator import *
+import papermill as pm
+from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 @pytest.fixture
@@ -50,11 +52,44 @@ def test_model_dkn(resource_path):
         download_deeprec_resources(r'https://recodatasets.blob.core.windows.net/deeprec/', data_path, 'dknresources.zip')
 
     hparams = prepare_hparams(yaml_file, wordEmb_file=wordEmb_file,
-                              entityEmb_file=entityEmb_file, epochs=2, learning_rate=0.0001)
+                              entityEmb_file=entityEmb_file, epochs=1, learning_rate=0.0001)
     input_creator = DKNTextIterator
     model = DKN(hparams, input_creator)
 
     assert(isinstance(model.fit(train_file, valid_file), BaseModel))
     assert model.run_eval(valid_file) is not None
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+@pytest.mark.deeprec
+def test_notebook_xdeepfm(notebooks):
+    notebook_path = notebooks["xdeepfm_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epochs_for_synthetic_run=10, epochs_for_criteo_run=1),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res_syn"]["auc"] >= 0.8
+    assert results["res_real"]["auc"] >= 0.52
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+@pytest.mark.deeprec
+def test_notebook_dkn(notebooks):
+    notebook_path = notebooks["dkn_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epoch=1),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert isinstance(results["res"]["auc"], float)
 
 
