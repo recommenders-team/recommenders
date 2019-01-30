@@ -152,7 +152,7 @@ class AffinityMatrix:
         total = self.AM.shape[0] * self.AM.shape[1]  # number of elements in the matrix
         sparsness = zero / total * 100  # Percentage of zeros in the matrix
 
-        log.info("Matrix generated, sparsness percentage: %d" % sparsness)
+        log.info("Matrix generated, sparseness percentage: %d" % sparsness)
 
         return self.AM
 
