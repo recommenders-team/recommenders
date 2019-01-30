@@ -52,9 +52,6 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
 
 @pytest.mark.integration
 @pytest.mark.gpu
-@pytest.mark.skip(
-    reason="as of now, it takes too long to do a integration test, see issue #466"
-)
 @pytest.mark.parametrize(
     "size, epochs, batch_size, expected_values",
     [
