@@ -40,7 +40,7 @@ do
 		--help)
 			echo "Please specify --gpu to install with GPU-support and"
 			echo "--pyspark to install with pySpark support"
-			echo "--pyspark-version X.Y.Z to install version X.Y.Z of pySpark (default 2.3.1)"
+			echo "--pyspark-version X.Y.Z to install version X.Y.Z of pySpark (default: $pyspark_version)"
 			exit
 			;;
 		--gpu)
@@ -61,6 +61,7 @@ do
 			pyspark_version=$2
 			if ! [[ $pyspark_version =~ ^[0-9]+([.][0-9]+){2}$ ]]; then
 				echo "Inappropriate version of pyspark passed:" $pyspark_version
+				echo "Version must be of format X.Y.Z"
 				exit 1
 			fi
 			shift
