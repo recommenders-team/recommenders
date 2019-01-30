@@ -9,7 +9,7 @@
 # $ sh generate_conda_file.sh --pyspark
 # For generating a conda file for running python gpu and pyspark:
 # $ sh generate_conda_file.sh --gpu --pyspark
-# For generating a conda file for running python gpu and pyspark a particular version of spark:
+# For generating a conda file for running python gpu and pyspark with a particular version:
 # $ sh generate_conda_file.sh --gpu --pyspark-version 2.4.0
 #
 
@@ -32,6 +32,8 @@ pyspark="#"
 # flags to detect if both CPU and GPU are specified
 gpu_flag=false
 pyspark_flag=false
+
+# default version of pyspark if it is installed
 pyspark_version=2.3.1
 
 while [ ! $# -eq 0 ]
