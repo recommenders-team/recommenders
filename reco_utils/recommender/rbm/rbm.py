@@ -530,10 +530,10 @@ class RBM:
 
         return ac_score
 
-    def msre(self, vp):
+    def rmse(self, vp):
 
         """
-        Mean Square Root Error
+        Root Mean Square Error
 
         Note that this needs to be evaluated on the rated items only
 
@@ -541,11 +541,11 @@ class RBM:
             vp (tensor, float32): inferred output (Network prediction)
 
         Returns:
-            err (tensor, float32): msr error
+            err (tensor, float32): root mean square error
 
         """
 
-        with tf.name_scope("msre"):
+        with tf.name_scope("re"):
 
             mask = tf.not_equal(self.v, 0)  # selects only the rated items
             n_values = tf.reduce_sum(
@@ -597,7 +597,7 @@ class RBM:
         """
 
         if self.with_metrics:  # if true (default) returns evaluation metrics
-            self.Mserr = self.msre(self.v_k)
+            self.Rmse = self.rmse(self.v_k)
             self.Clacc = self.accuracy(self.v_k)
 
     def train_test_precision(self, xtst):
@@ -629,14 +629,14 @@ class RBM:
 
         return precision_train, precision_test
 
-    def display_metrics(self, Mse_train, precision_train, precision_test):
+    def display_metrics(self, Rmse_train, precision_train, precision_test):
 
         """
         Display training/test metrics and plots the msre error as a function
         of the training epochs
 
         Args:
-            Mse_train (list, float32): per epoch msre on the train set
+            Rmse_train (list, float32): per epoch rmse on the train set
             precision_train (scalar, float32): precision on the train set
             precision_test  (scalar, float32): precision on the test set
         """
@@ -644,8 +644,8 @@ class RBM:
         if self.with_metrics:
 
             # Display training error as a function of epochs
-            plt.plot(Mse_train, label="train")
-            plt.ylabel("msr_error", size="x-large")
+            plt.plot(Rmse_train, label="train")
+            plt.ylabel("rmse", size="x-large")
             plt.xlabel("epochs", size="x-large")
             plt.legend(ncol=1)
 
@@ -730,7 +730,7 @@ class RBM:
         if self.with_metrics:
 
             for l in range(num_minibatches):  # minibatch loop
-                _, batch_err = self.sess.run([self.opt, self.Mserr])
+                _, batch_err = self.sess.run([self.opt, self.Rmse])
                 # average msr error per minibatch
                 epoch_tr_err += batch_err / num_minibatches
 
@@ -771,7 +771,7 @@ class RBM:
         self.init_gpu()
         self.init_training_session(xtr)
 
-        Mse_train = []  # List to collect the metrics across epochs
+        Rmse_train = []  # List to collect the metrics across epochs
 
         # start loop over training epochs
         for i in range(self.epochs):
@@ -780,9 +780,9 @@ class RBM:
             epoch_tr_err = self.batch_training(num_minibatches)  # model train
 
             if self.with_metrics == True and i % self.display == 0:
-                log.info("training epoch %i rmse Train %f" % (i, epoch_tr_err))
+                log.info("training epoch %i rmse %f" % (i, epoch_tr_err))
 
-            Mse_train.append(epoch_tr_err)  # mse training error per training epoch
+            Rmse_train.append(epoch_tr_err)  # mse training error per training epoch
 
         # optionally evaluate precision metrics
         precision_train, precision_test = self.train_test_precision(xtst)
@@ -790,7 +790,7 @@ class RBM:
 
         log.info("done training, Training time %f2" % elapsed)
 
-        self.display_metrics(Mse_train, precision_train, precision_test)
+        self.display_metrics(Rmse_train, precision_train, precision_test)
 
         return elapsed
 
