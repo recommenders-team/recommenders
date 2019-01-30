@@ -9,6 +9,8 @@
 # $ sh generate_conda_file.sh --pyspark
 # For generating a conda file for running python gpu and pyspark:
 # $ sh generate_conda_file.sh --gpu --pyspark
+# For generating a conda file for running python gpu and pyspark a particular version of spark:
+# $ sh generate_conda_file.sh --gpu --pyspark-version 2.4.0
 #
 
 # first check if conda is installed
@@ -30,6 +32,7 @@ pyspark="#"
 # flags to detect if both CPU and GPU are specified
 gpu_flag=false
 pyspark_flag=false
+pyspark_version=2.3.1
 
 while [ ! $# -eq 0 ]
 do
@@ -37,6 +40,7 @@ do
 		--help)
 			echo "Please specify --gpu to install with GPU-support and"
 			echo "--pyspark to install with pySpark support"
+			echo "--pyspark-version X.Y.Z to install version X.Y.Z of pySpark (default 2.3.1)"
 			exit
 			;;
 		--gpu)
@@ -49,6 +53,17 @@ do
 			pyspark=""
 			CONDA_FILE="conda_pyspark.yaml"
 			pyspark_flag=true
+			;;			
+		--pyspark-version)
+			pyspark=""
+			CONDA_FILE="conda_pyspark.yaml"
+			pyspark_flag=true
+			pyspark_version=$2
+			if ! [[ $pyspark_version =~ ^[0-9]+([.][0-9]+){2}$ ]]; then
+				echo "Inappropriate version of pyspark passed:" $pyspark_version
+				exit 1
+			fi
+			shift
 			;;			
 		*)
 			echo $"Usage: $0 invalid argument $1 please run with --help for more information."
@@ -82,7 +97,7 @@ dependencies:
 - python==3.6.7
 - numpy>=1.13.3
 - dask>=0.17.1
-${pyspark}- pyspark==2.3.1
+${pyspark}- pyspark==${pyspark_version}
 - pymongo>=3.6.1
 - ipykernel>=4.6.1
 - ${tensorflow}==1.12.0
