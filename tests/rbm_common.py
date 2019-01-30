@@ -4,18 +4,18 @@
 import numpy as np
 import pytest
 
-from reco_utils.dataset.numpy_splitter import numpy_stratified_split
+from reco_utils.dataset.numpy_splitters import numpy_stratified_split
 
 
 @pytest.fixture(scope="module")
 def test_specs():
 
     return {
-        "number_of_users": 30,
-        "number of items": 53,
+        "users": 30,
+        "items": 53,
         "ratings": 5,
         "seed": 123,
-        "sparsness": 80,
+        "spars": 0.8,
         "ratio": 0.7,
     }
 
@@ -31,7 +31,7 @@ def affinity_matrix(test_specs):
         users (int): number of users (rows).
         items (int): number of items (columns).
         ratings (int): rating scale, e.g. 5 meaning rates are from 1 to 5.
-        spars: probablity of obtaining zero. This roughly correponds to the sparsness.
+        spars: probablity of obtaining zero. This roughly correponds to the sparseness.
                of the generated matrix. If spars = 0 then the affinity matrix is dense.
 
     Returns:
@@ -42,8 +42,8 @@ def affinity_matrix(test_specs):
     np.random.seed(test_specs["seed"])
 
     # uniform probability for the 5 ratings
-    s = [(1 - test_specs["sparsness"]) / test_specs["ratings"]] * test_specs["ratings"]
-    s.append(test_specs["sparsness"])
+    s = [(1 - test_specs["spars"]) / test_specs["ratings"]] * test_specs["ratings"]
+    s.append(test_specs["spars"])
     P = s[::-1]
 
     # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
