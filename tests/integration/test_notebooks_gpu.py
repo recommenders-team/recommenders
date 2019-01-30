@@ -87,7 +87,7 @@ def test_ncf_deep_dive_integration(
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL*2)
 
 
 @pytest.mark.integration
