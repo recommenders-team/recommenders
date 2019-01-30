@@ -150,18 +150,10 @@ def test_float_numpy_stratified_splitter(test_specs, python_float_dataset):
     # are stronger than for the entire dataset due to the random nature of the per user splitting.
     # For this reason we allow a slightly bigger tollerance, as specified in the test_specs()
 
-    assert (
-        (Xtr_rated / X_rated <= test_specs["ratio"] + test_specs["fluctuation"]).all()
-        & (Xtr_rated / X_rated >= test_specs["ratio"] - test_specs["fluctuation"]).all()
+    assert Xtr_rated / X_rated == pytest.approx(
+        test_specs["ratio"], rel=test_specs["fluctuation"]
     )
 
-    assert (
-        (
-            Xtst_rated / X_rated
-            <= (1 - test_specs["ratio"]) + test_specs["fluctuation"]
-        ).all()
-        & (
-            Xtst_rated / X_rated
-            >= (1 - test_specs["ratio"]) - test_specs["fluctuation"]
-        ).all()
+    assert Xtst_rated / X_rated == pytest.approx(
+        (1 - test_specs["ratio"]), rel=test_specs["fluctuation"]
     )
