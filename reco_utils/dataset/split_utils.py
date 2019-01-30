@@ -8,7 +8,7 @@ from reco_utils.common.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
 try:
     from pyspark.sql.functions import col, broadcast
-except ModuleNotFoundError:
+except ImportError:
     pass  # so the environment without spark doesn't break
 
 
