@@ -24,13 +24,10 @@ def test_ncf_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(TOP_K=10, 
-                        MOVIELENS_DATA_SIZE="100k",
-                        EPOCHS=1,
-                        BATCH_SIZE=256),
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=256),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-    
+
     # There is too much variability to do an approx equal, just adding top values
     assert results["map"] < 0.05
     assert results["ndcg"] < 0.20
@@ -40,17 +37,19 @@ def test_ncf_smoke(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
-@pytest.mark.skip(reason="as of now, it takes too long to do a smoke test")
+@pytest.mark.skip(
+    reason="as of now, it takes too long to do a smoke test, see issue #466"
+)
 def test_ncf_deep_dive(notebooks):
     notebook_path = notebooks["ncf_deep_dive"]
-    pm.execute_notebook(notebook_path, 
-                        OUTPUT_NOTEBOOK, 
-                        kernel_name=KERNEL_NAME,
-                        parameters=dict(TOP_K=10, 
-                                        MOVIELENS_DATA_SIZE="100k",
-                                        EPOCHS=1,
-                                        BATCH_SIZE=1024),
-                       )
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=1024
+        ),
+    )
 
 
 @pytest.mark.smoke
