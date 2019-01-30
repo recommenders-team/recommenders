@@ -85,7 +85,7 @@ dependencies:
 ${pyspark}- pyspark==2.3.1
 - pymongo>=3.6.1
 - ipykernel>=4.6.1
-- ${tensorflow}==1.5.0
+- ${tensorflow}==1.12.0
 - scikit-surprise>=1.0.6
 - scikit-learn==0.19.1
 - jupyter>=1.0.0
@@ -108,7 +108,8 @@ ${pyspark}- pyarrow>=0.8.0
 ${gpu}  - numba>=0.38.1 
   - gitpython>=2.1.8
   - pydocumentdb>=2.3.3
-  - azureml-core>=0.1.74
+  - nvidia-ml-py3>=7.352.0
+  - dataclasses>=0.6
 EOM
 
 echo "Conda file generated: " $CONDA_FILE

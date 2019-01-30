@@ -118,6 +118,10 @@ conda*.yaml
 *.zip
 .vscode/
 scripts/repo_metrics/config.py
+movies.dat
+ratings.dat
+u.item
+u.data
 ml-100k/
 ml-10M100K/
 ml-1m/
