@@ -41,9 +41,6 @@ def test_ncf(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
-@pytest.mark.skip(
-    reason="as of now, it takes too long to do a unit test, see issue #466"
-)
 def test_ncf_deep_dive(notebooks):
     notebook_path = notebooks["ncf_deep_dive"]
     pm.execute_notebook(
@@ -51,7 +48,7 @@ def test_ncf_deep_dive(notebooks):
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=1024
+            TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=2048
         ),
     )
 
