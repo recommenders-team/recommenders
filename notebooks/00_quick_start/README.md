@@ -12,5 +12,4 @@ data preparation, model building, and model evaluation by using the utility func
 | [ncf_movielens](ncf_movielens.ipynb) | Utilizing Neural Collaborative Filtering (NCF) to predict movie ratings in a Python+GPU (TensorFlow) environment.
 | [sar_python_cpu_movielens](sar_single_node_movielens.ipynb) | Utilizing Smart Adaptive Recommendations (SAR) algorithm to predict movie ratings in a Python+CPU environment.
 | [dkn](dkn.ipynb) | Utilizing the Deep Knowledge-Aware Network (DKN) algorithm for news recommendations using information from a knowledge graph, in a Python+GPU (TensorFlow) environment.
-| [xdeepfm](xdeepfm.ipynb) | Utilizing the eXtreme Deep Factorization Machine (xDeepFM) to learn both low and high order feature interactions for predicting CTR, in a Python+GPU (TensorFlow) environment.¶
-
+| [xdeepfm](xdeepfm.ipynb) | Utilizing the eXtreme Deep Factorization Machine (xDeepFM) to learn both low and high order feature interactions for predicting CTR, in a Python+GPU (TensorFlow) environment.
