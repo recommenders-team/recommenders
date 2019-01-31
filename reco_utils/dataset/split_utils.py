@@ -8,12 +8,12 @@ from reco_utils.common.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
 try:
     from pyspark.sql.functions import col, broadcast
-except:
+except ImportError:
     pass  # so the environment without spark doesn't break
 
 
 def process_split_ratio(ratio):
-    '''Generate split ratio lists
+    """Generate split ratio lists
 
     Args:
         ratio (float or list): a float number that indicates split ratio or a list of float
@@ -23,7 +23,7 @@ def process_split_ratio(ratio):
         tuple: a tuple containing
             bool: A boolean variable multi that indicates if the splitting is multi or single.
             list: A list of normalized split ratios.
-    '''
+    """
     if isinstance(ratio, float):
         if ratio <= 0 or ratio >= 1:
             raise ValueError("Split ratio has to be between 0 and 1")
