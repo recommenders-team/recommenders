@@ -30,7 +30,7 @@ try:
         concat_ws,
         col,
     )
-except ModuleNotFoundError:
+except ImportError:
     pass  # so the environment without spark doesn't break
 
 
@@ -159,6 +159,10 @@ def load_pandas_df(
             If header is None but either title_col or genres_col is not None,
             returns movie titles and/or genres.
     """
+
+    # fix capitalization
+    size = size.lower()
+
     datapath, item_datapath = _load_datafile(size, local_cache_path)
 
     # Load title and genres
@@ -284,6 +288,10 @@ def load_spark_df(
             If header is None but either title_col or genres_col is not None,
             returns movie titles and/or genres.
     """
+
+    # fix capitalization
+    size = size.lower()
+
     file_datapath, file_item_datapath = _load_datafile(size, local_cache_path)
     # Driver node's file path
     datapath = "file:" + file_datapath

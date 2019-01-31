@@ -16,7 +16,7 @@ try:
         SparkRatingEvaluation,
     )
     from reco_utils.common.spark_utils import start_or_get_spark
-except ModuleNotFoundError:
+except ImportError:
     pass  # skip this import if we are in pure python environment
 
 TOL = 0.0001
@@ -149,22 +149,48 @@ def test_spark_recall(spark_data, target_metrics):
     assert evaluator.recall_at_k() == target_metrics["recall"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.recall_at_k() == target_metrics["recall"]
 
 
 @pytest.mark.spark
-def test_spark_precision(spark_data, target_metrics):
+def test_spark_precision(spark_data, target_metrics, spark):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
     assert evaluator.precision_at_k() == target_metrics["precision"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.precision_at_k() == target_metrics["precision"]
+
+    # Check normalization
+    single_user = pd.DataFrame(
+        {"userID": [1, 1, 1], "itemID": [1, 2, 3], "rating": [5, 4, 3]}
+    )
+    df_single = spark.createDataFrame(single_user)
+    evaluator2 = SparkRankingEvaluation(
+        df_single, df_single, k=3, col_prediction="rating"
+    )
+    assert evaluator2.precision_at_k() == 1
+
+    same_items = pd.DataFrame(
+        {
+            "userID": [1, 1, 1, 2, 2, 2],
+            "itemID": [1, 2, 3, 1, 2, 3],
+            "rating": [5, 4, 3, 5, 5, 3],
+        }
+    )
+    df_same = spark.createDataFrame(same_items)
+    evaluator3 = SparkRankingEvaluation(df_same, df_same, k=3, col_prediction="rating")
+    assert evaluator3.precision_at_k() == 1
+
+    # Check that if the sample size is smaller than k, the maximum precision can not be 1
+    # if we do precision@5 when there is only 3 items, we can get a maximum of 3/5.
+    evaluator4 = SparkRankingEvaluation(df_same, df_same, k=5, col_prediction="rating")
+    assert evaluator4.precision_at_k() == 0.6
 
 
 @pytest.mark.spark
@@ -178,7 +204,7 @@ def test_spark_ndcg(spark_data, target_metrics):
     assert evaluator.ndcg_at_k() == target_metrics["ndcg"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.ndcg_at_k() == target_metrics["ndcg"]
 
@@ -196,7 +222,7 @@ def test_spark_map(spark_data, target_metrics):
     assert evaluator.map_at_k() == target_metrics["map"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.map_at_k() == target_metrics["map"]
 
