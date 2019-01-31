@@ -306,7 +306,7 @@ class NCF:
 
         else:
             output = self._predict(np.array([user_input]), np.array([item_input]))
-            return output.reshape(-1)[0]
+            return float(output.reshape(-1)[0])
             
 
     def _predict(
