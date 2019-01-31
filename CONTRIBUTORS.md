@@ -9,7 +9,7 @@ They have write access to the repo and provide support reviewing issues and pull
 
 * **[Andreas Argyriou](https://github.com/anargyri)**
     * SAR single node improvements
-    * Reco Utils metric computation
+    * Reco Utils metrics computations
     * Tests for Surprise
 * **[Dan Ciborowski](https://github.com/dciborow)**
     * ALS movie example notebook
