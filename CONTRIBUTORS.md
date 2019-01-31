@@ -34,17 +34,19 @@ They have write access to the repo and provide support reviewing issues and pull
     * SAR notebooks
     * SAR unit / integration / smoke tests
     * Early infrastructure design based on collapsing another internal project
-* **[Zhang Le](https://github.com/yueguoguo)**
-    * Reco Utils
-    * Continuous integration build / test setup
-    * Algorithm comparison notebook
+* **[Jianxun Lian](https://github.com/Leavingseason)**
+    * xDeepFM algorithm
+    * DKN algorithm
 * **[Jun Ki Min](https://github.com/loomlike)**
 * **[Jeremy Reynolds](https://github.com/jreynolds01)**
 * **[Mirco Milletarì](https://github.com/WessZumino)**
 * **[Ye Xing](https://github.com/yexing99)**
 * **[Tao Wu](https://github.com/wutao)**
     * Improving documentation
-
+* **[Le Zhang](https://github.com/yueguoguo)**
+    * Reco Utils
+    * Continuous integration build / test setup
+    * Algorithm comparison notebook
 
 Contributors
 ------------
