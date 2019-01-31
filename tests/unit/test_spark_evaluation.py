@@ -149,7 +149,7 @@ def test_spark_recall(spark_data, target_metrics):
     assert evaluator.recall_at_k() == target_metrics["recall"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.recall_at_k() == target_metrics["recall"]
 
@@ -162,7 +162,7 @@ def test_spark_precision(spark_data, target_metrics, spark):
     assert evaluator.precision_at_k() == target_metrics["precision"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.precision_at_k() == target_metrics["precision"]
 
@@ -204,7 +204,7 @@ def test_spark_ndcg(spark_data, target_metrics):
     assert evaluator.ndcg_at_k() == target_metrics["ndcg"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.ndcg_at_k() == target_metrics["ndcg"]
 
@@ -222,7 +222,7 @@ def test_spark_map(spark_data, target_metrics):
     assert evaluator.map_at_k() == target_metrics["map"]
 
     evaluator1 = SparkRankingEvaluation(
-        df_true, df_pred, relevancy_method="by_threshold"
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
     assert evaluator1.map_at_k() == target_metrics["map"]
 
