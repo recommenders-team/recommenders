@@ -161,7 +161,7 @@ def test_sar_item_similarity(
         )
     else:
         test_item_similarity = _rearrange_to_test(
-            np.array(model.item_similarity),
+            model.item_similarity.toarray(),
             row_ids,
             col_ids,
             model.item_map_dict,
