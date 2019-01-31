@@ -165,7 +165,10 @@ def notebooks():
         "ncf_deep_dive": os.path.join(
             folder_notebooks, "02_model", "ncf_deep_dive.ipynb"
         ),
-            "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
-        }
+        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
+        "fastai": os.path.join(folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"),
+        "xdeepfm_quickstart": os.path.join(folder_notebooks, "00_quick_start", "xdeepfm.ipynb"),
+        "dkn_quickstart": os.path.join(folder_notebooks, "00_quick_start", "dkn.ipynb"),
+    }
     return paths
 
