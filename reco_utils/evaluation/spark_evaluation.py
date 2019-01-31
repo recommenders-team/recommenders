@@ -162,6 +162,7 @@ class SparkRankingEvaluation:
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL,
+        threshold=DEFAULT_THRESHOLD
     ):
         """Initialization.
         This is the Spark version of ranking metrics evaluator.
@@ -182,6 +183,10 @@ class SparkRankingEvaluation:
             k (int): number of items to recommend to each user.
             relevancy_method (str): method for determining relevant items. Possible 
                 values are "top_k", "by_time_stamp", and "by_threshold".
+            threshold (float): threshold for determining the relevant recommended items.
+                This is used for the case that predicted ratings follow a known
+                distribution. NOTE: this option is only activated if relevancy_method is
+                set to "by_threshold".
         """
         self.rating_true = rating_true
         self.rating_pred = rating_pred
@@ -189,6 +194,7 @@ class SparkRankingEvaluation:
         self.col_item = col_item
         self.col_rating = col_rating
         self.col_prediction = col_prediction
+        self.threshold = threshold
 
         # Check if inputs are Spark DataFrames.
         if not isinstance(self.rating_true, DataFrame):
@@ -229,9 +235,9 @@ class SparkRankingEvaluation:
         self.k = k
 
         relevant_func = {
-            "top_k": get_top_k_items,
-            "by_time_stamp": get_relevant_items_by_timestamp,
-            "by_threshold": get_relevant_items_by_threshold,
+            "top_k": _get_top_k_items,
+            "by_time_stamp": _get_relevant_items_by_timestamp,
+            "by_threshold": _get_relevant_items_by_threshold,
         }
 
         if relevancy_method not in relevant_func:
@@ -247,6 +253,7 @@ class SparkRankingEvaluation:
                 col_user=self.col_user,
                 col_item=self.col_item,
                 col_rating=self.col_prediction,
+                threshold=self.threshold
             )
             if relevancy_method == "by_threshold"
             else relevant_func[relevancy_method](
@@ -328,7 +335,7 @@ class SparkRankingEvaluation:
         return maprecision
 
 
-def get_top_k_items(
+def _get_top_k_items(
         dataframe,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
@@ -372,7 +379,7 @@ def get_top_k_items(
     return items_for_user
 
 
-def get_relevant_items_by_threshold(
+def _get_relevant_items_by_threshold(
         dataframe,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
@@ -392,9 +399,9 @@ def get_relevant_items_by_threshold(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
-        threshold: threshold for determining the relevant recommended items.
-        This is used for the case that predicted ratings follow a known
-        distribution.
+        threshold (float): threshold for determining the relevant recommended items.
+            This is used for the case that predicted ratings follow a known
+            distribution.
 
     Return:
         spark.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant
@@ -415,7 +422,7 @@ def get_relevant_items_by_threshold(
     return items_for_user
 
 
-def get_relevant_items_by_timestamp(
+def _get_relevant_items_by_timestamp(
         dataframe,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
