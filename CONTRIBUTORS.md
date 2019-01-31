@@ -40,6 +40,7 @@ They have write access to the repo and provide support reviewing issues and pull
 * **[Jun Ki Min](https://github.com/loomlike)**
 * **[Jeremy Reynolds](https://github.com/jreynolds01)**
 * **[Mirco Milletarì](https://github.com/WessZumino)**
+    * Restricted Boltzmann Machine  algorithm
 * **[Ye Xing](https://github.com/yexing99)**
 * **[Tao Wu](https://github.com/wutao)**
     * Improving documentation
