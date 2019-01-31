@@ -23,7 +23,7 @@ COSMOSDB_CONNECTOR_URL="https://search.maven.org/remotecontent?filepath=com/micr
 COSMOSDB_CONNECTOR_BASENAME=$(basename $COSMOSDB_CONNECTOR_URL)
 
 CLUSTER_EXIST=false
-PYPI_LIBRARIES=( "azure-cli" "azureml-sdk[databricks]" "pydocumentdb" )
+PYPI_LIBRARIES=( "azure-cli==2.0.56" "azureml-sdk[databricks]==1.0.8" "pydocumentdb==2.3.3" )
 while IFS=' ' read -ra ARR; do
     if [ ${ARR[0]} = $CLUSTER_ID ]; then
         CLUSTER_EXIST=true
