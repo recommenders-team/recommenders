@@ -66,4 +66,4 @@ def python_dataset_ncf(test_specs_ncf):
 
     train, test = python_chrono_split(rating, ratio=np.random.choice(test_specs_ncf["ratios"]))
 
-    return (train, test)
+    return train, test
