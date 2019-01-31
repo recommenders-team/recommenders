@@ -30,7 +30,7 @@ try:
         concat_ws,
         col,
     )
-except ModuleNotFoundError:
+except ImportError:
     pass  # so the environment without spark doesn't break
 
 
