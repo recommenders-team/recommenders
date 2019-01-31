@@ -114,6 +114,7 @@ conda*.yaml
 .idea/
 *.npz
 *.data
+*.dat
 *.csv
 *.zip
 .vscode/
@@ -127,3 +128,5 @@ ml-10M100K/
 ml-1m/
 ml-20m/
 *.jar
+*.item
+*.pkl
