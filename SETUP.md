@@ -23,13 +23,12 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements.
 
-Currently, this repository supports the following on a linux DSVM:
+Currently, this repository supports the following environments:
 
 * Python CPU
 * Python GPU
 * PySpark
 
-PySpark is the only supported environment on Azure Databricks.
 
 ## Setup guide for Local or DSVM
 
