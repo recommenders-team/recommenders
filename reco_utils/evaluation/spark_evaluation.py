@@ -185,7 +185,7 @@ class SparkRankingEvaluation:
                 values are "top_k", "by_time_stamp", and "by_threshold".
             threshold (float): threshold for determining the relevant recommended items.
                 This is used for the case that predicted ratings follow a known
-                distribution. NOTEÑ this option is only activated if relevancy_method is
+                distribution. NOTE: this option is only activated if relevancy_method is
                 set to "by_threshold".
         """
         self.rating_true = rating_true
