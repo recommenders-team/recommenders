@@ -52,7 +52,7 @@ def _apply_sar_hash_index(model, train, test, header, pandas_new=False):
     index2item = dict(enumerate_items_2)
 
     model.set_index(
-        unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item
+        user_map_dict, item_map_dict, index2user, index2item
     )
 
 
