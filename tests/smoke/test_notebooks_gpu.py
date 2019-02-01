@@ -52,11 +52,11 @@ def test_ncf_deep_dive(notebooks):
     # There is too much variability to do an approx equal, just adding top values
     assert results["map"] < 0.05
     assert results["ndcg"] < 0.35
-    assert results["precision"] < 0.15
+    assert results["precision"] < 0.17
     assert results["recall"] < 0.1
     assert results["map2"] < 0.05
     assert results["ndcg2"] < 0.35
-    assert results["precision2"] < 0.15
+    assert results["precision2"] < 0.17
     assert results["recall2"] < 0.1
 
     
@@ -82,3 +82,41 @@ def test_fastai(notebooks):
     assert results["precision"] == pytest.approx(0.138494, TOL)
     assert results["recall"] == pytest.approx(0.058747, TOL)
 
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+@pytest.mark.deeprec
+def test_notebook_xdeepfm(notebooks):
+    notebook_path = notebooks["xdeepfm_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(EPOCHS_FOR_SYNTHETIC_RUN=20, EPOCHS_FOR_CRITEO_RUN=1),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res_syn"]["auc"] == pytest.approx(0.982, TOL)
+    assert results["res_syn"]["logloss"] == pytest.approx(0.2306, TOL*10)    
+    assert results["res_real"]["auc"] == pytest.approx(0.628, TOL)
+    assert results["res_real"]["logloss"] == pytest.approx(0.5589, TOL*10)
+    
+    
+@pytest.mark.smoke
+@pytest.mark.gpu
+@pytest.mark.deeprec
+def test_notebook_dkn(notebooks):
+    notebook_path = notebooks["dkn_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epoch=1),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res"]["auc"] == pytest.approx(0.4707, TOL*10)
+    assert results["res"]["acc"] == pytest.approx(0.5725, TOL*10)
+    assert results["res"]["f1"] == pytest.approx(0.7281, TOL)
+
+  
