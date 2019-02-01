@@ -69,7 +69,10 @@ def test_fastai(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1),
+        parameters=dict(TOP_K=10, 
+                        MOVIELENS_DATA_SIZE="100k", 
+                        EPOCHS=1,
+                        IS_TEST=True),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -92,7 +95,10 @@ def test_notebook_xdeepfm(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(EPOCHS_FOR_SYNTHETIC_RUN=20, EPOCHS_FOR_CRITEO_RUN=1),
+        parameters=dict(EPOCHS_FOR_SYNTHETIC_RUN=20, 
+                        EPOCHS_FOR_CRITEO_RUN=1,
+                        BATCH_SIZE_SYNTHETIC=128,
+                        BATCH_SIZE_CRITEO=2048),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
