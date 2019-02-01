@@ -361,7 +361,12 @@ class SARSingleNode:
 
         # Convert to dense, the following operations are easier.
         logger.info("Converting to dense array ...")
-        scores_dense = scores.toarray()
+        # Convert to dense, the following operations are easier.
+        logger.info("Converting to dense matrix...")
+        if isinstance(scores, np.matrixlib.defmatrix.matrix):
+            scores_dense = np.array(scores)
+        else:
+            scores_dense = scores.todense()
 
         # take the intersection between train test items and items we actually need
         test_col_hashed_users = test[self.col_user].map(self.user_map_dict)
