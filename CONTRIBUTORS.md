@@ -9,11 +9,11 @@ They have write access to the repo and provide support reviewing issues and pull
 
 * **[Andreas Argyriou](https://github.com/anargyri)**
     * SAR single node improvements
-    * Reco Utils metrics computations
+    * Reco utils metrics computations
     * Tests for Surprise
 * **[Dan Ciborowski](https://github.com/dciborow)**
-    * ALS movie example notebook
-    * SAR Pyspark wrapper
+    * ALS operationalization notebook
+    * SAR PySpark improvement
 * **[Markus Cosowicz](https://github.com/eisber)**
     * SAR improvements on Spark
 * **[Miguel González-Fierro](https://github.com/miguelfierro)**
@@ -23,6 +23,7 @@ They have write access to the repo and provide support reviewing issues and pull
     * Continuous integration build / test setup.
 * **[Scott Graham](https://github.com/gramhagen)**
     * Improving documentation
+    * VW notebook
 * **[Nikhil Joglekar](https://github.com/nikhilrj)**
     * Improving documentation
     * Quick start notebook
@@ -37,14 +38,16 @@ They have write access to the repo and provide support reviewing issues and pull
     * xDeepFM algorithm
     * DKN algorithm
 * **[Jun Ki Min](https://github.com/loomlike)**
+    * ALS notebook
+    * Wide & Deep algorithm
 * **[Jeremy Reynolds](https://github.com/jreynolds01)**
+    * Reference architecture
 * **[Mirco Milletarì](https://github.com/WessZumino)**
-    * Restricted Boltzmann Machine  algorithm
-* **[Ye Xing](https://github.com/yexing99)**
+    * Restricted Boltzmann Machine algorithm
 * **[Tao Wu](https://github.com/wutao)**
     * Improving documentation
 * **[Le Zhang](https://github.com/yueguoguo)**
-    * Reco Utils
+    * Reco utils
     * Continuous integration build / test setup
     * Quickstart, deep dive, algorithm comparison, notebooks
 
@@ -56,6 +59,6 @@ Contributors
 
 * **[Aaron He](https://github.com/AaronHeee)**
     * Reco utils of NCF.
-    * Deep dive notebook demonstrating use of NCF.
+    * Deep dive notebook demonstrating the use of NCF.
 * **[Nicolas Hug](https://github.com/NicolasHug)**
     * Jupyter notebook demonstrating use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations
