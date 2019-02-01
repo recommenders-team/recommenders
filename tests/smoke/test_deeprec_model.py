@@ -1,3 +1,5 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 import pytest
 import os
@@ -14,6 +16,7 @@ from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 @pytest.fixture
 def resource_path():
     return os.path.dirname(os.path.realpath(__file__))
+
 
 @pytest.mark.smoke
 @pytest.mark.gpu
@@ -37,6 +40,7 @@ def test_model_xdeepfm(resource_path):
     assert isinstance(model.fit(data_file,data_file), BaseModel)
     assert model.predict(data_file, output_file) is not None
 
+    
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.deeprec
@@ -59,37 +63,4 @@ def test_model_dkn(resource_path):
     assert(isinstance(model.fit(train_file, valid_file), BaseModel))
     assert model.run_eval(valid_file) is not None
 
-
-@pytest.mark.smoke
-@pytest.mark.gpu
-@pytest.mark.deeprec
-def test_notebook_xdeepfm(notebooks):
-    notebook_path = notebooks["xdeepfm_quickstart"]
-    pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=dict(epochs_for_synthetic_run=20, epochs_for_criteo_run=1),
-    )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-
-    assert results["res_syn"]["auc"] >= 0.8
-    assert results["res_real"]["auc"] >= 0.52
-
-
-@pytest.mark.smoke
-@pytest.mark.gpu
-@pytest.mark.deeprec
-def test_notebook_dkn(notebooks):
-    notebook_path = notebooks["dkn_quickstart"]
-    pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=dict(epoch=1),
-    )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-
-    assert isinstance(results["res"]["auc"], float)
-
-
+  
