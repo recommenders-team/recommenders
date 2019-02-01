@@ -46,12 +46,16 @@ They have write access to the repo and provide support reviewing issues and pull
 * **[Le Zhang](https://github.com/yueguoguo)**
     * Reco Utils
     * Continuous integration build / test setup
-    * Algorithm comparison notebook
+    * Quickstart, deep dive, algorithm comparison, notebooks
 
 Contributors
 ------------
 [Full List of Contributors](https://github.com/Microsoft/Recommenders/graphs/contributors)
 - To contributors: please add your name to the list when you submit a patch to the project
 ---
+
+* **[Aaron He](https://github.com/AaronHeee)**
+    * Reco utils of NCF.
+    * Deep dive notebook demonstrating use of NCF.
 * **[Nicolas Hug](https://github.com/NicolasHug)**
     * Jupyter notebook demonstrating use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations
