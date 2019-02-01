@@ -85,9 +85,9 @@ class SARSingleNode:
         self.n_items = None
 
         # user2rowID map for prediction method to look up user affinity vectors
-        self.user_map_dict = None
+        self.user2index = None
         # mapping for item to matrix element
-        self.item_map_dict = None
+        self.item2index = None
 
         # the opposite of the above map - map array index to actual string ID
         self.index2user = None
@@ -96,25 +96,22 @@ class SARSingleNode:
         # affinity scores for the recommendation
         self.scores = None
 
-    def set_index(self, user_map_dict, item_map_dict, index2user, index2item):
-        """MVP2 temporary function to set the index of the sparse dataframe.
-        In future releases this will be carried out into the data object and index will be provided
-        with the data"""
+    def set_index(self, df):
+        """Set indices for mapping user / item ids
+        Args:
+            df (pd.DataFrame): dataframe of all user items
+        """
 
-        # original IDs of users and items in a list
-        # later as we modify the algorithm these might not be needed (can use dictionary keys
-        # instead)
-        self.n_users = len(user_map_dict.keys())
-        self.n_items = len(item_map_dict.keys())
+        # Map a continuous index to user / item ids
+        self.index2user = dict(enumerate(df[self.col_user].unique()))
+        self.index2item = dict(enumerate(df[self.col_item].unique()))
 
-        # mapping of original IDs to actual matrix elements
-        self.user_map_dict = user_map_dict
-        self.item_map_dict = item_map_dict
+        # Invert the mapping from above
+        self.user2index = {v: k for k, v in self.index2user.items()}
+        self.item2index = {v: k for k, v in self.index2item.items()}
 
-        # reverse mapping of matrix index to an item
-        # TODO: we can make this into an array as well
-        self.index2user = index2user
-        self.index2item = index2item
+        self.n_users = len(self.index2user.keys())
+        self.n_items = len(self.index2item.keys())
 
     def compute_affinity_matrix(self, df, n_users, n_items):
         """ Affinity matrix
@@ -226,8 +223,8 @@ class SARSingleNode:
 
         logger.info("Creating index columns...")
         # Map users and items according to the two dicts. Add the two new columns to newdf.
-        temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item_map_dict)
-        temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user_map_dict)
+        temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item2index)
+        temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user2index)
 
         if self.remove_seen:
             # retain seen items for removal at prediction time
@@ -273,7 +270,7 @@ class SARSingleNode:
         # pick users from test set and
         test_users = test[self.col_user].unique()
         try:
-            test_users_training_ids = np.array([self.user_map_dict[user] for user in test_users])
+            test_users_training_ids = np.array([self.user2index[user] for user in test_users])
         except KeyError():
             msg = "SAR cannot score test set users which are not in the training set"
             logger.error(msg)
@@ -349,7 +346,7 @@ class SARSingleNode:
         # pick users from test set and
         test_users = test[self.col_user].unique()
         try:
-            training_ids = np.array([self.user_map_dict[user] for user in test_users])
+            training_ids = np.array([self.user2index[user] for user in test_users])
             assert training_ids is not None
         except KeyError():
             msg = "SAR cannot score test set users which are not in the training set"
@@ -369,8 +366,8 @@ class SARSingleNode:
             scores_dense = scores.todense()
 
         # take the intersection between train test items and items we actually need
-        test_col_hashed_users = test[self.col_user].map(self.user_map_dict)
-        test_col_hashed_items = test[self.col_item].map(self.item_map_dict)
+        test_col_hashed_users = test[self.col_user].map(self.user2index)
+        test_col_hashed_items = test[self.col_item].map(self.item2index)
 
         test_index = pd.concat([test_col_hashed_users, test_col_hashed_items], axis=1).values
         aset = set([tuple(x) for x in self.seen_items])

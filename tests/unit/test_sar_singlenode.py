@@ -34,26 +34,7 @@ def _apply_sar_hash_index(model, train, test, header, pandas_new=False):
     else:
         df_all = train
 
-    # hash SAR
-    # Obtain all the users and items from both training and test data
-    unique_users = df_all[header["col_user"]].unique()
-    unique_items = df_all[header["col_item"]].unique()
-
-    # Hash users and items to smaller continuous space.
-    # Actually, this is an ordered set - it's discrete, but .
-    # This helps keep the matrices we keep in memory as small as possible.
-    enumerate_items_1, enumerate_items_2 = itertools.tee(enumerate(unique_items))
-    enumerate_users_1, enumerate_users_2 = itertools.tee(enumerate(unique_users))
-    item_map_dict = {x: i for i, x in enumerate_items_1}
-    user_map_dict = {x: i for i, x in enumerate_users_1}
-
-    # the reverse of the dictionary above - array index to actual ID
-    index2user = dict(enumerate_users_2)
-    index2item = dict(enumerate_items_2)
-
-    model.set_index(
-        user_map_dict, item_map_dict, index2user, index2item
-    )
+    model.set_index(df_all)
 
 
 def test_init(header):
@@ -152,8 +133,8 @@ def test_sar_item_similarity(
             model.item_similarity.todense(),
             row_ids,
             col_ids,
-            model.item_map_dict,
-            model.item_map_dict,
+            model.item2index,
+            model.item2index,
         )
         assert np.array_equal(
             true_item_similarity.astype(test_item_similarity.dtype),
@@ -164,8 +145,8 @@ def test_sar_item_similarity(
             model.item_similarity,
             row_ids,
             col_ids,
-            model.item_map_dict,
-            model.item_map_dict,
+            model.item2index,
+            model.item2index,
         )
         assert np.allclose(
             true_item_similarity.astype(test_item_similarity.dtype),
@@ -189,11 +170,11 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
     model.fit(demo_usage_data)
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
-    user_index = model.user_map_dict[sar_settings["TEST_USER_ID"]]
+    user_index = model.user2index[sar_settings["TEST_USER_ID"]]
     test_user_affinity = np.reshape(
         np.array(
             _rearrange_to_test(
-                model.user_affinity, None, items, None, model.item_map_dict
+                model.user_affinity, None, items, None, model.item2index
             )[user_index,].todense()
         ),
         -1,
