@@ -8,6 +8,7 @@ from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 TOL = 0.05
+TOL2 = 0.5
 
 
 @pytest.mark.smoke
@@ -102,10 +103,10 @@ def test_notebook_xdeepfm(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res_syn"]["auc"] == pytest.approx(0.982, TOL)
-    assert results["res_syn"]["logloss"] == pytest.approx(0.2306, TOL*10)    
-    assert results["res_real"]["auc"] == pytest.approx(0.628, TOL)
-    assert results["res_real"]["logloss"] == pytest.approx(0.5589, TOL*10)
+    assert results["res_syn"]["auc"] == pytest.approx(0.982, TOL2)
+    assert results["res_syn"]["logloss"] == pytest.approx(0.2306, TOL2)    
+    assert results["res_real"]["auc"] == pytest.approx(0.628, TOL2)
+    assert results["res_real"]["logloss"] == pytest.approx(0.5589, TOL2)
     
     
 @pytest.mark.smoke
@@ -121,8 +122,8 @@ def test_notebook_dkn(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res"]["auc"] == pytest.approx(0.4707, TOL*10)
-    assert results["res"]["acc"] == pytest.approx(0.5725, TOL*10)
-    assert results["res"]["f1"] == pytest.approx(0.7281, TOL)
+    assert results["res"]["auc"] == pytest.approx(0.4707, TOL2)
+    assert results["res"]["acc"] == pytest.approx(0.5725, TOL2)
+    assert results["res"]["f1"] == pytest.approx(0.7281, TOL2)
 
   
