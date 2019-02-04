@@ -97,7 +97,7 @@ channels:
 - fastai
 - defaults
 dependencies:
-- python==3.6.7
+- python==3.6.8
 - numpy>=1.13.3
 - dask>=0.17.1
 ${pyspark}- pyspark==${pyspark_version}
