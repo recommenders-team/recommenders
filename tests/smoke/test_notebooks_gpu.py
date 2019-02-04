@@ -72,8 +72,7 @@ def test_fastai(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(TOP_K=10, 
                         MOVIELENS_DATA_SIZE="100k", 
-                        EPOCHS=1,
-                        IS_TEST=True),
+                        EPOCHS=1),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
