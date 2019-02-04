@@ -13,6 +13,7 @@ import logging
 from scipy import sparse
 
 from reco_utils.common.python_utils import jaccard, lift, exponential_decay
+from reco_utils.evaluation.python_evaluation import get_top_k_items
 
 from reco_utils.common import constants
 from reco_utils.recommender import sar
@@ -60,7 +61,6 @@ class SARSingleNode:
         self.col_prediction = col_prediction
 
         self.remove_seen = remove_seen
-        self.seen_items = None
 
         self.similarity_type = similarity_type
         # convert to seconds
@@ -84,34 +84,15 @@ class SARSingleNode:
         self.n_users = None
         self.n_items = None
 
-        # user2rowID map for prediction method to look up user affinity vectors
-        self.user2index = None
         # mapping for item to matrix element
+        self.user2index = None
         self.item2index = None
 
         # the opposite of the above map - map array index to actual string ID
-        self.index2user = None
         self.index2item = None
 
         # affinity scores for the recommendation
         self.scores = None
-
-    def set_index(self, df):
-        """Set indices for mapping user / item ids
-        Args:
-            df (pd.DataFrame): dataframe of all user items
-        """
-
-        # Map a continuous index to user / item ids
-        self.index2user = dict(enumerate(df[self.col_user].unique()))
-        self.index2item = dict(enumerate(df[self.col_item].unique()))
-
-        # Invert the mapping from above
-        self.user2index = {v: k for k, v in self.index2user.items()}
-        self.item2index = {v: k for k, v in self.index2item.items()}
-
-        self.n_users = len(self.index2user.keys())
-        self.n_items = len(self.index2item.keys())
 
     def compute_affinity_matrix(self, df, n_users, n_items):
         """ Affinity matrix
@@ -167,10 +148,20 @@ class SARSingleNode:
             df (pd.DataFrame): User item rating dataframe
         """
 
+        # Map a continuous index to user / item ids
+        self.index2item = dict(enumerate(df[self.col_item].unique()))
+
+        # Invert the mapping from above
+        self.item2index = {v: k for k, v in self.index2item.items()}
+        self.user2index = {x[1]: x[0] for x in enumerate(df[self.col_user].unique())}
+
+        self.n_users = len(self.user2index)
+        self.n_items = len(self.index2item)
+
         logger.info("Collecting user affinity matrix...")
         assert np.issubdtype(df[self.col_rating].dtype, np.floating), "Rating column data type must be floating point"
 
-        # copy part of the data frame to avoid modification of the input
+        # Copy the DataFrame to avoid modification of the input
         temp_df = df[[self.col_user, self.col_item, self.col_rating]].copy()
 
         if self.time_decay_flag:
@@ -224,9 +215,10 @@ class SARSingleNode:
         temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item2index)
         temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user2index)
 
+        seen_items = None
         if self.remove_seen:
             # retain seen items for removal at prediction time
-            self.seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
+            seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
 
         # Affinity matrix
         logger.info("Building user affinity sparse matrix...")
@@ -248,159 +240,92 @@ class SARSingleNode:
         else:
             raise ValueError("Unknown similarity type: {0}".format(self.similarity_type))
 
-        # Calculate raw scores with a matrix multiplication.
+        # Calculate raw scores with a matrix multiplication
         logger.info("Calculating recommendation scores...")
         self.scores = self.user_affinity.dot(self.item_similarity)
 
+        # Remove items in the train set so recommended items are always novel
+        if self.remove_seen:
+            logger.info("Removing seen items...")
+            self.scores[seen_items[:, 0], seen_items[:, 1]] = -np.inf
+
         logger.info("Done training")
 
-    def recommend_k_items(self, test, top_k=10, sort_top_k=False):
+    def recommend_k_items(self, test, top_k=10):
         """Recommend top K items for all users which are in the test set
 
         Args:
             test (pd.DataFrame): user to test
             top_k (int): number of top items to recommend
-            sort_top_k (bool): flag to sort top k results in descending order
         Returns:
             (pd.DataFrame): top k recommendation items for each user
         """
 
-        # pick users from test set and
-        test_users = test[self.col_user].unique()
-        try:
-            test_users_training_ids = np.array([self.user2index[user] for user in test_users])
-        except KeyError():
-            msg = "SAR cannot score test set users which are not in the training set"
-            logger.error(msg)
-            raise ValueError(msg)
+        # get user / item indices from test set
+        user_ids = test[self.col_user].drop_duplicates().map(self.user2index).values
+        assert not any(np.isnan(user_ids)), "SAR cannot score users that are not in the training set"
 
-        # shorthand
-        scores = self.scores
+        # extract only the scores for the test users
+        test_scores = self.scores[user_ids, :]
 
-        # Convert to dense, the following operations are easier.
-        logger.info("Converting to ndarray...")
-        if isinstance(scores, np.matrixlib.defmatrix.matrix):
-            scores_dense = np.array(scores)
-        elif isinstance(scores, sparse.spmatrix):
-            scores_dense = scores.todense()
-        elif isinstance(scores, np.ndarray):
-            scores_dense = scores
-        else:
-            raise TypeError('Encountered unexpected data type: {}'.format(type(scores)))
+        # convert and flatten scores into an array
+        if isinstance(test_scores, sparse.spmatrix):
+            test_scores = test_scores.todense()
+        test_scores = np.array(test_scores).flatten()
 
-        # Mask out items in the train set.  This only makes sense for some
-        # problems (where a user wouldn't interact with an item more than once).
-        if self.remove_seen:
-            logger.info("Removing seen items...")
-            scores_dense[self.seen_items[:, 0], self.seen_items[:, 1]] = 0
-
-        # Get top K items and scores.
-        logger.info("Getting top K...")
-        top_items = np.argpartition(scores_dense, -top_k, axis=1)[:, -top_k:]
-        top_scores = scores_dense[np.arange(scores_dense.shape[0])[:, None], top_items]
-
-        logger.info("Select users from the test set")
-        top_items = top_items[test_users_training_ids, :]
-        top_scores = top_scores[test_users_training_ids, :]
-
-        logger.info("Creating output dataframe...")
-
-        # Convert to np.array (from view) and flatten
-        top_items = np.reshape(np.array(top_items), -1)
-        top_scores = np.reshape(np.array(top_scores), -1)
-
-        userids = []
-        for u in test_users:
-            userids.extend([u] * top_k)
-
-        results = pd.DataFrame.from_dict(
-            {self.col_user: userids, self.col_item: top_items, self.col_rating: top_scores}
+        df = pd.DataFrame(
+            {
+                self.col_user: np.repeat(test[self.col_user].drop_duplicates().values, self.n_items),
+                self.col_item: np.tile([self.index2item[item] for item in np.arange(self.n_items)], len(user_ids)),
+                self.col_prediction: test_scores,
+            }
         )
 
-        # remap user and item indices to IDs
-        results[self.col_item] = results[self.col_item].map(self.index2item)
+        # ensure datatypes are correct
+        df = df.astype(dtype={self.col_user: str, self.col_item: str, self.col_prediction: self.scores.dtype})
 
-        # do final sort
-        if sort_top_k:
-            results = (
-                results.sort_values(by=[self.col_user, self.col_rating], ascending=False)
-                .groupby(self.col_user)
-                .apply(lambda x: x)
-            )
+        # get top k
+        result = get_top_k_items(df, col_user=self.col_user, col_rating=self.col_prediction, k=top_k)
 
-        # format the dataframe in the end to conform to Suprise return type
-        logger.info("Formatting output")
-
-        return (
-            results[[self.col_user, self.col_item, self.col_rating]]
-            .rename(columns={self.col_rating: self.col_prediction})
-            .astype({self.col_user: str, self.col_item: str, self.col_prediction: self.scores.dtype})
-        )
+        # drop seen items
+        return result.replace(-np.inf, np.nan).dropna()
 
     def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set
         Args:
-            test (pd.DataFrame): DataFrame that contains users to test
+            test (pd.DataFrame): DataFrame that contains users and items to test
         Return:
             pd.DataFrame: DataFrame contains the prediction results
         """
 
-        # pick users from test set and
-        test_users = test[self.col_user].unique()
-        try:
-            training_ids = np.array([self.user2index[user] for user in test_users])
-            assert training_ids is not None
-        except KeyError():
-            msg = "SAR cannot score test set users which are not in the training set"
-            logger.error(msg)
-            raise ValueError(msg)
+        # get user / item indices from test set
+        user_ids = test[self.col_user].map(self.user2index).values
+        assert not any(np.isnan(user_ids)), "SAR cannot score users that are not in the training set"
 
-        # shorthand
-        scores = self.scores
+        # extract only the scores for the test users
+        test_scores = self.scores[user_ids, :]
 
-        # Convert to dense, the following operations are easier.
-        logger.info("Converting to ndarray...")
-        if isinstance(scores, np.matrixlib.defmatrix.matrix):
-            scores_dense = np.array(scores)
-        elif isinstance(scores, sparse.spmatrix):
-            scores_dense = scores.todense()
-        elif isinstance(scores, np.ndarray):
-            scores_dense = scores
-        else:
-            raise TypeError('Encountered unexpected data type: {}'.format(type(scores)))
+        # convert and flatten scores into an array
+        if isinstance(test_scores, sparse.spmatrix):
+            test_scores = test_scores.todense()
 
-        # take the intersection between train test items and items we actually need
-        test_col_hashed_users = test[self.col_user].map(self.user2index)
-        test_col_hashed_items = test[self.col_item].map(self.item2index)
+        item_ids = test[self.col_item].map(self.item2index).values
+        nans = np.isnan(item_ids)
+        if any(nans):
+            # predict 0 for items not seen during training
+            test_scores = np.append(test_scores, np.zeros((self.n_users, 1)), axis=1)
+            item_ids[nans] = self.n_items
+            item_ids = item_ids.astype('int64')
 
-        test_index = pd.concat([test_col_hashed_users, test_col_hashed_items], axis=1).values
-        aset = set([tuple(x) for x in self.seen_items])
-        bset = set([tuple(x) for x in test_index])
-
-        common_index = np.array([x for x in aset & bset])
-
-        # Mask out items in the train set.  This only makes sense for some
-        # problems (where a user wouldn't interact with an item more than once).
-        if self.remove_seen and len(aset & bset) > 0:
-            logger.info("Removing seen items...")
-            scores_dense[common_index[:, 0], common_index[:, 1]] = 0
-
-        final_scores = scores_dense[test_index[:, 0], test_index[:, 1]]
-
-        results = pd.DataFrame.from_dict(
-            {self.col_user: test_index[:, 0], self.col_item: test_index[:, 1], self.col_rating: final_scores}
+        df = pd.DataFrame(
+            {
+                self.col_user: test[self.col_user].values,
+                self.col_item: test[self.col_item].values,
+                self.col_prediction: test_scores[np.arange(test_scores.shape[0]), item_ids],
+            }
         )
 
-        # remap user and item indices to IDs
-        results[self.col_user] = results[self.col_user].map(self.index2user)
-        results[self.col_item] = results[self.col_item].map(self.index2item)
+        # ensure datatypes are correct
+        df = df.astype(dtype={self.col_user: str, self.col_item: str, self.col_prediction: self.scores.dtype})
 
-        # format the dataframe in the end to conform to Suprise return type
-        logger.info("Formatting output")
-
-        # modify test to make it compatible with
-        return (
-            results[[self.col_user, self.col_item, self.col_rating]]
-            .rename(columns={self.col_rating: self.col_prediction})
-            .astype({self.col_user: str, self.col_item: str, self.col_prediction: self.scores.dtype})
-        )
+        return df

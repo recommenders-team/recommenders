@@ -22,21 +22,6 @@ def _rearrange_to_test(array, row_ids, col_ids, row_map, col_map):
     return array
 
 
-def _apply_sar_hash_index(model, train, test, header, pandas_new=False):
-    # TODO: review this function
-    # index all users and items which SAR will compute scores for
-    # bugfix to get around different pandas vesions in build servers
-    if test is not None:
-        if pandas_new:
-            df_all = pd.concat([train, test], sort=False)
-        else:
-            df_all = pd.concat([train, test])
-    else:
-        df_all = train
-
-    model.set_index(df_all)
-
-
 def test_init(header):
     model = SARSingleNode(
         remove_seen=True, similarity_type="jaccard", **header
@@ -59,8 +44,6 @@ def test_fit(similarity_type, timedecay_formula, train_test_dummy_timestamp, hea
         **header
     )
     trainset, testset = train_test_dummy_timestamp
-    _apply_sar_hash_index(model, trainset, testset, header)
-
     model.fit(trainset)
 
 
@@ -77,9 +60,6 @@ def test_predict(
         **header
     )
     trainset, testset = train_test_dummy_timestamp
-
-    _apply_sar_hash_index(model, trainset, testset, header)
-
     model.fit(trainset)
     preds = model.predict(testset)
 
@@ -119,8 +99,6 @@ def test_sar_item_similarity(
         threshold=threshold,
         **header
     )
-
-    _apply_sar_hash_index(model, demo_usage_data, None, header)
 
     model.fit(demo_usage_data)
 
@@ -166,7 +144,6 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         time_now=time_now,
         **header
     )
-    _apply_sar_hash_index(model, demo_usage_data, None, header)
     model.fit(demo_usage_data)
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
@@ -204,7 +181,6 @@ def test_userpred(
         threshold=threshold,
         **header
     )
-    _apply_sar_hash_index(model, demo_usage_data, None, header)
     model.fit(demo_usage_data)
 
     true_items, true_scores = load_userpred(
@@ -218,8 +194,7 @@ def test_userpred(
         demo_usage_data[
             demo_usage_data[header["col_user"]] == sar_settings["TEST_USER_ID"]
         ],
-        top_k=10,
-        sort_top_k=True
+        top_k=10
     )
     test_items = list(test_results[header["col_item"]])
     test_scores = np.array(test_results["prediction"])
