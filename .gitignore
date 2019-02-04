@@ -130,3 +130,6 @@ ml-20m/
 *.jar
 *.item
 *.pkl
+!tests/resources/ml-100k/u.data
+!tests/resources/ml-100k/u.item
+!tests/resources/ml-1m/*.dat
