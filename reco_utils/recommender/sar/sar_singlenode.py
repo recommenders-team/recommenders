@@ -108,12 +108,10 @@ class SARSingleNode:
             (sparse.csr): Affinity matrix in Compressed Sparse Row (CSR) format.
         """
 
-        return (
-            sparse.coo_matrix(
-                (df[self.col_rating], (df[self.col_user_id], df[self.col_item_id])), shape=(n_users, n_items)
-            )
-            .tocsr()
-        )
+        return sparse.coo_matrix(
+            (df[self.col_rating], (df[self.col_user_id], df[self.col_item_id])),
+            shape=(n_users, n_items),
+        ).tocsr()
 
     def compute_coocurrence_matrix(self, df, n_users, n_items):
         """ Co-occurrence matrix
@@ -130,14 +128,20 @@ class SARSingleNode:
 
         user_item_hits = (
             sparse.coo_matrix(
-                (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])), shape=(n_users, n_items)
+                (
+                    np.repeat(1, df.shape[0]),
+                    (df[self.col_user_id], df[self.col_item_id]),
+                ),
+                shape=(n_users, n_items),
             )
             .tocsr()
             .astype(df[self.col_rating].dtype)
         )
 
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
-        item_cooccurrence = item_cooccurrence.multiply(item_cooccurrence >= self.threshold)
+        item_cooccurrence = item_cooccurrence.multiply(
+            item_cooccurrence >= self.threshold
+        )
 
         return item_cooccurrence
 
@@ -159,7 +163,9 @@ class SARSingleNode:
         self.n_items = len(self.index2item)
 
         logger.info("Collecting user affinity matrix...")
-        assert np.issubdtype(df[self.col_rating].dtype, np.floating), "Rating column data type must be floating point"
+        assert np.issubdtype(
+            df[self.col_rating].dtype, np.floating
+        ), "Rating column data type must be floating point"
 
         # Copy the DataFrame to avoid modification of the input
         temp_df = df[[self.col_user, self.col_item, self.col_rating]].copy()
@@ -172,43 +178,21 @@ class SARSingleNode:
 
             # apply time decay to each rating
             temp_df[self.col_rating] *= exponential_decay(
-                value=df[self.col_timestamp], max_val=self.time_now, half_life=self.time_decay_half_life
+                value=df[self.col_timestamp],
+                max_val=self.time_now,
+                half_life=self.time_decay_half_life,
             )
 
             # group time decayed ratings by user-item and take the sum as the user-item affinity
-            temp_df = temp_df.groupby([self.col_user, self.col_item]).sum().reset_index()
-
-            """
-            # experimental implementation of multiprocessing - in practice for smaller datasets this is not needed
-            # leaving here in case anyone wants to actually try this
-            # to enable, you need:
-            #   conda install dill>=0.2.8.1
-            #   pip install multiprocess>=0.70.6.1
-            # from multiprocess import Pool, cpu_count
-            # 
-            # multiprocess uses dill for python3 to serialize lambda functions
-            #
-            # helper function to parallelize the operation on groups
-            def applyParallel(dfGrouped, func):
-                with Pool(cpu_count()*2) as p:
-                    ret_list = p.map(func, [group for name, group in dfGrouped])
-                return pd.concat(ret_list)
-
-            from types import MethodType
-            grouped.applyParallel = MethodType(applyParallel, grouped)
-
-            # then replace df.apply with df.applyParallel
-
-            Original implementation of groupby and apply - without optimization
-            rating_series = grouped.apply(lambda x: np.sum(np.array(x[self.col_rating]) * np.exp(
-                -np.log(2.) * (self.time_now - np.array(x[self.col_timestamp])) / (
-                    self.time_decay_coefficient * 24. * 3600))))
-            """
-
+            temp_df = (
+                temp_df.groupby([self.col_user, self.col_item]).sum().reset_index()
+            )
         else:
             # without time decay use the latest user-item rating in the dataset as the affinity score
             logger.info("De-duplicating the user-item counts")
-            temp_df = temp_df.drop_duplicates([self.col_user, self.col_item], keep="last")
+            temp_df = temp_df.drop_duplicates(
+                [self.col_user, self.col_item], keep="last"
+            )
 
         logger.info("Creating index columns...")
         # Map users and items according to the two dicts. Add the two new columns to newdf.
@@ -222,11 +206,15 @@ class SARSingleNode:
 
         # Affinity matrix
         logger.info("Building user affinity sparse matrix...")
-        self.user_affinity = self.compute_affinity_matrix(temp_df, self.n_users, self.n_items)
+        self.user_affinity = self.compute_affinity_matrix(
+            temp_df, self.n_users, self.n_items
+        )
 
         # Calculate item co-occurrence
         logger.info("Calculating item co-occurrence...")
-        item_cooccurrence = self.compute_coocurrence_matrix(temp_df, self.n_users, self.n_items)
+        item_cooccurrence = self.compute_coocurrence_matrix(
+            temp_df, self.n_users, self.n_items
+        )
 
         logger.info("Calculating item similarity...")
         if self.similarity_type == sar.SIM_COOCCUR:
@@ -238,7 +226,9 @@ class SARSingleNode:
             logger.info("Calculating lift ...")
             self.item_similarity = lift(item_cooccurrence)
         else:
-            raise ValueError("Unknown similarity type: {0}".format(self.similarity_type))
+            raise ValueError(
+                "Unknown similarity type: {0}".format(self.similarity_type)
+            )
 
         # Calculate raw scores with a matrix multiplication
         logger.info("Calculating recommendation scores...")
@@ -263,7 +253,9 @@ class SARSingleNode:
 
         # get user / item indices from test set
         user_ids = test[self.col_user].drop_duplicates().map(self.user2index).values
-        assert not any(np.isnan(user_ids)), "SAR cannot score users that are not in the training set"
+        assert not any(
+            np.isnan(user_ids)
+        ), "SAR cannot score users that are not in the training set"
 
         # extract only the scores for the test users
         test_scores = self.scores[user_ids, :]
@@ -275,17 +267,30 @@ class SARSingleNode:
 
         df = pd.DataFrame(
             {
-                self.col_user: np.repeat(test[self.col_user].drop_duplicates().values, self.n_items),
-                self.col_item: np.tile([self.index2item[item] for item in np.arange(self.n_items)], len(user_ids)),
+                self.col_user: np.repeat(
+                    test[self.col_user].drop_duplicates().values, self.n_items
+                ),
+                self.col_item: np.tile(
+                    [self.index2item[item] for item in np.arange(self.n_items)],
+                    len(user_ids),
+                ),
                 self.col_prediction: test_scores,
             }
         )
 
         # ensure datatypes are correct
-        df = df.astype(dtype={self.col_user: str, self.col_item: str, self.col_prediction: self.scores.dtype})
+        df = df.astype(
+            dtype={
+                self.col_user: str,
+                self.col_item: str,
+                self.col_prediction: self.scores.dtype,
+            }
+        )
 
         # get top k
-        result = get_top_k_items(df, col_user=self.col_user, col_rating=self.col_prediction, k=top_k)
+        result = get_top_k_items(
+            df, col_user=self.col_user, col_rating=self.col_prediction, k=top_k
+        )
 
         # drop seen items
         return result.replace(-np.inf, np.nan).dropna()
@@ -300,7 +305,9 @@ class SARSingleNode:
 
         # get user / item indices from test set
         user_ids = test[self.col_user].map(self.user2index).values
-        assert not any(np.isnan(user_ids)), "SAR cannot score users that are not in the training set"
+        assert not any(
+            np.isnan(user_ids)
+        ), "SAR cannot score users that are not in the training set"
 
         # extract only the scores for the test users
         test_scores = self.scores[user_ids, :]
@@ -315,17 +322,25 @@ class SARSingleNode:
             # predict 0 for items not seen during training
             test_scores = np.append(test_scores, np.zeros((self.n_users, 1)), axis=1)
             item_ids[nans] = self.n_items
-            item_ids = item_ids.astype('int64')
+            item_ids = item_ids.astype("int64")
 
         df = pd.DataFrame(
             {
                 self.col_user: test[self.col_user].values,
                 self.col_item: test[self.col_item].values,
-                self.col_prediction: test_scores[np.arange(test_scores.shape[0]), item_ids],
+                self.col_prediction: test_scores[
+                    np.arange(test_scores.shape[0]), item_ids
+                ],
             }
         )
 
         # ensure datatypes are correct
-        df = df.astype(dtype={self.col_user: str, self.col_item: str, self.col_prediction: self.scores.dtype})
+        df = df.astype(
+            dtype={
+                self.col_user: str,
+                self.col_item: str,
+                self.col_prediction: self.scores.dtype,
+            }
+        )
 
         return df
