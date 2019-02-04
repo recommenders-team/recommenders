@@ -38,7 +38,6 @@ def test_model_xdeepfm(resource_path):
     assert model.run_eval(data_file) is not None
     assert isinstance(model.fit(data_file,data_file), BaseModel)
     assert model.predict(data_file, output_file) is not None
-    del model
 
     
 @pytest.mark.smoke
@@ -62,6 +61,5 @@ def test_model_dkn(resource_path):
 
     assert(isinstance(model.fit(train_file, valid_file), BaseModel))
     assert model.run_eval(valid_file) is not None
-    del model
 
   
