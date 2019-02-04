@@ -3,14 +3,13 @@
 
 import pytest
 import os
-from reco_utils.recommender.deeprec.deeprec_utils import *
-from reco_utils.recommender.deeprec.models.base_model import *
-from reco_utils.recommender.deeprec.models.xDeepFM import *
-from reco_utils.recommender.deeprec.models.dkn import *
-from reco_utils.recommender.deeprec.IO.iterator import *
-from reco_utils.recommender.deeprec.IO.dkn_iterator import *
 import papermill as pm
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
+from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources, prepare_hparams
+from reco_utils.recommender.deeprec.models.base_model import BaseModel
+from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
+from reco_utils.recommender.deeprec.models.dkn import DKN
+from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
+from reco_utils.recommender.deeprec.IO.dkn_iterator import DKNTextIterator
 
 
 @pytest.fixture
@@ -39,6 +38,7 @@ def test_model_xdeepfm(resource_path):
     assert model.run_eval(data_file) is not None
     assert isinstance(model.fit(data_file,data_file), BaseModel)
     assert model.predict(data_file, output_file) is not None
+    del model
 
     
 @pytest.mark.smoke
@@ -62,5 +62,6 @@ def test_model_dkn(resource_path):
 
     assert(isinstance(model.fit(train_file, valid_file), BaseModel))
     assert model.run_eval(valid_file) is not None
+    del model
 
   
