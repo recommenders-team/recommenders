@@ -131,7 +131,6 @@ class SARSingleNode:
             sparse.coo_matrix(
                 (df[self.col_rating], (df[self.col_user_id], df[self.col_item_id])), shape=(n_users, n_items)
             )
-            .todok()
             .tocsr()
         )
 
@@ -145,14 +144,13 @@ class SARSingleNode:
             n_users (int): Number of users.
             n_items (int): Number of items.
         Returns:
-            (np.array): Coocurrence matrix
+            (np.array): Co-occurrence matrix
         """
 
         user_item_hits = (
             sparse.coo_matrix(
                 (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])), shape=(n_users, n_items)
             )
-            .todok()
             .tocsr()
             .astype(df[self.col_rating].dtype)
         )
@@ -280,11 +278,15 @@ class SARSingleNode:
         scores = self.scores
 
         # Convert to dense, the following operations are easier.
-        logger.info("Converting to dense matrix...")
+        logger.info("Converting to ndarray...")
         if isinstance(scores, np.matrixlib.defmatrix.matrix):
             scores_dense = np.array(scores)
-        else:
+        elif isinstance(scores, sparse.spmatrix):
             scores_dense = scores.todense()
+        elif isinstance(scores, np.ndarray):
+            scores_dense = scores
+        else:
+            raise TypeError('Encountered unexpected data type: {}'.format(type(scores)))
 
         # Mask out items in the train set.  This only makes sense for some
         # problems (where a user wouldn't interact with an item more than once).
@@ -357,13 +359,15 @@ class SARSingleNode:
         scores = self.scores
 
         # Convert to dense, the following operations are easier.
-        logger.info("Converting to dense array ...")
-        # Convert to dense, the following operations are easier.
-        logger.info("Converting to dense matrix...")
+        logger.info("Converting to ndarray...")
         if isinstance(scores, np.matrixlib.defmatrix.matrix):
             scores_dense = np.array(scores)
-        else:
+        elif isinstance(scores, sparse.spmatrix):
             scores_dense = scores.todense()
+        elif isinstance(scores, np.ndarray):
+            scores_dense = scores
+        else:
+            raise TypeError('Encountered unexpected data type: {}'.format(type(scores)))
 
         # take the intersection between train test items and items we actually need
         test_col_hashed_users = test[self.col_user].map(self.user2index)

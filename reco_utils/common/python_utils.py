@@ -18,9 +18,9 @@ def exponential_decay(value, max_val, half_life):
 def jaccard(cooccurrence):
     """Helper method to calculate the Jaccard similarity of a matrix of co-occurrences
     Args:
-        cooccurrence (np.matrix): the symmetric matrix of co-occurrences of items
+        cooccurrence (np.array): the symmetric matrix of co-occurrences of items
     Returns:
-        (np.matrix): The matrix of Jaccard similarities between any two items
+        (np.array): The matrix of Jaccard similarities between any two items
     """
 
     diag = cooccurrence.diagonal()
@@ -30,15 +30,15 @@ def jaccard(cooccurrence):
     with np.errstate(invalid='ignore', divide='ignore'):
         result = cooccurrence / (diag_rows + diag_cols - cooccurrence)
 
-    return result
+    return np.array(result)
 
 
 def lift(cooccurrence):
     """Helper method to calculate the Lift of a matrix of co-occurrences
     Args:
-        cooccurrence ((np.matrix): the symmetric matrix of co-occurrences of items
+        cooccurrence (np.array): the symmetric matrix of co-occurrences of items
     Returns:
-        (np.matrix): The matrix of Lifts between any two items
+        (np.array): The matrix of Lifts between any two items
     """
 
     diag = cooccurrence.diagonal()
@@ -48,4 +48,4 @@ def lift(cooccurrence):
     with np.errstate(invalid='ignore', divide='ignore'):
         result = cooccurrence / (diag_rows * diag_cols)
 
-    return result
+    return np.array(result)
