@@ -99,6 +99,7 @@ channels:
 dependencies:
 - python==3.6.7
 - numpy>=1.13.3
+- numexpr>=2.6.6
 - dask>=0.17.1
 ${pyspark}- pyspark==${pyspark_version}
 - pymongo>=3.6.1

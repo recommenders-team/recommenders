@@ -5,7 +5,7 @@
 Reference implementation of SAR in python/numpy/pandas.
 
 This is not meant to be particularly performant or scalable, just
-as a simple and readable implementation.
+a simple and readable implementation.
 """
 import numpy as np
 import pandas as pd
@@ -13,7 +13,6 @@ import logging
 from scipy import sparse
 
 from reco_utils.common.python_utils import jaccard, lift, exponential_decay
-from reco_utils.evaluation.python_evaluation import get_top_k_items
 
 from reco_utils.common import constants
 from reco_utils.recommender import sar
@@ -74,7 +73,8 @@ class SARSingleNode:
         self.item_similarity = None
 
         # threshold - items below this number get set to zero in co-occurrence counts
-        assert self.threshold > 0
+        if self.threshold <= 0:
+            raise ValueError('Threshold cannot be < 1')
 
         # Column for mapping user / item ids to internal indices
         self.col_item_id = sar.INDEXED_ITEMS
@@ -163,9 +163,8 @@ class SARSingleNode:
         self.n_items = len(self.index2item)
 
         logger.info("Collecting user affinity matrix...")
-        assert np.issubdtype(
-            df[self.col_rating].dtype, np.floating
-        ), "Rating column data type must be floating point"
+        if not np.issubdtype(df[self.col_rating].dtype, np.floating):
+            raise TypeError("Rating column data type must be floating point")
 
         # Copy the DataFrame to avoid modification of the input
         temp_df = df[[self.col_user, self.col_item, self.col_rating]].copy()
@@ -261,9 +260,8 @@ class SARSingleNode:
 
         # get user / item indices from test set
         user_ids = test[self.col_user].drop_duplicates().map(self.user2index).values
-        assert not any(
-            np.isnan(user_ids)
-        ), "SAR cannot score users that are not in the training set"
+        if any(np.isnan(user_ids)):
+            raise ValueError("SAR cannot score users that are not in the training set")
 
         # extract only the scores for the test users
         test_scores = self.scores[user_ids, :]
@@ -317,9 +315,8 @@ class SARSingleNode:
 
         # get user / item indices from test set
         user_ids = test[self.col_user].map(self.user2index).values
-        assert not any(
-            np.isnan(user_ids)
-        ), "SAR cannot score users that are not in the training set"
+        if any(np.isnan(user_ids)):
+            raise ValueError("SAR cannot score users that are not in the training set")
 
         # extract only the scores for the test users
         test_scores = self.scores[user_ids, :]
