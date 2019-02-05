@@ -241,12 +241,13 @@ class SARSingleNode:
 
         logger.info("Done training")
 
-    def recommend_k_items(self, test, top_k=10):
+    def recommend_k_items(self, test, top_k=10, sort_top_k=False):
         """Recommend top K items for all users which are in the test set
 
         Args:
             test (pd.DataFrame): user to test
             top_k (int): number of top items to recommend
+            sort_top_k (bool): flag to sort top k results
         Returns:
             (pd.DataFrame): top k recommendation items for each user
         """
@@ -260,21 +261,28 @@ class SARSingleNode:
         # extract only the scores for the test users
         test_scores = self.scores[user_ids, :]
 
-        # convert and flatten scores into an array
+        # ensure we're working with a dense matrix
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.todense()
-        test_scores = np.array(test_scores).flatten()
+
+        # get top K items and scores
+        logger.info("Getting top K...")
+        # this determines the un-ordered top-k item indices for each user
+        top_items = np.argpartition(test_scores, -top_k, axis=1)[:, -top_k:]
+        top_scores = test_scores[np.arange(test_scores.shape[0])[:, None], top_items]
+
+        if sort_top_k:
+            sort_ind = np.argsort(-top_scores)
+            top_items = top_items[np.arange(top_items.shape[0])[:, None], sort_ind]
+            top_scores = top_scores[np.arange(top_scores.shape[0])[:, None], sort_ind]
 
         df = pd.DataFrame(
             {
                 self.col_user: np.repeat(
-                    test[self.col_user].drop_duplicates().values, self.n_items
+                    test[self.col_user].drop_duplicates().values, top_k
                 ),
-                self.col_item: np.tile(
-                    [self.index2item[item] for item in np.arange(self.n_items)],
-                    len(user_ids),
-                ),
-                self.col_prediction: test_scores,
+                self.col_item: [self.index2item[item] for item in np.array(top_items).flatten()],
+                self.col_prediction: np.array(top_scores).flatten(),
             }
         )
 
@@ -287,13 +295,8 @@ class SARSingleNode:
             }
         )
 
-        # get top k
-        result = get_top_k_items(
-            df, col_user=self.col_user, col_rating=self.col_prediction, k=top_k
-        )
-
         # drop seen items
-        return result.replace(-np.inf, np.nan).dropna()
+        return df.replace(-np.inf, np.nan).dropna()
 
     def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set
