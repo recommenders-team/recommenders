@@ -61,7 +61,9 @@ do
 			CONDA_FILE="conda_pyspark.yaml"
 			pyspark_flag=true
 			pyspark_version=$2
-			if ! [[ $pyspark_version =~ ^[0-9]+([.][0-9]+){2}$ ]]; then
+			## update to use with sh
+			good_version=$(echo $pyspark_version | awk '$0 ~ "^[0-9]+([.][0-9]+){2}$"{print 1}')
+			if ! [ "$good_version" = "1" ]; then
 				echo "Inappropriate version of pyspark passed:" $pyspark_version
 				echo "Version must be of format X.Y.Z"
 				exit 1
