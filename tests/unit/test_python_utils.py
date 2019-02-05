@@ -7,8 +7,8 @@ Test common python utils
 import numpy as np
 import pytest
 
-from scipy import sparse
 from reco_utils.common.python_utils import (
+    exponential_decay,
     jaccard,
     lift
 )
@@ -72,3 +72,10 @@ def test_python_lift(python_data, target_matrices):
     L2 = lift(cooccurrence2)
     assert type(L2) == np.ndarray
     assert L2 == target_matrices["lift2"]
+
+
+def test_exponential_decay():
+    values = np.array([1, 2, 3, 4, 5])
+    expected = np.array([0.25, 0.35355339, 0.5, 0.70710678, 1.])
+    actual = exponential_decay(value=values, max_val=5, half_life=2)
+    assert np.allclose(actual, expected, atol=TOL)
