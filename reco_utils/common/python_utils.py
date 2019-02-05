@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.sparse import coo_matrix
+import numexpr as ne
 
 
 def exponential_decay(value, max_val, half_life):
@@ -9,10 +9,10 @@ def exponential_decay(value, max_val, half_life):
         max_val (numeric): value at which decay factor will be 1
         half_life (numeric): value at which decay factor will be 0.5
     Returns:
-        (float): decay factor
+        float: decay factor
     """
 
-    return np.exp(-np.log(2) * (max_val - value) / half_life)
+    return ne.evaluate("exp(-log(2) * (max_val - value) / half_life)")
 
 
 def jaccard(cooccurrence):
@@ -20,7 +20,7 @@ def jaccard(cooccurrence):
     Args:
         cooccurrence (np.array): the symmetric matrix of co-occurrences of items
     Returns:
-        (np.array): The matrix of Jaccard similarities between any two items
+        np.array: The matrix of Jaccard similarities between any two items
     """
 
     diag = cooccurrence.diagonal()
@@ -38,7 +38,7 @@ def lift(cooccurrence):
     Args:
         cooccurrence (np.array): the symmetric matrix of co-occurrences of items
     Returns:
-        (np.array): The matrix of Lifts between any two items
+        np.array: The matrix of Lifts between any two items
     """
 
     diag = cooccurrence.diagonal()

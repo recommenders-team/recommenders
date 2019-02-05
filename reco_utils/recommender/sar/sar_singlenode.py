@@ -105,7 +105,7 @@ class SARSingleNode:
             n_users (int): Number of users.
             n_items (int): Number of items.
         Returns:
-            (sparse.csr): Affinity matrix in Compressed Sparse Row (CSR) format.
+            sparse.csr: Affinity matrix in Compressed Sparse Row (CSR) format.
         """
 
         return sparse.coo_matrix(
@@ -123,7 +123,7 @@ class SARSingleNode:
             n_users (int): Number of users.
             n_items (int): Number of items.
         Returns:
-            (np.array): Co-occurrence matrix
+            np.array: Co-occurrence matrix
         """
 
         user_item_hits = (
@@ -256,7 +256,7 @@ class SARSingleNode:
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
         Returns:
-            (pd.DataFrame): top k recommendation items for each user
+            pd.DataFrame: top k recommendation items for each user
         """
 
         # get user / item indices from test set
