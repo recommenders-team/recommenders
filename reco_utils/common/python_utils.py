@@ -4,6 +4,7 @@ import numexpr as ne
 
 def exponential_decay(value, max_val, half_life):
     """Compute decay factor for a given value based on an exponential decay
+    Values greater than max_val will be set to 1
     Args:
         value (numeric): value to calculate decay factor
         max_val (numeric): value at which decay factor will be 1
@@ -12,7 +13,7 @@ def exponential_decay(value, max_val, half_life):
         float: decay factor
     """
 
-    return ne.evaluate("exp(-log(2) * (max_val - value) / half_life)")
+    return np.minimum(1., ne.evaluate("exp(-log(2) * (max_val - value) / half_life)"))
 
 
 def jaccard(cooccurrence):

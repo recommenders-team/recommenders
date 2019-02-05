@@ -75,7 +75,7 @@ def test_python_lift(python_data, target_matrices):
 
 
 def test_exponential_decay():
-    values = np.array([1, 2, 3, 4, 5])
-    expected = np.array([0.25, 0.35355339, 0.5, 0.70710678, 1.])
+    values = np.array([1, 2, 3, 4, 5, 6])
+    expected = np.array([0.25, 0.35355339, 0.5, 0.70710678, 1., 1.])
     actual = exponential_decay(value=values, max_val=5, half_life=2)
     assert np.allclose(actual, expected, atol=TOL)
