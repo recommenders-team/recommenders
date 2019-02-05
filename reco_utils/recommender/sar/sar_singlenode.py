@@ -195,7 +195,7 @@ class SARSingleNode:
             )
 
         logger.info("Creating index columns...")
-        # Map users and items according to the two dicts. Add the two new columns to newdf.
+        # Map users and items according to the two dicts. Add the two new columns to temp_df.
         temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item2index)
         temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user2index)
 
@@ -216,15 +216,22 @@ class SARSingleNode:
             temp_df, self.n_users, self.n_items
         )
 
+        # Free up some space
+        del temp_df
+
         logger.info("Calculating item similarity...")
         if self.similarity_type == sar.SIM_COOCCUR:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == sar.SIM_JACCARD:
             logger.info("Calculating jaccard ...")
             self.item_similarity = jaccard(item_cooccurrence)
+            # Free up some space
+            del item_cooccurrence
         elif self.similarity_type == sar.SIM_LIFT:
             logger.info("Calculating lift ...")
             self.item_similarity = lift(item_cooccurrence)
+            # Free up some space
+            del item_cooccurrence
         else:
             raise ValueError(
                 "Unknown similarity type: {0}".format(self.similarity_type)
