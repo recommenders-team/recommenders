@@ -62,8 +62,8 @@ In addition, we also provide a [comparison notebook](notebooks/03_evaluate/compa
 | [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
 | [FastAI](notebooks/00_quick_start/fastai_recommendation.ipynb) | 0.023022 |0.168714 |0.154761 |0.050153 |0.887224 |0.705609 |0.371552 |0.374281 |
 | [SAR](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | 0.064013 | 0.308012 | 0.277215 | 0.109292 | N/A | N/A | N/A | N/A 
-| [NCF](notebooks/00_quick_start/ncf_movielens.ipynb) | 0.026364 | 0.157324 | 0.146258 | 0.058225 | NaN | NaN | NaN | NaN
-| [RBM](notebooks/00_quick_start/rbm_movielens.ipynb) | 0.203125 | 0.582515 | 0.490083 | 0.249196 | NaN | NaN | NaN | NaN
+| [NCF](notebooks/00_quick_start/ncf_movielens.ipynb) | 0.026364 | 0.157324 | 0.146258 | 0.058225 | N/A | N/A | N/A | N/A
+| [RBM](notebooks/00_quick_start/rbm_movielens.ipynb) | 0.203125 | 0.582515 | 0.490083 | 0.249196 | N/A | N/A | N/A | N/A
 
 
 ## Contributing
