@@ -281,7 +281,9 @@ class SARSingleNode:
                 self.col_user: np.repeat(
                     test[self.col_user].drop_duplicates().values, top_k
                 ),
-                self.col_item: [self.index2item[item] for item in np.array(top_items).flatten()],
+                self.col_item: [
+                    self.index2item[item] for item in np.array(top_items).flatten()
+                ],
                 self.col_prediction: np.array(top_scores).flatten(),
             }
         )
