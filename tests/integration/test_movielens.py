@@ -29,8 +29,8 @@ except ImportError:
     ],
 )
 def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_example):
-    """Test MovieLens dataset load into pd.DataFrame
-    """
+    """Test MovieLens dataset load into pd.DataFrame"""
+
     df = movielens.load_pandas_df(size=size)
     assert len(df) == num_samples
     assert len(df.columns) == 4
@@ -48,7 +48,7 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     # Test title load
     df = movielens.load_pandas_df(size=size, title_col="Title")
     assert len(df.columns) == 5
-    # Movie 1 is Toy Story
+    # Movie 1 is Test
     title = df.loc[df[DEFAULT_ITEM_COL] == 1][:2]["Title"].values
     assert title[0] == title[1]
     assert title[0] == title_example
@@ -71,8 +71,9 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
 @pytest.mark.parametrize(
     "size, num_samples, num_movies, title_example, genres_example",
     [
-        ("100k", 100000, 1682, "Toy Story (1995)", "Animation|Children's|Comedy"),
         ("1m", 1000209, 3883, "Toy Story (1995)", "Animation|Children's|Comedy"),
+        ("10m", 10000054, 10681, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
+        ("20m", 20000263, 27278, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
     ],
 )
 def test_load_spark_df(size, num_samples, num_movies, title_example, genres_example):
