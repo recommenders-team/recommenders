@@ -162,7 +162,7 @@ class SARSingleNode:
         self.n_users = len(self.user2index)
         self.n_items = len(self.index2item)
 
-        logger.info("Collecting user affinity matrix...")
+        logger.info("Collecting user affinity matrix")
         if not np.issubdtype(df[self.col_rating].dtype, np.floating):
             raise TypeError("Rating column data type must be floating point")
 
@@ -170,7 +170,7 @@ class SARSingleNode:
         temp_df = df[[self.col_user, self.col_item, self.col_rating]].copy()
 
         if self.time_decay_flag:
-            logger.info("Calculating time-decayed affinities...")
+            logger.info("Calculating time-decayed affinities")
             # if time_now is None use the latest time
             if not self.time_now:
                 self.time_now = df[self.col_timestamp].max()
@@ -193,7 +193,7 @@ class SARSingleNode:
                 [self.col_user, self.col_item], keep="last"
             )
 
-        logger.info("Creating index columns...")
+        logger.info("Creating index columns")
         # Map users and items according to the two dicts. Add the two new columns to temp_df.
         temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item2index)
         temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user2index)
@@ -204,13 +204,13 @@ class SARSingleNode:
             seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
 
         # Affinity matrix
-        logger.info("Building user affinity sparse matrix...")
+        logger.info("Building user affinity sparse matrix")
         self.user_affinity = self.compute_affinity_matrix(
             temp_df, self.n_users, self.n_items
         )
 
         # Calculate item co-occurrence
-        logger.info("Calculating item co-occurrence...")
+        logger.info("Calculating item co-occurrence")
         item_cooccurrence = self.compute_coocurrence_matrix(
             temp_df, self.n_users, self.n_items
         )
@@ -218,16 +218,16 @@ class SARSingleNode:
         # Free up some space
         del temp_df
 
-        logger.info("Calculating item similarity...")
+        logger.info("Calculating item similarity")
         if self.similarity_type == sar.SIM_COOCCUR:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == sar.SIM_JACCARD:
-            logger.info("Calculating jaccard ...")
+            logger.info("Calculating jaccard")
             self.item_similarity = jaccard(item_cooccurrence)
             # Free up some space
             del item_cooccurrence
         elif self.similarity_type == sar.SIM_LIFT:
-            logger.info("Calculating lift ...")
+            logger.info("Calculating lift")
             self.item_similarity = lift(item_cooccurrence)
             # Free up some space
             del item_cooccurrence
@@ -237,12 +237,12 @@ class SARSingleNode:
             )
 
         # Calculate raw scores with a matrix multiplication
-        logger.info("Calculating recommendation scores...")
+        logger.info("Calculating recommendation scores")
         self.scores = self.user_affinity.dot(self.item_similarity)
 
         # Remove items in the train set so recommended items are always novel
         if self.remove_seen:
-            logger.info("Removing seen items...")
+            logger.info("Removing seen items")
             self.scores[seen_items[:, 0], seen_items[:, 1]] = -np.inf
 
         logger.info("Done training")
@@ -271,7 +271,7 @@ class SARSingleNode:
             test_scores = test_scores.todense()
 
         # get top K items and scores
-        logger.info("Getting top K...")
+        logger.info("Getting top K")
         # this determines the un-ordered top-k item indices for each user
         top_items = np.argpartition(test_scores, -top_k, axis=1)[:, -top_k:]
         top_scores = test_scores[np.arange(test_scores.shape[0])[:, None], top_items]
