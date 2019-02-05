@@ -52,6 +52,26 @@ We provide several notebooks to show how recommendation algorithms can be design
 
 - The [Operationalizion Notebook](notebooks/05_operationalize) demonstrates how to deploy models in production systems.
 
+
+The Quick-Start and Modeling notebooks showcase how to utilize the following algorithms to build a recommender system:
+
+**Algorithms**
+
+| Algorithm | Environment | Description | 
+| --- | --- | --- |
+| **`Classic Recommenders`** |
+| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Python |  | 
+| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Spark |  |
+| **`Microsoft Recommenders`** |
+| [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Python / Spark | |
+| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | |
+| **`Deep Learning`** |
+| [eXtreme Deep Factorization Machine (xDeepFM)](notebooks/00_quick_start/xdeepfm.ipynb) | Python / GPU | | 
+| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn.ipynb) | Python / GPU | | 
+| [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | Python / GPU | | 
+| [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) | Python / GPU | | 
+| [FastAI](notebooks/00_quick_start/fastai_recommendation.ipynb)  | Python / GPU | | 
+
 In addition, we also provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, data (MovieLens 1M) is randomly split into train/test sets at a 75/25 ratio. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
 
 **Preliminary Comparison**
@@ -64,6 +84,7 @@ In addition, we also provide a [comparison notebook](notebooks/03_evaluate/compa
 | [SAR](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | 0.064013 | 0.308012 | 0.277215 | 0.109292 | N/A | N/A | N/A | N/A 
 | [NCF](notebooks/00_quick_start/ncf_movielens.ipynb) | 0.026364 | 0.157324 | 0.146258 | 0.058225 | N/A | N/A | N/A | N/A
 | [RBM](notebooks/00_quick_start/rbm_movielens.ipynb) | 0.203125 | 0.582515 | 0.490083 | 0.249196 | N/A | N/A | N/A | N/A
+
 
 
 ## Contributing
