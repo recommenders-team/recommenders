@@ -178,7 +178,12 @@ def notebooks():
         "xdeepfm_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "xdeepfm.ipynb"
         ),
-        "dkn_quickstart": os.path.join(folder_notebooks, "00_quick_start", "dkn.ipynb"),
+        "dkn_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "dkn.ipynb"
+        ),
+        "vowpal_wabbit_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "vowpal_wabbit_deep_dive.ipynb"
+        ),
     }
     return paths
 
