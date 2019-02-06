@@ -60,17 +60,17 @@ The Quick-Start and Modeling notebooks showcase how to utilize the following alg
 | Algorithm | Environment | Description | 
 | --- | --- | --- |
 | **`Classic Recommenders`** |
-| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Python |  | 
-| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Spark |  |
+| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Python | Collaborative Filtering | General purpose algorithm for smaller datasets | 
+| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Spark | Collaborative | General purpose algorithm for larger datasets, optimized with Spark |
 | **`Microsoft Recommenders`** |
-| [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Python / Spark | |
-| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | |
+| [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Python / Spark | Collaborative Filtering | Generalized algorithm utilizing item similarities and can easily adapt to new users |
+| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | Collaborative, Content Based | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
+| [eXtreme Deep Factorization Machine (xDeepFM)](notebooks/00_quick_start/xdeepfm.ipynb) | Python / GPU | Hybrid | Deep learning model combining implicit and explicit features | 
+| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn.ipynb) | Python / GPU | Content Based | Deep learning model incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |  
 | **`Deep Learning`** |
-| [eXtreme Deep Factorization Machine (xDeepFM)](notebooks/00_quick_start/xdeepfm.ipynb) | Python / GPU | | 
-| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn.ipynb) | Python / GPU | | 
-| [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | Python / GPU | | 
-| [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) | Python / GPU | | 
-| [FastAI](notebooks/00_quick_start/fastai_recommendation.ipynb)  | Python / GPU | | 
+| [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | Python / GPU | Collaborative Filtering | General algorithm built using a multi-layer perceptron | 
+| [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) | Python / GPU | Collaborative Filtering | Generative neural network algorithm built to learn the underlying probability distribution for user/item affinity | 
+| [FastAI Embedding Dot Bias (FAST)](notebooks/00_quick_start/fastai_recommendation.ipynb)  | Python / GPU | Collaborative Filtering | General purpose algorithm embedding dot biases for users and items  |
 
 In addition, we also provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, data (MovieLens 1M) is randomly split into train/test sets at a 75/25 ratio. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
 
