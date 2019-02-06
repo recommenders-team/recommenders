@@ -57,8 +57,8 @@ The Quick-Start and Modeling notebooks showcase how to utilize the following alg
 
 **Algorithms**
 
-| Algorithm | Environment | Description | 
-| --- | --- | --- |
+| Algorithm | Environment | Type | Description | 
+| --- | --- | --- | --- |
 | **`Classic Recommenders`** |
 | [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_single_node_movielens.ipynb) | Python | Collaborative Filtering | General purpose algorithm for smaller datasets | 
 | [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_pyspark_movielens.ipynb) | Spark | Collaborative | General purpose algorithm for larger datasets, optimized with Spark |
