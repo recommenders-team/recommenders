@@ -8,6 +8,7 @@ from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 TOL = 0.05
 
+
 @pytest.mark.smoke
 def test_sar_single_node_smoke(notebooks):
     notebook_path = notebooks["sar_single_node"]
@@ -81,11 +82,11 @@ def test_vw_deep_dive_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["rmse"] == pytest.approx(0.96, TOL)
-    assert results["mae"] == pytest.approx(0.75, TOL)
-    assert results["rsquared"] == pytest.approx(0.29, TOL)
-    assert results["exp_var"] == pytest.approx(0.29, TOL)
-    assert results["map"] == pytest.approx(0.013, TOL)
-    assert results["ndcg"] == pytest.approx(0.1, TOL)
-    assert results["precision"] == pytest.approx(0.095, TOL)
-    assert results["recall"] == pytest.approx(0.032, TOL)
+    assert results["rmse"] == pytest.approx(0.99575, TOL)
+    assert results["mae"] == pytest.approx(0.72024, TOL)
+    assert results["rsquared"] == pytest.approx(0.22961, TOL)
+    assert results["exp_var"] == pytest.approx(0.22967, TOL)
+    assert results["map"] == pytest.approx(0.25684, TOL)
+    assert results["ndcg"] == pytest.approx(0.65339, TOL)
+    assert results["precision"] == pytest.approx(0.514738, TOL)
+    assert results["recall"] == pytest.approx(0.25684, TOL)
