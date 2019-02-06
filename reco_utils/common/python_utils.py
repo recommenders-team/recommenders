@@ -1,5 +1,20 @@
+import os
 import numpy as np
 from scipy.sparse import coo_matrix
+
+
+def get_number_processors():
+    """Get the number of processors in a CPU.
+    Returns:
+        int: Number of processors.
+    """
+    try:
+        num = os.cpu_count()
+    except Exception:
+        import multiprocessing  # force exception in case mutiprocessing is not installed
+
+        num = multiprocessing.cpu_count()
+    return num
 
 
 def jaccard(cooccurrence):
