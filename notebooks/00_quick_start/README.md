@@ -13,7 +13,7 @@ data preparation, model building, and model evaluation by using the utility func
 | [sar_python_cpu_movielens](sar_single_node_movielens.ipynb) | Utilizing Smart Adaptive Recommendations (SAR) algorithm to predict movie ratings in a Python+CPU environment.
 | [dkn](dkn.ipynb) | Utilizing the Deep Knowledge-Aware Network (DKN) [2] algorithm for news recommendations using information from a knowledge graph, in a Python+GPU (TensorFlow) environment.
 | [xdeepfm](xdeepfm.ipynb) | Utilizing the eXtreme Deep Factorization Machine (xDeepFM) [3] to learn both low and high order feature interactions for predicting CTR, in a Python+GPU (TensorFlow) environment.
-| [rbm](rbm_movielens.py)| Utiliziing the Restricted Boltzmann Machine (rbm) [4] to predict movie ratings in Python+GPU (TensorFlow) enviroment.<br>
+| [rbm](rbm_movielens.ipynb)| Utilizing the Restricted Boltzmann Machine (rbm) [4] to predict movie ratings in a Python+GPU (TensorFlow) environment.<br>
 
 [1] _Neural Collaborative Filtering_, Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu and Tat-Seng Chua. WWW 2017.<br>
 [2] _DKN: Deep Knowledge-Aware Network for News Recommendation_, Hongwei Wang, Fuzheng Zhang, Xing Xie and Minyi Guo. WWW 2018.<br>
