@@ -1,25 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import os
 import pytest
 import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
-TOL = 0.5
+TOL = 0.05
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "size, result_list",
+    "size, expected_values",
     [
-        ("1m", [0.06, 0.30, 0.27, 0.10]),
-        ("10m", [0.10, 0.32, 0.27, 0.15]),
-        #       ("20m", [0.03, 0.15, 0.14, 0.08]), # raises MemoryError
+        ("1m", {"map": 0.064012679, "ndcg": 0.308012195, "precision": 0.277214771, "recall": 0.109291553}),
+        #("10m", {"map": 0.101402403, "ndcg": 0.321072689, "precision": 0.275765514, "recall": 0.156483292}) skipping for now, investigating this on issue #465
     ],
 )
-def test_als_pyspark_integration(notebooks, size, result_list):
+def test_sar_single_node_integration(notebooks, size, expected_values):
     notebook_path = notebooks["sar_single_node"]
     pm.execute_notebook(
         notebook_path,
@@ -27,14 +25,60 @@ def test_als_pyspark_integration(notebooks, size, result_list):
         kernel_name=KERNEL_NAME,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
-    nb = pm.read_notebook(OUTPUT_NOTEBOOK)
-    df = nb.dataframe
-    result_map = df.loc[df["name"] == "map", "value"].values[0]
-    assert result_map == pytest.approx(result_list[0], TOL)
-    result_ndcg = df.loc[df["name"] == "ndcg", "value"].values[0]
-    assert result_ndcg == pytest.approx(result_list[1], TOL)
-    result_precision = df.loc[df["name"] == "precision", "value"].values[0]
-    assert result_precision == pytest.approx(result_list[2], TOL)
-    result_recall = df.loc[df["name"] == "recall", "value"].values[0]
-    assert result_recall == pytest.approx(result_list[3], TOL)
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL)
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
+        ("1m", {"map": 0.033914, "ndcg": 0.231570, "precision": 0.211923, "recall": 0.064663}),
+        #("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
+    ],
+)
+def test_baseline_deep_dive_integration(notebooks, size, expected_values):
+    notebook_path = notebooks["baseline_deep_dive"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL)
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
+        ("1m", dict(rmse=0.89,
+                    mae=0.70,
+                    rsquared=0.36,
+                    exp_var=0.36,
+                    map=0.011,
+                    ndcg=0.10,
+                    precision=0.093,
+                    recall=0.025)),
+        # 10m works but takes too long
+    ],
+)
+def test_surprise_svd_integration(notebooks, size, expected_values):
+    notebook_path = notebooks["surprise_svd_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(MOVIELENS_DATA_SIZE=size),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL)
 

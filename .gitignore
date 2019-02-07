@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+*.pretrain*
 # C extensions
 *.so
 
@@ -111,11 +111,22 @@ Untitled*.ipynb
 ~$*
 output.ipynb
 conda*.yaml
-.idea
+.idea/
 *.npz
 *.data
+*.dat
 *.csv
+*.zip
 .vscode/
 scripts/repo_metrics/config.py
-Recommenders.zip
-Recommenders.egg
+movies.dat
+ratings.dat
+u.item
+u.data
+ml-100k/
+ml-10M100K/
+ml-1m/
+ml-20m/
+*.jar
+*.item
+*.pkl

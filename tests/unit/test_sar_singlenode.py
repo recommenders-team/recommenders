@@ -106,7 +106,7 @@ def test_predict(
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == object
     assert preds[header["col_item"]].dtype == object
-    assert preds[PREDICTION_COL].dtype == float
+    assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
 """
@@ -161,7 +161,7 @@ def test_sar_item_similarity(
         )
     else:
         test_item_similarity = _rearrange_to_test(
-            np.array(model.item_similarity),
+            model.item_similarity.toarray(),
             row_ids,
             col_ids,
             model.item_map_dict,
