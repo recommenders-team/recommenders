@@ -27,7 +27,7 @@ To setup on your local machine:
 4. Activate the conda environment and register it with Jupyter:
     ```
     conda activate reco_base
-    python -m ipykernel install --user --name reco_base --display-name "Python (reco_base)"
+    python -m ipykernel install --user --name reco_base --display-name "Python (reco)"
     ```
 5. Start the Jupyter notebook server
     ```
