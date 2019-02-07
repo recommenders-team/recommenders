@@ -254,12 +254,16 @@ if len(answer) == 0 or answer.lower()[0] != "n":
 
     recutils.plot_recommendations()
 
-sys.stdout.write("""
-We will display a sample image that was generated previously.
+else:
     
-Press Enter to continue on to the model performance evaluation: """)
+    sys.stdout.write("""
+We will display a sample image that was generated previously.
+""")
 
-os.system("eom sample.png")
+    os.system("eom sample.png")
+
+sys.stdout.write("""
+Press Enter to continue on to the model performance evaluation: """)
 
 eval_map = map_at_k(test, topk, col_user="UserId", col_item="MovieId", 
                     col_rating="Rating", col_prediction="prediction", 
