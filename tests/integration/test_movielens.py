@@ -48,7 +48,7 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     # Test title load
     df = movielens.load_pandas_df(size=size, title_col="Title")
     assert len(df.columns) == 5
-    # Movie 1 is Test
+    # Movie 1 is Toy Story
     title = df.loc[df[DEFAULT_ITEM_COL] == 1][:2]["Title"].values
     assert title[0] == title[1]
     assert title[0] == title_example
