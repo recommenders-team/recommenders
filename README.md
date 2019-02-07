@@ -21,13 +21,13 @@ To setup on your local machine:
 3. Run the generate conda file script and create a conda environment:   
     ```
     cd Recommenders
-    ./scripts/generate_conda_file.sh
-    conda env create -n reco -f conda_bare.yaml  
+    python scripts/generate_conda_file.py
+    conda env create -f conda_base.yaml  
     ```
 4. Activate the conda environment and register it with Jupyter:
     ```
-    conda activate reco
-    python -m ipykernel install --user --name reco --display-name "Python (reco)"
+    conda activate reco_base
+    python -m ipykernel install --user --name reco_base --display-name "Python (reco_base)"
     ```
 5. Start the Jupyter notebook server
     ```
