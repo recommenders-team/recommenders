@@ -14,3 +14,15 @@ def get_number_gpus():
         return len(cuda.gpus)
     except CudaSupportError:
         return 0
+
+    
+def clear_memory_all_gpus():
+    """Clear memory of all GPUs.
+    """
+    try:
+        for gpu in cuda.gpus:
+            with gpu:
+                cuda.current_context().deallocations.clear()
+    except CudaSupportError:
+        print("No CUDA available")
+        
