@@ -145,6 +145,26 @@ class SARSingleNode:
 
         return item_cooccurrence
 
+    def set_index(self, df):
+        """Generate continuous indices for users and items to reduce memory usage
+
+        Args:
+            df (pd.DataFrame): dataframe with user and item ids
+        """
+
+        # Generate a map of continuous index values to items
+        self.index2item = dict(enumerate(df[self.col_item].unique()))
+
+        # Invert the mapping from above
+        self.item2index = {v: k for k, v in self.index2item.items()}
+
+        # Create mapping of users to continuous indices
+        self.user2index = {x[1]: x[0] for x in enumerate(df[self.col_user].unique())}
+
+        # set values for the total count of users and items
+        self.n_users = len(self.user2index)
+        self.n_items = len(self.index2item)
+
     def fit(self, df):
         """Main fit method for SAR
 
@@ -152,15 +172,8 @@ class SARSingleNode:
             df (pd.DataFrame): User item rating dataframe
         """
 
-        # Map a continuous index to user / item ids
-        self.index2item = dict(enumerate(df[self.col_item].unique()))
-
-        # Invert the mapping from above
-        self.item2index = {v: k for k, v in self.index2item.items()}
-        self.user2index = {x[1]: x[0] for x in enumerate(df[self.col_user].unique())}
-
-        self.n_users = len(self.user2index)
-        self.n_items = len(self.index2item)
+        # Generate continuous indices to compress user and item ids
+        self.set_index(df)
 
         logger.info("Collecting user affinity matrix")
         if not np.issubdtype(df[self.col_rating].dtype, np.floating):
