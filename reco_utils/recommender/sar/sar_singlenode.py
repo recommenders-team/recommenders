@@ -172,8 +172,9 @@ class SARSingleNode:
             df (pd.DataFrame): User item rating dataframe
         """
 
-        # Generate continuous indices to compress user and item ids
-        self.set_index(df)
+        # Generate continuous indices if this hasn't been done
+        if self.index2item is None:
+            self.set_index(df)
 
         logger.info("Collecting user affinity matrix")
         if not np.issubdtype(df[self.col_rating].dtype, np.floating):
