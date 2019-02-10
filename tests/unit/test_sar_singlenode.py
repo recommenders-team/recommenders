@@ -22,40 +22,6 @@ def _rearrange_to_test(array, row_ids, col_ids, row_map, col_map):
     return array
 
 
-def _apply_sar_hash_index(model, train, test, header, pandas_new=False):
-    # TODO: review this function
-    # index all users and items which SAR will compute scores for
-    # bugfix to get around different pandas vesions in build servers
-    if test is not None:
-        if pandas_new:
-            df_all = pd.concat([train, test], sort=False)
-        else:
-            df_all = pd.concat([train, test])
-    else:
-        df_all = train
-
-    # hash SAR
-    # Obtain all the users and items from both training and test data
-    unique_users = df_all[header["col_user"]].unique()
-    unique_items = df_all[header["col_item"]].unique()
-
-    # Hash users and items to smaller continuous space.
-    # Actually, this is an ordered set - it's discrete, but .
-    # This helps keep the matrices we keep in memory as small as possible.
-    enumerate_items_1, enumerate_items_2 = itertools.tee(enumerate(unique_items))
-    enumerate_users_1, enumerate_users_2 = itertools.tee(enumerate(unique_users))
-    item_map_dict = {x: i for i, x in enumerate_items_1}
-    user_map_dict = {x: i for i, x in enumerate_users_1}
-
-    # the reverse of the dictionary above - array index to actual ID
-    index2user = dict(enumerate_users_2)
-    index2item = dict(enumerate_items_2)
-
-    model.set_index(
-        unique_users, unique_items, user_map_dict, item_map_dict, index2user, index2item
-    )
-
-
 def test_init(header):
     model = SARSingleNode(
         remove_seen=True, similarity_type="jaccard", **header
@@ -78,8 +44,6 @@ def test_fit(similarity_type, timedecay_formula, train_test_dummy_timestamp, hea
         **header
     )
     trainset, testset = train_test_dummy_timestamp
-    _apply_sar_hash_index(model, trainset, testset, header)
-
     model.fit(trainset)
 
 
@@ -96,9 +60,6 @@ def test_predict(
         **header
     )
     trainset, testset = train_test_dummy_timestamp
-
-    _apply_sar_hash_index(model, trainset, testset, header)
-
     model.fit(trainset)
     preds = model.predict(testset)
 
@@ -139,8 +100,6 @@ def test_sar_item_similarity(
         **header
     )
 
-    _apply_sar_hash_index(model, demo_usage_data, None, header)
-
     model.fit(demo_usage_data)
 
     true_item_similarity, row_ids, col_ids = read_matrix(
@@ -152,8 +111,8 @@ def test_sar_item_similarity(
             model.item_similarity.todense(),
             row_ids,
             col_ids,
-            model.item_map_dict,
-            model.item_map_dict,
+            model.item2index,
+            model.item2index,
         )
         assert np.array_equal(
             true_item_similarity.astype(test_item_similarity.dtype),
@@ -161,11 +120,11 @@ def test_sar_item_similarity(
         )
     else:
         test_item_similarity = _rearrange_to_test(
-            model.item_similarity.toarray(),
+            model.item_similarity,
             row_ids,
             col_ids,
-            model.item_map_dict,
-            model.item_map_dict,
+            model.item2index,
+            model.item2index,
         )
         assert np.allclose(
             true_item_similarity.astype(test_item_similarity.dtype),
@@ -185,15 +144,14 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         time_now=time_now,
         **header
     )
-    _apply_sar_hash_index(model, demo_usage_data, None, header)
     model.fit(demo_usage_data)
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
-    user_index = model.user_map_dict[sar_settings["TEST_USER_ID"]]
+    user_index = model.user2index[sar_settings["TEST_USER_ID"]]
     test_user_affinity = np.reshape(
         np.array(
             _rearrange_to_test(
-                model.user_affinity, None, items, None, model.item_map_dict
+                model.user_affinity, None, items, None, model.item2index
             )[user_index,].todense()
         ),
         -1,
@@ -223,7 +181,6 @@ def test_userpred(
         threshold=threshold,
         **header
     )
-    _apply_sar_hash_index(model, demo_usage_data, None, header)
     model.fit(demo_usage_data)
 
     true_items, true_scores = load_userpred(
