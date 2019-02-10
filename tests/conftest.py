@@ -1,6 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# NOTE: This file is used by pytest to inject fixtures automatically. As it is explained in the documentation
+# https://docs.pytest.org/en/latest/fixture.html:
+# "If during implementing your tests you realize that you want to use a fixture function from multiple test files
+# you can move it to a conftest.py file. You don’t need to import the fixture you want to use in a test, it
+# automatically gets discovered by pytest."
+
 import calendar
 import datetime
 import os
@@ -143,13 +149,13 @@ def notebooks():
         "sar_single_node": os.path.join(
             folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
         ),
-        "ncf": os.path.join(
-            folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"
-        ),
+        "ncf": os.path.join(folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
         ),
-        "fastai": os.path.join(folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"),    
+        "fastai": os.path.join(
+            folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
@@ -166,8 +172,12 @@ def notebooks():
             folder_notebooks, "02_model", "ncf_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
-        "fastai": os.path.join(folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"),
-        "xdeepfm_quickstart": os.path.join(folder_notebooks, "00_quick_start", "xdeepfm.ipynb"),
+        "fastai": os.path.join(
+            folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"
+        ),
+        "xdeepfm_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "xdeepfm.ipynb"
+        ),
         "dkn_quickstart": os.path.join(folder_notebooks, "00_quick_start", "dkn.ipynb"),
     }
     return paths
