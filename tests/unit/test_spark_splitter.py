@@ -118,7 +118,7 @@ def test_random_splitter(test_specs, spark_dataset):
     )
 
     splits = spark_random_split(
-        df_rating, ratio=test_specs["ratios"], seed=test_specs["seed"]
+        spark_dataset, ratio=test_specs["ratios"], seed=test_specs["seed"]
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -166,7 +166,7 @@ def test_chrono_splitter(test_specs, spark_dataset):
         all_later.append(user_later)
     assert all(all_later)
 
-    splits = spark_chrono_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_chrono_split(spark_dataset, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
@@ -216,7 +216,7 @@ def test_stratified_splitter(test_specs, spark_dataset):
 
     assert set(users_train) == set(users_test)
 
-    splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_stratified_split(spark_dataset, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
