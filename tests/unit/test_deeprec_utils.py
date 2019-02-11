@@ -4,6 +4,7 @@ import tensorflow as tf
 from reco_utils.recommender.deeprec.deeprec_utils import (
     prepare_hparams,
     download_deeprec_resources,
+    load_yaml_file
 )
 from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
 from reco_utils.recommender.deeprec.IO.dkn_iterator import DKNTextIterator
