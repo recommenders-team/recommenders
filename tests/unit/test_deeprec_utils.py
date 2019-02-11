@@ -1,10 +1,10 @@
 
 import pytest
 import os
+import tensorflow as tf
 from reco_utils.recommender.deeprec.deeprec_utils import *
 from reco_utils.recommender.deeprec.IO.iterator import *
 from reco_utils.recommender.deeprec.IO.dkn_iterator import *
-import tensorflow as tf
 
 @pytest.fixture
 def resource_path():
@@ -19,12 +19,11 @@ def resource_path():
 def test_prepare_hparams(must_exist_attributes,resource_path):
     data_path = os.path.join(resource_path, '../resources/deeprec/xdeepfm')
     yaml_file = os.path.join(data_path, r'xDeepFM.yaml')
-
     if not os.path.exists(yaml_file):
         download_deeprec_resources(r'https://recodatasets.blob.core.windows.net/deeprec/', data_path, 'xdeepfmresources.zip')
-
     hparams = prepare_hparams(yaml_file)
     assert hasattr(hparams, must_exist_attributes)
+
 
 @pytest.mark.gpu
 @pytest.mark.deeprec
