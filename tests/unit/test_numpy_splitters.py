@@ -11,7 +11,6 @@ from reco_utils.dataset.numpy_splitters import numpy_stratified_split
 
 @pytest.fixture(scope="module")
 def test_specs():
-
     return {
         "number_of_items": 50,
         "number_of_users": 20,
@@ -24,46 +23,30 @@ def test_specs():
 
 @pytest.fixture(scope="module")
 def python_int_dataset(test_specs):
-
-    """Generate a test user/item affinity Matrix"""
-
     # fix the the random seed
     np.random.seed(test_specs["seed"])
 
     # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
-    X = np.random.randint(
+    return np.random.randint(
         low=0,
         high=6,
         size=(test_specs["number_of_users"], test_specs["number_of_items"]),
     )
 
-    return X
-
 
 @pytest.fixture(scope="module")
 def python_float_dataset(test_specs):
-
-    """Generate a test user/item affinity Matrix"""
-
     # fix the the random seed
     np.random.seed(test_specs["seed"])
 
     # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
-    X = (
-        np.random.random(
+    return np.random.random(
             size=(test_specs["number_of_users"], test_specs["number_of_items"])
-        )
-        * 5
-    )
+        ) * 5
 
-    return X
 
 
 def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
-    """
-    Test the random stratified splitter.
-    """
-
     # generate a syntetic dataset
     X = python_int_dataset
 
@@ -72,10 +55,8 @@ def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
         X, ratio=test_specs["ratio"], seed=test_specs["seed"]
     )
 
-    # Tests
     # check that the generated matrices have the correct dimensions
     assert (Xtr.shape[0] == X.shape[0]) & (Xtr.shape[1] == X.shape[1])
-
     assert (Xtst.shape[0] == X.shape[0]) & (Xtst.shape[1] == X.shape[1])
 
     X_rated = np.sum(X != 0, axis=1)  # number of total rated items per user
@@ -114,10 +95,6 @@ def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
 
 
 def test_float_numpy_stratified_splitter(test_specs, python_float_dataset):
-    """
-    Test the random stratified splitter.
-    """
-
     # generate a syntetic dataset
     X = python_float_dataset
 

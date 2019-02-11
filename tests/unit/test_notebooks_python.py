@@ -29,6 +29,12 @@ def test_sar_single_node_runs(notebooks):
 
 
 @pytest.mark.notebooks
+def test_sar_deep_dive_runs(notebooks):
+    notebook_path = notebooks["sar_deep_dive"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+
+
+@pytest.mark.notebooks
 def test_baseline_deep_dive_runs(notebooks):
     notebook_path = notebooks["baseline_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
@@ -38,7 +44,7 @@ def test_baseline_deep_dive_runs(notebooks):
 def test_surprise_deep_dive_runs(notebooks):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
-
+    
 
 @pytest.mark.notebooks
 def test_vw_deep_dive_runs(notebooks):

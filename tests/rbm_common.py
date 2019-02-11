@@ -9,7 +9,6 @@ from reco_utils.dataset.numpy_splitters import numpy_stratified_split
 
 @pytest.fixture(scope="module")
 def test_specs():
-
     return {
         "users": 30,
         "items": 53,
@@ -22,20 +21,18 @@ def test_specs():
 
 @pytest.fixture(scope="module")
 def affinity_matrix(test_specs):
-
-    """
-    Generate a random user/item affinity matrix. By increasing the likehood of 0 elements we simulate
-    a typical recommeding situation where the input matrix is highly sparse.
+    """Generate a random user/item affinity matrix. By increasing the likehood of 0 elements we simulate
+    a typical recommending situation where the input matrix is highly sparse.
 
     Args:
         users (int): number of users (rows).
         items (int): number of items (columns).
         ratings (int): rating scale, e.g. 5 meaning rates are from 1 to 5.
-        spars: probablity of obtaining zero. This roughly correponds to the sparseness.
+        spars: probability of obtaining zero. This roughly corresponds to the sparseness.
                of the generated matrix. If spars = 0 then the affinity matrix is dense.
 
     Returns:
-        X (np array, int): sparse user/affinity matrix
+        np.array: sparse user/affinity matrix of integers.
 
     """
 
