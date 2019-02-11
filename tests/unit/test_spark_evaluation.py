@@ -19,6 +19,7 @@ try:
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
+
 TOL = 0.0001
 
 
@@ -93,7 +94,6 @@ def test_init_spark(spark):
 def test_init_spark_rating_eval(spark_data):
     df_true, df_pred = spark_data
     evaluator = SparkRatingEvaluation(df_true, df_pred)
-
     assert evaluator is not None
 
 
@@ -230,7 +230,6 @@ def test_spark_map(spark_data, target_metrics):
 @pytest.mark.spark
 def test_spark_python_match(python_data, spark):
     # Test on the original data with k = 10.
-
     df_true, df_pred = python_data
 
     dfs_true = spark.createDataFrame(df_true)
@@ -247,11 +246,9 @@ def test_spark_python_match(python_data, spark):
         == pytest.approx(eval_spark1.ndcg_at_k(), TOL),
         map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark1.map_at_k(), TOL),
     ]
-
     assert all(match1)
 
     # Test on the original data with k = 3.
-
     dfs_true = spark.createDataFrame(df_true)
     dfs_pred = spark.createDataFrame(df_pred)
 
@@ -265,7 +262,6 @@ def test_spark_python_match(python_data, spark):
         ndcg_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.ndcg_at_k(), TOL),
         map_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.map_at_k(), TOL),
     ]
-
     assert all(match2)
 
     # Remove the first row from the original data.
@@ -285,11 +281,9 @@ def test_spark_python_match(python_data, spark):
         == pytest.approx(eval_spark3.ndcg_at_k(), TOL),
         map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark3.map_at_k(), TOL),
     ]
-
     assert all(match3)
 
     # Test with one user
-
     df_pred = df_pred.loc[df_pred["userID"] == 3]
     df_true = df_true.loc[df_true["userID"] == 3]
 
@@ -307,5 +301,4 @@ def test_spark_python_match(python_data, spark):
         == pytest.approx(eval_spark4.ndcg_at_k(), TOL),
         map_at_k(df_true, df_pred, k=10) == pytest.approx(eval_spark4.map_at_k(), TOL),
     ]
-
     assert all(match4)
