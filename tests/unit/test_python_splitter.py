@@ -10,6 +10,7 @@ from reco_utils.dataset.split_utils import (
     min_rating_filter_pandas,
     split_pandas_data_with_ratios,
 )
+
 from reco_utils.dataset.python_splitters import (
     python_chrono_split,
     python_random_split,
@@ -39,8 +40,6 @@ def test_specs():
 
 @pytest.fixture(scope="module")
 def python_dataset(test_specs):
-    """Get Python labels"""
-
     def random_date_generator(start_date, range_in_days):
         """Helper function to generate random timestamps.
 
@@ -73,32 +72,22 @@ def python_dataset(test_specs):
             ),
         }
     )
-
     return rating
 
 
 def test_split_pandas_data(pandas_dummy_timestamp):
-    """Test split pandas data
-    """
-    df_rating = pandas_dummy_timestamp
-
-    splits = split_pandas_data_with_ratios(df_rating, ratios=[0.5, 0.5])
-
+    splits = split_pandas_data_with_ratios(pandas_dummy_timestamp, ratios=[0.5, 0.5])
     assert len(splits[0]) == 5
     assert len(splits[1]) == 5
 
-    splits = split_pandas_data_with_ratios(df_rating, ratios=[0.12, 0.36, 0.52])
-
-    assert len(splits[0]) == round(df_rating.shape[0] * 0.12)
-    assert len(splits[1]) == round(df_rating.shape[0] * 0.36)
-    assert len(splits[2]) == round(df_rating.shape[0] * 0.52)
+    splits = split_pandas_data_with_ratios(pandas_dummy_timestamp, ratios=[0.12, 0.36, 0.52])
+    shape = pandas_dummy_timestamp.shape[0]
+    assert len(splits[0]) == round(shape * 0.12)
+    assert len(splits[1]) == round(shape * 0.36)
+    assert len(splits[2]) == round(shape * 0.52)
 
 
 def test_min_rating_filter(python_dataset):
-    """Test min rating filter
-    """
-    df_rating = python_dataset
-
     def count_filtered_rows(data, filter_by="user"):
         split_by_column = DEFAULT_USER_COL if filter_by == "user" else DEFAULT_ITEM_COL
         data_grouped = data.groupby(split_by_column)
@@ -110,9 +99,8 @@ def test_min_rating_filter(python_dataset):
 
         return row_counts
 
-    df_user = min_rating_filter_pandas(df_rating, min_rating=5, filter_by="user")
-    df_item = min_rating_filter_pandas(df_rating, min_rating=5, filter_by="item")
-
+    df_user = min_rating_filter_pandas(python_dataset, min_rating=5, filter_by="user")
+    df_item = min_rating_filter_pandas(python_dataset, min_rating=5, filter_by="item")
     user_rating_counts = count_filtered_rows(df_user, filter_by="user")
     item_rating_counts = count_filtered_rows(df_item, filter_by="item")
 
@@ -128,10 +116,8 @@ def test_random_splitter(test_specs, python_dataset):
     the testing data. A approximate match with certain level of tolerance is therefore used
     instead for tests.
     """
-    df_rating = python_dataset
-
     splits = python_random_split(
-        df_rating, ratio=test_specs["ratio"], seed=test_specs["seed"]
+        python_dataset, ratio=test_specs["ratio"], seed=test_specs["seed"]
     )
     assert len(splits[0]) / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratio"], test_specs["tolerance"]
@@ -141,7 +127,7 @@ def test_random_splitter(test_specs, python_dataset):
     )
 
     splits = python_random_split(
-        df_rating, ratio=test_specs["ratios"], seed=test_specs["seed"]
+        python_dataset, ratio=test_specs["ratios"], seed=test_specs["seed"]
     )
 
     assert len(splits) == 3
@@ -156,7 +142,7 @@ def test_random_splitter(test_specs, python_dataset):
     )
 
     splits = python_random_split(
-        df_rating, ratio=test_specs["split_numbers"], seed=test_specs["seed"]
+        python_dataset, ratio=test_specs["split_numbers"], seed=test_specs["seed"]
     )
 
     assert len(splits) == 3
@@ -172,12 +158,8 @@ def test_random_splitter(test_specs, python_dataset):
 
 
 def test_chrono_splitter(test_specs, python_dataset):
-    """Test chronological splitter for Spark dataframes.
-    """
-    df_rating = python_dataset
-
     splits = python_chrono_split(
-        df_rating, ratio=test_specs["ratio"], min_rating=10, filter_by="user"
+        python_dataset, ratio=test_specs["ratio"], min_rating=10, filter_by="user"
     )
 
     assert len(splits[0]) / test_specs["number_of_rows"] == pytest.approx(
@@ -207,7 +189,7 @@ def test_chrono_splitter(test_specs, python_dataset):
     assert set(users_train) == set(users_test)
 
     splits = python_chrono_split(
-        df_rating, ratio=test_specs["ratios"], min_rating=10, filter_by="user"
+        python_dataset, ratio=test_specs["ratios"], min_rating=10, filter_by="user"
     )
 
     assert len(splits) == 3
@@ -239,12 +221,8 @@ def test_chrono_splitter(test_specs, python_dataset):
 
 
 def test_stratified_splitter(test_specs, python_dataset):
-    """Test stratified splitter.
-    """
-    df_rating = python_dataset
-
     splits = python_stratified_split(
-        df_rating, ratio=test_specs["ratio"], min_rating=10, filter_by="user"
+        python_dataset, ratio=test_specs["ratio"], min_rating=10, filter_by="user"
     )
 
     assert len(splits[0]) / test_specs["number_of_rows"] == pytest.approx(
@@ -261,7 +239,7 @@ def test_stratified_splitter(test_specs, python_dataset):
     assert set(users_train) == set(users_test)
 
     splits = python_stratified_split(
-        df_rating, ratio=test_specs["ratios"], min_rating=10, filter_by="user"
+        python_dataset, ratio=test_specs["ratios"], min_rating=10, filter_by="user"
     )
 
     assert len(splits) == 3
