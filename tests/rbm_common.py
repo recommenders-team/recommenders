@@ -4,7 +4,7 @@
 import numpy as np
 import pytest
 
-from reco_utils.dataset.python_splitters import numpy_stratified_split
+from reco_utils.dataset.numpy_splitters import numpy_stratified_split
 
 
 @pytest.fixture(scope="module")
