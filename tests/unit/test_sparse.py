@@ -4,10 +4,8 @@
 import pandas as pd
 import numpy as np
 import pytest
-from sklearn.utils import shuffle
 
 from reco_utils.dataset.sparse import AffinityMatrix
-
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -18,7 +16,6 @@ from reco_utils.common.constants import (
 
 @pytest.fixture(scope="module")
 def test_specs():
-
     return {"number_of_items": 50, "number_of_users": 20, "seed": 123}
 
 
@@ -40,7 +37,6 @@ def python_dataset(test_specs):
         random_dates = []
 
         for i in range(range_in_days):
-
             random_date = np.datetime64(start_date) + np.random.choice(days_to_add)
             random_dates.append(random_date)
 
@@ -87,10 +83,6 @@ def python_dataset(test_specs):
 
 
 def test_df_to_sparse(test_specs, python_dataset):
-
-    # generate a syntetic dataset
-    df_rating = python_dataset
-
     # initialize the splitter
     header = {
         "col_user": DEFAULT_USER_COL,
@@ -99,25 +91,18 @@ def test_df_to_sparse(test_specs, python_dataset):
     }
 
     # instantiate the affinity matrix
-    am = AffinityMatrix(DF=df_rating, **header)
+    am = AffinityMatrix(DF=python_dataset, **header)
 
     # obtain the sparse matrix representation of the input dataframe
     X = am.gen_affinity_matrix()
 
-    # Tests
     # check that the generated matrix has the correct dimensions
-    assert (X.shape[0] == df_rating.userID.unique().shape[0]) & (
-        X.shape[1] == df_rating.itemID.unique().shape[0]
+    assert (X.shape[0] == python_dataset.userID.unique().shape[0]) & (
+        X.shape[1] == python_dataset.itemID.unique().shape[0]
     )
 
 
-# Test inverse mapping: from sparse matrix to dataframe
-
-
 def test_sparse_to_df(test_specs, python_dataset):
-
-    df_rating = python_dataset
-
     # initialize the splitter
     header = {
         "col_user": DEFAULT_USER_COL,
@@ -126,7 +111,7 @@ def test_sparse_to_df(test_specs, python_dataset):
     }
 
     # instantiate the the affinity matrix
-    am = AffinityMatrix(DF=df_rating, **header)
+    am = AffinityMatrix(DF=python_dataset, **header)
 
     # generate the sparse matrix representation
     X = am.gen_affinity_matrix()
@@ -137,15 +122,15 @@ def test_sparse_to_df(test_specs, python_dataset):
     # tests: check that the two dataframes have the same elements in the same positions.
     assert (
         DF.userID.values.all()
-        == df_rating.sort_values(by=["userID"]).userID.values.all()
+        == python_dataset.sort_values(by=["userID"]).userID.values.all()
     )
 
     assert (
         DF.itemID.values.all()
-        == df_rating.sort_values(by=["userID"]).itemID.values.all()
+        == python_dataset.sort_values(by=["userID"]).itemID.values.all()
     )
 
     assert (
         DF.rating.values.all()
-        == df_rating.sort_values(by=["userID"]).rating.values.all()
+        == python_dataset.sort_values(by=["userID"]).rating.values.all()
     )
