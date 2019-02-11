@@ -174,6 +174,9 @@ def notebooks():
         "ncf_deep_dive": os.path.join(
             folder_notebooks, "02_model", "ncf_deep_dive.ipynb"
         ),
+        "sar_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "sar_deep_dive.ipynb"
+        ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }
     return paths
