@@ -147,14 +147,14 @@ def notebooks():
     paths = {
         "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
+            folder_notebooks, "00_quick_start", "sar_movielens.ipynb"
         ),
         "ncf": os.path.join(folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"),
         "als_pyspark": os.path.join(
-            folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
+            folder_notebooks, "00_quick_start", "als_movielens.ipynb"
         ),
         "fastai": os.path.join(
-            folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"
+            folder_notebooks, "00_quick_start", "fastai_movielens.ipynb"
         ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
@@ -173,12 +173,12 @@ def notebooks():
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "fastai": os.path.join(
-            folder_notebooks, "00_quick_start", "fastai_recommendation.ipynb"
+            folder_notebooks, "00_quick_start", "fastai_movielens.ipynb"
         ),
         "xdeepfm_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "xdeepfm.ipynb"
+            folder_notebooks, "00_quick_start", "xdeepfm_synthetic.ipynb"
         ),
-        "dkn_quickstart": os.path.join(folder_notebooks, "00_quick_start", "dkn.ipynb"),
+        "dkn_quickstart": os.path.join(folder_notebooks, "00_quick_start", "dkn_synthetic.ipynb"),
     }
     return paths
 
