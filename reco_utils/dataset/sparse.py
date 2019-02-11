@@ -26,6 +26,19 @@ log = logging.getLogger(__name__)
 
 
 class AffinityMatrix:
+    """
+
+    Args:
+        df (pd.DataFrame): a dataframe containing the data
+        col_user (str): default name for user column
+        col_item (str): default name for item column
+        col_rating (str): default name for rating columns
+        col_time (str): default name for timestamp columns
+        save_model (Bool): if True it saves the item/user maps
+        save_path (str): default path to save item/user maps
+
+    """
+
     # initialize class parameters
     def __init__(
         self,
@@ -34,18 +47,11 @@ class AffinityMatrix:
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_pred=PREDICTION_COL,
+        col_time=DEFAULT_TIMESTAMP_COL,
         save_path=None,
+        debug=False,
     ):
-        """Generate the user/item affinity matrix from a pandas dataframe and vice versa
 
-            Args:
-                DF (pd.DataFrame): a dataframe containing the data
-                col_user (str): default name for user column
-                col_item (str): default name for item column
-                col_rating (str): default name for rating columns
-                save_path (str): default path to save item/user maps
-
-        """
         self.df = DF  # dataframe
 
         # pandas DF parameters
@@ -57,10 +63,12 @@ class AffinityMatrix:
         # Options to save the model for future use
         self.save_path = save_path
 
-    def _gen_index(self):
+    def gen_index(self):
 
         """
-        Generate the user/item index:
+        Generate the user/item index
+
+        Returns:
             map_users, map_items: dictionaries mapping the original user/item index to matrix indices
             map_back_users, map_back_items: dictionaries to map back the matrix elements to the original
             dataframe indices
@@ -97,13 +105,13 @@ class AffinityMatrix:
         self.df_.loc[:, "hashedUsers"] = self.df_[self.col_user].map(self.map_users)
 
         # optionally save the inverse dictionary to work with trained models
-        if self.save_path is not None:
+        if self.save_path != None:
 
-            np.save(self.save_path + "/user_dict", self.map_users)
-            np.save(self.save_path + "/item_dict", self.map_items)
+            np.save(self.save_path_ + "/user_dict", self.map_users)
+            np.save(self.save_path_ + "/item_dict", self.map_items)
 
-            np.save(self.save_path + "/user_back_dict", self.map_back_users)
-            np.save(self.save_path + "/item_back_dict", self.map_back_items)
+            np.save(self.save_path_ + "/user_back_dict", self.map_back_users)
+            np.save(self.save_path_ + "/item_back_dict", self.map_back_items)
 
     def gen_affinity_matrix(self):
 
@@ -127,7 +135,7 @@ class AffinityMatrix:
 
         log.info("Generating the user/item affinity matrix...")
 
-        self._gen_index()
+        self.gen_index()
 
         ratings = self.df_[self.col_rating]  # ratings
         itm_id = self.df_["hashedItems"]  # itm_id serving as columns
