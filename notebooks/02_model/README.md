@@ -4,14 +4,14 @@ In this directory, notebooks are provided to give a deep dive into training mode
  Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)) and Singular Value Decomposition (SVD) using [Surprise](http://surpriselib.com/) python package. The notebooks make use of the utility functions ([reco_utils](../../reco_utils))
  available in the repo.
 
-| Notebook | Description |
-| --- | --- |
-| [als_deep_dive](als_deep_dive.ipynb) | Deep dive on the ALS algorithm and implementation.
-| [baseline_deep_dive](baseline_deep_dive.ipynb) | Deep dive on baseline performance estimation.
-| [ncf_deep_dive](ncf_deep_dive.ipynb) | Deep dive on a NCF algorithm and implementation.
-| [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Deep dive on a SVD algorithm and implementation.
-| [sar_single_node_deep_dive](sar_single_node_deep_dive.ipynb) | Deep dive on the SAR algorithm and implementation.
-| [vowpal_wabbit_deep_dive](vowpal_wabbit_deep_dive.ipynb) | Deep dive into using Vowpal Wabbit for regression and matrix factorization.
-| [rbm_deep_dive](rbm_deep_dive.ipynb)| Deep dive on the rbm algorithm and its implementation.
+| Notebook | Environment | Description |
+| --- | --- | --- |
+| [als_deep_dive](als_deep_dive.ipynb) | PySpark | Deep dive on the ALS algorithm and implementation.
+| [baseline_deep_dive](baseline_deep_dive.ipynb) | --- | Deep dive on baseline performance estimation.
+| [ncf_deep_dive](ncf_deep_dive.ipynb) | Python CPU, GPU | Deep dive on a NCF algorithm and implementation.
+| [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Python CPU | Deep dive on a SVD algorithm and implementation.
+| [sar_single_node_deep_dive](sar_single_node_deep_dive.ipynb) | Python CPU | Deep dive on the SAR algorithm and implementation.
+| [vowpal_wabbit_deep_dive](vowpal_wabbit_deep_dive.ipynb) | Python CPU | Deep dive into using Vowpal Wabbit for regression and matrix factorization.
+| [rbm_deep_dive](rbm_deep_dive.ipynb)| Python CPU, GPU | Deep dive on the rbm algorithm and its implementation.
 
 Details on model training are best found inside each notebook.
