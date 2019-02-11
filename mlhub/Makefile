@@ -25,5 +25,8 @@ ifneq ("$(wildcard $(INC_CLEAN))","")
   include $(INC_CLEAN)
 endif
 
+%: %.py
+	python3 $^
+
 realclean::
 	rm -rf m?.jpg p?.jpg __pycache__
