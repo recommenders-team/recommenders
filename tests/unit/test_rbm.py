@@ -3,14 +3,12 @@
 
 import pytest
 import numpy as np
-
 from reco_utils.recommender.rbm.rbm import RBM
 from tests.rbm_common import test_specs, affinity_matrix
 
 
 @pytest.fixture(scope="module")
 def init_rbm():
-
     return {
         "n_hidden": 100,
         "epochs": 10,
@@ -25,9 +23,6 @@ def init_rbm():
 
 @pytest.mark.gpu
 def test_class_init(init_rbm):
-    """
-    Test the init of the model class
-    """
     model = RBM(
         hidden_units=init_rbm["n_hidden"],
         training_epoch=init_rbm["epochs"],
@@ -59,9 +54,6 @@ def test_class_init(init_rbm):
 
 @pytest.mark.gpu
 def test_train_param_init(init_rbm, affinity_matrix):
-    """
-    Test the dimension of the learning parameters
-    """
     # obtain the train/test set matrices
     Xtr, Xtst = affinity_matrix
 
@@ -86,9 +78,6 @@ def test_train_param_init(init_rbm, affinity_matrix):
 
 @pytest.mark.gpu
 def test_sampling_funct(init_rbm, affinity_matrix):
-    """
-    Test the sampling functions
-    """
     # obtain the train/test set matrices
     Xtr, Xtst = affinity_matrix
 

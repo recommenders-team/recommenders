@@ -70,11 +70,6 @@ def test_predict(
     assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
-"""
-Main SAR tests are below - load test files which are used for both Scala SAR and Python reference implementations
-"""
-
-# Tests 1-6
 @pytest.mark.parametrize(
     "threshold,similarity_type,file",
     [
@@ -133,7 +128,6 @@ def test_sar_item_similarity(
         )
 
 
-# Test 7
 def test_user_affinity(demo_usage_data, sar_settings, header):
     time_now = demo_usage_data[header["col_timestamp"]].max()
     model = SARSingleNode(
@@ -163,7 +157,6 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
     )
 
 
-# Tests 8-10
 @pytest.mark.parametrize(
     "threshold,similarity_type,file",
     [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")],
