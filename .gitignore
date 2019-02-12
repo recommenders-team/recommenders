@@ -104,7 +104,7 @@ venv.bak/
 .mypy_cache/
 
 # Tensorflow
-model_checkpoints
+*model_checkpoints
 
 # Azure ML
 aml_config
