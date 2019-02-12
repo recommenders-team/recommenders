@@ -14,6 +14,7 @@ from reco_utils.common.constants import (
 )
 
 try:
+    from pyspark.sql import functions as F
     from pyspark.sql.functions import col
     from reco_utils.common.spark_utils import start_or_get_spark
     from reco_utils.dataset.spark_splitters import (
@@ -244,8 +245,12 @@ def test_timestamp_splitter(test_specs, spark_dataset):
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
 
+    max_split0 = splits[0].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split0 < min_split1)
+
     # Test multi split
-    splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_timestamp_split(dfs_rating, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
@@ -257,36 +262,26 @@ def test_timestamp_splitter(test_specs, spark_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
-    dfs_train = splits[0]
-    dfs_valid = splits[1]
-    dfs_test = splits[2]
+    max_split0 = splits[0].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split0 < min_split1)
 
-    # if valid is later than train.
-    all_later_1 = _if_later(dfs_train, dfs_valid, col_timestamp=DEFAULT_TIMESTAMP_COL)
-    assert all_later_1
-
-    # if test is later than valid.
-    all_later_2 = _if_later(dfs_valid, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
-    assert all_later_2
+    max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split2 = splits[2].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split1 < min_split2)
 
 
-def _if_later(data1, data2, col_timestamp=DEFAULT_TIMESTAMP_COL):
-    '''Helper function to test if records in data1 are later than that in data2.
+def _if_later(data1, data2):
+    """Helper function to test if records in data1 are later than that in data2.
     Returns:
         bool: True or False indicating if data1 is later than data2.
-    '''
-    p = product(
-        [
-            x[col_timestamp]
-            for x in data1.select(col_timestamp).collect()
-        ],
-        [
-            x[col_timestamp]
-            for x in data2.select(col_timestamp).collect()
-        ],
-    )
-
-    if_late = [a <= b for (a, b) in p]
-
-    return if_late
+    """
+    x = (data1.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
+         .groupBy(DEFAULT_USER_COL)
+         .agg(F.max(DEFAULT_TIMESTAMP_COL).alias('max_train')))
+    y = (data2.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
+         .groupBy(DEFAULT_USER_COL)
+         .agg(F.min(DEFAULT_TIMESTAMP_COL).alias('min_test')))
+    z = x.join(y, DEFAULT_USER_COL).withColumn('check', col('max_train') < col('min_test'))
+    return all([row['check'] for row in z.collect()])
 
