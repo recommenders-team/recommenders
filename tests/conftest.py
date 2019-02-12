@@ -1,9 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# NOTE: This file is used by pytest to inject fixtures automatically. As it is explained in the documentation
+# https://docs.pytest.org/en/latest/fixture.html:
+# "If during implementing your tests you realize that you want to use a fixture function from multiple test files
+# you can move it to a conftest.py file. You don’t need to import the fixture you want to use in a test, it
+# automatically gets discovered by pytest."
+
 import calendar
 import datetime
 import os
+import numpy as np
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
@@ -11,7 +18,7 @@ from tests.notebooks_common import path_notebooks
 
 try:
     from pyspark.sql import SparkSession
-except:
+except ImportError:
     pass  # so the environment without spark doesn't break
 
 
@@ -77,7 +84,7 @@ def pandas_dummy(header):
     ratings_dict = {
         header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
         header["col_item"]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        header["col_rating"]: [1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
+        header["col_rating"]: [1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 3.0, 4.0, 5.0],
     }
     df = pd.DataFrame(ratings_dict)
     return df
@@ -101,7 +108,7 @@ def train_test_dummy_timestamp(pandas_dummy_timestamp):
 def demo_usage_data(header, sar_settings):
     # load the data
     data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv")
-    data["rating"] = pd.Series([1] * data.shape[0])
+    data["rating"] = pd.Series([1.0] * data.shape[0])
     data = data.rename(
         columns={
             "userId": header["col_user"],
@@ -126,10 +133,7 @@ def demo_usage_data(header, sar_settings):
 @pytest.fixture(scope="module")
 def demo_usage_data_spark(spark, demo_usage_data, header):
     data_local = demo_usage_data[[x[1] for x in header.items()]]
-    # TODO: install pyArrow in DS VM
-    # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
-    data = spark.createDataFrame(data_local)
-    return data
+    return spark.createDataFrame(data_local)
 
 
 @pytest.fixture(scope="module")
@@ -140,17 +144,41 @@ def notebooks():
     paths = {
         "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
-            folder_notebooks, "00_quick_start", "sar_single_node_movielens.ipynb"
+            folder_notebooks, "00_quick_start", "sar_movielens.ipynb"
         ),
+        "ncf": os.path.join(folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"),
         "als_pyspark": os.path.join(
-            folder_notebooks, "00_quick_start", "als_pyspark_movielens.ipynb"
+            folder_notebooks, "00_quick_start", "als_movielens.ipynb"
         ),
-        "data_split": os.path.join(folder_notebooks, "01_prepare_data", "data_split.ipynb"),
+        "fastai": os.path.join(
+            folder_notebooks, "00_quick_start", "fastai_movielens.ipynb"
+        ),
+        "xdeepfm_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "xdeepfm_synthetic.ipynb"
+        ),
+        "dkn_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "dkn_synthetic.ipynb"
+        ),
+        "data_split": os.path.join(
+            folder_notebooks, "01_prepare_data", "data_split.ipynb"
+        ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_model", "als_deep_dive.ipynb"
         ),
         "surprise_svd_deep_dive": os.path.join(
             folder_notebooks, "02_model", "surprise_svd_deep_dive.ipynb"
+        ),
+        "baseline_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "baseline_deep_dive.ipynb"
+        ),
+        "ncf_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "ncf_deep_dive.ipynb"
+        ),
+        "sar_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "sar_deep_dive.ipynb"
+        ),
+        "vowpal_wabbit_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "vowpal_wabbit_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
     }

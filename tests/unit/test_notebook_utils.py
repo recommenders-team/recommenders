@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
+import os
 import pytest
 import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
@@ -9,15 +9,14 @@ from reco_utils.common.notebook_utils import is_jupyter, is_databricks
 
 @pytest.mark.notebooks
 def test_is_jupyter():
-    """Test if the module is running on Jupyter
-    """
     # Test on the terminal
     assert is_jupyter() is False
     assert is_databricks() is False
 
     # Test on Jupyter notebook
+    path = os.path.join("tests", "unit", "test_notebook_utils.ipynb")
     pm.execute_notebook(
-        'test_notebook_utils.ipynb',
+        path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
     )
