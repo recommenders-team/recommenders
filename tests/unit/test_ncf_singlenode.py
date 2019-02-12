@@ -9,18 +9,18 @@ import os
 import shutil
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset
-
-N_NEG = 5
-N_NEG_TEST = 10
-
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-
 from tests.ncf_common import python_dataset_ncf, test_specs_ncf
+
+
+N_NEG = 5
+N_NEG_TEST = 10
+
 
 @pytest.mark.gpu
 @pytest.mark.parametrize(
@@ -44,6 +44,7 @@ def test_init(model_type, n_users, n_items):
     assert model.embedding_mlp_Q.shape == [n_items, model.n_factors]
     
     # TODO: more parameters
+
 
 @pytest.mark.gpu
 @pytest.mark.parametrize(

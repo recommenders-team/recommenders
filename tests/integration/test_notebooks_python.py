@@ -82,3 +82,30 @@ def test_surprise_svd_integration(notebooks, size, expected_values):
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL)
 
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
+        ("1m", dict(rmse=0.9555,
+                    mae=0.68493,
+                    rsquared=0.26547,
+                    exp_var=0.26615,
+                    map=0.50635,
+                    ndcg=0.99966,
+                    precision=0.92684,
+                    recall=0.50635)),
+    ],
+)
+def test_vw_deep_dive_integration(notebooks, size, expected_values):
+    notebook_path = notebooks["vowpal_wabbit_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(MOVIELENS_DATA_SIZE=size, TOP_K=10),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL)

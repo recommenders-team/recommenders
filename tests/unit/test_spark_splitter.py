@@ -14,6 +14,7 @@ from reco_utils.common.constants import (
 )
 
 try:
+    from pyspark.sql.functions import col
     from reco_utils.common.spark_utils import start_or_get_spark
     from reco_utils.dataset.spark_splitters import (
         spark_chrono_split,
@@ -44,9 +45,7 @@ def python_data(test_specs):
 
     def random_date_generator(start_date, range_in_days):
         """Helper function to generate random timestamps.
-
-        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a
-        -range-in-numpy
+        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a-range-in-numpy
         """
         days_to_add = np.arange(0, range_in_days)
         random_dates = []
@@ -78,22 +77,14 @@ def python_data(test_specs):
 
 @pytest.fixture(scope="module")
 def spark_dataset(python_data):
-    """Get Python labels"""
-    rating = python_data
     spark = start_or_get_spark("SplitterTesting")
-    df_rating = spark.createDataFrame(rating)
-
-    return df_rating
+    return spark.createDataFrame(python_data)
 
 
 @pytest.mark.spark
 def test_min_rating_filter(spark_dataset):
-    """Test min rating filter
-    """
-    dfs_rating = spark_dataset
-
-    dfs_user = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="user")
-    dfs_item = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="item")
+    dfs_user = min_rating_filter_spark(spark_dataset, min_rating=5, filter_by="user")
+    dfs_item = min_rating_filter_spark(spark_dataset, min_rating=5, filter_by="item")
 
     user_rating_counts = [
         x["count"] >= 5 for x in dfs_user.groupBy(DEFAULT_USER_COL).count().collect()
@@ -115,10 +106,8 @@ def test_random_splitter(test_specs, spark_dataset):
     the testing data. A approximate match with certain level of tolerance is therefore used
     instead for tests.
     """
-    df_rating = spark_dataset
-
     splits = spark_random_split(
-        df_rating, ratio=test_specs["ratio"], seed=test_specs["seed"]
+        spark_dataset, ratio=test_specs["ratio"], seed=test_specs["seed"]
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -129,7 +118,7 @@ def test_random_splitter(test_specs, spark_dataset):
     )
 
     splits = spark_random_split(
-        df_rating, ratio=test_specs["ratios"], seed=test_specs["seed"]
+        spark_dataset, ratio=test_specs["ratios"], seed=test_specs["seed"]
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -145,11 +134,8 @@ def test_random_splitter(test_specs, spark_dataset):
 
 @pytest.mark.spark
 def test_chrono_splitter(test_specs, spark_dataset):
-    """Test chronological splitter for Spark dataframes"""
-    dfs_rating = spark_dataset
-
     splits = spark_chrono_split(
-        dfs_rating, ratio=test_specs["ratio"], filter_by="user", min_rating=10
+        spark_dataset, ratio=test_specs["ratio"], filter_by="user", min_rating=10
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -180,7 +166,7 @@ def test_chrono_splitter(test_specs, spark_dataset):
         all_later.append(user_later)
     assert all(all_later)
 
-    splits = spark_chrono_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_chrono_split(spark_dataset, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
@@ -209,11 +195,8 @@ def test_chrono_splitter(test_specs, spark_dataset):
 
 @pytest.mark.spark
 def test_stratified_splitter(test_specs, spark_dataset):
-    """Test stratified splitter for Spark dataframes"""
-    dfs_rating = spark_dataset
-
     splits = spark_stratified_split(
-        dfs_rating, ratio=test_specs["ratio"], filter_by="user", min_rating=10
+        spark_dataset, ratio=test_specs["ratio"], filter_by="user", min_rating=10
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -233,7 +216,7 @@ def test_stratified_splitter(test_specs, spark_dataset):
 
     assert set(users_train) == set(users_test)
 
-    splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_stratified_split(spark_dataset, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
@@ -248,11 +231,7 @@ def test_stratified_splitter(test_specs, spark_dataset):
 
 @pytest.mark.spark
 def test_timestamp_splitter(test_specs, spark_dataset):
-    """Test timestamp splitter for Spark dataframes"""
-    from pyspark.sql.functions import col
-
-    dfs_rating = spark_dataset
-    dfs_rating = dfs_rating.withColumn(DEFAULT_TIMESTAMP_COL, col(DEFAULT_TIMESTAMP_COL).cast("float"))
+    dfs_rating = spark_dataset.withColumn(DEFAULT_TIMESTAMP_COL, col(DEFAULT_TIMESTAMP_COL).cast("float"))
 
     splits = spark_timestamp_split(
         dfs_rating, ratio=test_specs["ratio"], col_timestamp=DEFAULT_TIMESTAMP_COL
@@ -293,9 +272,8 @@ def test_timestamp_splitter(test_specs, spark_dataset):
 
 def _if_later(data1, data2, col_timestamp=DEFAULT_TIMESTAMP_COL):
     '''Helper function to test if records in data1 are later than that in data2.
-
-    Return:
-        True or False indicating if data1 is later than data2.
+    Returns:
+        bool: True or False indicating if data1 is later than data2.
     '''
     p = product(
         [

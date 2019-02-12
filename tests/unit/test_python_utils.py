@@ -17,7 +17,7 @@ TOL = 0.0001
 
 
 @pytest.fixture
-def target_matrices():
+def target_matrices(scope="module"):
     J1 = np.array([[1.0, 0.0, 0.5],
                    [0.0, 1.0, 0.33333],
                    [0.5, 0.33333, 1.0]])
