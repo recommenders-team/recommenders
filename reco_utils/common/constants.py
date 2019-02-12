@@ -7,6 +7,7 @@ DEFAULT_ITEM_COL = "itemID"
 DEFAULT_RATING_COL = "rating"
 DEFAULT_TIMESTAMP_COL = "timestamp"
 PREDICTION_COL = "prediction"
+DEFAULT_PREDICTION_COL = PREDICTION_COL
 
 # Filtering variables
 DEFAULT_K = 10
