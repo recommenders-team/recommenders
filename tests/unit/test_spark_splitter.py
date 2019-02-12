@@ -242,13 +242,13 @@ def test_timestamp_splitter(test_specs, spark_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
-    min_split0 = splits[0].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
-    max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
-    assert(min_split0 >= max_split1)
-
+    max_split0 = splits[0].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
     min_split1 = splits[1].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
-    max_split2 = splits[2].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
-    assert(min_split1 >= max_split2)
+    assert(max_split0 <= min_split1)
+
+    max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split2 = splits[2].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split1 <= min_split2)
 
 
 def _if_later(data1, data2):
@@ -258,10 +258,11 @@ def _if_later(data1, data2):
     """
     x = (data1.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
          .groupBy(DEFAULT_USER_COL)
-         .agg(F.max(DEFAULT_TIMESTAMP_COL).alias('max_train')))
+         .agg(F.max(DEFAULT_TIMESTAMP_COL).alias('max_1')))
     y = (data2.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
          .groupBy(DEFAULT_USER_COL)
-         .agg(F.min(DEFAULT_TIMESTAMP_COL).alias('min_test')))
-    z = x.join(y, DEFAULT_USER_COL).withColumn('check', col('max_train') < col('min_test'))
-    return all([row['check'] for row in z.collect()])
+         .agg(F.min(DEFAULT_TIMESTAMP_COL).alias('min_2')))
+    return (x.join(y, DEFAULT_USER_COL)
+            .withColumn('check', (col('max_1') < col('min_2')).cast('integer'))
+            .agg(F.min('check')).first()[0]) == 1
 
