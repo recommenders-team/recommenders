@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-from itertools import product
 import pytest
 from reco_utils.dataset.split_utils import min_rating_filter_spark
 from reco_utils.common.constants import (
@@ -225,9 +224,9 @@ def test_timestamp_splitter(test_specs, spark_dataset):
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
 
-    min_split0 = splits[0].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
-    max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
-    assert(min_split0 >= max_split1)
+    max_split0 = splits[0].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split1 = splits[1].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split0 <= min_split1)
 
     # Test multi split
     splits = spark_timestamp_split(dfs_rating, ratio=test_specs["ratios"])
@@ -252,17 +251,24 @@ def test_timestamp_splitter(test_specs, spark_dataset):
 
 
 def _if_later(data1, data2):
-    """Helper function to test if records in data1 are later than that in data2.
+    """Helper function to test if records in data1 are earlier than that in data2.
     Returns:
-        bool: True or False indicating if data1 is later than data2.
+        bool: True or False indicating if data1 is earlier than data2.
     """
     x = (data1.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
          .groupBy(DEFAULT_USER_COL)
-         .agg(F.max(DEFAULT_TIMESTAMP_COL).alias('max_1')))
+         .agg(F.max(DEFAULT_TIMESTAMP_COL).cast('long').alias('max'))
+         .collect())
+    max_times = {row[DEFAULT_USER_COL]: row['max'] for row in x}
+
     y = (data2.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
          .groupBy(DEFAULT_USER_COL)
-         .agg(F.min(DEFAULT_TIMESTAMP_COL).alias('min_2')))
-    return (x.join(y, DEFAULT_USER_COL)
-            .withColumn('check', (col('max_1') < col('min_2')).cast('integer'))
-            .agg(F.min('check')).first()[0]) == 1
+         .agg(F.min(DEFAULT_TIMESTAMP_COL).cast('long').alias('min'))
+         .collect())
+    min_times = {row[DEFAULT_USER_COL]: row['min'] for row in y}
 
+    result = True
+    for user, max_time in max_times.items():
+        result = result and min_times[user] >= max_time
+
+    return result
