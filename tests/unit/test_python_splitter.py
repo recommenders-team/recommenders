@@ -248,4 +248,3 @@ def test_stratified_splitter(test_specs, python_dataset):
     assert len(splits[2]) / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][2], test_specs["tolerance"]
     )
-
