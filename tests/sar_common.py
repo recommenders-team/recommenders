@@ -6,10 +6,6 @@ import urllib.request
 import csv
 import codecs
 
-import logging
-
-log = logging.getLogger(__name__)
-
 
 def _csv_reader_url(url, delimiter=",", encoding="utf-8"):
     ftpstream = urllib.request.urlopen(url)
