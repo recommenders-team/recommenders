@@ -4,7 +4,7 @@ This repository provides examples and best practices for building recommendation
 - [Prepare Data](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
 - [Model](notebooks/02_model/README.md): Building models using various recommender algorithms such as Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)), Singular Value Decomposition ([SVD](https://surprise.readthedocs.io/en/stable/matrix_factorization.html#surprise.prediction_algorithms.matrix_factorization.SVD)), etc.
 - [Evaluate](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
-- [Model Select and Optimize](notebooks/04_model_select_and_optimize): Tuning and optimizing hyperparameteres for recommender models
+- [Model Select and Optimize](notebooks/04_model_select_and_optimize): Tuning and optimizing hyperparameters for recommender models
 - [Operationalize](notebooks/05_operationalize/README.md): Operationalizing models in a production environment on Azure
 
 Several utilities are provided in [reco_utils](reco_utils) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting train/test data. Implementations of several state-of-the-art algorithms are provided for self-study and customization in your own applications.
@@ -57,17 +57,19 @@ The Quick-Start and Modeling notebooks showcase how to utilize the following alg
 
 **Algorithms**
 
+The table below lists recommender algorithms available in the repository at the moment.
+
 | Algorithm | Environment | Type | Description | 
 | --- | --- | --- | --- |
-| **`Classic Recommenders`** |
+| **Classic Recommenders** |
 | [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_movielens.ipynb) | Python | Collaborative Filtering | General purpose algorithm for smaller datasets | 
-| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative | General purpose algorithm for larger datasets, optimized with Spark |
-| **`Microsoft Recommenders`** |
+| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative Filtering | General purpose algorithm for larger datasets, optimized with Spark |
+| **Microsoft Recommenders** |
 | [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_movielens.ipynb) | Python / Spark | Collaborative Filtering | Generalized algorithm utilizing item similarities and can easily adapt to new users |
-| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | Collaborative, Content Based | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
+| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | Collaborative, Content-based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
 | [eXtreme Deep Factorization Machine (xDeepFM)](notebooks/00_quick_start/xdeepfm_synthetic.ipynb) | Python / GPU | Hybrid | Deep learning model combining implicit and explicit features | 
-| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn_synthetic.ipynb) | Python / GPU | Content Based | Deep learning model incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |  
-| **`Deep Learning`** |
+| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn_synthetic.ipynb) | Python / GPU | Content-based Filtering | Deep learning model incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |  
+| **Deep Learning Recommenders** |
 | [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | Python / GPU | Collaborative Filtering | General algorithm built using a multi-layer perceptron | 
 | [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) | Python / GPU | Collaborative Filtering | Generative neural network algorithm built to learn the underlying probability distribution for user/item affinity | 
 | [FastAI Embedding Dot Bias (FAST)](notebooks/00_quick_start/fastai_movielens.ipynb)  | Python / GPU | Collaborative Filtering | General purpose algorithm embedding dot biases for users and items  |
