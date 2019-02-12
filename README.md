@@ -57,17 +57,19 @@ The Quick-Start and Modeling notebooks showcase how to utilize the following alg
 
 **Algorithms**
 
+The tale below listed recommender algorithms collected in the repository.
+
 | Algorithm | Environment | Type | Description | 
 | --- | --- | --- | --- |
 | **Classic Recommenders** |
 | [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_movielens.ipynb) | Python | Collaborative Filtering | General purpose algorithm for smaller datasets | 
-| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative | General purpose algorithm for larger datasets, optimized with Spark |
+| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative Filtering | General purpose algorithm for larger datasets, optimized with Spark |
 | **Microsoft Recommenders** |
 | [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_movielens.ipynb) | Python / Spark | Collaborative Filtering | Generalized algorithm utilizing item similarities and can easily adapt to new users |
-| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | Collaborative, Content Based | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
+| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | Collaborative, Content-based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
 | [eXtreme Deep Factorization Machine (xDeepFM)](notebooks/00_quick_start/xdeepfm_synthetic.ipynb) | Python / GPU | Hybrid | Deep learning model combining implicit and explicit features | 
-| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn_synthetic.ipynb) | Python / GPU | Content Based | Deep learning model incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |  
-| **Deep Learning** |
+| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn_synthetic.ipynb) | Python / GPU | Content-based Filtering | Deep learning model incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |  
+| **Deep Learning Recommenders** |
 | [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | Python / GPU | Collaborative Filtering | General algorithm built using a multi-layer perceptron | 
 | [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) | Python / GPU | Collaborative Filtering | Generative neural network algorithm built to learn the underlying probability distribution for user/item affinity | 
 | [FastAI Embedding Dot Bias (FAST)](notebooks/00_quick_start/fastai_movielens.ipynb)  | Python / GPU | Collaborative Filtering | General purpose algorithm embedding dot biases for users and items  |
