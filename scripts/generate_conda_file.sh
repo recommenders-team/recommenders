@@ -124,7 +124,7 @@ ${pyspark}- pyarrow>=0.8.0
   - papermill>=0.15.0
   - black>=18.6b4
   - memory-profiler>=0.54.0
-  - azureml-sdk[notebooks,contrib]>=1.0.8
+  - azureml-sdk[notebooks,contrib]==1.0.10
 ${gpu}  - numba>=0.38.1 
   - gitpython>=2.1.8
   - pydocumentdb>=2.3.3
