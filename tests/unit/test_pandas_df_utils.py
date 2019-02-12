@@ -3,7 +3,10 @@
 
 import pytest
 import pandas as pd
-from reco_utils.dataset.pandas_df_utils import user_item_pairs
+from reco_utils.dataset.pandas_df_utils import (
+    user_item_pairs,
+    filter_by
+)
 
 
 @pytest.fixture(scope="module")
@@ -73,3 +76,21 @@ def test_user_item_pairs(user_item_dataset):
     assert len(user_item_filtered) == len(user_item) - 3
     # Check filtered out record
     assert len(user_item_filtered.loc[(user_item['user_id'] == 3) & (user_item['item_id'] == 7)]) == 0
+
+
+def test_filter_by():
+    user_df = pd.DataFrame({
+        'user_id': [1, 9, 3, 5, 5, 1],
+        'item_id': [1, 6, 7, 6, 8, 9]
+    })
+
+    seen_df = pd.DataFrame({
+        'user_id': [1, 2, 4],
+    })
+
+    filtered_df = filter_by(user_df, seen_df, ['user_id'])
+
+    # Check filtered out number
+    assert len(filtered_df) == len(user_df) - 2
+    # Check filtered out record
+    assert len(filtered_df.loc[(user_df['user_id'] == 1)]) == 0

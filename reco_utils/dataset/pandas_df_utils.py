@@ -51,3 +51,21 @@ def user_item_pairs(
         users_items = users_items.sample(frac=1).reset_index(drop=True)
 
     return users_items
+
+
+def filter_by(df, filter_by_df, filter_by_cols):
+    """From the input DataFrame (df), remove the records whose target column (filter_by_cols) values are
+    exist in the filter-by DataFrame (filter_by_df)
+
+    Args:
+        df (pd.DataFrame): Source dataframe.
+        filter_by_df (pd.DataFrame): Filter dataframe.
+        filter_by_cols (iterable of str): Filter columns.
+
+    Returns:
+        (pd.DataFrame): Dataframe filtered by filter_by_df on filter_by_cols
+    """
+
+    return df.loc[
+        ~df.set_index(filter_by_cols).index.isin(filter_by_df.set_index(filter_by_cols).index)
+    ]

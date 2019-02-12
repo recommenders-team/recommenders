@@ -1,1 +1,0 @@
-# TODO except tf.train.NanLossDuringTrainingError:
