@@ -13,6 +13,7 @@ import shutil
 
 
 END_POINT = "https://api.github.com/repos/"
+SEARCH_END_POINT = "https://api.github.com/search/"
 BASE_URL = "https://github.com/"
 
 
@@ -20,20 +21,21 @@ class Github:
     """Github stats class"""
 
     def __init__(self, token, git_url):
-        """Initializer
+        """Initializer.
         Args:
             token (str): Github token.
             git_url (str): URL of github repository.
         """
         self.token = token
         self.git_url = git_url
-        self.api_url = END_POINT + self.git_url.split(BASE_URL)[1]
+        self.repo_name = self.git_url.split(BASE_URL)[1]
+        self.api_url = END_POINT + self.repo_name
         self.headers = {"Authorization": "token " + self.token}
 
     @property
     @lru_cache()
     def general_stats(self):
-        """General attributes and statistics of the repo
+        """General attributes and statistics of the repo.
         Returns:
             json: JSON with general stats.
         """
@@ -45,7 +47,7 @@ class Github:
 
     @property
     def forks(self):
-        """Get current number of forks
+        """Get current number of forks.
         Returns:
             int: Number of forks.
         """
@@ -56,16 +58,42 @@ class Github:
         )
 
     @property
+    @lru_cache()
     def open_issues(self):
-        """Get current number of open issues
+        """Get current number of open issues.
         Returns:
             int: Number of issues.
         """
-        return (
-            self.general_stats["open_issues_count"]
-            if self.general_stats is not None
-            else None
+        url = (
+            SEARCH_END_POINT
+            + "issues?q=state%3Aopen+repo:"
+            + self.repo_name
+            + "+type%3Aissues"
         )
+        r = requests.get(url, headers=self.headers)
+        if r.ok:
+            return r.json()["total_count"]
+        else:
+            return None
+
+    @property
+    @lru_cache()
+    def open_pull_requests(self):
+        """Get current number of open PRs.
+        Returns:
+            int: Number of PRs.
+        """
+        url = (
+            SEARCH_END_POINT
+            + "issues?q=state%3Aopen+repo:"
+            + self.repo_name
+            + "+type%3Apr"
+        )
+        r = requests.get(url, headers=self.headers)
+        if r.ok:
+            return r.json()["total_count"]
+        else:
+            return None
 
     @property
     def stars(self):

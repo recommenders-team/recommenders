@@ -16,13 +16,6 @@ SIM_COOCCUR = "cooccurrence"
 SIM_JACCARD = "jaccard"
 SIM_LIFT = "lift"
 
-HASHED_ITEMS = "hashedItems"
-HASHED_USERS = "hashedUsers"
+INDEXED_ITEMS = "indexedItems"
+INDEXED_USERS = "indexedUsers"
 
-
-def _user_item_return_type():
-    return str
-
-
-def _predict_column_type():
-    return float
