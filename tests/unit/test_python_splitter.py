@@ -58,13 +58,13 @@ def python_dataset(test_specs):
 
     rating = pd.DataFrame(
         {
-            DEFAULT_USER_COL: np.random.random_integers(
+            DEFAULT_USER_COL: np.random.randint(
                 1, 5, test_specs["number_of_rows"]
             ),
-            DEFAULT_ITEM_COL: np.random.random_integers(
+            DEFAULT_ITEM_COL: np.random.randint(
                 1, 15, test_specs["number_of_rows"]
             ),
-            DEFAULT_RATING_COL: np.random.random_integers(
+            DEFAULT_RATING_COL: np.random.randint(
                 1, 5, test_specs["number_of_rows"]
             ),
             DEFAULT_TIMESTAMP_COL: random_date_generator(
@@ -169,25 +169,19 @@ def test_chrono_splitter(test_specs, python_dataset):
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
 
-    # Test all time stamps in test are later than that in train for all users.
-    # This is for single-split case.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        df_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        df_test = splits[1][splits[1][DEFAULT_USER_COL] == user]
-
-        p = product(df_train[DEFAULT_TIMESTAMP_COL], df_test[DEFAULT_TIMESTAMP_COL])
-        user_later = [a <= b for (a, b) in p]
-
-        all_later.append(user_later)
-    assert all(all_later)
-
     # Test if both contains the same user list. This is because chrono split is stratified.
     users_train = splits[0][DEFAULT_USER_COL].unique()
     users_test = splits[1][DEFAULT_USER_COL].unique()
-
     assert set(users_train) == set(users_test)
 
+    # Test all time stamps in test are later than that in train for all users.
+    # This is for single-split case.
+    max_train_times = splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
+    min_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
+    check_times = max_train_times.join(min_test_times, lsuffix='_0', rsuffix='_1')
+    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_0'] < check_times[DEFAULT_TIMESTAMP_COL + '_1']).values)
+
+    # Test multi-split case
     splits = python_chrono_split(
         python_dataset, ratio=test_specs["ratios"], min_rating=10, filter_by="user"
     )
@@ -203,21 +197,23 @@ def test_chrono_splitter(test_specs, python_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
+    # Test if all splits contain the same user list. This is because chrono split is stratified.
+    users_train = splits[0][DEFAULT_USER_COL].unique()
+    users_test = splits[1][DEFAULT_USER_COL].unique()
+    users_val = splits[2][DEFAULT_USER_COL].unique()
+    assert set(users_train) == set(users_test)
+    assert set(users_train) == set(users_val)
+
     # Test if timestamps are correctly split. This is for multi-split case.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        df_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        df_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
-        df_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
+    max_train_times = splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
+    min_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
+    check_times = max_train_times.join(min_test_times, lsuffix='_0', rsuffix='_1')
+    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_0'] < check_times[DEFAULT_TIMESTAMP_COL + '_1']).values)
 
-        p1 = product(df_train[DEFAULT_TIMESTAMP_COL], df_valid[DEFAULT_TIMESTAMP_COL])
-        p2 = product(df_valid[DEFAULT_TIMESTAMP_COL], df_test[DEFAULT_TIMESTAMP_COL])
-        user_later_1 = [a <= b for (a, b) in p1]
-        user_later_2 = [a <= b for (a, b) in p2]
-
-        all_later.append(user_later_1)
-        all_later.append(user_later_2)
-    assert all(all_later)
+    max_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
+    min_val_times = splits[2][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
+    check_times = max_test_times.join(min_val_times, lsuffix='_1', rsuffix='_2')
+    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_1'] < check_times[DEFAULT_TIMESTAMP_COL + '_2']).values)
 
 
 def test_stratified_splitter(test_specs, python_dataset):
