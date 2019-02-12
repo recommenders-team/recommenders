@@ -16,7 +16,20 @@
 # $ python generate_conda_file.py --gpu --pyspark-version 2.4.0
 
 import argparse
+import textwrap
 
+
+HELP_MSG = """
+To create the conda environment:
+$ conda env create -f {conda_env}.yaml
+
+To update the conda environment:
+$ conda env update -f {conda_env}.yaml
+
+To register the conda environment in Jupyter:
+$ conda activate {conda_env}
+$ python -m ipykernel install --user --name {conda_env} --display-name "Python ({conda_env})
+"""
 
 CHANNELS = ["conda-forge", "pytorch", "fastai", "defaults"]
 
@@ -45,7 +58,7 @@ CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
 CONDA_GPU = {"numba": "numba>=0.38.1", "tensorflow": "tensorflow-gpu==1.12.0"}
 
 PIP_BASE = {
-    "azureml-sdk[notebooks,contrib]": "azureml-sdk[notebooks,contrib]>=1.0.8",
+    "azureml-sdk[notebooks,contrib]": "azureml-sdk[notebooks,contrib]==1.0.10",
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "dataclasses": "dataclasses>=0.6",
@@ -63,18 +76,23 @@ PIP_GPU = {}
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="""This script generates a conda file for different environments. Plain python is the default, 
-        flags can be used to add packages needed to support pyspark and gpu functionality"""
+        description=textwrap.dedent(
+            """
+        This script generates a conda file for different environments.
+        Plain python is the default, but flags can be used to support PySpark and GPU functionality"""
+        ),
+        epilog=HELP_MSG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument("--name", help="specify name of conda environment")
     parser.add_argument(
-        "--gpu", action="store_true", help="include packages for gpu support"
+        "--gpu", action="store_true", help="include packages for GPU support"
     )
     parser.add_argument(
-        "--pyspark", action="store_true", help="include packages for pyspark support"
+        "--pyspark", action="store_true", help="include packages for PySpark support"
     )
     parser.add_argument(
-        "--pyspark-version", help="provide specific version of pyspark to use"
+        "--pyspark-version", help="provide specific version of PySpark to use"
     )
     args = parser.parse_args()
 
@@ -86,7 +104,7 @@ if __name__ == "__main__":
             [not x.isdigit() for x in pyspark_version_info]
         ):
             raise TypeError(
-                "Pyspark version input must be valid numeric format (e.g. --pyspark-version=2.3.1)"
+                "PySpark version input must be valid numeric format (e.g. --pyspark-version=2.3.1)"
             )
 
     # set name for environment and output yaml file
@@ -116,6 +134,8 @@ if __name__ == "__main__":
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)
     with open(conda_file, "w") as f:
+        for line in HELP_MSG.format(conda_env=conda_env).split("\n"):
+            f.write("# {}\n".format(line))
         f.write("name: {}\n".format(conda_env))
         f.write("channels:\n")
         for channel in CHANNELS:
@@ -127,19 +147,5 @@ if __name__ == "__main__":
         for pip_package in pip_packages.values():
             f.write("  - {}\n".format(pip_package))
 
-    print(
-        """Generated conda file: {conda_file}
-    
-    To create the conda environment:
-    $ conda env create -f {conda_file}
-    
-    To update the conda environment:
-    $ conda env update -f {conda_file}
-    
-    To register the conda environment in Jupyter:
-    $ conda activate {conda_env}
-    $ python -m ipykernel install --user --name {conda_env} --display-name "Python ({conda_env})"
-    """.format(
-            conda_env=conda_env, conda_file=conda_file
-        )
-    )
+    print("Generated conda file: {}".format(conda_file))
+    print(HELP_MSG.format(conda_env=conda_env))
