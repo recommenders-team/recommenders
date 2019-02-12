@@ -247,7 +247,7 @@ def test_timestamp_splitter(test_specs, spark_dataset):
 
     min_split0 = splits[0].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
     max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
-    assert(min_split0 > max_split1)
+    assert(min_split0 >= max_split1)
 
     # Test multi split
     splits = spark_timestamp_split(dfs_rating, ratio=test_specs["ratios"])
@@ -264,11 +264,11 @@ def test_timestamp_splitter(test_specs, spark_dataset):
 
     min_split0 = splits[0].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
     max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
-    assert(min_split0 > max_split1)
+    assert(min_split0 >= max_split1)
 
     min_split1 = splits[1].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
     max_split2 = splits[2].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
-    assert(min_split1 > max_split2)
+    assert(min_split1 >= max_split2)
 
 
 def _if_later(data1, data2):
