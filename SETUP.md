@@ -60,7 +60,7 @@ Assuming the repo is cloned as `Recommenders` in the local system, to install th
 
     cd Recommenders
     python scripts/generate_conda_file.py
-    conda env create -f conda_bare.yaml 
+    conda env create -f reco_base.yaml 
 
 </details>
 
@@ -71,7 +71,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
 
     cd Recommenders
     python scripts/generate_conda_file.py --gpu
-    conda env create -f conda_gpu.yaml 
+    conda env create -f reco_gpu.yaml 
 
 </details>
 
@@ -82,11 +82,11 @@ To install the PySpark environment, which by default installs the CPU environmen
 
     cd Recommenders
     python scripts/generate_conda_file.py --pyspark
-    conda env create -f conda_pyspark.yaml
+    conda env create -f reo_pyspark.yaml
 
 Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
 
-    python /scripts/generate_conda_file.py --pyspark-version 2.4.0
+    python scripts/generate_conda_file.py --pyspark-version 2.4.0
 
 **NOTE** - for a PySpark environment, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
 
@@ -113,8 +113,8 @@ unset PYSPARK_DRIVER_PYTHON
 To install all three environments:
 
     cd Recommenders
-    python /scripts/generate_conda_file.py  --gpu --pyspark
-    conda env create -f conda_full.yaml
+    python scripts/generate_conda_file.py --gpu --pyspark
+    conda env create -f reco_full.yaml
 
 </details>
 
