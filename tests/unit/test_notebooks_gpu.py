@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import shutil
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
@@ -52,3 +53,27 @@ def test_ncf_deep_dive(notebooks):
         ),
     )
 
+
+@pytest.mark.notebooks
+@pytest.mark.gpu
+def test_wide_deep(notebooks):
+    notebook_path = notebooks["wide_deep"]
+
+    MODEL_DIR = 'model_checkpoints'
+    params = {
+        'MOVIELENS_DATA_SIZE': '100k',
+        'EPOCHS': 1,
+        'EVALUATE_WHILE_TRAINING': False,
+        'MODEL_DIR': MODEL_DIR,
+        'EXPORT_DIR_BASE': MODEL_DIR,
+        'METRICS': ['rmse'],
+    }
+
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=params,
+    )
+
+    shutil.rmtree(MODEL_DIR, ignore_errors=True)

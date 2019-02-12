@@ -28,7 +28,7 @@ from reco_utils.common.constants import (
 NOTEBOOK_NAME = os.path.join(
     "notebooks",
     "00_quick_start",
-    "wide_deep_model_movielens.ipynb"
+    "wide_deep_movielens.ipynb"
 )
 OUTPUT_NOTEBOOK = "wide_deep.ipynb"
 SUPPORTED_METRICS = {

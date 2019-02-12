@@ -159,6 +159,9 @@ def notebooks():
         "dkn_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "dkn_synthetic.ipynb"
         ),
+        "wide_deep": os.path.join(
+            folder_notebooks, "00_quick_start", "wide_deep_movielens.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
