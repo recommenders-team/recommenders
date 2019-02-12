@@ -156,16 +156,7 @@ def test_chrono_splitter(test_specs, spark_dataset):
 
     assert set(users_train) == set(users_test)
 
-    # Test all time stamps in test are later than that in train for all users.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        dfs_test = splits[1][splits[1][DEFAULT_USER_COL] == user]
-
-        user_later = _if_later(dfs_train, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
-
-        all_later.append(user_later)
-    assert all(all_later)
+    assert _if_later(splits[0], splits[1])
 
     splits = spark_chrono_split(spark_dataset, ratio=test_specs["ratios"])
 
@@ -179,19 +170,8 @@ def test_chrono_splitter(test_specs, spark_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
-    # Test if timestamps are correctly split. This is for multi-split case.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        dfs_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
-        dfs_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
-
-        user_later_1 = _if_later(dfs_train, dfs_valid, col_timestamp=DEFAULT_TIMESTAMP_COL)
-        user_later_2 = _if_later(dfs_valid, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
-
-        all_later.append(user_later_1)
-        all_later.append(user_later_2)
-    assert all(all_later)
+    assert _if_later(splits[0], splits[1])
+    assert _if_later(splits[1], splits[2])
 
 
 @pytest.mark.spark
