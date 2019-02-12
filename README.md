@@ -18,7 +18,8 @@ To setup on your local machine:
     ```
     git clone https://github.com/Microsoft/Recommenders
     ```
-3. Run the generate conda file script and create a conda environment:   
+3. Run the generate conda file script to create a conda environment:
+   (This is for a basic python environment, see [SETUP.md](SETUP.md) for PySpark and GPU environment setup) 
     ```
     cd Recommenders
     python scripts/generate_conda_file.py
