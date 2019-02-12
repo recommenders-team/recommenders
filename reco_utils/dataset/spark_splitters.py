@@ -56,7 +56,7 @@ def spark_chrono_split(
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halfs and the ratio argument indicates the ratio of 
+            it splits data into two sets and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits 
             data into several portions corresponding to the split ratios. If a list is 
             provided and the ratios are not summed to 1, they will be normalized.
@@ -93,7 +93,7 @@ def spark_chrono_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
-    window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp).desc())
+    window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp))
 
     rating_grouped = (
         data.groupBy(split_by_column)
@@ -141,6 +141,8 @@ def spark_stratified_split(
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
+            Earlier indexed splits will have earlier times
+            (e.g the latest time per user or item in split[0] <= the earliest time per user or item in split[1])
         seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
         filter_by (str): either "user" or "item", depending on which of the two is to filter
@@ -216,10 +218,12 @@ def spark_timestamp_split(
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halfs and the ratio argument indicates the ratio of
+            it splits data into two sets and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
+            Earlier indexed splits will have earlier times
+            (e.g the latest time in split[0] <= the earliest time in split[1])
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
         col_timestamp (str): column name of timestamps. Float number represented in
@@ -233,7 +237,7 @@ def spark_timestamp_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
-    window_spec = Window.orderBy(col(col_timestamp).desc())
+    window_spec = Window.orderBy(col(col_timestamp))
     rating = data.withColumn("rank", row_number().over(window_spec))
 
     data_count = rating.count()
