@@ -35,7 +35,7 @@ To setup on your local machine:
     cd notebooks
     jupyter notebook
     ```
-5. Run the [SAR Python CPU Movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to change the kernel to "Python (reco)".
+5. Run the [SAR Python CPU Movielens](notebooks/00_quick_start/sar_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to change the kernel to "Python (reco)".
 
 ## Notebooks
 
@@ -43,7 +43,7 @@ We provide several notebooks to show how recommendation algorithms can be design
 
 - The [Quick-Start Notebooks](notebooks/00_quick_start) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
 
-- The [Data Preparation Notebook](notebooks/01_prepare_data) shows how to prepare and split data properly for recommendation systems.
+- The [Data Preparation Notebooks](notebooks/01_prepare_data) show how to prepare and split data properly for recommendation systems.
 
 - The [Modeling Notebooks](notebooks/02_model) provide a deep dive into implementations of different recommender algorithms.
 
@@ -63,7 +63,7 @@ The table below lists recommender algorithms available in the repository at the 
 | Algorithm | Environment | Type | Description | 
 | --- | --- | --- | --- |
 | **Classic Recommenders** |
-| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_movielens.ipynb) | Python | Collaborative Filtering | General purpose algorithm for smaller datasets | 
+| [Surprise/Singular Value Decomposition (SVD)](notebooks/02_model/surprise_svd_deep_dive.ipynb) | Python | Collaborative Filtering | General purpose algorithm for smaller datasets | 
 | [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative Filtering | General purpose algorithm for larger datasets, optimized with Spark |
 | **Microsoft Recommenders** |
 | [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_movielens.ipynb) | Python / Spark | Collaborative Filtering | Generalized algorithm utilizing item similarities and can easily adapt to new users |
