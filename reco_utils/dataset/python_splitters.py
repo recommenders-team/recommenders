@@ -100,7 +100,7 @@ def python_chrono_split(
 
     num_of_splits = len(ratio)
     splits = [pd.DataFrame({})] * num_of_splits
-    df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
+    df_grouped = data.groupby(split_by_column)
     for name, group in df_grouped:
         group_splits = split_pandas_data_with_ratios(
             df_grouped.get_group(name), ratio, resample=False
