@@ -78,6 +78,14 @@ def python_chrono_split(
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
 
+    # Fast fail if columns are not found.
+    if col_user not in data.columns:
+        raise ValueError("Schema of data not valid. Missing User Col")
+    if col_item not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Item Col")
+    if col_timestamp not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Timestamp Col")
+
     multi_split, ratio = process_split_ratio(ratio)
 
     split_by_column = col_user if filter_by == "user" else col_item
