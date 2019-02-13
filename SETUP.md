@@ -34,13 +34,14 @@ Currently, this repository supports the following environments:
 
 ### Setup Requirements
 
-* Anaconda with Python version >= 3.6. [Miniconda](https://conda.io/miniconda.html) is the fastest way to get started.
-* The Python library dependencies can be found in this [script](scripts/generate_conda_file.py).
-* Machine with Spark (optional for Python environment but mandatory for PySpark environment).
+* Machine running Linux, Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/about)) or macOS
+* Anaconda with Python version >= 3.6.
+  * This is pre-installed on Azure DSVM, for local setup [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
+* [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
 
-We install the dependencies with Conda. As a pre-requisite, we want to make sure that Anaconda and the package manager conda are both up to date:
+We install the dependencies with Conda. As a pre-requisite, we want to make sure that Anaconda and the package manager Conda are both up to date:
 
 ```{shell}
 conda update conda
