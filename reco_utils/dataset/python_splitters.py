@@ -72,17 +72,19 @@ def python_chrono_split(
     Returns:
         list: Splits of the input data as pd.DataFrame.
     """
+    # A few preliminary checks.
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
 
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
 
-    # Fast fail if columns are not found.
     if col_user not in data.columns:
         raise ValueError("Schema of data not valid. Missing User Col")
+
     if col_item not in data.columns:
         raise ValueError("Schema of data not valid. Missing Item Col")
+
     if col_timestamp not in data.columns:
         raise ValueError("Schema of data not valid. Missing Timestamp Col")
 
@@ -153,11 +155,18 @@ def python_stratified_split(
     Returns:
         list: Splits of the input data as pd.DataFrame.
     """
+    # A few preliminary checks.
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
 
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
+
+    if col_user not in data.columns:
+        raise ValueError("Schema of data not valid. Missing User Col")
+
+    if col_item not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Item Col")
 
     multi_split, ratio = process_split_ratio(ratio)
 
