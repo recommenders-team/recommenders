@@ -10,20 +10,17 @@ from reco_utils.common.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-
 from reco_utils.recommender.ncf.dataset import Dataset
-
 from tests.ncf_common import python_dataset_ncf, test_specs_ncf
+
 
 N_NEG = 5
 N_NEG_TEST = 10
 BATCH_SIZE = 32
 
-def test_data_preprocessing(python_dataset_ncf):
-    # test dataset._data_preprocessing and dataset._reindex
 
+def test_data_preprocessing(python_dataset_ncf):
     train, test = python_dataset_ncf
-    
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
     
     # shape
@@ -43,11 +40,9 @@ def test_data_preprocessing(python_dataset_ncf):
         assert data_row[1][DEFAULT_ITEM_COL] == data.item2id[row[1][DEFAULT_ITEM_COL]]
         assert row[1][DEFAULT_ITEM_COL] == data.id2item[data_row[1][DEFAULT_ITEM_COL]]
 
-def test_train_loader(python_dataset_ncf):
-    # test dataset.train_loader()
 
+def test_train_loader(python_dataset_ncf):
     train, test = python_dataset_ncf
-    
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
 
     # collect positvie user-item dict
@@ -62,7 +57,6 @@ def test_train_loader(python_dataset_ncf):
         assert len(user) == BATCH_SIZE
         assert len(item) == BATCH_SIZE
         assert len(labels) == BATCH_SIZE
-
         assert max(labels) == min(labels)
 
         # right labels
@@ -73,12 +67,8 @@ def test_train_loader(python_dataset_ncf):
                 assert i not in positive_pool[u] 
 
     data.negative_sampling()
-
     label_list = []
-
     batches = []
-
-
     for idx, batch in enumerate(data.train_loader(batch_size=1)):
         user, item, labels = batch
         assert len(user) == 1
@@ -99,23 +89,18 @@ def test_train_loader(python_dataset_ncf):
 
 
 def test_test_loader(python_dataset_ncf):
-    # test for dataset.test_loader()
-
     train, test = python_dataset_ncf
-    
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
 
     # positive user-item dict, noting that the pool is train+test
     positive_pool = {}
     df = train.append(test)
-    for u in df[DEFAULT_USER_COL].unique():
-        
+    for u in df[DEFAULT_USER_COL].unique(): 
         positive_pool[u] = set(df[df[DEFAULT_USER_COL] == u][DEFAULT_ITEM_COL])
 
     for batch in data.test_loader():
         user, item, labels = batch
         # shape
-
         assert len(user) == N_NEG_TEST + 1
         assert len(item) == N_NEG_TEST + 1
         assert len(labels) == N_NEG_TEST + 1
