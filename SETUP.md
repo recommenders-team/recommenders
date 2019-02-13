@@ -47,7 +47,7 @@ conda update conda
 conda update anaconda
 ```
 
-We provide a script ([generate_conda_file.py]((scripts/generate_conda_file.py))) to generate a conda file, depending of the environment we want to use. This will create the environment using the Python version 3.6 with all the correct dependencies.
+We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda file, depending of the environment we want to use. This will create the environment using the Python version 3.6 with all the correct dependencies.
 
 To install each environment, first we need to generate a conda yaml file and then install the environment. We can specify the environment name with the input `-n`.
 
