@@ -46,6 +46,7 @@ CONDA_BASE = {
     "pymongo": "pymongo>=3.6.1",
     "python": "python==3.6.8",
     "pytest": "pytest>=3.6.4",
+    "pytorch": "pytorch-cpu>=1.0.0",
     "seaborn": "seaborn>=0.8.1",
     "scikit-learn": "scikit-learn==0.19.1",
     "scipy": "scipy>=1.0.0",
@@ -55,7 +56,7 @@ CONDA_BASE = {
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
 
-CONDA_GPU = {"numba": "numba>=0.38.1", "tensorflow": "tensorflow-gpu==1.12.0"}
+CONDA_GPU = {"numba": "numba>=0.38.1", "pytorch": "pytorch>=1.0.0", "tensorflow": "tensorflow-gpu==1.12.0"}
 
 PIP_BASE = {
     "azureml-sdk[notebooks,contrib]": "azureml-sdk[notebooks,contrib]==1.0.10",
@@ -65,13 +66,14 @@ PIP_BASE = {
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill>=0.15.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
 }
 
 PIP_PYSPARK = {}
-PIP_GPU = {}
+PIP_GPU = {
+    "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
+}
 
 
 if __name__ == "__main__":
