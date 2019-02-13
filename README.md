@@ -36,7 +36,7 @@ To setup on your local machine:
     ```
 6. Run the [SAR Python CPU Movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to change the kernel to "Python (reco)".
 
-**NOTE** - The [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) notebooks require PySpark to run. Please follow the PySpark set up environment steps in the [setup guide](https://github.com/Microsoft/Recommenders/blob/master/SETUP.md#dependencies-setup) to run these notebooks.
+**NOTE** - The [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) notebooks require PySpark to run. Please follow the PySpark set up environment steps in the [setup guide](/SETUP.md#dependencies-setup) to run these notebooks.
 
 ## Notebooks
 
