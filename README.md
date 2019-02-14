@@ -61,10 +61,10 @@ The table below lists recommender algorithms available in the repository at the 
 
 | Algorithm | Environment | Type | Description | 
 | --- | --- | --- | --- |
-| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_movielens.ipynb) | CPU | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in small datasets | 
+| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_movielens.ipynb) | CPU-only | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in small datasets | 
 | [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative Filtering | Matrix factorization algorithm for explicit or implicit feedback in large datasets, optimized with Spark for scalability and distributed computing capability |
-| [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_movielens.ipynb) | CPU / Spark | Collaborative Filtering | Similarity-based algorithm for implicit feedback dataset, supporting both single-node and distributed environment (Spark) |
-| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Online | Collaborative, Content-based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
+| [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_movielens.ipynb) | CPU-only | Collaborative Filtering | Similarity-based algorithm for implicit feedback dataset |
+| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | CPU-only (train online) | Collaborative, Content-based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
 | [eXtreme Deep Factorization Machine (xDeepFM)](notebooks/00_quick_start/xdeepfm_synthetic.ipynb) | CPU / GPU | Hybrid | Deep learning based algorithm for implicit and explicit feedback with user/item features | 
 | [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn_synthetic.ipynb) | CPU / GPU | Content-based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |  
 | [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | CPU / GPU | Collaborative Filtering | Deep learning algorithm with enhanced performance for implicit feedback | 
