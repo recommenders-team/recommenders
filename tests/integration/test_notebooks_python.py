@@ -22,7 +22,15 @@ TOL = 0.05
                 "recall": 0.109291553,
             },
         ),
-        # ("10m", {"map": 0.101402403, "ndcg": 0.321072689, "precision": 0.275765514, "recall": 0.156483292}) skipping for now, investigating this on issue #465
+        (
+            "10m", 
+            {
+                "map": 0.101402, 
+                "ndcg": 0.321073, 
+                "precision": 0.275766, 
+                "recall": 0.156483
+            }
+        ) 
     ],
 )
 def test_sar_single_node_integration(notebooks, size, expected_values):
