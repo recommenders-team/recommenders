@@ -36,24 +36,6 @@ To setup on your local machine:
     ```
 5. Run the [SAR Python CPU Movielens](notebooks/00_quick_start/sar_python_cpu_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to change the kernel to "Python (reco)".
 
-## Notebooks
-
-We provide several notebooks to show how recommendation algorithms can be designed, evaluated and operationalized.
-
-- The [Quick-Start Notebooks](notebooks/00_quick_start) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
-
-- The [Data Preparation Notebook](notebooks/01_prepare_data) shows how to prepare and split data properly for recommendation systems.
-
-- The [Modeling Notebooks](notebooks/02_model) provide a deep dive into implementations of different recommender algorithms.
-
-- The [Evaluation Notebooks](notebooks/03_evaluate) show how to evaluate recommender algorithms for different ranking and rating metrics.
-
-- The [Model selecting and optimizing Notebooks](notebooks/04_model_select_and_optimize) collect how to fine tune hyperparameters for recommender algorithms.
-
-- The [Operationalizion Notebook](notebooks/05_operationalize) demonstrates how to deploy models in production systems.
-
-
-The Quick-Start and Modeling notebooks showcase how to utilize the following algorithms to build a recommender system:
 
 **Algorithms**
 
@@ -80,7 +62,6 @@ In addition, we also provide a [comparison notebook](notebooks/03_evaluate/compa
 | [ALS](notebooks/00_quick_start/als_movielens.ipynb) | 0.002020 | 0.024313 | 0.030677 | 0.009649 | 0.860502 | 0.680608 | 0.406014 | 0.411603 | 
 | [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
 | [FastAI](notebooks/00_quick_start/fastai_movielens.ipynb) | 0.023022 |0.168714 |0.154761 |0.050153 |0.887224 |0.705609 |0.371552 |0.374281 |
-
 
 
 ## Contributing
