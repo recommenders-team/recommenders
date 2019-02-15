@@ -83,7 +83,7 @@ To install the PySpark environment, which by default installs the CPU environmen
 
     cd Recommenders
     python scripts/generate_conda_file.py --pyspark
-    conda env create -f reo_pyspark.yaml
+    conda env create -f reco_pyspark.yaml
 
 Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
 
