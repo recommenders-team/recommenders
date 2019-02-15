@@ -15,6 +15,7 @@ from reco_utils.dataset.python_splitters import (
     python_chrono_split,
     python_random_split,
     python_stratified_split,
+    numpy_stratified_split,
 )
 
 from reco_utils.common.constants import (
@@ -35,6 +36,9 @@ def test_specs():
         "ratios": [0.2, 0.3, 0.5],
         "split_numbers": [2, 3, 5],
         "tolerance": 0.01,
+        "number_of_items": 50,
+        "number_of_users": 20,
+        "fluctuation": 0.02,
     }
 
 
@@ -58,13 +62,13 @@ def python_dataset(test_specs):
 
     rating = pd.DataFrame(
         {
-            DEFAULT_USER_COL: np.random.random_integers(
+            DEFAULT_USER_COL: np.random.randint(
                 1, 5, test_specs["number_of_rows"]
             ),
-            DEFAULT_ITEM_COL: np.random.random_integers(
+            DEFAULT_ITEM_COL: np.random.randint(
                 1, 15, test_specs["number_of_rows"]
             ),
-            DEFAULT_RATING_COL: np.random.random_integers(
+            DEFAULT_RATING_COL: np.random.randint(
                 1, 5, test_specs["number_of_rows"]
             ),
             DEFAULT_TIMESTAMP_COL: random_date_generator(
@@ -169,25 +173,19 @@ def test_chrono_splitter(test_specs, python_dataset):
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
 
-    # Test all time stamps in test are later than that in train for all users.
-    # This is for single-split case.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        df_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        df_test = splits[1][splits[1][DEFAULT_USER_COL] == user]
-
-        p = product(df_train[DEFAULT_TIMESTAMP_COL], df_test[DEFAULT_TIMESTAMP_COL])
-        user_later = [a <= b for (a, b) in p]
-
-        all_later.append(user_later)
-    assert all(all_later)
-
     # Test if both contains the same user list. This is because chrono split is stratified.
     users_train = splits[0][DEFAULT_USER_COL].unique()
     users_test = splits[1][DEFAULT_USER_COL].unique()
-
     assert set(users_train) == set(users_test)
 
+    # Test all time stamps in test are later than that in train for all users.
+    # This is for single-split case.
+    max_train_times = splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
+    min_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
+    check_times = max_train_times.join(min_test_times, lsuffix='_0', rsuffix='_1')
+    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_0'] < check_times[DEFAULT_TIMESTAMP_COL + '_1']).values)
+
+    # Test multi-split case
     splits = python_chrono_split(
         python_dataset, ratio=test_specs["ratios"], min_rating=10, filter_by="user"
     )
@@ -203,21 +201,23 @@ def test_chrono_splitter(test_specs, python_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
+    # Test if all splits contain the same user list. This is because chrono split is stratified.
+    users_train = splits[0][DEFAULT_USER_COL].unique()
+    users_test = splits[1][DEFAULT_USER_COL].unique()
+    users_val = splits[2][DEFAULT_USER_COL].unique()
+    assert set(users_train) == set(users_test)
+    assert set(users_train) == set(users_val)
+
     # Test if timestamps are correctly split. This is for multi-split case.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        df_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        df_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
-        df_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
+    max_train_times = splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
+    min_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
+    check_times = max_train_times.join(min_test_times, lsuffix='_0', rsuffix='_1')
+    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_0'] < check_times[DEFAULT_TIMESTAMP_COL + '_1']).values)
 
-        p1 = product(df_train[DEFAULT_TIMESTAMP_COL], df_valid[DEFAULT_TIMESTAMP_COL])
-        p2 = product(df_valid[DEFAULT_TIMESTAMP_COL], df_test[DEFAULT_TIMESTAMP_COL])
-        user_later_1 = [a <= b for (a, b) in p1]
-        user_later_2 = [a <= b for (a, b) in p2]
-
-        all_later.append(user_later_1)
-        all_later.append(user_later_2)
-    assert all(all_later)
+    max_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
+    min_val_times = splits[2][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
+    check_times = max_test_times.join(min_val_times, lsuffix='_1', rsuffix='_2')
+    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_1'] < check_times[DEFAULT_TIMESTAMP_COL + '_2']).values)
 
 
 def test_stratified_splitter(test_specs, python_dataset):
@@ -251,5 +251,119 @@ def test_stratified_splitter(test_specs, python_dataset):
     )
     assert len(splits[2]) / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][2], test_specs["tolerance"]
+    )
+
+
+@pytest.fixture(scope="module")
+def python_int_dataset(test_specs):
+    # fix the the random seed
+    np.random.seed(test_specs["seed"])
+
+    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
+    return np.random.randint(
+        low=0,
+        high=6,
+        size=(test_specs["number_of_users"], test_specs["number_of_items"]),
+    )
+
+
+@pytest.fixture(scope="module")
+def python_float_dataset(test_specs):
+    # fix the the random seed
+    np.random.seed(test_specs["seed"])
+
+    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
+    return np.random.random(
+            size=(test_specs["number_of_users"], test_specs["number_of_items"])
+        ) * 5
+
+
+def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
+    # generate a syntetic dataset
+    X = python_int_dataset
+
+    # the splitter returns (in order): train and test user/affinity matrices, train and test datafarmes and user/items to matrix maps
+    Xtr, Xtst = numpy_stratified_split(
+        X, ratio=test_specs["ratio"], seed=test_specs["seed"]
+    )
+
+    # check that the generated matrices have the correct dimensions
+    assert (Xtr.shape[0] == X.shape[0]) & (Xtr.shape[1] == X.shape[1])
+    assert (Xtst.shape[0] == X.shape[0]) & (Xtst.shape[1] == X.shape[1])
+
+    X_rated = np.sum(X != 0, axis=1)  # number of total rated items per user
+    Xtr_rated = np.sum(Xtr != 0, axis=1)  # number of rated items in the train set
+    Xtst_rated = np.sum(Xtst != 0, axis=1)  # number of rated items in the test set
+
+    # global split: check that the all dataset is split in the correct ratio
+    assert Xtr_rated.sum() / (X_rated.sum()) == pytest.approx(
+        test_specs["ratio"], test_specs["tolerance"]
+    )
+
+    assert Xtst_rated.sum() / (X_rated.sum()) == pytest.approx(
+        1 - test_specs["ratio"], test_specs["tolerance"]
+    )
+
+    # This implementation of the stratified splitter performs a random split at the single user level. Here we check
+    # that also this more stringent condition is verified. Note that user to user fluctuations in the split ratio
+    # are stronger than for the entire dataset due to the random nature of the per user splitting.
+    # For this reason we allow a slightly bigger tollerance, as specified in the test_specs()
+
+    assert (
+        (Xtr_rated / X_rated <= test_specs["ratio"] + test_specs["fluctuation"]).all()
+        & (Xtr_rated / X_rated >= test_specs["ratio"] - test_specs["fluctuation"]).all()
+    )
+
+    assert (
+        (
+            Xtst_rated / X_rated
+            <= (1 - test_specs["ratio"]) + test_specs["fluctuation"]
+        ).all()
+        & (
+            Xtst_rated / X_rated
+            >= (1 - test_specs["ratio"]) - test_specs["fluctuation"]
+        ).all()
+    )
+
+
+def test_float_numpy_stratified_splitter(test_specs, python_float_dataset):
+    # generate a syntetic dataset
+    X = python_float_dataset
+
+    # the splitter returns (in order): train and test user/affinity matrices, train and test datafarmes and user/items to matrix maps
+    Xtr, Xtst = numpy_stratified_split(
+        X, ratio=test_specs["ratio"], seed=test_specs["seed"]
+    )
+
+    # Tests
+    # check that the generated matrices have the correct dimensions
+    assert (Xtr.shape[0] == X.shape[0]) & (Xtr.shape[1] == X.shape[1])
+
+    assert (Xtst.shape[0] == X.shape[0]) & (Xtst.shape[1] == X.shape[1])
+
+    X_rated = np.sum(X != 0, axis=1)  # number of total rated items per user
+    Xtr_rated = np.sum(Xtr != 0, axis=1)  # number of rated items in the train set
+    Xtst_rated = np.sum(Xtst != 0, axis=1)  # number of rated items in the test set
+
+    # global split: check that the all dataset is split in the correct ratio
+    assert Xtr_rated.sum() / (X_rated.sum()) == pytest.approx(
+        test_specs["ratio"], test_specs["tolerance"]
+    )
+
+    assert Xtst_rated.sum() / (X_rated.sum()) == pytest.approx(
+        1 - test_specs["ratio"], test_specs["tolerance"]
+    )
+
+    # This implementation of the stratified splitter performs a random split at the single user level. Here we check
+    # that also this more stringent condition is verified. Note that user to user fluctuations in the split ratio
+    # are stronger than for the entire dataset due to the random nature of the per user splitting.
+    # For this reason we allow a slightly bigger tollerance, as specified in the test_specs()
+
+    assert Xtr_rated / X_rated == pytest.approx(
+        test_specs["ratio"], rel=test_specs["fluctuation"]
+    )
+
+    assert Xtst_rated / X_rated == pytest.approx(
+        (1 - test_specs["ratio"]), rel=test_specs["fluctuation"]
     )
 
