@@ -66,14 +66,13 @@ PIP_BASE = {
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "memory-profiler": "memory-profiler>=0.54.0",
+    "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill>=0.15.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
 }
 
 PIP_PYSPARK = {}
-PIP_GPU = {
-    "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
-}
+PIP_GPU = {}
 
 
 if __name__ == "__main__":
@@ -108,6 +107,8 @@ if __name__ == "__main__":
             raise TypeError(
                 "PySpark version input must be valid numeric format (e.g. --pyspark-version=2.3.1)"
             )
+    else:
+        args.pyspark_version = "2.3.1"
 
     # set name for environment and output yaml file
     conda_env = "reco_base"
