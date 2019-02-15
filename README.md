@@ -1,4 +1,4 @@
-# Recommenders 
+# Recommenders
 
 This repository provides examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on five key tasks: 
 - [Prepare Data](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
@@ -38,54 +38,33 @@ To setup on your local machine:
 
 **NOTE** - The [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment.
 
-## Notebooks
-
-We provide several notebooks to show how recommendation algorithms can be designed, evaluated and operationalized.
-
-- The [Quick-Start Notebooks](notebooks/00_quick_start) detail how you can quickly get up and run with state-of-the-art algorithms such as the Smart Adaptive Recommendation ([SAR](https://github.com/Microsoft/Product-Recommendations/blob/master/doc/sar.md)) algorithm and ALS algorithm. 
-
-- The [Data Preparation Notebook](notebooks/01_prepare_data) shows how to prepare and split data properly for recommendation systems.
-
-- The [Modeling Notebooks](notebooks/02_model) provide a deep dive into implementations of different recommender algorithms.
-
-- The [Evaluation Notebooks](notebooks/03_evaluate) show how to evaluate recommender algorithms for different ranking and rating metrics.
-
-- The [Model selecting and optimizing Notebooks](notebooks/04_model_select_and_optimize) collect how to fine tune hyperparameters for recommender algorithms.
-
-- The [Operationalizion Notebook](notebooks/05_operationalize) demonstrates how to deploy models in production systems.
-
-
-The Quick-Start and Modeling notebooks showcase how to utilize the following algorithms to build a recommender system:
-
-**Algorithms**
+## Algorithms
 
 The table below lists recommender algorithms available in the repository at the moment.
 
 | Algorithm | Environment | Type | Description | 
 | --- | --- | --- | --- |
-| **Classic Recommenders** |
-| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_movielens.ipynb) | Python | Collaborative Filtering | General purpose algorithm for smaller datasets | 
-| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative Filtering | General purpose algorithm for larger datasets, optimized with Spark |
-| **Microsoft Recommenders** |
-| [Smart Adaptive Recommendations (SAR)](notebooks/00_quick_start/sar_movielens.ipynb) | Python / Spark | Collaborative Filtering | Generalized algorithm utilizing item similarities and can easily adapt to new users |
-| [Vowpal Wabbit Family (VW)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python / Online | Collaborative, Content-based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
-| [eXtreme Deep Factorization Machine (xDeepFM)](notebooks/00_quick_start/xdeepfm_synthetic.ipynb) | Python / GPU | Hybrid | Deep learning model combining implicit and explicit features | 
-| [Deep Knowledge-Aware Network (DKN)](notebooks/00_quick_start/dkn_synthetic.ipynb) | Python / GPU | Content-based Filtering | Deep learning model incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |  
-| **Deep Learning Recommenders** |
-| [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | Python / GPU | Collaborative Filtering | General algorithm built using a multi-layer perceptron | 
-| [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) | Python / GPU | Collaborative Filtering | Generative neural network algorithm built to learn the underlying probability distribution for user/item affinity | 
-| [FastAI Embedding Dot Bias (FAST)](notebooks/00_quick_start/fastai_movielens.ipynb)  | Python / GPU | Collaborative Filtering | General purpose algorithm embedding dot biases for users and items  |
+| [Smart Adaptive Recommendations (SAR)<sup>*</sup>](notebooks/00_quick_start/sar_movielens.ipynb) | CPU-only | Collaborative Filtering | Similarity-based algorithm for implicit feedback dataset |
+| [Vowpal Wabbit Family (VW)<sup>*</sup>](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | CPU-only (train online) | Collaborative, Content-based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing, like real-time bidding |
+| [eXtreme Deep Factorization Machine (xDeepFM)<sup>*</sup>](notebooks/00_quick_start/xdeepfm_synthetic.ipynb) | CPU / GPU | Hybrid | Deep learning based algorithm for implicit and explicit feedback with user/item features | 
+| [Deep Knowledge-Aware Network (DKN)<sup>*</sup>](notebooks/00_quick_start/dkn_synthetic.ipynb) | CPU / GPU | Content-based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations | 
+| [Surprise/Singular Value Decomposition (SVD)](notebooks/00_quick_start/sar_movielens.ipynb) | CPU-only | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in small datasets | 
+| [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | Spark | Collaborative Filtering | Matrix factorization algorithm for explicit or implicit feedback in large datasets, optimized with Spark for scalability and distributed computing capability | 
+| [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) | CPU / GPU | Collaborative Filtering | Deep learning algorithm with enhanced performance for implicit feedback | 
+| [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) | CPU / GPU | Collaborative Filtering | Neural network based algorithm to learn the underlying probability distribution for explicit or implicit feedback | 
+| [FastAI Embedding Dot Bias (FAST)](notebooks/00_quick_start/fastai_movielens.ipynb)  | CPU / GPU | Collaborative Filtering | General purpose algorithm with embedding dot biases for users and items |
 
-In addition, we also provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, data (MovieLens 1M) is randomly split into train/test sets at a 75/25 ratio. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 P100 GPU). Spark ALS is run in local standalone mode. 
+**NOTE** - "<sup>*</sup>" indicates algorithms invented/contributed by Microsoft.
 
 **Preliminary Comparison**
+
+We provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, data (MovieLens 1M) is randomly split into train/test sets at a 75/25 ratio. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 results). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 K80 GPU). Spark ALS is run in local standalone mode. 
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance | 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
 | [ALS](notebooks/00_quick_start/als_movielens.ipynb) | 0.002020 | 0.024313 | 0.030677 | 0.009649 | 0.860502 | 0.680608 | 0.406014 | 0.411603 | 
 | [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
 | [FastAI](notebooks/00_quick_start/fastai_movielens.ipynb) | 0.023022 |0.168714 |0.154761 |0.050153 |0.887224 |0.705609 |0.371552 |0.374281 |
-
 
 
 ## Contributing
