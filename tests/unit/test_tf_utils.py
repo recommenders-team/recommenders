@@ -95,7 +95,7 @@ def test_evaluation_log_hook(pd_df):
 
     # Run hook 10 times
     hook_frequency = 10
-    train_steps = 100
+    train_steps = 101
 
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
 
