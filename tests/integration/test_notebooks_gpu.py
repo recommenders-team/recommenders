@@ -7,9 +7,7 @@ import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
-
-TOL = 0.05
-TOL2 = 0.5
+TOL = 0.5
 
 
 @pytest.mark.integration
@@ -62,8 +60,8 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
             10,
             512,
             {
-                "map": 0.045746, 
-                "ndcg": 0.3739307, 
+                "map": 0.045746,
+                "ndcg": 0.3739307,
                 "precision": 0.183987,
                 "recall": 0.105546,
                 "map2": 0.049723,
@@ -89,7 +87,7 @@ def test_ncf_deep_dive_integration(
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL*5)
+        assert results[key] == pytest.approx(value, rel=TOL)
 
 
 @pytest.mark.integration
@@ -172,6 +170,6 @@ def test_wide_deep(notebooks, size, epochs, expected_values):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL2)
+        assert results[key] == pytest.approx(value, rel=TOL)
 
     shutil.rmtree(MODEL_DIR, ignore_errors=True)
