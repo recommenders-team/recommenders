@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import shutil
 import papermill as pm
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
@@ -65,7 +66,6 @@ def test_ncf_deep_dive(notebooks):
 @pytest.mark.gpu
 def test_fastai(notebooks):
     notebook_path = notebooks["fastai"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
@@ -125,4 +125,33 @@ def test_notebook_dkn(notebooks):
     assert results["res"]["acc"] == pytest.approx(0.5725, TOL2)
     assert results["res"]["f1"] == pytest.approx(0.7281, TOL2)
 
-  
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+def test_wide_deep(notebooks):
+    notebook_path = notebooks["wide_deep"]
+
+    MODEL_DIR = 'model_checkpoints'
+    params = {
+        'MOVIELENS_DATA_SIZE': '100k',
+        'EPOCHS': 1,
+        'EVALUATE_WHILE_TRAINING': False,
+        'MODEL_DIR': MODEL_DIR,
+        'EXPORT_DIR_BASE': MODEL_DIR,
+        'RATING_METRICS': ['rmse', 'mae'],
+        'RANKING_METRICS': ['ndcg_at_k', 'precision_at_k'],
+    }
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=params,
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["rmse"] == pytest.approx(1.698808, TOL2)
+    assert results["mae"] == pytest.approx(1.340401, TOL2)
+    assert results["ndcg_at_k"] == pytest.approx(0.019003, TOL2)
+    assert results["precision_at_k"] == pytest.approx(0.020382, TOL2)
+
+    shutil.rmtree(MODEL_DIR, ignore_errors=True)

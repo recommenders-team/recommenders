@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pytest
 import shutil
 
@@ -6,10 +9,14 @@ import tensorflow as tf
 
 from reco_utils.common.tf_utils import (
     pandas_input_fn,
-    build_model,
+    build_optimizer,
     evaluation_log_hook,
     Logger,
     MODEL_DIR
+)
+from reco_utils.recommender.wide_deep.wide_deep_utils import (
+    build_model,
+    build_feature_columns,
 )
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -17,7 +24,6 @@ from reco_utils.common.constants import (
     DEFAULT_RATING_COL
 )
 from reco_utils.evaluation.python_evaluation import rmse
-
 
 ITEM_FEAT_COL = 'itemFeat'
 
@@ -37,6 +43,7 @@ def pd_df():
     return df, users, items
 
 
+@pytest.mark.gpu
 def test_pandas_input_fn(pd_df):
     df, _, _ = pd_df
 
@@ -58,42 +65,31 @@ def test_pandas_input_fn(pd_df):
     assert len(X) == len(features.columns)
 
 
-def test_build_model(pd_df):
-    data, users, items = pd_df
+@pytest.mark.gpu
+def test_build_optimizer():
+    adadelta = build_optimizer('Adadelta')
+    assert type(adadelta) == tf.train.AdadeltaOptimizer
 
-    model, wide_columns, deep_columns = build_model(users, items, model_dir='wide_'+MODEL_DIR, model_type='wide')
-    assert type(model) == tf.estimator.LinearRegressor
-    # Test if wide column has one cross-product column
-    assert len(wide_columns) == 1
-    assert len(deep_columns) == 0
-    # Test if model train works
-    model.train(
-        input_fn=pandas_input_fn(df=data, y_col=DEFAULT_RATING_COL, batch_size=1, num_epochs=10, shuffle=True)
-    )
-    _clean_up('wide_'+MODEL_DIR)
+    adagrad = build_optimizer('Adagrad')
+    assert type(adagrad) == tf.train.AdagradOptimizer
 
-    model, wide_columns, deep_columns = build_model(users, items, model_dir='deep_'+MODEL_DIR, model_type='deep')
-    assert type(model) == tf.estimator.DNNRegressor
-    # Test if deep columns have user and item columns
-    assert len(wide_columns) == 0
-    assert len(deep_columns) == 2
-    # Test if model train works
-    model.train(
-        input_fn=pandas_input_fn(df=data, y_col=DEFAULT_RATING_COL, batch_size=1, num_epochs=10, shuffle=True)
-    )
-    _clean_up('deep_'+MODEL_DIR)
+    adam = build_optimizer('Adam')
+    assert type(adam) == tf.train.AdamOptimizer
 
-    model, wide_columns, deep_columns = build_model(users, items, model_dir='wide_deep_'+MODEL_DIR, model_type='wide_deep')
-    assert type(model) == tf.estimator.DNNLinearCombinedRegressor
-    assert len(wide_columns) == 1
-    assert len(deep_columns) == 2
-    # Test if model train works
-    model.train(
-        input_fn=pandas_input_fn(df=data, y_col=DEFAULT_RATING_COL, batch_size=1, num_epochs=10, shuffle=True)
-    )
-    _clean_up('wide_deep_'+MODEL_DIR)
+    ftrl = build_optimizer('Ftrl', **{'l1_regularization_strength': 0.001})
+    assert type(ftrl) == tf.train.FtrlOptimizer
+
+    momentum = build_optimizer('Momentum', **{'momentum': 0.5})
+    assert type(momentum) == tf.train.MomentumOptimizer
+
+    rmsprop = build_optimizer('RMSProp')
+    assert type(rmsprop) == tf.train.RMSPropOptimizer
+
+    sgd = build_optimizer('SGD')
+    assert type(sgd) == tf.train.GradientDescentOptimizer
 
 
+@pytest.mark.gpu
 def test_evaluation_log_hook(pd_df):
     data, users, items = pd_df
 
@@ -101,8 +97,10 @@ def test_evaluation_log_hook(pd_df):
     hook_frequency = 10
     train_steps = 100
 
-    model, wide_columns, deep_columns = build_model(
-        users, items, model_dir='deep_'+MODEL_DIR, model_type='deep', save_checkpoints_steps=train_steps//hook_frequency
+    _, deep_columns = build_feature_columns(users, items, model_type='deep')
+
+    model = build_model(
+        'deep_'+MODEL_DIR, deep_columns=deep_columns, save_checkpoints_steps=train_steps//hook_frequency
     )
 
     class EvaluationLogger(Logger):
@@ -136,13 +134,8 @@ def test_evaluation_log_hook(pd_df):
         hooks=hooks,
         steps=train_steps
     )
-    _clean_up('deep_' + MODEL_DIR)
+    shutil.rmtree('deep_' + MODEL_DIR, ignore_errors=True)
 
     # Check if hook logged the given metric
     assert rmse.__name__ in evaluation_logger.get_log()
     assert len(evaluation_logger.get_log()[rmse.__name__]) == hook_frequency
-
-
-def _clean_up(path):
-    """Clean up. Be careful not to erase anything else."""
-    shutil.rmtree(path, ignore_errors=True)

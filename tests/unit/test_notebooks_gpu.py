@@ -66,7 +66,8 @@ def test_wide_deep(notebooks):
         'EVALUATE_WHILE_TRAINING': False,
         'MODEL_DIR': MODEL_DIR,
         'EXPORT_DIR_BASE': MODEL_DIR,
-        'METRICS': ['rmse'],
+        'RATING_METRICS': ['rmse', 'mae'],
+        'RANKING_METRICS': ['ndcg_at_k', 'precision_at_k'],
     }
 
     pm.execute_notebook(

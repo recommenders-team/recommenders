@@ -105,6 +105,7 @@ venv.bak/
 
 # Tensorflow
 *model_checkpoints
+**/outputs
 
 # Azure ML
 aml_config
