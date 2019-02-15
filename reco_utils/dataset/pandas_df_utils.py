@@ -28,7 +28,7 @@ def user_item_pairs(
         shuffle (bool): If True, shuffles the result.
 
     Returns:
-        (pd.DataFrame) All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df
+        pd.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df
     """
 
     # Get all user-item pairs
@@ -63,7 +63,7 @@ def filter_by(df, filter_by_df, filter_by_cols):
         filter_by_cols (iterable of str): Filter columns.
 
     Returns:
-        (pd.DataFrame): Dataframe filtered by filter_by_df on filter_by_cols
+        pd.DataFrame: Dataframe filtered by filter_by_df on filter_by_cols
     """
 
     return df.loc[

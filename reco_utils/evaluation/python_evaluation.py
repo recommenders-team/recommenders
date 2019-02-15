@@ -10,25 +10,14 @@ from sklearn.metrics import (
     explained_variance_score,
 )
 
-try:
-    from reco_utils.common.constants import (
-        DEFAULT_USER_COL,
-        DEFAULT_ITEM_COL,
-        DEFAULT_RATING_COL,
-        PREDICTION_COL,
-        DEFAULT_K,
-        DEFAULT_THRESHOLD,
-    )
-except ModuleNotFoundError:
-    # Default column names
-    DEFAULT_USER_COL = "userID"
-    DEFAULT_ITEM_COL = "itemID"
-    DEFAULT_RATING_COL = "rating"
-    PREDICTION_COL = "prediction"
-
-    # Filtering variables
-    DEFAULT_K = 10
-    DEFAULT_THRESHOLD = 10
+from reco_utils.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    PREDICTION_COL,
+    DEFAULT_K,
+    DEFAULT_THRESHOLD,
+)
 
 
 def _merge_rating_true_pred(
