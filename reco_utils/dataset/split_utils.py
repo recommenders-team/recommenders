@@ -159,4 +159,8 @@ def split_pandas_data_with_ratios(data, ratios, seed=1234, resample=False):
 
     splits = np.split(data, [round(x * len(data)) for x in split_index])
 
+    # Add split index (this makes splitting by group more efficient).
+    for i in range(len(ratios)):
+        splits[i]['split_index'] = i
+
     return splits

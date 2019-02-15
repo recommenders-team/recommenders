@@ -72,20 +72,25 @@ def python_chrono_split(
     Returns:
         list: Splits of the input data as pd.DataFrame.
     """
+    # A few preliminary checks.
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
 
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
 
+    if col_user not in data.columns:
+        raise ValueError("Schema of data not valid. Missing User Col")
+
+    if col_item not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Item Col")
+
+    if col_timestamp not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Timestamp Col")
+
     multi_split, ratio = process_split_ratio(ratio)
 
     split_by_column = col_user if filter_by == "user" else col_item
-
-    # Sort data by timestamp.
-    data = data.sort_values(
-        by=[split_by_column, col_timestamp], axis=0, ascending=False
-    )
 
     ratio = ratio if multi_split else [ratio, 1 - ratio]
 
@@ -98,17 +103,26 @@ def python_chrono_split(
             col_item=col_item,
         )
 
-    num_of_splits = len(ratio)
-    splits = [pd.DataFrame({})] * num_of_splits
+    # Split by each group and aggregate splits together.
+    splits = []
     df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
     for name, group in df_grouped:
         group_splits = split_pandas_data_with_ratios(
             df_grouped.get_group(name), ratio, resample=False
         )
-        for x in range(num_of_splits):
-            splits[x] = pd.concat([splits[x], group_splits[x]])
 
-    return splits
+        # Concatenate the list of split dataframes.
+        concat_group_splits = pd.concat(group_splits)
+
+        splits.append(concat_group_splits)
+
+    # Concatenate splits for all the groups together.
+    splits_all = pd.concat(splits)
+
+    # Take split by split_index
+    splits_list = [splits_all[splits_all['split_index'] == x].drop('split_index', axis=1) for x in range(len(ratio))]
+
+    return splits_list
 
 
 def python_stratified_split(
@@ -141,11 +155,18 @@ def python_stratified_split(
     Returns:
         list: Splits of the input data as pd.DataFrame.
     """
+    # A few preliminary checks.
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
 
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
+
+    if col_user not in data.columns:
+        raise ValueError("Schema of data not valid. Missing User Col")
+
+    if col_item not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Item Col")
 
     multi_split, ratio = process_split_ratio(ratio)
 
@@ -162,17 +183,26 @@ def python_stratified_split(
             col_item=col_item,
         )
 
-    num_of_splits = len(ratio)
-    splits = [pd.DataFrame({})] * num_of_splits
+    # Split by each group and aggregate splits together.
+    splits = []
     df_grouped = data.groupby(split_by_column)
     for name, group in df_grouped:
         group_splits = split_pandas_data_with_ratios(
             df_grouped.get_group(name), ratio, resample=True, seed=seed
         )
-        for x in range(num_of_splits):
-            splits[x] = pd.concat([splits[x], group_splits[x]])
 
-    return splits
+        # Concatenate the list of split dataframes.
+        concat_group_splits = pd.concat(group_splits)
+
+        splits.append(concat_group_splits)
+
+    # Concatenate splits for all the groups together.
+    splits_all = pd.concat(splits)
+
+    # Take split by split_index
+    splits_list = [splits_all[splits_all['split_index'] == x].drop('split_index', axis=1) for x in range(len(ratio))]
+
+    return splits_list
 
 
 def numpy_stratified_split(X, ratio=0.75, seed=123):
