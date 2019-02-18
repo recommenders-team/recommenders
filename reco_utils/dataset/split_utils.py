@@ -152,6 +152,9 @@ def split_pandas_data_with_ratios(data, ratios, seed=1234, resample=False):
     Returns:
         list: List of pd.DataFrame splitted by the given specifications.
     """
+    if sum(ratios) != 1.0:
+        raise ValueError("The ratios have to sum to 1")
+        
     split_index = np.cumsum(ratios).tolist()[:-1]
 
     if resample:
