@@ -79,6 +79,30 @@ def python_dataset(test_specs):
     return rating
 
 
+@pytest.fixture(scope="module")
+def python_int_dataset(test_specs):
+    # fix the random seed
+    np.random.seed(test_specs["seed"])
+
+    # generates the user/item affinity matrix. Ratings are in the interval [0, 5), with 0s denoting unrated items
+    return np.random.randint(
+        low=0,
+        high=6,
+        size=(test_specs["number_of_users"], test_specs["number_of_items"]),
+    )
+
+
+@pytest.fixture(scope="module")
+def python_float_dataset(test_specs):
+    # fix the random seed
+    np.random.seed(test_specs["seed"])
+
+    # generates the user/item affinity matrix. Ratings are in the interval [0, 5), with 0s denoting unrated items.
+    return np.random.random(
+            size=(test_specs["number_of_users"], test_specs["number_of_items"])
+        ) * 5
+
+
 def test_split_pandas_data(pandas_dummy_timestamp):
     splits = split_pandas_data_with_ratios(pandas_dummy_timestamp, ratios=[0.5, 0.5])
     assert len(splits[0]) == 5
@@ -89,6 +113,9 @@ def test_split_pandas_data(pandas_dummy_timestamp):
     assert len(splits[0]) == round(shape * 0.12)
     assert len(splits[1]) == round(shape * 0.36)
     assert len(splits[2]) == round(shape * 0.52)
+
+    with pytest.raises(ValueError):
+        splits = split_pandas_data_with_ratios(pandas_dummy_timestamp, ratios=[0.6, 0.2, 0.4])
 
 
 def test_min_rating_filter(python_dataset):
@@ -254,30 +281,6 @@ def test_stratified_splitter(test_specs, python_dataset):
     )
 
 
-@pytest.fixture(scope="module")
-def python_int_dataset(test_specs):
-    # fix the the random seed
-    np.random.seed(test_specs["seed"])
-
-    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
-    return np.random.randint(
-        low=0,
-        high=6,
-        size=(test_specs["number_of_users"], test_specs["number_of_items"]),
-    )
-
-
-@pytest.fixture(scope="module")
-def python_float_dataset(test_specs):
-    # fix the the random seed
-    np.random.seed(test_specs["seed"])
-
-    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
-    return np.random.random(
-            size=(test_specs["number_of_users"], test_specs["number_of_items"])
-        ) * 5
-
-
 def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
     # generate a syntetic dataset
     X = python_int_dataset
@@ -307,7 +310,7 @@ def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
     # This implementation of the stratified splitter performs a random split at the single user level. Here we check
     # that also this more stringent condition is verified. Note that user to user fluctuations in the split ratio
     # are stronger than for the entire dataset due to the random nature of the per user splitting.
-    # For this reason we allow a slightly bigger tollerance, as specified in the test_specs()
+    # For this reason we allow a slightly bigger tolerance, as specified in the test_specs()
 
     assert (
         (Xtr_rated / X_rated <= test_specs["ratio"] + test_specs["fluctuation"]).all()
@@ -357,7 +360,7 @@ def test_float_numpy_stratified_splitter(test_specs, python_float_dataset):
     # This implementation of the stratified splitter performs a random split at the single user level. Here we check
     # that also this more stringent condition is verified. Note that user to user fluctuations in the split ratio
     # are stronger than for the entire dataset due to the random nature of the per user splitting.
-    # For this reason we allow a slightly bigger tollerance, as specified in the test_specs()
+    # For this reason we allow a slightly bigger tolerance, as specified in the test_specs()
 
     assert Xtr_rated / X_rated == pytest.approx(
         test_specs["ratio"], rel=test_specs["fluctuation"]
