@@ -1,4 +1,6 @@
-"""This script parse and run train function"""
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 
 import tensorflow as tf
 import six
@@ -12,8 +14,8 @@ from sklearn.metrics import (
 )
 import numpy as np
 import yaml
-from reco_utils.dataset.url_utils import *
 import zipfile
+from reco_utils.dataset.url_utils import *
 
 
 def flat_config(config):
