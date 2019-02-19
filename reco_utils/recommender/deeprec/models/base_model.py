@@ -77,7 +77,9 @@ class BaseModel(object):
         Args:
             logit (obj): Base prediction value.
             task (str): A task (values: regression/classification)
-        :return: transformed score
+        
+        Returns:
+            obj: Transformed score
         """
         if task == "regression":
             pred = tf.identity(logit)
