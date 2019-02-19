@@ -8,6 +8,6 @@ assignees: ''
 ---
 
 ### Description
-<!--- Describe your issue/bug/request in detail -->
+<!--- Describe your general ask in detail -->
 
 ### Other Comments
