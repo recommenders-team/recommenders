@@ -35,7 +35,7 @@ def python_random_split(data, ratio=0.75, seed=123):
     multi_split, ratio = process_split_ratio(ratio)
 
     if multi_split:
-        return split_pandas_data_with_ratios(data, ratio, resample=True, seed=seed)
+        return split_pandas_data_with_ratios(data, ratio, shuffle=True, seed=seed)
     else:
         return sk_split(data, test_size=None, train_size=ratio, random_state=seed)
 
@@ -108,7 +108,7 @@ def python_chrono_split(
     df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
     for name, group in df_grouped:
         group_splits = split_pandas_data_with_ratios(
-            df_grouped.get_group(name), ratio, resample=False
+            df_grouped.get_group(name), ratio, shuffle=False
         )
 
         # Concatenate the list of split dataframes.
@@ -191,7 +191,7 @@ def python_stratified_split(
     df_grouped = data.groupby(split_by_column)
     for name, group in df_grouped:
         group_splits = split_pandas_data_with_ratios(
-            df_grouped.get_group(name), ratio, resample=True, seed=seed
+            df_grouped.get_group(name), ratio, shuffle=True, seed=seed
         )
 
         # Concatenate the list of split dataframes.
