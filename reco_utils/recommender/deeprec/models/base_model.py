@@ -1,9 +1,13 @@
-"""define base class model"""
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import abc
+import os
+import time
+import numpy as np
+import collections
 import tensorflow as tf
 from ..deeprec_utils import *
-import numpy as np
-import os, time, collections
 
 
 __all__ = ["BaseModel"]
@@ -46,7 +50,9 @@ class BaseModel(object):
 
         # set GPU use with demand growth
         gpu_options = tf.GPUOptions(allow_growth=True)
-        self.sess = tf.Session(graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options))
+        self.sess = tf.Session(
+            graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options)
+        )
         self.sess.run(self.init_op)
 
     def _get_loss(self):
