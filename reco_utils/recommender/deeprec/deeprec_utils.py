@@ -191,25 +191,23 @@ def check_nn_config(f_config):
     check_type(f_config)
 
 
-def check_file_exist(filename):
-    if not os.path.isfile(filename):
-        raise ValueError("{0} is not exits".format(filename))
+def load_yaml(filename):
+    """Load a yaml file.
 
+    Args:
+        filename (str): Filename.
 
-def load_yaml_file(filename):
-    with open(filename) as f:
-        try:
-            config = yaml.load(f)
-        except:
-            raise IOError("load {0} error!".format(filename))
-    return config
-
-
-# train process load yaml
-def load_yaml(yaml_name):
-    check_file_exist(yaml_name)
-    config = load_yaml_file(yaml_name)
-    return config
+    Returns:
+        dict: Dictionary.
+    """
+    try:
+        with open(filename, "r") as f:
+            config = yaml.load(f, yaml.SafeLoader)
+        return config
+    except FileNotFoundError: # for file not found
+        raise
+    except Exception as e: # for other exceptions
+        raise IOError("load {0} error!".format(filename))
 
 
 def create_hparams(flags):
