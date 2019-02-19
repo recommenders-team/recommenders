@@ -37,6 +37,11 @@ class VW:
     ):
         """Initialize model parameters
         Args:
+            col_user (str): user column name
+            col_item (str): item column name
+            col_rating (str): rating column name
+            col_timestamp (str): timestamp column name
+            col_prediction (str): prediction column name
         """
 
         # create temporary files
@@ -65,6 +70,7 @@ class VW:
         Returns:
             list[str]: vw command line parameters as list of strings
         """
+
         cmd = ["vw"]
         for k, v in params.items():
             if v is False:
@@ -80,7 +86,12 @@ class VW:
         return cmd
 
     def parse_train_params(self, params):
-        """Parse input hyper-parameters to build vw train commands"""
+        """Parse input hyper-parameters to build vw train commands
+        Args:
+            params (dict): key = parameter, value = value (use True if parameter is just a flag)
+        Returns:
+            list[str]: vw command line parameters as list of strings
+        """
 
         # make a copy of the original hyper parameters
         train_params = params.copy()
@@ -112,7 +123,12 @@ class VW:
         return self.to_vw_cmd(params=train_params)
 
     def parse_test_params(self, params):
-        """Parse input hyper-parameters to build vw test commands"""
+        """Parse input hyper-parameters to build vw test commands
+        Args:
+            params (dict): key = parameter, value = value (use True if parameter is just a flag)
+        Returns:
+            list[str]: vw command line parameters as list of strings
+        """
 
         # make a copy of the original hyper parameters
         test_params = params.copy()
