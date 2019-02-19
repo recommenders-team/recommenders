@@ -10,10 +10,10 @@ __all__ = ["XDeepFMModel"]
 
 class XDeepFMModel(BaseModel):
     def _build_graph(self):
-        """
-        The main function to create xdeepfm's logic.
+        """The main function to create xdeepfm's logic.
+        
         Returns:
-            the prediction score make by the model.
+            obj:the prediction score make by the model.
         """
         hparams = self.hparams
         self.keep_prob_train = 1 - np.array(hparams.dropout)
@@ -57,9 +57,9 @@ class XDeepFMModel(BaseModel):
             return logit
 
     def _build_embedding(self):
-        """
-        The field embedding layer. MLP requires fixed-length vectors as input.
+        """The field embedding layer. MLP requires fixed-length vectors as input.
         This function makes sum pooling of feature embeddings for each field.
+        
         Returns:
             embedding:  the result of field embedding layer, with size of #_fields * #_dim
             embedding_size: #_fields * #_dim
@@ -85,11 +85,11 @@ class XDeepFMModel(BaseModel):
         return embedding, embedding_size
 
     def _build_linear(self):
-        """
-        Construct the linear part for the model.
+        """Construct the linear part for the model.
         This is a linear regression.
+        
         Returns:
-            prediction score made by linear regression.
+            obj: prediction score made by linear regression.
         """
         with tf.variable_scope("linear_part", initializer=self.initializer) as scope:
             w = tf.get_variable(
@@ -114,11 +114,11 @@ class XDeepFMModel(BaseModel):
             return linear_output
 
     def _build_fm(self):
-        """
-        Construct the factorization machine part for the model.
+        """Construct the factorization machine part for the model.
         This is a traditional 2-order FM module.
+        
         Returns:
-            prediction score made by factorization machine.
+            obj: prediction score made by factorization machine.
         """
         with tf.variable_scope("fm_part") as scope:
             x = tf.SparseTensor(
@@ -142,18 +142,19 @@ class XDeepFMModel(BaseModel):
     def _build_CIN(
         self, nn_input, res=False, direct=False, bias=False, is_masked=False
     ):
-        """
-        Construct the compressed interaction network.
+        """Construct the compressed interaction network.
         This component provides explicit and vector-wise higher-order feature interactions.
+        
         Args:
-            nn_input: The output of field-embedding layer. This is the input for CIN.
-            res: Whether use residual structure to fuse the results from each layer of CIN.
-            direct: If true, then all hidden units are connected to both next layer and output layer;
+            nn_input (obj): The output of field-embedding layer. This is the input for CIN.
+            res (bool): Whether use residual structure to fuse the results from each layer of CIN.
+            direct (bool): If true, then all hidden units are connected to both next layer and output layer;
                     otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
-            bias:   Whether to add bais term when calculating the feature maps.
-            is_masked: Controls whether to remove self-interaction in the first layer of CIN.
+            bias (bool): Whether to add bais term when calculating the feature maps.
+            is_masked (bool): Controls whether to remove self-interaction in the first layer of CIN.
+        
         Returns:
-            prediction score made by CIN.
+            obj: prediction score made by CIN.
         """
         hparams = self.hparams
         hidden_nn_layers = []
@@ -267,20 +268,20 @@ class XDeepFMModel(BaseModel):
             return exFM_out
 
     def _build_fast_CIN(self, nn_input, res=False, direct=False, bias=False):
-        """
-        Construct the compressed interaction network with reduced parameters.
+        """Construct the compressed interaction network with reduced parameters.
         This component provides explicit and vector-wise higher-order feature interactions.
         Parameters from the filters are reduced via a matrix decomposition method.
         Fast CIN is more space and time efficient than CIN.
+        
         Args:
-            nn_input: The output of field-embedding layer. This is the input for CIN.
-            res: Whether use residual structure to fuse the results from each layer of CIN.
-            direct: If true, then all hidden units are connected to both next layer and output layer;
+            nn_input (obj): The output of field-embedding layer. This is the input for CIN.
+            res (bool): Whether use residual structure to fuse the results from each layer of CIN.
+            direct (bool): If true, then all hidden units are connected to both next layer and output layer;
                     otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
-            bias:   Whether to add bais term when calculating the feature maps.
+            bias (bool): Whether to add bais term when calculating the feature maps.
 
         Returns:
-            prediction score made by fast CIN.
+            obj: prediction score made by fast CIN.
         """
         hparams = self.hparams
         hidden_nn_layers = []
@@ -416,15 +417,15 @@ class XDeepFMModel(BaseModel):
         return exFM_out
 
     def _build_dnn(self, embed_out, embed_layer_size):
-        """
-        Construct the MLP part for the model.
+        """Construct the MLP part for the model.
         This components provides implicit higher-order feature interactions.
+        
         Args:
-            embed_out: The output of field-embedding layer. This is the input for DNN.
-            embed_layer_size: shape of the embed_out
+            embed_out (obj): The output of field-embedding layer. This is the input for DNN.
+            embed_layer_size (obj): shape of the embed_out
 
         Returns:
-            prediction score made by fast CIN.
+            obj: prediction score made by fast CIN.
         """
         hparams = self.hparams
         w_fm_nn_input = embed_out
