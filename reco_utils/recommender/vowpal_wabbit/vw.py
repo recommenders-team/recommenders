@@ -54,8 +54,8 @@ class VW:
         self.col_prediction = col_prediction
 
         self.logistic = "logistic" in kwargs.values()
-        self.train_params = self.parse_train_params(params=kwargs)
-        self.test_params = self.parse_test_params(params=kwargs)
+        self.train_cmd = self.parse_train_params(params=kwargs)
+        self.test_cmd = self.parse_test_params(params=kwargs)
 
     @staticmethod
     def to_vw_cmd(params):
@@ -67,17 +67,16 @@ class VW:
         """
         cmd = ["vw"]
         for k, v in params.items():
-            if isinstance(v, bool):
-                if not v:
-                    continue
-                else:
-                    value = ""
-            else:
-                value = f"={v}"
+            if v is False:
+                # don't add parameters with a value == False
+                continue
 
-            hyphen = "-" if len(k) == 1 else "--"
-            entry = f"{hyphen}{k}{value}"
-            cmd.append(entry)
+            # add the correct hyphen to the parameter
+            cmd.append(f"-{k}" if len(k) == 1 else f"--{k}")
+            if v is not True:
+                # don't add an argument for parameters with value == True
+                cmd.append("{}".format(v))
+
         return cmd
 
     def parse_train_params(self, params):
@@ -215,7 +214,7 @@ class VW:
         self.to_vw_file(df=df)
 
         # train model
-        run(self.train_params, check=True)
+        run(self.train_cmd, check=True)
 
     def predict(self, df):
         """Predict results
@@ -227,7 +226,7 @@ class VW:
         self.to_vw_file(df=df, train=False)
 
         # generate predictions
-        run(self.test_params, check=True)
+        run(self.test_cmd, check=True)
 
         # read predictions
         return df.join(

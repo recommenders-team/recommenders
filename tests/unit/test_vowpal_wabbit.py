@@ -37,11 +37,15 @@ def test_vw_init_del():
 def test_to_vw_cmd():
     expected = [
         "vw",
-        "-l=0.1",
-        "--l1=0.2",
-        "--loss_function=logistic",
+        "-l",
+        "0.1",
+        "--l1",
+        "0.2",
+        "--loss_function",
+        "logistic",
         "--holdout_off",
-        "--rank=3",
+        "--rank",
+        "3",
         "-t",
     ]
     params = dict(
@@ -59,10 +63,14 @@ def test_to_vw_cmd():
 def test_parse_train_cmd(model):
     expected = [
         "vw",
-        "--loss_function=logistic",
-        "--oaa=5",
-        "-f={}".format(model.model_file),
-        "-d={}".format(model.train_file),
+        "--loss_function",
+        "logistic",
+        "--oaa",
+        "5",
+        "-f",
+        model.model_file,
+        "-d",
+        model.train_file,
     ]
     params = dict(loss_function="logistic", oaa=5, f="test", d="data", quiet=False)
     assert model.parse_train_params(params=params) == expected
@@ -71,11 +79,15 @@ def test_parse_train_cmd(model):
 def test_parse_test_cmd(model):
     expected = [
         "vw",
-        "--loss_function=logistic",
-        "-d={}".format(model.test_file),
+        "--loss_function",
+        "logistic",
+        "-d",
+        model.test_file,
         "--quiet",
-        "-i={}".format(model.model_file),
-        "-p={}".format(model.prediction_file),
+        "-i",
+        model.model_file,
+        "-p",
+        model.prediction_file,
         "-t",
     ]
     params = dict(
