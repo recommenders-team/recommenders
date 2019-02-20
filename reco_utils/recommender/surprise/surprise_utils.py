@@ -12,7 +12,7 @@ def compute_predictions(algo, data, usercol='userID', itemcol='itemID'):
     Returns:
         pd.DataFrame: dataframe with usercol, itemcol, prediction
     """
-    predictions = [algo.predict(row.userID, row.itemID) for (_, row) in data.iterrows()]
+    predictions = [algo.predict(row[usercol], row[itemcol]) for (_, row) in data.iterrows()]
     predictions = pd.DataFrame(predictions)
     predictions = predictions.rename(index=str, columns={'uid': usercol, 'iid': itemcol, 'est': 'prediction'})
     return predictions.drop(['details', 'r_ui'], axis='columns')
