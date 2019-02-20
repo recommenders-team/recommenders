@@ -98,7 +98,7 @@ def test_sar_single_node_runs(notebooks):
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 ```
 
-Notice that the input of the function is a fixture defined in [conftest.py](test/conftest.py). For more information, please see the [definition of fixtures in PyTest](https://docs.pytest.org/en/latest/fixture.html).
+Notice that the input of the function is a fixture defined in [conftest.py](tests/conftest.py). For more information, please see the [definition of fixtures in PyTest](https://docs.pytest.org/en/latest/fixture.html).
 
 For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](/SETUP.md): 
 
