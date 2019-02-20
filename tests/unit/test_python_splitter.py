@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-from itertools import product
 import pytest
 
 from reco_utils.dataset.split_utils import (
@@ -30,7 +29,6 @@ from reco_utils.common.constants import (
 def test_specs():
     return {
         "number_of_rows": 1000,
-        "user_ids": [1, 2, 3, 4, 5],
         "seed": 123,
         "ratio": 0.6,
         "ratios": [0.2, 0.3, 0.5],
@@ -63,7 +61,7 @@ def python_dataset(test_specs):
         {
             DEFAULT_USER_COL: np.random.randint(1, 5, test_specs["number_of_rows"]),
             DEFAULT_ITEM_COL: np.random.randint(1, 15, test_specs["number_of_rows"]),
-            DEFAULT_RATING_COL: np.random.randint(1, 5, test_specs["number_of_rows"]),
+            DEFAULT_RATING_COL: np.random.randint(1, 6, test_specs["number_of_rows"]),
             DEFAULT_TIMESTAMP_COL: random_date_generator(
                 "2018-01-01", test_specs["number_of_rows"]
             ),
@@ -116,7 +114,15 @@ def test_split_pandas_data(pandas_dummy_timestamp):
         )
 
 
-def test_min_rating_filter(python_dataset):
+def test_min_rating_filter():
+    python_dataset = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5],
+            DEFAULT_ITEM_COL: [5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1],
+            DEFAULT_RATING_COL: np.random.randint(1, 6, 15)
+        }
+    )
+
     def count_filtered_rows(data, filter_by="user"):
         split_by_column = DEFAULT_USER_COL if filter_by == "user" else DEFAULT_ITEM_COL
         data_grouped = data.groupby(split_by_column)
@@ -128,13 +134,13 @@ def test_min_rating_filter(python_dataset):
 
         return row_counts
 
-    df_user = min_rating_filter_pandas(python_dataset, min_rating=5, filter_by="user")
-    df_item = min_rating_filter_pandas(python_dataset, min_rating=5, filter_by="item")
+    df_user = min_rating_filter_pandas(python_dataset, min_rating=3, filter_by="user")
+    df_item = min_rating_filter_pandas(python_dataset, min_rating=2, filter_by="item")
     user_rating_counts = count_filtered_rows(df_user, filter_by="user")
     item_rating_counts = count_filtered_rows(df_item, filter_by="item")
 
-    assert all(user_rating_counts)
-    assert all(item_rating_counts)
+    assert all(u >= 3 for u in user_rating_counts)
+    assert all(i >= 2 for i in item_rating_counts)
 
 
 def test_random_splitter(test_specs, python_dataset):
