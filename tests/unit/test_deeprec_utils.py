@@ -4,7 +4,7 @@ import tensorflow as tf
 from reco_utils.recommender.deeprec.deeprec_utils import (
     prepare_hparams,
     download_deeprec_resources,
-    load_yaml_file
+    load_yaml,
 )
 from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
 from reco_utils.recommender.deeprec.IO.dkn_iterator import DKNTextIterator
@@ -46,7 +46,7 @@ def test_load_yaml_file(resource_path):
             "xdeepfmresources.zip",
         )
 
-    config = load_yaml_file(yaml_file)
+    config = load_yaml(yaml_file)
     assert config is not None
 
 
