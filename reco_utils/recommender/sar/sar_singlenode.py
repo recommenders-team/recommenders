@@ -268,6 +268,7 @@ class SARSingleNode:
             test (pd.DataFrame): user to test
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
+        
         Returns:
             pd.DataFrame: top k recommendation items for each user
         """
@@ -304,15 +305,6 @@ class SARSingleNode:
                     self.index2item[item] for item in np.array(top_items).flatten()
                 ],
                 self.col_prediction: np.array(top_scores).flatten(),
-            }
-        )
-
-        # ensure datatypes are correct
-        df = df.astype(
-            dtype={
-                self.col_user: str,
-                self.col_item: str,
-                self.col_prediction: self.scores.dtype,
             }
         )
 
