@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import numpy as np
 import tensorflow as tf
 import abc
@@ -22,20 +25,19 @@ class BaseIterator(object):
 
 
 class FFMTextIterator(BaseIterator):
-    """
-    Data loader for FFM format based models, such as xDeepFM.
+    """Data loader for FFM format based models, such as xDeepFM.
     Iterator will not load the whole data into memory. Instead, it loads data into memory
     per mini-batch, so that large files can be used as input data.
     """
 
     def __init__(self, hparams, graph, col_spliter=" ", ID_spliter="%"):
-        """
-        Initialize an iterator. Create necessary placeholders for the model.
+        """Initialize an iterator. Create necessary placeholders for the model.
+        
         Args:
-            hparams: Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
-            graph: the running graph. All created placeholder will be added to this graph.
-            col_spliter: column spliter in one line.
-            ID_spliter: ID spliter in one line.
+            hparams (obj): Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
+            graph (obj): the running graph. All created placeholder will be added to this graph.
+            col_spliter (str): column spliter in one line.
+            ID_spliter (str): ID spliter in one line.
         """
         self.feature_cnt = hparams.FEATURE_COUNT
         self.field_cnt = hparams.FIELD_COUNT
@@ -67,13 +69,13 @@ class FFMTextIterator(BaseIterator):
             )
 
     def parser_one_line(self, line):
-        """
-        Parse one string line into feature values.
+        """Parse one string line into feature values.
+        
         Args:
-            line: a string indicating one instance
+            line (str): a string indicating one instance
 
         Returns:
-            Parsed results,including label, features and impression_id
+            list: Parsed results,including label, features and impression_id
 
         """
         impression_id = None
@@ -95,13 +97,13 @@ class FFMTextIterator(BaseIterator):
         return label, features, impression_id
 
     def load_data_from_file(self, infile):
-        """
-        Read and parse data from a file.
+        """Read and parse data from a file.
+        
         Args:
-            infile: text input file. Each line in this file is an instance.
+            infile (str): text input file. Each line in this file is an instance.
 
         Returns:
-            An iterator that will yields parsed results, in the format of graph feed_dict.
+            obj: An iterator that will yields parsed results, in the format of graph feed_dict.
         """
         label_list = []
         features_list = []
@@ -133,15 +135,15 @@ class FFMTextIterator(BaseIterator):
                 yield self.gen_feed_dict(res)
 
     def _convert_data(self, labels, features):
-        """
-        Convert data into numpy arrays that are good for further operation.
+        """Convert data into numpy arrays that are good for further operation.
+        
         Args:
-            labels: a list of ground-truth labels.
-            features: a 3-dimensional list, carrying a list (batch_size) of feature array,
+            labels (list): a list of ground-truth labels.
+            features (list): a 3-dimensional list, carrying a list (batch_size) of feature array,
                     where each feature array is a list of [field_idx, feature_idx, feature_value] tuple.
 
         Returns:
-            A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
         """
         dim = self.feature_cnt
         FIELD_COUNT = self.field_cnt
@@ -202,13 +204,12 @@ class FFMTextIterator(BaseIterator):
         return res
 
     def gen_feed_dict(self, data_dict):
-        """
-        Construct a dictionary that maps graph elements to values.
+        """Construct a dictionary that maps graph elements to values.
         Args:
-            data_dict: a dictionary that maps string name to numpy arrays.
+            data_dict (dict): a dictionary that maps string name to numpy arrays.
 
         Returns:
-            a dictionary that maps graph elements to numpy arrays.
+            dict: a dictionary that maps graph elements to numpy arrays.
 
         """
         feed_dict = {
