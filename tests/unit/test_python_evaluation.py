@@ -3,6 +3,7 @@
 
 import pandas as pd
 import pytest
+from reco_utils.common.constants import *
 from reco_utils.evaluation.python_evaluation import (
     rmse,
     mae,
@@ -103,44 +104,44 @@ def test_python_datatypes(python_data):
     # Change data types of true and prediction data, and there should type error produced.
     rating_true_copy = rating_true.copy()
 
-    rating_true_copy['userID'] = rating_true_copy['userID'].astype(str)
-    rating_true_copy['rating'] = rating_true_copy['rating'].astype(str)
+    rating_true_copy[DEFAULT_USER_COL] = rating_true_copy[DEFAULT_USER_COL].astype(str)
+    rating_true_copy[DEFAULT_RATING_COL] = rating_true_copy[DEFAULT_RATING_COL].astype(str)
 
     with pytest.raises(TypeError) as e_info:
         _merge_rating_true_pred(
             rating_true_copy,
             rating_pred,
-            col_user='userID',
-            col_item='itemID',
-            col_rating='rating',
-            col_prediction='prediction',
+            col_user=DEFAULT_USER_COL,
+            col_item=DEFAULT_ITEM_COL,
+            col_rating=DEFAULT_RATING_COL,
+            col_prediction=PREDICTION_COL,
             relevancy_method="top_k",
         )
-        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format('userID')
+        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format(DEFAULT_USER_COL)
 
     with pytest.raises(TypeError) as e_info:
         _merge_rating_true_pred(
             rating_true_copy,
             rating_pred,
-            col_user='userID',
-            col_item='itemID',
-            col_rating='rating',
-            col_prediction='prediction',
+            col_user=DEFAULT_USER_COL,
+            col_item=DEFAULT_ITEM_COL,
+            col_rating=DEFAULT_RATING_COL,
+            col_prediction=PREDICTION_COL,
             relevancy_method="top_k",
         )
-        assert str(e_info.value) == "Data types of column {} and {} are different in true and prediction".format('rating', 'prediction')
+        assert str(e_info.value) == "Data types of column {} and {} are different in true and prediction".format(DEFAULT_RATING_COL, PREDICTION_COL)
 
     with pytest.raises(TypeError) as e_info:
         _merge_ranking_true_pred(
             rating_true_copy,
             rating_pred,
-            col_user='userID',
-            col_item='itemID',
-            col_rating='rating',
-            col_prediction='prediction',
+            col_user=DEFAULT_USER_COL,
+            col_item=DEFAULT_ITEM_COL,
+            col_rating=DEFAULT_RATING_COL,
+            col_prediction=PREDICTION_COL,
             relevancy_method="top_k",
         )
-        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format('userID')
+        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format(DEFAULT_USER_COL)
 
 
 def test_python_rmse(python_data, target_metrics):
