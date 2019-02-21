@@ -1,6 +1,10 @@
 # Tests
 
-This project uses unit, smoke and integration tests with Python files and notebooks. For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](/SETUP.md)**. 
+This project uses unit, smoke and integration tests with Python files and notebooks. 
+
+In the unit tests we just make sure the notebook runs. In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics. Finally, in the integration tests, we use a bigger dataset for more epochs and we test that the metrics are what we expect. 
+
+For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**. 
 
 ## Test execution
 
@@ -10,6 +14,8 @@ Click on the following menus to see more details on how to execute the unit, smo
 <summary><strong><em>Unit tests</em></strong></summary>
 
 Unit tests ensure that each class or function behaves as it should. Every time a developer makes a pull request to staging or master branch, a battery of unit tests is executed. 
+
+**Note that the next instructions execute the tests from the root folder.**
 
 For executing the Python unit tests for the utilities:
 
@@ -43,6 +49,8 @@ For executing the PySpark unit tests for the notebooks:
 
 Smoke tests make sure that the system works and are executed just before the integration tests every night.
 
+**Note that the next instructions execute the tests from the root folder.**
+
 For executing the Python smoke tests:
 
     pytest tests/smoke -m "smoke and not spark and not gpu"
@@ -60,7 +68,9 @@ For executing the PySpark smoke tests:
 <details>
 <summary><strong><em>Integration tests</em></strong></summary>
 
-Integration tests make sure that the program results are acceptable
+Integration tests make sure that the program results are acceptable.
+
+**Note that the next instructions execute the tests from the root folder.**
 
 For executing the Python integration tests:
 
@@ -79,13 +89,11 @@ For executing the PySpark integration tests:
 
 ## How to create tests on notebooks with Papermill
 
-In the notebooks of these repo we use [Papermill](https://github.com/nteract/papermill) in unit, smoke and integration tests. 
-
-In the unit tests we just make sure the notebook runs. In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics. Finally, in the integration tests, we use a bigger dataset for more epochs and we test that the metrics are what we expect. 
+In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) in unit, smoke and integration tests. 
 
 ### Developing unit tests with Papermill
 
-Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/test_notebooks_python.py](tests/unit/test_notebooks_python.py). 
+Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/test_notebooks_python.py](unit/test_notebooks_python.py). 
 
 ```
 import pytest
@@ -98,9 +106,11 @@ def test_sar_single_node_runs(notebooks):
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 ```
 
-Notice that the input of the function is a fixture defined in [conftest.py](tests/conftest.py). For more information, please see the [definition of fixtures in PyTest](https://docs.pytest.org/en/latest/fixture.html).
+Notice that the input of the function is a fixture defined in [conftest.py](conftest.py). For more information, please see the [definition of fixtures in PyTest](https://docs.pytest.org/en/latest/fixture.html).
 
-For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](/SETUP.md): 
+For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
+
+**Note that the next instruction executes the tests from the root folder.**
 
 ```
 pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
@@ -117,7 +127,7 @@ The way papermill works to inject parameters is very simple, it generates a copy
 
 The second modification that we need to do to the notebook is to record the metrics we want to test using `pm.record("output_variable", python_variable_name)`. We normally use the last cell of the notebook to record all the metrics. These are the metrics that we are going to control to in the smoke and integration tests.
 
-This is an example on how we do a smoke test. The complete code can be found in [tests/smoke/test_notebooks_python.py](tests/smoke/test_notebooks_python.py):
+This is an example on how we do a smoke test. The complete code can be found in [tests/smoke/test_notebooks_python.py](smoke/test_notebooks_python.py):
 
 ```
 import pytest
@@ -143,7 +153,9 @@ def test_sar_single_node_smoke(notebooks):
 
 As it can be seen in the code, we are injecting the dataset size and the top k and we are recovering the precision and recall at k. 
 
-For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](/SETUP.md): 
+For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
+
+**Note that the next instructions execute the tests from the root folder.**
 
 ```
 pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
