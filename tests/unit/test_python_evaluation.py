@@ -12,6 +12,8 @@ from reco_utils.evaluation.python_evaluation import (
     recall_at_k,
     ndcg_at_k,
     map_at_k,
+    _merge_ranking_true_pred,
+    _merge_rating_true_pred
 )
 
 TOL = 0.0001
@@ -93,6 +95,52 @@ def python_data():
         }
     )
     return rating_true, rating_pred, rating_nohit
+
+
+def test_python_datatypes(python_data):
+    rating_true, rating_pred, _ = python_data
+
+    # Change data types of true and prediction data, and there should type error produced.
+    rating_true_copy = rating_true.copy()
+
+    rating_true_copy['userID'] = rating_true_copy['userID'].astype(str)
+    rating_true_copy['rating'] = rating_true_copy['rating'].astype(str)
+
+    with pytest.raises(TypeError) as e_info:
+        _merge_rating_true_pred(
+            rating_true_copy,
+            rating_pred,
+            col_user='userID',
+            col_item='itemID',
+            col_rating='rating',
+            col_prediction='prediction',
+            relevancy_method="top_k",
+        )
+        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format('userID')
+
+    with pytest.raises(TypeError) as e_info:
+        _merge_rating_true_pred(
+            rating_true_copy,
+            rating_pred,
+            col_user='userID',
+            col_item='itemID',
+            col_rating='rating',
+            col_prediction='prediction',
+            relevancy_method="top_k",
+        )
+        assert str(e_info.value) == "Data types of column {} and {} are different in true and prediction".format('rating', 'prediction')
+
+    with pytest.raises(TypeError) as e_info:
+        _merge_ranking_true_pred(
+            rating_true_copy,
+            rating_pred,
+            col_user='userID',
+            col_item='itemID',
+            col_rating='rating',
+            col_prediction='prediction',
+            relevancy_method="top_k",
+        )
+        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format('userID')
 
 
 def test_python_rmse(python_data, target_metrics):
