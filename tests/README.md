@@ -8,7 +8,7 @@ For more information, see a [quick introduction to unit, smoke and integration t
 
 ## Test execution
 
-Click on the following menus to see more details on how to execute the unit, smoke and integration tests:
+**Click on the following menus** to see more details on how to execute the unit, smoke and integration tests:
 
 <details>
 <summary><strong><em>Unit tests</em></strong></summary>
