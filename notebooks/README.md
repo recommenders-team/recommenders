@@ -9,7 +9,7 @@ The following summarizes the categories of recommendation key tasks covered in e
 | Directory | Is Azure required | Description |
 | --- | --- | --- |
 | [00_quick_start](./00_quick_start)| No | Quick start notebooks that demonstrate workflow of developing a recommender by using an algorithm in local environment|
-| [01_prepare_data](.01_prepare_data) | No | Data preparation notebooks for each recommender algorithm|
+| [01_prepare_data](./01_prepare_data) | No | Data preparation notebooks for each recommender algorithm|
 | [02_model](./02_model) | No | Deep dive notebooks about model building by using various classical and deep learning recommender algorithms|
 | [03_evaluate](./03_evaluate) | No | Notebooks that introduce different evaluation methods for recommenders|
 | [04_model_select_and_optimize](04_model_select_and_optimize) | Yes | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
