@@ -18,7 +18,7 @@ The following summarizes each directory of the best practice notebooks.
 ## On-premise notebooks
 
 The notebooks that do not require Azure can be run out-of-the-box on any Linux machine, where an environment is properly
-set up by following the [instruction](../SETUP.md). 
+set up by following the [instructions](../SETUP.md). 
 
 **NOTE** some of the notebooks may rely on heterogeneous computing instances
 like a cluster of CPU machines with Spark framework installed or machines with GPU devices incorporated. It is therefore recommended
