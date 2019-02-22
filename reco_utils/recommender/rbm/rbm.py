@@ -612,7 +612,7 @@ class RBM:
             precision_test  (scalar, float32): precision on the test set
         """
 
-        if self.with_metrics:
+        if self.with_metrics and xtst is not None:
 
             precision_train = self.sess.run(self.Clacc)
 
@@ -740,7 +740,7 @@ class RBM:
 
         return epoch_tr_err
 
-    def fit(self, xtr, xtst):
+    def fit(self, xtr, xtst=None):
         """
         Fit method
 
