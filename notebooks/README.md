@@ -6,14 +6,14 @@ This folder contains examples and best practices, written in Jupyter notebooks, 
 
 The following summarizes each directory of the best practice notebooks.
 
-| Directory | Is Azure required | Description |
+| Directory | Runs Local | Description |
 | --- | --- | --- |
-| [00_quick_start](./00_quick_start)| No | Quick start notebooks that demonstrate workflow of developing a recommender by using an algorithm in local environment|
-| [01_prepare_data](./01_prepare_data) | No | Data preparation notebooks for each recommender algorithm|
-| [02_model](./02_model) | No | Deep dive notebooks about model building by using various classical and deep learning recommender algorithms|
-| [03_evaluate](./03_evaluate) | No | Notebooks that introduce different evaluation methods for recommenders|
-| [04_model_select_and_optimize](04_model_select_and_optimize) | Yes | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
-| [05_operationalize](05_operationalize) | Yes | Operationalization notebooks that illustrate an end-to-end pipeline by using a recommender algorithm for a certain real-world use case scenario|
+| [00_quick_start](./00_quick_start)| Yes | Quick start notebooks that demonstrate workflow of developing a recommender by using an algorithm in local environment|
+| [01_prepare_data](./01_prepare_data) | Yes | Data preparation notebooks for each recommender algorithm|
+| [02_model](./02_model) | Yes | Deep dive notebooks about model building by using various classical and deep learning recommender algorithms|
+| [03_evaluate](./03_evaluate) | Yes | Notebooks that introduce different evaluation methods for recommenders|
+| [04_model_select_and_optimize](04_model_select_and_optimize) | No, Run on Azure | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
+| [05_operationalize](05_operationalize) | No, Run on Azure | Operationalization notebooks that illustrate an end-to-end pipeline by using a recommender algorithm for a certain real-world use case scenario|
 
 ## On-premise notebooks
 
