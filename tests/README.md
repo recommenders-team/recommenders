@@ -91,7 +91,7 @@ For executing the PySpark integration tests:
 
 ## How to create tests on notebooks with Papermill
 
-In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) in unit, smoke and integration tests. 
+In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) in unit, smoke and integration tests. Papermill is a tool that enables you to parameterize notebooks, execute and collect metrics across the notebooks, and summarize collections of notebooks.
 
 ### Developing unit tests with Papermill
 
