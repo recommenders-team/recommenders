@@ -20,15 +20,15 @@ The following summarizes each directory of the best practice notebooks.
 The notebooks that do not require Azure can be run out-of-the-box on any Linux machine, where an environment is properly
 set up by following the [instructions](../SETUP.md). 
 
-**NOTE** some of the notebooks may rely on heterogeneous computing instances
+**NOTE** Some of the notebooks may rely on heterogeneous computing instances
 like a cluster of CPU machines with Spark framework installed or machines with GPU devices incorporated. It is therefore recommended
-to run these notebooks on an Azure Data Science Virtual Machine, where single-node Spark and/or GPU devices are pre-configured.
+to run these notebooks on a [Data Science Virtual Machine for Linux (Ubuntu)](https://azuremarketplace.microsoft.com/en-us/marketplace/apps/microsoft-dsvm.linux-data-science-vm-ubuntu), where a single-node Spark and/or GPU device are pre-configured.
 
 ## Azure-enhanced notebooks
 
 Azure products and services are used in certain notebooks to enhance the development-efficiency of recommender system in scale.
-To successfully run these notebooks, the users **need an Azure subscription**.
-The Azure products featured in the notebooks include
+To successfully run these notebooks, the users **need an Azure subscription** or can [use Azure for free](https://azure.microsoft.com/en-us/free/).
+The Azure products featured in the notebooks include:
 
 * [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning-service/) - it is used for model building (e.g., hyperparameter tuning), model serving, etc. Azure
 Machine Learning Service is used intensively across various notebooks - particularly, it is used for hyperparameter optimization
