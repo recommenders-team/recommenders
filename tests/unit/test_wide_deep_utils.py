@@ -43,7 +43,7 @@ def pd_df():
 def test_build_feature_columns(pd_df):
     data, users, items = pd_df
 
-    # Test if wide column has one cross-product column
+    # Test if wide column has one crossed column
     wide_columns, _ = build_feature_columns(users, items, model_type='wide')
     assert len(wide_columns) == 1
 
@@ -64,9 +64,9 @@ def test_build_model(pd_df):
     # Test wide model
     wide_columns, deep_columns = build_feature_columns(users, items, model_type='wide')
     model = build_model('wide_'+MODEL_DIR, wide_columns=wide_columns)
-    assert type(model) == tf.estimator.LinearRegressor
+    assert isinstance(model, tf.estimator.LinearRegressor)
     model = build_model('wide_'+MODEL_DIR, wide_columns=wide_columns, deep_columns=deep_columns)
-    assert type(model) == tf.estimator.LinearRegressor
+    assert isinstance(model, tf.estimator.LinearRegressor)
 
     # Test if model train works
     model.train(
@@ -77,9 +77,9 @@ def test_build_model(pd_df):
     # Test deep model
     wide_columns, deep_columns = build_feature_columns(users, items, model_type='deep')
     model = build_model('deep_'+MODEL_DIR, deep_columns=deep_columns)
-    assert type(model) == tf.estimator.DNNRegressor
+    assert isinstance(model, tf.estimator.DNNRegressor)
     model = build_model('deep_'+MODEL_DIR, wide_columns=wide_columns, deep_columns=deep_columns)
-    assert type(model) == tf.estimator.DNNRegressor
+    assert isinstance(model, tf.estimator.DNNRegressor)
 
     # Test if model train works
     model.train(
@@ -90,7 +90,7 @@ def test_build_model(pd_df):
     # Test wide_deep model
     wide_columns, deep_columns = build_feature_columns(users, items, model_type='wide_deep')
     model = build_model('wide_deep_'+MODEL_DIR, wide_columns=wide_columns, deep_columns=deep_columns)
-    assert type(model) == tf.estimator.DNNLinearCombinedRegressor
+    assert isinstance(model, tf.estimator.DNNLinearCombinedRegressor)
 
     # Test if model train works
     model.train(

@@ -68,25 +68,25 @@ def test_pandas_input_fn(pd_df):
 @pytest.mark.gpu
 def test_build_optimizer():
     adadelta = build_optimizer('Adadelta')
-    assert type(adadelta) == tf.train.AdadeltaOptimizer
+    assert isinstance(adadelta, tf.train.AdadeltaOptimizer)
 
     adagrad = build_optimizer('Adagrad')
-    assert type(adagrad) == tf.train.AdagradOptimizer
+    assert isinstance(adagrad, tf.train.AdagradOptimizer)
 
     adam = build_optimizer('Adam')
-    assert type(adam) == tf.train.AdamOptimizer
+    assert isinstance(adam, tf.train.AdamOptimizer)
 
     ftrl = build_optimizer('Ftrl', **{'l1_regularization_strength': 0.001})
-    assert type(ftrl) == tf.train.FtrlOptimizer
+    assert isinstance(ftrl,  tf.train.FtrlOptimizer)
 
     momentum = build_optimizer('Momentum', **{'momentum': 0.5})
-    assert type(momentum) == tf.train.MomentumOptimizer
+    assert isinstance(momentum, tf.train.MomentumOptimizer)
 
     rmsprop = build_optimizer('RMSProp')
-    assert type(rmsprop) == tf.train.RMSPropOptimizer
+    assert isinstance(rmsprop, tf.train.RMSPropOptimizer)
 
     sgd = build_optimizer('SGD')
-    assert type(sgd) == tf.train.GradientDescentOptimizer
+    assert isinstance(sgd, tf.train.GradientDescentOptimizer)
 
 
 @pytest.mark.gpu
