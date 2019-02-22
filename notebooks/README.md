@@ -4,7 +4,7 @@ This folder contains examples and best practices, written in Jupyter notebooks, 
 
 ## Summary
 
-The following summarizes the categories of recommendation key tasks covered in each category of the best practice notebooks.
+The following summarizes each directory of the best practice notebooks.
 
 | Directory | Is Azure required | Description |
 | --- | --- | --- |
