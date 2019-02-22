@@ -28,16 +28,18 @@ Azure products and services are used in certain notebooks to enhance the develop
 To successfully run these notebooks, the users **need an Azure subscription**.
 The Azure products featured in the notebooks include
 
-* [Azure Machine Learning Service]() - it is used for model building (e.g., hyperparameter tuning), model serving, etc. Azure
+* [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning-service/) - it is used for model building (e.g., hyperparameter tuning), model serving, etc. Azure
 Machine Learning Service is used intensively across various notebooks - particularly, it is use for hyperparameter optimization
 and recommender algorithm benchmarking examples.
-* [Azure Data Science Virtual Machine]() - Azure Data Science Virtual Machine is mainly used for a remote server where user
+* [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) - Azure Data Science Virtual Machine is mainly used for a remote server where user
 can easily configure the local as well as the cloud environment for running the example notebooks.
-* [Azure Cosmos DB]() - Cosmos DB is used for preserving data. This is demonstrated in the operationalization example where
+* [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) - Cosmos DB is used for preserving data. This is demonstrated in the operationalization example where
 recommendation results generated from a model are preserved in Cosmos DB for real-time serving purpose.
-* [Azure Databricks]() - Azure Databricks is mainly used for developing Spark based recommenders such as Spark ALS algorithm, in a distributed computing
+* [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/) - Azure Databricks is mainly used for developing Spark based recommenders such as Spark ALS algorithm, in a distributed computing
 environment.
-* [Azure Kubernetes Service]() - Azure Kubernetes Service is used for serving a recommender model or consuming the results
+* [Azure Kubernetes Service](https://azure.microsoft.com/en-us/services/kubernetes-service/) - Azure Kubernetes Service is used for serving a recommender model or consuming the results
 generated from a recommender for a application service.
 
+There may be other Azure service or products used in the notebooks. Introduction and/or reference of
+those will be provided in the notebooks.
 
