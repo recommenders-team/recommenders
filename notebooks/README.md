@@ -2,7 +2,7 @@
 
 This folder contains examples and best practices, written in Jupyter notebooks, for building recommendation systems.
 
-## At a glance
+## A glance
 
 The following summarizes the categories of recommendation key tasks covered in the best practices.
 
