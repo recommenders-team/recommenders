@@ -121,7 +121,7 @@ def _get_schema(include_label=True):
   return schema
 
 
-def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore', force_download=False, archive_to_dbfs=True):
+def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore', force_download=False, archive_to_dbfs=True, dbutils=dbutils):
     """ Download and extract file """
 
     path, filename = os.path.split(os.path.realpath(local_cache_path))
