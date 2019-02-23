@@ -130,8 +130,9 @@ def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore'
     atexit.register(_clean_up, local_cache_path)
 
     if is_databricks() and filename in [x.name for x in dbutils.fs.ls(dbfs_archive)] and not force_download:
-        print('pulling {} from local dbfs archive {} ...'.format(filename, dbfs_archive))
-        dbutils.fs.cp(os.path.join(dbfs_archive,filename),'file:'+path)
+        if not os.path.exists(local_cache_path):
+            print('pulling {} from dbfs archive {} ...'.format(filename, dbfs_archive))
+            dbutils.fs.cp(os.path.join(dbfs_archive,filename),'file:'+path)
     else: 
         print('trying to download from external site... This can take some time.')
         maybe_download(
