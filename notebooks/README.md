@@ -26,7 +26,7 @@ to run these notebooks on a [Data Science Virtual Machine for Linux (Ubuntu)](ht
 
 ## Azure-enhanced notebooks
 
-Azure products and services are used in certain notebooks to enhance the development-efficiency of recommender system in scale.
+Azure products and services are used in certain notebooks to enhance the efficiency of developing recommender system in scale.
 To successfully run these notebooks, the users **need an Azure subscription** or can [use Azure for free](https://azure.microsoft.com/en-us/free/).
 The Azure products featured in the notebooks include:
 
