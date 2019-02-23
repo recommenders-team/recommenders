@@ -31,8 +31,12 @@ To successfully run these notebooks, the users **need an Azure subscription** or
 The Azure products featured in the notebooks include:
 
 * [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning-service/) - it is used for model building (e.g., hyperparameter tuning), model serving, etc. Azure
-Machine Learning Service is used intensively across various notebooks - particularly, it is used for hyperparameter optimization
-and recommender algorithm benchmarking examples.
+Machine Learning Service is used intensively across various notebooks for the AI model development related tasks like
+  * Hyperparameter tuning
+  * Tracking and monitoring metrics to enhance the model creation process
+  * Scaling up and out on Compute like DSVM and Azure Machine Learning Compute
+  * Deploying a web service to AKS
+  * Submitting pipelines
 * [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) - Azure Data Science Virtual Machine is mainly used for a remote server where user
 can easily configure the local as well as the cloud environment for running the example notebooks.
 * [Azure Cosmos DB](https://docs.microsoft.com/en-us/azure/cosmos-db/introduction) - Cosmos DB is used for preserving data. This is demonstrated in the operationalization example where
