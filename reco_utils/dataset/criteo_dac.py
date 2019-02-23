@@ -58,7 +58,7 @@ def load_spark_df(
       raise ValueError("This is only supported on Databricks at the moment.")
 
   ## download and untar the train and test files
-  extracted_tar_dir_path = _load_datafile(local_cache_path=local_cache_path, dbfs_archive=dbfs_archive_path)
+  extracted_tar_dir_path = _load_datafile(local_cache_path=local_cache_path, dbfs_archive=dbfs_archive_path, dbutils=dbutils)
   # Driver node's file path
   tar_datapath = "file:" + extracted_tar_dir_path
 
@@ -121,7 +121,7 @@ def _get_schema(include_label=True):
   return schema
 
 
-def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore', force_download=False, archive_to_dbfs=True, dbutils=dbutils):
+def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore', force_download=False, archive_to_dbfs=True, dbutils=None):
     """ Download and extract file """
 
     path, filename = os.path.split(os.path.realpath(local_cache_path))
