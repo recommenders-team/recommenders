@@ -31,7 +31,7 @@ $ conda activate {conda_env}
 $ python -m ipykernel install --user --name {conda_env} --display-name "Python ({conda_env})"
 """
 
-CHANNELS = ["conda-forge", "pytorch", "fastai", "defaults"]
+CHANNELS = [ "defaults", "conda-forge", "pytorch", "fastai"]
 
 CONDA_BASE = {
     "python": "python==3.6.8",
