@@ -3,6 +3,7 @@
 
 import pandas as pd
 import pytest
+from mock import Mock
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -11,6 +12,8 @@ from reco_utils.common.constants import (
 )
 from reco_utils.evaluation.python_evaluation import (
     check_column_dtypes,
+    merge_rating_true_pred,
+    merge_ranking_true_pred,
     rmse,
     mae,
     rsquared,
@@ -147,8 +150,7 @@ def python_data():
 #         )
 #         assert str(e_info.value) == "Data types of column {} are different in true and prediction".format(DEFAULT_USER_COL)
 
-
-def test_check_column_dtypes(python_data):
+def test_column_dtypes_match(python_data):
     rating_true, rating_pred, _ = python_data
 
     # Change data types of true and prediction data, and there should type error produced.
@@ -158,17 +160,58 @@ def test_check_column_dtypes(python_data):
     rating_true_copy[DEFAULT_RATING_COL] = rating_true_copy[DEFAULT_RATING_COL].astype(str)
 
     with pytest.raises(TypeError) as e_info:
-        rmse(
+        f = Mock()
+        f_d = check_column_dtypes(f)
+        f_d(
             rating_true_copy,
             rating_pred,
             col_user=DEFAULT_USER_COL,
             col_item=DEFAULT_ITEM_COL,
             col_rating=DEFAULT_RATING_COL,
-            col_prediction=PREDICTION_COL,
-            relevancy_method="top_k",
+            col_prediction=PREDICTION_COL
         )
+
+        # Error message is expected when there is mismatch.
         assert str(e_info.value) == "Data types of column {} are different in true and prediction".format(DEFAULT_USER_COL)
 
+
+def test_merge_rating(python_data):
+    rating_true, rating_pred, _ = python_data
+
+    rating_true_pred = merge_rating_true_pred(
+        rating_true,
+        rating_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
+    )
+
+    assert isinstance(rating_true_pred, pd.DataFrame)
+
+    columns = rating_true_pred.columns
+    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, PREDICTION_COL]
+    assert set(columns).intersection(set(columns_exp)) is not None
+
+
+def test_merge_ranking(python_data):
+    ranking_true, ranking_pred, _ = python_data
+
+    ranking_true_pred = merge_ranking_true_pred(
+        ranking_true,
+        ranking_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL,
+        relevancy_method="top_k"
+    )
+
+    assert isinstance(ranking_true_pred, pd.DataFrame)
+
+    columns = ranking_true_pred.columns
+    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, PREDICTION_COL]
+    assert set(columns).intersection(set(columns_exp)) is not None
 
 
 def test_python_rmse(python_data, target_metrics):
