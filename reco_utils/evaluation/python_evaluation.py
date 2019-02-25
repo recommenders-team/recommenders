@@ -79,7 +79,10 @@ def check_column_dtypes(f):
             col_user=col_user,
             col_item=col_item,
             col_rating=col_rating,
-            col_prediction=col_prediction
+            col_prediction=col_prediction,
+            k=k,
+            threshold=threshold,
+            relevancy_method=relevancy_method
         )
     return check_column_dtypes_wrapper
 
@@ -353,6 +356,9 @@ def precision_at_k(
     Returns:
         float: precision at k (min=0, max=1)
     """
+    print(rating_true)
+    print(rating_pred)
+
     _, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
@@ -375,7 +381,11 @@ def precision_at_k(
         .rename(columns={col_item: "hit"}, inplace=False)
     )
 
+    print(k)
+
     df_count_hit["precision"] = df_count_hit.apply(lambda x: (x.hit / k), axis=1)
+
+    print(df_count_hit)
 
     return np.float64(df_count_hit.agg({"precision": "sum"})) / n_users
 
