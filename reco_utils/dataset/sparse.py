@@ -29,30 +29,37 @@ class AffinityMatrix:
     # initialize class parameters
     def __init__(
         self,
-        DF,
+        df,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_pred=PREDICTION_COL,
+        map_users=None,
+        map_items=None,
         save_path=None,
     ):
         """Generate the user/item affinity matrix from a pandas dataframe and vice versa
 
             Args:
-                DF (pd.DataFrame): a dataframe containing the data
+                df (pd.DataFrame): a dataframe containing the data
                 col_user (str): default name for user column
                 col_item (str): default name for item column
                 col_rating (str): default name for rating columns
+                map_users (dict): map between original users and a consecutive hashed version
+                map_items (dict): map between original items and a consecutive hashed version
                 save_path (str): default path to save item/user maps
-
         """
-        self.df = DF  # dataframe
+        self.df = df  # dataframe
 
         # pandas DF parameters
         self.col_item = col_item
         self.col_user = col_user
         self.col_rating = col_rating
         self.col_pred = col_pred
+        
+        # maps
+        self.map_users = map_users
+        self.map_items = map_items
 
         # Options to save the model for future use
         self.save_path = save_path
@@ -86,8 +93,10 @@ class AffinityMatrix:
         self.Nitems = len(unique_items)
 
         # create a dictionary to map unique users/items to hashed values to generate the matrix
-        self.map_users = {x: i for i, x in enumerate(unique_users)}
-        self.map_items = {x: i for i, x in enumerate(unique_items)}
+        if self.map_users is None:
+            self.map_users = {x: i for i, x in enumerate(unique_users)}
+        if self.map_items is None:
+            self.map_items = {x: i for i, x in enumerate(unique_items)}
 
         # map back functions used to get back the original dataframe
         self.map_back_users = {i: x for i, x in enumerate(unique_users)}
@@ -135,7 +144,8 @@ class AffinityMatrix:
 
         # generate a sparse matrix representation using scipy's coo_matrix and convert to array format
         self.AM = coo_matrix(
-            (ratings, (usr_id, itm_id)), shape=(self.Nusers, self.Nitems)
+            #(ratings, (usr_id, itm_id)), shape=(self.Nusers, self.Nitems)
+            (ratings, (usr_id, itm_id)), shape=(usr_id.max()+1, itm_id.max()+1)
         ).toarray()
 
         # ---------------------print the degree of sparsness of the matrix------------------------------
