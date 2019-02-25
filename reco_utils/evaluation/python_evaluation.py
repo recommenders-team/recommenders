@@ -21,6 +21,66 @@ from reco_utils.common.constants import (
 )
 
 
+def check_column_dtypes(f):
+    """
+    Checks columns of dataframe inputs.
+    """
+    @wraps(f)
+    def check_column_dtypes_wrapper(
+        rating_true,
+        rating_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
+    ):
+        # check existence of input columns.
+        if col_user not in rating_true.columns:
+            raise ValueError("schema of y_true not valid. missing user col")
+        if col_item not in rating_true.columns:
+            raise ValueError("schema of y_true not valid. missing item col")
+        if col_rating not in rating_true.columns:
+            raise ValueError("schema of y_true not valid. missing rating col")
+
+        if col_user not in rating_pred.columns:
+            # pragma : no cover
+            raise ValueError("schema of y_pred not valid. missing user col")
+        if col_item not in rating_pred.columns:
+            # pragma : no cover
+            raise ValueError("schema of y_pred not valid. missing item col")
+        if col_prediction not in rating_pred.columns:
+            raise ValueError(
+                "schema of y_pred not valid. missing prediction col: "
+                + str(rating_pred.columns)
+            )
+
+        # check matching of input column types. the evaluator requires two dataframes have the same
+        # data types of the input columns.
+        if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
+            raise TypeError(
+                "data types of column {} are different in true and prediction".format(
+                    col_user
+                )
+            )
+
+        if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
+            raise TypeError(
+                "data types of column {} are different in true and prediction".format(
+                    col_item
+                )
+            )
+
+        return f(
+            rating_true,
+            rating_pred,
+            col_user=col_user,
+            col_item=col_item,
+            col_rating=col_rating,
+            col_prediction=col_prediction
+        )
+    return check_column_dtypes_wrapper
+
+
 def merge_rating_true_pred(
     rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
 ):
@@ -37,49 +97,6 @@ def merge_rating_true_pred(
     Returns:
         pd.DataFrame: Merged pd.DataFrame
     """
-
-    # if col_user not in rating_true.columns:
-    #     raise ValueError("Schema of y_true not valid. Missing User Col")
-    # if col_item not in rating_true.columns:
-    #     raise ValueError("Schema of y_true not valid. Missing Item Col")
-    # if col_rating not in rating_true.columns:
-    #     raise ValueError("Schema of y_true not valid. Missing Rating Col")
-    #
-    # if col_user not in rating_pred.columns:
-    #     # pragma : No Cover
-    #     raise ValueError("Schema of y_pred not valid. Missing User Col")
-    # if col_item not in rating_pred.columns:
-    #     # pragma : No Cover
-    #     raise ValueError("Schema of y_pred not valid. Missing Item Col")
-    # if col_prediction not in rating_pred.columns:
-    #     raise ValueError(
-    #         "Schema of y_true not valid. Missing Prediction Col: "
-    #         + str(rating_pred.columns)
-    #     )
-    #
-    # # Check matching of input column types. The evaluator requires two dataframes have the same
-    # # data types of the input columns.
-    # if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
-    #     raise TypeError(
-    #         "Data types of column {} are different in true and prediction".format(
-    #             col_user
-    #         )
-    #     )
-    #
-    # if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
-    #     raise TypeError(
-    #         "Data types of column {} are different in true and prediction".format(
-    #             col_item
-    #         )
-    #     )
-    #
-    # if rating_true[col_rating].dtypes != rating_pred[col_prediction].dtypes:
-    #     raise TypeError(
-    #         "Data types of column {} and {} are different in true and prediction".format(
-    #             col_rating, col_prediction
-    #         )
-    #     )
-
     # Select the columns needed for evaluations
     rating_true = rating_true[[col_user, col_item, col_rating]]
     rating_pred = rating_pred[[col_user, col_item, col_prediction]]
@@ -112,7 +129,7 @@ def rmse(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=PREDICTION_COL
 ):
     """Calculate Root Mean Squared Error
 
@@ -130,9 +147,10 @@ def rmse(
     rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
+
     return np.sqrt(
         mean_squared_error(
-            rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
+            rating_true_pred[col_rating], rating_true_pred[col_prediction]
         )
     )
 
@@ -232,7 +250,6 @@ def merge_ranking_true_pred(
     rating_pred,
     col_user,
     col_item,
-    col_rating,
     col_prediction,
     relevancy_method,
     k=DEFAULT_K,
@@ -252,42 +269,6 @@ def merge_ranking_true_pred(
         pd.DataFrame: new data frame of true data DataFrame of recommendation hits
             number of common users
     """
-    # Check existence of input columns.
-    if col_user not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing User Col")
-    if col_item not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing Item Col")
-    if col_rating not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing Rating Col")
-
-    if col_user not in rating_pred.columns:
-        # pragma : No Cover
-        raise ValueError("Schema of y_pred not valid. Missing User Col")
-    if col_item not in rating_pred.columns:
-        # pragma : No Cover
-        raise ValueError("Schema of y_pred not valid. Missing Item Col")
-    if col_prediction not in rating_pred.columns:
-        raise ValueError(
-            "Schema of y_pred not valid. Missing Prediction Col: "
-            + str(rating_pred.columns)
-        )
-
-    # Check matching of input column types. The evaluator requires two dataframes have the same
-    # data types of the input columns.
-    if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
-        raise TypeError(
-            "Data types of column {} are different in true and prediction".format(
-                col_user
-            )
-        )
-
-    if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
-        raise TypeError(
-            "Data types of column {} are different in true and prediction".format(
-                col_item
-            )
-        )
-
     relevant_func = {"top_k": get_top_k_items}
 
     rating_pred_new = (
@@ -633,57 +614,5 @@ def get_top_k_items(
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
-
-
-def check_column_dtypes(func):
-    """
-    Checks columns of dataframe inputs.
-    """
-    @wraps(func)
-    def check_column_dtypes_wrapper(
-        rating_true,
-        rating_pred,
-        col_user,
-        col_item,
-        col_rating,
-        col_prediction
-    ):
-        # check existence of input columns.
-        if col_user not in rating_true.columns:
-            raise ValueError("schema of y_true not valid. missing user col")
-        if col_item not in rating_true.columns:
-            raise ValueError("schema of y_true not valid. missing item col")
-        if col_rating not in rating_true.columns:
-            raise ValueError("schema of y_true not valid. missing rating col")
-
-        if col_user not in rating_pred.columns:
-            # pragma : no cover
-            raise ValueError("schema of y_pred not valid. missing user col")
-        if col_item not in rating_pred.columns:
-            # pragma : no cover
-            raise ValueError("schema of y_pred not valid. missing item col")
-        if col_prediction not in rating_pred.columns:
-            raise ValueError(
-                "schema of y_pred not valid. missing prediction col: "
-                + str(rating_pred.columns)
-            )
-
-        # check matching of input column types. the evaluator requires two dataframes have the same
-        # data types of the input columns.
-        if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
-            raise TypeError(
-                "data types of column {} are different in true and prediction".format(
-                    col_user
-                )
-            )
-
-        if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
-            raise TypeError(
-                "data types of column {} are different in true and prediction".format(
-                    col_item
-                )
-            )
-
-    return check_column_dtypes_wrapper
 
 
