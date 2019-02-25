@@ -20,7 +20,7 @@ from reco_utils.common.constants import (
 )
 
 
-def _merge_rating_true_pred(
+def merge_rating_true_pred(
     rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
 ):
     """Join truth and prediction data frames on userID and itemID
@@ -115,7 +115,7 @@ def rmse(
     Returns:
         float: Root mean squared error.
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return np.sqrt(
@@ -146,7 +146,7 @@ def mae(
     Returns:
         float: Mean Absolute Error.
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return mean_absolute_error(
@@ -175,7 +175,7 @@ def rsquared(
     Returns:
         float: R squared (min=0, max=1).
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return r2_score(
@@ -204,7 +204,7 @@ def exp_var(
     Returns:
         float: Explained variance (min=0, max=1).
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return explained_variance_score(
@@ -212,7 +212,7 @@ def exp_var(
     )
 
 
-def _merge_ranking_true_pred(
+def merge_ranking_true_pred(
     rating_true,
     rating_pred,
     col_user,
@@ -344,7 +344,7 @@ def precision_at_k(
     Returns:
         float: precision at k (min=0, max=1)
     """
-    _, df_hit, n_users = _merge_ranking_true_pred(
+    _, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
@@ -399,7 +399,7 @@ def recall_at_k(
         float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than 
             k items exist for a user in rating_true.
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
@@ -464,7 +464,7 @@ def ndcg_at_k(
     Returns:
         float: nDCG at k (min=0, max=1).
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
@@ -545,7 +545,7 @@ def map_at_k(
     Return:
         float: MAP at k (min=0, max=1).
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
