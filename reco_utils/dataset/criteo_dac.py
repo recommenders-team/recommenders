@@ -39,7 +39,6 @@ def load_spark_df(
     type='train',
     local_cache_path="dac.tar.gz",
     dbfs_datapath="dbfs:/FileStore/dac", 
-    dbfs_archive_path="dbfs:/FileStore",
     dbutils=None,
 ):
   """Loads the Criteo DAC dataset as pySpark.DataFrame.
@@ -62,11 +61,12 @@ def load_spark_df(
       raise ValueError("This is only supported on Databricks at the moment.")
 
   ## download and untar the train and test files
-  extracted_tar_dir_path = _load_datafile(local_cache_path=local_cache_path, dbfs_archive=dbfs_archive_path, dbutils=dbutils)
+  extracted_tar_dir_path = _load_datafile(local_cache_path=local_cache_path, dbutils=dbutils)
   # Driver node's file path
   tar_datapath = "file:" + extracted_tar_dir_path
 
   try:
+      ## needs to be on dbfs to load
       dbutils.fs.cp(tar_datapath, dbfs_datapath, recurse = True)
   except:
       raise ValueError("To use on a Databricks notebook, dbutils object should be passed as an argument")
@@ -125,7 +125,7 @@ def _get_schema(include_label=True):
   return schema
 
 
-def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore', force_download=False, archive_to_dbfs=True, dbutils=None):
+def _load_datafile(local_cache_path="dac.tar.gz", dbutils=None):
     """ Download and extract file """
 
     path, filename = os.path.split(os.path.realpath(local_cache_path))
@@ -133,17 +133,12 @@ def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore'
     # Make sure the temporal tar file gets cleaned up no matter what
     atexit.register(_clean_up, local_cache_path)
 
-    if is_databricks() and filename in [x.name for x in dbutils.fs.ls(dbfs_archive)] and not force_download:
-        if not os.path.exists(os.path.realpath(local_cache_path)):
-            print('pulling {} from dbfs archive {} ...'.format(filename, dbfs_archive))
-            dbutils.fs.cp(os.path.join(dbfs_archive,filename),'file:'+path)
-    else: 
-        print('trying to download from external site... This can take some time.')
-        maybe_download(
-              "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz",
-              filename,
-              work_directory=path,
-        )
+    ## download if it doesn't already exist locally
+    maybe_download(
+          "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz",
+          filename,
+          work_directory=path,
+    )
 
     #always extract to a subdirectory of cache_path called dac
     extracted_dir=os.path.join(path, "dac")
@@ -153,11 +148,6 @@ def _load_datafile(local_cache_path="dac.tar.gz", dbfs_archive='dbfs:/FileStore'
     train_file = os.path.join(extracted_dir,'train.txt')
     test_file = os.path.join(extracted_dir,'test.txt')
     
-    ## archive it if on databricks.
-    if is_databricks() and archive_to_dbfs:
-        print('Archiving {} to {}'.format(local_cache_path, dbfs_archive))
-        dbutils.fs.cp('file:'+os.path.realpath(local_cache_path), os.path.join(dbfs_archive,filename))
-
     _clean_up(local_cache_path)
 
     # Make sure a temporal data file get cleaned up when done
