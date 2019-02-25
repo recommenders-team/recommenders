@@ -41,7 +41,7 @@ def check_column_dtypes(f):
             if col not in rating_true.columns:
                 raise ValueError("schema of y_true not valid. missing {}".format(col))
 
-        for col in [col_user, col_item, col_rating]:
+        for col in [col_user, col_item, col_prediction]:
             if col not in rating_pred.columns:
                 raise ValueError("schema of y_true not valid. missing {}".format(col))
 
