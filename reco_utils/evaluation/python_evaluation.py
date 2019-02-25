@@ -32,7 +32,10 @@ def check_column_dtypes(f):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL
+        col_prediction=PREDICTION_COL,
+        k=DEFAULT_K,
+        threshold=DEFAULT_THRESHOLD,
+        relevancy_method="top_k"
     ):
         # check existence of input columns.
         if col_user not in rating_true.columns:
@@ -250,6 +253,7 @@ def merge_ranking_true_pred(
     rating_pred,
     col_user,
     col_item,
+    col_rating,
     col_prediction,
     relevancy_method,
     k=DEFAULT_K,
