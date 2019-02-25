@@ -33,9 +33,8 @@ def check_column_dtypes(f):
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL,
-        k=DEFAULT_K,
-        threshold=DEFAULT_THRESHOLD,
-        relevancy_method="top_k"
+        *args,
+        **kwargs
     ):
         # check existence of input columns.
         if col_user not in rating_true.columns:
@@ -74,15 +73,14 @@ def check_column_dtypes(f):
             )
 
         return f(
-            rating_true,
-            rating_pred,
+            rating_true=rating_true,
+            rating_pred=rating_pred,
             col_user=col_user,
             col_item=col_item,
             col_rating=col_rating,
             col_prediction=col_prediction,
-            k=k,
-            threshold=threshold,
-            relevancy_method=relevancy_method
+            *args,
+            **kwargs
         )
     return check_column_dtypes_wrapper
 
