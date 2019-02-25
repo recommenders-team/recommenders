@@ -157,6 +157,7 @@ def test_merge_ranking(python_data):
         ranking_pred,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL,
         relevancy_method="top_k"
     )
