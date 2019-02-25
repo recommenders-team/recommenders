@@ -16,7 +16,7 @@ from reco_utils.dataset.split_utils import (
 )
 
 
-def python_random_split(data, ratio=0.75, seed=123):
+def python_random_split(data, ratio=0.75, seed=42):
     """Pandas random splitter
     The splitter randomly splits the input data.
 
@@ -135,7 +135,7 @@ def python_stratified_split(
     filter_by="user",
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
-    seed=1234,
+    seed=42,
 ):
     """Pandas stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -211,7 +211,7 @@ def python_stratified_split(
     return splits_list
 
 
-def numpy_stratified_split(X, ratio=0.75, seed=123):
+def numpy_stratified_split(X, ratio=0.75, seed=42):
 
     """
     Split the user/item affinity matrix (sparse matrix) into train and test set matrices while maintaining
