@@ -37,24 +37,13 @@ def check_column_dtypes(f):
         **kwargs
     ):
         # check existence of input columns.
-        if col_user not in rating_true.columns:
-            raise ValueError("schema of y_true not valid. missing user col")
-        if col_item not in rating_true.columns:
-            raise ValueError("schema of y_true not valid. missing item col")
-        if col_rating not in rating_true.columns:
-            raise ValueError("schema of y_true not valid. missing rating col")
+        for col in [col_user, col_item, col_rating]:
+            if col not in rating_true.columns:
+                raise ValueError("schema of y_true not valid. missing {}".format(col))
 
-        if col_user not in rating_pred.columns:
-            # pragma : no cover
-            raise ValueError("schema of y_pred not valid. missing user col")
-        if col_item not in rating_pred.columns:
-            # pragma : no cover
-            raise ValueError("schema of y_pred not valid. missing item col")
-        if col_prediction not in rating_pred.columns:
-            raise ValueError(
-                "schema of y_pred not valid. missing prediction col: "
-                + str(rating_pred.columns)
-            )
+        for col in [col_user, col_item, col_rating]:
+            if col not in rating_pred.columns:
+                raise ValueError("schema of y_true not valid. missing {}".format(col))
 
         # check matching of input column types. the evaluator requires two dataframes have the same
         # data types of the input columns.
