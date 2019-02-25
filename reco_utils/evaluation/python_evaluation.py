@@ -154,7 +154,7 @@ def rmse(
 
     return np.sqrt(
         mean_squared_error(
-            rating_true_pred[col_rating], rating_true_pred[col_prediction]
+            rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
         )
     )
 
