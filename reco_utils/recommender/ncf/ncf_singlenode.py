@@ -26,6 +26,7 @@ class NCF:
             verbose=1,
             save=False,
             pretrain=False,
+            seed=123
     ):
         # number of users in dataset
         self.n_users = n_users
@@ -34,7 +35,12 @@ class NCF:
         # model type
         self.model_type = model_type.lower()
         # check model type
-        assert self.model_type in {"gmf", "mlp", "neumf"}
+        model_options = ["gmf", "mlp", "neumf"]
+        if self.model_type not in model_options:
+            raise ValueError("Wrong model type, please select one of this list: {}".format(model_options))
+        # seed
+        tf.set_random_seed(seed)
+        np.random.seed(seed)
         # dimension of latent space
         self.n_factors = n_factors
         # number of layers for mlp
