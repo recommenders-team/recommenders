@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+from functools import wraps
 from sklearn.metrics import (
     mean_squared_error,
     mean_absolute_error,
@@ -628,3 +629,54 @@ def get_top_k_items(
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
+
+
+def check_data_columns(func):
+    '''
+    Checks columns of dataframe inputs.
+    '''
+    @wraps(func)
+    def check_data_columns_wrapper(
+        rating_true,
+        rating_pred,
+        col_user,
+        col_item,
+        col_rating,
+        col_prediction
+    ):
+        # check existence of input columns.
+        if col_user not in rating_true.columns:
+            raise ValueError("schema of y_true not valid. missing user col")
+        if col_item not in rating_true.columns:
+            raise ValueError("schema of y_true not valid. missing item col")
+        if col_rating not in rating_true.columns:
+            raise ValueError("schema of y_true not valid. missing rating col")
+
+        if col_user not in rating_pred.columns:
+            # pragma : no cover
+            raise ValueError("schema of y_pred not valid. missing user col")
+        if col_item not in rating_pred.columns:
+            # pragma : no cover
+            raise ValueError("schema of y_pred not valid. missing item col")
+        if col_prediction not in rating_pred.columns:
+            raise ValueError(
+                "schema of y_pred not valid. missing prediction col: "
+                + str(rating_pred.columns)
+            )
+
+        # check matching of input column types. the evaluator requires two dataframes have the same
+        # data types of the input columns.
+        if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
+            raise TypeError(
+                "data types of column {} are different in true and prediction".format(
+                    col_user
+                )
+            )
+
+        if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
+            raise TypeError(
+                "data types of column {} are different in true and prediction".format(
+                    col_item
+                )
+            )
+
