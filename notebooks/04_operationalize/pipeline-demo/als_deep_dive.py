@@ -128,7 +128,7 @@ spark = start_or_get_spark("ALS Deep Dive", memory="16g")
 # In[7]:
 
 
-dfs = movielens.load_spark_df(spark=spark, size="100k")
+dfs = movielens.load_spark_df(spark=spark, size="100k",dbutils=dbutils)
 
 
 # In[8]:
