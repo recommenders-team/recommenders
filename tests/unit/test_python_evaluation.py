@@ -264,6 +264,7 @@ def test_python_precision(python_data, target_metrics):
             k=3,
             rating_true=single_user,
             rating_pred=single_user,
+            col_rating=DEFAULT_RATING_COL,
             col_prediction=DEFAULT_RATING_COL,
         )
         == 1
