@@ -314,6 +314,7 @@ def merge_ranking_true_pred(
     return rating_true_new, df_hit, n_users
 
 
+@check_column_dtypes
 def precision_at_k(
     rating_true,
     rating_pred,
@@ -375,6 +376,7 @@ def precision_at_k(
     return np.float64(df_count_hit.agg({"precision": "sum"})) / n_users
 
 
+@check_column_dtypes
 def recall_at_k(
     rating_true,
     rating_pred,
@@ -439,6 +441,7 @@ def recall_at_k(
     return np.float64(df_count_all.agg({"recall": "sum"})) / n_users
 
 
+@check_column_dtypes
 def ndcg_at_k(
     rating_true,
     rating_pred,
@@ -517,6 +520,7 @@ def ndcg_at_k(
     return np.float64(df_ndcg.agg({"ndcg": "sum"})) / n_users
 
 
+@check_column_dtypes
 def map_at_k(
     rating_true,
     rating_pred,
