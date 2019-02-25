@@ -59,14 +59,24 @@ def merge_rating_true_pred(
     # Check matching of input column types. The evaluator requires two dataframes have the same
     # data types of the input columns.
     if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
-        raise TypeError("Data types of column {} are different in true and prediction".format(col_user))
+        raise TypeError(
+            "Data types of column {} are different in true and prediction".format(
+                col_user
+            )
+        )
 
     if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
-        raise TypeError("Data types of column {} are different in true and prediction".format(col_item))
+        raise TypeError(
+            "Data types of column {} are different in true and prediction".format(
+                col_item
+            )
+        )
 
     if rating_true[col_rating].dtypes != rating_pred[col_prediction].dtypes:
         raise TypeError(
-            "Data types of column {} and {} are different in true and prediction".format(col_rating, col_prediction)
+            "Data types of column {} and {} are different in true and prediction".format(
+                col_rating, col_prediction
+            )
         )
 
     # Select the columns needed for evaluations
@@ -260,10 +270,18 @@ def merge_ranking_true_pred(
     # Check matching of input column types. The evaluator requires two dataframes have the same
     # data types of the input columns.
     if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
-        raise TypeError("Data types of column {} are different in true and prediction".format(col_user))
+        raise TypeError(
+            "Data types of column {} are different in true and prediction".format(
+                col_user
+            )
+        )
 
     if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
-        raise TypeError("Data types of column {} are different in true and prediction".format(col_item))
+        raise TypeError(
+            "Data types of column {} are different in true and prediction".format(
+                col_item
+            )
+        )
 
     relevant_func = {"top_k": get_top_k_items}
 
@@ -585,7 +603,9 @@ def map_at_k(
     return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
 
 
-def get_top_k_items(dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RATING_COL, k=DEFAULT_K):
+def get_top_k_items(
+    dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RATING_COL, k=DEFAULT_K
+):
     """Get the input customer-item-rating tuple in the format of Pandas
     DataFrame, output a Pandas DataFrame in the dense format of top k items
     for each user.
@@ -603,6 +623,8 @@ def get_top_k_items(dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RAT
     Return:
         pd.DataFrame: DataFrame of top k items for each user.
     """
-    return (dataframe.groupby(col_user, as_index=False)
-            .apply(lambda x: x.nlargest(k, col_rating))
-            .reset_index(drop=True))
+    return (
+        dataframe.groupby(col_user, as_index=False)
+        .apply(lambda x: x.nlargest(k, col_rating))
+        .reset_index(drop=True)
+    )
