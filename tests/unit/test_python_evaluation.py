@@ -197,12 +197,11 @@ def test_merge_rating(python_data):
 def test_merge_ranking(python_data):
     ranking_true, ranking_pred, _ = python_data
 
-    ranking_true_pred = merge_ranking_true_pred(
+    ranking_true_pred, data_hit, n_users = merge_ranking_true_pred(
         ranking_true,
         ranking_pred,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL,
         relevancy_method="top_k"
     )
@@ -210,8 +209,12 @@ def test_merge_ranking(python_data):
     assert isinstance(ranking_true_pred, pd.DataFrame)
 
     columns = ranking_true_pred.columns
-    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, PREDICTION_COL]
+    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, PREDICTION_COL]
     assert set(columns).intersection(set(columns_exp)) is not None
+
+    assert isinstance(data_hit, pd.DataFrame)
+
+    assert isinstance(n_users, int)
 
 
 def test_python_rmse(python_data, target_metrics):
