@@ -269,6 +269,7 @@ def test_python_precision(python_data, target_metrics):
         )
         == 1
     )
+
     same_items = pd.DataFrame(
         {
             DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2],
@@ -278,7 +279,10 @@ def test_python_precision(python_data, target_metrics):
     )
     assert (
         precision_at_k(
-            k=3, rating_true=same_items, rating_pred=same_items, col_prediction=DEFAULT_RATING_COL
+            k=3,
+            rating_true=same_items,
+            rating_pred=same_items,
+            col_prediction=DEFAULT_RATING_COL
         )
         == 1
     )
