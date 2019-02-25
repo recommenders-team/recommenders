@@ -129,6 +129,47 @@ ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 
 ERROR_LOCAL_CACHE_PATH = """Local cache path only accepts a zip file path:
     use/something/like_this.zip"""
 
+def load_pandas_df_from_ds(
+    size="100k",
+    header=(
+        DEFAULT_USER_COL,
+        DEFAULT_ITEM_COL,
+        DEFAULT_RATING_COL,
+        DEFAULT_TIMESTAMP_COL
+    ),
+    ds_path=None,
+    title_col=None,
+    genres_col=None,
+):
+    """Loads the MovieLens dataset as pd.DataFrame.
+
+    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
+
+    Args:
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m")
+        header (list or tuple or None): Rating dataset header. If None, ratings are not loaded.
+        local_cache_path (str): Path where to cache the zip file locally
+        title_col (str): Movie title column name. If None, the title column is not loaded.
+        genres_col (str): Genres column name. Genres are '|' separated string.
+            If None, the genres column is not loaded.
+
+    Returns:
+        pd.DataFrame: Movie rating dataset.
+            If header is None but either title_col or genres_col is not None,
+            returns movie titles and/or genres.
+    """
+
+    df = pd.read_csv(
+        ds_path,
+        sep=DATA_FORMAT[size].separator,
+        engine='python',
+        names=header,
+        usecols=[*range(len(header))],
+        header=0 if DATA_FORMAT[size].has_header else None,
+    )
+
+    return df
+
 
 def load_pandas_df(
     size="100k",
@@ -408,6 +449,45 @@ def _load_datafile(size, local_cache_path):
             shutil.copyfileobj(zf, f)
 
     _clean_up(local_cache_path)
+
+    # Make sure a temporal data file get cleaned up when done
+    atexit.register(_clean_up, datapath)
+    atexit.register(_clean_up, item_datapath)
+
+    return datapath, item_datapath
+
+def download_datafile(size, local_cache_path='./data/ml.zip'):
+    """ Download and extract file """
+
+    if size not in DATA_FORMAT:
+        raise ValueError(ERROR_MOVIE_LENS_SIZE)
+    if not local_cache_path.endswith(".zip"):
+        raise ValueError(ERROR_LOCAL_CACHE_PATH)
+
+    path, filename = os.path.split(os.path.realpath(local_cache_path))
+    print(path)
+
+    # Make sure a temporal zip file get cleaned up no matter what
+    atexit.register(_clean_up, local_cache_path)
+
+    maybe_download(
+        "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip",
+        filename,
+        work_directory=path,
+    )
+
+    _, dataname = os.path.split(DATA_FORMAT[size].path)
+    datapath = os.path.join(path, dataname)
+    _, item_dataname = os.path.split(DATA_FORMAT[size].item_path)
+    item_datapath = os.path.join(path, item_dataname)
+
+    with ZipFile(local_cache_path, "r") as z:
+        with z.open(DATA_FORMAT[size].path) as zf, open(datapath, 'wb') as f:
+            shutil.copyfileobj(zf, f)
+        with z.open(DATA_FORMAT[size].item_path) as zf, open(item_datapath, 'wb') as f:
+            shutil.copyfileobj(zf, f)
+
+    #_clean_up(local_cache_path)
 
     # Make sure a temporal data file get cleaned up when done
     atexit.register(_clean_up, datapath)
