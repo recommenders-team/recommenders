@@ -62,5 +62,5 @@ Contributors
     * Deep dive notebook demonstrating the use of NCF.
 * **[Nicolas Hug](https://github.com/NicolasHug)**
     * Jupyter notebook demonstrating the use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations.
-* **[Daniel Scheneider](https://github.com/danielsc)**
+* **[Daniel Schneider](https://github.com/danielsc)**
    * FastAI notebook.
