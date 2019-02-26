@@ -15,7 +15,7 @@ from reco_utils.common.constants import (
 from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filter_spark
 
 
-def spark_random_split(data, ratio=0.75, seed=123):
+def spark_random_split(data, ratio=0.75, seed=42):
     """Spark random splitter
     Randomly split the data into several splits.
 
@@ -56,7 +56,7 @@ def spark_chrono_split(
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halfs and the ratio argument indicates the ratio of 
+            it splits data into two sets and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits 
             data into several portions corresponding to the split ratios. If a list is 
             provided and the ratios are not summed to 1, they will be normalized.
@@ -93,7 +93,7 @@ def spark_chrono_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
-    window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp).desc())
+    window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp))
 
     rating_grouped = (
         data.groupBy(split_by_column)
@@ -128,7 +128,7 @@ def spark_stratified_split(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    seed=1234,
+    seed=42,
 ):
     """Spark stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -141,6 +141,8 @@ def spark_stratified_split(
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
+            Earlier indexed splits will have earlier times
+            (e.g the latest time per user or item in split[0] <= the earliest time per user or item in split[1])
         seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
         filter_by (str): either "user" or "item", depending on which of the two is to filter
@@ -205,7 +207,7 @@ def spark_timestamp_split(
     ratio=0.75,
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
-    col_timestamp=DEFAULT_TIMESTAMP_COL
+    col_timestamp=DEFAULT_TIMESTAMP_COL,
 ):
     """Spark timestamp based splitter
     The splitter splits the data into sets by timestamps without stratification on either
@@ -216,10 +218,12 @@ def spark_timestamp_split(
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halfs and the ratio argument indicates the ratio of
+            it splits data into two sets and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
+            Earlier indexed splits will have earlier times
+            (e.g the latest time in split[0] <= the earliest time in split[1])
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
         col_timestamp (str): column name of timestamps. Float number represented in
@@ -233,18 +237,18 @@ def spark_timestamp_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
-    window_spec = Window.orderBy(col(col_timestamp).desc())
+    window_spec = Window.orderBy(col(col_timestamp))
     rating = data.withColumn("rank", row_number().over(window_spec))
 
     data_count = rating.count()
-    rating_rank = rating.withColumn(
-        "rank", row_number().over(window_spec) / data_count
-    )
+    rating_rank = rating.withColumn("rank", row_number().over(window_spec) / data_count)
 
     splits = []
     for i, _ in enumerate(ratio_index):
         if i == 0:
-            rating_split = rating_rank.filter(col("rank") <= ratio_index[i]).drop("rank")
+            rating_split = rating_rank.filter(col("rank") <= ratio_index[i]).drop(
+                "rank"
+            )
         else:
             rating_split = rating_rank.filter(
                 (col("rank") <= ratio_index[i]) & (col("rank") > ratio_index[i - 1])
