@@ -3,33 +3,18 @@
 # Licensed under the MIT License.
 
 import os
-import warnings
-import shutil
 import atexit
-import pandas as pd
-
 import tarfile
 
 from reco_utils.dataset.url_utils import maybe_download
 from reco_utils.common.notebook_utils import is_databricks
-
-import logging
-
-log = logging.getLogger(__name__)
 
 try:
     from pyspark.sql.types import (
         StructType,
         StructField,
         IntegerType,
-        FloatType,
-        DoubleType,
-        LongType,
         StringType,
-    )
-    from pyspark.sql.functions import (
-        concat_ws,
-        col,
     )
 except ImportError:
     pass  # so the environment without spark doesn't break
@@ -49,9 +34,8 @@ def load_spark_df(
       spark (pySpark.SparkSession)
       type (str): which dataset to load. 2 options: 'train' or 'test'
       local_cache_path (str): Path where to cache the tar.gz file locally (not dbfs)
-      dbutils (Databricks.dbutils): Databricks utility object
       dbfs_datapath: where to store the extracted files
-      dbfs_archive_path: where to archive the .tar.gz file so it doesn't have to be downloaded externally again (and where to search for it)
+      dbutils (Databricks.dbutils): Databricks utility object
   Returns:
       pySpark.DataFrame: Criteo DAC training dataset.
   """
