@@ -24,6 +24,10 @@ from reco_utils.common.constants import (
 def check_column_dtypes(f):
     """
     Checks columns of dataframe inputs.
+
+    This includes the checks on 
+        1. whether the input columns exist in the input dataframes.
+        2. whether the data types of col_user as well as col_item are matched in the two input dataframes.
     """
     @wraps(f)
     def check_column_dtypes_wrapper(
