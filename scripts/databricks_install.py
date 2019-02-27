@@ -156,7 +156,7 @@ if __name__ == "__main__":
 
   ## upload the egg:
   uploadpath='/'.join([args.dbfs_path, os.path.basename(myegg)])
-  print("Uploading to databricks at {}".format(uploadpath))
+  print("Uploading {} to databricks at {}".format(os.path.basename(myegg), uploadpath))
   DbfsApi(my_api_client).cp(recursive=False, src=myegg, dst=uploadpath, overwrite=args.overwrite)
 
   ## steps below require the cluster to be running. Check status
