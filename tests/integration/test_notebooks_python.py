@@ -7,14 +7,31 @@ from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 TOL = 0.05
+ABS_TOL = 0.05
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", {"map": 0.064012679, "ndcg": 0.308012195, "precision": 0.277214771, "recall": 0.109291553}),
-        #("10m", {"map": 0.101402403, "ndcg": 0.321072689, "precision": 0.275765514, "recall": 0.156483292}) skipping for now, investigating this on issue #465
+        (
+            "1m",
+            {
+                "map": 0.064012679,
+                "ndcg": 0.308012195,
+                "precision": 0.277214771,
+                "recall": 0.109291553,
+            },
+        ),
+        (
+            "10m",
+            {
+                "map": 0.101402,
+                "ndcg": 0.321073,
+                "precision": 0.275766,
+                "recall": 0.156483,
+            },
+        ),
     ],
 )
 def test_sar_single_node_integration(notebooks, size, expected_values):
@@ -28,15 +45,23 @@ def test_sar_single_node_integration(notebooks, size, expected_values):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", {"map": 0.033914, "ndcg": 0.231570, "precision": 0.211923, "recall": 0.064663}),
-        #("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
+        (
+            "1m",
+            {
+                "map": 0.033914,
+                "ndcg": 0.231570,
+                "precision": 0.211923,
+                "recall": 0.064663,
+            },
+        ),
+        # ("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
     ],
 )
 def test_baseline_deep_dive_integration(notebooks, size, expected_values):
@@ -51,21 +76,26 @@ def test_baseline_deep_dive_integration(notebooks, size, expected_values):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", dict(rmse=0.89,
-                    mae=0.70,
-                    rsquared=0.36,
-                    exp_var=0.36,
-                    map=0.011,
-                    ndcg=0.10,
-                    precision=0.093,
-                    recall=0.025)),
+        (
+            "1m",
+            dict(
+                rmse=0.89,
+                mae=0.70,
+                rsquared=0.36,
+                exp_var=0.36,
+                map=0.011,
+                ndcg=0.10,
+                precision=0.093,
+                recall=0.025,
+            ),
+        ),
         # 10m works but takes too long
     ],
 )
@@ -80,21 +110,26 @@ def test_surprise_svd_integration(notebooks, size, expected_values):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
-        ("1m", dict(rmse=0.9555,
-                    mae=0.68493,
-                    rsquared=0.26547,
-                    exp_var=0.26615,
-                    map=0.50635,
-                    ndcg=0.99966,
-                    precision=0.92684,
-                    recall=0.50635)),
+        (
+            "1m",
+            dict(
+                rmse=0.9555,
+                mae=0.68493,
+                rsquared=0.26547,
+                exp_var=0.26615,
+                map=0.50635,
+                ndcg=0.99966,
+                precision=0.92684,
+                recall=0.50635,
+            ),
+        )
     ],
 )
 def test_vw_deep_dive_integration(notebooks, size, expected_values):
@@ -108,4 +143,4 @@ def test_vw_deep_dive_integration(notebooks, size, expected_values):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)

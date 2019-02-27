@@ -12,25 +12,25 @@ from reco_utils.common.constants import (
 
 
 class Dataset(object):
-    '''
+    """
     classdocs
-    '''
+    """
 
     def __init__(
-            self,
-            train,
-            test=None,
-            n_neg=4,
-            n_neg_test=100,
-            col_user=DEFAULT_USER_COL,
-            col_item=DEFAULT_ITEM_COL,
-            col_rating=DEFAULT_RATING_COL,
-            col_timestamp=DEFAULT_TIMESTAMP_COL,
-            seed=1234,
+        self,
+        train,
+        test=None,
+        n_neg=4,
+        n_neg_test=100,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_timestamp=DEFAULT_TIMESTAMP_COL,
+        seed=42,
     ):
-        '''
+        """
         Constructor
-        '''
+        """
 
         # initialize user and item index
         self.user_idx = None
@@ -40,7 +40,7 @@ class Dataset(object):
         self.n_neg_test = n_neg_test
         # get col name of user, item and rating
         self.col_user = col_user
-        self.col_item = col_item 
+        self.col_item = col_item
         self.col_rating = col_rating
         self.col_timestamp = col_timestamp
         # data preprocessing for training and test data
@@ -75,8 +75,10 @@ class Dataset(object):
             self.n_users = len(user_idx)
             self.user_idx = user_idx
 
-            self.user2id = dict(zip(user_idx[self.col_user], user_idx[self.col_user+"_idx"]))
-            self.id2user = {self.user2id[k]:k for k in self.user2id}
+            self.user2id = dict(
+                zip(user_idx[self.col_user], user_idx[self.col_user + "_idx"])
+            )
+            self.id2user = {self.user2id[k]: k for k in self.user2id}
 
         if self.item_idx is None:
             # Map item id
@@ -85,8 +87,10 @@ class Dataset(object):
             self.n_items = len(item_idx)
             self.item_idx = item_idx
 
-            self.item2id = dict(zip(item_idx[self.col_item], item_idx[self.col_item+"_idx"]))
-            self.id2item = {self.item2id[k]:k for k in self.item2id}
+            self.item2id = dict(
+                zip(item_idx[self.col_item], item_idx[self.col_item + "_idx"])
+            )
+            self.id2item = {self.item2id[k]: k for k in self.item2id}
 
         return self._reindex(train, implicit), self._reindex(test, implicit)
 
@@ -107,15 +111,17 @@ class Dataset(object):
             return None
 
         # Map user_idx and item_idx
-        df = pd.merge(df, self.user_idx, on=self.col_user, how='left')
-        df = pd.merge(df, self.item_idx, on=self.col_item, how='left')
+        df = pd.merge(df, self.user_idx, on=self.col_user, how="left")
+        df = pd.merge(df, self.item_idx, on=self.col_item, how="left")
 
         # If implicit feedback, set rating as 1.0 or 0.0
         if implicit:
             df[self.col_rating] = df[self.col_rating].apply(lambda x: float(x > 0))
 
         # Select relevant columns
-        df_reindex = df[[self.col_user + "_idx", self.col_item + "_idx", self.col_rating]]
+        df_reindex = df[
+            [self.col_user + "_idx", self.col_item + "_idx", self.col_rating]
+        ]
         df_reindex.columns = [self.col_user, self.col_item, self.col_rating]
 
         return df_reindex
@@ -127,13 +133,15 @@ class Dataset(object):
         """
 
         self.item_pool = set(self.train[self.col_item].unique())
-        self.interact_status = self.train\
-                                   .groupby(self.col_user)[self.col_item]\
-                                   .apply(set)\
-                                   .reset_index()\
-                                   .rename(columns={self.col_item: self.col_item + '_interacted'})
-        self.interact_status[self.col_item + '_negative'] = self.interact_status[self.col_item + '_interacted']\
-                                                                .apply(lambda x: self.item_pool - x)
+        self.interact_status = (
+            self.train.groupby(self.col_user)[self.col_item]
+            .apply(set)
+            .reset_index()
+            .rename(columns={self.col_item: self.col_item + "_interacted"})
+        )
+        self.interact_status[self.col_item + "_negative"] = self.interact_status[
+            self.col_item + "_interacted"
+        ].apply(lambda x: self.item_pool - x)
 
         self.users, self.items, self.ratings = [], [], []
 
@@ -146,7 +154,6 @@ class Dataset(object):
         self.users = np.array(self.users)
         self.items = np.array(self.items)
         self.ratings = np.array(self.ratings)
-        
 
     def _init_test_data(self):
         """ initialize self.test using 'leave-one-out' evaluation protocol in
@@ -154,41 +161,46 @@ class Dataset(object):
         """
         if self.test is not None:
             # get test positive set for every user
-            test_interact_status = self.test\
-                                       .groupby(self.col_user)[self.col_item]\
-                                       .apply(set)\
-                                       .reset_index().rename(columns={self.col_item: self.col_item + '_interacted_test'})
+            test_interact_status = (
+                self.test.groupby(self.col_user)[self.col_item]
+                .apply(set)
+                .reset_index()
+                .rename(columns={self.col_item: self.col_item + "_interacted_test"})
+            )
 
             # get negative pools for every user based on training and test interactions
             test_interact_status = pd.merge(
-                test_interact_status,
-                self.interact_status,
-                on=self.col_user,
-                how="left"
+                test_interact_status, self.interact_status, on=self.col_user, how="left"
             )
-            test_interact_status[self.col_item + '_negative'] = test_interact_status.apply(
-                    lambda row: row[self.col_item + '_negative'] - row[self.col_item + '_interacted_test'],
-                    axis=1,
+            test_interact_status[
+                self.col_item + "_negative"
+            ] = test_interact_status.apply(
+                lambda row: row[self.col_item + "_negative"]
+                - row[self.col_item + "_interacted_test"],
+                axis=1,
             )
             test_ratings = pd.merge(
                 self.test,
-                test_interact_status[[self.col_user, self.col_item + '_negative']],
+                test_interact_status[[self.col_user, self.col_item + "_negative"]],
                 on=self.col_user,
-                how="left"
+                how="left",
             )
 
             # sample n_neg_test negative samples for testing
             try:
-                test_ratings[self.col_item + '_negative'] = test_ratings[self.col_item + '_negative'].apply(
-                    lambda x: random.sample(x, self.n_neg_test)
-                )
+                test_ratings[self.col_item + "_negative"] = test_ratings[
+                    self.col_item + "_negative"
+                ].apply(lambda x: random.sample(x, self.n_neg_test))
 
             except:
-                min_num = min(map(len, list(test_ratings[self.col_item + '_negative'])))
-                warnings.warn("n_neg_test is larger than negative items set size! We will set n_neg as the smallest size: %d" % min_num)
-                test_ratings[self.col_item + '_negative'] = test_ratings[self.col_item + '_negative'].apply(
-                    lambda x: random.sample(x, min_num)
+                min_num = min(map(len, list(test_ratings[self.col_item + "_negative"])))
+                warnings.warn(
+                    "n_neg_test is larger than negative items set size! We will set n_neg as the smallest size: %d"
+                    % min_num
                 )
+                test_ratings[self.col_item + "_negative"] = test_ratings[
+                    self.col_item + "_negative"
+                ].apply(lambda x: random.sample(x, min_num))
 
             self.test_data = []
 
@@ -200,15 +212,16 @@ class Dataset(object):
                 self.test_items.append(int(getattr(row, self.col_item)))
                 self.test_ratings.append(float(getattr(row, self.col_rating)))
 
-                for i in getattr(row, self.col_item + '_negative'):
+                for i in getattr(row, self.col_item + "_negative"):
                     self.test_users.append(int(getattr(row, self.col_user)))
                     self.test_items.append(int(i))
                     self.test_ratings.append(float(0))
 
-                self.test_data.append ( [
+                self.test_data.append(
+                    [
                         [self.id2user[x] for x in self.test_users],
                         [self.id2item[x] for x in self.test_items],
-                        self.test_ratings
+                        self.test_ratings,
                     ]
                 )
 
@@ -219,25 +232,32 @@ class Dataset(object):
         self.users, self.items, self.ratings = [], [], []
 
         # sample n_neg negative samples for training
-        train_ratings = pd.merge(self.train, self.interact_status[[self.col_user, self.col_item + '_negative']],
-                                 on=self.col_user)
+        train_ratings = pd.merge(
+            self.train,
+            self.interact_status[[self.col_user, self.col_item + "_negative"]],
+            on=self.col_user,
+        )
 
         try:
-            train_ratings[self.col_item + '_negative'] = train_ratings[self.col_item + '_negative'].apply(
-                lambda x: random.sample(x, self.n_neg))
+            train_ratings[self.col_item + "_negative"] = train_ratings[
+                self.col_item + "_negative"
+            ].apply(lambda x: random.sample(x, self.n_neg))
         except:
-            min_num = min(map(len, list(train_ratings[self.col_item + '_negative'])))
-            warnings.warn("n_neg is larger than negative items set size! We will set n_neg as the smallest size: %d" % min_num)
-            train_ratings[self.col_item + '_negative'] = train_ratings[self.col_item + '_negative'].apply(
-                lambda x: random.sample(x, min_num)
+            min_num = min(map(len, list(train_ratings[self.col_item + "_negative"])))
+            warnings.warn(
+                "n_neg is larger than negative items set size! We will set n_neg as the smallest size: %d"
+                % min_num
             )
+            train_ratings[self.col_item + "_negative"] = train_ratings[
+                self.col_item + "_negative"
+            ].apply(lambda x: random.sample(x, min_num))
 
         # generate training data
         for row in train_ratings.itertuples():
             self.users.append(int(getattr(row, self.col_user)))
             self.items.append(int(getattr(row, self.col_item)))
             self.ratings.append(float(getattr(row, self.col_rating)))
-            for i in getattr(row, self.col_item + '_negative'):
+            for i in getattr(row, self.col_item + "_negative"):
                 self.users.append(int(getattr(row, self.col_user)))
                 self.items.append(int(i))
                 self.ratings.append(float(0))
@@ -265,12 +285,12 @@ class Dataset(object):
         for i in range(len(indices) // batch_size):
             begin_idx = i * batch_size
             end_idx = (i + 1) * batch_size
-            batch_indices = indices[begin_idx: end_idx]
+            batch_indices = indices[begin_idx:end_idx]
 
-            # train_loader() could be called and used by our users in other situations, 
+            # train_loader() could be called and used by our users in other situations,
             # who expect the not re-indexed data. So we convert id --> orignal user and item
             # when returning batch
-            
+
             yield [
                 [self.id2user[x] for x in self.users[batch_indices]],
                 [self.id2item[x] for x in self.items[batch_indices]],

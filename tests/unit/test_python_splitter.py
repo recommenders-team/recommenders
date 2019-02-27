@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-from itertools import product
 import pytest
 
 from reco_utils.dataset.split_utils import (
@@ -30,7 +29,6 @@ from reco_utils.common.constants import (
 def test_specs():
     return {
         "number_of_rows": 1000,
-        "user_ids": [1, 2, 3, 4, 5],
         "seed": 123,
         "ratio": 0.6,
         "ratios": [0.2, 0.3, 0.5],
@@ -47,8 +45,7 @@ def python_dataset(test_specs):
     def random_date_generator(start_date, range_in_days):
         """Helper function to generate random timestamps.
 
-        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a
-        -range-in-numpy
+        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a-range-in-numpy
         """
         days_to_add = np.arange(0, range_in_days)
         random_dates = []
@@ -62,15 +59,9 @@ def python_dataset(test_specs):
 
     rating = pd.DataFrame(
         {
-            DEFAULT_USER_COL: np.random.randint(
-                1, 5, test_specs["number_of_rows"]
-            ),
-            DEFAULT_ITEM_COL: np.random.randint(
-                1, 15, test_specs["number_of_rows"]
-            ),
-            DEFAULT_RATING_COL: np.random.randint(
-                1, 5, test_specs["number_of_rows"]
-            ),
+            DEFAULT_USER_COL: np.random.randint(1, 5, test_specs["number_of_rows"]),
+            DEFAULT_ITEM_COL: np.random.randint(1, 15, test_specs["number_of_rows"]),
+            DEFAULT_RATING_COL: np.random.randint(1, 6, test_specs["number_of_rows"]),
             DEFAULT_TIMESTAMP_COL: random_date_generator(
                 "2018-01-01", test_specs["number_of_rows"]
             ),
@@ -79,19 +70,59 @@ def python_dataset(test_specs):
     return rating
 
 
+@pytest.fixture(scope="module")
+def python_int_dataset(test_specs):
+    np.random.seed(test_specs["seed"])
+
+    # generates the user/item affinity matrix. Ratings are in the interval [0, 5), with 0s denoting unrated items
+    return np.random.randint(
+        low=0,
+        high=6,
+        size=(test_specs["number_of_users"], test_specs["number_of_items"]),
+    )
+
+
+@pytest.fixture(scope="module")
+def python_float_dataset(test_specs):
+    np.random.seed(test_specs["seed"])
+
+    # generates the user/item affinity matrix. Ratings are in the interval [0, 5), with 0s denoting unrated items.
+    return (
+        np.random.random(
+            size=(test_specs["number_of_users"], test_specs["number_of_items"])
+        )
+        * 5
+    )
+
+
 def test_split_pandas_data(pandas_dummy_timestamp):
     splits = split_pandas_data_with_ratios(pandas_dummy_timestamp, ratios=[0.5, 0.5])
     assert len(splits[0]) == 5
     assert len(splits[1]) == 5
 
-    splits = split_pandas_data_with_ratios(pandas_dummy_timestamp, ratios=[0.12, 0.36, 0.52])
+    splits = split_pandas_data_with_ratios(
+        pandas_dummy_timestamp, ratios=[0.12, 0.36, 0.52]
+    )
     shape = pandas_dummy_timestamp.shape[0]
     assert len(splits[0]) == round(shape * 0.12)
     assert len(splits[1]) == round(shape * 0.36)
     assert len(splits[2]) == round(shape * 0.52)
 
+    with pytest.raises(ValueError):
+        splits = split_pandas_data_with_ratios(
+            pandas_dummy_timestamp, ratios=[0.6, 0.2, 0.4]
+        )
 
-def test_min_rating_filter(python_dataset):
+
+def test_min_rating_filter():
+    python_dataset = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5],
+            DEFAULT_ITEM_COL: [5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1],
+            DEFAULT_RATING_COL: np.random.randint(1, 6, 15)
+        }
+    )
+
     def count_filtered_rows(data, filter_by="user"):
         split_by_column = DEFAULT_USER_COL if filter_by == "user" else DEFAULT_ITEM_COL
         data_grouped = data.groupby(split_by_column)
@@ -103,22 +134,18 @@ def test_min_rating_filter(python_dataset):
 
         return row_counts
 
-    df_user = min_rating_filter_pandas(python_dataset, min_rating=5, filter_by="user")
-    df_item = min_rating_filter_pandas(python_dataset, min_rating=5, filter_by="item")
+    df_user = min_rating_filter_pandas(python_dataset, min_rating=3, filter_by="user")
+    df_item = min_rating_filter_pandas(python_dataset, min_rating=2, filter_by="item")
     user_rating_counts = count_filtered_rows(df_user, filter_by="user")
     item_rating_counts = count_filtered_rows(df_item, filter_by="item")
 
-    assert all(user_rating_counts)
-    assert all(item_rating_counts)
+    assert all(u >= 3 for u in user_rating_counts)
+    assert all(i >= 2 for i in item_rating_counts)
 
 
 def test_random_splitter(test_specs, python_dataset):
-    """Test random splitter for Spark dataframes.
-
-    NOTE: some split results may not match exactly with the ratios, which may be owing to the
-    limited number of rows in
-    the testing data. A approximate match with certain level of tolerance is therefore used
-    instead for tests.
+    """NOTE: some split results may not match exactly with the ratios, which may be owing to the  limited number of 
+    rows in the testing data. A approximate match with certain level of tolerance is therefore used instead for tests.
     """
     splits = python_random_split(
         python_dataset, ratio=test_specs["ratio"], seed=test_specs["seed"]
@@ -180,10 +207,23 @@ def test_chrono_splitter(test_specs, python_dataset):
 
     # Test all time stamps in test are later than that in train for all users.
     # This is for single-split case.
-    max_train_times = splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
-    min_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
-    check_times = max_train_times.join(min_test_times, lsuffix='_0', rsuffix='_1')
-    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_0'] < check_times[DEFAULT_TIMESTAMP_COL + '_1']).values)
+    max_train_times = (
+        splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]]
+        .groupby(DEFAULT_USER_COL)
+        .max()
+    )
+    min_test_times = (
+        splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]]
+        .groupby(DEFAULT_USER_COL)
+        .min()
+    )
+    check_times = max_train_times.join(min_test_times, lsuffix="_0", rsuffix="_1")
+    assert all(
+        (
+            check_times[DEFAULT_TIMESTAMP_COL + "_0"]
+            < check_times[DEFAULT_TIMESTAMP_COL + "_1"]
+        ).values
+    )
 
     # Test multi-split case
     splits = python_chrono_split(
@@ -209,15 +249,41 @@ def test_chrono_splitter(test_specs, python_dataset):
     assert set(users_train) == set(users_val)
 
     # Test if timestamps are correctly split. This is for multi-split case.
-    max_train_times = splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
-    min_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
-    check_times = max_train_times.join(min_test_times, lsuffix='_0', rsuffix='_1')
-    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_0'] < check_times[DEFAULT_TIMESTAMP_COL + '_1']).values)
+    max_train_times = (
+        splits[0][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]]
+        .groupby(DEFAULT_USER_COL)
+        .max()
+    )
+    min_test_times = (
+        splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]]
+        .groupby(DEFAULT_USER_COL)
+        .min()
+    )
+    check_times = max_train_times.join(min_test_times, lsuffix="_0", rsuffix="_1")
+    assert all(
+        (
+            check_times[DEFAULT_TIMESTAMP_COL + "_0"]
+            < check_times[DEFAULT_TIMESTAMP_COL + "_1"]
+        ).values
+    )
 
-    max_test_times = splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).max()
-    min_val_times = splits[2][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]].groupby(DEFAULT_USER_COL).min()
-    check_times = max_test_times.join(min_val_times, lsuffix='_1', rsuffix='_2')
-    assert all((check_times[DEFAULT_TIMESTAMP_COL + '_1'] < check_times[DEFAULT_TIMESTAMP_COL + '_2']).values)
+    max_test_times = (
+        splits[1][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]]
+        .groupby(DEFAULT_USER_COL)
+        .max()
+    )
+    min_val_times = (
+        splits[2][[DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL]]
+        .groupby(DEFAULT_USER_COL)
+        .min()
+    )
+    check_times = max_test_times.join(min_val_times, lsuffix="_1", rsuffix="_2")
+    assert all(
+        (
+            check_times[DEFAULT_TIMESTAMP_COL + "_1"]
+            < check_times[DEFAULT_TIMESTAMP_COL + "_2"]
+        ).values
+    )
 
 
 def test_stratified_splitter(test_specs, python_dataset):
@@ -254,30 +320,6 @@ def test_stratified_splitter(test_specs, python_dataset):
     )
 
 
-@pytest.fixture(scope="module")
-def python_int_dataset(test_specs):
-    # fix the the random seed
-    np.random.seed(test_specs["seed"])
-
-    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
-    return np.random.randint(
-        low=0,
-        high=6,
-        size=(test_specs["number_of_users"], test_specs["number_of_items"]),
-    )
-
-
-@pytest.fixture(scope="module")
-def python_float_dataset(test_specs):
-    # fix the the random seed
-    np.random.seed(test_specs["seed"])
-
-    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
-    return np.random.random(
-            size=(test_specs["number_of_users"], test_specs["number_of_items"])
-        ) * 5
-
-
 def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
     # generate a syntetic dataset
     X = python_int_dataset
@@ -307,7 +349,7 @@ def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
     # This implementation of the stratified splitter performs a random split at the single user level. Here we check
     # that also this more stringent condition is verified. Note that user to user fluctuations in the split ratio
     # are stronger than for the entire dataset due to the random nature of the per user splitting.
-    # For this reason we allow a slightly bigger tollerance, as specified in the test_specs()
+    # For this reason we allow a slightly bigger tolerance, as specified in the test_specs()
 
     assert (
         (Xtr_rated / X_rated <= test_specs["ratio"] + test_specs["fluctuation"]).all()
@@ -357,7 +399,7 @@ def test_float_numpy_stratified_splitter(test_specs, python_float_dataset):
     # This implementation of the stratified splitter performs a random split at the single user level. Here we check
     # that also this more stringent condition is verified. Note that user to user fluctuations in the split ratio
     # are stronger than for the entire dataset due to the random nature of the per user splitting.
-    # For this reason we allow a slightly bigger tollerance, as specified in the test_specs()
+    # For this reason we allow a slightly bigger tolerance, as specified in the test_specs()
 
     assert Xtr_rated / X_rated == pytest.approx(
         test_specs["ratio"], rel=test_specs["fluctuation"]
