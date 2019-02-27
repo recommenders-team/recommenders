@@ -8,6 +8,7 @@ from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 TOL = 0.5
+ABS_TOL = 0.05
 
 
 @pytest.mark.integration
@@ -47,7 +48,7 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.integration
@@ -87,7 +88,7 @@ def test_ncf_deep_dive_integration(
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.integration
@@ -124,7 +125,7 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.integration
@@ -145,31 +146,28 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
                 "precision_at_k": 0.063195,
                 "recall_at_k": 0.020235,
             },
-        ),
+        )
     ],
 )
 def test_wide_deep(notebooks, size, epochs, expected_values):
     notebook_path = notebooks["wide_deep"]
 
-    MODEL_DIR = 'model_checkpoints'
+    MODEL_DIR = "model_checkpoints"
     params = {
-        'MOVIELENS_DATA_SIZE': size,
-        'EPOCHS': epochs,
-        'EVALUATE_WHILE_TRAINING': False,
-        'MODEL_DIR': MODEL_DIR,
-        'EXPORT_DIR_BASE': MODEL_DIR,
-        'RATING_METRICS': ['rmse', 'mae', 'rsquared', 'exp_var'],
-        'RANKING_METRICS': ['ndcg_at_k', 'map_at_k', 'precision_at_k', 'recall_at_k'],
+        "MOVIELENS_DATA_SIZE": size,
+        "EPOCHS": epochs,
+        "EVALUATE_WHILE_TRAINING": False,
+        "MODEL_DIR": MODEL_DIR,
+        "EXPORT_DIR_BASE": MODEL_DIR,
+        "RATING_METRICS": ["rmse", "mae", "rsquared", "exp_var"],
+        "RANKING_METRICS": ["ndcg_at_k", "map_at_k", "precision_at_k", "recall_at_k"],
     }
     pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=params,
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     for key, value in expected_values.items():
-        assert results[key] == pytest.approx(value, rel=TOL)
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
     shutil.rmtree(MODEL_DIR, ignore_errors=True)
