@@ -69,6 +69,7 @@ PIP_BASE = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill>=0.15.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
+    "databricks-cli": "databricks-cli>=0.8.4"
 }
 
 PIP_PYSPARK = {}
