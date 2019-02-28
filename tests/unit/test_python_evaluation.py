@@ -116,7 +116,7 @@ def python_data():
             )
 
             # Normalize the prediction.
-            rating_pred[PREDICTION_COL] = minmax_scale(rating_pred[PREDICTION_COL])
+            rating_pred[PREDICTION_COL] = minmax_scale(rating_pred[PREDICTION_COL].astype(float))
 
         return rating_true, rating_pred, rating_nohit
     return _generate_python_data
