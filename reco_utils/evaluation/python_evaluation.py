@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+from functools import wraps
 from sklearn.metrics import (
     mean_squared_error,
     mean_absolute_error,
@@ -20,7 +21,64 @@ from reco_utils.common.constants import (
 )
 
 
-def _merge_rating_true_pred(
+def check_column_dtypes(f):
+    """
+    Checks columns of dataframe inputs.
+
+    This includes the checks on 
+        1. whether the input columns exist in the input dataframes.
+        2. whether the data types of col_user as well as col_item are matched in the two input dataframes.
+    """
+    @wraps(f)
+    def check_column_dtypes_wrapper(
+        rating_true,
+        rating_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL,
+        *args,
+        **kwargs
+    ):
+        # check existence of input columns.
+        for col in [col_user, col_item, col_rating]:
+            if col not in rating_true.columns:
+                raise ValueError("schema of y_true not valid. missing {}".format(col))
+
+        for col in [col_user, col_item, col_prediction]:
+            if col not in rating_pred.columns:
+                raise ValueError("schema of y_true not valid. missing {}".format(col))
+
+        # check matching of input column types. the evaluator requires two dataframes have the same
+        # data types of the input columns.
+        if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
+            raise TypeError(
+                "data types of column {} are different in true and prediction".format(
+                    col_user
+                )
+            )
+
+        if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
+            raise TypeError(
+                "data types of column {} are different in true and prediction".format(
+                    col_item
+                )
+            )
+
+        return f(
+            rating_true=rating_true,
+            rating_pred=rating_pred,
+            col_user=col_user,
+            col_item=col_item,
+            col_rating=col_rating,
+            col_prediction=col_prediction,
+            *args,
+            **kwargs
+        )
+    return check_column_dtypes_wrapper
+
+
+def merge_rating_true_pred(
     rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
 ):
     """Join truth and prediction data frames on userID and itemID
@@ -36,26 +94,6 @@ def _merge_rating_true_pred(
     Returns:
         pd.DataFrame: Merged pd.DataFrame
     """
-
-    if col_user not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing User Col")
-    if col_item not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing Item Col")
-    if col_rating not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing Rating Col")
-
-    if col_user not in rating_pred.columns:
-        # pragma : No Cover
-        raise ValueError("Schema of y_pred not valid. Missing User Col")
-    if col_item not in rating_pred.columns:
-        # pragma : No Cover
-        raise ValueError("Schema of y_pred not valid. Missing Item Col")
-    if col_prediction not in rating_pred.columns:
-        raise ValueError(
-            "Schema of y_true not valid. Missing Prediction Col: "
-            + str(rating_pred.columns)
-        )
-
     # Select the columns needed for evaluations
     rating_true = rating_true[[col_user, col_item, col_rating]]
     rating_pred = rating_pred[[col_user, col_item, col_prediction]]
@@ -81,13 +119,14 @@ def _merge_rating_true_pred(
     return rating_true_pred
 
 
+@check_column_dtypes
 def rmse(
     rating_true,
     rating_pred,
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=PREDICTION_COL
 ):
     """Calculate Root Mean Squared Error
 
@@ -102,9 +141,10 @@ def rmse(
     Returns:
         float: Root mean squared error.
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
+
     return np.sqrt(
         mean_squared_error(
             rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
@@ -112,6 +152,7 @@ def rmse(
     )
 
 
+@check_column_dtypes
 def mae(
     rating_true,
     rating_pred,
@@ -133,7 +174,7 @@ def mae(
     Returns:
         float: Mean Absolute Error.
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return mean_absolute_error(
@@ -141,6 +182,7 @@ def mae(
     )
 
 
+@check_column_dtypes
 def rsquared(
     rating_true,
     rating_pred,
@@ -162,7 +204,7 @@ def rsquared(
     Returns:
         float: R squared (min=0, max=1).
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return r2_score(
@@ -170,6 +212,7 @@ def rsquared(
     )
 
 
+@check_column_dtypes
 def exp_var(
     rating_true,
     rating_pred,
@@ -191,7 +234,7 @@ def exp_var(
     Returns:
         float: Explained variance (min=0, max=1).
     """
-    rating_true_pred = _merge_rating_true_pred(
+    rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return explained_variance_score(
@@ -199,7 +242,7 @@ def exp_var(
     )
 
 
-def _merge_ranking_true_pred(
+def merge_ranking_true_pred(
     rating_true,
     rating_pred,
     col_user,
@@ -224,26 +267,6 @@ def _merge_ranking_true_pred(
         pd.DataFrame: new data frame of true data DataFrame of recommendation hits
             number of common users
     """
-
-    if col_user not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing User Col")
-    if col_item not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing Item Col")
-    if col_rating not in rating_true.columns:
-        raise ValueError("Schema of y_true not valid. Missing Rating Col")
-
-    if col_user not in rating_pred.columns:
-        # pragma : No Cover
-        raise ValueError("Schema of y_pred not valid. Missing User Col")
-    if col_item not in rating_pred.columns:
-        # pragma : No Cover
-        raise ValueError("Schema of y_pred not valid. Missing Item Col")
-    if col_prediction not in rating_pred.columns:
-        raise ValueError(
-            "Schema of y_pred not valid. Missing Prediction Col: "
-            + str(rating_pred.columns)
-        )
-
     relevant_func = {"top_k": get_top_k_items}
 
     rating_pred_new = (
@@ -289,6 +312,7 @@ def _merge_ranking_true_pred(
     return rating_true_new, df_hit, n_users
 
 
+@check_column_dtypes
 def precision_at_k(
     rating_true,
     rating_pred,
@@ -323,7 +347,7 @@ def precision_at_k(
     Returns:
         float: precision at k (min=0, max=1)
     """
-    _, df_hit, n_users = _merge_ranking_true_pred(
+    _, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
@@ -350,6 +374,7 @@ def precision_at_k(
     return np.float64(df_count_hit.agg({"precision": "sum"})) / n_users
 
 
+@check_column_dtypes
 def recall_at_k(
     rating_true,
     rating_pred,
@@ -378,7 +403,7 @@ def recall_at_k(
         float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than 
             k items exist for a user in rating_true.
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
@@ -414,6 +439,7 @@ def recall_at_k(
     return np.float64(df_count_all.agg({"recall": "sum"})) / n_users
 
 
+@check_column_dtypes
 def ndcg_at_k(
     rating_true,
     rating_pred,
@@ -443,7 +469,7 @@ def ndcg_at_k(
     Returns:
         float: nDCG at k (min=0, max=1).
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
@@ -492,6 +518,7 @@ def ndcg_at_k(
     return np.float64(df_ndcg.agg({"ndcg": "sum"})) / n_users
 
 
+@check_column_dtypes
 def map_at_k(
     rating_true,
     rating_pred,
@@ -524,7 +551,7 @@ def map_at_k(
     Return:
         float: MAP at k (min=0, max=1).
     """
-    rating_true_new, df_hit, n_users = _merge_ranking_true_pred(
+    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
         rating_true,
         rating_pred,
         col_user,
@@ -564,7 +591,9 @@ def map_at_k(
     return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
 
 
-def get_top_k_items(dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RATING_COL, k=DEFAULT_K):
+def get_top_k_items(
+    dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RATING_COL, k=DEFAULT_K
+):
     """Get the input customer-item-rating tuple in the format of Pandas
     DataFrame, output a Pandas DataFrame in the dense format of top k items
     for each user.
@@ -582,6 +611,10 @@ def get_top_k_items(dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RAT
     Return:
         pd.DataFrame: DataFrame of top k items for each user.
     """
-    return (dataframe.groupby(col_user, as_index=False)
-            .apply(lambda x: x.nlargest(k, col_rating))
-            .reset_index(drop=True))
+    return (
+        dataframe.groupby(col_user, as_index=False)
+        .apply(lambda x: x.nlargest(k, col_rating))
+        .reset_index(drop=True)
+    )
+
+
