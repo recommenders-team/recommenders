@@ -4,6 +4,7 @@
 import pandas as pd
 import pytest
 from mock import Mock
+from sklearn.preprocessing import minmax_scale
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -21,7 +22,9 @@ from reco_utils.evaluation.python_evaluation import (
     precision_at_k,
     recall_at_k,
     ndcg_at_k,
-    map_at_k
+    map_at_k,
+    auc,
+    logloss
 )
 
 TOL = 0.0001
@@ -42,7 +45,7 @@ def target_metrics(scope="module"):
 
 
 @pytest.fixture(scope="module")
-def python_data():
+def python_data(binary_rating=False):
     rating_true = pd.DataFrame(
         {
             DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
@@ -102,6 +105,16 @@ def python_data():
             ],
         }
     )
+
+    if binary_rating:
+        # Convert to binary case.
+        rating_true[DEFAULT_RATING_COL] = (
+            rating_true[DEFAULT_RATING_COL].apply(lambda x: 1 if x >= 3 else 0)
+        )
+
+        # Normalize the prediction.
+        rating_pred[PREDICTION_COL] = minmax_scale(rating_pred[PREDICTION_COL])
+
     return rating_true, rating_pred, rating_nohit
 
 
@@ -305,6 +318,22 @@ def test_python_recall(python_data, target_metrics):
     ) == pytest.approx(1, 0.1)
     assert recall_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert recall_at_k(rating_true, rating_pred, k=10) == target_metrics["recall"]
+
+
+def test_python_auc(python_data, target_metrics):
+    rating_true, rating_pred, _ = python_data(True)
+
+    assert auc(
+        rating_true=rating_true,
+        rating_pred=rating_true,
+        col_prediction=DEFAULT_RATING_COL
+    ) == pytest.approx(1.0, 0.1)
+
+    assert auc(
+        rating_true=rating_true,
+        rating_pred=rating_true,
+        col_prediction=DEFAULT_RATING_COL
+    ) == pytest.approx(target_metrics['auc'], 0.1)
 
 
 def test_python_errors(python_data):
