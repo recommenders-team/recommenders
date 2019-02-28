@@ -4,6 +4,8 @@
 # Licensed under the MIT License.
 
 # This script installs Recommenders/reco_utils as an egg library onto a Databricks Workspace
+# Optionally, also installs a version of mmlspark as a maven library, and prepares the cluster
+# for operationalizations
 
 import argparse
 import textwrap
@@ -51,6 +53,13 @@ PYPI_O16N_LIBS = [
     "pydocumentdb==2.3.3",
 ]
 
+MMLSPARK_INFO = {
+    "maven": {
+        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.15.dev29",
+        "repo": "https://mmlspark.azureedge.net/maven",
+    }
+}
+
 
 def create_egg(
     path_to_recommenders_repo_root=os.getcwd(),
@@ -88,12 +97,12 @@ def prepare_for_operationalization(
     overwrite=False,
 ):
     """
-  Installs appropriate versions of several libraries to support operationalization.
-  """
+    Installs appropriate versions of several libraries to support operationalization.
+    """
     print("Preparing for operationliazation...")
     if status is None:
         ## get status if None
-        status = ClusterApi(my_api_client).get_cluster(args.cluster_id)
+        status = ClusterApi(api_client).get_cluster(cluster_id)
 
     spark_version = status["spark_version"][0]
     cosmosdb_jar_url = COSMOSDB_JAR_FILE_OPTIONS[spark_version]
@@ -166,6 +175,12 @@ if __name__ == "__main__":
         help="Whether to install additional libraries for operationalization.",
         default=False,
     )
+    parser.add_argument(
+        "--mmlspark",
+        action="store_true",
+        help="Whether to install mmlspark.",
+        default=False,
+    )
     parser.add_argument("cluster_id", help="cluster id for the cluster to install on.")
     args = parser.parse_args()
 
@@ -217,8 +232,13 @@ if __name__ == "__main__":
             args.cluster_id
         )
     )
-    formatted_lib = {"egg": uploadpath}
-    LibrariesApi(my_api_client).install_libraries(args.cluster_id, [formatted_lib])
+    libs2install = [{"egg": uploadpath}]
+    ## add mmlspark if selected.
+    if args.mmlspark:
+      print("Installing MMLSPARK package...")
+      libs2install.extend([MMLSPARK_INFO])
+    print(libs2install)
+    LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
 
     ## prepare for operationalization if desired:
     if args.prepare_o16n:
