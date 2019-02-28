@@ -591,6 +591,69 @@ def map_at_k(
     return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
 
 
+# This is a placeholder.
+def auc(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL
+):
+    """
+    Calculate the Area-Under-Curve metric for implicit feedback typed
+    recommender, where rating is binary and prediction is float number ranging
+    from 0 to 1.
+
+    https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
+
+    Args:
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
+        relevancy_method (str): method for getting the most relevant items.
+        k (int): number of top k items per user.
+        threshold (float): threshold of top items per user (optional).
+
+    Return:
+        float: auc (min=0, max=1).
+    """
+
+
+# This is a placeholder.
+def logloss(
+        rating_true,
+        rating_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
+):
+    """
+    Calculate the logloss metric for implicit feedback typed
+    recommender.
+
+    TODO: need a reference.
+
+    Args:
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
+        relevancy_method (str): method for getting the most relevant items.
+        k (int): number of top k items per user.
+        threshold (float): threshold of top items per user (optional).
+
+    Return:
+        float: auc (min=0, max=1).
+    """
+
+
 def get_top_k_items(
     dataframe, col_user=DEFAULT_USER_COL, col_rating=DEFAULT_RATING_COL, k=DEFAULT_K
 ):
