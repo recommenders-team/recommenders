@@ -21,7 +21,7 @@ def cartesian_product(*arrays):
 def score(learner, test_df, user_col, item_col, prediction_col, top_k=0):
     """score all users+movies provided and reduce to top_k items per user if top_k>0"""
     # replace values not known to the model with #na#
-    total_users, total_items = learner.data.classes.values()
+    total_users, total_items = learner.data.train_ds.x.classes.values()
     test_df.loc[~test_df[user_col].isin(total_users),user_col] = total_users[0]
     test_df.loc[~test_df[item_col].isin(total_items),item_col] = total_items[0]
    
