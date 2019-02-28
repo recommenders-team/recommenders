@@ -1,13 +1,16 @@
 #data
 #data format:ffm
 data:
-     train_file  : ../data/ml-100k/ml-100k/ua.base.reg.final # use .reg.final for regression data
-     eval_file  :  ../data/ml-100k/ml-100k/ua.test.reg.final
-     test_file  : ../data/ml-100k/ml-100k/ua.test.reg.final
-     infer_file  :  ../data/ml-100k/ml-100k/ua.test.reg.final
+     train_file  : ./data/ml-100k/ml-100k/ua.base.reg.final # use .reg.final for regression data
+     eval_file  :  ./data/ml-100k/ml-100k/ua.test.reg.final
+     test_file  : ./data/ml-100k/ml-100k/ua.test.reg.final
+     infer_file  :  ./data/ml-100k/ml-100k/ua.test.classification.topN.final
+     user_item_file : ./data/user_item.csv
+     #eval_topN_file : ../data/ml-100k/ml-100k/
      FIELD_COUNT :  5
      FEATURE_COUNT : 213
      data_format : ffm
+     top_K : 10
 
 #model
 #model_type:deepFM or deepWide or dnn or ipnn or opnn or fm or lr
@@ -47,8 +50,9 @@ train:
 info:
     show_step : 20
     save_epoch : 2
-    metrics : ['rmse','mae','rsquare','exp_var','map_at_k','ndcg_at_k','precision_at_k','recall_at_k']
+    metrics : ['rmse','mae','rsquare','exp_var']
+    ranking_metrics  : ['map_at_k','ndcg_at_k','precision_at_k','recall_at_k']
 
 test:
-    topN_flag : False
+    topN_flag : "TRUE"
 

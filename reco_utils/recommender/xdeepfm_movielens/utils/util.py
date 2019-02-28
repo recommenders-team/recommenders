@@ -11,6 +11,8 @@ CONFIG_DIR = './config/'
 TRAIN_YAML = 'network_xdeepFM.yaml'
 TRAIN_NUM = './cache/train_num.csv'
 EVAL_NUM = './cache/eval_num.csv'
+EVAL_TOPN_NUM = './cache/eval_topN_num.csv'  ##to do. need to create one csv with sample number for evaluation of topN
+
 TEST_NUM = './cache/test_num.csv'
 INFER_NUM = './cache/infer_num.csv'
 LOG_DIR = './logs/'

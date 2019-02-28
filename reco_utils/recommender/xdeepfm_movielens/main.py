@@ -71,9 +71,12 @@ def create_hparams(FLAGS):
         show_step=FLAGS['show_step'] if 'show_step' in FLAGS else 1,
         save_epoch=FLAGS['save_epoch'] if 'save_epoch' in FLAGS else 5,
         metrics=FLAGS['metrics'] if 'metrics' in FLAGS else None,
-
+        ranking_metrics=FLAGS['ranking_metrics'] if 'ranking_metrics' in FLAGS else None,
+        user_item_file = FLAGS['user_item_file'] if 'user_item_file' in FLAGS else None,
         ##top N
+        top_K=FLAGS['top_K'] if 'top_K' in FLAGS else None,
         topN_flag=FLAGS['topN_flag'] if 'topN_flag' in FLAGS else None
+        
     )
 
 

@@ -3,6 +3,7 @@ import numpy as np
 import os, time, collections
 import tensorflow as tf
 from IO.iterator import FfmIterator #, DinIterator, CCCFNetIterator
+import reco_utils.evaluation.python_evaluation
 #from IO.din_cache import DinCache
 from IO.ffm_cache import FfmCache
 #from IO.cccfnet_cache import CCCFNetCache
@@ -20,6 +21,7 @@ from src.exDeepFM import ExtremeDeepFMModel
 from src.CIN import CINModel
 #from src.cross import CrossModel
 import utils.util as util
+import pandas as pd
 import utils.metric as metric
 # from utils.log import Log
 
@@ -60,7 +62,7 @@ def create_train_model(model_creator, hparams, scope=None):
 
 
 # run evaluation and get evaluted loss
-def run_eval(load_model, load_sess, filename, sample_num_file, hparams, topN_flag, flag):
+def run_eval(load_model, load_sess, filename, sample_num_file, hparams, flag):
     # load sample num
     with open(sample_num_file, 'r') as f:
         sample_num = int(f.readlines()[0].strip())
@@ -78,8 +80,53 @@ def run_eval(load_model, load_sess, filename, sample_num_file, hparams, topN_fla
     #print('preds',preds)
     labels = labels[:sample_num]
     hparams.logger.info("data num:{0:d}".format(len(labels)))
-    res = metric.cal_metric(labels, preds, hparams, topN_flag, flag) #TopN_flag is a flag for prediction is top N recommendation or not
+    res = metric.cal_metric(labels, preds, hparams, flag) #TopN_flag is a flag for prediction is top N recommendation or not
     return res
+
+def run_eval_topN(load_model, load_sess, filename, sample_num_file, hparams, flag):
+    # load sample num
+    with open(sample_num_file, 'r') as f:
+        sample_num = int(f.readlines()[0].strip())
+    load_sess.run(load_model.iterator.initializer, feed_dict={load_model.filenames: [filename]})
+    preds = []
+    labels = []
+    while True:
+        try:
+            _, _, step_pred, step_labels = load_model.model.eval(load_sess)
+            preds.extend(np.reshape(step_pred, -1))
+            labels.extend(np.reshape(step_labels, -1))
+        except tf.errors.OutOfRangeError:
+            break
+    preds = preds[:sample_num]
+    labels = labels[:sample_num]
+    
+    hparams.logger.info("data num:{0:d}".format(len(labels)))
+    user_data = pd.read_csv (hparams.user_item_file, sep='\t')[['userID','itemID']]
+    prediction = user_data.copy()
+    prediction['prediction'] = preds
+
+    label_df = user_data.copy()
+    label_df['label'] = labels
+
+    ##evaluation##
+    cols = {
+        'col_user': 'userID',
+        'col_item': 'itemID',
+        'col_rating': 'label',
+        'col_prediction': 'prediction'
+    }
+
+    for m in hparams.ranking_metrics:
+        fn = getattr(reco_utils.evaluation.python_evaluation, m)
+        #result = fn(label_df, prediction, **{**cols, 'k': hparams.top_K})
+        result = fn(label_df, prediction, **{**cols, 'k': 10 })
+        print(m, "=", result)
+
+
+
+
+
+
 
 
 # run infer
@@ -270,7 +317,7 @@ def train(hparams, scope=None, target_session=""):
         eval_start = time.time()
         # train_res = run_eval(train_model, train_sess, hparams.train_file_cache, util.TRAIN_NUM, hparams, flag='train')
         #evaluation set
-        eval_res = run_eval(train_model, train_sess, hparams.eval_file_cache, util.EVAL_NUM, hparams, hparams.topN_flag,flag='eval')
+        eval_res = run_eval(train_model, train_sess, hparams.eval_file_cache, util.EVAL_NUM, hparams,flag='eval')
         #print('eval_res',eval_res.items())
         #print('hparams.metrics',hparams.metrics)
         train_info = ', '.join(
@@ -284,7 +331,7 @@ def train(hparams, scope=None, target_session=""):
 
         ##test set
         if hparams.test_file is not None:
-            test_res = run_eval(train_model, train_sess, hparams.test_file_cache, util.TEST_NUM, hparams,  hparams.topN_flag, flag='test')
+            test_res = run_eval(train_model, train_sess, hparams.test_file_cache, util.TEST_NUM, hparams, flag='test')
             test_info = ', '.join(
                 [str(item[0]) + ':' + str(item[1])
                  for item in sorted(test_res.items(), key=lambda x: x[0])])
@@ -310,7 +357,13 @@ def train(hparams, scope=None, target_session=""):
         if eval_res["rmse"] > last_eval:
             last_eval = eval_res["rmse"]  ##replace auc with resquare
 
-
+      ## add top N recommendation
+    if hparams.topN_flag == "TRUE":
+        print('top N recommendation result')
+        run_eval_topN(train_model, train_sess, hparams.infer_file_cache, util.EVAL_TOPN_NUM, hparams, flag='eval')
+      
+      
+       
     writer.close()
     # after train,run infer
     if hparams.infer_file is not None:
