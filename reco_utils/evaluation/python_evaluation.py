@@ -631,8 +631,8 @@ def auc(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     auc_score = roc_auc_score(
-        np.asarray(rating_true_pred[DEFAULT_RATING_COL]),
-        np.asarray(rating_true_pred[PREDICTION_COL])
+        np.asarray(rating_true_pred[DEFAULT_RATING_COL].values),
+        np.asarray(rating_true_pred[PREDICTION_COL].values)
     )
 
     # Round the AUC score to four digits.
@@ -678,8 +678,8 @@ def logloss(
     )
 
     log_loss_score = log_loss(
-        np.asarray(rating_true_pred[DEFAULT_RATING_COL]),
-        np.asarray(rating_true_pred[PREDICTION_COL])
+        np.asarray(rating_true_pred[DEFAULT_RATING_COL].values),
+        np.asarray(rating_true_pred[PREDICTION_COL].values)
     )
 
     # Round the AUC score to four digits.
