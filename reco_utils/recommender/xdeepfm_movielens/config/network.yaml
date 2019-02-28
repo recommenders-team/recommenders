@@ -1,0 +1,47 @@
+#data
+#data format:ffm
+data:
+     train_file  :  data/dnn/train.userid.txt
+     eval_file  :  data/dnn/val.userid.txt
+     test_file  :  data/dnn/test.userid.txt
+     infer_file  :  data/dnn/infer.userid.txt
+     FIELD_COUNT :  33
+     FEATURE_COUNT : 194081
+     data_format : ffm
+
+#model
+#model_type:deepFM or deepWide or dnn or ipnn or opnn or fm or lr
+model:
+    method : classification
+    model_type : exDeepFM
+    dim : 10
+    layer_sizes : [100, 100]
+    activation : [relu, relu]
+    dropout : [0.0, 0.0]
+    cross_layer_sizes : [100, 100, 50]
+    infer_model_name : epoch_2
+
+
+#train
+#init_method: normal,tnormal,uniform,he_normal,he_uniform,xavier_normal,xavier_uniform
+train:
+    init_method: tnormal
+    init_value : 0.01
+    embed_l2 : 0.0001
+    embed_l1 : 0.0000
+    layer_l2 : 0.0001
+    layer_l1 : 0.0000
+    cross_l2 : 0.0001
+    cross_l1 : 0.000
+    learning_rate : 0.0001
+    loss : log_loss
+    optimizer : adam
+    epochs : 10
+    batch_size : 128
+
+#show info
+#metric :'auc','logloss', 'group_auc'
+info:
+    show_step : 1
+    save_epoch : 5
+    metrics : ['auc','logloss']

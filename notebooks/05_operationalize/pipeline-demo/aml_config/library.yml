@@ -1,0 +1,21 @@
+environment:
+# Databricks details
+  databricks:
+# List of maven libraries.
+
+# List of PyPi libraries
+    pypiLibraries:
+    - package: seaborn
+               numpy
+               pandas
+               pyspark
+# List of RCran libraries
+    rcranLibraries:
+    - package: ada
+      repo: http://cran.us.r-project.org
+# List of JAR libraries
+#    jarLibraries:
+#    - library: dbfs:/mnt/libraries/library.jar
+# List of Egg libraries
+    eggLibraries:
+    - library: dbfs:/mnt/libraries/Recommenders.egg
