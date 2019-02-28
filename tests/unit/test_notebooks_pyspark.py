@@ -33,3 +33,10 @@ def test_evaluation_runs(notebooks):
     notebook_path = notebooks["evaluation"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
+
+@pytest.mark.notebooks
+@pytest.mark.spark
+def test_spark_hypertune(notebooks):
+    notebook_path = notebooks["spark_hypertune"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+
