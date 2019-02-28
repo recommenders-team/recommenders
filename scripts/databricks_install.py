@@ -137,9 +137,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
       This script packages the reco_utils directory into a .egg file and installs it onto a databricks cluster. 
-      Optionally, this script may also install additional libraries useful for operationalization.
-      This script requires that you have installed databricks-cli in the python environment in which you are running
-      this script, and that have you have already configured it with a profile.
+      Optionally, this script may also install the mmlspark library, and it may also install additional libraries useful 
+      for operationalization. This script requires that you have installed databricks-cli in the python environment in 
+      which you are running this script, and that have you have already configured it with a profile.
       """,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
@@ -235,8 +235,8 @@ if __name__ == "__main__":
     libs2install = [{"egg": uploadpath}]
     ## add mmlspark if selected.
     if args.mmlspark:
-      print("Installing MMLSPARK package...")
-      libs2install.extend([MMLSPARK_INFO])
+        print("Installing MMLSPARK package...")
+        libs2install.extend([MMLSPARK_INFO])
     print(libs2install)
     LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
 
