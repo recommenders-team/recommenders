@@ -299,5 +299,6 @@ Top K: {:d}
 MAP:         {:4.2f}
 NDCG:        {:4.2f}
 Precision@K: {:4.2f} 
-Recall@K:    {:4.2f}""".format(model.model_str, TOPK, eval_map, eval_ndcg,
+Recall@K:    {:4.2f}
+""".format(model.model_str, TOPK, eval_map, eval_ndcg,
                                eval_precision, eval_recall))
