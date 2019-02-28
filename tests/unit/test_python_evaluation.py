@@ -41,7 +41,8 @@ def target_metrics():
         "precision": pytest.approx(0.26666, TOL),
         "map": pytest.approx(0.23613, TOL),
         "recall": pytest.approx(0.37777, TOL),
-        "auc": pytest.approx(0.75, TOL)
+        "auc": pytest.approx(0.75, TOL),
+        "logloss": pytest.approx(0.7835, TOL)
     }
 
 
@@ -338,6 +339,23 @@ def test_python_auc(python_data, target_metrics):
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL
     ) == pytest.approx(target_metrics['auc'], 0.1)
+
+
+def test_python_logloss(python_data, target_metrics):
+    rating_true, rating_pred, _ = python_data(binary_rating=True)
+
+    assert logloss(
+        rating_true=rating_true,
+        rating_pred=rating_true,
+        col_prediction=DEFAULT_RATING_COL
+    ) == pytest.approx(0, 0.1)
+
+    assert logloss(
+        rating_true=rating_true,
+        rating_pred=rating_pred,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
+    ) == pytest.approx(target_metrics['logloss'], 0.1)
 
 
 def test_python_errors(python_data):
