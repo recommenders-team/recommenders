@@ -171,14 +171,20 @@ This option utilizes an installation script to do the setup, and it requires add
 >        ```
 
 
-Once you have confirmed the databricks cluster is *RUNNING*, install the modules within this repository with the following commands:
+Once you have confirmed the databricks cluster is *RUNNING*, install the modules within this repository with the following commands. 
 
 ```{shell}
 cd Recommenders
 ./scripts/databricks_install.py <CLUSTER_ID>
 ```
 
-**Note** If you are planning on running through the sample code for operationalization [here](notebooks//05_operationalize/als_movie_o16n.ipynb), you need to prepare the cluster for operationalization. You can do so by adding an additional option to the script run:
+The installation script has a number of options that can also deal with different databricks-cli profiles, install a version of the mmlspark library, or prepare the cluster for operationalization. For all options, please see:
+
+```{shell}
+./scripts/databricks_install.py -h
+```
+
+**Note** If you are planning on running through the sample code for operationalization [here](notebooks/05_operationalize/als_movie_o16n.ipynb), you need to prepare the cluster for operationalization. You can do so by adding an additional option to the script run. <CLUSTER_ID> is the same as that mentioned above, and can be identified by running `databricks clusters list` and selecting the appropriate cluster.
 
 ```{shell}
 ./scripts/databricks_install.py --prepare-o16n <CLUSTER_ID>
@@ -224,7 +230,7 @@ import reco_utils
 
 ## Prepare Azure Databricks for Operationalization
 
-This repository includes an end-to-end example notebook that uses Azure Datbaricks to estimate a recommendation model using Alternating Least Squares, writes pre-computed recommendations to Azure Cosmos DB, and then creates a real-time scoring service that retrieves the recommendations from Cosmos DB. In order to execute that [notebook](notebooks//05_operationalize/als_movie_o16n.ipynb), you must install the Recommenders repository as a library (as described above), **AND** you must also install some additional dependencies. With the *Quick install* method, you just need to pass an additional option to the `scripts/databricks_install.py` script.
+This repository includes an end-to-end example notebook that uses Azure Datbaricks to estimate a recommendation model using Alternating Least Squares, writes pre-computed recommendations to Azure Cosmos DB, and then creates a real-time scoring service that retrieves the recommendations from Cosmos DB. In order to execute that [notebook](notebooks/05_operationalize/als_movie_o16n.ipynb), you must install the Recommenders repository as a library (as described above), **AND** you must also install some additional dependencies. With the *Quick install* method, you just need to pass an additional option to the [installation script](scripts/databricks_install.py).
 
 <details>
 <summary><strong><em>Quick install</em></strong></summary>
