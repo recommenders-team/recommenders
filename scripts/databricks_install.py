@@ -108,12 +108,14 @@ def prepare_for_operationalization(cluster_id, api_client, status=None, dbfs_pat
 
 if __name__ == "__main__":
   parser = argparse.ArgumentParser(
-      description=textwrap.dedent(
+      description=
       """
-      This script packages the reco_utils directory into a .egg file and installs it onto a databricks cluster.
-      """
-      ),
-      formatter_class=argparse.RawDescriptionHelpFormatter,
+      This script packages the reco_utils directory into a .egg file and installs it onto a databricks cluster. 
+      Optionally, this script may also install additional libraries useful for operationalization.
+      This script requires that you have installed databricks-cli in the python environment in which you are running
+      this script, and that have you have already configured it with a profile.
+      """,
+      formatter_class=argparse.ArgumentDefaultsHelpFormatter,
   )
   parser.add_argument("--profile", 
       help="The CLI profile to use for connecting to the databricks workspace",
@@ -125,7 +127,7 @@ if __name__ == "__main__":
       help="Name of the egg you want to generate. Useful if you want to name based on branch or date.",
       default="Recommenders.egg")
   parser.add_argument("--dbfs-path",
-      help="The directory you want to place the egg in",
+      help="The directory on dbfs that want to place files in",
       default="dbfs:/FileStore/jars")
   parser.add_argument("--overwrite",
       action="store_true",
