@@ -187,7 +187,7 @@ def notebooks():
         "spark_hypertune": os.path.join(
             folder_notebooks,
             "04_model_select_and_optimize",
-            "hypertune_spark_deep_dive.ipynb"),
+            "hypertune_spark_deep_dive.ipynb",
+        ),
     }
     return paths
-
