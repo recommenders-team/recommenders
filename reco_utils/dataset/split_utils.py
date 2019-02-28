@@ -135,7 +135,7 @@ def _check_min_rating_filter(filter_by, min_rating, col_user, col_item):
     return split_by_column, split_with_column
 
 
-def split_pandas_data_with_ratios(data, ratios, seed=1234, shuffle=False):
+def split_pandas_data_with_ratios(data, ratios, seed=42, shuffle=False):
     """Helper function to split pandas DataFrame with given ratios
 
     Note:

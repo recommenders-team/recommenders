@@ -159,6 +159,9 @@ def notebooks():
         "dkn_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "dkn_synthetic.ipynb"
         ),
+        "wide_deep": os.path.join(
+            folder_notebooks, "00_quick_start", "wide_deep_movielens.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
@@ -180,7 +183,7 @@ def notebooks():
         "vowpal_wabbit_deep_dive": os.path.join(
             folder_notebooks, "02_model", "vowpal_wabbit_deep_dive.ipynb"
         ),
-        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
+        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb")
     }
     return paths
 
