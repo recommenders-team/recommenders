@@ -123,7 +123,7 @@ def python_data():
 
 
 def test_column_dtypes_match(python_data):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data()
 
     # Change data types of true and prediction data, and there should type error produced.
     rating_true_copy = rating_true.copy()
@@ -148,7 +148,7 @@ def test_column_dtypes_match(python_data):
 
 
 def test_merge_rating(python_data):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data()
 
     rating_true_pred = merge_rating_true_pred(
         rating_true,
@@ -167,7 +167,7 @@ def test_merge_rating(python_data):
 
 
 def test_merge_ranking(python_data):
-    ranking_true, ranking_pred, _ = python_data
+    ranking_true, ranking_pred, _ = python_data()
 
     ranking_true_pred, data_hit, n_users = merge_ranking_true_pred(
         ranking_true,
@@ -191,7 +191,7 @@ def test_merge_ranking(python_data):
 
 
 def test_python_rmse(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data()
     assert (
         rmse(rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL)
         == 0
@@ -200,7 +200,7 @@ def test_python_rmse(python_data, target_metrics):
 
 
 def test_python_mae(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data()
     assert (
         mae(rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL)
         == 0
@@ -209,7 +209,7 @@ def test_python_mae(python_data, target_metrics):
 
 
 def test_python_rsquared(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data()
 
     assert rsquared(
         rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
@@ -218,7 +218,7 @@ def test_python_rsquared(python_data, target_metrics):
 
 
 def test_python_exp_var(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data()
 
     assert exp_var(
         rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
@@ -227,7 +227,7 @@ def test_python_exp_var(python_data, target_metrics):
 
 
 def test_python_ndcg_at_k(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data()
 
     assert (
         ndcg_at_k(
@@ -243,7 +243,7 @@ def test_python_ndcg_at_k(python_data, target_metrics):
 
 
 def test_python_map_at_k(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data()
 
     assert (
         map_at_k(
@@ -259,7 +259,7 @@ def test_python_map_at_k(python_data, target_metrics):
 
 
 def test_python_precision(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data()
     assert (
         precision_at_k(
             k=10,
@@ -315,7 +315,7 @@ def test_python_precision(python_data, target_metrics):
 
 
 def test_python_recall(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data()
 
     assert recall_at_k(
         k=10, rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
@@ -359,7 +359,7 @@ def test_python_logloss(python_data, target_metrics):
 
 
 def test_python_errors(python_data):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data()
 
     with pytest.raises(ValueError):
         rmse(rating_true, rating_true, col_user="not_user")
