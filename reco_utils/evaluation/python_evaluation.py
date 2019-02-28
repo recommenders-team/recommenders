@@ -9,6 +9,8 @@ from sklearn.metrics import (
     mean_absolute_error,
     r2_score,
     explained_variance_score,
+    roc_auc_score,
+    log_loss
 )
 
 from reco_utils.common.constants import (
@@ -621,6 +623,18 @@ def auc(
     Return:
         float: auc (min=0, max=1).
     """
+    rating_true_pred = merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+    auc_score = roc_auc_score(
+        np.asarray(rating_true_pred[DEFAULT_RATING_COL]),
+        np.asarray(rating_true_pred[PREDICTION_COL])
+    )
+
+    # Round the AUC score to four digits.
+    auc_score = round(auc_score, 4)
+
+    return auc_score
 
 
 # This is a placeholder.
@@ -634,7 +648,11 @@ def logloss(
 ):
     """
     Calculate the logloss metric for implicit feedback typed
-    recommender.
+    recommender, where rating is binary and prediction is float number ranging
+    from 0 to 1.
+
+    https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
+
 
     TODO: need a reference.
 
@@ -652,6 +670,25 @@ def logloss(
     Return:
         float: auc (min=0, max=1).
     """
+    rating_true_pred = merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+
+    # To make sure that there is no N/A in the logloss metric calculation.
+    rating_true_pred[PREDICTION_COL] = (
+        rating_true_pred[PREDICTION_COL].apply(lambda x: max(min(x, 1.0 - 10e-12), 10e-12))
+    )
+
+    log_loss_score = log_loss(
+        np.asarray(rating_true_pred[DEFAULT_RATING_COL]),
+        np.asarray(rating_true_pred[PREDICTION_COL])
+    )
+
+    # Round the AUC score to four digits.
+    log_loss_score = round(log_loss_score, 4)
+
+    return log_loss_score
+
 
 
 def get_top_k_items(
