@@ -183,10 +183,7 @@ def notebooks():
         "vowpal_wabbit_deep_dive": os.path.join(
             folder_notebooks, "02_model", "vowpal_wabbit_deep_dive.ipynb"
         ),
-        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
-        "spark_hypertune": os.path.join(
-            folder_notebooks,
-            "04_model_select_and_optimize", "hypertune_spark_deep_dive.ipynb"),
+        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb")
     }
     return paths
 
