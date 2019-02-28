@@ -41,81 +41,84 @@ def target_metrics(scope="module"):
         "precision": pytest.approx(0.26666, TOL),
         "map": pytest.approx(0.23613, TOL),
         "recall": pytest.approx(0.37777, TOL),
+        "auc": pytest.approx(0.75, TOL)
     }
 
 
 @pytest.fixture(scope="module")
-def python_data(binary_rating=False):
-    rating_true = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
-            DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
-        }
-    )
-    rating_pred = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            DEFAULT_ITEM_COL: [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
-            PREDICTION_COL: [
-                14,
-                13,
-                12,
-                14,
-                13,
-                12,
-                11,
-                10,
-                14,
-                13,
-                12,
-                11,
-                10,
-                9,
-                8,
-                7,
-                6,
-                5,
-            ],
-        }
-    )
-    rating_nohit = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            DEFAULT_ITEM_COL: [100] * rating_pred.shape[0],
-            PREDICTION_COL: [
-                14,
-                13,
-                12,
-                14,
-                13,
-                12,
-                11,
-                10,
-                14,
-                13,
-                12,
-                11,
-                10,
-                9,
-                8,
-                7,
-                6,
-                5,
-            ],
-        }
-    )
-
-    if binary_rating:
-        # Convert to binary case.
-        rating_true[DEFAULT_RATING_COL] = (
-            rating_true[DEFAULT_RATING_COL].apply(lambda x: 1 if x >= 3 else 0)
+def python_data():
+    def _generate_python_data(binary_rating=False):
+        rating_true = pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
+                DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
+            }
+        )
+        rating_pred = pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                DEFAULT_ITEM_COL: [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
+                PREDICTION_COL: [
+                    14,
+                    13,
+                    12,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    9,
+                    8,
+                    7,
+                    6,
+                    5,
+                ],
+            }
+        )
+        rating_nohit = pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                DEFAULT_ITEM_COL: [100] * rating_pred.shape[0],
+                PREDICTION_COL: [
+                    14,
+                    13,
+                    12,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    9,
+                    8,
+                    7,
+                    6,
+                    5,
+                ],
+            }
         )
 
-        # Normalize the prediction.
-        rating_pred[PREDICTION_COL] = minmax_scale(rating_pred[PREDICTION_COL])
+        if binary_rating:
+            # Convert to binary case.
+            rating_true[DEFAULT_RATING_COL] = (
+                rating_true[DEFAULT_RATING_COL].apply(lambda x: 1.0 if x >= 3 else 0.0)
+            )
 
-    return rating_true, rating_pred, rating_nohit
+            # Normalize the prediction.
+            rating_pred[PREDICTION_COL] = minmax_scale(rating_pred[PREDICTION_COL])
+
+        return rating_true, rating_pred, rating_nohit
+    return _generate_python_data
 
 
 def test_column_dtypes_match(python_data):
@@ -321,7 +324,7 @@ def test_python_recall(python_data, target_metrics):
 
 
 def test_python_auc(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data(True)
+    rating_true, rating_pred, _ = python_data(binary_rating=True)
 
     assert auc(
         rating_true=rating_true,
@@ -331,8 +334,9 @@ def test_python_auc(python_data, target_metrics):
 
     assert auc(
         rating_true=rating_true,
-        rating_pred=rating_true,
-        col_prediction=DEFAULT_RATING_COL
+        rating_pred=rating_pred,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
     ) == pytest.approx(target_metrics['auc'], 0.1)
 
 
