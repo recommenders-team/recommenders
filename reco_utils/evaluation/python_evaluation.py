@@ -593,6 +593,7 @@ def map_at_k(
     return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
 
 
+@check_column_dtypes
 # This is a placeholder.
 def auc(
     rating_true,
@@ -609,6 +610,12 @@ def auc(
 
     https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
 
+    Note:
+        The evaluation does not require a leave-one-out scenario.
+        This metric does not calculate group-based AUC which considers the AUC scores
+        averaged across users. It is also not limited to k. Instead, it calculates the
+        scores on the entire prediction results regardless the users.
+
     Args:
         rating_true (pd.DataFrame): True data.
         rating_pred (pd.DataFrame): Predicted data.
@@ -616,12 +623,9 @@ def auc(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
-        relevancy_method (str): method for getting the most relevant items.
-        k (int): number of top k items per user.
-        threshold (float): threshold of top items per user (optional).
 
     Return:
-        float: auc (min=0, max=1).
+        float: auc_score (min=0, max=1).
     """
     rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -637,7 +641,7 @@ def auc(
     return auc_score
 
 
-# This is a placeholder.
+@check_column_dtypes
 def logloss(
         rating_true,
         rating_pred,
@@ -651,10 +655,7 @@ def logloss(
     recommender, where rating is binary and prediction is float number ranging
     from 0 to 1.
 
-    https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
-
-
-    TODO: need a reference.
+    https://en.wikipedia.org/wiki/Loss_functions_for_classification#Cross_entropy_loss_(Log_Loss)
 
     Args:
         rating_true (pd.DataFrame): True data.
@@ -663,12 +664,9 @@ def logloss(
         col_item (str): column name for item.
         col_rating (str): column name for rating.
         col_prediction (str): column name for prediction.
-        relevancy_method (str): method for getting the most relevant items.
-        k (int): number of top k items per user.
-        threshold (float): threshold of top items per user (optional).
 
     Return:
-        float: auc (min=0, max=1).
+        float: log_loss_score (min=-\inf, max=\inf).
     """
     rating_true_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -688,7 +686,6 @@ def logloss(
     log_loss_score = round(log_loss_score, 4)
 
     return log_loss_score
-
 
 
 def get_top_k_items(
