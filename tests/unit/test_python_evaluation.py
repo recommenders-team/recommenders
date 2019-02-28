@@ -30,8 +30,8 @@ from reco_utils.evaluation.python_evaluation import (
 TOL = 0.0001
 
 
-@pytest.fixture
-def target_metrics(scope="module"):
+@pytest.fixture(scope="module")
+def target_metrics():
     return {
         "rmse": pytest.approx(7.254309, TOL),
         "mae": pytest.approx(6.375, TOL),
