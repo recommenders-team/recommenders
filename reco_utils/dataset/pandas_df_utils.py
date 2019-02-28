@@ -42,10 +42,7 @@ def user_item_pairs(
 
     # Filter
     if user_item_filter_df is not None:
-        user_item_col = [user_col, item_col]
-        users_items = users_items.loc[
-            ~users_items.set_index(user_item_col).index.isin(user_item_filter_df.set_index(user_item_col).index)
-        ]
+        users_items = filter_by(users_items, user_item_filter_df, [user_col, item_col])
 
     if shuffle:
         users_items = users_items.sample(frac=1).reset_index(drop=True)
