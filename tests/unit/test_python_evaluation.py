@@ -338,7 +338,7 @@ def test_python_auc(python_data, target_metrics):
         rating_pred=rating_pred,
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL
-    ) == pytest.approx(target_metrics['auc'], 0.1)
+    ) == target_metrics['auc']
 
 
 def test_python_logloss(python_data, target_metrics):
@@ -355,7 +355,7 @@ def test_python_logloss(python_data, target_metrics):
         rating_pred=rating_pred,
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL
-    ) == pytest.approx(target_metrics['logloss'], 0.1)
+    ) == target_metrics['logloss']
 
 
 def test_python_errors(python_data):
