@@ -7,6 +7,25 @@ import logging
 
 log = logging.getLogger(__name__)
 
+from tqdm import tqdm
+
+
+class TqdmUpTo(tqdm):
+    """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
+
+    def update_to(self, b=1, bsize=1, tsize=None):
+        """
+        b  : int, optional
+            Number of blocks transferred so far [default: 1].
+        bsize  : int, optional
+            Size of each block (in tqdm units) [default: 1].
+        tsize  : int, optional
+            Total size (in tqdm units). If [default: None] remains unchanged.
+        """
+        if tsize is not None:
+            self.total = tsize
+        self.update(b * bsize - self.n)  # will also set self.n = b * bsize
+
 
 def maybe_download(url, filename, work_directory=".", expected_bytes=None):
     """Download a file if it is not already downloaded.
@@ -22,7 +41,8 @@ def maybe_download(url, filename, work_directory=".", expected_bytes=None):
     """
     filepath = os.path.join(work_directory, filename)
     if not os.path.exists(filepath):
-        filepath, _ = urlretrieve(url, filepath)
+        with TqdmUpTo(unit="B", unit_scale=True) as t:
+            filepath, _ = urlretrieve(url, filepath, reporthook=t.update_to)
     else:
         log.debug("File {} already downloaded".format(filepath))
     if expected_bytes is not None:
@@ -32,3 +52,4 @@ def maybe_download(url, filename, work_directory=".", expected_bytes=None):
             raise IOError("Failed to verify {}".format(filepath))
 
     return filepath
+

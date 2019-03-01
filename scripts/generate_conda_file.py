@@ -70,6 +70,7 @@ PIP_BASE = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill>=0.15.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
+    "tqdm": "tqdm==4.31.1"
 }
 
 PIP_PYSPARK = {}
