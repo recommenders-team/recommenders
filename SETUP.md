@@ -16,7 +16,7 @@ This document describes how to setup all the dependencies to run the notebooks i
 * [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
   * [Repository installation](#repository-installation)
-  * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
+  * [Troubleshooting Installation on Azure Databricks](#Troubleshooting-Installation-on-Azure-Databricks)
 * [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
 
 ## Compute environments
