@@ -594,7 +594,6 @@ def map_at_k(
 
 
 @check_column_dtypes
-# This is a placeholder.
 def auc(
     rating_true,
     rating_pred,
