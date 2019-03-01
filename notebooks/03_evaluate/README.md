@@ -18,6 +18,8 @@ Two approaches for evaluating model performance are demonstrated along with thei
     * Recall - this measures the proportion of relevant items that are recommended
     * Normalized Discounted Cumulative Gain (NDCG) - evaluates how well the predicted items for a user are ranked based on relevance
     * Mean Average Precision (MAP) - average precision for each user normalized over all users
+    * Arear Under Curver (AUC) - integral area under the receiver operating characteristic curve
+    * Logistic loss (Logloss) - the negative log-likelihood of the true labels given the predictions of a classifier
 
 More details on recommender metrics can be found in ths paper by Asela Gunawardana and Guy Shani: [A Survey of Accuracy Evaluation Metrics of Recommendation Tasks
-](http://jmlr.csail.mit.edu/papers/volume10/gunawardana09a/gunawardana09a.pdf).
+](http://jmlr.csail.mit.edu/papers/volume10/gunawardana09a/gunawardana09a.pdf) or the references as cited in the [evaluation notebook](evaluation.ipynb).
