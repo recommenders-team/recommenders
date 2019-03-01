@@ -1,0 +1,54 @@
+#data
+#data format:ffm
+data: 
+    FIELD_COUNT :  20 #number of fields 
+    FEATURE_COUNT : 10000  #number of features
+    data_format : ffm  # xdeepfm requires ffm format
+    load_saved_model : False  #set to True if you want to load a pre-trained model
+    load_model_name : 'you model path'  #the model path, if you want to load a pre-trained model
+
+#model
+model:
+    method : classification # classification or regression
+    model_type : xDeepFM
+    dim : 10 # dimennsion of feature embedding
+    layer_sizes : [100,100]  # layers' size of DNN. In this example, DNN has two layers, and each layer has 100 hidden nodes.
+    activation : [relu, relu] # activation function for DNN
+    user_dropout: False 
+    dropout : [0.0, 0.0]  #drop out values for DNN layer
+    cross_layer_sizes : [1]  # layers' size for CIN.
+    cross_activation : 'identity' # activation function for CIN
+    use_Linear_part : False 
+    use_FM_part : False
+    use_CIN_part: True 
+    use_DNN_part: False
+
+
+#train
+#init_method: normal,tnormal,uniform,he_normal,he_uniform,xavier_normal,xavier_uniform
+train:
+    init_method: tnormal  # method for initializing model parameters
+    init_value : 0.3 # stddev values for initializing model parameters
+    embed_l2 : 0.0001 # l2 regularization for embedding parameters
+    embed_l1 : 0.0000 # l1 regularization for embedding parameters
+    layer_l2 : 0.0001 # l2 regularization for hidden layer parameters
+    layer_l1 : 0.0000 # l1 regularization for hidden layer parameters
+    cross_l2 : 0.0000  # l2 regularization for cross layer parameters
+    cross_l1 : 0.000   # l1 regularization for cross layer parameters
+    learning_rate : 0.0005  
+    loss : log_loss     #log_loss, cross_entropy_loss, or square_loss
+    optimizer : adam  # adam, adadelta, sgd, ftrl, gd, padagrad, pgd, rmsprop
+    epochs : 50  #   number of epoch for training
+    batch_size : 128  # batch size 
+    enable_BN : False  # whether to use batch normalization in hidden layers
+    fast_CIN_d: 0   # if the value is >0, then use fast_CIN. fast_CIN_d is the dimension for parameter decomposition.
+
+#show info
+#metric :'auc','logloss', 'group_auc'
+info:
+    show_step : 200000   #print training information after a certain number of mini-batch 
+    save_model: False   #whether to save modl
+    save_epoch : 2    #is save_model is set to True, save the model every save_epoch.
+    metrics : ['auc','logloss']  #metrics for evaluation.
+    
+

@@ -1,0 +1,55 @@
+data:
+  doc_size: 10
+  word_size: 8033 
+  entity_size: 3777 
+  data_format: dkn
+  
+info:
+  metrics:
+  - auc
+  - acc
+  - f1
+  - logloss
+  show_step: 100000
+  
+model:
+  method : classification
+  activation:
+  - sigmoid
+  attention_activation: relu
+  attention_dropout: 0.0
+  attention_layer_sizes: 100
+  dim: 100
+ 
+  entity_dim: 100
+  entity_embedding_method: TransE
+  transform: true
+ 
+  dropout:
+  - 0.0
+  filter_sizes:
+  - 1
+  - 2
+  - 3
+  layer_sizes:
+  - 300
+  # model_type: DKN_without_context
+  model_type: dkn
+  num_filters: 100
+  infer_model_name : epoch_2
+
+train:
+  batch_size: 100
+  embed_l1: 0.000
+  embed_l2: 0.0005
+  epochs: 50
+  init_method: uniform
+  init_value: 0.1
+  layer_l1: 0.000
+  layer_l2: 0.0005
+  learning_rate: 0.00002
+  loss: log_loss
+  optimizer: adam
+  save_model: False
+  save_epoch : 2
+  enable_BN : False
