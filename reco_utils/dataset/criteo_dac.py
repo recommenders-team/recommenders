@@ -8,6 +8,7 @@ import tarfile
 
 from reco_utils.dataset.url_utils import maybe_download
 from reco_utils.common.notebook_utils import is_databricks
+from reco_utils.common.python_utils import _clean_up
 
 try:
     from pyspark.sql.types import (
@@ -140,10 +141,3 @@ def _load_datafile(local_cache_path="dac.tar.gz", dbutils=None):
 
     return extracted_dir
 
-
-def _clean_up(filepath):
-    """ Remove cached file. Be careful not to erase anything else. """
-    try:
-        os.remove(filepath)
-    except OSError:
-        pass
