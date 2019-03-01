@@ -49,3 +49,11 @@ def lift(cooccurrence):
         result = cooccurrence / (diag_rows * diag_cols)
 
     return np.array(result)
+
+
+def _clean_up(filepath):
+    """ Remove cached file. Be careful not to erase anything else. """
+    try:
+        os.remove(filepath)
+    except OSError:
+        pass
