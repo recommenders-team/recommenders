@@ -4,6 +4,7 @@
 import pandas as pd
 import pytest
 from mock import Mock
+from sklearn.preprocessing import minmax_scale
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -21,14 +22,16 @@ from reco_utils.evaluation.python_evaluation import (
     precision_at_k,
     recall_at_k,
     ndcg_at_k,
-    map_at_k
+    map_at_k,
+    auc,
+    logloss
 )
 
 TOL = 0.0001
 
 
-@pytest.fixture
-def target_metrics(scope="module"):
+@pytest.fixture(scope="module")
+def target_metrics():
     return {
         "rmse": pytest.approx(7.254309, TOL),
         "mae": pytest.approx(6.375, TOL),
@@ -38,75 +41,89 @@ def target_metrics(scope="module"):
         "precision": pytest.approx(0.26666, TOL),
         "map": pytest.approx(0.23613, TOL),
         "recall": pytest.approx(0.37777, TOL),
+        "auc": pytest.approx(0.75, TOL),
+        "logloss": pytest.approx(0.7835, TOL)
     }
 
 
 @pytest.fixture(scope="module")
 def python_data():
-    rating_true = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
-            DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
-        }
-    )
-    rating_pred = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            DEFAULT_ITEM_COL: [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
-            PREDICTION_COL: [
-                14,
-                13,
-                12,
-                14,
-                13,
-                12,
-                11,
-                10,
-                14,
-                13,
-                12,
-                11,
-                10,
-                9,
-                8,
-                7,
-                6,
-                5,
-            ],
-        }
-    )
-    rating_nohit = pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            DEFAULT_ITEM_COL: [100] * rating_pred.shape[0],
-            PREDICTION_COL: [
-                14,
-                13,
-                12,
-                14,
-                13,
-                12,
-                11,
-                10,
-                14,
-                13,
-                12,
-                11,
-                10,
-                9,
-                8,
-                7,
-                6,
-                5,
-            ],
-        }
-    )
-    return rating_true, rating_pred, rating_nohit
+    def _generate_python_data(binary_rating=False):
+        rating_true = pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
+                DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
+            }
+        )
+        rating_pred = pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                DEFAULT_ITEM_COL: [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
+                PREDICTION_COL: [
+                    14,
+                    13,
+                    12,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    9,
+                    8,
+                    7,
+                    6,
+                    5,
+                ],
+            }
+        )
+        rating_nohit = pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+                DEFAULT_ITEM_COL: [100] * rating_pred.shape[0],
+                PREDICTION_COL: [
+                    14,
+                    13,
+                    12,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    14,
+                    13,
+                    12,
+                    11,
+                    10,
+                    9,
+                    8,
+                    7,
+                    6,
+                    5,
+                ],
+            }
+        )
+
+        if binary_rating:
+            # Convert to binary case.
+            rating_true[DEFAULT_RATING_COL] = (
+                rating_true[DEFAULT_RATING_COL].apply(lambda x: 1.0 if x >= 3 else 0.0)
+            )
+
+            # Normalize the prediction.
+            rating_pred[PREDICTION_COL] = minmax_scale(rating_pred[PREDICTION_COL].astype(float))
+
+        return rating_true, rating_pred, rating_nohit
+    return _generate_python_data
 
 
 def test_column_dtypes_match(python_data):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data(binary_rating=False)
 
     # Change data types of true and prediction data, and there should type error produced.
     rating_true_copy = rating_true.copy()
@@ -131,7 +148,7 @@ def test_column_dtypes_match(python_data):
 
 
 def test_merge_rating(python_data):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data(binary_rating=False)
 
     rating_true_pred = merge_rating_true_pred(
         rating_true,
@@ -150,7 +167,7 @@ def test_merge_rating(python_data):
 
 
 def test_merge_ranking(python_data):
-    ranking_true, ranking_pred, _ = python_data
+    ranking_true, ranking_pred, _ = python_data(binary_rating=False)
 
     ranking_true_pred, data_hit, n_users = merge_ranking_true_pred(
         ranking_true,
@@ -174,7 +191,7 @@ def test_merge_ranking(python_data):
 
 
 def test_python_rmse(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data(binary_rating=False)
     assert (
         rmse(rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL)
         == 0
@@ -183,7 +200,7 @@ def test_python_rmse(python_data, target_metrics):
 
 
 def test_python_mae(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data(binary_rating=False)
     assert (
         mae(rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL)
         == 0
@@ -192,7 +209,7 @@ def test_python_mae(python_data, target_metrics):
 
 
 def test_python_rsquared(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data(binary_rating=False)
 
     assert rsquared(
         rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
@@ -201,7 +218,7 @@ def test_python_rsquared(python_data, target_metrics):
 
 
 def test_python_exp_var(python_data, target_metrics):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data(binary_rating=False)
 
     assert exp_var(
         rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
@@ -210,7 +227,7 @@ def test_python_exp_var(python_data, target_metrics):
 
 
 def test_python_ndcg_at_k(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
 
     assert (
         ndcg_at_k(
@@ -226,7 +243,7 @@ def test_python_ndcg_at_k(python_data, target_metrics):
 
 
 def test_python_map_at_k(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
 
     assert (
         map_at_k(
@@ -242,7 +259,7 @@ def test_python_map_at_k(python_data, target_metrics):
 
 
 def test_python_precision(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
     assert (
         precision_at_k(
             k=10,
@@ -298,7 +315,7 @@ def test_python_precision(python_data, target_metrics):
 
 
 def test_python_recall(python_data, target_metrics):
-    rating_true, rating_pred, rating_nohit = python_data
+    rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
 
     assert recall_at_k(
         k=10, rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
@@ -307,8 +324,42 @@ def test_python_recall(python_data, target_metrics):
     assert recall_at_k(rating_true, rating_pred, k=10) == target_metrics["recall"]
 
 
+def test_python_auc(python_data, target_metrics):
+    rating_true, rating_pred, _ = python_data(binary_rating=True)
+
+    assert auc(
+        rating_true=rating_true,
+        rating_pred=rating_true,
+        col_prediction=DEFAULT_RATING_COL
+    ) == pytest.approx(1.0, 0.1)
+
+    assert auc(
+        rating_true=rating_true,
+        rating_pred=rating_pred,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
+    ) == target_metrics['auc']
+
+
+def test_python_logloss(python_data, target_metrics):
+    rating_true, rating_pred, _ = python_data(binary_rating=True)
+
+    assert logloss(
+        rating_true=rating_true,
+        rating_pred=rating_true,
+        col_prediction=DEFAULT_RATING_COL
+    ) == pytest.approx(0, 0.1)
+
+    assert logloss(
+        rating_true=rating_true,
+        rating_pred=rating_pred,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
+    ) == target_metrics['logloss']
+
+
 def test_python_errors(python_data):
-    rating_true, rating_pred, _ = python_data
+    rating_true, rating_pred, _ = python_data(binary_rating=False)
 
     with pytest.raises(ValueError):
         rmse(rating_true, rating_true, col_user="not_user")
