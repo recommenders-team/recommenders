@@ -114,7 +114,19 @@ class Github:
             int: Number of watchers.
         """
         return (
-            self.general_stats["stargazers_count"]
+            self.general_stats["watchers_count"]
+            if self.general_stats is not None
+            else None
+        )
+
+    @property
+    def subscribers(self):
+        """Get current number of subscribers.
+        Returns:
+            int: Number of watchers.
+        """
+        return (
+            self.general_stats["subscribers_count"]
             if self.general_stats is not None
             else None
         )

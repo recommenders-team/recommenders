@@ -11,7 +11,6 @@ sys.path.append(os.getcwd())
 import argparse
 import traceback
 import logging
-from datetime import datetime
 from dateutil.parser import isoparse
 from pymongo import MongoClient
 from datetime import datetime
@@ -99,6 +98,7 @@ def github_stats_as_dict(github):
         "stars": github.stars,
         "forks": github.forks,
         "watchers": github.watchers,
+        "subscribers": github.subscribers,
         "open_issues": github.open_issues,
         "open_pull_requests": github.open_pull_requests,
         "unique_views": github.number_unique_views,
