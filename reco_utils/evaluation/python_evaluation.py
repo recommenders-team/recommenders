@@ -540,10 +540,10 @@ def map_at_k(
     http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
 
     Note:
-        1. The MAP is at k because the evaluation class takes top k items for
-        the prediction items.
-        2. The MAP is to calculate the AP in the relevant items, so it is normalized
-        by the number of relevant items in the ground truth data, instead of k.
+        1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
+        the prediction items. The naming is different from Spark.
+        2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
+        relevant items in the ground truth data, instead of k.
 
     Args:
         rating_true (pd.DataFrame): True data.
