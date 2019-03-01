@@ -9,6 +9,8 @@ from sklearn.metrics import (
     mean_absolute_error,
     r2_score,
     explained_variance_score,
+    roc_auc_score,
+    log_loss
 )
 
 from reco_utils.common.constants import (
@@ -589,6 +591,100 @@ def map_at_k(
 
     # Average the results across users.
     return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
+
+
+@check_column_dtypes
+def auc(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL
+):
+    """
+    Calculate the Area-Under-Curve metric for implicit feedback typed
+    recommender, where rating is binary and prediction is float number ranging
+    from 0 to 1.
+
+    https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
+
+    Note:
+        The evaluation does not require a leave-one-out scenario.
+        This metric does not calculate group-based AUC which considers the AUC scores
+        averaged across users. It is also not limited to k. Instead, it calculates the
+        scores on the entire prediction results regardless the users.
+
+    Args:
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
+
+    Return:
+        float: auc_score (min=0, max=1).
+    """
+    rating_true_pred = merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+    auc_score = roc_auc_score(
+        np.asarray(rating_true_pred[DEFAULT_RATING_COL].values),
+        np.asarray(rating_true_pred[PREDICTION_COL].values)
+    )
+
+    # Round the AUC score to four digits.
+    auc_score = round(auc_score, 4)
+
+    return auc_score
+
+
+@check_column_dtypes
+def logloss(
+        rating_true,
+        rating_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=PREDICTION_COL
+):
+    """
+    Calculate the logloss metric for implicit feedback typed
+    recommender, where rating is binary and prediction is float number ranging
+    from 0 to 1.
+
+    https://en.wikipedia.org/wiki/Loss_functions_for_classification#Cross_entropy_loss_(Log_Loss)
+
+    Args:
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
+
+    Return:
+        float: log_loss_score (min=-\inf, max=\inf).
+    """
+    rating_true_pred = merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+
+    # To make sure that there is no N/A in the logloss metric calculation.
+    rating_true_pred[PREDICTION_COL] = (
+        rating_true_pred[PREDICTION_COL].apply(lambda x: max(min(x, 1.0 - 10e-12), 10e-12))
+    )
+
+    log_loss_score = log_loss(
+        np.asarray(rating_true_pred[DEFAULT_RATING_COL].values),
+        np.asarray(rating_true_pred[PREDICTION_COL].values)
+    )
+
+    # Round the AUC score to four digits.
+    log_loss_score = round(log_loss_score, 4)
+
+    return log_loss_score
 
 
 def get_top_k_items(
