@@ -44,7 +44,7 @@ Currently, this repository supports the following environments:
 We install the dependencies with Conda. As a pre-requisite, we want to make sure that Anaconda and the package manager Conda are both up to date:
 
 ```{shell}
-conda update conda
+conda update conda -n root
 conda update anaconda
 ```
 

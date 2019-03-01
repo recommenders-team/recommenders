@@ -15,7 +15,7 @@ from reco_utils.common.constants import (
 from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filter_spark
 
 
-def spark_random_split(data, ratio=0.75, seed=123):
+def spark_random_split(data, ratio=0.75, seed=42):
     """Spark random splitter
     Randomly split the data into several splits.
 
@@ -128,7 +128,7 @@ def spark_stratified_split(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    seed=1234,
+    seed=42,
 ):
     """Spark stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -207,7 +207,7 @@ def spark_timestamp_split(
     ratio=0.75,
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
-    col_timestamp=DEFAULT_TIMESTAMP_COL
+    col_timestamp=DEFAULT_TIMESTAMP_COL,
 ):
     """Spark timestamp based splitter
     The splitter splits the data into sets by timestamps without stratification on either
@@ -241,14 +241,14 @@ def spark_timestamp_split(
     rating = data.withColumn("rank", row_number().over(window_spec))
 
     data_count = rating.count()
-    rating_rank = rating.withColumn(
-        "rank", row_number().over(window_spec) / data_count
-    )
+    rating_rank = rating.withColumn("rank", row_number().over(window_spec) / data_count)
 
     splits = []
     for i, _ in enumerate(ratio_index):
         if i == 0:
-            rating_split = rating_rank.filter(col("rank") <= ratio_index[i]).drop("rank")
+            rating_split = rating_rank.filter(col("rank") <= ratio_index[i]).drop(
+                "rank"
+            )
         else:
             rating_split = rating_rank.filter(
                 (col("rank") <= ratio_index[i]) & (col("rank") > ratio_index[i - 1])
