@@ -14,18 +14,19 @@ meta:
   yaml         : gjwgit/recommenders:mlhub/rbm.yaml
 dependencies:
   python3:
-    - scipy
-    - sklearn
+    - numpy
     - pandas
+    - sklearn
+    - matplotlib
   pip3:
-    - imdbpy
-    - toolz # DLVM does not have python3-toolz so do pip
+#    - imdbpy
+#    - toolz # DLVM does not have python3-toolz so do pip
   files:
     - reco_utils/
     - mlhub/rbm.py: demo.py
-    - mlhub/recutils.py
-    - mlhub/na.jpg
-    - mlhub/sample.png
+#    - mlhub/recutils.py
+#    - mlhub/na.jpg
+#    - mlhub/sample.png
     - mlhub/rbm.md: README.md
     - http://files.grouplens.org/datasets/movielens/ml-100k/u.item: titles.txt
 commands:
