@@ -1,0 +1,32 @@
+--- # RECOMMENDERS
+meta:
+  name         : rbm
+  title        : The Microsoft recommender toolkit demo of RBM
+  keywords     : recommendation
+  version      : 1.1.3
+  languages    : python
+  modeller     : RBM
+  type         : 
+  license      : mit
+  author       : Graham.Williams@togaware.com
+  maintainer   : Graham.Williams@togaware.com
+  url          : https://github.com/gjwgit/recommenders
+  yaml         : gjwgit/recommenders:mlhub/rbm.yaml
+dependencies:
+  python3:
+    - scipy
+    - sklearn
+    - pandas
+  pip3:
+    - imdbpy
+    - toolz # DLVM does not have python3-toolz so do pip
+  files:
+    - reco_utils/
+    - mlhub/rbm.py: demo.py
+    - mlhub/recutils.py
+    - mlhub/na.jpg
+    - mlhub/sample.png
+    - mlhub/rbm.md: README.md
+    - http://files.grouplens.org/datasets/movielens/ml-100k/u.item: titles.txt
+commands:
+  demo    : Demo the RBM model to build/evaluate it.
