@@ -47,6 +47,8 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "5": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/1.3.5/azure-cosmosdb-spark_2.4.0_2.11-1.3.5-uber.jar",
 }
 
+PYPI_RECO_LIB_DEPS = ["tqdm==4.31.1"]
+
 PYPI_O16N_LIBS = [
     "azure-cli==2.0.56",
     "azureml-sdk[databricks]==1.0.8",
@@ -226,13 +228,16 @@ if __name__ == "__main__":
         )
         sys.exit()
 
-    ## install the library:
+    ## install the library and its dependencies
     print(
         "Installing the reco_utils module onto databricks cluster {}".format(
             args.cluster_id
         )
     )
     libs2install = [{"egg": uploadpath}]
+    ## PYPI dependencies:
+    libs2install.extend([{"pypi": {"package": i}} for i in PYPI_RECO_LIB_DEPS])
+
     ## add mmlspark if selected.
     if args.mmlspark:
         print("Installing MMLSPARK package...")
@@ -264,61 +269,4 @@ if __name__ == "__main__":
         + """ clusters list
   """
     )
-
-
-sys.exit()
-
-#######################################################
-## STOP HERE
-#######################################################
-
-# ## setup the config
-# my_cluster_config = {
-#   "cluster_name": cluster_name,
-#   "node_type_id": node_type_id,
-#   "autoscale" : {
-#     "min_workers": min_workers,
-#     "max_workers": max_workers
-#   },
-#   "autotermination_minutes": autotermination_minutes,
-#   "spark_version": spark_version,
-#   "spark_env_vars": {
-#     "PYSPARK_PYTHON": "/databricks/python3/bin/python3"
-#   }
-# }
-
-
-# # ## Search the list for cluster_name
-# #
-# # Only create the cluster if a cluster of the same name doesn't already exist...
-# #
-# # Databricks allows multiple clusters with the same name, so this goes through and checks to see if the same name already exists. If so, this notebook will
-# # install to that cluster.
-
-
-# cluster_ids = [c['cluster_id'] for c in cluster_list if c['cluster_name'] == cluster_name]
-
-# if len(cluster_ids) == 0:
-#     print("""
-#     no clusters with cluster_name ("""+cluster_name+""") found.
-#     Trying to create it...
-#     """)
-#     ## Post the request...
-#     response = requests.post(
-#         BASE_URL + "clusters/create",
-#         headers = my_header,
-#         json=my_cluster_config
-#     )
-#     cluster_id = response.json()['cluster_id']
-# else:
-#     print("""
-#     Cluster named """+cluster_name+""" found!
-#     Using that one.
-#     Note: It may not have the same configuration as defined in this notebook,
-#           so you may want to use a different name.
-#     """)
-#     if len(cluster_ids) > 1:
-#         print("""Warning: Multiple clusters with the same name found. Using the first identified.""")
-#     cluster_id = cluster_ids[0]
-#     print(cluster_id)
 
