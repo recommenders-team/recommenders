@@ -20,6 +20,11 @@ Two approaches for evaluating model performance are demonstrated along with thei
     * Mean Average Precision (MAP) - average precision for each user normalized over all users
     * Arear Under Curver (AUC) - integral area under the receiver operating characteristic curve
     * Logistic loss (Logloss) - the negative log-likelihood of the true labels given the predictions of a classifier
+    
+References:
+1. Asela Gunawardana and Guy Shani: [A Survey of Accuracy Evaluation Metrics of Recommendation Tasks
+](http://jmlr.csail.mit.edu/papers/volume10/gunawardana09a/gunawardana09a.pdf)
+2. Dimitris Paraschakis et al, "Comparative Evaluation of Top-N Recommenders in e-Commerce: An Industrial Perspective", IEEE ICMLA, 2015, Miami, FL, USA.
+3. Yehuda Koren and Robert Bell, "Advances in Collaborative Filtering", Recommender Systems Handbook, Springer, 2015.
+4. Chris Bishop, "Pattern Recognition and Machine Learning", Springer, 2006.
 
-More details on recommender metrics can be found in ths paper by Asela Gunawardana and Guy Shani: [A Survey of Accuracy Evaluation Metrics of Recommendation Tasks
-](http://jmlr.csail.mit.edu/papers/volume10/gunawardana09a/gunawardana09a.pdf) or the references as cited in the [evaluation notebook](evaluation.ipynb).
