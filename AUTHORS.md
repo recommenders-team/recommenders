@@ -50,6 +50,8 @@ They have write access to the repo and provide support reviewing issues and pull
     * Reco utils
     * Continuous integration build / test setup
     * Quickstart, deep dive, algorithm comparison, notebooks
+* **[Yassine Khelifi](https://github.com/datashinob)**
+    * SAR notebook quickstart
 
 Contributors
 ------------
