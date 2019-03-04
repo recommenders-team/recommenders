@@ -59,12 +59,13 @@ def test_compute_all_predictions(python_data):
     assert preds.shape[0] == (n_users * n_items - rating_true.shape[0])
 
     preds = compute_all_predictions(svd, rating_true.rename(columns={'userID': 'uid', 'itemID': 'iid', 'rating': 'r'}),
-                                    usercol='uid', itemcol='iid', ratingcol='r', recommend_seen=True)
+                                    usercol='uid', itemcol='iid', recommend_seen=True)
     assert set(preds.columns) == {'uid', 'iid', 'prediction'}
     user = preds.iloc[1]['uid']
     item = preds.iloc[1]['iid']
     assert preds[(preds['uid'] == user) & (preds['iid'] == item)]['prediction'].values == \
            pytest.approx(svd.predict(user, item).est, rel=TOL)
     # Test recommend_seen=True
-    assert pd.merge(rating_true, preds, left_on=['userID', 'itemID'], right_on=['uid', 'iid']).shape[0] == rating_true.shape[0]
+    assert pd.merge(rating_true, preds, left_on=['userID', 'itemID'], right_on=['uid', 'iid']).shape[0] == \
+           rating_true.shape[0]
     assert preds.shape[0] == n_users * n_items
