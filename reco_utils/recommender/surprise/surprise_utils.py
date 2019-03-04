@@ -1,7 +1,10 @@
+import numpy as np
 import pandas as pd
 
+from reco_utils.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL
 
-def compute_predictions(algo, data, usercol='userID', itemcol='itemID'):
+
+def compute_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL):
     """
     Computes predictions of an algorithm from Surprise on the data
     Args:
@@ -18,7 +21,7 @@ def compute_predictions(algo, data, usercol='userID', itemcol='itemID'):
     return predictions.drop(['details', 'r_ui'], axis='columns')
 
 
-def compute_all_predictions(algo, data, usercol='userID', itemcol='itemID', ratingcol='rating', recommend_seen=False):
+def compute_all_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL, recommend_seen=False):
     """
     Computes predictions of an algorithm from Surprise on all users and items in data.
     Args:
@@ -26,7 +29,6 @@ def compute_all_predictions(algo, data, usercol='userID', itemcol='itemID', rati
         data (pd.DataFrame): the data from which to get the users and items
         usercol (str): name of the user column
         itemcol (str): name of the item column
-        ratingcol (str): name of the rating column
         recommend_seen (bool): flag to include (user, item) pairs that appear in data
     Returns:
         pd.DataFrame: dataframe with usercol, itemcol, prediction
@@ -38,8 +40,10 @@ def compute_all_predictions(algo, data, usercol='userID', itemcol='itemID', rati
 
     all_predictions = pd.DataFrame(data=preds_lst, columns=[usercol, itemcol, "prediction"])
 
-    merged = pd.merge(data, all_predictions, on=[usercol, itemcol], how="outer")
     if recommend_seen:
-        return merged.drop(ratingcol, axis=1)
+        return all_predictions
     else:
-        return merged[merged.rating.isnull()].drop(ratingcol, axis=1)
+        tempdf = pd.concat([data[[usercol, itemcol]], pd.DataFrame(data=np.ones(data.shape[0]), columns=['dummycol'])],
+                            axis=1)
+        merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
+        return merged[merged['dummycol'].isnull()].drop('dummycol', axis=1)
