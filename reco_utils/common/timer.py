@@ -7,7 +7,7 @@ from datetime import timedelta
 
 class Timer(object):
     """Timer class.
-    Original code: https://github.com/miguelgfierro/codebase/blob/b761ab0b0b853734fcab18cd1ad958bd70b0f0ab/python/log_base/timer.py
+    Original code: https://github.com/miguelgfierro/codebase
     
     Examples:
         >>> big_num = 1000
