@@ -34,7 +34,7 @@ OUTPUT_NOTEBOOK = "wide_deep.ipynb"
 
 def _log(metric, value):
     if run is not None:
-        if type(value) == list and len(value) > 0 and (type(value[0]) == int or type(value[0]) == float):
+        if isintance(value, list) and len(value) > 0 and isinstance(value[0], (int, float))
             run.log_list(metric, value)
         else:
             run.log(metric, str(value))
@@ -49,6 +49,7 @@ parser.add_argument('--top-k', type=int, dest='TOP_K', help="Top k recommendatio
 parser.add_argument('--datastore', type=str, dest='DATA_DIR', help="Datastore path")
 parser.add_argument('--train-datapath', type=str, dest='TRAIN_PICKLE_PATH')
 parser.add_argument('--test-datapath', type=str, dest='TEST_PICKLE_PATH')
+parser.add_argument('--model-dir', type=str, dest='MODEL_DIR', default='model_checkpoints')
 # Data column names
 parser.add_argument('--user-col', type=str, dest='USER_COL', default=DEFAULT_USER_COL)
 parser.add_argument('--item-col', type=str, dest='ITEM_COL', default=DEFAULT_ITEM_COL)
@@ -79,6 +80,8 @@ parser.add_argument('--dnn-dropout', type=float, dest='DNN_DROPOUT', default=0.0
 # Training parameters
 parser.add_argument('--epochs', type=int, dest='EPOCHS', default=50)
 parser.add_argument('--batch-size', type=int, dest='BATCH_SIZE', default=128)
+parser.add_argument('--evaluate-while-training', dest='EVALUATE_WHILE_TRAINING', action='store_true')
+
 
 args = parser.parse_args()
 
@@ -97,8 +100,6 @@ print("Args:")
 for k, v in params.items():
     _log(k, v)
 
-params['MODEL_DIR'] = 'model_checkpoints'
-params['EVALUATE_WHILE_TRAINING'] = True
 
 print("Run", NOTEBOOK_NAME)
 
