@@ -9,13 +9,7 @@ In this directory, notebooks are provided to demonstrate how to tune and optimiz
 | [azureml_hyperdrive_tuning_svd](azureml_hyperdrive_tuning_svd.ipynb) | Quickstart tutorial on utilizing [Azure Machine Learning service](https://azure.microsoft.com/en-us/services/machine-learning-service/) for hyperparameter tuning of the matrix factorization method SVD from [Surprise library](https://surprise.readthedocs.io/en/stable/).
 
 ### Prerequisites
-To run the examples running on the Azure Machine Learning service, you will need to install [`azureml-sdk`](https://pypi.org/project/azureml-sdk/).
-If you are using a [Data Science Virtual Machine (DSVM)](https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-configure-environment#dsvm) or [Azure Notebook](https://notebooks.azure.com/), `azureml-sdk` is already installed.
-
-To install AzureML Python SDK, run
-```
-pip install --upgrade azureml-sdk[notebooks]
-```
+To run the examples running on the Azure Machine Learning service, the [`azureml-sdk`](https://pypi.org/project/azureml-sdk/) is required. The AzureML Python SDK is already installed after setting up the conda environments from this repository (see [Setup.md](../../Setup.md)). 
 
 More info about setting up an AzureML environment can be found at [this link](https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-configure-environment).
 
