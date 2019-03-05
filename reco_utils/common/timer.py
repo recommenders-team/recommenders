@@ -48,4 +48,9 @@ class Timer(object):
     def stop(self):
         """Stop the timer. Calculate the interval in seconds."""
         self.end = self._timer()
-        self.interval = self.end - self.init
+        try:
+            self.interval = self.end - self.init
+        except AttributeError:
+            raise ValueError(
+                "Timer has not been initialized: use start() or the contextual form with Timer() as t:"
+            )
