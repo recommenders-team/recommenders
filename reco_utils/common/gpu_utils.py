@@ -8,6 +8,9 @@ from numba import cuda
 from numba.cuda.cudadrv.error import CudaSupportError
 
 
+DEFAULT_CUDA_PATH_LINUX = "/usr/local/cuda/version.txt"
+
+
 def get_number_gpus():
     """Get the number of GPUs in the system.
     
@@ -30,18 +33,20 @@ def clear_memory_all_gpus():
         print("No CUDA available")
 
 
-def get_cuda_version():
+def get_cuda_version(unix_path=DEFAULT_CUDA_PATH_LINUX):
     """Get CUDA version
     
+    Args:
+        unix_path (str): Path to CUDA version file in Linux/Mac.
+
     Returns:
         str: Version of the library.
     """
     if sys.platform == "win32":
         raise NotImplementedError("Implement this!")
     elif sys.platform == "linux" or sys.platform == "darwin":
-        path = "/usr/local/cuda/version.txt"
-        if os.path.isfile(path):
-            with open(path, "r") as f:
+        if os.path.isfile(unix_path):
+            with open(unix_path, "r") as f:
                 data = f.read().replace("\n", "")
             return data
         else:
@@ -80,7 +85,8 @@ def get_cudnn_version():
             return "No CUDNN in this machine"
 
     if sys.platform == "win32":
-        candidates = [r"C:\NVIDIA\cuda\include\cudnn.h"]
+        candidates = ["C:\\NVIDIA\\cuda\\include\\cudnn.h",
+                     "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v[0-99]\\include\\cudnn.h]
     elif sys.platform == "linux":
         candidates = [
             "/usr/include/x86_64-linux-gnu/cudnn_v[0-99].h",
