@@ -8,8 +8,19 @@ import fastai
 from fastprogress import force_console_behavior
 import fastprogress
 
+from reco_utils.common import constants as cc
+
 
 def cartesian_product(*arrays):
+    """Compute the cartesian product in fastai algo. This is a helper function.
+
+    Args:
+        arrays (tuple of np.array): Input arrays
+
+    Returns:
+        np.array: product
+
+    """
     la = len(arrays)
     dtype = np.result_type(*arrays)
     arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
@@ -18,8 +29,27 @@ def cartesian_product(*arrays):
     return arr.reshape(-1, la)
 
 
-def score(learner, test_df, user_col, item_col, prediction_col, top_k=0):
-    """score all users+movies provided and reduce to top_k items per user if top_k>0"""
+def score(
+    learner,
+    test_df,
+    user_col=cc.DEFAULT_USER_COL,
+    item_col=cc.DEFAULT_ITEM_COL,
+    prediction_col=cc.DEFAULT_PREDICTION_COL,
+    top_k=0,
+):
+    """Score all users+items provided and reduce to top_k items per user if top_k>0
+    
+    Args:
+        learner (obj): Model.
+        test_df (pd.DataFrame): Test dataframe.
+        user_col (str): User column name.
+        item_col (str): Item column name.
+        prediction_col (str): Prediction column name.
+        top_k (int): Number of top items to recommend.
+
+    Returns:
+        pd.DataFrame: Result of recommendation 
+    """
     # replace values not known to the model with #na#
     total_users, total_items = learner.data.train_ds.x.classes.values()
     test_df.loc[~test_df[user_col].isin(total_users), user_col] = total_users[0]
