@@ -73,7 +73,7 @@ class SARSingleNode:
 
         # threshold - items below this number get set to zero in co-occurrence counts
         if self.threshold <= 0:
-            raise ValueError('Threshold cannot be < 1')
+            raise ValueError("Threshold cannot be < 1")
 
         # column for mapping user / item ids to internal indices
         self.col_item_id = sar.INDEXED_ITEMS
@@ -125,16 +125,10 @@ class SARSingleNode:
             np.array: Co-occurrence matrix
         """
 
-        user_item_hits = (
-            sparse.coo_matrix(
-                (
-                    np.repeat(1, df.shape[0]),
-                    (df[self.col_user_id], df[self.col_item_id]),
-                ),
-                shape=(n_users, n_items),
-            )
-            .tocsr()
-        )
+        user_item_hits = sparse.coo_matrix(
+            (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])),
+            shape=(n_users, n_items),
+        ).tocsr()
 
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
         item_cooccurrence = item_cooccurrence.multiply(
@@ -233,10 +227,14 @@ class SARSingleNode:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == sar.SIM_JACCARD:
             logger.info("Calculating jaccard")
-            self.item_similarity = jaccard(item_cooccurrence).astype(df[self.col_rating].dtype)
+            self.item_similarity = jaccard(item_cooccurrence).astype(
+                df[self.col_rating].dtype
+            )
         elif self.similarity_type == sar.SIM_LIFT:
             logger.info("Calculating lift")
-            self.item_similarity = lift(item_cooccurrence).astype(df[self.col_rating].dtype)
+            self.item_similarity = lift(item_cooccurrence).astype(
+                df[self.col_rating].dtype
+            )
         else:
             raise ValueError(
                 "Unknown similarity type: {0}".format(self.similarity_type)
@@ -337,7 +335,9 @@ class SARSingleNode:
         item_ids = test[self.col_item].map(self.item2index).values
         nans = np.isnan(item_ids)
         if any(nans):
-            logger.warning("Items found in test not seen during training, new items will have score of 0")
+            logger.warning(
+                "Items found in test not seen during training, new items will have score of 0"
+            )
             test_scores = np.append(test_scores, np.zeros((self.n_users, 1)), axis=1)
             item_ids[nans] = self.n_items
             item_ids = item_ids.astype("int64")
