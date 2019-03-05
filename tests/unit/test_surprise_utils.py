@@ -32,11 +32,11 @@ def test_compute_predictions(python_data):
            pytest.approx(svd.predict(user, item).est, rel=TOL)
 
     preds = compute_predictions(svd, rating_true.rename(columns={'userID': 'uid', 'itemID': 'iid'}),
-                                usercol='uid', itemcol='iid')
-    assert set(preds.columns) == {'uid', 'iid', 'prediction'}
+                                usercol='uid', itemcol='iid', predcol='pred')
+    assert set(preds.columns) == {'uid', 'iid', 'pred'}
     user = rating_true.iloc[1]['userID']
     item = rating_true.iloc[1]['itemID']
-    assert preds[(preds['uid'] == user) & (preds['iid'] == item)]['prediction'].values == \
+    assert preds[(preds['uid'] == user) & (preds['iid'] == item)]['pred'].values == \
            pytest.approx(svd.predict(user, item).est, rel=TOL)
 
 
@@ -59,11 +59,11 @@ def test_compute_all_predictions(python_data):
     assert preds.shape[0] == (n_users * n_items - rating_true.shape[0])
 
     preds = compute_all_predictions(svd, rating_true.rename(columns={'userID': 'uid', 'itemID': 'iid', 'rating': 'r'}),
-                                    usercol='uid', itemcol='iid', recommend_seen=True)
-    assert set(preds.columns) == {'uid', 'iid', 'prediction'}
+                                    usercol='uid', itemcol='iid', predcol='pred', recommend_seen=True)
+    assert set(preds.columns) == {'uid', 'iid', 'pred'}
     user = preds.iloc[1]['uid']
     item = preds.iloc[1]['iid']
-    assert preds[(preds['uid'] == user) & (preds['iid'] == item)]['prediction'].values == \
+    assert preds[(preds['uid'] == user) & (preds['iid'] == item)]['pred'].values == \
            pytest.approx(svd.predict(user, item).est, rel=TOL)
     # Test recommend_seen=True
     assert pd.merge(rating_true, preds, left_on=['userID', 'itemID'], right_on=['uid', 'iid']).shape[0] == \
