@@ -35,7 +35,10 @@ def python_random_split(data, ratio=0.75, seed=42):
     multi_split, ratio = process_split_ratio(ratio)
 
     if multi_split:
-        return split_pandas_data_with_ratios(data, ratio, shuffle=True, seed=seed)
+        splits = split_pandas_data_with_ratios(data, ratio, shuffle=True, seed=seed)
+        splits_new = [x.drop('split_index', axis=1) for x in splits]
+
+        return splits_new
     else:
         return sk_split(data, test_size=None, train_size=ratio, random_state=seed)
 
