@@ -3,7 +3,7 @@ meta:
   name         : rbm
   title        : The Microsoft recommender toolkit demo of RBM
   keywords     : recommendation
-  version      : 1.0.1
+  version      : 1.0.2
   languages    : python
   modeller     : RBM
   type         : Restricted Boltzmann Machine
@@ -18,7 +18,7 @@ dependencies:
     - pandas
     - sklearn
     - matplotlib
-  pip3:
+#  pip3:
 #    - imdbpy
 #    - toolz # DLVM does not have python3-toolz so do pip
   files:
