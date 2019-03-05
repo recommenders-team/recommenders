@@ -15,7 +15,7 @@ from tqdm import tqdm
 import collections
 import gc
 
-import zipfile
+import tarfile
 from reco_utils.dataset.url_utils import maybe_download
 
 logging.basicConfig(level = logging.INFO, format = '%(asctime)s [INFO] %(message)s')
@@ -31,9 +31,9 @@ def download_lgb_resources(azure_container_url, data_path, remote_resource_name)
     os.makedirs(data_path, exist_ok=True)
     remote_path = azure_container_url + remote_resource_name
     maybe_download(remote_path, remote_resource_name, data_path)
-    zip_ref = zipfile.ZipFile(os.path.join(data_path, remote_resource_name), "r")
-    zip_ref.extractall(data_path)
-    zip_ref.close()
+    tar_ref = tarfile.open(os.path.join(data_path, remote_resource_name), "r")
+    tar_ref.extractall(data_path)
+    tar_ref.close()
     os.remove(os.path.join(data_path, remote_resource_name))
 
 def cal_metric(labels, preds, metrics):
@@ -97,9 +97,9 @@ class NumEncoder(object):
         self.samples = 0
 
     def fit_transform(self, inPath):
-        print('----------------------------------------------------------------------')
-        print('Fitting and Transforming %s .'%inPath)
-        print('----------------------------------------------------------------------')
+        logging.info('----------------------------------------------------------------------')
+        logging.info('Fitting and Transforming %s .'%inPath)
+        logging.info('----------------------------------------------------------------------')
         df = pd.read_csv(inPath, dtype=self.dtype_dict)
         self.samples = df.shape[0]
         logging.info('Filtering and fillna features')
@@ -173,9 +173,9 @@ class NumEncoder(object):
 
     # for test dataset
     def transform(self, inPath):
-        print('----------------------------------------------------------------------')
-        print('Transforming %s .'%inPath)
-        print('----------------------------------------------------------------------')
+        logging.info('----------------------------------------------------------------------')
+        logging.info('Transforming %s .'%inPath)
+        logging.info('----------------------------------------------------------------------')
         df = pd.read_csv(inPath, dtype=self.dtype_dict)
         samples = df.shape[0]
         logging.info('Filtering and fillna features')
