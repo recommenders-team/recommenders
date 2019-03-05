@@ -86,7 +86,7 @@ def get_cudnn_version():
 
     if sys.platform == "win32":
         candidates = ["C:\\NVIDIA\\cuda\\include\\cudnn.h",
-                     "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v[0-99]\\include\\cudnn.h]
+                     "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v[0-99]\\include\\cudnn.h"]
     elif sys.platform == "linux":
         candidates = [
             "/usr/include/x86_64-linux-gnu/cudnn_v[0-99].h",
