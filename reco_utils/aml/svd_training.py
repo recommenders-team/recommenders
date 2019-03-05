@@ -11,6 +11,7 @@ import surprise
 
 try:
     from azureml.core import Run
+
     HAS_AML = True
     run = Run.get_context()
 except ModuleNotFoundError:
@@ -19,13 +20,14 @@ except ModuleNotFoundError:
 from reco_utils.evaluation.python_evaluation import *
 from reco_utils.recommender.surprise.surprise_utils import compute_predictions, compute_all_predictions
 
+
 def svd_training(args):
     """
     Train Surprise SVD using the given hyper-parameters
     """
     print("Start training...")
     train_data = pd.read_pickle(path=os.path.join(args.datastore, args.train_datapath))
-    test_data = pd.read_pickle(path=os.path.join(args.datastore, args.test_datapath))
+    validation_data = pd.read_pickle(path=os.path.join(args.datastore, args.validation_datapath))
 
     svd = surprise.SVD(random_state=args.random_state, n_epochs=args.epochs, verbose=args.verbose, biased=args.biased,
                        n_factors=args.n_factors, init_mean=args.init_mean, init_std_dev=args.init_std_dev,
@@ -41,9 +43,9 @@ def svd_training(args):
 
     rating_metrics = args.rating_metrics
     if len(rating_metrics) > 0:
-        predictions = compute_predictions(svd, test_data, usercol=args.usercol, itemcol=args.itemcol)
+        predictions = compute_predictions(svd, validation_data, usercol=args.usercol, itemcol=args.itemcol)
         for metric in rating_metrics:
-            result = eval(metric)(test_data, predictions)
+            result = eval(metric)(validation_data, predictions)
             print(metric, result)
             if HAS_AML:
                 run.log(metric, result)
@@ -54,7 +56,7 @@ def svd_training(args):
                                                   recommend_seen=args.recommend_seen)
         k = args.k
         for metric in ranking_metrics:
-            result = eval(metric)(test_data, all_predictions, col_prediction='prediction', k=k)
+            result = eval(metric)(validation_data, all_predictions, col_prediction='prediction', k=k)
             print("{}@{}".format(metric, k), result)
             if HAS_AML:
                 run.log(metric, result)
@@ -62,13 +64,16 @@ def svd_training(args):
     if len(ranking_metrics) == 0 and len(rating_metrics) == 0:
         raise ValueError("No metrics were specified.")
 
+    return svd
+
 
 def main():
     parser = argparse.ArgumentParser()
     # Data path
     parser.add_argument('--datastore', type=str, dest='datastore', help="Datastore path")
     parser.add_argument('--train-datapath', type=str, dest='train_datapath')
-    parser.add_argument('--test-datapath', type=str, dest='test_datapath')
+    parser.add_argument('--validation-datapath', type=str, dest='validation_datapath')
+    parser.add_argument('--output_dir', type=str, help='output directory')
     parser.add_argument('--surprise-reader', type=str, dest='surprise_reader')
     parser.add_argument('--usercol', type=str, dest='usercol', default='userID')
     parser.add_argument('--itemcol', type=str, dest='itemcol', default='itemID')
@@ -104,7 +109,10 @@ def main():
     if HAS_AML:
         run.log('Number of epochs', args.epochs)
 
-    svd_training(args)
+    svd = svd_training(args)
+    # Save SVD model to the output directory for later use
+    os.makedirs(args.output_dir, exist_ok=True)
+    surprise.dump.dump(os.path.join(args.output_dir, 'model.dump'), algo=svd)
 
 
 if __name__ == "__main__":
