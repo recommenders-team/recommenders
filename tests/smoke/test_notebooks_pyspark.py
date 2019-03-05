@@ -8,6 +8,7 @@ from reco_utils.common.spark_utils import start_or_get_spark
 
 
 TOL = 0.05
+ABS_TOL = 0.05
 
 
 @pytest.mark.smoke
@@ -24,11 +25,11 @@ def test_als_pyspark_smoke(notebooks):
     results = nb.dataframe.set_index("name")["value"]
     start_or_get_spark("ALS PySpark").stop()
 
-    assert results["map"] == pytest.approx(0.0052, rel=TOL)
-    assert results["ndcg"] == pytest.approx(0.0463, rel=TOL)
-    assert results["precision"] == pytest.approx(0.0487, rel=TOL)
-    assert results["recall"] == pytest.approx(0.0177, rel=TOL)
-    assert results["rmse"] == pytest.approx(0.9636, rel=TOL)
-    assert results["mae"] == pytest.approx(0.7508, rel=TOL)
-    assert results["exp_var"] == pytest.approx(0.2672, rel=TOL)
-    assert results["rsquared"] == pytest.approx(0.2611, rel=TOL)
+    assert results["map"] == pytest.approx(0.0052, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.0463, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.0487, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.0177, rel=TOL, abs=ABS_TOL)
+    assert results["rmse"] == pytest.approx(0.9636, rel=TOL, abs=ABS_TOL)
+    assert results["mae"] == pytest.approx(0.7508, rel=TOL, abs=ABS_TOL)
+    assert results["exp_var"] == pytest.approx(0.2672, rel=TOL, abs=ABS_TOL)
+    assert results["rsquared"] == pytest.approx(0.2611, rel=TOL, abs=ABS_TOL)
