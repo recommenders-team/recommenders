@@ -7,13 +7,13 @@ from reco_utils.common.gpu_utils import get_number_gpus, clear_memory_all_gpus, 
 
 
 @pytest.mark.gpu
-def test_get_number_gpus()
+def test_get_number_gpus():
     assert get_number_gpus() >= 1
 
 
 @pytest.mark.gpu
 @pytest.mark.skip(reason="TODO: Implement this")
-def test_clear_memory_all_gpus()
+def test_clear_memory_all_gpus():
     pass
 
 
