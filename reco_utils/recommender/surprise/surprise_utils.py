@@ -9,6 +9,8 @@ def surprise_trainset_to_df(
     trainset, col_user="uid", col_item="iid", col_rating="rating"
 ):
     """Converts a surprise.Trainset object to pd.DataFrame
+    More info: https://surprise.readthedocs.io/en/stable/trainset.html
+
     
     Args:
         trainset (obj): A surprise.Trainset object.
@@ -17,7 +19,7 @@ def surprise_trainset_to_df(
         col_rating (str): Rating column name.
     
     Returns:
-        pd.DataFrame: A dataframe
+        pd.DataFrame: A dataframe. The user and item columns are strings and the rating columns are floats.
     """
     df = pd.DataFrame(trainset.all_ratings(), columns=[col_user, col_item, col_rating])
     map_user = (
