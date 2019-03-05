@@ -34,10 +34,10 @@ OUTPUT_NOTEBOOK = "wide_deep.ipynb"
 
 def _log(metric, value):
     if run is not None:
-        if isintance(value, list) and len(value) > 0 and isinstance(value[0], (int, float))
+        if isinstance(value, list) and len(value) > 0 and isinstance(value[0], (int, float))
             run.log_list(metric, value)
         else:
-            run.log(metric, str(value))
+            run.log(metric, value)
     print(metric, "=", value)
 
 
