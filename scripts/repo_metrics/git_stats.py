@@ -123,7 +123,7 @@ class Github:
     def subscribers(self):
         """Get current number of subscribers.
         Returns:
-            int: Number of watchers.
+            int: Number of subscribers.
         """
         return (
             self.general_stats["subscribers_count"]
