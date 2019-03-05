@@ -16,7 +16,7 @@ from reco_utils.dataset.split_utils import (
 )
 
 
-def python_random_split(data, ratio=0.75, seed=123):
+def python_random_split(data, ratio=0.75, seed=42):
     """Pandas random splitter
     The splitter randomly splits the input data.
 
@@ -35,9 +35,84 @@ def python_random_split(data, ratio=0.75, seed=123):
     multi_split, ratio = process_split_ratio(ratio)
 
     if multi_split:
-        return split_pandas_data_with_ratios(data, ratio, resample=True, seed=seed)
+        return split_pandas_data_with_ratios(data, ratio, shuffle=True, seed=seed)
     else:
         return sk_split(data, test_size=None, train_size=ratio, random_state=seed)
+
+
+def _do_stratification(
+    data,
+    ratio=0.75,
+    min_rating=1,
+    filter_by="user",
+    is_random=True,
+    seed=42,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_timestamp=DEFAULT_TIMESTAMP_COL,
+):
+    # A few preliminary checks.
+    if not (filter_by == "user" or filter_by == "item"):
+        raise ValueError("filter_by should be either 'user' or 'item'.")
+
+    if min_rating < 1:
+        raise ValueError("min_rating should be integer and larger than or equal to 1.")
+
+    if col_user not in data.columns:
+        raise ValueError("Schema of data not valid. Missing User Col")
+
+    if col_item not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Item Col")
+
+    if not is_random:
+        if col_timestamp not in data.columns:
+            raise ValueError("Schema of data not valid. Missing Timestamp Col")
+
+    multi_split, ratio = process_split_ratio(ratio)
+
+    split_by_column = col_user if filter_by == "user" else col_item
+
+    ratio = ratio if multi_split else [ratio, 1 - ratio]
+
+    if min_rating > 1:
+        data = min_rating_filter_pandas(
+            data,
+            min_rating=min_rating,
+            filter_by=filter_by,
+            col_user=col_user,
+            col_item=col_item,
+        )
+
+    # Split by each group and aggregate splits together.
+    splits = []
+
+    # If it is for chronological splitting, the split will be performed in a random way.
+    df_grouped = (
+        data.sort_values(col_timestamp).groupby(split_by_column)
+        if is_random is False
+        else data.groupby(split_by_column)
+    )
+
+    for name, group in df_grouped:
+        group_splits = split_pandas_data_with_ratios(
+            df_grouped.get_group(name), ratio, shuffle=is_random, seed=seed
+        )
+
+        # Concatenate the list of split dataframes.
+        concat_group_splits = pd.concat(group_splits)
+
+        splits.append(concat_group_splits)
+
+    # Concatenate splits for all the groups together.
+    splits_all = pd.concat(splits)
+
+    # Take split by split_index
+    splits_list = [
+        splits_all[splits_all["split_index"] == x].drop("split_index", axis=1)
+        for x in range(len(ratio))
+    ]
+
+    return splits_list
 
 
 def python_chrono_split(
@@ -72,57 +147,16 @@ def python_chrono_split(
     Returns:
         list: Splits of the input data as pd.DataFrame.
     """
-    # A few preliminary checks.
-    if not (filter_by == "user" or filter_by == "item"):
-        raise ValueError("filter_by should be either 'user' or 'item'.")
-
-    if min_rating < 1:
-        raise ValueError("min_rating should be integer and larger than or equal to 1.")
-
-    if col_user not in data.columns:
-        raise ValueError("Schema of data not valid. Missing User Col")
-
-    if col_item not in data.columns:
-        raise ValueError("Schema of data not valid. Missing Item Col")
-
-    if col_timestamp not in data.columns:
-        raise ValueError("Schema of data not valid. Missing Timestamp Col")
-
-    multi_split, ratio = process_split_ratio(ratio)
-
-    split_by_column = col_user if filter_by == "user" else col_item
-
-    ratio = ratio if multi_split else [ratio, 1 - ratio]
-
-    if min_rating > 1:
-        data = min_rating_filter_pandas(
-            data,
-            min_rating=min_rating,
-            filter_by=filter_by,
-            col_user=col_user,
-            col_item=col_item,
-        )
-
-    # Split by each group and aggregate splits together.
-    splits = []
-    df_grouped = data.sort_values(col_timestamp).groupby(split_by_column)
-    for name, group in df_grouped:
-        group_splits = split_pandas_data_with_ratios(
-            df_grouped.get_group(name), ratio, resample=False
-        )
-
-        # Concatenate the list of split dataframes.
-        concat_group_splits = pd.concat(group_splits)
-
-        splits.append(concat_group_splits)
-
-    # Concatenate splits for all the groups together.
-    splits_all = pd.concat(splits)
-
-    # Take split by split_index
-    splits_list = [splits_all[splits_all['split_index'] == x].drop('split_index', axis=1) for x in range(len(ratio))]
-
-    return splits_list
+    return _do_stratification(
+        data,
+        ratio=ratio,
+        min_rating=min_rating,
+        filter_by=filter_by,
+        col_user=col_user,
+        col_item=col_item,
+        col_timestamp=col_timestamp,
+        is_random=False
+    )
 
 
 def python_stratified_split(
@@ -132,7 +166,7 @@ def python_stratified_split(
     filter_by="user",
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
-    seed=1234,
+    seed=42,
 ):
     """Pandas stratified splitter
     For each user / item, the split function takes proportions of ratings which is
@@ -155,57 +189,18 @@ def python_stratified_split(
     Returns:
         list: Splits of the input data as pd.DataFrame.
     """
-    # A few preliminary checks.
-    if not (filter_by == "user" or filter_by == "item"):
-        raise ValueError("filter_by should be either 'user' or 'item'.")
+    return _do_stratification(
+        data,
+        ratio=ratio,
+        min_rating=min_rating,
+        filter_by=filter_by,
+        col_user=col_user,
+        col_item=col_item,
+        is_random=True,
+        seed=seed
+    )
 
-    if min_rating < 1:
-        raise ValueError("min_rating should be integer and larger than or equal to 1.")
-
-    if col_user not in data.columns:
-        raise ValueError("Schema of data not valid. Missing User Col")
-
-    if col_item not in data.columns:
-        raise ValueError("Schema of data not valid. Missing Item Col")
-
-    multi_split, ratio = process_split_ratio(ratio)
-
-    split_by_column = col_user if filter_by == "user" else col_item
-
-    ratio = ratio if multi_split else [ratio, 1 - ratio]
-
-    if min_rating > 1:
-        data = min_rating_filter_pandas(
-            data,
-            min_rating=min_rating,
-            filter_by=filter_by,
-            col_user=col_user,
-            col_item=col_item,
-        )
-
-    # Split by each group and aggregate splits together.
-    splits = []
-    df_grouped = data.groupby(split_by_column)
-    for name, group in df_grouped:
-        group_splits = split_pandas_data_with_ratios(
-            df_grouped.get_group(name), ratio, resample=True, seed=seed
-        )
-
-        # Concatenate the list of split dataframes.
-        concat_group_splits = pd.concat(group_splits)
-
-        splits.append(concat_group_splits)
-
-    # Concatenate splits for all the groups together.
-    splits_all = pd.concat(splits)
-
-    # Take split by split_index
-    splits_list = [splits_all[splits_all['split_index'] == x].drop('split_index', axis=1) for x in range(len(ratio))]
-
-    return splits_list
-
-
-def numpy_stratified_split(X, ratio=0.75, seed=123):
+def numpy_stratified_split(X, ratio=0.75, seed=42):
 
     """
     Split the user/item affinity matrix (sparse matrix) into train and test set matrices while maintaining
@@ -213,8 +208,8 @@ def numpy_stratified_split(X, ratio=0.75, seed=123):
 
     Args:
         X (np.array, int): a sparse matrix to be split
-        ratio (scalar, float): fraction of the entire dataset to constitute the train set
-        seed (scalar, int): random seed
+        ratio (float): fraction of the entire dataset to constitute the train set
+        seed (int): random seed
 
     Returns:
         Xtr (np.array, int): train set user/item affinity matrix
@@ -248,12 +243,9 @@ def numpy_stratified_split(X, ratio=0.75, seed=123):
            from the original datatset X. We first create two copies of X; for each user we select a random
            sample of local size ratio (point 1) and erase the remaining ratings, obtaining in this way the
            train set matrix Xtst. The train set matrix is obtained in the opposite way.
-
-
     """
 
     np.random.seed(seed)  # set the random seed
-
     test_cut = int((1 - ratio) * 100)  # percentage of ratings to go in the test set
 
     # initialize train and test set matrices
@@ -266,9 +258,7 @@ def numpy_stratified_split(X, ratio=0.75, seed=123):
     # for each user, cut down a test_size% for the test set
     tst = np.around((rated * test_cut) / 100).astype(int)
 
-    Nusers, Nitems = X.shape  # total number of users and items
-
-    for u in range(Nusers):
+    for u in range(X.shape[0]):
         # For each user obtain the index of rated movies
         idx = np.asarray(np.where(Xtr[u] != 0))[0].tolist()
 
@@ -276,12 +266,10 @@ def numpy_stratified_split(X, ratio=0.75, seed=123):
         idx_tst = np.random.choice(idx, tst[u], replace=False)
         idx_train = list(set(idx).difference(set(idx_tst)))
 
-        Xtr[
-            u, idx_tst
-        ] = 0  # change the selected rated movies to unrated in the train set
-        Xtst[
-            u, idx_train
-        ] = 0  # set the movies that appear already in the train set as 0
+        # change the selected rated movies to unrated in the train set
+        Xtr[u, idx_tst] = 0
+        # set the movies that appear already in the train set as 0
+        Xtst[u, idx_train] = 0
 
     del idx, idx_train, idx_tst
 
