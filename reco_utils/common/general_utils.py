@@ -6,8 +6,12 @@ import os
 
 def invert_dictionary(dictionary):
     """Invert a dictionary
+    NOTE: If the dictionary has unique keys and unique values, the invertion would be perfect. However, if there are
+    repeated values, the invertion can take different keys
+    
     Args: 
         dictionary (dict): A dictionary
+    
     Returns:
         dict: inverted dictionary
     """
@@ -16,6 +20,7 @@ def invert_dictionary(dictionary):
 
 def get_number_processors():
     """Get the number of processors in a CPU.
+    
     Returns:
         int: Number of processors.
     """
