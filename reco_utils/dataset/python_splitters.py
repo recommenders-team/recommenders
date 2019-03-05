@@ -64,8 +64,9 @@ def _do_stratification(
     if col_item not in data.columns:
         raise ValueError("Schema of data not valid. Missing Item Col")
 
-    if col_timestamp not in data.columns:
-        raise ValueError("Schema of data not valid. Missing Timestamp Col")
+    if not is_random:
+        if col_timestamp not in data.columns:
+            raise ValueError("Schema of data not valid. Missing Timestamp Col")
 
     multi_split, ratio = process_split_ratio(ratio)
 
