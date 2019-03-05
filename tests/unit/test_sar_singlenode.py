@@ -22,9 +22,7 @@ def _rearrange_to_test(array, row_ids, col_ids, row_map, col_map):
 
 
 def test_init(header):
-    model = SARSingleNode(
-        remove_seen=True, similarity_type="jaccard", **header
-    )
+    model = SARSingleNode(remove_seen=True, similarity_type="jaccard", **header)
 
     assert model.col_user == "UserId"
     assert model.col_item == "MovieId"
@@ -37,9 +35,7 @@ def test_init(header):
 )
 def test_fit(similarity_type, timedecay_formula, train_test_dummy_timestamp, header):
     model = SARSingleNode(
-        similarity_type=similarity_type,
-        timedecay_formula=timedecay_formula,
-        **header
+        similarity_type=similarity_type, timedecay_formula=timedecay_formula, **header
     )
     trainset, testset = train_test_dummy_timestamp
     model.fit(trainset)
@@ -52,9 +48,7 @@ def test_predict(
     similarity_type, timedecay_formula, train_test_dummy_timestamp, header
 ):
     model = SARSingleNode(
-        similarity_type=similarity_type,
-        timedecay_formula=timedecay_formula,
-        **header
+        similarity_type=similarity_type, timedecay_formula=timedecay_formula, **header
     )
     trainset, testset = train_test_dummy_timestamp
     model.fit(trainset)
@@ -111,11 +105,7 @@ def test_sar_item_similarity(
         )
     else:
         test_item_similarity = _rearrange_to_test(
-            model.item_similarity,
-            row_ids,
-            col_ids,
-            model.item2index,
-            model.item2index,
+            model.item_similarity, row_ids, col_ids, model.item2index, model.item2index
         )
         assert np.allclose(
             true_item_similarity.astype(test_item_similarity.dtype),
@@ -183,7 +173,7 @@ def test_recommend_k_items(
         ],
         top_k=10,
         sort_top_k=True,
-        remove_seen=True
+        remove_seen=True,
     )
     test_items = list(test_results[header["col_item"]])
     test_scores = np.array(test_results["prediction"])
