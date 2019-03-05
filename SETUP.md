@@ -220,7 +220,7 @@ import reco_utils
 
 ## Prepare Azure Databricks for Operationalization
 
-This repository includes an end-to-end example notebook that uses Azure Datbaricks to estimate a recommendation model using Alternating Least Squares, writes pre-computed recommendations to Azure Cosmos DB, and then creates a real-time scoring service that retrieves the recommendations from Cosmos DB. In order to execute that [notebook](notebooks//05_operationalize/als_movie_o16n.ipynb), you must install the Recommenders repository as a library (as described above), **AND* you must also install some additional dependencies. Similar to above, you can do so either manually or via an installation [script](scripts/prepare_databricks_for_o16n.sh).
+This repository includes an end-to-end example notebook that uses Azure Datbaricks to estimate a recommendation model using Alternating Least Squares, writes pre-computed recommendations to Azure Cosmos DB, and then creates a real-time scoring service that retrieves the recommendations from Cosmos DB. In order to execute that [notebook](notebooks//05_operationalize/als_movie_o16n.ipynb), you must install the Recommenders repository as a library (as described above), **AND** you must also install some additional dependencies. Similar to above, you can do so either manually or via an installation [script](scripts/prepare_databricks_for_o16n.sh).
 
 <details>
 <summary><strong><em>Quick install</em></strong></summary>
