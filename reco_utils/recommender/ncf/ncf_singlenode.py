@@ -13,19 +13,20 @@ class NCF:
     """NCF implementation"""
 
     def __init__(
-            self,
-            n_users,
-            n_items,
-            model_type="NeuMF",
-            random_state=0,
-            n_factors=8,
-            layer_sizes=[16,8,4],
-            n_epochs=50,
-            batch_size=64,
-            learning_rate=5e-3,
-            verbose=1,
-            save=False,
-            pretrain=False,
+        self,
+        n_users,
+        n_items,
+        model_type="NeuMF",
+        random_state=0,
+        n_factors=8,
+        layer_sizes=[16, 8, 4],
+        n_epochs=50,
+        batch_size=64,
+        learning_rate=5e-3,
+        verbose=1,
+        save=False,
+        pretrain=False,
+        seed=42,
     ):
         # number of users in dataset
         self.n_users = n_users
@@ -34,7 +35,16 @@ class NCF:
         # model type
         self.model_type = model_type.lower()
         # check model type
-        assert self.model_type in {"gmf", "mlp", "neumf"}
+        model_options = ["gmf", "mlp", "neumf"]
+        if self.model_type not in model_options:
+            raise ValueError(
+                "Wrong model type, please select one of this list: {}".format(
+                    model_options
+                )
+            )
+        # seed
+        tf.set_random_seed(seed)
+        np.random.seed(seed)
         # dimension of latent space
         self.n_factors = n_factors
         # number of layers for mlp
@@ -58,10 +68,7 @@ class NCF:
         # parameters initialization
         self.sess.run(tf.global_variables_initializer())
 
-
-    def _create_model(
-            self,
-    ):
+    def _create_model(self,):
         # reset graph
         tf.reset_default_graph()
 
@@ -76,27 +83,51 @@ class NCF:
 
             # set embedding table
             self.embedding_gmf_P = tf.Variable(
-                tf.truncated_normal(shape=[self.n_users, self.n_factors], mean=0.0, stddev=0.01),
-                name='embedding_gmf_P', dtype=tf.float32)
+                tf.truncated_normal(
+                    shape=[self.n_users, self.n_factors], mean=0.0, stddev=0.01
+                ),
+                name="embedding_gmf_P",
+                dtype=tf.float32,
+            )
 
             self.embedding_gmf_Q = tf.Variable(
-                tf.truncated_normal(shape=[self.n_items, self.n_factors], mean=0.0, stddev=0.01),
-                name='embedding_gmf_Q', dtype=tf.float32)
+                tf.truncated_normal(
+                    shape=[self.n_items, self.n_factors], mean=0.0, stddev=0.01
+                ),
+                name="embedding_gmf_Q",
+                dtype=tf.float32,
+            )
 
             # set embedding table
             self.embedding_mlp_P = tf.Variable(
-                tf.truncated_normal(shape=[self.n_users, int(self.layer_sizes[0]/2)], mean=0.0, stddev=0.01),
-                name='embedding_mlp_P', dtype=tf.float32)
+                tf.truncated_normal(
+                    shape=[self.n_users, int(self.layer_sizes[0] / 2)],
+                    mean=0.0,
+                    stddev=0.01,
+                ),
+                name="embedding_mlp_P",
+                dtype=tf.float32,
+            )
 
             self.embedding_mlp_Q = tf.Variable(
-                tf.truncated_normal(shape=[self.n_items, int(self.layer_sizes[0]/2)], mean=0.0, stddev=0.01),
-                name='embedding_mlp_Q', dtype=tf.float32)
+                tf.truncated_normal(
+                    shape=[self.n_items, int(self.layer_sizes[0] / 2)],
+                    mean=0.0,
+                    stddev=0.01,
+                ),
+                name="embedding_mlp_Q",
+                dtype=tf.float32,
+            )
 
         with tf.variable_scope("gmf", reuse=tf.AUTO_REUSE):
 
             # get user embedding p and item embedding q
-            self.gmf_p = tf.reduce_sum(tf.nn.embedding_lookup(self.embedding_gmf_P, self.user_input), 1)
-            self.gmf_q = tf.reduce_sum(tf.nn.embedding_lookup(self.embedding_gmf_Q, self.item_input), 1)
+            self.gmf_p = tf.reduce_sum(
+                tf.nn.embedding_lookup(self.embedding_gmf_P, self.user_input), 1
+            )
+            self.gmf_q = tf.reduce_sum(
+                tf.nn.embedding_lookup(self.embedding_gmf_Q, self.item_input), 1
+            )
 
             # get gmf vector
             self.gmf_vector = self.gmf_p * self.gmf_q
@@ -104,15 +135,21 @@ class NCF:
         with tf.variable_scope("mlp", reuse=tf.AUTO_REUSE):
 
             # get user embedding p and item embedding q
-            self.mlp_p = tf.reduce_sum(tf.nn.embedding_lookup(self.embedding_mlp_P, self.user_input), 1)
-            self.mlp_q = tf.reduce_sum(tf.nn.embedding_lookup(self.embedding_mlp_Q, self.item_input), 1)
+            self.mlp_p = tf.reduce_sum(
+                tf.nn.embedding_lookup(self.embedding_mlp_P, self.user_input), 1
+            )
+            self.mlp_q = tf.reduce_sum(
+                tf.nn.embedding_lookup(self.embedding_mlp_Q, self.item_input), 1
+            )
 
             # concatenate user and item vector
             output = tf.concat([self.mlp_p, self.mlp_q], 1)
 
             # MLP Layers
             for layer_size in self.layer_sizes[1:]:
-                output = tf.contrib.layers.fully_connected(output, num_outputs=layer_size, activation_fn=tf.nn.relu)
+                output = tf.contrib.layers.fully_connected(
+                    output, num_outputs=layer_size, activation_fn=tf.nn.relu
+                )
             self.mlp_vector = output
 
             # self.output = tf.sigmoid(tf.reduce_sum(self.mlp_vector, axis=1, keepdims=True))
@@ -121,22 +158,34 @@ class NCF:
 
             if self.model_type == "gmf":
                 # GMF only
-                output = tf.contrib.layers.fully_connected(self.gmf_vector, num_outputs=1,
-                                                       activation_fn=None, biases_initializer=None)
+                output = tf.contrib.layers.fully_connected(
+                    self.gmf_vector,
+                    num_outputs=1,
+                    activation_fn=None,
+                    biases_initializer=None,
+                )
                 self.output = tf.sigmoid(output)
 
             elif self.model_type == "mlp":
                 # MLP only
-                output = tf.contrib.layers.fully_connected(self.mlp_vector, num_outputs=1,
-                                                       activation_fn=None, biases_initializer=None)
+                output = tf.contrib.layers.fully_connected(
+                    self.mlp_vector,
+                    num_outputs=1,
+                    activation_fn=None,
+                    biases_initializer=None,
+                )
                 self.output = tf.sigmoid(output)
 
             elif self.model_type == "neumf":
                 # concatenate GMF and MLP vector
                 self.ncf_vector = tf.concat([self.gmf_vector, self.mlp_vector], 1)
                 # get predicted rating score
-                output = tf.contrib.layers.fully_connected(self.ncf_vector, num_outputs=1,
-                                                        activation_fn=None, biases_initializer=None)
+                output = tf.contrib.layers.fully_connected(
+                    self.ncf_vector,
+                    num_outputs=1,
+                    activation_fn=None,
+                    biases_initializer=None,
+                )
                 self.output = tf.sigmoid(output)
 
         with tf.variable_scope("loss", reuse=tf.AUTO_REUSE):
@@ -147,7 +196,9 @@ class NCF:
         with tf.variable_scope("optimizer", reuse=tf.AUTO_REUSE):
 
             # set optimizer
-            self.optimizer = tf.train.AdamOptimizer(learning_rate=self.learning_rate).minimize(self.loss)
+            self.optimizer = tf.train.AdamOptimizer(
+                learning_rate=self.learning_rate
+            ).minimize(self.loss)
 
     def save(self, dir_name):
         """ save model parameters in `dir_name`
@@ -204,23 +255,27 @@ class NCF:
         # load gmf part
         variables = tf.global_variables()
         # get variables with 'gmf'
-        var_flow_restore = [val for val in variables if 'gmf' in val.name and 'ncf' not in val.name] 
+        var_flow_restore = [
+            val for val in variables if "gmf" in val.name and "ncf" not in val.name
+        ]
         # load 'gmf' variable
-        saver = tf.train.Saver(var_flow_restore) 
+        saver = tf.train.Saver(var_flow_restore)
         # restore
-        saver.restore(self.sess, os.path.join(gmf_dir, "model.ckpt")) 
+        saver.restore(self.sess, os.path.join(gmf_dir, "model.ckpt"))
 
         # load mlp part
         variables = tf.global_variables()
         # get variables with 'gmf'
-        var_flow_restore = [val for val in variables if 'mlp' in val.name and 'ncf' not in val.name] 
+        var_flow_restore = [
+            val for val in variables if "mlp" in val.name and "ncf" not in val.name
+        ]
         # load 'gmf' variable
-        saver = tf.train.Saver(var_flow_restore) 
+        saver = tf.train.Saver(var_flow_restore)
         # restore
-        saver.restore(self.sess, os.path.join(mlp_dir, "model.ckpt")) 
+        saver.restore(self.sess, os.path.join(mlp_dir, "model.ckpt"))
 
         # concat pretrain h_from_gmf and h_from_mlp
-        vars_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope='ncf')
+        vars_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="ncf")
 
         assert len(vars_list) == 1
         ncf_fc = vars_list[0]
@@ -230,9 +285,10 @@ class NCF:
         mlp_fc = tf.contrib.framework.load_variable(mlp_dir, ncf_fc.name)
 
         # load fc layer by tf.concat
-        assign_op = tf.assign(ncf_fc, tf.concat([alpha*gmf_fc, (1-alpha)*mlp_fc], axis=0))
+        assign_op = tf.assign(
+            ncf_fc, tf.concat([alpha * gmf_fc, (1 - alpha) * mlp_fc], axis=0)
+        )
         self.sess.run(assign_op)
-
 
     def fit(self, data):
         """ fit model with training data
@@ -250,7 +306,7 @@ class NCF:
         print("Training model: %s" % self.model_type)
 
         # loop for n_epochs
-        for epoch_count in range(1, self.n_epochs+1):
+        for epoch_count in range(1, self.n_epochs + 1):
 
             # negative sampling for training
             train_begin = time()
@@ -269,7 +325,7 @@ class NCF:
                 feed_dict = {
                     self.user_input: user_input[..., None],
                     self.item_input: item_input[..., None],
-                    self.labels: labels[..., None]
+                    self.labels: labels[..., None],
                 }
 
                 # get loss and execute optimization
@@ -280,16 +336,12 @@ class NCF:
             # output every self.verbose
             if self.verbose and epoch_count % self.verbose == 0:
 
-                print("Epoch %d [%.2fs]: train_loss = %.6f " % (
-                    epoch_count, train_time, sum(train_loss) / len(train_loss)))
+                print(
+                    "Epoch %d [%.2fs]: train_loss = %.6f "
+                    % (epoch_count, train_time, sum(train_loss) / len(train_loss))
+                )
 
-
-    def predict(
-            self,
-            user_input,
-            item_input,
-            is_list=False,
-    ):
+    def predict(self, user_input, item_input, is_list=False):
         """ predict function of this trained model
             Args:
                 user_input ( list or element of list ): userID or userID list 
@@ -307,13 +359,8 @@ class NCF:
         else:
             output = self._predict(np.array([user_input]), np.array([item_input]))
             return float(output.reshape(-1)[0])
-            
 
-    def _predict(
-                self,
-                user_input,
-                item_input,
-        ):
+    def _predict(self, user_input, item_input):
 
         # index converting
         user_input = np.array([self.user2id[x] for x in user_input])
@@ -328,5 +375,4 @@ class NCF:
         # calculate predicted score
         output = self.sess.run(self.output, feed_dict)
         return output
-
 
