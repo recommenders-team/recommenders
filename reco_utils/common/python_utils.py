@@ -12,7 +12,7 @@ def exponential_decay(value, max_val, half_life):
         float: decay factor
     """
 
-    return np.minimum(1., np.exp(-np.log(2) * (max_val - value) / half_life))
+    return np.minimum(1., np.power(0.5, (max_val - value) / half_life))
 
 
 def jaccard(cooccurrence):
