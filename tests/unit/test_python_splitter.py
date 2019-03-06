@@ -157,6 +157,9 @@ def test_random_splitter(test_specs, python_dataset):
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
 
+    for split in splits:
+        assert set(split.columns) == set(python_dataset.columns)
+
     splits = python_random_split(
         python_dataset, ratio=test_specs["ratios"], seed=test_specs["seed"]
     )
@@ -171,6 +174,9 @@ def test_random_splitter(test_specs, python_dataset):
     assert len(splits[2]) / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][2], test_specs["tolerance"]
     )
+
+    for split in splits:
+        assert set(split.columns) == set(python_dataset.columns)
 
     splits = python_random_split(
         python_dataset, ratio=test_specs["split_numbers"], seed=test_specs["seed"]
@@ -187,6 +193,9 @@ def test_random_splitter(test_specs, python_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
+    for split in splits:
+        assert set(split.columns) == set(python_dataset.columns)
+
 
 def test_chrono_splitter(test_specs, python_dataset):
     splits = python_chrono_split(
@@ -199,6 +208,9 @@ def test_chrono_splitter(test_specs, python_dataset):
     assert len(splits[1]) / test_specs["number_of_rows"] == pytest.approx(
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
+
+    for split in splits:
+        assert set(split.columns) == set(python_dataset.columns)
 
     # Test if both contains the same user list. This is because chrono split is stratified.
     users_train = splits[0][DEFAULT_USER_COL].unique()
@@ -240,6 +252,9 @@ def test_chrono_splitter(test_specs, python_dataset):
     assert len(splits[2]) / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][2], test_specs["tolerance"]
     )
+
+    for split in splits:
+        assert set(split.columns) == set(python_dataset.columns)
 
     # Test if all splits contain the same user list. This is because chrono split is stratified.
     users_train = splits[0][DEFAULT_USER_COL].unique()
@@ -298,6 +313,9 @@ def test_stratified_splitter(test_specs, python_dataset):
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
 
+    for split in splits:
+        assert set(split.columns) == set(python_dataset.columns)
+
     # Test if both contains the same user list. This is because stratified split is stratified.
     users_train = splits[0][DEFAULT_USER_COL].unique()
     users_test = splits[1][DEFAULT_USER_COL].unique()
@@ -318,6 +336,9 @@ def test_stratified_splitter(test_specs, python_dataset):
     assert len(splits[2]) / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][2], test_specs["tolerance"]
     )
+
+    for split in splits:
+        assert set(split.columns) == set(python_dataset.columns)
 
 
 def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
