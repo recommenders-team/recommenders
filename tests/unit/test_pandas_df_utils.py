@@ -127,7 +127,6 @@ def test_csv_to_libffm():
 
     with open(filepath, 'r') as f:
         line = f.readline()
-        print(line)
         assert line == '1 1:1:1 2:6:1 3:3:1.0 4:11:1\n'
 
 
