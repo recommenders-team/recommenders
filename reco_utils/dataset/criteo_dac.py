@@ -1,4 +1,3 @@
-# Databricks notebook source
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
@@ -41,42 +40,40 @@ def load_spark_df(
       pySpark.DataFrame: Criteo DAC training dataset.
   """
 
-  ## Exit if it isn't on databricks right now.
-  if not is_databricks():
-      raise ValueError("This is only supported on Databricks at the moment.")
-
   ## download and untar the train and test files
   extracted_tar_dir_path = _load_datafile(local_cache_path=local_cache_path, dbutils=dbutils)
-  # Driver node's file path
-  tar_datapath = "file:" + extracted_tar_dir_path
+  
 
-  try:
-      ## needs to be on dbfs to load
-      dbutils.fs.cp(tar_datapath, dbfs_datapath, recurse = True)
-  except:
-      raise ValueError("To use on a Databricks notebook, dbutils object should be passed as an argument")
+  if is_databricks():
+    try:
+        # Driver node's file path
+        tar_datapath = "file:" + extracted_tar_dir_path
+        ## needs to be on dbfs to load
+        dbutils.fs.cp(tar_datapath, dbfs_datapath, recurse=True)
+        path = dbfs_datapath
+    except:
+        raise ValueError("To use on a Databricks notebook, dbutils object should be passed as an argument")
+  else:
+    path = extracted_tar_dir_path
 
   if type is 'train':
       include_label = True
-      datapath = os.path.join(dbfs_datapath,'train.txt')
+      datapath = os.path.join(path,'train.txt')
   elif type is 'test':
       include_label = False
-      datapath = os.path.join(dbfs_datapath,'test.txt')
+      datapath = os.path.join(path,'test.txt')
   else:
       raise ValueError('Unknown type. Only "train" or "test" is allowed.')
 
   schema = _get_schema(include_label)
 
-  df = spark.read.csv(
+  return spark.read.csv(
        datapath, schema=schema, sep="\t", header=False
   )
 
-  return df
-
 
 def _get_schema(include_label=True):
-  """ 
-  Create the schema.
+  """Create the schema.
   
   For the training data, the schema is:
   
