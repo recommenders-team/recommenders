@@ -3,7 +3,11 @@
 
 
 import pytest
+import time
 from reco_utils.common.timer import Timer
+
+
+TOL = 0.01
 
 
 @pytest.fixture(scope="function")
@@ -23,16 +27,13 @@ def test_stop_before_start(t):
 
 
 def test_timer(t):
-    big_num = 1000
     t.start()
-    r = 0
-    a = [r + i for i in range(big_num)]
+    time.sleep(1)
     t.stop()
-    assert t.interval < 1
-    r = 0
+    assert t.interval == pytest.approx(1, abs=TOL)
     with Timer() as t2:
-        a = [r + i for i in range(big_num)]
-    assert t2.interval < 1
+        time.sleep(1)
+    assert t2.interval == pytest.approx(1, abs=TOL)
 
 
 def test_timer_format(t):
