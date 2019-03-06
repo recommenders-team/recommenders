@@ -187,3 +187,48 @@ def notebooks():
     }
     return paths
 
+
+@pytest.fixture(scope="module")
+def criteo_first_row():
+    return {
+    'label': 0,
+    'int00': 1,
+    'int01': 1,
+    'int02': 5,
+    'int03': 0,
+    'int04': 1382,
+    'int05': 4,
+    'int06': 15,
+    'int07': 2,
+    'int08': 181,
+    'int09': 1,
+    'int10': 2,
+    'int11': None,
+    'int12': 2,
+    'cat00': '68fd1e64',
+    'cat01': '80e26c9b',
+    'cat02': 'fb936136',
+    'cat03': '7b4723c4',
+    'cat04': '25c83c98',
+    'cat05': '7e0ccccf',
+    'cat06': 'de7995b8',
+    'cat07': '1f89b562',
+    'cat08': 'a73ee510',
+    'cat09': 'a8cd5504',
+    'cat10': 'b2cb9c98',
+    'cat11': '37c9c164',
+    'cat12': '2824a5f6',
+    'cat13': '1adce6ef',
+    'cat14': '8ba8b39a',
+    'cat15': '891b62e7',
+    'cat16': 'e5ba7672',
+    'cat17': 'f54016b9',
+    'cat18': '21ddcdc9',
+    'cat19': 'b1252a9d',
+    'cat20': '07b5194c',
+    'cat21': None,
+    'cat22': '3a171ecb',
+    'cat23': 'c5c50484',
+    'cat24': 'e8b83407',
+    'cat25': '9727dd16'
+}

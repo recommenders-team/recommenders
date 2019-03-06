@@ -15,7 +15,6 @@ try:
         DoubleType,
     )
     from pyspark.sql.functions import col
-    from reco_utils.common.spark_utils import start_or_get_spark
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -28,6 +27,7 @@ except ImportError:
         ("20m", 20000263, 27278, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
     ],
 )
+@pytest.mark.integration
 def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_example):
     """Test MovieLens dataset load into pd.DataFrame"""
 
@@ -67,7 +67,6 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     assert len(df.columns) == 3
 
 
-@pytest.mark.spark
 @pytest.mark.parametrize(
     "size, num_samples, num_movies, title_example, genres_example",
     [
@@ -76,6 +75,8 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
         ("20m", 20000263, 27278, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
     ],
 )
+@pytest.mark.spark
+@pytest.mark.integration
 def test_load_spark_df(size, num_samples, num_movies, title_example, genres_example):
     """Test MovieLens dataset load into pySpark.DataFrame
     """
@@ -130,3 +131,14 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
     with pytest.warns(Warning):
         df = movielens.load_spark_df(spark, header=header, schema=schema)
         assert len(df.columns) == len(schema)
+
+
+@pytest.mark.spark
+@pytest.mark.integration
+def test_criteo_load_spark_df(spark, criteo_first_row):
+    df = load_spark_df(spark, size="full")
+    assert df.count() == 45840617
+    assert len(df.columns) == 40
+    first_row = df.limit(1).collect()[0].asDict()
+    assert first_row == criteo_first_row
+
