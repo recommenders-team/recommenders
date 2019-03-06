@@ -135,6 +135,17 @@ def criteo_urls(size):
 
 
 def download_criteo(size="full", filename="dac.tar.gz", work_directory="."):
+    """Download criteo dataset as a compressed file.
+
+    Args:
+        size (str): Size of criteo dataset. It can be "full" or "sample".
+        filename (str): Filename.
+        work_directory (str): Working directory.
+
+    Returns:
+        str: Path of the downloaded file.
+
+    """
     url = criteo_urls(size)
     return maybe_download(url, filename, work_directory)
 
@@ -155,14 +166,15 @@ def _load_datafile(size, local_cache_path="dac.tar.gz", dbutils=None):
     print('Extracting component files from {}. This can take 3-5 minutes.'.format(local_cache_path))
     with tarfile.open(local_cache_path) as tar:
         tar.extractall(extracted_dir)
-    train_file = os.path.join(extracted_dir,'train.txt')
-    test_file = os.path.join(extracted_dir,'test.txt')
     
-    remove_filepath(local_cache_path)
+    #train_file = os.path.join(extracted_dir,'train.txt')
+    #test_file = os.path.join(extracted_dir,'test.txt')
+    
+    #remove_filepath(local_cache_path)
 
     # Make sure a temporal data file get cleaned up when done
-    atexit.register(remove_filepath, train_file)
-    atexit.register(remove_filepath, test_file)
+    #atexit.register(remove_filepath, train_file)
+    #atexit.register(remove_filepath, test_file)
 
     return extracted_dir
 

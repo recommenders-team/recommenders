@@ -7,9 +7,8 @@ import shutil
 import atexit
 import pandas as pd
 from zipfile import ZipFile
-from reco_utils.dataset.url_utils import maybe_download
+from reco_utils.dataset.url_utils import maybe_download, remove_filepath
 from reco_utils.common.notebook_utils import is_databricks
-from reco_utils.common.python_utils import _clean_up
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -389,7 +388,7 @@ def _load_datafile(size, local_cache_path):
     path, filename = os.path.split(os.path.realpath(local_cache_path))
 
     # Make sure a temporal zip file get cleaned up no matter what
-    atexit.register(_clean_up, local_cache_path)
+    atexit.register(remove_filepath, local_cache_path)
 
     maybe_download(
         "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip",
@@ -408,10 +407,10 @@ def _load_datafile(size, local_cache_path):
         with z.open(DATA_FORMAT[size].item_path) as zf, open(item_datapath, 'wb') as f:
             shutil.copyfileobj(zf, f)
 
-    _clean_up(local_cache_path)
+    remove_filepath(local_cache_path)
 
     # Make sure a temporal data file get cleaned up when done
-    atexit.register(_clean_up, datapath)
-    atexit.register(_clean_up, item_datapath)
+    atexit.register(remove_filepath, datapath)
+    atexit.register(remove_filepath, item_datapath)
 
     return datapath, item_datapath
