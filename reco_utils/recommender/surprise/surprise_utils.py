@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from reco_utils.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, DEFAULT_PREDICTION_COL
+from reco_utils.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_PREDICTION_COL
 
 
 def compute_rating_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL, predcol=DEFAULT_PREDICTION_COL):
@@ -15,7 +15,7 @@ def compute_rating_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEF
     Returns:
         pd.DataFrame: dataframe with usercol, itemcol, predcol
     """
-    predictions = [algo.predict(row[usercol], row[itemcol]) for (_, row) in data.iterrows()]
+    predictions = [algo.predict(getattr(row, usercol), getattr(row, itemcol)) for row in data.itertuples()]
     predictions = pd.DataFrame(predictions)
     predictions = predictions.rename(index=str, columns={'uid': usercol, 'iid': itemcol, 'est': predcol})
     return predictions.drop(['details', 'r_ui'], axis='columns')
@@ -45,7 +45,8 @@ def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DE
     if recommend_seen:
         return all_predictions
     else:
-        tempdf = pd.concat([data[[usercol, itemcol]], pd.DataFrame(data=np.ones(data.shape[0]), columns=['dummycol'])],
+        tempdf = pd.concat([data[[usercol, itemcol]],
+                            pd.DataFrame(data=np.ones(data.shape[0]), columns=['dummycol'], index=data.index)],
                             axis=1)
         merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
         return merged[merged['dummycol'].isnull()].drop('dummycol', axis=1)
