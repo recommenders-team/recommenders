@@ -107,7 +107,6 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
 
     # Encode field (rating column is not included)
     field_names = list(df_new.drop(col_rating, axis=1).columns)
-    field_dict = {k: v+1 for v, k in enumerate(field_names)}
 
     # Encode field-feature
     field_feature_list = []
@@ -129,8 +128,8 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
 
         return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
-    for col in field_names:
-        df_new[col] = df_new[col].apply(lambda x: _convert(col, x, field_dict, field_feature_dict))
+    for col_index, col in enumerate(field_names):
+        df_new[col] = df_new[col].apply(lambda x: _convert(col, x, col_index, field_feature_dict))
 
     # Move rating column to the first.
     field_names.insert(0, col_rating)
