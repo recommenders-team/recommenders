@@ -115,23 +115,19 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         if df_new[col].dtype == int:
             df_new[col] = df_new[col].astype(str)
         if df_new[col].dtype == object:
-            field_feature_concat = ['{}-{}'.format(col, x) for x in df_new[col].values]
-            field_feature_list.extend(field_feature_concat)
+            field_feature_tuple = [(col, x) for x in df_new[col].values]
+            field_feature_list.extend(field_feature_tuple)
     field_feature_dict = {k: v+1 for v, k in enumerate(field_feature_list)}
 
     def _convert(field, feature, field_index_dict, field_feature_index_dict):
         field_index = field_index_dict[field]
-        field_feature_index = (
-            field_feature_index_dict['{}-{}'.format(field, feature)]
-            if isinstance(feature, str)
-            else None
-        )
+        if isinstance(feature, str):
+            field_feature_index = field_feature_index_dict[(field, feature)]
+            feature = 1
+        else:
+            field_feature_index = field_index
 
-        return (
-            "{}:{}:1".format(field_index, field_feature_index)
-            if isinstance(feature, str)
-            else "{}:{}:{}".format(field_index, field_index, feature)
-        )
+        return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
     for col in field_names:
         if col is not col_rating:
