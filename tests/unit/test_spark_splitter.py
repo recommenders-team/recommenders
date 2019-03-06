@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-from itertools import product
 import pytest
 from reco_utils.dataset.split_utils import min_rating_filter_spark
 from reco_utils.common.constants import (
@@ -14,6 +13,8 @@ from reco_utils.common.constants import (
 )
 
 try:
+    from pyspark.sql import functions as F
+    from pyspark.sql.functions import col
     from reco_utils.common.spark_utils import start_or_get_spark
     from reco_utils.dataset.spark_splitters import (
         spark_chrono_split,
@@ -44,9 +45,7 @@ def python_data(test_specs):
 
     def random_date_generator(start_date, range_in_days):
         """Helper function to generate random timestamps.
-
-        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a
-        -range-in-numpy
+        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a-range-in-numpy
         """
         days_to_add = np.arange(0, range_in_days)
         random_dates = []
@@ -58,13 +57,13 @@ def python_data(test_specs):
 
     rating = pd.DataFrame(
         {
-            DEFAULT_USER_COL: np.random.random_integers(
+            DEFAULT_USER_COL: np.random.randint(
                 1, 5, test_specs["number_of_rows"]
             ),
-            DEFAULT_ITEM_COL: np.random.random_integers(
+            DEFAULT_ITEM_COL: np.random.randint(
                 1, 15, test_specs["number_of_rows"]
             ),
-            DEFAULT_RATING_COL: np.random.random_integers(
+            DEFAULT_RATING_COL: np.random.randint(
                 1, 5, test_specs["number_of_rows"]
             ),
             DEFAULT_TIMESTAMP_COL: random_date_generator(
@@ -78,22 +77,14 @@ def python_data(test_specs):
 
 @pytest.fixture(scope="module")
 def spark_dataset(python_data):
-    """Get Python labels"""
-    rating = python_data
     spark = start_or_get_spark("SplitterTesting")
-    df_rating = spark.createDataFrame(rating)
-
-    return df_rating
+    return spark.createDataFrame(python_data)
 
 
 @pytest.mark.spark
 def test_min_rating_filter(spark_dataset):
-    """Test min rating filter
-    """
-    dfs_rating = spark_dataset
-
-    dfs_user = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="user")
-    dfs_item = min_rating_filter_spark(dfs_rating, min_rating=5, filter_by="item")
+    dfs_user = min_rating_filter_spark(spark_dataset, min_rating=5, filter_by="user")
+    dfs_item = min_rating_filter_spark(spark_dataset, min_rating=5, filter_by="item")
 
     user_rating_counts = [
         x["count"] >= 5 for x in dfs_user.groupBy(DEFAULT_USER_COL).count().collect()
@@ -115,10 +106,8 @@ def test_random_splitter(test_specs, spark_dataset):
     the testing data. A approximate match with certain level of tolerance is therefore used
     instead for tests.
     """
-    df_rating = spark_dataset
-
     splits = spark_random_split(
-        df_rating, ratio=test_specs["ratio"], seed=test_specs["seed"]
+        spark_dataset, ratio=test_specs["ratio"], seed=test_specs["seed"]
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -129,7 +118,7 @@ def test_random_splitter(test_specs, spark_dataset):
     )
 
     splits = spark_random_split(
-        df_rating, ratio=test_specs["ratios"], seed=test_specs["seed"]
+        spark_dataset, ratio=test_specs["ratios"], seed=test_specs["seed"]
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -145,11 +134,8 @@ def test_random_splitter(test_specs, spark_dataset):
 
 @pytest.mark.spark
 def test_chrono_splitter(test_specs, spark_dataset):
-    """Test chronological splitter for Spark dataframes"""
-    dfs_rating = spark_dataset
-
     splits = spark_chrono_split(
-        dfs_rating, ratio=test_specs["ratio"], filter_by="user", min_rating=10
+        spark_dataset, ratio=test_specs["ratio"], filter_by="user", min_rating=10
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -169,18 +155,9 @@ def test_chrono_splitter(test_specs, spark_dataset):
 
     assert set(users_train) == set(users_test)
 
-    # Test all time stamps in test are later than that in train for all users.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        dfs_test = splits[1][splits[1][DEFAULT_USER_COL] == user]
+    assert _if_later(splits[0], splits[1])
 
-        user_later = _if_later(dfs_train, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
-
-        all_later.append(user_later)
-    assert all(all_later)
-
-    splits = spark_chrono_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_chrono_split(spark_dataset, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
@@ -192,28 +169,14 @@ def test_chrono_splitter(test_specs, spark_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
-    # Test if timestamps are correctly split. This is for multi-split case.
-    all_later = []
-    for user in test_specs["user_ids"]:
-        dfs_train = splits[0][splits[0][DEFAULT_USER_COL] == user]
-        dfs_valid = splits[1][splits[1][DEFAULT_USER_COL] == user]
-        dfs_test = splits[2][splits[2][DEFAULT_USER_COL] == user]
-
-        user_later_1 = _if_later(dfs_train, dfs_valid, col_timestamp=DEFAULT_TIMESTAMP_COL)
-        user_later_2 = _if_later(dfs_valid, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
-
-        all_later.append(user_later_1)
-        all_later.append(user_later_2)
-    assert all(all_later)
+    assert _if_later(splits[0], splits[1])
+    assert _if_later(splits[1], splits[2])
 
 
 @pytest.mark.spark
 def test_stratified_splitter(test_specs, spark_dataset):
-    """Test stratified splitter for Spark dataframes"""
-    dfs_rating = spark_dataset
-
     splits = spark_stratified_split(
-        dfs_rating, ratio=test_specs["ratio"], filter_by="user", min_rating=10
+        spark_dataset, ratio=test_specs["ratio"], filter_by="user", min_rating=10
     )
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
@@ -233,7 +196,7 @@ def test_stratified_splitter(test_specs, spark_dataset):
 
     assert set(users_train) == set(users_test)
 
-    splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_stratified_split(spark_dataset, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
@@ -248,11 +211,7 @@ def test_stratified_splitter(test_specs, spark_dataset):
 
 @pytest.mark.spark
 def test_timestamp_splitter(test_specs, spark_dataset):
-    """Test timestamp splitter for Spark dataframes"""
-    from pyspark.sql.functions import col
-
-    dfs_rating = spark_dataset
-    dfs_rating = dfs_rating.withColumn(DEFAULT_TIMESTAMP_COL, col(DEFAULT_TIMESTAMP_COL).cast("float"))
+    dfs_rating = spark_dataset.withColumn(DEFAULT_TIMESTAMP_COL, col(DEFAULT_TIMESTAMP_COL).cast("float"))
 
     splits = spark_timestamp_split(
         dfs_rating, ratio=test_specs["ratio"], col_timestamp=DEFAULT_TIMESTAMP_COL
@@ -265,8 +224,12 @@ def test_timestamp_splitter(test_specs, spark_dataset):
         1 - test_specs["ratio"], test_specs["tolerance"]
     )
 
+    max_split0 = splits[0].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split1 = splits[1].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split0 <= min_split1)
+
     # Test multi split
-    splits = spark_stratified_split(dfs_rating, ratio=test_specs["ratios"])
+    splits = spark_timestamp_split(dfs_rating, ratio=test_specs["ratios"])
 
     assert splits[0].count() / test_specs["number_of_rows"] == pytest.approx(
         test_specs["ratios"][0], test_specs["tolerance"]
@@ -278,37 +241,34 @@ def test_timestamp_splitter(test_specs, spark_dataset):
         test_specs["ratios"][2], test_specs["tolerance"]
     )
 
-    dfs_train = splits[0]
-    dfs_valid = splits[1]
-    dfs_test = splits[2]
+    max_split0 = splits[0].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split1 = splits[1].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split0 <= min_split1)
 
-    # if valid is later than train.
-    all_later_1 = _if_later(dfs_train, dfs_valid, col_timestamp=DEFAULT_TIMESTAMP_COL)
-    assert all_later_1
-
-    # if test is later than valid.
-    all_later_2 = _if_later(dfs_valid, dfs_test, col_timestamp=DEFAULT_TIMESTAMP_COL)
-    assert all_later_2
+    max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
+    min_split2 = splits[2].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
+    assert(max_split1 <= min_split2)
 
 
-def _if_later(data1, data2, col_timestamp=DEFAULT_TIMESTAMP_COL):
-    '''Helper function to test if records in data1 are later than that in data2.
+def _if_later(data1, data2):
+    """Helper function to test if records in data1 are earlier than that in data2.
+    Returns:
+        bool: True or False indicating if data1 is earlier than data2.
+    """
+    x = (data1.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
+         .groupBy(DEFAULT_USER_COL)
+         .agg(F.max(DEFAULT_TIMESTAMP_COL).cast('long').alias('max'))
+         .collect())
+    max_times = {row[DEFAULT_USER_COL]: row['max'] for row in x}
 
-    Return:
-        True or False indicating if data1 is later than data2.
-    '''
-    p = product(
-        [
-            x[col_timestamp]
-            for x in data1.select(col_timestamp).collect()
-        ],
-        [
-            x[col_timestamp]
-            for x in data2.select(col_timestamp).collect()
-        ],
-    )
+    y = (data2.select(DEFAULT_USER_COL, DEFAULT_TIMESTAMP_COL)
+         .groupBy(DEFAULT_USER_COL)
+         .agg(F.min(DEFAULT_TIMESTAMP_COL).cast('long').alias('min'))
+         .collect())
+    min_times = {row[DEFAULT_USER_COL]: row['min'] for row in y}
 
-    if_late = [a <= b for (a, b) in p]
+    result = True
+    for user, max_time in max_times.items():
+        result = result and min_times[user] >= max_time
 
-    return if_late
-
+    return result

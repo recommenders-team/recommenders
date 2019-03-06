@@ -148,7 +148,7 @@ def load_pandas_df(
 
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m")
-        header (list or tuple): Rating dataset header. If None, ratings are not loaded.
+        header (list or tuple or None): Rating dataset header. If None, ratings are not loaded.
         local_cache_path (str): Path where to cache the zip file locally
         title_col (str): Movie title column name. If None, the title column is not loaded.
         genres_col (str): Genres column name. Genres are '|' separated string.

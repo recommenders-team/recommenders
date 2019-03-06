@@ -3,6 +3,7 @@ import pytest
 
 from reco_utils.evaluation.parameter_sweep import generate_param_grid
 
+
 @pytest.fixture(scope="module")
 def parameter_dictionary():
     params = {
@@ -12,6 +13,7 @@ def parameter_dictionary():
     }
 
     return params
+
 
 def test_param_sweep(parameter_dictionary):
     params_grid = generate_param_grid(parameter_dictionary)
