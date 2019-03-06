@@ -11,12 +11,12 @@ This document describes how to setup all the dependencies to run the notebooks i
 * [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
   * [Setup Requirements](#setup-requirements)
   * [Dependencies setup](#dependencies-setup)
-  * [Register the conda environment in Jupyter notebook](#register-the-conda-environment-in-jupyter-notebook)
+  * [Register the conda environment as a kernel in Jupyter](#Register-the-conda-environment-as-a-kernel-in-Jupyter)
   * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
 * [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
   * [Repository installation](#repository-installation)
-  * [Troubleshooting for Azure Databricks](#troubleshooting-for-azure-databricks)
+  * [Troubleshooting Installation on Azure Databricks](#Troubleshooting-Installation-on-Azure-Databricks)
 * [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
 
 ## Compute environments
