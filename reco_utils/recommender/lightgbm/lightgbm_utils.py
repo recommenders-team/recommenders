@@ -1,13 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import os, logging
-from sklearn.metrics import (
-    roc_auc_score,
-    log_loss,
-    mean_squared_error,
-    accuracy_score,
-    f1_score,
-)
 import numpy as np
 import pandas as pd
 import category_encoders as ce
@@ -17,19 +10,29 @@ import gc
 
 import tarfile
 from reco_utils.dataset.url_utils import maybe_download
+from sklearn.metrics import (
+        roc_auc_score,
+        log_loss,
+        mean_squared_error,
+)
+# from reco_utils.evaluation.python_evaluation import (
+#     auc,
+#     rmse,
+#     logloss,
+# )
 
 logging.basicConfig(level = logging.INFO, format = '%(asctime)s [INFO] %(message)s')
 
-def download_lgb_resources(azure_container_url, data_path, remote_resource_name):
+def download_lgb_resources(remote_url, data_path, remote_resource_name):
     """Download resources.
 
     Args:
-        azure_container_url (str): URL of Azure container.
+        remote_url (str): URL from Internet.
         data_path (str): Path to download the resources.
         remote_resource_name (str): Name of the resource.
     """
     os.makedirs(data_path, exist_ok=True)
-    remote_path = azure_container_url + remote_resource_name
+    remote_path = remote_url + remote_resource_name
     maybe_download(remote_path, remote_resource_name, data_path)
     tar_ref = tarfile.open(os.path.join(data_path, remote_resource_name), "r")
     tar_ref.extractall(data_path)
@@ -38,45 +41,49 @@ def download_lgb_resources(azure_container_url, data_path, remote_resource_name)
 
 def cal_metric(labels, preds, metrics):
     """Calculate metrics,such as auc, logloss
-    FIXME: refactor this with the reco metrics
     """
     res = {}
     for metric in metrics:
         if metric == "auc":
-            auc = roc_auc_score(np.asarray(labels), np.asarray(preds))
-            res["auc"] = round(auc, 4)
-        elif metric == "rmse":
-            rmse = mean_squared_error(np.asarray(labels), np.asarray(preds))
-            res["rmse"] = np.sqrt(round(rmse, 4))
+            auc_res = roc_auc_score(np.asarray(labels), np.asarray(preds))
+            res["auc"] = round(auc_res, 4)
+        elif metric == "mse":
+            mse_res = mean_squared_error(np.asarray(labels), np.asarray(preds))
+            res["rmse"] = np.sqrt(round(mse_res, 4))
         elif metric == "logloss":
             # avoid logloss nan
             preds = [max(min(p, 1.0 - 10e-12), 10e-12) for p in preds]
-            logloss = log_loss(np.asarray(labels), np.asarray(preds))
-            res["logloss"] = round(logloss, 4)
-        elif metric == "acc":
-            pred = np.asarray(preds)
-            pred[pred >= 0.5] = 1
-            pred[pred < 0.5] = 0
-            acc = accuracy_score(np.asarray(labels), pred)
-            res["acc"] = round(acc, 4)
-        elif metric == "f1":
-            pred = np.asarray(preds)
-            pred[pred >= 0.5] = 1
-            pred[pred < 0.5] = 0
-            f1 = f1_score(np.asarray(labels), pred)
-            res["f1"] = round(f1, 4)
+            logloss_res = log_loss(np.asarray(labels), np.asarray(preds))
+            res["logloss"] = round(logloss_res, 4)
         else:
             raise ValueError("not define this metric {0}".format(metric))
     return res
 
-def unpackbits(x,num_bits):
+def unpackbits(x, num_bits):
+    """Convert a decimal value np.array into multi-binary value np.arrays ([1,2]->[[0,1],[1,0]])
+
+    Args:
+        x (np.array): Decimal array.
+        num_bits (int): The max length of the converted binary value.
+    """
     xshape = list(x.shape)
     x = x.reshape([-1,1])
     to_and = 2**np.arange(num_bits).reshape([1,num_bits])
     return (x & to_and).astype(bool).astype(int).reshape(xshape + [num_bits])
 
 class NumEncoder(object):
+    """Encode all the categorical features into numerical ones by sequntial label encoding, sequential count encoding, and binary encoding. Additionally, it also filters the low-frequency categories and fills the missing values, referring to the descriptions in 'notebooks/00_quick_start/lightgbm_tinycriteo.ipynb'.
+    """
     def __init__(self, cate_cols, nume_cols, label_col, threshold=10, thresrate=0.99):
+        """Init the class.
+        
+        Args:
+            cate_cols (list): The columns of categorical features.
+            nume_cols (list): The columns of numerical features.
+            label_col (object): The column of Label.
+            threshold (int): The categories whose frequency is lower than the threshold will be filtered (be treated as "<LESS>").
+            thresrate (float): The (1.0 - thersrate, default 1%) lowest-frequency categories will also be filtered.
+        """
         self.label_name = label_col
         self.cate_cols = cate_cols
         self.dtype_dict = {}
@@ -96,11 +103,10 @@ class NumEncoder(object):
         self.Max_len = {}
         self.samples = 0
 
-    def fit_transform(self, inPath):
-        logging.info('----------------------------------------------------------------------')
-        logging.info('Fitting and Transforming %s .'%inPath)
-        logging.info('----------------------------------------------------------------------')
-        df = pd.read_csv(inPath, dtype=self.dtype_dict)
+    def fit_transform(self, df):
+        """Input a training set (pd.DataFrame) and return the converted 2 np.arrays (x,y).
+        """
+        df = df.astype(dtype=self.dtype_dict)
         self.samples = df.shape[0]
         logging.info('Filtering and fillna features')
         for item in tqdm(self.cate_cols):
@@ -172,11 +178,10 @@ class NumEncoder(object):
         return (trn_x, trn_y)
 
     # for test dataset
-    def transform(self, inPath):
-        logging.info('----------------------------------------------------------------------')
-        logging.info('Transforming %s .'%inPath)
-        logging.info('----------------------------------------------------------------------')
-        df = pd.read_csv(inPath, dtype=self.dtype_dict)
+    def transform(self, df):
+        """Input a testing / validation set (pd.DataFrame) and return the converted 2 np.arrays (x,y).
+        """
+        df = df.astype(dtype=self.dtype_dict)
         samples = df.shape[0]
         logging.info('Filtering and fillna features')
         for item in tqdm(self.cate_cols):
