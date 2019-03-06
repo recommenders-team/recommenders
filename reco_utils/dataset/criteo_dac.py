@@ -170,7 +170,7 @@ def _load_datafile(size, local_cache_path="dac.tar.gz", dbutils=None):
     #train_file = os.path.join(extracted_dir,'train.txt')
     #test_file = os.path.join(extracted_dir,'test.txt')
     
-    #remove_filepath(local_cache_path)
+    remove_filepath(local_cache_path)
 
     # Make sure a temporal data file get cleaned up when done
     #atexit.register(remove_filepath, train_file)
