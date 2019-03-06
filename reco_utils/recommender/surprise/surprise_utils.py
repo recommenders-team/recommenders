@@ -4,9 +4,9 @@ import pandas as pd
 from reco_utils.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, DEFAULT_PREDICTION_COL
 
 
-def compute_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL, predcol=DEFAULT_PREDICTION_COL):
+def compute_rating_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL, predcol=DEFAULT_PREDICTION_COL):
     """
-    Computes predictions of an algorithm from Surprise on the data
+    Computes predictions of an algorithm from Surprise on the data. Can be used for computing rating metrics like RMSE.
     Args:
         algo (surprise.prediction_algorithms.algo_base.AlgoBase): an algorithm from Surprise
         data (pd.DataFrame): the data on which to predict
@@ -21,10 +21,11 @@ def compute_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_IT
     return predictions.drop(['details', 'r_ui'], axis='columns')
 
 
-def compute_all_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL,
+def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL,
                             predcol=DEFAULT_PREDICTION_COL, recommend_seen=False):
     """
-    Computes predictions of an algorithm from Surprise on all users and items in data.
+    Computes predictions of an algorithm from Surprise on all users and items in data. can be used for computing
+    ranking metrics like NDCG.
     Args:
         algo (surprise.prediction_algorithms.algo_base.AlgoBase): an algorithm from Surprise
         data (pd.DataFrame): the data from which to get the users and items
