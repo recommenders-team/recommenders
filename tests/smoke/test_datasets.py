@@ -116,8 +116,8 @@ def test_movielens_load_spark_df(spark):
 
 @pytest.mark.smoke
 @pytest.mark.spark
-def test_criteo_load_spark_df(spark):
-    df = load_spark_df(spark, size="sample")
+def test_criteo_load_spark_df(spark, criteo_first_row):
+    df = criteo_dac.load_spark_df(spark, size="sample")
     assert df.count() == 100000
     assert len(df.columns) == 40
     first_row = df.limit(1).collect()[0].asDict()
