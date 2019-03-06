@@ -15,13 +15,12 @@ try:
         DoubleType,
     )
     from pyspark.sql.functions import col
-    from reco_utils.common.spark_utils import start_or_get_spark
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
 
 @pytest.mark.smoke
-def test_movielens_load_pandas_df(size, num_samples, num_movies, title_example, genres_example):
+def test_movielens_load_pandas_df():
     size = "100k"
     df = movielens.load_pandas_df(size=size)
     assert len(df) == 100000
@@ -61,8 +60,7 @@ def test_movielens_load_pandas_df(size, num_samples, num_movies, title_example, 
     
 @pytest.mark.smoke
 @pytest.mark.spark
-def test_movielens_load_spark_df():
-    spark = start_or_get_spark("MovieLensLoaderTesting")
+def test_movielens_load_spark_df(spark):
     size = "100k"
 
     # Check if the function load correct dataset
@@ -116,4 +114,11 @@ def test_movielens_load_spark_df():
         assert len(df.columns) == len(schema)
 
 
-
+@pytest.mark.smoke
+@pytest.mark.spark
+def test_criteo_load_spark_df(spark):
+    df = load_spark_df(spark, size="sample")
+    assert df.count() == 100000
+    assert len(df.columns) == 40
+    first_row = df.limit(1).collect()[0].asDict()
+    assert first_row == criteo_first_row
