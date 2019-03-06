@@ -59,36 +59,7 @@ def create_itemid_dict(filepath, begin_fildnum):
     return item_feature_dict, feature_num
 
 
-# def create_final_file(filepath):
-#     with open(filepath, "r", encoding="ISO-8859-1") as train, \
-#          open(filepath+".final", "w", encoding="utf8") as train_final:
-#         for line in train:
-#             line = line.strip().split("\t")
-#             rating = line[2]
-#             if int(rating) > 3:
-#                 rating = "1"
-#             else:
-#                 rating = "0"
-#             userid = line[0]
-#             itemid = line[1]
-#             final_str = rating + " " + user_feature_dict[userid] + " " + item_feature_dict[itemid] + "\n"
-#             train_final.write(final_str)
-#
-# def create_final_file_regression(filepath):
-#     with open(filepath, "r", encoding="ISO-8859-1") as train, \
-#          open(filepath+".reg.final", "w", encoding="utf8") as train_final:
-#         for line in train:
-#             line = line.strip().split("\t")
-#             rating = line[2]
-#             userid = line[0]
-#             itemid = line[1]
-#             final_str = rating + " " + user_feature_dict[userid] + " " + item_feature_dict[itemid] + "\n"
-#             train_final.write(final_str)
 
-# from reco_utils.common.constants import (
-#     DEFAULT_USER_COL,
-#     DEFAULT_ITEM_COL
-# )
 
 
 def user_item_pairs(
@@ -134,75 +105,78 @@ def user_item_pairs(
 
     return users_items
 
-def create_final_file(filepath,training_flag, scoring_flag,field_num):
+def create_final_file(filepath,flag, field_num): ##scoring_flag and filed_num are only needed for top N recommendation
     with open(filepath, "r", encoding="ISO-8859-1") as train, \
-         open(filepath + "."+ training_flag+ "."+ scoring_flag+".final", "w", encoding="utf8") as train_final:
+         open(filepath + "."+ flag+".final", "w", encoding="utf8") as train_final:
 
-        if training_flag == 'regression': ## use rating as predition value for regression
+        if flag == 'regression': ## use rating as predition value for regression
+            for line in train:
+                line = line.strip().split("\t")
+                rating = line[2]+'.00' #changed to .00 format
+                userid = line[0]
+                itemid = line[1]
+                final_str = rating + " " + user_feature_dict[userid] + " " + item_feature_dict[itemid] + "\n"
+                train_final.write(final_str)
+        ## 2-class classification  rating>3 -> class=1
+        elif flag == 'classification':
+
             for line in train:
                 line = line.strip().split("\t")
                 rating = line[2]
                 userid = line[0]
                 itemid = line[1]
+
+                if int(rating) > 3:
+                    rating = "1.00"
+                else:
+                    rating = "0.00"
+
                 final_str = rating + " " + user_feature_dict[userid] + " " + item_feature_dict[itemid] + "\n"
                 train_final.write(final_str)
+        elif flag =='classification_topN':
 
-        elif training_flag == 'classification':
-            if scoring_flag != 'topN':  ## 2-class classification  rating>3 -> class=1
-                for line in train:
-                    line = line.strip().split("\t")
-                    rating = line[2]
-                    userid = line[0]
-                    itemid = line[1]
+            ## top_N recommendation
+            f_set_list = []
+            for i in range(field_num):#{0,1}
+                f_set_list.append(set())
 
-                    if int(rating) > 3:
-                        rating = "1"
-                    else:
-                        rating = "0"
+            for line in train:
+                line = line.strip().split("\t")
+                for i in range(0, field_num ): # i"0,1"
+                    f_set_list[i].add(line[i]) ##f_set_list[0] is user and f_set_list[1] is movie id
 
-                    final_str = rating + " " + user_feature_dict[userid] + " " + item_feature_dict[itemid] + "\n"
-                    train_final.write(final_str)
-            else:                           ## top_N
-                f_set_list = []
-                for i in range(field_num):#{0,1}
-                    f_set_list.append(set())
+            user_df = pd.DataFrame(list(f_set_list[0]),columns=['userID'])
+            item_df = pd.DataFrame(list(f_set_list[1]),columns=['itemID'])
+            user_items = user_item_pairs(user_df,item_df,user_col='userID',item_col='itemID')
 
-                for line in train:
-                    line = line.strip().split("\t")
-                    for i in range(0, field_num ): # i"0,1"
-                        f_set_list[i].add(line[i]) ##f_set_list[0] is user and f_set_list[1] is movie id
-                print("fset type",type(f_set_list[0]))
-                #print("fset_[0]",f_set_list[0])
-                user_df = pd.DataFrame(list(f_set_list[0]),columns=['userID'])
-                item_df = pd.DataFrame(list(f_set_list[1]),columns=['itemID'])
-                user_items = user_item_pairs(user_df,item_df,user_col='userID',item_col='itemID')
-                user_items['userID'] = user_items['userID'].astype(int)
-                user_items['itemID'] = user_items['itemID'].astype(int)
-                data = pd.read_csv(filepath, sep='\t', names=["userID", "itemID", "rating", "timestamp"])
+            user_items['userID'] = user_items['userID'].astype(int)
+            user_items['itemID'] = user_items['itemID'].astype(int)
 
-               ## merge all user_item data with movielens data
-                user_item_rating= pd.merge(user_items,data, how='left', on=['userID','itemID']).fillna(0).drop(columns=['timestamp'])
-                
-                user_item_rating.drop(columns=['rating']).to_csv('user_item.csv', sep='\t') ##order is a little weird need to check
-                
-                print(len(user_item_rating))
-                #user_item_rating.columns = ['']*len(user_item_rating.columns) #remove header
+            data = pd.read_csv(filepath, sep='\t', names=["userID", "itemID", "rating", "timestamp"])
 
-                for line in range(len(user_item_rating)):
+           ## merge all user_item data with movielens data
+            user_item_rating= pd.merge(user_items,data, how='left', on=['userID','itemID']).fillna(0).drop(columns=['timestamp'])
+            
+            user_item_rating.drop(columns=['rating']).to_csv('user_item.csv', sep='\t') ##order is a little weird need to check
+            
+            print(len(user_item_rating))
+            #user_item_rating.columns = ['']*len(user_item_rating.columns) #remove header
 
-                    rating = user_item_rating.iloc[line,2]
-                    #print(user_item_rating.loc[1,"userID"])
-                    #(user_item_rating.iloc[1,1])
-                    userid = user_item_rating.iloc[line,0].astype(str)
-                    itemid = user_item_rating.iloc[line,1].astype(str)
+            for line in range(len(user_item_rating)):
 
-                    if int(rating) > 3:
-                        rating = "1"
-                    else:
-                        rating = "0"
+                rating = user_item_rating.iloc[line,2]
+                #print(user_item_rating.loc[1,"userID"])
+                #(user_item_rating.iloc[1,1])
+                userid = user_item_rating.iloc[line,0].astype(str)
+                itemid = user_item_rating.iloc[line,1].astype(str)
 
-                    final_str = rating + " " + user_feature_dict[userid] + " " + item_feature_dict[itemid] + "\n"
-                    train_final.write(final_str)
+                if int(rating) > 3:
+                    rating = "1.00"
+                else:
+                    rating = "0.00"
+
+                final_str = rating + " " + user_feature_dict[userid] + " " + item_feature_dict[itemid] + "\n"
+                train_final.write(final_str)
 
 
 
@@ -210,14 +184,19 @@ if __name__ == "__main__":
     user_feature_dict, user_feature_num = create_userid_dict("ml-100k/ml-100k/u.user", 3)
     item_feature_dict, item_feature_num = create_itemid_dict("ml-100k/ml-100k/u.item", 4)
     print("feature_num: " + str(user_feature_num+item_feature_num))
-    #create_final_file_regression("ml-100k/ml-100k/ua.base")
-    #create_final_file_regression("ml-100k/ml-100k/ua.test")
-    #create_final_file("ml-100k/ml-100k/ua.base",'classification','topN',2)
-    create_final_file("ml-100k/ml-100k/ua.test",'classification','topN',2)
-    #create_final_file("ml-100k/ml-100k/ua.base", 'classification', 'nontopN', 2)
 
-##generate user and movie pairs
+    ## if do regression
+    ## transform training data ua.base into ua.base.regerssion
+    create_final_file("ml-100k/ml-100k/ua.base",'regression',0) #0 is not used for regression
+    create_final_file("ml-100k/ml-100k/ua.base",'classification',0) #0 is not used
+    create_final_file("ml-100k/ml-100k/ua.test",'classification',0) #0 is not used
+    create_final_file("ml-100k/ml-100k/ua.test",'classification_topN',2) #2 is number of fields
+    
+    #create_final_file_regression("ml-100k/ml-100k/ua.test",'regression')
 
-# user_df = pd.DataFrame(f_set_list[0], columns=['userID'])
-# item_df = pd.DataFrame(f_set_list[1],columns=['itemID'])
-# user_items= user_item_pairs(user_df,item_df,user_col='userID', item_col='itemID')
+    ## if do top N recommendation or do normal classification,use "classification,non-topN" as input arguments for training dataset
+    # create_final_file("ml-100k/ml-100k/ua.base", 'classification', 'nontopN', 2)
+
+    ##  use "classification , topN" as input arguments for testing dataset
+    #create_final_file("ml-100k/ml-100k/ua.test",'classification','topN',2)
+
