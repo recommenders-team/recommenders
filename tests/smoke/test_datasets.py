@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import pytest
-from reco_utils.dataset import movielens
+from reco_utils.dataset import movielens, criteo_dac
 from reco_utils.common.constants import DEFAULT_ITEM_COL
 
 try:
@@ -21,17 +21,10 @@ except ImportError:
 
 
 @pytest.mark.smoke
-@pytest.mark.parametrize(
-    "size, num_samples, num_movies, title_example, genres_example",
-    [
-        ("100k", 100000, 1682, "Toy Story (1995)", "Animation|Children's|Comedy"),
-    ],
-)
-def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_example):
-    """Test MovieLens dataset load into pd.DataFrame
-    """
+def test_movielens_load_pandas_df(size, num_samples, num_movies, title_example, genres_example):
+    size = "100k"
     df = movielens.load_pandas_df(size=size)
-    assert len(df) == num_samples
+    assert len(df) == 100000
     assert len(df.columns) == 4
 
     # Test if can handle different size of header columns
@@ -50,7 +43,7 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     # Movie 1 is Toy Story
     title = df.loc[df[DEFAULT_ITEM_COL] == 1][:2]["Title"].values
     assert title[0] == title[1]
-    assert title[0] == title_example
+    assert title[0] == "Toy Story (1995)"
 
     # Test genres load
     df = movielens.load_pandas_df(size=size, genres_col="Genres")
@@ -58,30 +51,23 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     # Movie 1 is Toy Story
     genres = df.loc[df[DEFAULT_ITEM_COL] == 1][:2]["Genres"].values
     assert genres[0] == genres[1]
-    assert genres[0] == genres_example
+    assert genres[0] == "Animation|Children's|Comedy"
 
     # Test movie data load (not rating data)
     df = movielens.load_pandas_df(size=size, header=None, title_col="Title", genres_col="Genres")
-    assert len(df) == num_movies
+    assert len(df) == 1682
     assert len(df.columns) == 3
 
     
 @pytest.mark.smoke
 @pytest.mark.spark
-@pytest.mark.parametrize(
-    "size, num_samples, num_movies, title_example, genres_example",
-    [
-        ("100k", 100000, 1682, "Toy Story (1995)", "Animation|Children's|Comedy"),
-    ],
-)
-def test_load_spark_df(size, num_samples, num_movies, title_example, genres_example):
-    """Test MovieLens dataset load into pySpark.DataFrame
-    """
+def test_movielens_load_spark_df():
     spark = start_or_get_spark("MovieLensLoaderTesting")
+    size = "100k"
 
     # Check if the function load correct dataset
     df = movielens.load_spark_df(spark, size=size)
-    assert df.count() == num_samples
+    assert df.count() == 100000
     assert len(df.columns) == 4
 
     # Test if can handle different size of header columns
@@ -100,7 +86,7 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
     # Movie 1 is Toy Story
     title = df.filter(col(DEFAULT_ITEM_COL) == 1).select("Title").limit(2).collect()
     assert title[0][0] == title[1][0]
-    assert title[0][0] == title_example
+    assert title[0][0] == "Toy Story (1995)"
 
     # Test genres load
     df = movielens.load_spark_df(spark, size=size, genres_col="Genres")
@@ -108,11 +94,11 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
     # Movie 1 is Toy Story
     genres = df.filter(col(DEFAULT_ITEM_COL) == 1).select("Genres").limit(2).collect()
     assert genres[0][0] == genres[1][0]
-    assert genres[0][0] == genres_example
+    assert genres[0][0] == "Animation|Children's|Comedy"
 
     # Test movie data load (not rating data)
     df = movielens.load_spark_df(spark, size=size, header=None, title_col="Title", genres_col="Genres")
-    assert df.count() == num_movies
+    assert df.count() == 1682
     assert len(df.columns) == 3
 
     # Test if can handle wrong size argument
@@ -128,3 +114,6 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
     with pytest.warns(Warning):
         df = movielens.load_spark_df(spark, header=header, schema=schema)
         assert len(df.columns) == len(schema)
+
+
+
