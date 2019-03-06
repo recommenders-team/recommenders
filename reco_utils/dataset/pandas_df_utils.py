@@ -91,7 +91,7 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         Where
         1. each "field-*" occupies one column in the data, and
         2. "feature-*-*" can be either a string or a numerical value.
-        3. If there are ordinal variables in the columns other than the rating column, users should make sure they
+        3. If there are ordinal variables in the columns, users should make sure these columns
         are properly converted to string type.
 
         The above data will be converted to the libffm format by following the convention as explained in
@@ -106,6 +106,11 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         pd.DataFrame: data in libffm format.
     """
     df_new = df.copy()
+
+    # Check column types.
+    types = df_new.dtypes
+    if not all([x == object or x == float or x == int for x in types]):
+        raise TypeError("Input columns should be only object and/or numeric types.")
 
     field_names = list(df_new.drop(col_rating, axis=1).columns)
 
