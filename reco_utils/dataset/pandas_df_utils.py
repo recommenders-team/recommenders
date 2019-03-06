@@ -91,6 +91,8 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         Where
         1. each "field-*" occupies one column in the data, and
         2. "feature-*-*" can be either a string or a numerical value.
+        3. If there are ordinal variables in the columns other than the rating column, users should make sure they
+        are properly converted to string type.
 
         The above data will be converted to the libffm format by following the convention as explained in
         https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf
@@ -105,21 +107,21 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
     """
     df_new = df.copy()
 
-    # Encode field (rating column is not included)
     field_names = list(df_new.drop(col_rating, axis=1).columns)
 
-    # Encode field-feature
-    field_feature_list = []
-    for col in field_names:
-        if df_new[col].dtype == int:
-            df_new[col] = df_new[col].astype(str)
-        if df_new[col].dtype == object:
-            field_feature_tuple = [(col, x) for x in df_new[col].values]
-            field_feature_list.extend(field_feature_tuple)
-    field_feature_dict = {k: v+1 for v, k in enumerate(field_feature_list)}
+    # Encode field-feature.
+    idx = 1
+    field_feature_dict = {}
+    for field in field_names:
+        if df_new[field].dtype == object:
+            for feature in df_new[field].values:
+                # Check whether (field, feature) tuple exists in the dict or not.
+                # If not, put them into the key-values of the dict and count the index.
+                if (field, feature) not in field_feature_dict:
+                    field_feature_dict[(field, feature)] = idx
+                    idx += 1
 
-    def _convert(field, feature, field_index_dict, field_feature_index_dict):
-        field_index = field_index_dict[field]
+    def _convert(field, feature, field_index, field_feature_index_dict):
         if isinstance(feature, str):
             field_feature_index = field_feature_index_dict[(field, feature)]
             feature = 1
@@ -129,7 +131,7 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
     for col_index, col in enumerate(field_names):
-        df_new[col] = df_new[col].apply(lambda x: _convert(col, x, col_index, field_feature_dict))
+        df_new[col] = df_new[col].apply(lambda x: _convert(col, x, col_index+1, field_feature_dict))
 
     # Move rating column to the first.
     field_names.insert(0, col_rating)
