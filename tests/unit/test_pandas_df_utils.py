@@ -114,6 +114,13 @@ def test_csv_to_libffm():
     filename = 'test'
     filepath = os.path.join(filedir, filename)
 
+    # Check the input column types. For example, a bool type is not allowed.
+    df_feature_wrong_type = df_feature.copy()
+    df_feature_wrong_type['field4'] = True
+    with pytest.raises(TypeError) as e:
+        df_to_libffm(df_feature_wrong_type, col_rating='rating')
+        assert e.value == "Input columns should be only object and/or numeric types."
+
     df_feature_libffm = df_to_libffm(df_feature, col_rating='rating', filepath=filepath)
 
     # Check if the dim is the same.
