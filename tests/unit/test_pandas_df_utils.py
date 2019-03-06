@@ -101,10 +101,10 @@ def test_filter_by():
 def test_csv_to_libffm():
     df_feature = pd.DataFrame({
         'rating': [1, 0, 0, 1, 1],
-        'field1': ['xxx1', 'xxx2', 'xxx3', 'xxx4', 'xxx5'],
+        'field1': ['xxx1', 'xxx2', 'xxx4', 'xxx4', 'xxx4'],
         'field2': ['yyy1', 'yyy2', 'yyy3', 'yyy4', 'yyy5'],
         'field3': [1.0, 2.0, 3.0, 4.0, 5.0],
-        'field5': [1, 2, 3, 4, 5]
+        'field4': ['1', '2', '3', '4', '5']
     })
 
     import tempfile
@@ -120,14 +120,18 @@ def test_csv_to_libffm():
     assert df_feature_libffm.shape == df_feature.shape
 
     # Check if the columns are converted successfully.
-    assert df_feature_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:6:1', '3:3:1.0', '4:11:1']
+    assert df_feature_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:4:1', '3:3:1.0', '4:9:1']
+
+    # Check if the duplicated column entries are indexed correctly.
+    # It should skip counting the duplicated features in a field column.
+    assert df_feature_libffm.iloc[-1, :].values.tolist() == [1, '1:3:1', '2:8:1', '3:3:5.0', '4:13:1']
 
     # Check if the file is written successfully.
     assert os.path.isfile(filepath)
 
     with open(filepath, 'r') as f:
         line = f.readline()
-        assert line == '1 1:1:1 2:6:1 3:3:1.0 4:11:1\n'
+        assert line == '1 1:1:1 2:4:1 3:3:1.0 4:9:1\n'
 
 
 
