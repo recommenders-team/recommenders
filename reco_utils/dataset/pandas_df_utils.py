@@ -130,8 +130,7 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
     for col in field_names:
-        if col is not col_rating:
-            df_new[col] = df_new[col].apply(lambda x: _convert(col, x, field_dict, field_feature_dict))
+        df_new[col] = df_new[col].apply(lambda x: _convert(col, x, field_dict, field_feature_dict))
 
     # Move rating column to the first.
     field_names.insert(0, col_rating)
