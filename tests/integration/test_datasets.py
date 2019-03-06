@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import pytest
-from reco_utils.dataset import movielens
+from reco_utils.dataset import movielens, criteo_dac
 from reco_utils.common.constants import DEFAULT_ITEM_COL
 
 try:
@@ -136,7 +136,7 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
 @pytest.mark.spark
 @pytest.mark.integration
 def test_criteo_load_spark_df(spark, criteo_first_row):
-    df = load_spark_df(spark, size="full")
+    df = criteo_dac.load_spark_df(spark, size="full")
     assert df.count() == 45840617
     assert len(df.columns) == 40
     first_row = df.limit(1).collect()[0].asDict()
