@@ -74,7 +74,8 @@ def filter_by(df, filter_by_df, filter_by_cols):
 
 
 def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
-    """Converts an input Dataframe (df) to an text file in libffm format.
+    """Converts an input Dataframe (df) to another Dataframe (df) in libffm format. A text file of the converted
+    Dataframe is optionally generated.
 
     Note:
         The input dataframe is expected to represent the feature data in the following schema
@@ -96,7 +97,7 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         filepath (str): path to save the converted data.
 
     Return:
-        df_libffm (pd.DataFrame): a Pandas DataFrame in libffm format.
+        pd.DataFrame: data in libffm format.
     """
     df_new = df.copy()
 
