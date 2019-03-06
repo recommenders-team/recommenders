@@ -4,11 +4,6 @@
 import os
 import atexit
 import tarfile
-
-from reco_utils.dataset.url_utils import maybe_download
-from reco_utils.common.notebook_utils import is_databricks
-from reco_utils.common.python_utils import _clean_up
-
 try:
     from pyspark.sql.types import (
         StructType,
@@ -19,9 +14,18 @@ try:
 except ImportError:
     pass  # so the environment without spark doesn't break
 
+from reco_utils.dataset.url_utils import maybe_download, remove_filepath
+from reco_utils.common.notebook_utils import is_databricks
+
+
+CRITEO_URL_FULL = "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz"
+CRITEO_URL_SAMPLE = "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz"
+
+
 def load_spark_df(
     spark,
-    type='train',
+    size="sample",
+    type="train",
     local_cache_path="dac.tar.gz",
     dbfs_datapath="dbfs:/FileStore/dac", 
     dbutils=None,
@@ -36,14 +40,13 @@ def load_spark_df(
       local_cache_path (str): Path where to cache the tar.gz file locally (not dbfs)
       dbfs_datapath: where to store the extracted files
       dbutils (Databricks.dbutils): Databricks utility object
+  
   Returns:
       pySpark.DataFrame: Criteo DAC training dataset.
   """
-
   ## download and untar the train and test files
-  extracted_tar_dir_path = _load_datafile(local_cache_path=local_cache_path, dbutils=dbutils)
+  extracted_tar_dir_path = _load_datafile(size=size, local_cache_path=local_cache_path, dbutils=dbutils)
   
-
   if is_databricks():
     try:
         # Driver node's file path
@@ -56,20 +59,27 @@ def load_spark_df(
   else:
     path = extracted_tar_dir_path
 
-  if type is 'train':
-      include_label = True
-      datapath = os.path.join(path,'train.txt')
-  elif type is 'test':
-      include_label = False
-      datapath = os.path.join(path,'test.txt')
-  else:
-      raise ValueError('Unknown type. Only "train" or "test" is allowed.')
-
+  datapath, include_label = _manage_data_sizes(size, path, type)
   schema = _get_schema(include_label)
-
   return spark.read.csv(
        datapath, schema=schema, sep="\t", header=False
   )
+
+
+def _manage_data_sizes(size, path, type):
+  if size == "sample":
+    include_label = True
+    datapath = os.path.join(path, "dac_sample.txt")
+  elif size == "full":
+    if type is 'train':
+        include_label = True
+        datapath = os.path.join(path,'train.txt')
+    elif type is 'test':
+        include_label = False
+        datapath = os.path.join(path,'test.txt')
+    else:
+        raise ValueError('Unknown type. Only "train" or "test" is allowed.')
+  return datapath, include_label
 
 
 def _get_schema(include_label=True):
@@ -107,20 +117,38 @@ def _get_schema(include_label=True):
   return schema
 
 
-def _load_datafile(local_cache_path="dac.tar.gz", dbutils=None):
+def criteo_urls(size):
+  """Return the url of criteo based on the input size
+
+  Args:
+    size (str): Size of criteo dataset. It can be "full" or "sample".
+
+  Returns:
+    str: url of Criteo dataset.
+
+  """
+  url = {
+    "full": CRITEO_URL_FULL,
+    "sample": CRITEO_URL_SAMPLE
+  }
+  return url[size]
+
+
+def download_criteo(size="full", filename="dac.tar.gz", work_directory="."):
+    url = criteo_urls(size)
+    return maybe_download(url, filename, work_directory)
+
+
+def _load_datafile(size, local_cache_path="dac.tar.gz", dbutils=None):
     """ Download and extract file """
 
     path, filename = os.path.split(os.path.realpath(local_cache_path))
 
     # Make sure the temporal tar file gets cleaned up no matter what
-    atexit.register(_clean_up, local_cache_path)
+    atexit.register(remove_filepath, local_cache_path)
 
     ## download if it doesn't already exist locally
-    maybe_download(
-          "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz",
-          filename,
-          work_directory=path,
-    )
+    download_criteo(size, filename, path)
 
     #always extract to a subdirectory of cache_path called dac
     extracted_dir=os.path.join(path, "dac")
@@ -130,11 +158,11 @@ def _load_datafile(local_cache_path="dac.tar.gz", dbutils=None):
     train_file = os.path.join(extracted_dir,'train.txt')
     test_file = os.path.join(extracted_dir,'test.txt')
     
-    _clean_up(local_cache_path)
+    remove_filepath(local_cache_path)
 
     # Make sure a temporal data file get cleaned up when done
-    atexit.register(_clean_up, train_file)
-    atexit.register(_clean_up, test_file)
+    atexit.register(remove_filepath, train_file)
+    atexit.register(remove_filepath, test_file)
 
     return extracted_dir
 
