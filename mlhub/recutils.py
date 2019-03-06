@@ -28,12 +28,12 @@ def _plot_image(ax, img):
     ax.imshow(to_img(img))
     ax.tick_params(axis='both',
                    which='both',
-                   bottom='off',
-                   top='off',
-                   left='off',
-                   right='off',
-                   labelleft='off',
-                   labelbottom='off')
+                   bottom=False,
+                   top=False,
+                   left=False,
+                   right=False,
+                   labelleft=False,
+                   labelbottom=False)
     return ax
 
 def plot_recommendations():
@@ -53,3 +53,4 @@ def plot_recommendations():
     # fig = plt.figure()
     # fig.savefig("sample.png")
     plt.show()
+
