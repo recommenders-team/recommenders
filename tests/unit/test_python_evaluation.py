@@ -111,9 +111,7 @@ def python_data():
 
         if binary_rating:
             # Convert to binary case.
-            rating_true[DEFAULT_RATING_COL] = (
-                rating_true[DEFAULT_RATING_COL].apply(lambda x: 1.0 if x >= 3 else 0.0)
-            )
+            rating_true[DEFAULT_RATING_COL] = rating_true[DEFAULT_RATING_COL].apply(lambda x: 1.0 if x >= 3 else 0.0)
 
             # Normalize the prediction.
             rating_pred[PREDICTION_COL] = minmax_scale(rating_pred[PREDICTION_COL].astype(float))
