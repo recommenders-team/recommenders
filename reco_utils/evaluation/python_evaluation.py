@@ -636,24 +636,21 @@ def auc(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     auc_score = roc_auc_score(
-        np.asarray(rating_true_pred[DEFAULT_RATING_COL].values),
-        np.asarray(rating_true_pred[PREDICTION_COL].values)
+        rating_true_pred[DEFAULT_RATING_COL].values,
+        rating_true_pred[PREDICTION_COL].values
     )
-
-    # Round the AUC score to four digits.
-    auc_score = round(auc_score, 4)
 
     return auc_score
 
 
 @check_column_dtypes
 def logloss(
-        rating_true,
-        rating_pred,
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL
 ):
     """
     Calculate the logloss metric for implicit feedback typed
@@ -677,18 +674,10 @@ def logloss(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
 
-    # To make sure that there is no N/A in the logloss metric calculation.
-    rating_true_pred[PREDICTION_COL] = (
-        rating_true_pred[PREDICTION_COL].apply(lambda x: max(min(x, 1.0 - 10e-12), 10e-12))
-    )
-
     log_loss_score = log_loss(
-        np.asarray(rating_true_pred[DEFAULT_RATING_COL].values),
-        np.asarray(rating_true_pred[PREDICTION_COL].values)
+        rating_true_pred[DEFAULT_RATING_COL].values,
+        rating_true_pred[PREDICTION_COL].values
     )
-
-    # Round the AUC score to four digits.
-    log_loss_score = round(log_loss_score, 4)
 
     return log_loss_score
 
