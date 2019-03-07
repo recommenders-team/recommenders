@@ -35,7 +35,7 @@ def score(
     user_col=cc.DEFAULT_USER_COL,
     item_col=cc.DEFAULT_ITEM_COL,
     prediction_col=cc.DEFAULT_PREDICTION_COL,
-    top_k=0,
+    top_k=None,
 ):
     """Score all users+items provided and reduce to top_k items per user if top_k>0
     
@@ -50,10 +50,10 @@ def score(
     Returns:
         pd.DataFrame: Result of recommendation 
     """
-    # replace values not known to the model with #na#
+    # replace values not known to the model with NaN
     total_users, total_items = learner.data.train_ds.x.classes.values()
-    test_df.loc[~test_df[user_col].isin(total_users), user_col] = total_users[0]
-    test_df.loc[~test_df[item_col].isin(total_items), item_col] = total_items[0]
+    test_df.loc[~test_df[user_col].isin(total_users), user_col] = np.nan
+    test_df.loc[~test_df[item_col].isin(total_items), item_col] = np.nan
 
     # map ids to embedding ids
     u = learner.get_idx(test_df[user_col], is_item=False)
@@ -65,7 +65,7 @@ def score(
         {user_col: test_df[user_col], item_col: test_df[item_col], prediction_col: pred}
     )
     scores = scores.sort_values([user_col, prediction_col], ascending=[True, False])
-    if top_k > 0:
+    if top_k is not None:
         top_scores = scores.groupby(user_col).head(top_k).reset_index(drop=True)
     else:
         top_scores = scores
