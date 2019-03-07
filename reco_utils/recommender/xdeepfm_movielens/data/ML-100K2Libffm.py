@@ -186,17 +186,14 @@ if __name__ == "__main__":
     print("feature_num: " + str(user_feature_num+item_feature_num))
 
     ## if do regression
-    ## transform training data ua.base into ua.base.regerssion
+    ## transform training data ua.base into ua.base.regerssion for regression
     create_final_file("ml-100k/ml-100k/ua.base",'regression',0) #0 is not used for regression
-    create_final_file("ml-100k/ml-100k/ua.base",'classification',0) #0 is not used
-    create_final_file("ml-100k/ml-100k/ua.test",'classification',0) #0 is not used
-    create_final_file("ml-100k/ml-100k/ua.test",'classification_topN',2) #2 is number of fields
+    create_final_file("ml-100k/ml-100k/ua.test",'regression',0) #0 is not used for regression
     
-    #create_final_file_regression("ml-100k/ml-100k/ua.test",'regression')
+    #### if do classification
+    #create_final_file("ml-100k/ml-100k/ua.base",'classification',0) #0 is not used
+    #create_final_file("ml-100k/ml-100k/ua.test",'classification',0) #0 is not used
+    #create_final_file("ml-100k/ml-100k/ua.test",'classification_topN',2) #2 is number of fields
+    
 
-    ## if do top N recommendation or do normal classification,use "classification,non-topN" as input arguments for training dataset
-    # create_final_file("ml-100k/ml-100k/ua.base", 'classification', 'nontopN', 2)
-
-    ##  use "classification , topN" as input arguments for testing dataset
-    #create_final_file("ml-100k/ml-100k/ua.test",'classification','topN',2)
 
