@@ -236,9 +236,15 @@ Performance Evaluation
 
 We evaluate the perfomance of the model using typical recommendations model
 performance criteria as provided by the Microsoft recommenders toolkit. The
-following evaluation criteria are the common ones. 
+following evaluation criteria are commonly used. 
 
-TODO: brief summary of each.
+Precision is the fraction of the K movies recommended that are relevant to the
+user. Recall is the proportion of relevant items that are recommended. NDCG is
+the Normalized Discounted Cumulative Gain which evaluates how well the 
+predicted items for a user are ranked based on relevance. Finally, MAP is the
+mean average precision, calcuated as the average precision for each user
+normalised over all users.  MAP is generally a good discriminator between
+models and is reported to be quite stable.
 
 rbm_ref with @K={:2.0f}
 Precision: {:4.2f} 
