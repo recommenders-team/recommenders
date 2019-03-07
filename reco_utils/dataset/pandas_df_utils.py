@@ -89,13 +89,17 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
         ...
         |feature-1-i|feature-2-j|...|feature-n-k|0|
         Where
-        1. each "field-*" occupies one column in the data, and
-        2. "feature-*-*" can be either a string or a numerical value.
-        3. If there are ordinal variables in the columns, users should make sure these columns
+        1. each "field-*" is the column name of the dataframe (column of lable/rating is excluded), and
+        2. "feature-*-*" can be either a string or a numerical value, representing the categorical variable or
+        actual numerical variable of the feature value in the field, respectively.
+        3. If there are ordinal variables represented in int types, users should make sure these columns
         are properly converted to string type.
 
         The above data will be converted to the libffm format by following the convention as explained in
         https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf
+
+        i.e., <field_index>:<field_feature_index>:1 or <field_index>:<field_index>:<field_feature_value>, depending on
+        the data type of the features in the original dataframe.
 
     Args:
         df (pd.DataFrame): input Pandas dataframe.
@@ -109,7 +113,7 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
 
     # Check column types.
     types = df_new.dtypes
-    if not all([x == object or x == np.integer or x == np.float for x in types]):
+    if not all([x == object or np.issubdtype(x, np.integer) or x == np.float for x in types]):
         raise TypeError("Input columns should be only object and/or numeric types.")
 
     field_names = list(df_new.drop(col_rating, axis=1).columns)
