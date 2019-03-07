@@ -41,6 +41,7 @@ def download_lgb_resources(remote_url, data_path, remote_resource_name):
 
 def cal_metric(labels, preds, metrics):
     """Calculate metrics,such as auc, logloss
+    FIXME: refactor this with the reco metrics
     """
     res = {}
     for metric in metrics:
