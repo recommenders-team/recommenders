@@ -293,7 +293,7 @@ def test_python_recall(python_data, target_metrics):
 
     assert recall_at_k(
         k=10, rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
-    ) == pytest.approx(1, 0.1)
+    ) == pytest.approx(1, TOL)
     assert recall_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert recall_at_k(rating_true, rating_pred, k=10) == target_metrics["recall"]
 
@@ -305,7 +305,7 @@ def test_python_auc(python_data, target_metrics):
         rating_true=rating_true,
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL
-    ) == pytest.approx(1.0, 0.1)
+    ) == pytest.approx(1.0, TOL)
 
     assert auc(
         rating_true=rating_true,
@@ -322,7 +322,7 @@ def test_python_logloss(python_data, target_metrics):
         rating_true=rating_true,
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL
-    ) == pytest.approx(0, 0.1)
+    ) == pytest.approx(0, TOL)
 
     assert logloss(
         rating_true=rating_true,
