@@ -1,4 +1,5 @@
-# Recommenders 
+Recommenders 
+============
 
 The Microsoft Recommenders repository on github provides examples and
 best practices for building recommendation systems. This package
@@ -18,10 +19,11 @@ The MovieLens data sets are used in this demonstration, containing
 movieId, rating, timestamp, title, and genres. The goal is to build a
 recommendation model to recommend new movies to users.
 
-# Usage
+Usage
+-----
 
 MLHub is a command line utility to quickly demonstrate the
-capabilities of different machine learning models and data science
+capabilities of pre-built machine learning models and data science
 processes. Visit [MLHub.ai](https://mlhub.ai) for details.
 
 To install and run the pre-built scripts:
