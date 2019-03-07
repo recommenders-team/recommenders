@@ -109,7 +109,7 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
 
     # Check column types.
     types = df_new.dtypes
-    if not all([x == object or x == float or x == int for x in types]):
+    if not all([x == object or x == np.integer or x == np.float for x in types]):
         raise TypeError("Input columns should be only object and/or numeric types.")
 
     field_names = list(df_new.drop(col_rating, axis=1).columns)
