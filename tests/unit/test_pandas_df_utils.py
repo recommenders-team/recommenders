@@ -3,11 +3,10 @@
 
 import pytest
 import pandas as pd
-import numpy as np
 from reco_utils.dataset.pandas_df_utils import (
     user_item_pairs,
     filter_by,
-    df_to_libffm
+    libffm_converter
 )
 
 
@@ -118,10 +117,10 @@ def test_csv_to_libffm():
     df_feature_wrong_type = df_feature.copy()
     df_feature_wrong_type['field4'] = True
     with pytest.raises(TypeError) as e:
-        df_to_libffm(df_feature_wrong_type, col_rating='rating')
+        libffm_converter(df_feature_wrong_type, col_rating='rating')
         assert e.value == "Input columns should be only object and/or numeric types."
 
-    df_feature_libffm = df_to_libffm(df_feature, col_rating='rating', filepath=filepath)
+    df_feature_libffm = libffm_converter(df_feature, col_rating='rating', filepath=filepath)
 
     # Check if the dim is the same.
     assert df_feature_libffm.shape == df_feature.shape

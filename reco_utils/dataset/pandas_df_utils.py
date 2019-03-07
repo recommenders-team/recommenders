@@ -77,7 +77,7 @@ def filter_by(df, filter_by_df, filter_by_cols):
     ]
 
 
-def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
+def libffm_converter(df, col_rating=DEFAULT_RATING_COL, filepath=None):
     """Converts an input Dataframe (df) to another Dataframe (df) in libffm format. A text file of the converted
     Dataframe is optionally generated.
 
@@ -100,6 +100,25 @@ def df_to_libffm(df, col_rating=DEFAULT_RATING_COL, filepath=None):
 
         i.e., <field_index>:<field_feature_index>:1 or <field_index>:<field_index>:<field_feature_value>, depending on
         the data type of the features in the original dataframe.
+
+    Examples:
+        >>> import pandas as pd
+        >>> df_feature = pd.DataFrame({
+                'rating': [1, 0, 0, 1, 1],
+                'field1': ['xxx1', 'xxx2', 'xxx4', 'xxx4', 'xxx4'],
+                'field2': [3, 4, 5, 6, 7],
+                'field3': [1.0, 2.0, 3.0, 4.0, 5.0],
+                'field4': ['1', '2', '3', '4', '5']
+            })
+
+        >>> df_out = libffm_converter(df_feature, col_rating='rating')
+        >>> df_out
+            rating field1 field2   field3 field4
+        0       1  1:1:1  2:2:3  3:3:1.0  4:4:1
+        1       0  1:2:1  2:2:4  3:3:2.0  4:5:1
+        2       0  1:3:1  2:2:5  3:3:3.0  4:6:1
+        3       1  1:3:1  2:2:6  3:3:4.0  4:7:1
+        4       1  1:3:1  2:2:7  3:3:5.0  4:8:1
 
     Args:
         df (pd.DataFrame): input Pandas dataframe.
