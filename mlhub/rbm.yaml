@@ -3,7 +3,7 @@ meta:
   name         : rbm
   title        : The Microsoft recommender toolkit demo of RBM
   keywords     : recommendation
-  version      : 1.0.4
+  version      : 1.0.5
   languages    : python
   modeller     : RBM
   type         : Restricted Boltzmann Machine
