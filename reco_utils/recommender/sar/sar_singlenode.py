@@ -290,6 +290,8 @@ class SARSingleNode:
             pd.DataFrame: top k recommendation items for each user
         """
 
+        if self.n_items < top_k:
+            logger.warning('Number of items is less than top_k, limiting top_k to number of items')
         k = min(top_k, self.n_items)
 
         test_scores = self.score(test, remove_seen=remove_seen)
