@@ -640,9 +640,6 @@ def auc(
         np.asarray(rating_true_pred[PREDICTION_COL].values)
     )
 
-    # Round the AUC score to four digits.
-    auc_score = round(auc_score, 4)
-
     return auc_score
 
 
@@ -686,9 +683,6 @@ def logloss(
         np.asarray(rating_true_pred[DEFAULT_RATING_COL].values),
         np.asarray(rating_true_pred[PREDICTION_COL].values)
     )
-
-    # Round the AUC score to four digits.
-    log_loss_score = round(log_loss_score, 4)
 
     return log_loss_score
 
