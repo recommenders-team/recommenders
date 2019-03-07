@@ -8,36 +8,11 @@ from tqdm import tqdm
 import collections
 import gc
 
-import tarfile
-from reco_utils.dataset.url_utils import maybe_download
 from sklearn.metrics import (
         roc_auc_score,
         log_loss,
         mean_squared_error,
 )
-# from reco_utils.evaluation.python_evaluation import (
-#     auc,
-#     rmse,
-#     logloss,
-# )
-
-logging.basicConfig(level = logging.INFO, format = '%(asctime)s [INFO] %(message)s')
-
-def download_lgb_resources(remote_url, data_path, remote_resource_name):
-    """Download resources.
-
-    Args:
-        remote_url (str): URL from Internet.
-        data_path (str): Path to download the resources.
-        remote_resource_name (str): Name of the resource.
-    """
-    os.makedirs(data_path, exist_ok=True)
-    remote_path = remote_url + remote_resource_name
-    maybe_download(remote_path, remote_resource_name, data_path)
-    tar_ref = tarfile.open(os.path.join(data_path, remote_resource_name), "r")
-    tar_ref.extractall(data_path)
-    tar_ref.close()
-    os.remove(os.path.join(data_path, remote_resource_name))
 
 def cal_metric(labels, preds, metrics):
     """Calculate metrics,such as auc, logloss
@@ -85,6 +60,7 @@ class NumEncoder(object):
             threshold (int): The categories whose frequency is lower than the threshold will be filtered (be treated as "<LESS>").
             thresrate (float): The (1.0 - thersrate, default 1%) lowest-frequency categories will also be filtered.
         """
+        logging.basicConfig(level = logging.INFO, format = '%(asctime)s [INFO] %(message)s')
         self.label_name = label_col
         self.cate_cols = cate_cols
         self.dtype_dict = {}
