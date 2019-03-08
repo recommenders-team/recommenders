@@ -43,7 +43,7 @@ def _load_datafile(local_cache_path="dac_sample.tar.gz"):
     path, filename = os.path.split(os.path.realpath(local_cache_path))
     # Make sure a temporal zip file get cleaned up no matter what
     atexit.register(_clean_up, local_cache_path)
-
+    
     ## download if it doesn't already exist locally
     maybe_download(
           "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz",
@@ -52,14 +52,16 @@ def _load_datafile(local_cache_path="dac_sample.tar.gz"):
     )
 
     #always extract to a subdirectory of cache_path called dac_sample
-    extracted_dir=os.path.join(path, "dac_sample")
+    # extracted_dir=os.path.join(path, "dac_sample")
     print('Extracting component files from {}.'.format(local_cache_path))
     with tarfile.open(local_cache_path) as tar:
-        tar.extractall(extracted_dir)
+        tar.extract('dac_sample.txt', path)
     
     _clean_up(local_cache_path)
 
-    datapath=os.path.join(extracted_dir, 'dac_sample.txt')
+    datapath=os.path.join(path, 'dac_sample.txt')
+
+    atexit.register(_clean_up, datapath)
     
     return datapath
 
