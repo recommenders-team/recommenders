@@ -34,3 +34,20 @@ def test_evaluation_runs(notebooks):
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
 
+
+@pytest.mark.notebooks
+@pytest.mark.spark
+def test_spark_tuning(notebooks):
+    notebook_path = notebooks["spark_tuning"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            NUMBER_CORES="*",
+            NUMBER_ITERATIONS=3,
+            RANK=[5, 5],
+            REG=[0.1, 0.01]
+        )
+    )
+
