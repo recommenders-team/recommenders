@@ -41,7 +41,6 @@ class SARSingleNode:
         """Initialize model parameters
 
         Args:
-            remove_seen (bool): whether to remove items observed in training when making recommendations
             col_user (str): user column name
             col_item (str): item column name
             col_rating (str): rating column name
@@ -49,7 +48,7 @@ class SARSingleNode:
             col_prediction (str): prediction column name
             similarity_type (str): [None, 'jaccard', 'lift'] option for computing item-item similarity
             time_decay_coefficient (float): number of days till ratings are decayed by 1/2
-            time_now (int): current time for time decay calculation
+            time_now (int | None): current time for time decay calculation
             timedecay_formula (bool): flag to apply time decay
             threshold (int): item-item co-occurrences below this threshold will be removed
         """
@@ -74,13 +73,13 @@ class SARSingleNode:
 
         # threshold - items below this number get set to zero in co-occurrence counts
         if self.threshold <= 0:
-            raise ValueError('Threshold cannot be < 1')
+            raise ValueError("Threshold cannot be < 1")
 
-        # Column for mapping user / item ids to internal indices
+        # column for mapping user / item ids to internal indices
         self.col_item_id = sar.INDEXED_ITEMS
         self.col_user_id = sar.INDEXED_USERS
 
-        # Obtain all the users and items from both training and test data
+        # obtain all the users and items from both training and test data
         self.n_users = None
         self.n_items = None
 
@@ -91,8 +90,8 @@ class SARSingleNode:
         # the opposite of the above map - map array index to actual string ID
         self.index2item = None
 
-        # affinity scores for the recommendation
-        self.scores = None
+        # track user-item pairs seen during training
+        self.seen_items = None
 
     def compute_affinity_matrix(self, df, n_users, n_items):
         """ Affinity matrix
@@ -126,24 +125,17 @@ class SARSingleNode:
             np.array: Co-occurrence matrix
         """
 
-        user_item_hits = (
-            sparse.coo_matrix(
-                (
-                    np.repeat(1, df.shape[0]),
-                    (df[self.col_user_id], df[self.col_item_id]),
-                ),
-                shape=(n_users, n_items),
-            )
-            .tocsr()
-            .astype(df[self.col_rating].dtype)
-        )
+        user_item_hits = sparse.coo_matrix(
+            (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])),
+            shape=(n_users, n_items),
+        ).tocsr()
 
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
         item_cooccurrence = item_cooccurrence.multiply(
             item_cooccurrence >= self.threshold
         )
 
-        return item_cooccurrence
+        return item_cooccurrence.astype(df[self.col_rating].dtype)
 
     def set_index(self, df):
         """Generate continuous indices for users and items to reduce memory usage
@@ -152,13 +144,13 @@ class SARSingleNode:
             df (pd.DataFrame): dataframe with user and item ids
         """
 
-        # Generate a map of continuous index values to items
+        # generate a map of continuous index values to items
         self.index2item = dict(enumerate(df[self.col_item].unique()))
 
-        # Invert the mapping from above
+        # invert the mapping from above
         self.item2index = {v: k for k, v in self.index2item.items()}
 
-        # Create mapping of users to continuous indices
+        # create mapping of users to continuous indices
         self.user2index = {x[1]: x[0] for x in enumerate(df[self.col_user].unique())}
 
         # set values for the total count of users and items
@@ -172,7 +164,7 @@ class SARSingleNode:
             df (pd.DataFrame): User item rating dataframe
         """
 
-        # Generate continuous indices if this hasn't been done
+        # generate continuous indices if this hasn't been done
         if self.index2item is None:
             self.set_index(df)
 
@@ -180,7 +172,7 @@ class SARSingleNode:
         if not np.issubdtype(df[self.col_rating].dtype, np.floating):
             raise TypeError("Rating column data type must be floating point")
 
-        # Copy the DataFrame to avoid modification of the input
+        # copy the DataFrame to avoid modification of the input
         temp_df = df[[self.col_user, self.col_item, self.col_rating]].copy()
 
         if self.time_decay_flag:
@@ -208,28 +200,26 @@ class SARSingleNode:
             )
 
         logger.info("Creating index columns")
-        # Map users and items according to the two dicts. Add the two new columns to temp_df.
+        # map users and items according to the two dicts. Add the two new columns to temp_df.
         temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item2index)
         temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user2index)
 
-        seen_items = None
-        if self.remove_seen:
-            # retain seen items for removal at prediction time
-            seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
+        # retain seen items for removal at prediction time
+        self.seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
 
-        # Affinity matrix
+        # affinity matrix
         logger.info("Building user affinity sparse matrix")
         self.user_affinity = self.compute_affinity_matrix(
             temp_df, self.n_users, self.n_items
         )
 
-        # Calculate item co-occurrence
+        # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
         item_cooccurrence = self.compute_coocurrence_matrix(
             temp_df, self.n_users, self.n_items
         )
 
-        # Free up some space
+        # free up some space
         del temp_df
 
         logger.info("Calculating item similarity")
@@ -237,39 +227,32 @@ class SARSingleNode:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == sar.SIM_JACCARD:
             logger.info("Calculating jaccard")
-            self.item_similarity = jaccard(item_cooccurrence)
-            # Free up some space
-            del item_cooccurrence
+            self.item_similarity = jaccard(item_cooccurrence).astype(
+                df[self.col_rating].dtype
+            )
         elif self.similarity_type == sar.SIM_LIFT:
             logger.info("Calculating lift")
-            self.item_similarity = lift(item_cooccurrence)
-            # Free up some space
-            del item_cooccurrence
+            self.item_similarity = lift(item_cooccurrence).astype(
+                df[self.col_rating].dtype
+            )
         else:
             raise ValueError(
                 "Unknown similarity type: {0}".format(self.similarity_type)
             )
 
-        # Calculate raw scores with a matrix multiplication
-        logger.info("Calculating recommendation scores")
-        self.scores = self.user_affinity.dot(self.item_similarity)
-
-        # Remove items in the train set so recommended items are always novel
-        if self.remove_seen:
-            logger.info("Removing seen items")
-            self.scores[seen_items[:, 0], seen_items[:, 1]] = -np.inf
+        # free up some space
+        del item_cooccurrence
 
         logger.info("Done training")
 
-    def recommend_k_items(self, test, top_k=10, sort_top_k=False):
-        """Recommend top K items for all users which are in the test set
+    def score(self, test, remove_seen=False):
+        """Score all items for test users
 
         Args:
             test (pd.DataFrame): user to test
-            top_k (int): number of top items to recommend
-            sort_top_k (bool): flag to sort top k results
+            remove_seen (bool): flag to remove items seen in training from recommendation
         Returns:
-            pd.DataFrame: top k recommendation items for each user
+            np.ndarray
         """
 
         # get user / item indices from test set
@@ -277,28 +260,58 @@ class SARSingleNode:
         if any(np.isnan(user_ids)):
             raise ValueError("SAR cannot score users that are not in the training set")
 
-        # extract only the scores for the test users
-        test_scores = self.scores[user_ids, :]
+        # calculate raw scores with a matrix multiplication
+        logger.info("Calculating recommendation scores")
+        # TODO: only compute scores for users in test
+        test_scores = self.user_affinity.dot(self.item_similarity)
+
+        # remove items in the train set so recommended items are always novel
+        if remove_seen:
+            logger.info("Removing seen items")
+            test_scores[self.seen_items[:, 0], self.seen_items[:, 1]] = -np.inf
+
+        test_scores = test_scores[user_ids, :]
 
         # ensure we're working with a dense matrix
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.todense()
 
+        return test_scores
+
+    def recommend_k_items(self, test, top_k=10, sort_top_k=False, remove_seen=False):
+        """Recommend top K items for all users which are in the test set
+
+        Args:
+            test (pd.DataFrame): user to test
+            top_k (int): number of top items to recommend
+            sort_top_k (bool): flag to sort top k results
+            remove_seen (bool): flag to remove items seen in training from recommendation
+        Returns:
+            pd.DataFrame: top k recommendation items for each user
+        """
+
+        if self.n_items < top_k:
+            logger.warning('Number of items is less than top_k, limiting top_k to number of items')
+        k = min(top_k, self.n_items)
+
+        test_scores = self.score(test, remove_seen=remove_seen)
+        test_user_idx = np.arange(test_scores.shape[0])[:, None]
+
         # get top K items and scores
         logger.info("Getting top K")
         # this determines the un-ordered top-k item indices for each user
-        top_items = np.argpartition(test_scores, -top_k, axis=1)[:, -top_k:]
-        top_scores = test_scores[np.arange(test_scores.shape[0])[:, None], top_items]
+        top_items = np.argpartition(test_scores, -k, axis=1)[:, -k:]
+        top_scores = test_scores[test_user_idx, top_items]
 
         if sort_top_k:
             sort_ind = np.argsort(-top_scores)
-            top_items = top_items[np.arange(top_items.shape[0])[:, None], sort_ind]
-            top_scores = top_scores[np.arange(top_scores.shape[0])[:, None], sort_ind]
+            top_items = top_items[test_user_idx, sort_ind]
+            top_scores = top_scores[test_user_idx, sort_ind]
 
         df = pd.DataFrame(
             {
                 self.col_user: np.repeat(
-                    test[self.col_user].drop_duplicates().values, top_k
+                    test[self.col_user].drop_duplicates().values, k
                 ),
                 self.col_item: [
                     self.index2item[item] for item in np.array(top_items).flatten()
@@ -307,16 +320,7 @@ class SARSingleNode:
             }
         )
 
-        # ensure datatypes are correct
-        df = df.astype(
-            dtype={
-                self.col_user: str,
-                self.col_item: str,
-                self.col_prediction: self.scores.dtype,
-            }
-        )
-
-        # drop seen items
+        # drop invalid items
         return df.replace(-np.inf, np.nan).dropna()
 
     def predict(self, test):
@@ -327,22 +331,15 @@ class SARSingleNode:
             pd.DataFrame: DataFrame contains the prediction results
         """
 
-        # get user / item indices from test set
-        user_ids = test[self.col_user].map(self.user2index).values
-        if any(np.isnan(user_ids)):
-            raise ValueError("SAR cannot score users that are not in the training set")
+        test_scores = self.score(test)
 
-        # extract only the scores for the test users
-        test_scores = self.scores[user_ids, :]
-
-        # convert and flatten scores into an array
-        if isinstance(test_scores, sparse.spmatrix):
-            test_scores = test_scores.todense()
-
+        # create mapping of new items to zeros
         item_ids = test[self.col_item].map(self.item2index).values
         nans = np.isnan(item_ids)
         if any(nans):
-            # predict 0 for items not seen during training
+            logger.warning(
+                "Items found in test not seen during training, new items will have score of 0"
+            )
             test_scores = np.append(test_scores, np.zeros((self.n_users, 1)), axis=1)
             item_ids[nans] = self.n_items
             item_ids = item_ids.astype("int64")
@@ -354,15 +351,6 @@ class SARSingleNode:
                 self.col_prediction: test_scores[
                     np.arange(test_scores.shape[0]), item_ids
                 ],
-            }
-        )
-
-        # ensure datatypes are correct
-        df = df.astype(
-            dtype={
-                self.col_user: str,
-                self.col_item: str,
-                self.col_prediction: self.scores.dtype,
             }
         )
 
