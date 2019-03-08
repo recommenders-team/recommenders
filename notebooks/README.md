@@ -12,7 +12,7 @@ The following summarizes each directory of the best practice notebooks.
 | [01_prepare_data](./01_prepare_data) | Yes | Data preparation notebooks for each recommender algorithm|
 | [02_model](./02_model) | Yes | Deep dive notebooks about model building by using various classical and deep learning recommender algorithms|
 | [03_evaluate](./03_evaluate) | Yes | Notebooks that introduce different evaluation methods for recommenders|
-| [04_model_select_and_optimize](04_model_select_and_optimize) | No, Run on Azure | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
+| [04_model_select_and_optimize](04_model_select_and_optimize) | Some local, some on Azure | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
 | [05_operationalize](05_operationalize) | No, Run on Azure | Operationalization notebooks that illustrate an end-to-end pipeline by using a recommender algorithm for a certain real-world use case scenario|
 
 ## On-premise notebooks
