@@ -26,15 +26,15 @@ to run these notebooks on a [Data Science Virtual Machine for Linux (Ubuntu)](ht
 
 ## Azure-enhanced notebooks
 
-Azure products and services are used in certain notebooks to enhance the efficiency of developing recommender system in scale.
+Azure products and services are used in certain notebooks to enhance the efficiency of developing recommender systems at scale.
 To successfully run these notebooks, the users **need an Azure subscription** or can [use Azure for free](https://azure.microsoft.com/en-us/free/).
 The Azure products featured in the notebooks include:
 
-* [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning-service/) - it is a cloud service that to train, deploy, automate, and manage machine learning models, all at the broad scale that the cloud provides. It is used intensively across various notebooks for the AI model development related tasks like
+* [Azure Machine Learning service](https://azure.microsoft.com/en-us/services/machine-learning-service/) - Azure Machine Learning service is a cloud service used to train, deploy, automate, and manage machine learning models, all at the broad scale that the cloud provides. It is used intensively across various notebooks for the AI model development related tasks like:
   * Hyperparameter tuning
   * Tracking and monitoring metrics to enhance the model creation process
   * Scaling up and out on Compute like DSVM and Azure Machine Learning Compute
-  * Deploying a web service to AKS
+  * Deploying a web service to Azure Kubernetes Service
   * Submitting pipelines
 * [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) - Azure Data Science Virtual Machine is mainly used for a remote server where user
 can easily configure the local as well as the cloud environment for running the example notebooks.
