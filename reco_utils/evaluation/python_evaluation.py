@@ -9,6 +9,8 @@ from sklearn.metrics import (
     mean_absolute_error,
     r2_score,
     explained_variance_score,
+    roc_auc_score,
+    log_loss
 )
 
 from reco_utils.common.constants import (
@@ -531,11 +533,17 @@ def map_at_k(
     threshold=DEFAULT_THRESHOLD,
 ):
     """
-    Get mean average precision at k. A good reference can be found at
-    https://people.cs.umass.edu/~jpjiang/cs646/03_eval_basics.pdf
+    The implementation of the MAP is referenced from Spark MLlib evaluation metrics.
+    https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
 
-    NOTE: The MAP is at k because the evaluation class takes top k items for
-    the prediction items.
+    Get mean average precision at k. A good reference can be found at
+    http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
+
+    Note:
+        1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
+        the prediction items. The naming is different from Spark.
+        2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
+        relevant items in the ground truth data, instead of k.
 
     Args:
         rating_true (pd.DataFrame): True data.
@@ -589,6 +597,89 @@ def map_at_k(
 
     # Average the results across users.
     return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
+
+
+@check_column_dtypes
+def auc(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL
+):
+    """
+    Calculate the Area-Under-Curve metric for implicit feedback typed
+    recommender, where rating is binary and prediction is float number ranging
+    from 0 to 1.
+
+    https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
+
+    Note:
+        The evaluation does not require a leave-one-out scenario.
+        This metric does not calculate group-based AUC which considers the AUC scores
+        averaged across users. It is also not limited to k. Instead, it calculates the
+        scores on the entire prediction results regardless the users.
+
+    Args:
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
+
+    Return:
+        float: auc_score (min=0, max=1).
+    """
+    rating_true_pred = merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+    auc_score = roc_auc_score(
+        rating_true_pred[DEFAULT_RATING_COL].values,
+        rating_true_pred[PREDICTION_COL].values
+    )
+
+    return auc_score
+
+
+@check_column_dtypes
+def logloss(
+    rating_true,
+    rating_pred,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=PREDICTION_COL
+):
+    """
+    Calculate the logloss metric for implicit feedback typed
+    recommender, where rating is binary and prediction is float number ranging
+    from 0 to 1.
+
+    https://en.wikipedia.org/wiki/Loss_functions_for_classification#Cross_entropy_loss_(Log_Loss)
+
+    Args:
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
+
+    Return:
+        float: log_loss_score (min=-\inf, max=\inf).
+    """
+    rating_true_pred = merge_rating_true_pred(
+        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
+    )
+
+    log_loss_score = log_loss(
+        rating_true_pred[DEFAULT_RATING_COL].values,
+        rating_true_pred[PREDICTION_COL].values
+    )
+
+    return log_loss_score
 
 
 def get_top_k_items(

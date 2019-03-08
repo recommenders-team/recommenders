@@ -120,6 +120,7 @@ Untitled*.ipynb
 ~$*
 output.ipynb
 conda*.yaml
+reco_*.yaml
 .idea/
 *.npz
 *.data
