@@ -173,6 +173,7 @@ class BaseModel(object):
 
     def _compute_data_loss(self):
         if self.hparams.loss == "cross_entropy_loss":
+            print('type of labels',self.iterator.labels)
             data_loss = tf.reduce_mean(
                 tf.nn.sigmoid_cross_entropy_with_logits(
                     logits=tf.reshape(self.logit, [-1]),

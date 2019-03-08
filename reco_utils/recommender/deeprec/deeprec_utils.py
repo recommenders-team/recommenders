@@ -5,13 +5,15 @@
 import tensorflow as tf
 import six
 import os
-from sklearn.metrics import (
-    roc_auc_score,
-    log_loss,
-    mean_squared_error,
-    accuracy_score,
-    f1_score,
-)
+#from sklearn.metrics import (
+#    roc_auc_score,
+#    log_loss,
+#    mean_squared_error,
+#    accuracy_score,
+#    f1_score,
+#)
+
+from sklearn.metrics import roc_auc_score, log_loss, mean_squared_error,mean_absolute_error,r2_score,explained_variance_score,accuracy_score,f1_score
 import numpy as np
 import yaml
 import zipfile
@@ -389,6 +391,14 @@ def cal_metric(labels, preds, metrics):
             pred[pred < 0.5] = 0
             f1 = f1_score(np.asarray(labels), pred)
             res["f1"] = round(f1, 4)
+        elif metric == 'mae':
+            res['mae'] = mean_absolute_error(np.asarray(labels), np.asarray(preds))
+        elif metric == 'rsquare':
+            res['rsquare'] = r2_score(np.asarray(labels), np.asarray(preds))
+        elif metric == 'exp_var':
+            res['exp_var'] = explained_variance_score(np.asarray(labels), np.asarray(preds))
+                    
+    
         else:
             raise ValueError("not define this metric {0}".format(metric))
     return res
