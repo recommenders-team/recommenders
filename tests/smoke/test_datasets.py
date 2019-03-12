@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import pytest
+import pandas as pd
 from reco_utils.dataset import movielens, criteo_dac
 from reco_utils.common.constants import DEFAULT_ITEM_COL
 
@@ -112,6 +113,14 @@ def test_movielens_load_spark_df(spark):
     with pytest.warns(Warning):
         df = movielens.load_spark_df(spark, header=header, schema=schema)
         assert len(df.columns) == len(schema)
+
+
+@pytest.mark.smoke
+def test_criteo_load_pandas_df(criteo_first_row):
+    df = criteo_dac.load_pandas_df(size="sample")
+    assert df.shape[0] == 100000
+    assert df.shape[1] == 40
+    assert df.loc[0].equals(pd.Series(criteo_first_row))
 
 
 @pytest.mark.smoke
