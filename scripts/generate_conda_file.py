@@ -52,6 +52,7 @@ CONDA_BASE = {
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
     "tensorflow": "tensorflow==1.12.0",
+    "lightgbm": "lightgbm==2.2.1",
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
@@ -69,6 +70,7 @@ PIP_BASE = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill>=0.15.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
+    "category_encoders": "category_encoders>=1.3.0",
     "fastai": "fastai==1.0.46",
 }
 
