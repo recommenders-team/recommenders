@@ -6,5 +6,5 @@ setup(name='RecoUtils',
       version='2019.02',
       description='Reco Utils',
       author='Microsoft',
-      packages=['reco_utils','reco_utils.common','reco_utils.dataset'],
+      packages=['reco_utils','reco_utils.common','reco_utils.dataset','reco_utils.evaluation','reco_utils.recommender'],
      )
