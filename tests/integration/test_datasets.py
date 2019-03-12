@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 import pytest
-from reco_utils.dataset import movielens
+import pandas as pd
+from reco_utils.dataset import movielens, criteo_dac
 from reco_utils.common.constants import DEFAULT_ITEM_COL
 
 try:
@@ -15,21 +16,22 @@ try:
         DoubleType,
     )
     from pyspark.sql.functions import col
-    from reco_utils.common.spark_utils import start_or_get_spark
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
 
-@pytest.mark.smoke
 @pytest.mark.parametrize(
     "size, num_samples, num_movies, title_example, genres_example",
     [
-        ("100k", 100000, 1682, "Toy Story (1995)", "Animation|Children's|Comedy"),
+        ("1m", 1000209, 3883, "Toy Story (1995)", "Animation|Children's|Comedy"),
+        ("10m", 10000054, 10681, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
+        ("20m", 20000263, 27278, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
     ],
 )
+@pytest.mark.integration
 def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_example):
-    """Test MovieLens dataset load into pd.DataFrame
-    """
+    """Test MovieLens dataset load into pd.DataFrame"""
+
     df = movielens.load_pandas_df(size=size)
     assert len(df) == num_samples
     assert len(df.columns) == 4
@@ -65,15 +67,17 @@ def test_load_pandas_df(size, num_samples, num_movies, title_example, genres_exa
     assert len(df) == num_movies
     assert len(df.columns) == 3
 
-    
-@pytest.mark.smoke
-@pytest.mark.spark
+
 @pytest.mark.parametrize(
     "size, num_samples, num_movies, title_example, genres_example",
     [
-        ("100k", 100000, 1682, "Toy Story (1995)", "Animation|Children's|Comedy"),
+        ("1m", 1000209, 3883, "Toy Story (1995)", "Animation|Children's|Comedy"),
+        ("10m", 10000054, 10681, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
+        ("20m", 20000263, 27278, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy"),
     ],
 )
+@pytest.mark.spark
+@pytest.mark.integration
 def test_load_spark_df(size, num_samples, num_movies, title_example, genres_example):
     """Test MovieLens dataset load into pySpark.DataFrame
     """
@@ -128,3 +132,23 @@ def test_load_spark_df(size, num_samples, num_movies, title_example, genres_exam
     with pytest.warns(Warning):
         df = movielens.load_spark_df(spark, header=header, schema=schema)
         assert len(df.columns) == len(schema)
+
+
+@pytest.mark.integration
+def test_criteo_load_pandas_df(criteo_first_row):
+    df = criteo_dac.load_pandas_df(size="full")
+    assert df.shape[0] == 45840617
+    assert df.shape[1] == 40
+    assert df.loc[0].equals(pd.Series(criteo_first_row))
+
+
+@pytest.mark.spark
+@pytest.mark.integration
+def test_criteo_load_spark_df(spark, criteo_first_row):
+    df = criteo_dac.load_spark_df(spark, size="full")
+    assert df.count() == 45840617
+    assert len(df.columns) == 40
+    first_row = df.limit(1).collect()[0].asDict()
+    assert first_row == criteo_first_row
+
+

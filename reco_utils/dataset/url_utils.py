@@ -53,3 +53,15 @@ def maybe_download(url, filename, work_directory=".", expected_bytes=None):
 
     return filepath
 
+
+def remove_filepath(filepath):
+    """ Remove file. Be careful not to erase anything else. 
+    
+    Args:
+        filepath (str): Path to the file
+
+    """
+    try:
+        os.remove(filepath)
+    except OSError:
+        pass
