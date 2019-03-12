@@ -57,7 +57,7 @@ The table below lists recommender algorithms available in the repository at the 
 | [Wide and Deep](notebooks/00_quick_start/wide_deep_movielens.ipynb) | Python CPU / Python GPU | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
 | [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | PySpark | Collaborative Filtering | Matrix factorization algorithm for explicit or implicit feedback in large datasets, optimized by Spark MLLib for scalability and distributed computing capability | 
 
-**NOTE** - <sup>*</sup> indicates algorithms invented/contributed to by Microsoft.
+**NOTE** - <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
 
 **Preliminary Comparison**
 
