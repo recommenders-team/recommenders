@@ -294,7 +294,7 @@ def load_spark_df(
 
     file_datapath, file_item_datapath = _load_datafile(size, local_cache_path)
     # Driver node's file path
-    datapath = "file:" + file_datapath
+    datapath = "file:///" + file_datapath
     item_datapath = "file:" + file_item_datapath
     if is_databricks():
         # Move rating file to DBFS (we load items as pandas, so no need to move to DBFS)

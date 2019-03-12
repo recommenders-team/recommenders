@@ -12,7 +12,7 @@ The following summarizes each directory of the best practice notebooks.
 | [01_prepare_data](./01_prepare_data) | Yes | Data preparation notebooks for each recommender algorithm|
 | [02_model](./02_model) | Yes | Deep dive notebooks about model building by using various classical and deep learning recommender algorithms|
 | [03_evaluate](./03_evaluate) | Yes | Notebooks that introduce different evaluation methods for recommenders|
-| [04_model_select_and_optimize](04_model_select_and_optimize) | No, Run on Azure | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
+| [04_model_select_and_optimize](04_model_select_and_optimize) | Some local, some on Azure | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
 | [05_operationalize](05_operationalize) | No, Run on Azure | Operationalization notebooks that illustrate an end-to-end pipeline by using a recommender algorithm for a certain real-world use case scenario|
 
 ## On-premise notebooks
@@ -26,15 +26,16 @@ to run these notebooks on a [Data Science Virtual Machine for Linux (Ubuntu)](ht
 
 ## Azure-enhanced notebooks
 
-Azure products and services are used in certain notebooks to enhance the efficiency of developing recommender system in scale.
+Azure products and services are used in certain notebooks to enhance the efficiency of developing recommender systems in scale.
+
 To successfully run these notebooks, the users **need an Azure subscription** or can [use Azure for free](https://azure.microsoft.com/en-us/free/).
 The Azure products featured in the notebooks include:
 
-* [Azure Machine Learning Service](https://azure.microsoft.com/en-us/services/machine-learning-service/) - it is a cloud service that to train, deploy, automate, and manage machine learning models, all at the broad scale that the cloud provides. It is used intensively across various notebooks for the AI model development related tasks like
+* [Azure Machine Learning service](https://azure.microsoft.com/en-us/services/machine-learning-service/) - Azure Machine Learning service is a cloud service used to train, deploy, automate, and manage machine learning models, all at the broad scale that the cloud provides. It is used intensively across various notebooks for the AI model development related tasks like:
   * Hyperparameter tuning
   * Tracking and monitoring metrics to enhance the model creation process
   * Scaling up and out on Compute like DSVM and Azure Machine Learning Compute
-  * Deploying a web service to AKS
+  * Deploying a web service to Azure Kubernetes Service
   * Submitting pipelines
 * [Azure Data Science Virtual Machine](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) - Azure Data Science Virtual Machine is mainly used for a remote server where user
 can easily configure the local as well as the cloud environment for running the example notebooks.
