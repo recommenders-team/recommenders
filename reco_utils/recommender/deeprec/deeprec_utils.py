@@ -318,6 +318,9 @@ def create_hparams(flags):
         save_model=flags["save_model"] if "save_model" in flags else True,
         save_epoch=flags["save_epoch"] if "save_epoch" in flags else 5,
         metrics=flags["metrics"] if "metrics" in flags else None,
+        ranking_metrics=flags["ranking_metrics"] if "ranking_metrics" in flags else None,
+        user_item_file= flags["user_item_file"] if "user_item_file" in flags else None,
+        top_K=flags["top_K"] if "top_K" in flags else None,
         write_tfevents=flags["write_tfevents"] if "write_tfevents" in flags else False,
     )
 

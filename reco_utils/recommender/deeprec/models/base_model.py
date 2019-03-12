@@ -8,7 +8,8 @@ import numpy as np
 import collections
 import tensorflow as tf
 from ..deeprec_utils import cal_metric
-
+import pandas as pd
+import reco_utils.evaluation.python_evaluation
 
 __all__ = ["BaseModel"]
 
@@ -332,6 +333,7 @@ class BaseModel(object):
             [self.loss, self.data_loss, self.pred, self.iterator.labels],
             feed_dict=feed_dict,
         )
+    
 
     def infer(self, sess, feed_dict):
         """Given feature data (in feed_dict), get predicted scores with current model.
@@ -485,6 +487,41 @@ class BaseModel(object):
             labels.extend(np.reshape(step_labels, -1))
         res = cal_metric(labels, preds, self.hparams.metrics)
         return res
+    
+    def run_eval_topN(self, filename, hparams):
+        load_sess = self.sess
+        preds = []
+        labels = []
+        for batch_data_input in self.iterator.load_data_from_file(filename):
+            _, _, step_pred, step_labels = self.eval(load_sess, batch_data_input)
+            preds.extend(np.reshape(step_pred, -1))
+            labels.extend(np.reshape(step_labels, -1))
+            
+        
+        user_data = pd.read_csv (hparams.user_item_file, sep='\t')[['userID','itemID']]
+        print("user data size", user_data.shape)
+        
+        
+        prediction = user_data.copy()      
+        prediction['prediction'] = preds
+
+        label_df = user_data.copy()
+        label_df['label'] = labels
+        ##evaluation##
+        cols = {
+            'col_user': 'userID',
+            'col_item': 'itemID',
+            'col_rating': 'label',
+            'col_prediction': 'prediction'}
+
+        for m in hparams.ranking_metrics:
+            fn = getattr(reco_utils.evaluation.python_evaluation, m)
+            result = fn(label_df, prediction, **{**cols, 'k': hparams.top_K})
+            print(m, "=", result)
+
+        
+        
+        
 
     def predict(self, infile_name, outfile_name):
         """Make predictions on the given data, and output predicted scores to a file.

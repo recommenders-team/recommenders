@@ -1,11 +1,8 @@
 #data
 #data format:ffm
 data:
-     train_file  : ./data/ml-100k/ml-100k/ua.base.reg.final # use .reg.final for regression data
-     eval_file  :  ./data/ml-100k/ml-100k/ua.test.reg.final
-     test_file  : ./data/ml-100k/ml-100k/ua.test.reg.final
-     infer_file  :  ./data/ml-100k/ml-100k/ua.test.classification.topN.final
-     user_item_file : ./data/user_item.csv
+
+     user_item_file : ../../tests/resources/deeprec/movielens/user_item.csv
      #eval_topN_file : ../data/ml-100k/ml-100k/
      FIELD_COUNT :  5
      FEATURE_COUNT : 213
@@ -57,7 +54,6 @@ info:
     save_epoch : 2
     save_model: False
     metrics : ['rmse','mae','rsquare','exp_var','auc','logloss']
-    #metrics : ['auc','logloss'，'rmse','mae','rsquare','exp_var']
     ranking_metrics  : ['map_at_k','ndcg_at_k','precision_at_k','recall_at_k']
 
 
