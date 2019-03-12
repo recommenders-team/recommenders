@@ -3,10 +3,8 @@
 from distutils.core import setup
 
 setup(name='RecoUtils',
-      version='1.0',
+      version='2019.02',
       description='Reco Utils',
-      author='',
-      author_email='',
-      url='https://www.python.org/sigs/distutils-sig/',
-      packages=['reco_utils'],
+      author='Microsoft',
+      packages=['reco_utils','reco_utils.dataset'],
      )
