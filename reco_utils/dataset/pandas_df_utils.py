@@ -179,7 +179,7 @@ def negative_feedback_sampler(
     binarized feedback, i.e., 1 and 0 indicate positive and negative feedback, 
     respectively. 
 
-    Engative sampling is used in the literature frequently to generate negative samples 
+    Negative sampling is used in the literature frequently to generate negative samples 
     from a user-item interaction data.
     See for example the neural collaborative filtering paper 
     https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
