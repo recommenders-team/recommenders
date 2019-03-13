@@ -178,6 +178,11 @@ def negative_feedback_sampler(
     This negative sampling function will take the user-item interaction data to create 
     binarized feedback, i.e., 1 and 0 indicate positive and negative feedback, 
     respectively. 
+
+    Engative sampling is used in the literature frequently to generate negative samples 
+    from a user-item interaction data.
+    See for example the neural collaborative filtering paper 
+    https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
     
     Examples:
         >>> import pandas as pd
