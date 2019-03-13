@@ -72,6 +72,7 @@ PIP_BASE = {
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "category_encoders": "category_encoders>=1.3.0",
     "fastai": "fastai==1.0.46",
+    "nni": "nni==0.5.2.1"
 }
 
 PIP_PYSPARK = {}
