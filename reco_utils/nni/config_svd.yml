@@ -1,0 +1,14 @@
+authorName: default
+experimentName: surprise_svd
+maxExecDuration: 1h
+maxTrialNum: 10
+searchSpacePath: search_space_svd.json
+trainingServicePlatform: local
+trial:
+  codeDir: .
+  command: python3 svd_training.py
+  gpuNum: 0
+trialConcurrency: 10
+tuner:
+  builtinTunerName: TPE
+useAnnotation: false
