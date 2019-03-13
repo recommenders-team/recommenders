@@ -222,12 +222,9 @@ def negative_feedback_sampler(
     user_item_tuples = [(row[col_user], row[col_item]) for _, row in df.iterrows()]
 
     # Generate feedback for both positive and negative
-    user_item_feedback = []
-    for user in users:
-        for item in items:
-            feedback = 1 if (user, item) in user_item_tuples else 0
-            user_item_feedback.append((user, item, feedback))
-
+    user_item_feedback = [
+        (user, item, 1 if (user, item) in user_item_tuples else 0) for user in users for item in items
+    ]
     df_all = pd.DataFrame(user_item_feedback, columns=[col_user, col_item, 'rating'])
 
     # Take all positive feedback
