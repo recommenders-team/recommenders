@@ -150,7 +150,7 @@ def test_negative_feedback_sampler():
 
     # If there is only negative sample for each user
     df_neg_sampled_1 = negative_feedback_sampler(
-        df, col_user='userID', col_item='itemID', number_neg_per_pos=1
+        df, col_user='userID', col_item='itemID', number_neg_per_user=1
     )
 
     assert (
@@ -160,7 +160,7 @@ def test_negative_feedback_sampler():
 
     # If there are two negative samples for each user
     df_neg_sampled_2 = negative_feedback_sampler(
-        df, col_user='userID', col_item='itemID', number_neg_per_pos=2
+        df, col_user='userID', col_item='itemID', number_neg_per_user=2
     )
 
     # In this case, user #4 will have only one negative feedback, because in total there
@@ -177,7 +177,7 @@ def test_negative_feedback_sampler():
     # For user #5 there should be no negative feedback because he has interacted with all
     # items.
     df_neg_sampled_3 = negative_feedback_sampler(
-        df, col_user='userID', col_item='itemID', number_neg_per_pos=1
+        df, col_user='userID', col_item='itemID', number_neg_per_user=1
     )
     print(df_neg_sampled_3)
 
