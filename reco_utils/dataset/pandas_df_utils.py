@@ -170,7 +170,7 @@ def negative_feedback_sampler(
     df, 
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
-    number_neg_per_pos=1,
+    number_neg_per_user=1,
     seed=42
 ):
     """Utility function to sample negative feedback from user-item interaction dataset.
@@ -191,8 +191,8 @@ def negative_feedback_sampler(
             'itemID': [1, 2, 3],
             'rating': [5, 5, 5]
         })
-        >>> df_neg_sampled = negative_sampler_from_user_item_tuple(
-            df, col_user='userID', col_item='itemID', number_neg_per_pos=1
+        >>> df_neg_sampled = negative_feedback_sampler(
+            df, col_user='userID', col_item='itemID', number_neg_per_user=1
         )
         >>> df_neg_sampled
         userID  itemID  feedback
@@ -207,7 +207,7 @@ def negative_feedback_sampler(
         df (pandas.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
-        number_neg_per_pos (int): number of negative feedback sampled for each positive feedback on the user-item interactive data. 
+        number_neg_per_user (int): number of negative feedback sampled for each positive feedback on the user-item interactive data. 
         seed (int): seed for the random state of the sampling function.
 
     Returns:
@@ -221,7 +221,8 @@ def negative_feedback_sampler(
         raise ValueError("Column {} is not in the dataframe".format(col_item))
 
     # Get all of the users and items.
-    users, items = df[col_user].unique(), df[col_item].unique()
+    users = df[col_user].unique()
+    items = df[col_item].unique()
 
     # Create a dataframe for all user-item pairs
     user_item_tuples = [(row[col_user], row[col_item]) for _, row in df.iterrows()]
@@ -243,7 +244,7 @@ def negative_feedback_sampler(
         df_neg
         .groupby(col_user)
         .apply(lambda x: x.sample(
-            n=min(number_neg_per_pos, len(x)),
+            n=min(number_neg_per_user, len(x)),
             random_state=seed, 
             replace=False))
         .reset_index(drop=True)
