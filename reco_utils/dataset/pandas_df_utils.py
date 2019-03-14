@@ -207,7 +207,7 @@ def negative_feedback_sampler(
         df (pandas.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
-        number_neg_per_user (int): number of negative feedback sampled for each positive feedback on the user-item interactive data. 
+        number_neg_per_user (int): number of negative feedback sampled for each user. 
         seed (int): seed for the random state of the sampling function.
 
     Returns:
