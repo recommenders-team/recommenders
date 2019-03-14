@@ -158,6 +158,16 @@ def test_negative_feedback_sampler():
         == len(df['userID'].unique()) - 1
     )
 
+    # If there is no 'rating' column, it should still work.
+    df_neg_sampled_11 = negative_feedback_sampler(
+        df.drop('rating', axis=1), col_user='userID', col_item='itemID', number_neg_per_user=1
+    )
+
+    assert (
+        df_neg_sampled_11[df_neg_sampled_11['rating'] == 0].shape[0]
+        == len(df['userID'].unique()) - 1
+    )
+
     # If there are two negative samples for each user
     df_neg_sampled_2 = negative_feedback_sampler(
         df, col_user='userID', col_item='itemID', number_neg_per_user=2
