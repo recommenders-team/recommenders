@@ -1,7 +1,7 @@
 authorName: default
 experimentName: surprise_svd
 maxExecDuration: 1h
-maxTrialNum: 3
+maxTrialNum: 10
 searchSpacePath: search_space_svd.json
 trainingServicePlatform: local
 trial:
