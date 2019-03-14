@@ -7,7 +7,8 @@ import numpy as np
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL
+    DEFAULT_RATING_COL,
+    DEFAULT_LABEL_COL
 )
 
 
@@ -170,6 +171,7 @@ def negative_feedback_sampler(
     df, 
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
+    col_label=DEFAULT_LABEL_COL,
     number_neg_per_user=1,
     seed=42
 ):
@@ -207,6 +209,8 @@ def negative_feedback_sampler(
         df (pandas.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
+        col_label (str): label column name. It is used for the generated columns where labels
+        of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
         number_neg_per_user (int): number of negative feedback sampled for each user. 
         seed (int): seed for the random state of the sampling function.
 
@@ -231,15 +235,15 @@ def negative_feedback_sampler(
     user_item_feedback = [
         (user, item, 1 if (user, item) in user_item_tuples else 0) for user in users for item in items
     ]
-    df_all = pd.DataFrame(user_item_feedback, columns=[col_user, col_item, 'rating'])
+    df_all = pd.DataFrame(user_item_feedback, columns=[col_user, col_item, col_label])
 
     # Take all positive feedback
-    df_pos = df_all[df_all['rating'] == 1]
+    df_pos = df_all[df_all[col_label] == 1]
 
     # Sample # negative feedback for each user
     # If the total negative feedback for a user is less than the sampling size, all of the 
     # negative feedback will be generated.
-    df_neg = df_all[df_all['rating'] == 0]
+    df_neg = df_all[df_all[col_label] == 0]
     df_neg_sample = (
         df_neg
         .groupby(col_user)
