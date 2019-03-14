@@ -14,6 +14,7 @@ import surprise
 from reco_utils.evaluation.python_evaluation import *
 from reco_utils.recommender.surprise.surprise_utils import compute_rating_predictions, compute_ranking_predictions
 
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("surprise_svd")
 
 
@@ -44,11 +45,9 @@ def svd_training(params):
                                                  itemcol=params['itemcol'])
         for metric in rating_metrics:
             result = eval(metric)(validation_data, predictions)
-            logger.debug(metric, result)
+            logger.debug("%s = %g", metric, result)
             if metric == params['primary_metric']:
-                nni.report_final_result(metric)
-            else:
-                nni.report_intermediate_result(metric)
+                nni.report_final_result(result)
 
     ranking_metrics = params['ranking_metrics']
     if len(ranking_metrics) > 0:
@@ -58,11 +57,9 @@ def svd_training(params):
         k = params['k']
         for metric in ranking_metrics:
             result = eval(metric)(validation_data, all_predictions, col_prediction='prediction', k=k)
-            logger.debug("{}@{}".format(metric, k), result)
+            logger.debug("%s@%d = %g", metric, k, result)
             if metric == params['primary_metric']:
-                nni.report_final_result(metric)
-            else:
-                nni.report_intermediate_result(metric)
+                nni.report_final_result(result)
 
     if len(ranking_metrics) == 0 and len(rating_metrics) == 0:
         raise ValueError("No metrics were specified.")
@@ -90,7 +87,7 @@ def get_params():
     parser.add_argument('--verbose', dest='verbose', action='store_true')
     parser.add_argument('--epochs', type=int, dest='epochs', default=30)
     parser.add_argument('--biased', dest='biased', action='store_true')
-    parser.add_argument('primary_metric', dest='primary_metric', default='rmse')
+    parser.add_argument('--primary_metric', dest='primary_metric', default='rmse')
     # Hyperparameters to be tuned
     parser.add_argument('--n_factors', type=int, dest='n_factors', default=100)
     parser.add_argument('--init_mean', type=float, dest='init_mean', default=0.0)
@@ -111,8 +108,8 @@ def get_params():
 
 
 def main(params):
-    logger.debug("Args:", str(params), sep='\n')
-    logger.debug('Number of epochs', params["epochs"])
+    logger.debug("Args: %s", str(params))
+    logger.debug('Number of epochs %d', params["epochs"])
 
     svd = svd_training(params)
     # Save SVD model to the output directory for later use
@@ -121,8 +118,14 @@ def main(params):
 
 
 if __name__ == "__main__":
-    tuner_params = nni.get_next_parameter()
-    logger.debug(tuner_params)
-    params = vars(get_params())
-    params.update(tuner_params)
-    main(params)
+    try:
+        tuner_params = nni.get_next_parameter()
+        logger.debug("Hyperparameters: %s", tuner_params)
+        params = vars(get_params())
+        print(params)
+        print(tuner_params)
+        params.update(tuner_params)
+        main(params)
+    except Exception as exception:
+        logger.exception(exception)
+        raise

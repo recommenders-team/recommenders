@@ -1,7 +1,7 @@
 authorName: default
 experimentName: surprise_svd
 maxExecDuration: 1h
-maxTrialNum: 10
+maxTrialNum: 3
 searchSpacePath: search_space_svd.json
 trainingServicePlatform: local
 trial:
@@ -11,4 +11,6 @@ trial:
 trialConcurrency: 10
 tuner:
   builtinTunerName: TPE
+  classArgs:
+    optimize_mode: maximize
 useAnnotation: false
