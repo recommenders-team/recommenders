@@ -179,7 +179,6 @@ def test_negative_feedback_sampler():
     df_neg_sampled_3 = negative_feedback_sampler(
         df, col_user='userID', col_item='itemID', number_neg_per_user=1
     )
-    print(df_neg_sampled_3)
 
     assert (
         df_neg_sampled_3[
