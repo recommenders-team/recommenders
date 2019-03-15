@@ -14,7 +14,7 @@ __all__ = ["BaseModel"]
 
 
 class BaseModel(object):
-    def __init__(self, hparams, iterator_creator, graph=None):
+    def __init__(self, hparams, iterator_creator, graph=None, seed=42):
         """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function, 
         parameter set.
 
@@ -22,7 +22,11 @@ class BaseModel(object):
             hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
             iterator_creator (obj): An iterator to load the data.
             graph (obj): An optional graph.
+            seed (int): Random seed.
         """
+        tf.set_random_seed(seed)
+        np.random.seed(seed)
+
         self.graph = graph if graph is not None else tf.Graph()
         self.iterator = iterator_creator(hparams, self.graph)
 
