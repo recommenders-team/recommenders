@@ -3,6 +3,7 @@
 
 import pandas as pd
 import numpy as np
+from decimal import Decimal, ROUND_HALF_UP
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -172,7 +173,7 @@ def negative_feedback_sampler(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_label=DEFAULT_LABEL_COL,
-    number_neg_per_user=1,
+    ratio_neg_per_user=1,
     seed=42
 ):
     """Utility function to sample negative feedback from user-item interaction dataset.
@@ -194,7 +195,7 @@ def negative_feedback_sampler(
             'rating': [5, 5, 5]
         })
         >>> df_neg_sampled = negative_feedback_sampler(
-            df, col_user='userID', col_item='itemID', number_neg_per_user=1
+            df, col_user='userID', col_item='itemID', ratio_neg_per_user=1
         )
         >>> df_neg_sampled
         userID  itemID  feedback
@@ -211,7 +212,9 @@ def negative_feedback_sampler(
         col_item (str): item id column name.
         col_label (str): label column name. It is used for the generated columns where labels
         of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
-        number_neg_per_user (int): number of negative feedback sampled for each user. 
+        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user. 
+        If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
+        of all the possible samples.
         seed (int): seed for the random state of the sampling function.
 
     Returns:
@@ -229,35 +232,44 @@ def negative_feedback_sampler(
     items = df[col_item].unique()
 
     # Create a dataframe for all user-item pairs
-    user_item_tuples = [(row[col_user], row[col_item]) for _, row in df.iterrows()]
+    df_neg = user_item_pairs(pd.DataFrame(users, columns=[col_user]), pd.DataFrame(items, columns=[col_item]), user_item_filter_df = df)
+    df_neg[col_label] = 0
 
-    # Generate feedback for both positive and negative
-    user_item_feedback = [
-        (user, item, 1 if (user, item) in user_item_tuples else 0) for user in users for item in items
-    ]
-    df_all = pd.DataFrame(user_item_feedback, columns=[col_user, col_item, col_label])
+
+    # user_item_tuples = [(row[col_user], row[col_item]) for _, row in df.iterrows()]
+
+    # # Generate feedback for both positive and negative
+    # user_item_feedback = [
+    #     (user, item, 1 if (user, item) in user_item_tuples else 0) for user in users for item in items
+    # ]
+    # df_all = pd.DataFrame(user_item_feedback, columns=[col_user, col_item, col_label])
 
     # Take all positive feedback
-    df_pos = df_all[df_all[col_label] == 1]
+    # df_pos = df_all[df_all[col_label] == 1]
+    df_pos = df.copy()
+    df_pos[col_label] = 1
 
-    # Sample # negative feedback for each user
-    # If the total negative feedback for a user is less than the sampling size, all of the 
-    # negative feedback will be generated.
-    df_neg = df_all[df_all[col_label] == 0]
-    df_neg_sample = (
-        df_neg
+    df_all = pd.concat([df_pos, df_neg], ignore_index=True, sort=True)
+    df_all = df_all[[col_user, col_item, col_label]]
+
+    df_sample = (
+        df_all
         .groupby(col_user)
-        .apply(lambda x: x.sample(
-            n=min(number_neg_per_user, len(x)),
-            random_state=seed, 
-            replace=False))
+        .apply(
+            lambda x: pd.concat(
+                [
+                    x[x[col_label] == 1],
+                    x[x[col_label] == 0].sample(min(
+                        round(len(x[x[col_label] == 1])*ratio_neg_per_user+1e-12),
+                        len(x[x[col_label] == 0])
+                    ), random_state=seed, replace=False) if len(x[x[col_label] == 0] > 0) else pd.DataFrame({}, columns=[col_user, col_item, col_label])
+                ], 
+                ignore_index=True,
+                sort=True
+            )
+        )
         .reset_index(drop=True)
+        .sort_values(col_user)
     )
 
-    # Concatenate the positive and negative feedback dataframes
-    df_sampled = (
-        pd.concat([df_pos, df_neg_sample], ignore_index=True)
-        .sort_values(by=[col_user, col_item])
-    )
-
-    return df_sampled
+    return df_sample
