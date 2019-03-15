@@ -233,6 +233,7 @@ def negative_feedback_sampler(
     df_all = pd.concat([df_pos, df_neg], ignore_index=True, sort=True)
     df_all = df_all[[col_user, col_item, col_label]]
 
+    # Sample negative feedback from the combined dataframe.
     df_sample = (
         df_all
         .groupby(col_user)
@@ -241,7 +242,7 @@ def negative_feedback_sampler(
                 [
                     x[x[col_label] == 1],
                     x[x[col_label] == 0].sample(min(
-                        round(len(x[x[col_label] == 1])*ratio_neg_per_user+1e-12),
+                        max(round(len(x[x[col_label] == 1])*ratio_neg_per_user), 1),
                         len(x[x[col_label] == 0])
                     ), random_state=seed, replace=False) if len(x[x[col_label] == 0] > 0) else pd.DataFrame({}, columns=[col_user, col_item, col_label])
                 ], 
