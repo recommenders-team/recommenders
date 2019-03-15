@@ -220,13 +220,6 @@ def negative_feedback_sampler(
     Returns:
         pandas.DataFrame: data with negative feedback 
     """
-    columns = df.columns
-    if col_user not in columns:
-        raise ValueError("Column {} is not in the dataframe".format(col_user))
-
-    if col_item not in columns:
-        raise ValueError("Column {} is not in the dataframe".format(col_item))
-
     # Get all of the users and items.
     users = df[col_user].unique()
     items = df[col_item].unique()
@@ -235,17 +228,6 @@ def negative_feedback_sampler(
     df_neg = user_item_pairs(pd.DataFrame(users, columns=[col_user]), pd.DataFrame(items, columns=[col_item]), user_item_filter_df = df)
     df_neg[col_label] = 0
 
-
-    # user_item_tuples = [(row[col_user], row[col_item]) for _, row in df.iterrows()]
-
-    # # Generate feedback for both positive and negative
-    # user_item_feedback = [
-    #     (user, item, 1 if (user, item) in user_item_tuples else 0) for user in users for item in items
-    # ]
-    # df_all = pd.DataFrame(user_item_feedback, columns=[col_user, col_item, col_label])
-
-    # Take all positive feedback
-    # df_pos = df_all[df_all[col_label] == 1]
     df_pos = df.copy()
     df_pos[col_label] = 1
 
