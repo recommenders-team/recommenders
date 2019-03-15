@@ -148,20 +148,35 @@ def test_negative_feedback_sampler():
         'rating': [5, 5, 5, 5, 5, 5, 5, 5]
     })
 
-    # If there is only negative sample for each user
+    # Same amount of negative samples to the positive samples per user
     df_neg_sampled_1 = negative_feedback_sampler(
         df, 
         col_user='userID', 
         col_item='itemID', 
         col_label='label', 
-        number_neg_per_user=1
-    )
-    assert (
-        df_neg_sampled_1[df_neg_sampled_1['label'] == 0].shape[0]
-        == len(df['userID'].unique()) - 1
+        ratio_neg_per_user=1
     )
 
-    # If the output contains a new column of 'label'
+    # Other than user #4 and #5, all the other users should have the same number of positive and negative feedback
+    assert (
+        df_neg_sampled_1[(df_neg_sampled_1['label'] == 0) & (df_neg_sampled_1['userID'].isin([1, 2, 3]))].shape[0]
+        == df_neg_sampled_1[(df_neg_sampled_1['label'] == 1) & (df_neg_sampled_1['userID'].isin([1, 2, 3]))].shape[0]
+    )
+
+    # For user #4, the negative feedback samples should be the number of the min of total positive feedback and the
+    # total possible number of negative feedback samples (in our case, it is 1).
+    assert (
+        df_neg_sampled_1[(df_neg_sampled_1['label'] == 0) & (df_neg_sampled_1['userID'] == 4)].shape[0]
+        == 1
+    )
+
+    # For user #5, the negative feedback samples should be 0 as he has interacted with all the items.
+    assert (
+        df_neg_sampled_1[(df_neg_sampled_1['label'] == 0) & (df_neg_sampled_1['userID'] == 5)].shape[0]
+        == 0
+    )
+
+    # Label column specified by the user should be there in the output.
     columns_new = df_neg_sampled_1.columns
     assert 'label' in columns_new
 
@@ -171,46 +186,30 @@ def test_negative_feedback_sampler():
         col_user='userID', 
         col_item='itemID', 
         col_label='label',
-        number_neg_per_user=1
+        ratio_neg_per_user=1
     )
     assert (
-        df_neg_sampled_11[df_neg_sampled_11['label'] == 0].shape[0]
-        == len(df['userID'].unique()) - 1
+        df_neg_sampled_1[df_neg_sampled_1['label'] == 0 & df_neg_sampled_1['userID'].isin([1, 2, 3])].shape[0]
+        == df_neg_sampled_1[df_neg_sampled_1['label'] == 1 & df_neg_sampled_1['userID'].isin([1, 2, 3])].shape[0]
     )
 
-    # If there are two negative samples for each user
+    # If the ratio is different, say 2, it should still work.
     df_neg_sampled_2 = negative_feedback_sampler(
         df, 
         col_user='userID', 
         col_item='itemID', 
-        col_label='label',
-        number_neg_per_user=2
+        col_label='label', 
+        ratio_neg_per_user=2
     )
-    # In this case, user #4 will have only one negative feedback, because in total there
-    # are 3 possible feedback items for user #4 and the possible negative feedback is only
-    # 1
     assert (
-        df_neg_sampled_2[
-            (df_neg_sampled_2['label'] == 0) & (df_neg_sampled_2['userID'] == 4)
-        ]
-        .shape[0]  
+        df_neg_sampled_2[(df_neg_sampled_2['label'] == 0) & (df_neg_sampled_2['userID'].isin([1, 2, 3]))].shape[0]
+        == 6
+    )
+    assert (
+        df_neg_sampled_2[(df_neg_sampled_2['label'] == 0) & (df_neg_sampled_2['userID'] == 4)].shape[0]
         == 1
     )
-
-    # For user #5 there should be no negative feedback because he has interacted with all
-    # items.
-    df_neg_sampled_3 = negative_feedback_sampler(
-        df, 
-        col_user='userID', 
-        col_item='itemID', 
-        col_label='label',
-        number_neg_per_user=1
-    )
     assert (
-        df_neg_sampled_3[
-            (df_neg_sampled_3['label'] == 0) & (df_neg_sampled_3['userID'] == 5)
-        ]
-        .shape[0]  
+        df_neg_sampled_2[(df_neg_sampled_2['label'] == 0) & (df_neg_sampled_2['userID'] == 5)].shape[0]
         == 0
     )
-
