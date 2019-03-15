@@ -213,3 +213,25 @@ def test_negative_feedback_sampler():
         df_neg_sampled_2[(df_neg_sampled_2['label'] == 0) & (df_neg_sampled_2['userID'] == 5)].shape[0]
         == 0
     )
+
+    # If the ratio is smaller than 1, it should at least sample one negative feedback (if there exist more than one
+    # negative feedback for the user).
+    df_neg_sampled_3 = negative_feedback_sampler(
+        df, 
+        col_user='userID', 
+        col_item='itemID', 
+        col_label='label', 
+        ratio_neg_per_user=0.5
+    )
+    assert (
+        df_neg_sampled_3[(df_neg_sampled_3['label'] == 0) & (df_neg_sampled_3['userID'].isin([1, 2, 3]))].shape[0]
+        == 3
+    )
+    assert (
+        df_neg_sampled_3[(df_neg_sampled_3['label'] == 0) & (df_neg_sampled_3['userID'] == 4)].shape[0]
+        == 1
+    )
+    assert (
+        df_neg_sampled_3[(df_neg_sampled_3['label'] == 0) & (df_neg_sampled_3['userID'] == 5)].shape[0]
+        == 0
+    )
