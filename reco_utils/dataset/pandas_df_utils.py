@@ -3,7 +3,6 @@
 
 import pandas as pd
 import numpy as np
-from decimal import Decimal, ROUND_HALF_UP
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
