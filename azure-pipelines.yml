@@ -1,0 +1,29 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- azure-pipelines-bz
+
+pool:
+ name: 'RecommendersAgentPool'
+ vmImage: 'RecoLinuxAgentGPU'
+
+steps:
+
+- task: UsePythonVersion@0
+
+  displayName: 'Use Python 3.5'
+
+  inputs:
+
+    versionSpec: 3.5
+
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+  
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
