@@ -1,4 +1,3 @@
-import pandas as pd
 import pytest
 
 from reco_utils.evaluation.parameter_sweep import generate_param_grid
