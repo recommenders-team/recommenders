@@ -1,1 +1,82 @@
-{"datastore": {"_type": "choice", "_value": ["/home/andreas/Recommenders/notebooks/04_model_select_and_optimize/aml_data"]}, "train_datapath": {"_type": "choice", "_value": ["movielens_100k_train.pkl"]}, "validation_datapath": {"_type": "choice", "_value": ["movielens_100k_val.pkl"]}, "output_dir": {"_type": "choice", "_value": ["./outputs"]}, "surprise_reader": {"_type": "choice", "_value": ["ml-100k"]}, "rating_metrics": {"_type": "choice", "_value": [["rmse"]]}, "ranking_metrics": {"_type": "choice", "_value": [["precision_at_k", "ndcg_at_k"]]}, "usercol": {"_type": "choice", "_value": ["userID"]}, "itemcol": {"_type": "choice", "_value": ["itemID"]}, "k": {"_type": "choice", "_value": [10]}, "random_state": {"_type": "choice", "_value": [0]}, "epochs": {"_type": "choice", "_value": [30]}, "primary_metric": {"_type": "choice", "_value": ["precision_at_k"]}, "biased": {"_type": "choice", "_value": [""]}, "verbose": {"_type": "choice", "_value": [""]}, "n_factors": {"_type": "choice", "_value": [10, 50, 100, 150, 200]}, "init_mean": {"_type": "uniform", "_value": [-0.5, 0.5]}, "init_std_dev": {"_type": "uniform", "_value": [0.01, 0.2]}, "lr_bu": {"_type": "uniform", "_value": [1e-06, 0.1]}, "lr_bi": {"_type": "uniform", "_value": [1e-06, 0.1]}, "lr_pu": {"_type": "uniform", "_value": [1e-06, 0.1]}, "lr_qi": {"_type": "uniform", "_value": [1e-06, 0.1]}, "reg_bu": {"_type": "uniform", "_value": [1e-06, 1]}, "reg_bi": {"_type": "uniform", "_value": [1e-06, 1]}, "reg_pu": {"_type": "uniform", "_value": [1e-06, 1]}, "reg_qi": {"_type": "uniform", "_value": [1e-06, 1]}}
+{
+  "n_factors": {
+    "_type": "choice",
+    "_value": [
+      10,
+      50,
+      100,
+      150,
+      200
+    ]
+  },
+  "init_mean": {
+    "_type": "uniform",
+    "_value": [
+      -0.5,
+      0.5
+    ]
+  },
+  "init_std_dev": {
+    "_type": "uniform",
+    "_value": [
+      0.01,
+      0.2
+    ]
+  },
+  "lr_bu": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      0.1
+    ]
+  },
+  "lr_bi": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      0.1
+    ]
+  },
+  "lr_pu": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      0.1
+    ]
+  },
+  "lr_qi": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      0.1
+    ]
+  },
+  "reg_bu": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      1
+    ]
+  },
+  "reg_bi": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      1
+    ]
+  },
+  "reg_pu": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      1
+    ]
+  },
+  "reg_qi": {
+    "_type": "uniform",
+    "_value": [
+      1e-06,
+      1
+    ]
+  }
+}

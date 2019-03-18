@@ -6,7 +6,11 @@ searchSpacePath: search_space_svd.json
 trainingServicePlatform: local
 trial:
   codeDir: .
-  command: python3 svd_training.py
+  command: python3 svd_training.py --datastore /home/andreas/Recommenders/notebooks/04_model_select_and_optimize/aml_data
+    --train-datapath movielens_100k_train.pkl --validation-datapath movielens_100k_val.pkl
+    --output-dir ./outputs --surprise-reader ml-100k --rating-metrics rmse --ranking-metrics
+    precision_at_k ndcg_at_k --usercol userID --itemcol itemID --k 10 --random-state
+    0 --epochs 30 --primary-metric precision_at_k --biased --verbose
   gpuNum: 0
 trialConcurrency: 10
 tuner:
