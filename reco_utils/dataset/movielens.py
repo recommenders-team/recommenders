@@ -9,7 +9,7 @@ from tempfile import TemporaryDirectory
 import warnings
 import pandas as pd
 from zipfile import ZipFile
-from reco_utils.dataset.url_utils import maybe_download, remove_filepath
+from reco_utils.dataset.url_utils import maybe_download
 from reco_utils.common.notebook_utils import is_databricks
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,

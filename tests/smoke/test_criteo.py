@@ -24,3 +24,17 @@ def test_criteo_load_spark_df(spark, criteo_first_row):
     first_row = df.limit(1).collect()[0].asDict()
     assert first_row == criteo_first_row
 
+
+@pytest.mark.smoke
+def test_download_criteo(tmp_path):
+    filepath = criteo.download_criteo(size="sample", work_directory=tmp_path)
+    statinfo = os.stat(filepath)
+    assert statinfo.st_size == 8787154
+
+
+@pytest.mark.smoke
+def test_extract_criteo(tmp_path):
+    filepath = criteo.download_criteo(size="sample", work_directory=tmp_path)
+    filename = criteo.extract_criteo(size="sample", compressed_file=filepath)
+    statinfo = os.stat(filename)
+    assert statinfo.st_size == 24328072

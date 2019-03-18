@@ -11,16 +11,15 @@ from tqdm import tqdm
 
 
 class TqdmUpTo(tqdm):
-    """Provides `update_to(n)` which uses `tqdm.update(delta_n)`."""
+    """Wrapper class for the progress bar tqdm to get `update_to(n)` functionality"""
 
     def update_to(self, b=1, bsize=1, tsize=None):
-        """
-        b  : int, optional
-            Number of blocks transferred so far [default: 1].
-        bsize  : int, optional
-            Size of each block (in tqdm units) [default: 1].
-        tsize  : int, optional
-            Total size (in tqdm units). If [default: None] remains unchanged.
+        """A progress bar showing how much is left to finish the opperation
+        
+        Args:
+            b (int): Number of blocks transferred so far.
+            bsize (int): Size of each block (in tqdm units).
+            tsize (int): Total size (in tqdm units). 
         """
         if tsize is not None:
             self.total = tsize

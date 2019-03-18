@@ -118,7 +118,7 @@ def load_spark_df(
     return df
 
 
-def download_criteo(size="full", work_directory="."):
+def download_criteo(size="sample", work_directory="."):
     """Download criteo dataset as a compressed file.
 
     Args:
