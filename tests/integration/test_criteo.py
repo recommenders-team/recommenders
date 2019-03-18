@@ -5,20 +5,6 @@ import os
 import pytest
 import pandas as pd
 from reco_utils.dataset import criteo
-from reco_utils.common.constants import DEFAULT_ITEM_COL
-
-try:
-    from pyspark.sql.types import (
-        StructType,
-        StructField,
-        IntegerType,
-        StringType,
-        FloatType,
-        DoubleType,
-    )
-    from pyspark.sql.functions import col
-except ImportError:
-    pass  # skip this import if we are in pure python environment
 
 
 @pytest.mark.integration

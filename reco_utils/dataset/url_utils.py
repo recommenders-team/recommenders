@@ -27,7 +27,7 @@ class TqdmUpTo(tqdm):
         self.update(b * bsize - self.n)  # will also set self.n = b * bsize
 
 
-def maybe_download(url, filename, work_directory=".", expected_bytes=None):
+def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
     """Download a file if it is not already downloaded.
     
     Args:
@@ -39,6 +39,8 @@ def maybe_download(url, filename, work_directory=".", expected_bytes=None):
     Returns:
         str: File path of the file downloaded.
     """
+    if filename is None:
+        filename = url.split("/")[-1]
     filepath = os.path.join(work_directory, filename)
     if not os.path.exists(filepath):
         with TqdmUpTo(unit="B", unit_scale=True) as t:
@@ -53,15 +55,3 @@ def maybe_download(url, filename, work_directory=".", expected_bytes=None):
 
     return filepath
 
-
-def remove_filepath(filepath):
-    """ Remove file. Be careful not to erase anything else. 
-    
-    Args:
-        filepath (str): Path to the file
-
-    """
-    try:
-        os.remove(filepath)
-    except OSError:
-        pass

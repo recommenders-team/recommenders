@@ -4,15 +4,16 @@
 
 import pandas as pd
 import os
-import atexit
 import tarfile
+from contextlib import contextmanager
+from tempfile import TemporaryDirectory
 
 try:
     from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 except ImportError:
     pass  # so the environment without spark doesn't break
 
-from reco_utils.dataset.url_utils import maybe_download, remove_filepath
+from reco_utils.dataset.url_utils import maybe_download
 from reco_utils.common.notebook_utils import is_databricks
 
 
@@ -28,9 +29,7 @@ DEFAULT_HEADER = (
 )
 
 
-def load_pandas_df(
-    size="sample", local_cache_path="dac_sample.tar.gz", header=DEFAULT_HEADER
-):
+def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
     """Loads the Criteo DAC dataset as pandas.DataFrame. This function download, untar, and load the dataset.
 
     The schema is:
@@ -46,17 +45,18 @@ def load_pandas_df(
     Returns:
         pd.DataFrame: Criteo DAC sample dataset.
     """
-    path, filename = os.path.split(os.path.realpath(local_cache_path))
-    download_criteo(size, filename, path)
-    filepath = extract_criteo(size, path, local_cache_path)
-    return pd.read_csv(filepath, sep="\t", header=None, names=header)
+    with _real_path(local_cache_path) as path:
+        filepath = download_criteo(size, path)
+        filepath = extract_criteo(size, filepath)
+        df = pd.read_csv(filepath, sep="\t", header=None, names=header)
+    return df
 
 
 def load_spark_df(
     spark,
     size="sample",
     header=DEFAULT_HEADER,
-    local_cache_path="dac.tar.gz",
+    local_cache_path=None,
     dbfs_datapath="dbfs:/FileStore/dac",
     dbutils=None,
 ):
@@ -78,34 +78,34 @@ def load_spark_df(
     Returns:
         pySpark.DataFrame: Criteo DAC training dataset.
     """
-    path, filename = os.path.split(os.path.realpath(local_cache_path))
-    download_criteo(size, filename, path)
-    filepath = extract_criteo(size, path, local_cache_path)
+    with _real_path(local_cache_path) as path:
+        filepath = download_criteo(size, path)
+        filepath = extract_criteo(size, filepath)
 
-    if is_databricks():
-        try:
-            # Driver node's file path
-            tar_datapath = "file:" + filepath
-            ## needs to be on dbfs to load
-            dbutils.fs.cp(tar_datapath, dbfs_datapath, recurse=True)
-            path = dbfs_datapath
-        except:
-            raise ValueError(
-                "To use on a Databricks notebook, dbutils object should be passed as an argument"
-            )
-    else:
-        path = filepath
+        if is_databricks():
+            try:
+                # Driver node's file path
+                tar_datapath = "file:" + filepath
+                ## needs to be on dbfs to load
+                dbutils.fs.cp(tar_datapath, dbfs_datapath, recurse=True)
+                path = dbfs_datapath
+            except:
+                raise ValueError(
+                    "To use on a Databricks notebook, dbutils object should be passed as an argument"
+                )
+        else:
+            path = filepath
 
-    schema = _get_spark_schema(header)
-    return spark.read.csv(path, schema=schema, sep="\t", header=False)
+        schema = _get_spark_schema(header)
+        df = spark.read.csv(path, schema=schema, sep="\t", header=False)
+    return df
 
 
-def download_criteo(size="full", filename="dac.tar.gz", work_directory="."):
+def download_criteo(size="full", work_directory="."):
     """Download criteo dataset as a compressed file.
 
     Args:
         size (str): Size of criteo dataset. It can be "full" or "sample".
-        filename (str): Filename.
         work_directory (str): Working directory.
 
     Returns:
@@ -113,28 +113,29 @@ def download_criteo(size="full", filename="dac.tar.gz", work_directory="."):
 
     """
     url = CRITEO_URL[size]
-    return maybe_download(url, filename, work_directory)
+    return maybe_download(url, work_directory=work_directory)
 
 
-def extract_criteo(size, path, compressed_file, remove_after_extraction=True):
+def extract_criteo(size, compressed_file, path=None):
     """Extract Criteo dataset tar.
 
     Args:
         size (str): Size of criteo dataset. It can be "full" or "sample".
-        path (str): Path to the file.
-        compressed_file (str): Tar file.
-        remove_after_extraction (bool): Whether or not to remove the tar file after extraction.
+        compressed_file (str): Path to compressed file.
+        path (str): Path to extract the file.
     
     Returns:
         str: Path to the extracted file.
+    
     """
-    extracted_dir = os.path.join(path, "dac")
-    print("Extracting component files from {}.".format(compressed_file))
+    if path is None:
+        folder = os.path.dirname(compressed_file)
+        extracted_dir = os.path.join(folder, "dac")
+    else:
+        extracted_dir = path
+
     with tarfile.open(compressed_file) as tar:
         tar.extractall(extracted_dir)
-
-    if remove_after_extraction:
-        remove_filepath(compressed_file)
 
     return _manage_data_sizes(size, extracted_dir)
 
@@ -159,3 +160,16 @@ def _get_spark_schema(header):
         schema.add(StructField(header[i + n_ints], StringType()))
     return schema
 
+
+@contextmanager
+def _real_path(path):
+    tmp_dir = TemporaryDirectory()
+    if path is None:
+        path = tmp_dir.name
+    else:
+        path = os.path.realpath(path)
+
+    try:
+        yield path
+    finally:
+        tmp_dir.cleanup()
