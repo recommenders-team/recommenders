@@ -1,5 +1,5 @@
 import numpy as np
-import os
+
 
 def exponential_decay(value, max_val, half_life):
     """Compute decay factor for a given value based on an exponential decay
