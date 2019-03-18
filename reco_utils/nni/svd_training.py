@@ -11,7 +11,7 @@ import os
 import pandas as pd
 import surprise
 
-from reco_utils.evaluation.python_evaluation import *
+import reco_utils.evaluation.python_evaluation as evaluation
 from reco_utils.recommender.surprise.surprise_utils import compute_rating_predictions, compute_ranking_predictions
 
 logging.basicConfig(level=logging.DEBUG)
@@ -40,14 +40,17 @@ def svd_training(params):
     logger.debug("Evaluating...")
 
     rating_metrics = params['rating_metrics']
+    metrics_dict = {}
     if len(rating_metrics) > 0:
         predictions = compute_rating_predictions(svd, validation_data, usercol=params['usercol'],
                                                  itemcol=params['itemcol'])
         for metric in rating_metrics:
-            result = eval(metric)(validation_data, predictions)
+            result = getattr(evaluation, metric)(validation_data, predictions)
             logger.debug("%s = %g", metric, result)
             if metric == params['primary_metric']:
-                nni.report_final_result(result)
+                metrics_dict['default'] = result
+            else:
+                metrics_dict[metric] = result
 
     ranking_metrics = params['ranking_metrics']
     if len(ranking_metrics) > 0:
@@ -56,13 +59,17 @@ def svd_training(params):
                                                       recommend_seen=params['recommend_seen'])
         k = params['k']
         for metric in ranking_metrics:
-            result = eval(metric)(validation_data, all_predictions, col_prediction='prediction', k=k)
+            result = getattr(evaluation, metric)(validation_data, all_predictions, col_prediction='prediction', k=k)
             logger.debug("%s@%d = %g", metric, k, result)
             if metric == params['primary_metric']:
-                nni.report_final_result(result)
+                metrics_dict['default'] = result
+            else:
+                metrics_dict[metric] = result
 
     if len(ranking_metrics) == 0 and len(rating_metrics) == 0:
         raise ValueError("No metrics were specified.")
+
+    nni.report_final_result(metrics_dict)
 
     return svd
 
@@ -73,7 +80,7 @@ def get_params():
     parser.add_argument('--datastore', type=str, dest='datastore', help="Datastore path")
     parser.add_argument('--train-datapath', type=str, dest='train_datapath')
     parser.add_argument('--validation-datapath', type=str, dest='validation_datapath')
-    parser.add_argument('--output_dir', type=str, help='output directory')
+    parser.add_argument('--output-dir', type=str, help='output directory')
     parser.add_argument('--surprise-reader', type=str, dest='surprise_reader')
     parser.add_argument('--usercol', type=str, dest='usercol', default='userID')
     parser.add_argument('--itemcol', type=str, dest='itemcol', default='itemID')
@@ -87,7 +94,7 @@ def get_params():
     parser.add_argument('--verbose', dest='verbose', action='store_true')
     parser.add_argument('--epochs', type=int, dest='epochs', default=30)
     parser.add_argument('--biased', dest='biased', action='store_true')
-    parser.add_argument('--primary_metric', dest='primary_metric', default='rmse')
+    parser.add_argument('--primary-metric', dest='primary_metric', default='rmse')
     # Hyperparameters to be tuned
     parser.add_argument('--n_factors', type=int, dest='n_factors', default=100)
     parser.add_argument('--init_mean', type=float, dest='init_mean', default=0.0)
