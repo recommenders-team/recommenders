@@ -21,13 +21,15 @@ CRITEO_URL_SAMPLE = (
     "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz"
 )
 CRITEO_URL = {"full": CRITEO_URL_FULL, "sample": CRITEO_URL_SAMPLE}
-DEFAULT_HEADER = ["label"] + ["int{0:02d}".format(i) for i in range(13)] + ["cat{0:02d}".format(i) for i in range(26)]
+DEFAULT_HEADER = (
+    ["label"]
+    + ["int{0:02d}".format(i) for i in range(13)]
+    + ["cat{0:02d}".format(i) for i in range(26)]
+)
 
 
 def load_pandas_df(
-    size="sample",
-    local_cache_path="dac_sample.tar.gz",
-    header=DEFAULT_HEADER
+    size="sample", local_cache_path="dac_sample.tar.gz", header=DEFAULT_HEADER
 ):
     """Loads the Criteo DAC dataset as pandas.DataFrame. This function download, untar, and load the dataset.
 
@@ -127,9 +129,7 @@ def extract_criteo(size, path, compressed_file, remove_after_extraction=True):
         str: Path to the extracted file.
     """
     extracted_dir = os.path.join(path, "dac")
-    print(
-        "Extracting component files from {}.".format(compressed_file)
-    )
+    print("Extracting component files from {}.".format(compressed_file))
     with tarfile.open(compressed_file) as tar:
         tar.extractall(extracted_dir)
 
@@ -158,7 +158,4 @@ def _get_spark_schema(header):
     for i in range(26):
         schema.add(StructField(header[i + n_ints], StringType()))
     return schema
-
-
-
 
