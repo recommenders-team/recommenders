@@ -17,11 +17,10 @@ from reco_utils.dataset.url_utils import maybe_download
 from reco_utils.common.notebook_utils import is_databricks
 
 
-CRITEO_URL_FULL = "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz"
-CRITEO_URL_SAMPLE = (
-    "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz"
-)
-CRITEO_URL = {"full": CRITEO_URL_FULL, "sample": CRITEO_URL_SAMPLE}
+CRITEO_URL = {
+    "full": "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz", 
+    "sample": "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz"
+}
 DEFAULT_HEADER = (
     ["label"]
     + ["int{0:02d}".format(i) for i in range(13)]
@@ -32,10 +31,19 @@ DEFAULT_HEADER = (
 def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
     """Loads the Criteo DAC dataset as pandas.DataFrame. This function download, untar, and load the dataset.
 
+    The dataset consists of a portion of Criteo’s traffic over a period
+    of 24 days. Each row corresponds to a display ad served by Criteo and the first
+    column is indicates whether this ad has been clicked or not.
+
+    There are 13 features taking integer values (mostly count features) and 26
+    categorical features. The values of the categorical features have been hashed
+    onto 32 bits for anonymization purposes.
+
     The schema is:
     <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
 
-    More details: http://labs.criteo.com/2013/12/download-terabyte-click-logs/
+    More details (need to accept user terms to see the information): 
+    http://labs.criteo.com/2013/12/download-terabyte-click-logs/ 
 
     Args:
         size (str): Dataset size. It can be "sample" or "full".
@@ -62,10 +70,19 @@ def load_spark_df(
 ):
     """Loads the Criteo DAC dataset as pySpark.DataFrame.
 
+    The dataset consists of a portion of Criteo’s traffic over a period
+    of 24 days. Each row corresponds to a display ad served by Criteo and the first
+    column is indicates whether this ad has been clicked or not.
+
+    There are 13 features taking integer values (mostly count features) and 26
+    categorical features. The values of the categorical features have been hashed
+    onto 32 bits for anonymization purposes.
+
     The schema is:
     <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
 
-    More details: http://labs.criteo.com/2013/12/download-terabyte-click-logs/
+    More details (need to accept user terms to see the information): 
+    http://labs.criteo.com/2013/12/download-terabyte-click-logs/ 
 
     Args:
         spark (pySpark.SparkSession): Spark session.
@@ -85,9 +102,9 @@ def load_spark_df(
         if is_databricks():
             try:
                 # Driver node's file path
-                tar_datapath = "file:" + filepath
+                node_path = "file:" + filepath
                 ## needs to be on dbfs to load
-                dbutils.fs.cp(tar_datapath, dbfs_datapath, recurse=True)
+                dbutils.fs.cp(node_path, dbfs_datapath, recurse=True)
                 path = dbfs_datapath
             except:
                 raise ValueError(
@@ -137,15 +154,11 @@ def extract_criteo(size, compressed_file, path=None):
     with tarfile.open(compressed_file) as tar:
         tar.extractall(extracted_dir)
 
-    return _manage_data_sizes(size, extracted_dir)
-
-
-def _manage_data_sizes(size, path):
-    if size == "sample":
-        datapath = os.path.join(path, "dac_sample.txt")
-    elif size == "full":
-        datapath = os.path.join(path, "train.txt")
-    return datapath
+    filename_selector = {
+        "sample": "dac_sample.txt",
+        "full": "train.txt"
+    }
+    return os.path.join(extracted_dir, filename_selector[size])
 
 
 def _get_spark_schema(header):
