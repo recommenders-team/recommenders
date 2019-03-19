@@ -7,7 +7,8 @@ import numpy as np
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL
+    DEFAULT_RATING_COL,
+    DEFAULT_LABEL_COL
 )
 
 
@@ -166,3 +167,91 @@ def libffm_converter(df, col_rating=DEFAULT_RATING_COL, filepath=None):
     return df_new
 
 
+def negative_feedback_sampler(
+    df, 
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_label=DEFAULT_LABEL_COL,
+    ratio_neg_per_user=1,
+    seed=42
+):
+    """Utility function to sample negative feedback from user-item interaction dataset.
+
+    This negative sampling function will take the user-item interaction data to create 
+    binarized feedback, i.e., 1 and 0 indicate positive and negative feedback, 
+    respectively. 
+
+    Negative sampling is used in the literature frequently to generate negative samples 
+    from a user-item interaction data.
+    See for example the neural collaborative filtering paper 
+    https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
+    
+    Examples:
+        >>> import pandas as pd
+        >>> df = pd.DataFrame({
+            'userID': [1, 2, 3],
+            'itemID': [1, 2, 3],
+            'rating': [5, 5, 5]
+        })
+        >>> df_neg_sampled = negative_feedback_sampler(
+            df, col_user='userID', col_item='itemID', ratio_neg_per_user=1
+        )
+        >>> df_neg_sampled
+        userID  itemID  feedback
+        1   1   1
+        1   2   0
+        2   2   1
+        2   1   0
+        3   3   1
+        3   1   0
+
+    Args:
+        df (pandas.DataFrame): input data that contains user-item tuples.
+        col_user (str): user id column name.
+        col_item (str): item id column name.
+        col_label (str): label column name. It is used for the generated columns where labels
+        of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
+        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user. 
+        If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
+        of all the possible samples.
+        seed (int): seed for the random state of the sampling function.
+
+    Returns:
+        pandas.DataFrame: data with negative feedback 
+    """
+    # Get all of the users and items.
+    users = df[col_user].unique()
+    items = df[col_item].unique()
+
+    # Create a dataframe for all user-item pairs
+    df_neg = user_item_pairs(pd.DataFrame(users, columns=[col_user]), pd.DataFrame(items, columns=[col_item]), user_item_filter_df = df)
+    df_neg[col_label] = 0
+
+    df_pos = df.copy()
+    df_pos[col_label] = 1
+
+    df_all = pd.concat([df_pos, df_neg], ignore_index=True, sort=True)
+    df_all = df_all[[col_user, col_item, col_label]]
+
+    # Sample negative feedback from the combined dataframe.
+    df_sample = (
+        df_all
+        .groupby(col_user)
+        .apply(
+            lambda x: pd.concat(
+                [
+                    x[x[col_label] == 1],
+                    x[x[col_label] == 0].sample(min(
+                        max(round(len(x[x[col_label] == 1])*ratio_neg_per_user), 1),
+                        len(x[x[col_label] == 0])
+                    ), random_state=seed, replace=False) if len(x[x[col_label] == 0] > 0) else pd.DataFrame({}, columns=[col_user, col_item, col_label])
+                ], 
+                ignore_index=True,
+                sort=True
+            )
+        )
+        .reset_index(drop=True)
+        .sort_values(col_user)
+    )
+
+    return df_sample
