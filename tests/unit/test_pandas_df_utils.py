@@ -204,12 +204,7 @@ def test_csv_to_libffm_new():
         'field3': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
         'field4': ['1', '2', '3', '4', '5', '6']
     })
-
     df_feature_new_libffm = converter.transform(df_feature_new)
 
-    # Check if the columns are converted successfully.
     assert df_feature_new_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:2:3', '3:3:1.0', '4:5:1']
-
-    # Check if the duplicated column entries are indexed correctly.
-    # It should skip counting the duplicated features in a field column.
     assert df_feature_new_libffm.iloc[-1, :].values.tolist() == [1, '1:4:1', '2:2:8', '3:3:6.0', '4:10:1']
