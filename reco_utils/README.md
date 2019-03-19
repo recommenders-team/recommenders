@@ -34,6 +34,8 @@ Currently available metrics include:
 - Recall at K
 - Normalized Discounted Cumulative Gain at K
 - Mean Average Precision at K
+- Area Under Curve
+- Logistic Loss
 
 ### [Recommender](./recommender)
 The recommender submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches.

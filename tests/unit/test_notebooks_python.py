@@ -50,3 +50,14 @@ def test_surprise_deep_dive_runs(notebooks):
 def test_vw_deep_dive_runs(notebooks):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+
+@pytest.mark.notebooks
+def test_lightgbm(notebooks):
+    notebook_path = notebooks["lightgbm_quickstart"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
+                        parameters=dict(MAX_LEAF = 32,
+                                        MIN_DATA = 20,
+                                        NUM_OF_TREES = 10,
+                                        TREE_LEARNING_RATE = 0.15,
+                                        EARLY_STOPPING_ROUNDS = 20,
+                                        METRIC = "auc"),)

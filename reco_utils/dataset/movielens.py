@@ -1,10 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from contextlib import contextmanager
 import os
-import warnings
+import re
 import shutil
-import atexit
+from tempfile import TemporaryDirectory
+import warnings
 import pandas as pd
 from zipfile import ZipFile
 from reco_utils.dataset.url_utils import maybe_download
@@ -40,7 +42,7 @@ class _DataFormat:
             sep, path, has_header=False,
             item_sep=None, item_path=None, item_has_header=False,
     ):
-        """ MovieLens data format container as a different size of MovieLens data file
+        """MovieLens data format container as a different size of MovieLens data file
         has a different format
 
         Args:
@@ -111,12 +113,19 @@ DATA_FORMAT = {
     ),
 }
 
-# 100K data genres index to string
+# 100K data genres index to string mapper. For 1m, 10m, and 20m, the genres labels are already in the dataset.
 GENRES = (
     "unknown", "Action", "Adventure", "Animation",
     "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
     "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi",
     "Thriller", "War", "Western"
+)
+
+DEFAULT_HEADER = (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_TIMESTAMP_COL
 )
 
 # Warning and error messages
@@ -126,57 +135,53 @@ WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
 WARNING_HAVE_SCHEMA_AND_HEADER = """Both schema and header are provided.
     The header argument will be ignored."""
 ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m}"
-ERROR_LOCAL_CACHE_PATH = """Local cache path only accepts a zip file path:
-    use/something/like_this.zip"""
+ERROR_NO_HEADER = "No header (schema) information"
 
 
 def load_pandas_df(
     size="100k",
-    header=(
-        DEFAULT_USER_COL,
-        DEFAULT_ITEM_COL,
-        DEFAULT_RATING_COL,
-        DEFAULT_TIMESTAMP_COL
-    ),
-    local_cache_path="ml.zip",
+    header=DEFAULT_HEADER,
+    local_cache_path=None,
     title_col=None,
     genres_col=None,
+    year_col=None,
 ):
     """Loads the MovieLens dataset as pd.DataFrame.
 
     Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
 
     Args:
-        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m")
-        header (list or tuple or None): Rating dataset header. If None, ratings are not loaded.
-        local_cache_path (str): Path where to cache the zip file locally
-        title_col (str): Movie title column name. If None, the title column is not loaded.
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
+        header (list or tuple or None): Rating dataset header.
+        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
+            If None, all the intermediate files will be stored in a temporary directory and removed after use.
+        title_col (str): Movie title column name. If None, the column will not be loaded.
         genres_col (str): Genres column name. Genres are '|' separated string.
-            If None, the genres column is not loaded.
+            If None, the column will not be loaded.
+        year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
         pd.DataFrame: Movie rating dataset.
-            If header is None but either title_col or genres_col is not None,
-            returns movie titles and/or genres.
     """
-
-    # fix capitalization
     size = size.lower()
-
-    datapath, item_datapath = _load_datafile(size, local_cache_path)
-
-    # Load title and genres
-    movie_col = DEFAULT_ITEM_COL if header is None or len(header) < 2 else header[1]
-    item_df = _load_item_df(size, movie_col, title_col, genres_col, item_datapath)
-
-    # Load rating data
+    if size not in DATA_FORMAT:
+        raise ValueError(ERROR_MOVIE_LENS_SIZE)
     if header is None or len(header) == 0:
-        return item_df
-    else:
-        if len(header) > 4:
-            warnings.warn(WARNING_MOVIE_LENS_HEADER)
-            header = header[:4]
-        elif len(header) == 1 and item_df is not None:
+        raise ValueError(ERROR_NO_HEADER)
+
+    if len(header) > 4:
+        warnings.warn(WARNING_MOVIE_LENS_HEADER)
+        header = header[:4]
+    movie_col = DEFAULT_ITEM_COL if len(header) < 2 else header[1]
+
+    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
+        datapath, item_datapath = _maybe_download_and_extract(size, path)
+
+        # Load movie features such as title, genres, and release year
+        item_df = _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+
+        # Load rating data
+        if len(header) == 1 and item_df is not None:
             # MovieID should be loaded to merge rating df w/ item_df
             header = [header[0], movie_col]
 
@@ -197,17 +202,54 @@ def load_pandas_df(
         if item_df is not None:
             df = df.merge(item_df, on=header[1])
 
-        return df
+    return df
 
 
-def _load_item_df(size, movie_col, title_col, genres_col, item_datapath):
-    if title_col is None and genres_col is None:
-        return None
+def load_item_df(
+    size="100k",
+    local_cache_path=None,
+    movie_col=DEFAULT_ITEM_COL,
+    title_col=None,
+    genres_col=None,
+    year_col=None
+):
+    """Loads Movie info.
 
-    item_header = [movie_col]
-    usecols = [0]
-    if title_col is not None:
-        item_header.append(title_col)
+    Args:
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
+        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
+            If None, all the intermediate files will be stored in a temporary directory and removed after use.
+        movie_col (str): Movie id column name.
+        title_col (str): Movie title column name. If None, the column will not be loaded.
+        genres_col (str): Genres column name. Genres are '|' separated string.
+            If None, the column will not be loaded.
+        year_col (str): Movie release year column name. If None, the column will not be loaded.
+
+    Returns:
+        pd.DataFrame: Movie information data, such as title, genres, and release year.
+    """
+    size = size.lower()
+    if size not in DATA_FORMAT:
+        raise ValueError(ERROR_MOVIE_LENS_SIZE)
+
+    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
+        _, item_datapath = _maybe_download_and_extract(size, path)
+        item_df = _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+
+    return item_df
+
+
+def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col):
+    """Loads Movie info"""
+    item_header = []
+    usecols = []
+    if movie_col is not None:
+        item_header.append(movie_col)
+        usecols.append(0)
+
+    # Year is parsed from title
+    if title_col is not None or year_col is not None:
+        item_header.append("title_year")
         usecols.append(1)
 
     genres_header_100k = None
@@ -217,10 +259,13 @@ def _load_item_df(size, movie_col, title_col, genres_col, item_datapath):
         if size == "100k":
             genres_header_100k = [*(str(i) for i in range(19))]
             item_header.extend(genres_header_100k)
-            usecols.extend([*range(5, 24)])
+            usecols.extend([*range(5, 24)])  # genres columns
         else:
             item_header.append(genres_col)
-            usecols.append(2)
+            usecols.append(2)  # genres column
+
+    if len(item_header) == 0:
+        return None
 
     item_df = pd.read_csv(
         item_datapath,
@@ -241,23 +286,35 @@ def _load_item_df(size, movie_col, title_col, genres_col, item_datapath):
 
         item_df.drop(genres_header_100k, axis=1, inplace=True)
 
+    # Parse year from movie title. Note, MovieLens title format is "title (year)"
+    # Note, there are very few records that are missing the year info.
+    if year_col is not None:
+        def parse_year(t):
+            parsed = re.split('[()]', t)
+            if len(parsed) > 2 and parsed[-2].isdecimal():
+                return parsed[-2]
+            else:
+                return None
+        item_df[year_col] = item_df["title_year"].map(parse_year)
+        if title_col is None:
+            item_df.drop("title_year", axis=1, inplace=True)
+
+    if title_col is not None:
+        item_df.rename(columns={"title_year": title_col}, inplace=True)
+
     return item_df
 
 
 def load_spark_df(
     spark,
     size="100k",
-    header=(
-        DEFAULT_USER_COL,
-        DEFAULT_ITEM_COL,
-        DEFAULT_RATING_COL,
-        DEFAULT_TIMESTAMP_COL
-    ),
+    header=DEFAULT_HEADER,
     schema=None,
-    local_cache_path="ml.zip",
+    local_cache_path=None,
     dbutils=None,
     title_col=None,
     genres_col=None,
+    year_col=None
 ):
     """Loads the MovieLens dataset as pySpark.DataFrame.
 
@@ -265,8 +322,8 @@ def load_spark_df(
 
     Args:
         spark (pySpark.SparkSession)
-        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m")
-        header (list or tuple): Rating dataset header. If None, ratings are not loaded.
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
+        header (list or tuple): Rating dataset header.
             If schema is provided, this argument is ignored.
         schema (pySpark.StructType): Dataset schema. By default,
             StructType(
@@ -277,47 +334,51 @@ def load_spark_df(
                     StructField(DEFAULT_TIMESTAMP_COL, LongType()),
                 ]
             )
-        local_cache_path (str): Path where to cache the zip file locally
+        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
+            If None, all the intermediate files will be stored in a temporary directory and removed after use.
         dbutils (Databricks.dbutils): Databricks utility object
-        title_col (str): Title column name. If None, title is not loaded.
+        title_col (str): Title column name. If None, the column will not be loaded.
         genres_col (str): Genres column name. Genres are '|' separated string.
-            If None, genres are not loaded.
+            If None, the column will not be loaded.
+        year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
         pySpark.DataFrame: Movie rating dataset.
-            If header is None but either title_col or genres_col is not None,
-            returns movie titles and/or genres.
     """
-
-    # fix capitalization
     size = size.lower()
-
-    file_datapath, file_item_datapath = _load_datafile(size, local_cache_path)
-    # Driver node's file path
-    datapath = "file:///" + file_datapath
-    item_datapath = "file:" + file_item_datapath
-    if is_databricks():
-        # Move rating file to DBFS (we load items as pandas, so no need to move to DBFS)
-        dbfs_datapath = "dbfs:/tmp/" + file_datapath
-        try:
-            dbutils.fs.mv(datapath, dbfs_datapath)
-        except:
-            raise ValueError("To use on a Databricks notebook, dbutils object should be passed as an argument")
-        datapath = dbfs_datapath
+    if size not in DATA_FORMAT:
+        raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     schema = _get_schema(header, schema)
-
-    # Load title and genres
-    movie_col = DEFAULT_ITEM_COL if schema is None or len(schema) < 2 else schema[1].name
-    item_df = _load_item_df(size, movie_col, title_col, genres_col, item_datapath)
-    if item_df is not None:
-        # Convert to spark DataFrame
-        item_df = spark.createDataFrame(item_df)
-
-    # Load rating data
     if schema is None:
-        return item_df
-    else:
+        raise ValueError(ERROR_NO_HEADER)
+
+    movie_col = DEFAULT_ITEM_COL if len(schema) < 2 else schema[1].name
+
+    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
+        datapath, item_datapath = _maybe_download_and_extract(size, path)
+        spark_datapath = "file://" + datapath
+
+        # Load movie features such as title, genres, and release year.
+        # Since the file size is small, we directly load as pd.DataFrame from the driver node
+        # and then convert into spark.DataFrame
+        item_df = spark.createDataFrame(
+            _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+        )
+
+        if is_databricks():
+            if dbutils is None:
+                raise ValueError("""
+                    To use on a Databricks, dbutils object should be passed as an argument.
+                    E.g. load_spark_df(spark, dbutils=dbutils)
+                """)
+
+            # Move rating file to DBFS in order to load into spark.DataFrame
+            dbfs_datapath = "dbfs:/tmp/" + datapath
+            dbutils.fs.mv(spark_datapath, dbfs_datapath)
+            spark_datapath = dbfs_datapath
+
+        # Load rating data
         if len(schema) == 1 and item_df is not None:
             # MovieID should be loaded to merge rating df w/ item_df
             schema.add(StructField(movie_col, IntegerType()))
@@ -325,7 +386,7 @@ def load_spark_df(
         # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
         separator = DATA_FORMAT[size].separator
         if len(separator) > 1:
-            raw_data = spark.sparkContext.textFile(datapath)
+            raw_data = spark.sparkContext.textFile(spark_datapath)
             data_rdd = raw_data.map(
                 lambda l: l.split(separator)
             ).map(
@@ -334,14 +395,18 @@ def load_spark_df(
             df = spark.createDataFrame(data_rdd, schema)
         else:
             df = spark.read.csv(
-                datapath, schema=schema, sep=separator, header=DATA_FORMAT[size].has_header
+                spark_datapath, schema=schema, sep=separator, header=DATA_FORMAT[size].has_header
             )
 
         # Merge rating df w/ item_df
         if item_df is not None:
             df = df.join(item_df, movie_col, 'left')
 
-        return df
+        # Cache and force trigger action since data-file might be removed.
+        df.cache()
+        df.count()
+
+    return df
 
 
 def _get_schema(header, schema):
@@ -377,48 +442,70 @@ def _get_schema(header, schema):
     return schema
 
 
-def _load_datafile(size, local_cache_path):
-    """ Download and extract file """
+@contextmanager
+def _real_path(path, filename_if_not_in_path):
+    tmp_dir = TemporaryDirectory()
+    if path is None:
+        path = tmp_dir.name
+    else:
+        path = os.path.realpath(path)
 
+    if not path.endswith(".zip"):
+        path = os.path.join(path, filename_if_not_in_path)
+
+    try:
+        yield path
+    finally:
+        tmp_dir.cleanup()
+
+
+def _maybe_download_and_extract(size, dest_path):
+    """Downloads and extracts MovieLens rating and item datafiles if they don’t already exist"""
+    dirs, _ = os.path.split(dest_path)
+    if not os.path.exists(dirs):
+        os.makedirs(dirs)
+
+    _, rating_filename = os.path.split(DATA_FORMAT[size].path)
+    rating_path = os.path.join(dirs, rating_filename)
+    _, item_filename = os.path.split(DATA_FORMAT[size].item_path)
+    item_path = os.path.join(dirs, item_filename)
+
+    if not os.path.exists(rating_path) or not os.path.exists(item_path):
+        download_movielens(size, dest_path)
+        extract_movielens(size, rating_path, item_path, dest_path)
+
+    return rating_path, item_path
+
+
+def download_movielens(size, dest_path):
+    """Downloads MovieLens datafile.
+
+    Args:
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
+        dest_path (str): File path for the downloaded file
+    """
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
-    if not local_cache_path.endswith(".zip"):
-        raise ValueError(ERROR_LOCAL_CACHE_PATH)
 
-    path, filename = os.path.split(os.path.realpath(local_cache_path))
+    url = "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip"
+    dirs, file = os.path.split(dest_path)
+    maybe_download(url, file, work_directory=dirs)
 
-    # Make sure a temporal zip file get cleaned up no matter what
-    atexit.register(_clean_up, local_cache_path)
 
-    maybe_download(
-        "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip",
-        filename,
-        work_directory=path,
-    )
+def extract_movielens(size, rating_path, item_path, zip_path):
+    """Extract MovieLens rating and item datafiles from the MovieLens raw zip file.
 
-    _, dataname = os.path.split(DATA_FORMAT[size].path)
-    datapath = os.path.join(path, dataname)
-    _, item_dataname = os.path.split(DATA_FORMAT[size].item_path)
-    item_datapath = os.path.join(path, item_dataname)
+    To extract all files instead of just rating and item datafiles,
+    use ZipFile's extractall(path) instead.
 
-    with ZipFile(local_cache_path, "r") as z:
-        with z.open(DATA_FORMAT[size].path) as zf, open(datapath, 'wb') as f:
+    Args:
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
+        rating_path (str): Destination path for rating datafile
+        item_path (str): Destination path for item datafile
+        zip_path (str): zipfile path
+    """
+    with ZipFile(zip_path, "r") as z:
+        with z.open(DATA_FORMAT[size].path) as zf, open(rating_path, 'wb') as f:
             shutil.copyfileobj(zf, f)
-        with z.open(DATA_FORMAT[size].item_path) as zf, open(item_datapath, 'wb') as f:
+        with z.open(DATA_FORMAT[size].item_path) as zf, open(item_path, 'wb') as f:
             shutil.copyfileobj(zf, f)
-
-    _clean_up(local_cache_path)
-
-    # Make sure a temporal data file get cleaned up when done
-    atexit.register(_clean_up, datapath)
-    atexit.register(_clean_up, item_datapath)
-
-    return datapath, item_datapath
-
-
-def _clean_up(filepath):
-    """ Remove cached file. Be careful not to erase anything else. """
-    try:
-        os.remove(filepath)
-    except OSError:
-        pass
