@@ -72,50 +72,6 @@ def filter_by(df, filter_by_df, filter_by_cols):
     ]
 
 
-def libffm_converter(df, col_rating=DEFAULT_RATING_COL, filepath=None):
-    df_new = df.copy()
-
-    # Check column types.
-    types = df_new.dtypes
-    if not all([x == object or np.issubdtype(x, np.integer) or x == np.float for x in types]):
-        raise TypeError("Input columns should be only object and/or numeric types.")
-
-    field_names = list(df_new.drop(col_rating, axis=1).columns)
-
-    # Encode field-feature.
-    idx = 1
-    field_feature_dict = {}
-    for field in field_names:
-        if df_new[field].dtype == object:
-            for feature in df_new[field].values:
-                # Check whether (field, feature) tuple exists in the dict or not.
-                # If not, put them into the key-values of the dict and count the index.
-                if (field, feature) not in field_feature_dict:
-                    field_feature_dict[(field, feature)] = idx
-                    idx += 1
-
-    def _convert(field, feature, field_index, field_feature_index_dict):
-        if isinstance(feature, str):
-            field_feature_index = field_feature_index_dict[(field, feature)]
-            feature = 1
-        else:
-            field_feature_index = field_index
-
-        return "{}:{}:{}".format(field_index, field_feature_index, feature)
-
-    for col_index, col in enumerate(field_names):
-        df_new[col] = df_new[col].apply(lambda x: _convert(col, x, col_index+1, field_feature_dict))
-
-    # Move rating column to the first.
-    field_names.insert(0, col_rating)
-    df_new = df_new[field_names]
-
-    if filepath is not None:
-        np.savetxt(filepath, df_new.values, delimiter=' ', fmt='%s')
-
-    return df_new
-
-
 class LibffmConverter():
     """Converts an input Dataframe (df) to another Dataframe (df) in libffm format. A text file of the converted
     Dataframe is optionally generated.
