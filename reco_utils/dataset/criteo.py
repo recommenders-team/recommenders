@@ -5,15 +5,13 @@
 import pandas as pd
 import os
 import tarfile
-from contextlib import contextmanager
-from tempfile import TemporaryDirectory
 
 try:
     from pyspark.sql.types import StructType, StructField, IntegerType, StringType
 except ImportError:
     pass  # so the environment without spark doesn't break
 
-from reco_utils.dataset.url_utils import maybe_download
+from reco_utils.dataset.url_utils import maybe_download, download_path
 from reco_utils.common.notebook_utils import is_databricks
 
 
@@ -53,7 +51,7 @@ def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
     Returns:
         pd.DataFrame: Criteo DAC sample dataset.
     """
-    with _real_path(local_cache_path) as path:
+    with download_path(local_cache_path) as path:
         filepath = download_criteo(size, path)
         filepath = extract_criteo(size, filepath)
         df = pd.read_csv(filepath, sep="\t", header=None, names=header)
@@ -95,7 +93,7 @@ def load_spark_df(
     Returns:
         pySpark.DataFrame: Criteo DAC training dataset.
     """
-    with _real_path(local_cache_path) as path:
+    with download_path(local_cache_path) as path:
         filepath = download_criteo(size, path)
         filepath = extract_criteo(size, filepath)
 
@@ -174,15 +172,4 @@ def _get_spark_schema(header):
     return schema
 
 
-@contextmanager
-def _real_path(path):
-    tmp_dir = TemporaryDirectory()
-    if path is None:
-        path = tmp_dir.name
-    else:
-        path = os.path.realpath(path)
 
-    try:
-        yield path
-    finally:
-        tmp_dir.cleanup()
