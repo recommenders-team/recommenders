@@ -6,7 +6,6 @@ import pandas as pd
 from reco_utils.dataset.pandas_df_utils import (
     user_item_pairs,
     filter_by,
-    libffm_converter,
     LibffmConverter
 )
 
