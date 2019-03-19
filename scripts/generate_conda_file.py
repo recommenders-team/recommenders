@@ -52,6 +52,7 @@ CONDA_BASE = {
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
     "tensorflow": "tensorflow==1.12.0",
+    "lightgbm": "lightgbm==2.2.1",
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
@@ -59,7 +60,7 @@ CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
 CONDA_GPU = {"numba": "numba>=0.38.1", "pytorch": "pytorch>=1.0.0", "tensorflow": "tensorflow-gpu==1.12.0"}
 
 PIP_BASE = {
-    "azureml-sdk[notebooks,contrib]": "azureml-sdk[notebooks,contrib]==1.0.10",
+    "azureml-sdk[notebooks,tensorboard,contrib]": "azureml-sdk[notebooks,tensorboard,contrib]==1.0.18",
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "dataclasses": "dataclasses>=0.6",
@@ -70,6 +71,7 @@ PIP_BASE = {
     "papermill": "papermill>=0.15.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "databricks-cli": "databricks-cli==0.8.4"
+    "category_encoders": "category_encoders>=1.3.0",
     "fastai": "fastai==1.0.46",
 }
 

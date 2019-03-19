@@ -37,8 +37,8 @@ def test_evaluation_runs(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-def test_spark_hypertune(notebooks):
-    notebook_path = notebooks["spark_hypertune"]
+def test_spark_tuning(notebooks):
+    notebook_path = notebooks["spark_tuning"]
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
