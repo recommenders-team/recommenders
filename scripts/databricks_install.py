@@ -14,6 +14,7 @@ from pathlib import Path
 
 import shutil
 import sys
+import time
 from urllib.request import urlretrieve
 
 ## requires databricks-cli to be installed:
@@ -65,13 +66,13 @@ MMLSPARK_INFO = {
 DEFAULT_CLUSTER_CONFIG = {
     "cluster_name": "DB_CLUSTER",
     "node_type_id": "Standard_D3_v2",
-    "autoscale" : {
-    "min_workers": 2,
-    "max_workers": 8
-    },
+    "autoscale": {"min_workers": 2, "max_workers": 8},
     "autotermination_minutes": 120,
     "spark_version": "5.2.x-scala2.11",
 }
+
+PENDING_SLEEP_INTERVAL = 60 ## seconds
+PENDING_SLEEP_ATTEMPTS = int(5*60/PENDING_SLEEP_INTERVAL) ## wait a maximum of 5 minutes...
 
 def create_egg(
     path_to_recommenders_repo_root=os.getcwd(),
@@ -182,13 +183,16 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--create-cluster",
-        help="The name of the cluster to create. This creates a cluster with default parameters.",
-        default=None,
+        action="store_true",
+        help="Whether to create the cluster. This will create a cluster with default parameters.",
+        default=False,
     )
-    parser.add_argument("cluster_id", help="cluster id for the cluster to install on.")
+    parser.add_argument("cluster_id", 
+        help="cluster id for the cluster to install data on. If used in conjunction with --create-cluster, this is the name of the cluster created"
+    )
     args = parser.parse_args()
 
-    ## Check name of egg for extension.
+    ## Check for extension of eggname
     if not args.eggname.endswith(".egg"):
         args.eggname += ".egg"
 
@@ -209,6 +213,13 @@ if __name__ == "__main__":
     ## first make sure you are using the correct profile and connecting to the intended workspace
     my_api_client = _get_api_client(ProfileConfigProvider(args.profile).get_config())
 
+    ## Create a cluster if flagged
+    if args.create_cluster:
+        DEFAULT_CLUSTER_CONFIG['cluster_name'] = args.cluster_id
+        cluster_info = ClusterApi(my_api_client).create_cluster(DEFAULT_CLUSTER_CONFIG)
+        args.cluster_id = cluster_info['cluster_id']
+        print('Creating a new cluster with name {}. New cluster_id={}'.format(DEFAULT_CLUSTER_CONFIG['cluster_name'], args.cluster_id))
+
     ## Check if file exists to alert user.
     ## upload the egg:
     upload_path = Path(args.dbfs_path, args.eggname).as_posix()
@@ -225,7 +236,23 @@ if __name__ == "__main__":
         print(textwrap.dedent(CLUSTER_NOT_FOUND_MSG.format(args.cluster_id)))
         raise
 
-    if status["state"] != "RUNNING":
+    if status["state"] == "TERMINATED":
+        print(
+            textwrap.dedent(
+                CLUSTER_NOT_RUNNING_MSG.format(args.cluster_id, status["state"])
+            )
+        )
+        sys.exit()
+
+    attempt = 0
+    while status["state"] == "PENDING" and attempt < PENDING_SLEEP_ATTEMPTS:
+        print('Current status=={}... Waiting {}s before trying again (attempt {}/{}).'.format(status["state"], PENDING_SLEEP_INTERVAL, attempt+1, PENDING_SLEEP_ATTEMPTS))
+        time.sleep(PENDING_SLEEP_INTERVAL)
+        status = ClusterApi(my_api_client).get_cluster(args.cluster_id)
+        attempt += 1
+
+    ## if it is still PENDING, exit.
+    if status["state"] == "PENDING":
         print(
             textwrap.dedent(
                 CLUSTER_NOT_RUNNING_MSG.format(args.cluster_id, status["state"])
