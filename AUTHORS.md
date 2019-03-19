@@ -67,3 +67,6 @@ Contributors
    * FastAI notebook.
 * **[Yassine Khelifi](https://github.com/datashinobi)**
     * SAR notebook quickstart
+* **[Zhenhui Xu](https://github.com/motefly)**
+    * Reco utils of LightGBM.
+    * LightGBM notebook quickstart.
