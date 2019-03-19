@@ -5,11 +5,12 @@
 
 # This script installs Recommenders/reco_utils as an egg library onto a Databricks Workspace
 # Optionally, also installs a version of mmlspark as a maven library, and prepares the cluster
-# for operationalizations
+# for operationalization
 
 import argparse
 import textwrap
 import os
+from pathlib import Path
 
 import shutil
 import sys
@@ -38,7 +39,6 @@ CLUSTER_NOT_RUNNING_MSG = """
     Then, check the cluster status by using 'databricks clusters list' and
     re-try installation once the status becomes 'RUNNING'.
     """
-""
 
 ## Variables for operationalization:
 COSMOSDB_JAR_FILE_OPTIONS = {
@@ -62,6 +62,16 @@ MMLSPARK_INFO = {
     }
 }
 
+DEFAULT_CLUSTER_CONFIG = {
+    "cluster_name": "DB_CLUSTER",
+    "node_type_id": "Standard_D3_v2",
+    "autoscale" : {
+    "min_workers": 2,
+    "max_workers": 8
+    },
+    "autotermination_minutes": 120,
+    "spark_version": "5.2.x-scala2.11",
+}
 
 def create_egg(
     path_to_recommenders_repo_root=os.getcwd(),
@@ -69,8 +79,8 @@ def create_egg(
     overwrite=False,
 ):
     """
-  Packages files in the reco_utils directory as a .egg file that can be uploaded to dbfs and installed as a library on a databricks cluster.
-  """
+    Packages files in the reco_utils directory as a .egg file that can be uploaded to dbfs and installed as a library on a databricks cluster.
+    """
     ## create the zip archive:
     myzipfile = shutil.make_archive(
         "reco_utils",
@@ -78,11 +88,6 @@ def create_egg(
         root_dir=path_to_recommenders_repo_root,
         base_dir="reco_utils",
     )
-
-    ## make sure extension is .egg
-    if local_eggname[-4:] != ".egg":
-        print("appending .egg to end of name.")
-        logal_eggname = local_eggname + ".egg"
 
     ## overwrite egg if it previously existed
     if os.path.exists(local_eggname) and overwrite:
@@ -92,21 +97,13 @@ def create_egg(
 
 
 def prepare_for_operationalization(
-    cluster_id,
-    api_client,
-    status=None,
-    dbfs_path="dbfs:/FileStore/jars",
-    overwrite=False,
+    cluster_id, api_client, dbfs_path, overwrite, spark_version
 ):
     """
     Installs appropriate versions of several libraries to support operationalization.
     """
-    print("Preparing for operationliazation...")
-    if status is None:
-        ## get status if None
-        status = ClusterApi(api_client).get_cluster(cluster_id)
+    print("Preparing for operationlization...")
 
-    spark_version = status["spark_version"][0]
     cosmosdb_jar_url = COSMOSDB_JAR_FILE_OPTIONS[spark_version]
 
     ## download the cosmosdb jar
@@ -118,16 +115,16 @@ def prepare_for_operationalization(
     else:
         print("File {} already downloaded.".format(local_jarname))
 
-    ## upload to dbfs:
-    uploadpath = "/".join([dbfs_path, local_jarname])
-    print("Uploading CosmosDB driver to databricks at {}".format(uploadpath))
+    ## upload jar to dbfs:
+    upload_path = Path(args.dbfs_path, local_jarname).as_posix()
+    print("Uploading CosmosDB driver to databricks at {}".format(upload_path))
     DbfsApi(api_client).cp(
-        recursive=False, src=local_jarname, dst=uploadpath, overwrite=overwrite
+        recursive=False, src=local_jarname, dst=upload_path, overwrite=overwrite
     )
 
     ## setup the list of libraries to install:
     ## jar library setup
-    libs2install = [{"jar": uploadpath}]
+    libs2install = [{"jar": upload_path}]
     ## setup libraries to install:
     libs2install.extend([{"pypi": {"package": i}} for i in PYPI_O16N_LIBS])
     print("Installing jar and pypi libraries required for operationalizaiton...")
@@ -183,8 +180,17 @@ if __name__ == "__main__":
         help="Whether to install mmlspark.",
         default=False,
     )
+    parser.add_argument(
+        "--create-cluster",
+        help="The name of the cluster to create. This creates a cluster with default parameters.",
+        default=None,
+    )
     parser.add_argument("cluster_id", help="cluster id for the cluster to install on.")
     args = parser.parse_args()
+
+    ## Check name of egg for extension.
+    if not args.eggname.endswith(".egg"):
+        args.eggname += ".egg"
 
     ###############################
     ## Create the egg:
@@ -203,13 +209,12 @@ if __name__ == "__main__":
     ## first make sure you are using the correct profile and connecting to the intended workspace
     my_api_client = _get_api_client(ProfileConfigProvider(args.profile).get_config())
 
+    ## Check if file exists to alert user.
     ## upload the egg:
-    uploadpath = "/".join([args.dbfs_path, os.path.basename(myegg)])
-    print(
-        "Uploading {} to databricks at {}".format(os.path.basename(myegg), uploadpath)
-    )
+    upload_path = Path(args.dbfs_path, args.eggname).as_posix()
+    print("Uploading {} to databricks at {}".format(args.eggname, upload_path))
     DbfsApi(my_api_client).cp(
-        recursive=False, src=myegg, dst=uploadpath, overwrite=args.overwrite
+        recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
     )
 
     ## steps below require the cluster to be running. Check status
@@ -234,7 +239,7 @@ if __name__ == "__main__":
             args.cluster_id
         )
     )
-    libs2install = [{"egg": uploadpath}]
+    libs2install = [{"egg": upload_path}]
     ## PYPI dependencies:
     libs2install.extend([{"pypi": {"package": i}} for i in PYPI_RECO_LIB_DEPS])
 
@@ -250,9 +255,9 @@ if __name__ == "__main__":
         prepare_for_operationalization(
             cluster_id=args.cluster_id,
             api_client=my_api_client,
-            status=status,
             dbfs_path=args.dbfs_path,
             overwrite=args.overwrite,
+            spark_version=status["spark_version"][0],
         )
 
     ## restart the cluster for new installation(s) to take effect.
@@ -262,11 +267,11 @@ if __name__ == "__main__":
     ## wrap up and send out a final message:
     print(
         """
-  Requests submitted. You can check on status of your cluster with: 
+        Requests submitted. You can check on status of your cluster with: 
 
-  databricks --profile """
+        databricks --profile """
         + args.profile
         + """ clusters list
-  """
+        """
     )
 
