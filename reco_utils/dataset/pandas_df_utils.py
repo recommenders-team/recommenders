@@ -166,3 +166,75 @@ def libffm_converter(df, col_rating=DEFAULT_RATING_COL, filepath=None):
     return df_new
 
 
+class LibffmConverter():
+    def __init__(self, filepath=None):
+        if filepath is not None:
+            # Check the existence of path
+            import os
+            if not os.path.exists(filepath):
+                raise ValueError("The specified file path {} does not exist".format(self.filepath))
+        
+        self.filepath = filepath
+    
+    def fit(self, df, col_rating=DEFAULT_RATING_COL):
+        # Check column types.
+        types = df.dtypes
+        if not all([x == object or np.issubdtype(x, np.integer) or x == np.float for x in types]):
+            raise TypeError("Input columns should be only object and/or numeric types.")
+
+        if col_rating not in df.columns:
+            raise TypeError("Column of {} is not in input dataframe columns".format(col_rating))
+        self.col_rating = col_rating
+
+        return self
+
+    def transform(self, df):
+        df_new = df.copy()
+
+        field_names = list(df_new.drop(self.col_rating, axis=1).columns)
+
+        # Encode field-feature.
+        idx = 1
+        field_feature_dict = {}
+        for field in field_names:
+            if df_new[field].dtype == object:
+                for feature in df_new[field].values:
+                    # Check whether (field, feature) tuple exists in the dict or not.
+                    # If not, put them into the key-values of the dict and count the index.
+                    if (field, feature) not in field_feature_dict:
+                        field_feature_dict[(field, feature)] = idx
+                        idx += 1
+
+        self.field_count = len(field_names)
+        self.feature_count = idx - 1
+
+        def _convert(field, feature, field_index, field_feature_index_dict):
+            if isinstance(feature, str):
+                field_feature_index = field_feature_index_dict[(field, feature)]
+                feature = 1
+            else:
+                field_feature_index = field_index
+            return "{}:{}:{}".format(field_index, field_feature_index, feature)
+
+        for col_index, col in enumerate(field_names):
+            df_new[col] = df_new[col].apply(lambda x: _convert(col, x, col_index+1, field_feature_dict))
+
+        # Move rating column to the first.
+        field_names.insert(0, self.col_rating)
+        df_new = df_new[field_names]
+
+        if self.filepath is not None:
+            np.savetxt(self.filepath, df_new.values, delimiter=' ', fmt='%s')
+
+        return df_new
+
+    def fit_transform(self, df, col_rating=DEFAULT_RATING_COL):
+        return self.fit(df, col_rating=col_rating).transform(df)
+
+    def get_params(self):
+        return {
+            'field count': self.field_count, 
+            'feature count': self.feature_count,
+            'file path': self.filepath
+        }
+
