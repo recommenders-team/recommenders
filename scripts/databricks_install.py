@@ -24,6 +24,7 @@ from databricks_cli.configure.config import _get_api_client
 from databricks_cli.clusters.api import ClusterApi
 from databricks_cli.dbfs.api import DbfsApi
 from databricks_cli.libraries.api import LibrariesApi
+from databricks_cli.dbfs.dbfs_path import DbfsPath
 
 from requests.exceptions import HTTPError
 
@@ -71,8 +72,11 @@ DEFAULT_CLUSTER_CONFIG = {
     "spark_version": "5.2.x-scala2.11",
 }
 
-PENDING_SLEEP_INTERVAL = 60 ## seconds
-PENDING_SLEEP_ATTEMPTS = int(5*60/PENDING_SLEEP_INTERVAL) ## wait a maximum of 5 minutes...
+PENDING_SLEEP_INTERVAL = 60  ## seconds
+PENDING_SLEEP_ATTEMPTS = int(
+    5 * 60 / PENDING_SLEEP_INTERVAL
+)  ## wait a maximum of 5 minutes...
+
 
 def create_egg(
     path_to_recommenders_repo_root=os.getcwd(),
@@ -81,6 +85,14 @@ def create_egg(
 ):
     """
     Packages files in the reco_utils directory as a .egg file that can be uploaded to dbfs and installed as a library on a databricks cluster.
+
+    Args:
+        path_to_recommenders_repo_root (String): the (relative or absolute) path to the root of the recommenders repository
+        local_eggname (String): the basename of the egg you want to create (NOTE: must have .egg extension)
+        overwrite (bool): whether to overwrite local_eggname if it already exists.
+
+    Returns:
+        the path to the created egg file.
     """
     ## create the zip archive:
     myzipfile = shutil.make_archive(
@@ -96,12 +108,41 @@ def create_egg(
     os.rename(myzipfile, local_eggname)
     return local_eggname
 
+def dbfs_file_exists(api_client, dbfs_path):
+    """
+    Checks to determine whether a file exists.
+
+    Args:
+        api_client (ApiClient object): Object used for authenticating to the workspace
+        dbfs_path (String): Path to check
+    
+    Returns:
+        True if file exists on dbfs, False otherwise.
+    """
+    try:
+        lsout = DbfsApi(api_client).list_files(dbfs_path=DbfsPath(dbfs_path))
+        file_exists = True
+    except:
+        file_exists = False
+        pass
+    return file_exists
+
 
 def prepare_for_operationalization(
     cluster_id, api_client, dbfs_path, overwrite, spark_version
 ):
     """
     Installs appropriate versions of several libraries to support operationalization.
+
+    Args:
+        cluster_id (String): cluster_id representing the cluster to prepare for operationalization
+        api_client (ApiClient): the ApiClient object used to authenticate to the workspace
+        dbfs_path (String): the path on dbfs to upload libraries to
+        overwrite (bool): whether to overwrite existing files on dbfs with new files of the same name
+        spark_version (String): string version indicating which version of spark is installed on the databricks cluster
+
+    Returns:
+        A dictionary of libraries installed
     """
     print("Preparing for operationlization...")
 
@@ -119,6 +160,8 @@ def prepare_for_operationalization(
     ## upload jar to dbfs:
     upload_path = Path(args.dbfs_path, local_jarname).as_posix()
     print("Uploading CosmosDB driver to databricks at {}".format(upload_path))
+    if dbfs_file_exists(api_client, upload_path) and args.overwrite:
+        print('Overwriting file at {}'.format(upload_path))
     DbfsApi(api_client).cp(
         recursive=False, src=local_jarname, dst=upload_path, overwrite=overwrite
     )
@@ -131,7 +174,6 @@ def prepare_for_operationalization(
     print("Installing jar and pypi libraries required for operationalizaiton...")
     LibrariesApi(api_client).install_libraries(args.cluster_id, libs2install)
     return libs2install
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -187,8 +229,9 @@ if __name__ == "__main__":
         help="Whether to create the cluster. This will create a cluster with default parameters.",
         default=False,
     )
-    parser.add_argument("cluster_id", 
-        help="cluster id for the cluster to install data on. If used in conjunction with --create-cluster, this is the name of the cluster created"
+    parser.add_argument(
+        "cluster_id",
+        help="cluster id for the cluster to install data on. If used in conjunction with --create-cluster, this is the name of the cluster created",
     )
     args = parser.parse_args()
 
@@ -215,19 +258,27 @@ if __name__ == "__main__":
 
     ## Create a cluster if flagged
     if args.create_cluster:
-        DEFAULT_CLUSTER_CONFIG['cluster_name'] = args.cluster_id
+        ## treat args.cluster_id as the name, because if you create a cluster, you do not know its id yet.
+        DEFAULT_CLUSTER_CONFIG["cluster_name"] = args.cluster_id
         cluster_info = ClusterApi(my_api_client).create_cluster(DEFAULT_CLUSTER_CONFIG)
-        args.cluster_id = cluster_info['cluster_id']
-        print('Creating a new cluster with name {}. New cluster_id={}'.format(DEFAULT_CLUSTER_CONFIG['cluster_name'], args.cluster_id))
+        args.cluster_id = cluster_info["cluster_id"]
+        print(
+            "Creating a new cluster with name {}. New cluster_id={}".format(
+                DEFAULT_CLUSTER_CONFIG["cluster_name"], args.cluster_id
+            )
+        )
 
-    ## Check if file exists to alert user.
     ## upload the egg:
     upload_path = Path(args.dbfs_path, args.eggname).as_posix()
+    ## Check if file exists to alert user.
+
     print("Uploading {} to databricks at {}".format(args.eggname, upload_path))
+    if dbfs_file_exists(my_api_client, upload_path) and args.overwrite:
+        print('Overwriting file at {}'.format(upload_path))
     DbfsApi(my_api_client).cp(
         recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
     )
-
+    sys.exit()
     ## steps below require the cluster to be running. Check status
     try:
         status = ClusterApi(my_api_client).get_cluster(args.cluster_id)
@@ -246,7 +297,14 @@ if __name__ == "__main__":
 
     attempt = 0
     while status["state"] == "PENDING" and attempt < PENDING_SLEEP_ATTEMPTS:
-        print('Current status=={}... Waiting {}s before trying again (attempt {}/{}).'.format(status["state"], PENDING_SLEEP_INTERVAL, attempt+1, PENDING_SLEEP_ATTEMPTS))
+        print(
+            "Current status=={}... Waiting {}s before trying again (attempt {}/{}).".format(
+                status["state"],
+                PENDING_SLEEP_INTERVAL,
+                attempt + 1,
+                PENDING_SLEEP_ATTEMPTS,
+            )
+        )
         time.sleep(PENDING_SLEEP_INTERVAL)
         status = ClusterApi(my_api_client).get_cluster(args.cluster_id)
         attempt += 1
