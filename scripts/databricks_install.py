@@ -278,7 +278,7 @@ if __name__ == "__main__":
     DbfsApi(my_api_client).cp(
         recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
     )
-    sys.exit()
+
     ## steps below require the cluster to be running. Check status
     try:
         status = ClusterApi(my_api_client).get_cluster(args.cluster_id)
