@@ -1,15 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from contextlib import contextmanager
 import os
 import re
 import shutil
-from tempfile import TemporaryDirectory
 import warnings
 import pandas as pd
 from zipfile import ZipFile
-from reco_utils.dataset.url_utils import maybe_download
+from reco_utils.dataset.url_utils import maybe_download, download_path
 from reco_utils.common.notebook_utils import is_databricks
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -182,8 +180,9 @@ def load_pandas_df(
         header = header[:4]
     movie_col = DEFAULT_ITEM_COL if len(header) < 2 else header[1]
 
-    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
-        datapath, item_datapath = _maybe_download_and_extract(size, path)
+    with download_path(local_cache_path) as path:
+        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        datapath, item_datapath = _maybe_download_and_extract(size, filepath)
 
         # Load movie features such as title, genres, and release year
         item_df = _load_item_df(
@@ -242,8 +241,9 @@ def load_item_df(
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
-    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
-        _, item_datapath = _maybe_download_and_extract(size, path)
+    with download_path(local_cache_path) as path:
+        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        _, item_datapath = _maybe_download_and_extract(size, filepath)
         item_df = _load_item_df(
             size, item_datapath, movie_col, title_col, genres_col, year_col
         )
@@ -369,8 +369,9 @@ def load_spark_df(
 
     movie_col = DEFAULT_ITEM_COL if len(schema) < 2 else schema[1].name
 
-    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
-        datapath, item_datapath = _maybe_download_and_extract(size, path)
+    with download_path(local_cache_path) as path:
+        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        datapath, item_datapath = _maybe_download_and_extract(size, filepath)
         spark_datapath = "file://" + datapath
 
         # Load movie features such as title, genres, and release year.
@@ -455,23 +456,6 @@ def _get_schema(header, schema):
             schema = schema[:4]
 
     return schema
-
-
-@contextmanager
-def _real_path(path, filename_if_not_in_path):
-    tmp_dir = TemporaryDirectory()
-    if path is None:
-        path = tmp_dir.name
-    else:
-        path = os.path.realpath(path)
-
-    if not path.endswith(".zip"):
-        path = os.path.join(path, filename_if_not_in_path)
-
-    try:
-        yield path
-    finally:
-        tmp_dir.cleanup()
 
 
 def _maybe_download_and_extract(size, dest_path):

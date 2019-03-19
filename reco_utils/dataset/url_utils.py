@@ -4,10 +4,12 @@
 import os
 from urllib.request import urlretrieve
 import logging
+from contextlib import contextmanager
+from tempfile import TemporaryDirectory
+from tqdm import tqdm
+
 
 log = logging.getLogger(__name__)
-
-from tqdm import tqdm
 
 
 class TqdmUpTo(tqdm):
@@ -54,3 +56,16 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
 
     return filepath
 
+
+@contextmanager
+def download_path(path):
+    tmp_dir = TemporaryDirectory()
+    if path is None:
+        path = tmp_dir.name
+    else:
+        path = os.path.realpath(path)
+
+    try:
+        yield path
+    finally:
+        tmp_dir.cleanup()
