@@ -25,22 +25,19 @@ $ conda env create -f {conda_env}.yaml
 
 To update the conda environment:
 $ conda env update -f {conda_env}.yaml
-
-To register the conda environment in Jupyter:
-$ conda activate {conda_env}
-$ python -m ipykernel install --user --name {conda_env} --display-name "Python ({conda_env})"
 """
 
 CHANNELS = [ "defaults", "conda-forge", "pytorch", "fastai"]
 
 CONDA_BASE = {
-    "mock": "mock==2.0.0",
     "dask": "dask>=0.17.1",
     "fastparquet": "fastparquet>=0.1.6",
     "gitpython": "gitpython>=2.1.8",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
     "matplotlib": "matplotlib>=2.2.2",
+    "mock": "mock==2.0.0",
+    "nb_conda": "nb_conda>=2.2.1",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4",
     "pymongo": "pymongo>=3.6.1",

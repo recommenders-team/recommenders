@@ -119,12 +119,10 @@ To install all three environments:
 
 </details>
 
-### Register the conda environment as a kernel in Jupyter
+### Using the conda environment as a kernel in Jupyter
 
-We can register our created conda environment to appear as a kernel in the Jupyter notebooks.
-
-    conda activate my_env_name
-    python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
+By using [nb_conda_kernels](https://github.com/Anaconda-Platform/nb_conda_kernels) all conda environments (with ipykernel installed) will automatically be made available as kernels in the Jupyter notebooks.<br>
+**Note** - The active conda environment will show up as "Python 3"
 
 ### Troubleshooting for the DSVM
 
