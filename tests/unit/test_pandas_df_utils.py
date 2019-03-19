@@ -109,49 +109,6 @@ def test_csv_to_libffm():
     import tempfile
     import os
 
-    filedir = tempfile.tempdir
-    filename = 'test'
-    filepath = os.path.join(filedir, filename)
-
-    # Check the input column types. For example, a bool type is not allowed.
-    df_feature_wrong_type = df_feature.copy()
-    df_feature_wrong_type['field4'] = True
-    with pytest.raises(TypeError) as e:
-        libffm_converter(df_feature_wrong_type, col_rating='rating')
-        assert e.value == "Input columns should be only object and/or numeric types."
-
-    df_feature_libffm = libffm_converter(df_feature, col_rating='rating', filepath=filepath)
-
-    # Check if the dim is the same.
-    assert df_feature_libffm.shape == df_feature.shape
-
-    # Check if the columns are converted successfully.
-    assert df_feature_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:2:3', '3:3:1.0', '4:4:1']
-
-    # Check if the duplicated column entries are indexed correctly.
-    # It should skip counting the duplicated features in a field column.
-    assert df_feature_libffm.iloc[-1, :].values.tolist() == [1, '1:3:1', '2:2:7', '3:3:5.0', '4:8:1']
-
-    # Check if the file is written successfully.
-    assert os.path.isfile(filepath)
-
-    with open(filepath, 'r') as f:
-        line = f.readline()
-        assert line == '1 1:1:1 2:2:3 3:3:1.0 4:4:1\n'
-
-
-def test_csv_to_libffm_new():
-    df_feature = pd.DataFrame({
-        'rating': [1, 0, 0, 1, 1],
-        'field1': ['xxx1', 'xxx2', 'xxx4', 'xxx4', 'xxx4'],
-        'field2': [3, 4, 5, 6, 7],
-        'field3': [1.0, 2.0, 3.0, 4.0, 5.0],
-        'field4': ['1', '2', '3', '4', '5']
-    })
-
-    import tempfile
-    import os
-
     filedir = tempfile.gettempdir()
     filename = 'test'
     filepath = os.path.join(filedir, filename)
