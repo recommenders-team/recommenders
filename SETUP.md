@@ -152,10 +152,10 @@ You can setup the repository as a library on Databricks either manually or by ru
 This option utilizes an installation script to do the setup, and it requires additional dependencies in the environment used to execute the script.
 
 > To run the script, following **prerequisites** are required:
-> * Install [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli) and setup CLI authentication. Please find details about how to create a token and set authentication [here](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication). Very briefly, you can install and configure your environment with the following commands.
+> * Setup CLI authentication for [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli). Please find details about how to create a token and set authentication [here](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication). Very briefly, you can install and configure your environment with the following commands.
 >
 >     ```{shell}
->     pip install databricks-cli
+>     conda activate reco-pyspark
 >     databricks configure --token
 >     ```
 >
@@ -174,13 +174,13 @@ Once you have confirmed the databricks cluster is *RUNNING*, install the modules
 
 ```{shell}
 cd Recommenders
-./scripts/databricks_install.py <CLUSTER_ID>
+python scripts/databricks_install.py <CLUSTER_ID>
 ```
 
 The installation script has a number of options that can also deal with different databricks-cli profiles, install a version of the mmlspark library, or prepare the cluster for operationalization. For all options, please see:
 
 ```{shell}
-./scripts/databricks_install.py -h
+python scripts/databricks_install.py -h
 ```
 
 **Note** If you are planning on running through the sample code for operationalization [here](notebooks/05_operationalize/als_movie_o16n.ipynb), you need to prepare the cluster for operationalization. You can do so by adding an additional option to the script run. <CLUSTER_ID> is the same as that mentioned above, and can be identified by running `databricks clusters list` and selecting the appropriate cluster.

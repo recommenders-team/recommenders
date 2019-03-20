@@ -17,8 +17,7 @@ import sys
 import time
 from urllib.request import urlretrieve
 
-## requires databricks-cli to be installed:
-## and requires authentication to be configured
+# requires databricks-cli to be installed and authentication to be configured
 from databricks_cli.configure.provider import ProfileConfigProvider
 from databricks_cli.configure.config import _get_api_client
 from databricks_cli.clusters.api import ClusterApi
@@ -42,7 +41,7 @@ CLUSTER_NOT_RUNNING_MSG = """
     re-try installation once the status becomes 'RUNNING'.
     """
 
-## Variables for operationalization:
+# Variables for operationalization:
 COSMOSDB_JAR_FILE_OPTIONS = {
     "3": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.2.0_2.11/1.1.1/azure-cosmosdb-spark_2.2.0_2.11-1.1.1-uber.jar",
     "4": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.3.0_2.11/1.2.2/azure-cosmosdb-spark_2.3.0_2.11-1.2.2-uber.jar",
@@ -57,12 +56,7 @@ PYPI_O16N_LIBS = [
     "pydocumentdb==2.3.3",
 ]
 
-MMLSPARK_INFO = {
-    "maven": {
-        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.15.dev29",
-        "repo": "https://mmlspark.azureedge.net/maven",
-    }
-}
+MMLSPARK_INFO = {"maven": {"coordinates": "Azure:mmlspark:0.16"}}
 
 DEFAULT_CLUSTER_CONFIG = {
     "cluster_name": "DB_CLUSTER",
@@ -75,7 +69,7 @@ DEFAULT_CLUSTER_CONFIG = {
 PENDING_SLEEP_INTERVAL = 60  ## seconds
 PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
-)  ## wait a maximum of 5 minutes...
+)  # wait a maximum of 5 minutes...
 
 
 def create_egg(
@@ -94,7 +88,7 @@ def create_egg(
     Returns:
         the path to the created egg file.
     """
-    ## create the zip archive:
+    # create the zip archive:
     myzipfile = shutil.make_archive(
         "reco_utils",
         "zip",
@@ -102,11 +96,12 @@ def create_egg(
         base_dir="reco_utils",
     )
 
-    ## overwrite egg if it previously existed
+    # overwrite egg if it previously existed
     if os.path.exists(local_eggname) and overwrite:
         os.unlink(local_eggname)
     os.rename(myzipfile, local_eggname)
     return local_eggname
+
 
 def dbfs_file_exists(api_client, dbfs_path):
     """
@@ -120,7 +115,7 @@ def dbfs_file_exists(api_client, dbfs_path):
         True if file exists on dbfs, False otherwise.
     """
     try:
-        lsout = DbfsApi(api_client).list_files(dbfs_path=DbfsPath(dbfs_path))
+        DbfsApi(api_client).list_files(dbfs_path=DbfsPath(dbfs_path))
         file_exists = True
     except:
         file_exists = False
@@ -148,32 +143,33 @@ def prepare_for_operationalization(
 
     cosmosdb_jar_url = COSMOSDB_JAR_FILE_OPTIONS[spark_version]
 
-    ## download the cosmosdb jar
+    # download the cosmosdb jar
     local_jarname = os.path.basename(cosmosdb_jar_url)
-    ## only download if you need it:
+    # only download if you need it:
     if overwrite or not os.path.exists(local_jarname):
         print("Downloading {}...".format(cosmosdb_jar_url))
         local_jarname, _ = urlretrieve(cosmosdb_jar_url, local_jarname)
     else:
         print("File {} already downloaded.".format(local_jarname))
 
-    ## upload jar to dbfs:
-    upload_path = Path(args.dbfs_path, local_jarname).as_posix()
+    # upload jar to dbfs:
+    upload_path = Path(dbfs_path, local_jarname).as_posix()
     print("Uploading CosmosDB driver to databricks at {}".format(upload_path))
-    if dbfs_file_exists(api_client, upload_path) and args.overwrite:
-        print('Overwriting file at {}'.format(upload_path))
+    if dbfs_file_exists(api_client, upload_path) and overwrite:
+        print("Overwriting file at {}".format(upload_path))
     DbfsApi(api_client).cp(
         recursive=False, src=local_jarname, dst=upload_path, overwrite=overwrite
     )
 
-    ## setup the list of libraries to install:
-    ## jar library setup
+    # setup the list of libraries to install:
+    # jar library setup
     libs2install = [{"jar": upload_path}]
-    ## setup libraries to install:
+    # setup libraries to install:
     libs2install.extend([{"pypi": {"package": i}} for i in PYPI_O16N_LIBS])
-    print("Installing jar and pypi libraries required for operationalizaiton...")
-    LibrariesApi(api_client).install_libraries(args.cluster_id, libs2install)
+    print("Installing jar and pypi libraries required for operationalization...")
+    LibrariesApi(api_client).install_libraries(cluster_id, libs2install)
     return libs2install
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -235,13 +231,13 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    ## Check for extension of eggname
+    # Check for extension of eggname
     if not args.eggname.endswith(".egg"):
         args.eggname += ".egg"
 
-    ###############################
-    ## Create the egg:
-    ###############################
+    #################
+    # Create the egg:
+    #################
 
     print("Preparing Recommenders library file ({})...".format(args.eggname))
     myegg = create_egg(
@@ -249,16 +245,16 @@ if __name__ == "__main__":
     )
     print("Created: {}".format(myegg))
 
-    ###############################
-    ## Interact with Databricks:
-    ###############################
+    ############################
+    # Interact with Databricks:
+    ############################
 
-    ## first make sure you are using the correct profile and connecting to the intended workspace
+    # first make sure you are using the correct profile and connecting to the intended workspace
     my_api_client = _get_api_client(ProfileConfigProvider(args.profile).get_config())
 
-    ## Create a cluster if flagged
+    # Create a cluster if flagged
     if args.create_cluster:
-        ## treat args.cluster_id as the name, because if you create a cluster, you do not know its id yet.
+        # treat args.cluster_id as the name, because if you create a cluster, you do not know its id yet.
         DEFAULT_CLUSTER_CONFIG["cluster_name"] = args.cluster_id
         cluster_info = ClusterApi(my_api_client).create_cluster(DEFAULT_CLUSTER_CONFIG)
         args.cluster_id = cluster_info["cluster_id"]
@@ -268,18 +264,18 @@ if __name__ == "__main__":
             )
         )
 
-    ## upload the egg:
+    # Upload the egg:
     upload_path = Path(args.dbfs_path, args.eggname).as_posix()
-    ## Check if file exists to alert user.
 
+    # Check if file exists to alert user.
     print("Uploading {} to databricks at {}".format(args.eggname, upload_path))
     if dbfs_file_exists(my_api_client, upload_path) and args.overwrite:
-        print('Overwriting file at {}'.format(upload_path))
+        print("Overwriting file at {}".format(upload_path))
     DbfsApi(my_api_client).cp(
         recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
     )
 
-    ## steps below require the cluster to be running. Check status
+    # steps below require the cluster to be running. Check status
     try:
         status = ClusterApi(my_api_client).get_cluster(args.cluster_id)
     except HTTPError as e:
@@ -309,7 +305,7 @@ if __name__ == "__main__":
         status = ClusterApi(my_api_client).get_cluster(args.cluster_id)
         attempt += 1
 
-    ## if it is still PENDING, exit.
+    # if it is still PENDING, exit.
     if status["state"] == "PENDING":
         print(
             textwrap.dedent(
@@ -318,24 +314,24 @@ if __name__ == "__main__":
         )
         sys.exit()
 
-    ## install the library and its dependencies
+    # install the library and its dependencies
     print(
         "Installing the reco_utils module onto databricks cluster {}".format(
             args.cluster_id
         )
     )
     libs2install = [{"egg": upload_path}]
-    ## PYPI dependencies:
+    # PYPI dependencies:
     libs2install.extend([{"pypi": {"package": i}} for i in PYPI_RECO_LIB_DEPS])
 
-    ## add mmlspark if selected.
+    # add mmlspark if selected.
     if args.mmlspark:
         print("Installing MMLSPARK package...")
         libs2install.extend([MMLSPARK_INFO])
     print(libs2install)
     LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
 
-    ## prepare for operationalization if desired:
+    # prepare for operationalization if desired:
     if args.prepare_o16n:
         prepare_for_operationalization(
             cluster_id=args.cluster_id,
@@ -345,11 +341,11 @@ if __name__ == "__main__":
             spark_version=status["spark_version"][0],
         )
 
-    ## restart the cluster for new installation(s) to take effect.
+    # restart the cluster for new installation(s) to take effect.
     print("Restarting databricks cluster {}".format(args.cluster_id))
     ClusterApi(my_api_client).restart_cluster(args.cluster_id)
 
-    ## wrap up and send out a final message:
+    # wrap up and send out a final message:
     print(
         """
         Requests submitted. You can check on status of your cluster with: 
@@ -359,4 +355,3 @@ if __name__ == "__main__":
         + """ clusters list
         """
     )
-
