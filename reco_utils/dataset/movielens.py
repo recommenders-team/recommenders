@@ -1,15 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from contextlib import contextmanager
 import os
 import re
 import shutil
-from tempfile import TemporaryDirectory
 import warnings
 import pandas as pd
 from zipfile import ZipFile
-from reco_utils.dataset.url_utils import maybe_download
+from reco_utils.dataset.url_utils import maybe_download, download_path
 from reco_utils.common.notebook_utils import is_databricks
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -28,19 +26,20 @@ try:
         LongType,
         StringType,
     )
-    from pyspark.sql.functions import (
-        concat_ws,
-        col,
-    )
+    from pyspark.sql.functions import concat_ws, col
 except ImportError:
     pass  # so the environment without spark doesn't break
 
 
 class _DataFormat:
     def __init__(
-            self,
-            sep, path, has_header=False,
-            item_sep=None, item_path=None, item_has_header=False,
+        self,
+        sep,
+        path,
+        has_header=False,
+        item_sep=None,
+        item_path=None,
+        item_has_header=False,
     ):
         """MovieLens data format container as a different size of MovieLens data file
         has a different format
@@ -53,7 +52,7 @@ class _DataFormat:
             item_path (str): Item data path within the original zip file
             item_has_header (bool): Whether the item data contains a header line or not
         """
-    
+
         # Rating file
         self._sep = sep
         self._path = path
@@ -95,37 +94,44 @@ class _DataFormat:
 
 # 10m and 20m data do not have user data
 DATA_FORMAT = {
-    "100k": _DataFormat(
-        "\t", "ml-100k/u.data", False,
-        "|", "ml-100k/u.item", False,
-    ),
+    "100k": _DataFormat("\t", "ml-100k/u.data", False, "|", "ml-100k/u.item", False),
     "1m": _DataFormat(
-        "::", "ml-1m/ratings.dat", False,
-        "::", "ml-1m/movies.dat", False,
+        "::", "ml-1m/ratings.dat", False, "::", "ml-1m/movies.dat", False
     ),
     "10m": _DataFormat(
-        "::", "ml-10M100K/ratings.dat", False,
-        "::", "ml-10M100K/movies.dat", False,
+        "::", "ml-10M100K/ratings.dat", False, "::", "ml-10M100K/movies.dat", False
     ),
-    "20m": _DataFormat(
-        ",", "ml-20m/ratings.csv", True,
-        ",", "ml-20m/movies.csv", True
-    ),
+    "20m": _DataFormat(",", "ml-20m/ratings.csv", True, ",", "ml-20m/movies.csv", True),
 }
 
 # 100K data genres index to string mapper. For 1m, 10m, and 20m, the genres labels are already in the dataset.
 GENRES = (
-    "unknown", "Action", "Adventure", "Animation",
-    "Children's", "Comedy", "Crime", "Documentary", "Drama", "Fantasy",
-    "Film-Noir", "Horror", "Musical", "Mystery", "Romance", "Sci-Fi",
-    "Thriller", "War", "Western"
+    "unknown",
+    "Action",
+    "Adventure",
+    "Animation",
+    "Children's",
+    "Comedy",
+    "Crime",
+    "Documentary",
+    "Drama",
+    "Fantasy",
+    "Film-Noir",
+    "Horror",
+    "Musical",
+    "Mystery",
+    "Romance",
+    "Sci-Fi",
+    "Thriller",
+    "War",
+    "Western",
 )
 
 DEFAULT_HEADER = (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL
+    DEFAULT_TIMESTAMP_COL,
 )
 
 # Warning and error messages
@@ -174,11 +180,14 @@ def load_pandas_df(
         header = header[:4]
     movie_col = DEFAULT_ITEM_COL if len(header) < 2 else header[1]
 
-    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
-        datapath, item_datapath = _maybe_download_and_extract(size, path)
+    with download_path(local_cache_path) as path:
+        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        datapath, item_datapath = _maybe_download_and_extract(size, filepath)
 
         # Load movie features such as title, genres, and release year
-        item_df = _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+        item_df = _load_item_df(
+            size, item_datapath, movie_col, title_col, genres_col, year_col
+        )
 
         # Load rating data
         if len(header) == 1 and item_df is not None:
@@ -188,7 +197,7 @@ def load_pandas_df(
         df = pd.read_csv(
             datapath,
             sep=DATA_FORMAT[size].separator,
-            engine='python',
+            engine="python",
             names=header,
             usecols=[*range(len(header))],
             header=0 if DATA_FORMAT[size].has_header else None,
@@ -211,7 +220,7 @@ def load_item_df(
     movie_col=DEFAULT_ITEM_COL,
     title_col=None,
     genres_col=None,
-    year_col=None
+    year_col=None,
 ):
     """Loads Movie info.
 
@@ -232,9 +241,12 @@ def load_item_df(
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
-    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
-        _, item_datapath = _maybe_download_and_extract(size, path)
-        item_df = _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+    with download_path(local_cache_path) as path:
+        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        _, item_datapath = _maybe_download_and_extract(size, filepath)
+        item_df = _load_item_df(
+            size, item_datapath, movie_col, title_col, genres_col, year_col
+        )
 
     return item_df
 
@@ -270,18 +282,18 @@ def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_co
     item_df = pd.read_csv(
         item_datapath,
         sep=DATA_FORMAT[size].item_separator,
-        engine='python',
+        engine="python",
         names=item_header,
         usecols=usecols,
         header=0 if DATA_FORMAT[size].item_has_header else None,
-        encoding="ISO-8859-1"
+        encoding="ISO-8859-1",
     )
 
     # Convert 100k data's format: '0|0|1|...' to 'Action|Romance|..."
     if genres_header_100k is not None:
         item_df[genres_col] = item_df[genres_header_100k].values.tolist()
         item_df[genres_col] = item_df[genres_col].map(
-            lambda l: '|'.join([GENRES[i] for i, v in enumerate(l) if v == 1])
+            lambda l: "|".join([GENRES[i] for i, v in enumerate(l) if v == 1])
         )
 
         item_df.drop(genres_header_100k, axis=1, inplace=True)
@@ -289,12 +301,14 @@ def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_co
     # Parse year from movie title. Note, MovieLens title format is "title (year)"
     # Note, there are very few records that are missing the year info.
     if year_col is not None:
+
         def parse_year(t):
-            parsed = re.split('[()]', t)
+            parsed = re.split("[()]", t)
             if len(parsed) > 2 and parsed[-2].isdecimal():
                 return parsed[-2]
             else:
                 return None
+
         item_df[year_col] = item_df["title_year"].map(parse_year)
         if title_col is None:
             item_df.drop("title_year", axis=1, inplace=True)
@@ -314,7 +328,7 @@ def load_spark_df(
     dbutils=None,
     title_col=None,
     genres_col=None,
-    year_col=None
+    year_col=None,
 ):
     """Loads the MovieLens dataset as pySpark.DataFrame.
 
@@ -355,23 +369,28 @@ def load_spark_df(
 
     movie_col = DEFAULT_ITEM_COL if len(schema) < 2 else schema[1].name
 
-    with _real_path(local_cache_path, "ml-{}.zip".format(size)) as path:
-        datapath, item_datapath = _maybe_download_and_extract(size, path)
+    with download_path(local_cache_path) as path:
+        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        datapath, item_datapath = _maybe_download_and_extract(size, filepath)
         spark_datapath = "file://" + datapath
 
         # Load movie features such as title, genres, and release year.
         # Since the file size is small, we directly load as pd.DataFrame from the driver node
         # and then convert into spark.DataFrame
         item_df = spark.createDataFrame(
-            _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+            _load_item_df(
+                size, item_datapath, movie_col, title_col, genres_col, year_col
+            )
         )
 
         if is_databricks():
             if dbutils is None:
-                raise ValueError("""
+                raise ValueError(
+                    """
                     To use on a Databricks, dbutils object should be passed as an argument.
                     E.g. load_spark_df(spark, dbutils=dbutils)
-                """)
+                """
+                )
 
             # Move rating file to DBFS in order to load into spark.DataFrame
             dbfs_datapath = "dbfs:/tmp/" + datapath
@@ -387,20 +406,21 @@ def load_spark_df(
         separator = DATA_FORMAT[size].separator
         if len(separator) > 1:
             raw_data = spark.sparkContext.textFile(spark_datapath)
-            data_rdd = raw_data.map(
-                lambda l: l.split(separator)
-            ).map(
+            data_rdd = raw_data.map(lambda l: l.split(separator)).map(
                 lambda c: [int(c[0]), int(c[1]), float(c[2]), int(c[3])][: len(schema)]
             )
             df = spark.createDataFrame(data_rdd, schema)
         else:
             df = spark.read.csv(
-                spark_datapath, schema=schema, sep=separator, header=DATA_FORMAT[size].has_header
+                spark_datapath,
+                schema=schema,
+                sep=separator,
+                header=DATA_FORMAT[size].has_header,
             )
 
         # Merge rating df w/ item_df
         if item_df is not None:
-            df = df.join(item_df, movie_col, 'left')
+            df = df.join(item_df, movie_col, "left")
 
         # Cache and force trigger action since data-file might be removed.
         df.cache()
@@ -420,13 +440,9 @@ def _get_schema(header, schema):
 
         schema = StructType()
         try:
-            schema.add(
-                StructField(header[0], IntegerType())
-            ).add(
+            schema.add(StructField(header[0], IntegerType())).add(
                 StructField(header[1], IntegerType())
-            ).add(
-                StructField(header[2], FloatType())
-            ).add(
+            ).add(StructField(header[2], FloatType())).add(
                 StructField(header[3], LongType())
             )
         except IndexError:
@@ -440,23 +456,6 @@ def _get_schema(header, schema):
             schema = schema[:4]
 
     return schema
-
-
-@contextmanager
-def _real_path(path, filename_if_not_in_path):
-    tmp_dir = TemporaryDirectory()
-    if path is None:
-        path = tmp_dir.name
-    else:
-        path = os.path.realpath(path)
-
-    if not path.endswith(".zip"):
-        path = os.path.join(path, filename_if_not_in_path)
-
-    try:
-        yield path
-    finally:
-        tmp_dir.cleanup()
 
 
 def _maybe_download_and_extract(size, dest_path):
@@ -505,7 +504,7 @@ def extract_movielens(size, rating_path, item_path, zip_path):
         zip_path (str): zipfile path
     """
     with ZipFile(zip_path, "r") as z:
-        with z.open(DATA_FORMAT[size].path) as zf, open(rating_path, 'wb') as f:
+        with z.open(DATA_FORMAT[size].path) as zf, open(rating_path, "wb") as f:
             shutil.copyfileobj(zf, f)
-        with z.open(DATA_FORMAT[size].item_path) as zf, open(item_path, 'wb') as f:
+        with z.open(DATA_FORMAT[size].item_path) as zf, open(item_path, "wb") as f:
             shutil.copyfileobj(zf, f)
