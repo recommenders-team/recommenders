@@ -78,8 +78,6 @@ PIP_BASE = {
     "papermill": "papermill>=0.15.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "tqdm": "tqdm==4.31.1",
-    "category_encoders": "category_encoders>=1.3.0",
-    "fastai": "fastai==1.0.46",
 }
 
 PIP_PYSPARK = {}
