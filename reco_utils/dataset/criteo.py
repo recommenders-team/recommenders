@@ -113,6 +113,7 @@ def load_spark_df(
 
         schema = _get_spark_schema(header)
         df = spark.read.csv(path, schema=schema, sep="\t", header=False)
+        df.cache().count() # trigger execution to overcome spark's lazy evaluation
     return df
 
 
