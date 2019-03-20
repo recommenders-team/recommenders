@@ -5,6 +5,7 @@ import sys
 sys.path.append("../../")
 
 import argparse
+import json
 import logging
 import nni
 import os
@@ -39,8 +40,8 @@ def svd_training(params):
 
     logger.debug("Evaluating...")
 
-    rating_metrics = params['rating_metrics']
     metrics_dict = {}
+    rating_metrics = params['rating_metrics']
     if len(rating_metrics) > 0:
         predictions = compute_rating_predictions(svd, validation_data, usercol=params['usercol'],
                                                  itemcol=params['itemcol'])
@@ -69,7 +70,15 @@ def svd_training(params):
     if len(ranking_metrics) == 0 and len(rating_metrics) == 0:
         raise ValueError("No metrics were specified.")
 
+    # Report the metrics
     nni.report_final_result(metrics_dict)
+
+    # Save the metrics in a JSON file
+    output_dir = os.environ.get('NNI_OUTPUT_DIR')
+    with open(os.path.join(output_dir, 'metrics.json'), 'w') as fp:
+        temp_dict = metrics_dict.copy()
+        temp_dict[params['primary_metric']] = temp_dict.pop('default')
+        json.dump(temp_dict, fp)
 
     return svd
 
@@ -80,7 +89,6 @@ def get_params():
     parser.add_argument('--datastore', type=str, dest='datastore', help="Datastore path")
     parser.add_argument('--train-datapath', type=str, dest='train_datapath')
     parser.add_argument('--validation-datapath', type=str, dest='validation_datapath')
-    parser.add_argument('--output-dir', type=str, help='output directory')
     parser.add_argument('--surprise-reader', type=str, dest='surprise_reader')
     parser.add_argument('--usercol', type=str, dest='usercol', default='userID')
     parser.add_argument('--itemcol', type=str, dest='itemcol', default='itemID')
@@ -120,8 +128,8 @@ def main(params):
 
     svd = svd_training(params)
     # Save SVD model to the output directory for later use
-    os.makedirs(params["output_dir"], exist_ok=True)
-    surprise.dump.dump(os.path.join(params["output_dir"], 'model.dump'), algo=svd)
+    output_dir = os.environ.get('NNI_OUTPUT_DIR')
+    surprise.dump.dump(os.path.join(output_dir, 'model.dump'), algo=svd)
 
 
 if __name__ == "__main__":
