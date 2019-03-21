@@ -15,6 +15,7 @@ import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
 from tests.notebooks_common import path_notebooks
+from reco_utils.common.general_utils import get_number_processors, get_physical_memory
 
 try:
     from pyspark.sql import SparkSession
@@ -23,12 +24,9 @@ except ImportError:
 
 
 @pytest.fixture(scope="session")
-def spark(app_name="Sample", url="local[*]", memory="1G"):
-    """Start Spark if not started
-    Args:
-        app_name (str): sets name of the application
-        url (str): url for spark master
-        memory (str): size of memory for spark driver
+def spark(app_name="Sample", url="local[*]"):
+    """Start Spark if not started.
+
     Other Spark settings which you might find useful:
         .config("spark.executor.cores", "4")
         .config("spark.executor.memory", "2g")
@@ -37,21 +35,27 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .config("spark.executor.instances", 1)
         .config("spark.executor.heartbeatInterval", "36000s")
         .config("spark.network.timeout", "10000000s")
-        .config("spark.driver.maxResultSize", memory)
-    """
-    SUBMIT_ARGS = "--packages eisber:sarplus:0.2.3 pyspark-shell"
-    os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
+    Args:
+        app_name (str): sets name of the application
+        url (str): url for spark master
+
+    Returns:
+        SparkSession: new Spark session
+    """
+    n_cores = get_number_processors()
+    physical_mem = get_physical_memory()
     return (
         SparkSession.builder.appName(app_name)
         .master(url)
-        .config("spark.driver.memory", memory)
-        .config("spark.sql.shuffle.partitions", "1")
+        .config("spark.driver.cores", 1)
+        .config("spark.driver.maxResultSize", "1g")
+        .config("spark.driver.memory", "{:d}g".format(int(physical_mem * 0.2)))
+        .config("spark.executor.cores", n_cores - 1)
+        .config("spark.executor.instances", 1)
+        .config("spark.executor.memory", "{:d}g".format(int(physical_mem * 0.6)))
         .config("spark.local.dir", "/mnt")
-        .config("spark.worker.cleanup.enabled", "true")
-        .config("spark.worker.cleanup.appDataTtl", "3600")
-        .config("spark.worker.cleanup.interval", "300")
-        .config("spark.storage.cleanupFilesAfterExecutorExit", "true")
+        .config("spark.sql.shuffle.partitions", 1)
         .getOrCreate()
     )
 
@@ -238,4 +242,3 @@ def notebooks():
         ),
     }
     return paths
-
