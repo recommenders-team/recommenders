@@ -10,6 +10,7 @@ data preparation, model building, and model evaluation by using the utility func
 | [als](als_movielens.ipynb) | MovieLens | PySpark | Utilizing ALS algorithm to predict movie ratings in a PySpark environment.
 | [dkn](dkn_synthetic.ipynb) | Synthetic Data | Python CPU, GPU | Utilizing the Deep Knowledge-Aware Network (DKN) [2] algorithm for news recommendations using information from a knowledge graph, in a Python+GPU (TensorFlow) environment.
 | [fastai](fastai_movielens.ipynb) | MovieLens | Python CPU, GPU | Utilizing FastAI recommender to predict movie ratings in a Python+GPU (PyTorch) environment.
+| [lightgbm](lightgbm_tinycriteo.ipynb) | Criteo | Python CPU | Utilizing LightGBM Boosting Tree to predict whether or not a user has clicked on an e-commerce ad |
 | [ncf](ncf_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Neural Collaborative Filtering (NCF) [1] to predict movie ratings in a Python+GPU (TensorFlow) environment.
 | [rbm](rbm_movielens.ipynb)| MovieLens | Python CPU, GPU | Utilizing the Restricted Boltzmann Machine (rbm) [4] to predict movie ratings in a Python+GPU (TensorFlow) environment.<br>
 | [sar](sar_movielens.ipynb) | MovieLens | Python CPU | Utilizing Smart Adaptive Recommendations (SAR) algorithm to predict movie ratings in a Python+CPU environment.

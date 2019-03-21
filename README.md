@@ -48,16 +48,18 @@ The table below lists recommender algorithms available in the repository at the 
 | --- | --- | --- | --- |
 | [Smart Adaptive Recommendations (SAR)<sup>*</sup>](notebooks/00_quick_start/sar_movielens.ipynb) | Python CPU | Collaborative Filtering | Similarity-based algorithm for implicit feedback dataset |
 | [Surprise/Singular Value Decomposition (SVD)](notebooks/02_model/surprise_svd_deep_dive.ipynb) | Python CPU | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in datasets that are not very large | 
-| [Vowpal Wabbit Family (VW)<sup>*</sup>](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python CPU (train online) | Collaborative, Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing |
-| [Extreme Deep Factorization Machine (xDeepFM)<sup>*</sup>](notebooks/00_quick_start/xdeepfm_synthetic.ipynb) | Python CPU / Python GPU | Hybrid | Deep learning based algorithm for implicit and explicit feedback with user/item features | 
-| [Deep Knowledge-Aware Network (DKN)<sup>*</sup>](notebooks/00_quick_start/dkn_synthetic.ipynb) |  Python CPU / Python GPU | Content-Based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations | 
 | [Neural Collaborative Filtering (NCF)](notebooks/00_quick_start/ncf_movielens.ipynb) |  Python CPU / Python GPU | Collaborative Filtering | Deep learning algorithm with enhanced performance for implicit feedback | 
 | [Restricted Boltzmann Machines (RBM)](notebooks/00_quick_start/rbm_movielens.ipynb) |  Python CPU / Python GPU | Collaborative Filtering | Neural network based algorithm for learning the underlying probability distribution for explicit or implicit feedback | 
 | [FastAI Embedding Dot Bias (FAST)](notebooks/00_quick_start/fastai_movielens.ipynb)  |  Python CPU / Python GPU | Collaborative Filtering | General purpose algorithm with embeddings and biases for users and items |
-| [Wide and Deep](notebooks/00_quick_start/wide_deep_movielens.ipynb) | Python CPU / Python GPU | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
 | [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) | PySpark | Collaborative Filtering | Matrix factorization algorithm for explicit or implicit feedback in large datasets, optimized by Spark MLLib for scalability and distributed computing capability | 
+| [Vowpal Wabbit Family (VW)<sup>*</sup>](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Python CPU (train online) | Collaborative, Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing |
+| [LightGBM/Gradient Boosting Tree<sup>*</sup>](notebooks/00_quick_start/lightgbm_tinycriteo.ipynb) | Python CPU | Content-Based Filtering | Gradient Boosting Tree algorithm for fast training and low memory usage in content-based problems |
+| [Deep Knowledge-Aware Network (DKN)<sup>*</sup>](notebooks/00_quick_start/dkn_synthetic.ipynb) |  Python CPU / Python GPU | Content-Based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations | 
+| [Extreme Deep Factorization Machine (xDeepFM)<sup>*</sup>](notebooks/00_quick_start/xdeepfm_synthetic.ipynb) | Python CPU / Python GPU | Hybrid | Deep learning based algorithm for implicit and explicit feedback with user/item features | 
+| [Wide and Deep](notebooks/00_quick_start/wide_deep_movielens.ipynb) | Python CPU / Python GPU | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
 
-**NOTE** - <sup>*</sup> indicates algorithms invented/contributed to by Microsoft.
+
+**NOTE** - <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
 
 **Preliminary Comparison**
 

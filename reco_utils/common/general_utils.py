@@ -2,25 +2,35 @@
 # Licensed under the MIT License.
 
 import os
+import psutil
 
 
 def invert_dictionary(dictionary):
     """Invert a dictionary
     NOTE: If the dictionary has unique keys and unique values, the invertion would be perfect. However, if there are
     repeated values, the invertion can take different keys
-    
-    Args: 
+
+    Args:
         dictionary (dict): A dictionary
-    
+
     Returns:
         dict: inverted dictionary
     """
     return {v: k for k, v in dictionary.items()}
 
 
+def get_physical_memory():
+    """Get the physical memory in GBs.
+
+    Returns:
+        float: Physical memory in GBs.
+    """
+    return psutil.virtual_memory()[0] / 1073741824
+
+
 def get_number_processors():
     """Get the number of processors in a CPU.
-    
+
     Returns:
         int: Number of processors.
     """
