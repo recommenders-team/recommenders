@@ -129,6 +129,7 @@ ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 
 ERROR_LOCAL_CACHE_PATH = """Local cache path only accepts a zip file path:
     use/something/like_this.zip"""
 
+
 def load_pandas_df(
     size="100k",
     header=(
@@ -388,8 +389,6 @@ def _load_datafile(size, local_cache_path):
 
     # Make sure a temporal zip file get cleaned up no matter what
     atexit.register(_clean_up, local_cache_path)
-    print(path)
-    print("http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip")
     
     maybe_download(
         "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip",
@@ -415,6 +414,7 @@ def _load_datafile(size, local_cache_path):
     atexit.register(_clean_up, item_datapath)
 
     return datapath, item_datapath
+
 
 def _clean_up(filepath):
     """ Remove cached file. Be careful not to erase anything else. """
