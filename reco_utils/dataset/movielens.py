@@ -389,7 +389,7 @@ def _load_datafile(size, local_cache_path):
 
     # Make sure a temporal zip file get cleaned up no matter what
     atexit.register(_clean_up, local_cache_path)
-    
+
     maybe_download(
         "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip",
         filename,
