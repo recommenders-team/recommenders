@@ -24,12 +24,9 @@ except ImportError:
 
 
 @pytest.fixture(scope="session")
-def spark(app_name="Sample", url="local[*]", memory="1G"):
-    """Start Spark if not started
-    Args:
-        app_name (str): sets name of the application
-        url (str): url for spark master
-        memory (str): size of memory for spark driver
+def spark(app_name="Sample", url="local[*]"):
+    """Start Spark if not started.
+
     Other Spark settings which you might find useful:
         .config("spark.executor.cores", "4")
         .config("spark.executor.memory", "2g")
@@ -38,7 +35,13 @@ def spark(app_name="Sample", url="local[*]", memory="1G"):
         .config("spark.executor.instances", 1)
         .config("spark.executor.heartbeatInterval", "36000s")
         .config("spark.network.timeout", "10000000s")
-        .config("spark.driver.maxResultSize", memory)
+
+    Args:
+        app_name (str): sets name of the application
+        url (str): url for spark master
+
+    Returns:
+        SparkSession: new Spark session
     """
     n_cores = get_number_processors()
     physical_mem = get_physical_memory()
