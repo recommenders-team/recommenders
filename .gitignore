@@ -140,3 +140,7 @@ ml-20m/
 *.jar
 *.item
 *.pkl
+
+bin/
+obj/
+TestResults/
