@@ -137,8 +137,10 @@ if __name__ == "__main__":
         tuner_params = nni.get_next_parameter()
         logger.debug("Hyperparameters: %s", tuner_params)
         params = vars(get_params())
-        print(params)
-        print(tuner_params)
+        # in the case of Hyperband, use STEPS to allocate the number of epochs SVD will run for 
+        if 'STEPS' in tuner_params:
+            steps_param = tuner_params['STEPS']
+            params['epochs'] = steps_param    
         params.update(tuner_params)
         main(params)
     except Exception as exception:
