@@ -1,12 +1,12 @@
 --- # RECOMMENDERS
 meta:
   name         : rbm
-  title        : The Microsoft recommender toolkit demo of RBM
+  title        : Recommendations using restricted Boltzmann machine.
   keywords     : recommendation
   version      : 1.0.5
   languages    : python
   modeller     : RBM
-  type         : Restricted Boltzmann Machine
+  type         : restricted boltzmann machine
   license      : mit
   author       : Graham.Williams@togaware.com
   maintainer   : Graham.Williams@togaware.com
