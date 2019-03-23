@@ -3,7 +3,7 @@ meta:
   name         : sar
   title        : Smart adaptive recommendations.
   keywords     : recommendation
-  version      : 1.1.5
+  version      : 1.1.6
   languages    : python
   modeller     : SAR
   type         : smart adaptive recommendation
