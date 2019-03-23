@@ -3,7 +3,7 @@ meta:
   name         : rbm
   title        : Recommendations using restricted Boltzmann machine.
   keywords     : recommendation
-  version      : 1.0.5
+  version      : 1.0.6
   languages    : python
   modeller     : RBM
   type         : restricted boltzmann machine
