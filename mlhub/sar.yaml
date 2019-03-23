@@ -1,7 +1,7 @@
 --- # RECOMMENDERS
 meta:
   name         : sar
-  title        : The Microsoft recommender toolkit demo of SAR
+  title        : Smart adaptive recommendations.
   keywords     : recommendation
   version      : 1.1.5
   languages    : python
