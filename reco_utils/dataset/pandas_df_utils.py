@@ -255,3 +255,39 @@ def negative_feedback_sampler(
     )
 
     return df_sample
+
+
+def has_same_base_dtype(df_1, df_2, columns=None):
+    """Check if specified columns have the same base dtypes
+
+    Args:
+        df_1 (pd.DataFrame): first dataframe
+        df_2 (pd.DataFrame): second dataframe
+        columns (list(str)): columns to check, None checks all columns
+    Returns:
+        bool: True if dataframe columns have the same base dtype
+    """
+
+    result = True
+    for c in columns:
+        if df_1[c].dtype.__base__ != df_2[c].dtype.__base__:
+            print('Columns {} do not have the same base dtype'.format(c))
+            result = False
+    return result
+
+
+def has_columns(df, columns):
+    """Check if dataframe has necessary columns
+    Args:
+        df (pd.DataFrame): dataframe
+        columns (list(str)): columns to check for
+    Returns:
+        bool: True if dataframe has specified columns
+    """
+
+    result = True
+    for c in columns:
+        if c not in df.columns:
+            print('Missing column: {}'.format(c))
+            result = False
+    return result

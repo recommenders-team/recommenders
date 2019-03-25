@@ -3,7 +3,6 @@
 
 import numpy as np
 import pandas as pd
-from functools import wraps
 from sklearn.metrics import (
     mean_squared_error,
     mean_absolute_error,
@@ -13,6 +12,7 @@ from sklearn.metrics import (
     log_loss
 )
 
+from reco_utils.dataset.pandas_df_utils import has_columns, has_same_base_dtype
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -23,663 +23,325 @@ from reco_utils.common.constants import (
 )
 
 
-def check_column_dtypes(f):
-    """
-    Checks columns of dataframe inputs.
+class Evaluation:
 
-    This includes the checks on 
-        1. whether the input columns exist in the input dataframes.
-        2. whether the data types of col_user as well as col_item are matched in the two input dataframes.
-    """
-    @wraps(f)
-    def check_column_dtypes_wrapper(
-        rating_true,
-        rating_pred,
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
-        *args,
-        **kwargs
-    ):
-        # check existence of input columns.
-        for col in [col_user, col_item, col_rating]:
-            if col not in rating_true.columns:
-                raise ValueError("schema of y_true not valid. missing {}".format(col))
+    def __init__(self,
+                 df_true,
+                 df_pred,
+                 col_user,
+                 col_item,
+                 col_rating,
+                 col_prediction):
 
-        for col in [col_user, col_item, col_prediction]:
-            if col not in rating_pred.columns:
-                raise ValueError("schema of y_true not valid. missing {}".format(col))
+        self.col_user = col_user
+        self.col_item = col_item
+        self.col_rating = col_rating
+        self.col_prediction = col_prediction
 
-        # check matching of input column types. the evaluator requires two dataframes have the same
-        # data types of the input columns.
-        if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
-            raise TypeError(
-                "data types of column {} are different in true and prediction".format(
-                    col_user
-                )
-            )
+        # check existence of input columns
+        columns = [col_user, col_item, col_rating]
+        if not has_columns(df_true, columns=columns):
+            raise ValueError("Truth DataFrame is missing required columns")
+        if not has_columns(df_pred, columns=columns):
+            raise ValueError("Prediction DataFrame is missing required columns")
 
-        if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
-            raise TypeError(
-                "data types of column {} are different in true and prediction".format(
-                    col_item
-                )
-            )
+        if not has_same_base_dtype(df_true, df_pred, columns=[col_user, col_item]):
+            raise ValueError("Truth and Prediction DataFrame data types are incompatible")
 
-        return f(
-            rating_true=rating_true,
-            rating_pred=rating_pred,
-            col_user=col_user,
-            col_item=col_item,
-            col_rating=col_rating,
-            col_prediction=col_prediction,
-            *args,
-            **kwargs
+        self.metrics = dict()
+
+
+class RatingEvaluation(Evaluation):
+
+    def __init__(self,
+                 df_true,
+                 df_pred,
+                 col_user=DEFAULT_USER_COL,
+                 col_item=DEFAULT_ITEM_COL,
+                 col_rating=DEFAULT_RATING_COL,
+                 col_prediction=PREDICTION_COL):
+        """Rating prediction evaluation
+
+        Args:
+            df_true (pd.DataFrame): truth dataframe
+            df_pred (pd.DataFrame): prediction dataframe
+            col_user (str): user column name
+            col_item (str): item column name
+            col_rating (str): rating column name
+            col_prediction (str): prediction column name
+        """
+
+        super().__init__(df_true=df_true,
+                         df_pred=df_pred,
+                         col_user=col_user,
+                         col_item=col_item,
+                         col_rating=col_rating,
+                         col_prediction=col_prediction)
+        self.y_true, self.y_pred = self.get_true_pred(df_true=df_true, df_pred=df_pred)
+
+    def get_true_pred(self, df_true, df_pred):
+        """Join truth and prediction data frames on user and item columns
+
+        Args:
+            df_true: truth dataframe
+            df_pred: prediction dataframe
+        Returns:
+            pd.Series, pd.Series: truth data, prediction data
+        """
+
+        # select the columns needed for evaluations
+        rating_true = df_true[[self.col_user, self.col_item, self.col_rating]]
+        rating_pred = df_pred[[self.col_user, self.col_item, self.col_prediction]]
+
+        kwargs = dict()
+        if self.col_rating == self.col_prediction:
+            kwargs['suffixes'] = ["_true", "_pred"]
+            col_true = '{}_true'.format(self.col_rating)
+            col_pred = '{}_pred'.format(self.col_prediction)
+        else:
+            col_true = self.col_rating
+            col_pred = self.col_prediction
+
+        df_merged = pd.merge(rating_true,
+                             rating_pred,
+                             on=[self.col_user, self.col_item],
+                             **kwargs)
+
+        return df_merged[col_true], df_merged[col_pred]
+
+    @property
+    def rmse(self):
+        """Calculate Root Mean Squared Error between rating and prediction columns
+
+        Returns:
+            float: Root Mean Squared Error
+        """
+
+        return np.sqrt(mean_squared_error(self.y_true, self.y_pred))
+
+    @property
+    def mae(self):
+        """Calculate Mean Absolute Error
+
+        Returns:
+            float: Mean Absolute Error
+        """
+
+        return mean_absolute_error(self.y_true, self.y_pred)
+
+    @property
+    def rsquared(self):
+        """Calculate R squared
+
+        Returns:
+            float: R squared (min=0, max=1).
+        """
+
+        return r2_score(self.y_true, self.y_pred)
+
+    @property
+    def exp_var(self):
+        """Calculate explained variance
+
+        Returns:
+            float: Explained variance (min=0, max=1).
+        """
+        return explained_variance_score(self.y_true, self.y_pred)
+
+    def auc(self):
+        """
+        Calculate the Area-Under-Curve metric for implicit feedback typed
+        recommender, where rating is binary and prediction is float number ranging
+        from 0 to 1.
+
+        https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
+
+        Note:
+            The evaluation does not require a leave-one-out scenario.
+            This metric does not calculate group-based AUC which considers the AUC scores
+            averaged across users. It is also not limited to k. Instead, it calculates the
+            scores on the entire prediction results regardless the users.
+
+        Returns:
+            float: auc_score (min=0, max=1).
+        """
+
+        return roc_auc_score(self.y_true, self.y_pred)
+
+    def logloss(self):
+        """
+        Calculate the logloss metric for implicit feedback typed
+        recommender, where rating is binary and prediction is float number ranging
+        from 0 to 1.
+
+        https://en.wikipedia.org/wiki/Loss_functions_for_classification#Cross_entropy_loss_(Log_Loss)
+
+        Returns:
+            float: log_loss_score (min=-\inf, max=\inf).
+        """
+
+        return log_loss(self.y_true, self.y_pred)
+
+
+class RankingEvaluation(Evaluation):
+
+    def __init__(self,
+                 df_true,
+                 df_pred,
+                 col_user=DEFAULT_USER_COL,
+                 col_item=DEFAULT_ITEM_COL,
+                 col_rating=DEFAULT_RATING_COL,
+                 col_prediction=PREDICTION_COL,
+                 relevancy_method='top_k',
+                 k=DEFAULT_K,
+                 threshold=DEFAULT_THRESHOLD):
+        """Ranking prediction evaluation
+
+        Args:
+            df_true (pd.DataFrame): truth dataframe
+            df_pred (pd.DataFrame): prediction dataframe
+            col_user (str): user column name
+            col_item (str): item column name
+            col_rating (str): rating column name
+            col_prediction (str): prediction column name
+        """
+
+        super().__init__(df_true=df_true,
+                         df_pred=df_pred,
+                         col_user=col_user,
+                         col_item=col_item,
+                         col_rating=col_rating,
+                         col_prediction=col_prediction)
+
+        self.relevancy = relevancy_method
+        self.k = k
+        self.threshold = threshold
+        self.col_rank = 'rank'
+
+        common_users = list(set(df_true[col_user]).intersection(set(df_pred[col_user])))
+        self.n_users = len(common_users)
+
+        df_pred_common = df_pred[df_pred[col_user].isin(common_users)]
+        df_true_common = df_true[df_true[col_user].isin(common_users)]
+        self.df_hit = self.get_hits(df_true=df_true_common, df_pred=df_pred_common)
+        self.df_hit_count = pd.merge(
+            self.df_hit.groupby(col_user).size().reset_index().rename(columns={0: 'hit'}),
+            df_true_common.groupby(col_user).size().reset_index().rename(columns={0: 'actual'}),
+            on=col_user
         )
-    return check_column_dtypes_wrapper
 
+    def get_hits(self, df_true, df_pred):
+        """Calculate hit items in prediction dataframe with rank information for NDCG and MAP calculation
+        This will generate a unique rank for each user-item pair to align the implementation with Spark
+        evaluation metrics, where index of each recommended items (the indices are unique to items) is used
+        to calculate penalized precision of the ordered items.
 
-def merge_rating_true_pred(
-    rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
-):
-    """Join truth and prediction data frames on userID and itemID
-    
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
+        Args:
+            df_true (pd.DataFrame): truth dataframe
+            df_pred (pd.DataFrame): prediction dataframe
+        Returns:
+            pd.DataFrame: merged dataframe with recommendation hits
+        """
 
-    Returns:
-        pd.DataFrame: Merged pd.DataFrame
-    """
-    # Select the columns needed for evaluations
-    rating_true = rating_true[[col_user, col_item, col_rating]]
-    rating_pred = rating_pred[[col_user, col_item, col_prediction]]
+        if self.relevancy == 'top_k':
+            df_hit = get_top_k_items(dataframe=df_pred, col_rating=self.col_prediction, k=self.k)
+        else:
+            raise NotImplementedError
 
-    if col_rating == col_prediction:
-        rating_true_pred = pd.merge(
-            rating_true,
-            rating_pred,
-            on=[col_user, col_item],
-            suffixes=["_true", "_pred"],
+        df_hit["rank"] = (
+            df_hit.groupby(self.col_user)[self.col_prediction]
+            .rank(method="first", ascending=False)
         )
-        rating_true_pred.rename(
-            columns={col_rating + "_true": DEFAULT_RATING_COL}, inplace=True
-        )
-        rating_true_pred.rename(
-            columns={col_prediction + "_pred": PREDICTION_COL}, inplace=True
-        )
-    else:
-        rating_true_pred = pd.merge(rating_true, rating_pred, on=[col_user, col_item])
-        rating_true_pred.rename(columns={col_rating: DEFAULT_RATING_COL}, inplace=True)
-        rating_true_pred.rename(columns={col_prediction: PREDICTION_COL}, inplace=True)
 
-    return rating_true_pred
+        df_merge = pd.merge(df_hit, df_true, on=[self.col_user, self.col_item])
+        return df_merge[[self.col_user, self.col_item, self.col_rank]]
 
+    def precision_at_k(self):
+        """Precision at K
 
-@check_column_dtypes
-def rmse(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL
-):
-    """Calculate Root Mean Squared Error
+        Note:
+        We use the same formula to calculate precision@k as that in Spark.
+        More details can be found at
+        http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
+        In particular, the maximum achievable precision may be < 1, if the number of items for a
+        user in rating_pred is less than k.
 
-    Args:
-        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
+        Returns:
+            float: precision at k (min=0, max=1)
+        """
+
+        if self.df_hit_count.shape[0] == 0:
+            return 0.0
+
+        return (self.df_hit_count['hit'] / self.k).mean()
+
+    def recall_at_k(self):
+        """Recall at K
+        Maximum value is 1 even when fewer than k items exist for a user in rating_true
+
+        Returns:
+            float: recall at k (min=0, max=1)
+        """
+
+        if self.df_hit_count.shape[0] == 0:
+            return 0.0
+
+        return (self.df_hit_count['hit'] / self.df_hit_count['actual']).mean()
+
+    def ndcg_at_k(self):
+        """Normalized Discounted Cumulative Gain (nDCG)
+        Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain
     
-    Returns:
-        float: Root mean squared error.
-    """
-    rating_true_pred = merge_rating_true_pred(
-        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
-    )
-
-    return np.sqrt(
-        mean_squared_error(
-            rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
-        )
-    )
-
-
-@check_column_dtypes
-def mae(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
-):
-    """Calculate Mean Absolute Error.
-
-    Args:
-        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-
-    Returns:
-        float: Mean Absolute Error.
-    """
-    rating_true_pred = merge_rating_true_pred(
-        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
-    )
-    return mean_absolute_error(
-        rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
-    )
-
-
-@check_column_dtypes
-def rsquared(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
-):
-    """Calculate R squared
-
-    Args:
-        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-    
-    Returns:
-        float: R squared (min=0, max=1).
-    """
-    rating_true_pred = merge_rating_true_pred(
-        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
-    )
-    return r2_score(
-        rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
-    )
-
-
-@check_column_dtypes
-def exp_var(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
-):
-    """Calculate explained variance.
-
-    Args:
-        rating_true (pd.DataFrame): True data. There should be no duplicate (userID, itemID) pairs.
-        rating_pred (pd.DataFrame): Predicted data. There should be no duplicate (userID, itemID) pairs.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-
-    Returns:
-        float: Explained variance (min=0, max=1).
-    """
-    rating_true_pred = merge_rating_true_pred(
-        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
-    )
-    return explained_variance_score(
-        rating_true_pred[DEFAULT_RATING_COL], rating_true_pred[PREDICTION_COL]
-    )
-
-
-def merge_ranking_true_pred(
-    rating_true,
-    rating_pred,
-    col_user,
-    col_item,
-    col_rating,
-    col_prediction,
-    relevancy_method,
-    k=DEFAULT_K,
-    threshold=DEFAULT_THRESHOLD,
-):
-    """Filter truth and prediction data frames on common users
-
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-
-    Returns:
-        pd.DataFrame: new data frame of true data DataFrame of recommendation hits
-            number of common users
-    """
-    relevant_func = {"top_k": get_top_k_items}
-
-    rating_pred_new = (
-        relevant_func[relevancy_method](
-            dataframe=rating_pred,
-            col_user=col_user,
-            col_rating=col_prediction,
-            threshold=threshold,
-        )
-        if relevancy_method == "by_threshold"
-        else relevant_func[relevancy_method](
-            dataframe=rating_pred, col_user=col_user, col_rating=col_prediction, k=k
-        )
-    )
-
-    common_user_list = list(
-        set(rating_true[col_user]).intersection(set(rating_pred_new[col_user]))
-    )
-
-    # To make sure the prediction and true data frames have the same set of users.
-    rating_pred_new = rating_pred_new[rating_pred_new[col_user].isin(common_user_list)]
-    rating_true_new = rating_true[rating_true[col_user].isin(common_user_list)]
-
-    n_users = len(common_user_list)
-
-    # Return hit items in prediction data frame with ranking information. This
-    # is used for calculating
-    # NDCG and MAP.
-    # Use first to generate unique ranking values for each item. This is to align with the
-    # implementation in
-    # Spark evaluation metrics, where index of each recommended items (the indices are unique
-    #  to items) is used
-    # to calculate penalized precision of the ordered items.
-    df_rating_pred = rating_pred_new.copy()
-    df_rating_pred["ranking"] = rating_pred_new.groupby(col_user)[col_prediction].rank(
-        method="first", ascending=False
-    )
-
-    df_hit = pd.merge(
-        rating_true_new, df_rating_pred, how="inner", on=[col_user, col_item]
-    )[[col_user, col_item, "ranking"]]
-
-    return rating_true_new, df_hit, n_users
-
-
-@check_column_dtypes
-def precision_at_k(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
-    relevancy_method="top_k",
-    k=DEFAULT_K,
-    threshold=DEFAULT_THRESHOLD,
-):
-    """Precision at K.
-
-    Note:
-    We use the same formula to calculate precision@k as that in Spark.
-    More details can be found at
-    http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
-    In particular, the maximum achievable precision may be < 1, if the number of items for a
-    user in rating_pred is less than k.
-
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-        relevancy_method (str): method for getting the most relevant items.
-        k (int): number of top k items per user.
-        threshold (float): threshold of top items per user (optional).
-    
-    Returns:
-        float: precision at k (min=0, max=1)
-    """
-    _, df_hit, n_users = merge_ranking_true_pred(
-        rating_true,
-        rating_pred,
-        col_user,
-        col_item,
-        col_rating,
-        col_prediction,
-        relevancy_method,
-        k,
-        threshold,
-    )
-
-    if df_hit.shape[0] == 0:
-        return 0.0
-
-    df_count_hit = (
-        df_hit.groupby(col_user)
-        .agg({col_item: "count"})
-        .reset_index()
-        .rename(columns={col_item: "hit"}, inplace=False)
-    )
-
-    df_count_hit["precision"] = df_count_hit.apply(lambda x: (x.hit / k), axis=1)
-
-    return np.float64(df_count_hit.agg({"precision": "sum"})) / n_users
-
-
-@check_column_dtypes
-def recall_at_k(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
-    relevancy_method="top_k",
-    k=DEFAULT_K,
-    threshold=DEFAULT_THRESHOLD,
-):
-    """Recall at K.
-
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-        relevancy_method (str): method for getting the most relevant items.
-        k (int): number of top k items per user.
-        threshold (float): threshold of top items per user (optional).
-    
-    Returns:
-        float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than 
-            k items exist for a user in rating_true.
-    """
-    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
-        rating_true,
-        rating_pred,
-        col_user,
-        col_item,
-        col_rating,
-        col_prediction,
-        relevancy_method,
-        k,
-        threshold,
-    )
-
-    if df_hit.shape[0] == 0:
-        return 0.0
-
-    df_count_hit = (
-        df_hit.groupby(col_user)
-        .agg({col_item: "count"})
-        .reset_index()
-        .rename(columns={col_item: "hit"}, inplace=False)
-    )
-
-    df_count_true = (
-        rating_true_new.groupby(col_user)
-        .agg({col_item: "count"})
-        .reset_index()
-        .rename(columns={col_item: "actual"}, inplace=False)
-    )
-
-    df_count_all = pd.merge(df_count_hit, df_count_true, on=col_user)
-
-    df_count_all["recall"] = df_count_all.apply(lambda x: (x.hit / x.actual), axis=1)
-
-    return np.float64(df_count_all.agg({"recall": "sum"})) / n_users
-
-
-@check_column_dtypes
-def ndcg_at_k(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
-    relevancy_method="top_k",
-    k=DEFAULT_K,
-    threshold=DEFAULT_THRESHOLD,
-):
-    """Normalized Discounted Cumulative Gain (nDCG).
-    
-    Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain
-    
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-        relevancy_method (str): method for getting the most relevant items.
-        k (int): number of top k items per user.
-        threshold (float): threshold of top items per user (optional).
-    
-    Returns:
-        float: nDCG at k (min=0, max=1).
-    """
-    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
-        rating_true,
-        rating_pred,
-        col_user,
-        col_item,
-        col_rating,
-        col_prediction,
-        relevancy_method,
-        k,
-        threshold,
-    )
-
-    if df_hit.shape[0] == 0:
-        return 0.0
-
-    # Calculate gain for hit items.
-    df_dcg = df_hit.sort_values([col_user, "ranking"])
-    df_dcg["dcg"] = df_dcg.apply(lambda x: 1 / np.log(x.ranking + 1), axis=1)
-
-    # Sum gain up to get accumulative gain.
-    df_dcg_sum = df_dcg.groupby(col_user).agg({"dcg": "sum"}).reset_index()
-
-    # Helper function to calculate max gain given parameter of n, which is the length of
-    # iterations.
-    # In calculating the maximum DCG for a user, n is equal to min(number_of_true_items, k).
-    def log_sum(iterations_length):
-        _sum = 0
-        for length in range(iterations_length):
-            _sum = _sum + 1 / np.log(length + 2)
-
-        return _sum
-
-    # Calculate maximum discounted accumulative gain.
-    df_mdcg_sum = (
-        rating_true_new.groupby(col_user)
-        .agg({col_item: "count"})
-        .reset_index()
-        .rename(columns={col_item: "actual"}, inplace=False)
-    )
-    df_mdcg_sum["mdcg"] = df_mdcg_sum.apply(lambda x: log_sum(min(x.actual, k)), axis=1)
-
-    # DCG over MDCG is the normalized DCG.
-    df_ndcg = pd.merge(df_dcg_sum, df_mdcg_sum, on=col_user)
-    df_ndcg["ndcg"] = df_ndcg.apply(lambda x: x.dcg / x.mdcg, axis=1)
-
-    # Average across users.
-    return np.float64(df_ndcg.agg({"ndcg": "sum"})) / n_users
-
-
-@check_column_dtypes
-def map_at_k(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
-    relevancy_method="top_k",
-    k=DEFAULT_K,
-    threshold=DEFAULT_THRESHOLD,
-):
-    """
-    The implementation of the MAP is referenced from Spark MLlib evaluation metrics.
-    https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
-
-    Get mean average precision at k. A good reference can be found at
-    http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
-
-    Note:
-        1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
-        the prediction items. The naming is different from Spark.
-        2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
-        relevant items in the ground truth data, instead of k.
-
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-        relevancy_method (str): method for getting the most relevant items.
-        k (int): number of top k items per user.
-        threshold (float): threshold of top items per user (optional).
-    
-    Return:
-        float: MAP at k (min=0, max=1).
-    """
-    rating_true_new, df_hit, n_users = merge_ranking_true_pred(
-        rating_true,
-        rating_pred,
-        col_user,
-        col_item,
-        col_rating,
-        col_prediction,
-        relevancy_method,
-        k,
-        threshold,
-    )
-
-    if df_hit.shape[0] == 0:
-        return 0.0
-
-    # Calculate inverse of rank of items for each user, use the inverse ranks to penalize
-    # precision,
-    # and sum them up.
-    df_hit = df_hit.sort_values([col_user, "ranking"])
-    df_hit["group_index"] = df_hit.groupby(col_user).cumcount() + 1
-    df_hit["precision"] = df_hit.apply(lambda x: x.group_index / x.ranking, axis=1)
-
-    df_sum_hit = df_hit.groupby(col_user).agg({"precision": "sum"}).reset_index()
-
-    # Count of true items for each user.
-    df_count_true = (
-        rating_true_new.groupby(col_user)
-        .agg({col_item: "count"})
-        .reset_index()
-        .rename(columns={col_item: "actual"}, inplace=False)
-    )
-
-    # Calculate proportion of sum of inverse rank over count of true items.
-    df_sum_all = pd.merge(df_sum_hit, df_count_true, on=col_user)
-    df_sum_all["map"] = df_sum_all.apply(lambda x: (x.precision / x.actual), axis=1)
-
-    # Average the results across users.
-    return np.float64(df_sum_all.agg({"map": "sum"})) / n_users
-
-
-@check_column_dtypes
-def auc(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL
-):
-    """
-    Calculate the Area-Under-Curve metric for implicit feedback typed
-    recommender, where rating is binary and prediction is float number ranging
-    from 0 to 1.
-
-    https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
-
-    Note:
-        The evaluation does not require a leave-one-out scenario.
-        This metric does not calculate group-based AUC which considers the AUC scores
-        averaged across users. It is also not limited to k. Instead, it calculates the
-        scores on the entire prediction results regardless the users.
-
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-
-    Return:
-        float: auc_score (min=0, max=1).
-    """
-    rating_true_pred = merge_rating_true_pred(
-        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
-    )
-    auc_score = roc_auc_score(
-        rating_true_pred[DEFAULT_RATING_COL].values,
-        rating_true_pred[PREDICTION_COL].values
-    )
-
-    return auc_score
-
-
-@check_column_dtypes
-def logloss(
-    rating_true,
-    rating_pred,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL
-):
-    """
-    Calculate the logloss metric for implicit feedback typed
-    recommender, where rating is binary and prediction is float number ranging
-    from 0 to 1.
-
-    https://en.wikipedia.org/wiki/Loss_functions_for_classification#Cross_entropy_loss_(Log_Loss)
-
-    Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
-
-    Return:
-        float: log_loss_score (min=-\inf, max=\inf).
-    """
-    rating_true_pred = merge_rating_true_pred(
-        rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
-    )
-
-    log_loss_score = log_loss(
-        rating_true_pred[DEFAULT_RATING_COL].values,
-        rating_true_pred[PREDICTION_COL].values
-    )
-
-    return log_loss_score
+        Returns:
+            float: nDCG at k (min=0, max=1)
+        """
+
+        if self.df_hit.shape[0] == 0:
+            return 0.0
+
+        # calculate discount gain for hit items
+        df_dcg = self.df_hit.sort_values(by=[self.col_user, self.col_rank])
+        # relevance in this case is always 1
+        df_dcg["dcg"] = 1 / np.log1p(df_dcg[self.col_rank])
+        # sum up discount gain to get cumulative gain
+        df_dcg = df_dcg.groupby(self.col_user).agg({"dcg": "sum"}).reset_index()
+
+        # calculate maximum discounted accumulative gain.
+        df_ndcg = pd.merge(df_dcg, self.df_hit_count, on=[self.col_user])
+        df_ndcg['idcg'] = df_ndcg['actual'].apply(lambda x: sum(1 / np.log1p(range(1, min(x, self.k) + 1))))
+
+        # DCG over IDCG is the normalized DCG
+        return (df_ndcg['dcg'] / df_ndcg['idcg']).mean()
+
+    def map_at_k(self):
+        """
+        The implementation of the MAP is referenced from Spark MLlib evaluation metrics.
+        https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
+
+        Get mean average precision at k. A good reference can be found at
+        http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
+
+        Note:
+            1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
+            the prediction items. The naming is different from Spark.
+            2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
+            relevant items in the ground truth data, instead of k.
+
+        Returns:
+            float: MAP at k (min=0, max=1)
+        """
+
+        if self.df_hit.shape[0] == 0:
+            return 0.0
+
+        # calculate reciprocal rank of items for each user and sum them up
+        df_hit = self.df_hit.sort_values([self.col_user, self.col_rank])
+        df_hit["rr"] = (df_hit.groupby(self.col_user).cumcount() + 1) / df_hit[self.col_rank]
+        df_hit = df_hit.groupby(self.col_user).agg({"rr": "sum"}).reset_index()
+
+        # calculate fraction of sum of reciprocal rank over count of true items
+        df_merge = pd.merge(df_hit, self.df_hit_count, on=self.col_user)
+        return (df_merge['rr'] / df_merge['actual']).mean()
 
 
 def get_top_k_items(
@@ -707,5 +369,3 @@ def get_top_k_items(
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
-
-
