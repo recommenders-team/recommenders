@@ -9,7 +9,7 @@ from reco_utils.dataset.movielens import (
     load_spark_df,
     load_item_df,
     download_movielens,
-    extract_movielens
+    extract_movielens,
 )
 
 try:
@@ -31,12 +31,44 @@ except ImportError:
 @pytest.mark.parametrize(
     "size, num_samples, num_movies, movie_example, title_example, genres_example, year_example",
     [
-        ("1m", 1000209, 3883, 1, "Toy Story (1995)", "Animation|Children's|Comedy", "1995"),
-        ("10m", 10000054, 10681, 1, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy", "1995"),
-        ("20m", 20000263, 27278, 1, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy", "1995"),
+        (
+            "1m",
+            1000209,
+            3883,
+            1,
+            "Toy Story (1995)",
+            "Animation|Children's|Comedy",
+            "1995",
+        ),
+        (
+            "10m",
+            10000054,
+            10681,
+            1,
+            "Toy Story (1995)",
+            "Adventure|Animation|Children|Comedy|Fantasy",
+            "1995",
+        ),
+        (
+            "20m",
+            20000263,
+            27278,
+            1,
+            "Toy Story (1995)",
+            "Adventure|Animation|Children|Comedy|Fantasy",
+            "1995",
+        ),
     ],
 )
-def test_load_pandas_df(size, num_samples, num_movies, movie_example, title_example, genres_example, year_example):
+def test_load_pandas_df(
+    size,
+    num_samples,
+    num_movies,
+    movie_example,
+    title_example,
+    genres_example,
+    year_example,
+):
     """Test MovieLens dataset load into pd.DataFrame
     """
     # Test if correct data are loaded and local_cache_path works
@@ -45,15 +77,25 @@ def test_load_pandas_df(size, num_samples, num_movies, movie_example, title_exam
         header = ["a"]
         df = load_pandas_df(size=size, local_cache_path=tmp_dir, header=header)
         assert len(df) == num_samples
-        assert len(df.columns) == max(len(header), 2)  # Should load at least 2 columns, user and item
+        assert len(df.columns) == max(
+            len(header), 2
+        )  # Should load at least 2 columns, user and item
 
         # Test title, genres, and released year load
         header = ["a", "b", "c", "d", "e"]
         with pytest.warns(Warning):
-            df = load_pandas_df(size=size, local_cache_path=tmp_dir,
-                                header=header, title_col="Title", genres_col="Genres", year_col="Year")
+            df = load_pandas_df(
+                size=size,
+                local_cache_path=tmp_dir,
+                header=header,
+                title_col="Title",
+                genres_col="Genres",
+                year_col="Year",
+            )
             assert len(df) == num_samples
-            assert len(df.columns) == 7  # 4 header columns (user, item, rating, timestamp) and 3 feature columns
+            assert (
+                len(df.columns) == 7
+            )  # 4 header columns (user, item, rating, timestamp) and 3 feature columns
             assert "e" not in df.columns  # only the first 4 header columns are used
             # Get two records of the same items and check if the item-features are the same.
             head = df.loc[df["b"] == movie_example][:2]
@@ -81,21 +123,41 @@ def test_load_pandas_df(size, num_samples, num_movies, movie_example, title_exam
     "size, num_movies, movie_example, title_example, genres_example, year_example",
     [
         ("1m", 3883, 1, "Toy Story (1995)", "Animation|Children's|Comedy", "1995"),
-        ("10m", 10681, 1, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy", "1995"),
-        ("20m", 27278, 1, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy", "1995"),
+        (
+            "10m",
+            10681,
+            1,
+            "Toy Story (1995)",
+            "Adventure|Animation|Children|Comedy|Fantasy",
+            "1995",
+        ),
+        (
+            "20m",
+            27278,
+            1,
+            "Toy Story (1995)",
+            "Adventure|Animation|Children|Comedy|Fantasy",
+            "1995",
+        ),
     ],
 )
-def test_load_item_df(size, num_movies, movie_example, title_example, genres_example, year_example):
+def test_load_item_df(
+    size, num_movies, movie_example, title_example, genres_example, year_example
+):
     """Test movielens item data load (not rating data)
     """
     with TemporaryDirectory() as tmp_dir:
-        df = load_item_df(size, local_cache_path=tmp_dir, movie_col=None, title_col="title")
+        df = load_item_df(
+            size, local_cache_path=tmp_dir, movie_col=None, title_col="title"
+        )
         assert len(df) == num_movies
         assert len(df.columns) == 1  # Only title column should be loaded
         assert df["title"][0] == title_example
 
         # Test title and genres
-        df = load_item_df(size, local_cache_path=tmp_dir, movie_col="item", genres_col="genres")
+        df = load_item_df(
+            size, local_cache_path=tmp_dir, movie_col="item", genres_col="genres"
+        )
         assert len(df) == num_movies
         assert len(df.columns) == 2  # movile_col and genres_col
         assert df["item"][0] == movie_example
@@ -113,12 +175,44 @@ def test_load_item_df(size, num_movies, movie_example, title_example, genres_exa
 @pytest.mark.parametrize(
     "size, num_samples, num_movies, movie_example, title_example, genres_example, year_example",
     [
-        ("1m", 1000209, 3883, 1, "Toy Story (1995)", "Animation|Children's|Comedy", "1995"),
-        ("10m", 10000054, 10681, 1, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy", "1995"),
-        ("20m", 20000263, 27278, 1, "Toy Story (1995)", "Adventure|Animation|Children|Comedy|Fantasy", "1995"),
+        (
+            "1m",
+            1000209,
+            3883,
+            1,
+            "Toy Story (1995)",
+            "Animation|Children's|Comedy",
+            "1995",
+        ),
+        (
+            "10m",
+            10000054,
+            10681,
+            1,
+            "Toy Story (1995)",
+            "Adventure|Animation|Children|Comedy|Fantasy",
+            "1995",
+        ),
+        (
+            "20m",
+            20000263,
+            27278,
+            1,
+            "Toy Story (1995)",
+            "Adventure|Animation|Children|Comedy|Fantasy",
+            "1995",
+        ),
     ],
 )
-def test_load_spark_df(size, num_samples, num_movies, movie_example, title_example, genres_example, year_example):
+def test_load_spark_df(
+    size,
+    num_samples,
+    num_movies,
+    movie_example,
+    title_example,
+    genres_example,
+    year_example,
+):
     """Test MovieLens dataset load into pySpark.DataFrame
     """
     spark = start_or_get_spark("MovieLensLoaderTesting")
@@ -130,17 +224,28 @@ def test_load_spark_df(size, num_samples, num_movies, movie_example, title_examp
         schema = StructType([StructField("u", IntegerType())])
         with pytest.warns(Warning):
             # Test if schema is used when both schema and header are provided
-            df = load_spark_df(spark, size=size, local_cache_path=tmp_dir, header=header, schema=schema)
+            df = load_spark_df(
+                spark, size=size, local_cache_path=tmp_dir, header=header, schema=schema
+            )
             assert df.count() == num_samples
             assert len(df.columns) == len(schema)
 
         # Test title, genres, and released year load
         header = ["a", "b", "c", "d", "e"]
         with pytest.warns(Warning):
-            df = load_spark_df(spark, size=size, local_cache_path=tmp_dir,
-                               header=header, title_col="Title", genres_col="Genres", year_col="Year")
+            df = load_spark_df(
+                spark,
+                size=size,
+                local_cache_path=tmp_dir,
+                header=header,
+                title_col="Title",
+                genres_col="Genres",
+                year_col="Year",
+            )
             assert df.count() == num_samples
-            assert len(df.columns) == 7  # 4 header columns (user, item, rating, timestamp) and 3 feature columns
+            assert (
+                len(df.columns) == 7
+            )  # 4 header columns (user, item, rating, timestamp) and 3 feature columns
             assert "e" not in df.columns  # only the first 4 header columns are used
             # Get two records of the same items and check if the item-features are the same.
             head = df.filter(col("b") == movie_example).limit(2)
@@ -176,7 +281,9 @@ def test_download_and_extract_movielens(size):
 
         rating_path = os.path.join(tmp_dir, "rating.dat")
         item_path = os.path.join(tmp_dir, "item.dat")
-        extract_movielens(size, rating_path=rating_path, item_path=item_path, zip_path=zip_path)
+        extract_movielens(
+            size, rating_path=rating_path, item_path=item_path, zip_path=zip_path
+        )
         assert len(os.listdir(tmp_dir)) == 3
         assert os.path.exists(rating_path)
         assert os.path.exists(item_path)
