@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import os
+import sys
 
 
 try:
@@ -10,7 +11,7 @@ except ImportError:
     SparkSession = None  # skip this import if we are in pure python environment
 
 
-def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G", packages=None):
+def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G", packages=None, jars=None):
     """Start Spark if not started
 
     Args:
@@ -22,8 +23,14 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G", packages
         obj: Spark context.
     """
 
+    submit_args = ''
     if packages is not None:
-        os.environ['PYSPARK_SUBMIT_ARGS'] = '--packages {} pyspark-shell'.format(','.join(packages))
+        submit_args = '--packages {} '.format(','.join(packages))
+    if jars is not None:
+        submit_args += '--jars {} '.format(','.join(jars))
+
+    if submit_args:
+        os.environ['PYSPARK_SUBMIT_ARGS'] = '{}pyspark-shell'.format(submit_args)
 
     spark = (
         SparkSession.builder.appName(app_name)
