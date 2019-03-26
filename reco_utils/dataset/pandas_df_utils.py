@@ -73,7 +73,7 @@ def filter_by(df, filter_by_df, filter_by_cols):
     ]
 
 
-class LibffmConverter():
+class LibffmConverter(object):
     """Converts an input Dataframe (df) to another Dataframe (df) in libffm format. A text file of the converted
     Dataframe is optionally generated.
 
@@ -142,7 +142,7 @@ class LibffmConverter():
             col_rating (str): rating of the data.
 
         Return:
-            The instance of the conveter
+            obj: the instance of the converter
         """
         # Check column types.
         types = df.dtypes
@@ -225,6 +225,9 @@ class LibffmConverter():
 
     def get_params(self):
         """Get parameters (attributes) of the libffm converter
+
+        Return:
+            dict: parameters field count, feature count, and file path.
         """
         return {
             'field count': self.field_count, 
