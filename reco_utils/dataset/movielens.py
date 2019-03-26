@@ -155,6 +155,21 @@ def load_pandas_df(
     """Loads the MovieLens dataset as pd.DataFrame.
 
     Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
+    
+    E.g., to load just user-id, item-id, and ratings from MovieLens-1M dataset,
+    >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating'))
+    
+    To load rating's timestamp together,
+    >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+
+    To load movie's title, genres, and released year info along with the ratings data,
+    >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
+    ...     title_col='Title',
+    ...     genres_col='Genres',
+    ...     year_col='Year'
+    ... )
+
+    To load movie information only, you can use load_item_df function. 
 
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
@@ -333,6 +348,24 @@ def load_spark_df(
     """Loads the MovieLens dataset as pySpark.DataFrame.
 
     Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
+
+    E.g., to load just user-id, item-id, and ratings from MovieLens-1M dataset,
+    >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'))
+    
+    To load rating's timestamp together,
+    >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+
+    To load movie's title, genres, and released year info along with the ratings data,
+    >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
+    ...     title_col='Title',
+    ...     genres_col='Genres',
+    ...     year_col='Year'
+    ... )
+
+    To load movie information only, you can use load_item_df function. 
+
+    On DataBricks, pass the dbutils argument as follows:
+    >>> spark_df = load_spark_df(spark, ..., dbutils=dbutils)
 
     Args:
         spark (pySpark.SparkSession)
