@@ -7,9 +7,11 @@ sys.path.append("../../")
 import argparse
 import json
 import logging
-import nni
+import numpy as np
 import os
 import pandas as pd
+
+import nni
 import surprise
 
 import reco_utils.evaluation.python_evaluation as evaluation
@@ -140,7 +142,7 @@ if __name__ == "__main__":
         # in the case of Hyperband, use STEPS to allocate the number of epochs SVD will run for 
         if 'STEPS' in tuner_params:
             steps_param = tuner_params['STEPS']
-            params['epochs'] = steps_param    
+            params['epochs'] = int(np.rint(steps_param))    
         params.update(tuner_params)
         main(params)
     except Exception as exception:
