@@ -35,7 +35,7 @@ def test_als_pyspark_smoke(notebooks):
     assert results["rsquared"] == pytest.approx(0.2611, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.notebooks
+@pytest.mark.smoke
 @pytest.mark.spark
 def test_mmlspark_lightgbm_criteo_smoke(notebooks):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
@@ -52,4 +52,3 @@ def test_mmlspark_lightgbm_criteo_smoke(notebooks):
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
     results = nb.dataframe.set_index("name")["value"]
     assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)
-    
