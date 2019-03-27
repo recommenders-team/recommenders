@@ -173,14 +173,12 @@ class LibffmConverter(object):
         if not all([x in df.columns for x in self.field_names]):
             raise ValueError("Not all columns in the input dataset appear in the fitting dataset")
 
-        df_new = df.copy()
-
         # Encode field-feature.
         idx = 1
         field_feature_dict = {}
         for field in self.field_names:
-            if df_new[field].dtype == object:
-                for feature in df_new[field].values:
+            if df[field].dtype == object:
+                for feature in df[field].values:
                     # Check whether (field, feature) tuple exists in the dict or not.
                     # If not, put them into the key-values of the dict and count the index.
                     if (field, feature) not in field_feature_dict:
@@ -199,17 +197,17 @@ class LibffmConverter(object):
             return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
         for col_index, col in enumerate(self.field_names):
-            df_new[col] = df_new[col].apply(lambda x: _convert(col, x, col_index+1, field_feature_dict))
+            df[col] = df[col].apply(lambda x: _convert(col, x, col_index+1, field_feature_dict))
 
         # Move rating column to the first.
         column_names = self.field_names[:]
         column_names.insert(0, self.col_rating)
-        df_new = df_new[column_names]
+        df = df[column_names]
 
         if self.filepath is not None:
-            np.savetxt(self.filepath, df_new.values, delimiter=' ', fmt='%s')
+            np.savetxt(self.filepath, df.values, delimiter=' ', fmt='%s')
 
-        return df_new
+        return df
 
     def fit_transform(self, df, col_rating=DEFAULT_RATING_COL):
         """Do fit and transform in a row
