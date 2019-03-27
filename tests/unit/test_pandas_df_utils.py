@@ -148,10 +148,6 @@ def test_csv_to_libffm():
         'file path': '/tmp/test'
     }
 
-    # Fit and transform can be done at the same time
-    df_feature_libffm_fittransform = LibffmConverter().fit_transform(df_feature)
-    assert df_feature_libffm_fittransform.equals(df_feature_libffm)
-
     # Dataset with the same columns should be transformable with a fitted converter.
     df_feature_new = pd.DataFrame({
         'rating': [1, 0, 0, 1, 1, 1],
