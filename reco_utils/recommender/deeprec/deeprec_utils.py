@@ -15,7 +15,7 @@ from sklearn.metrics import (
 import numpy as np
 import yaml
 import zipfile
-from reco_utils.dataset.url_utils import maybe_download
+from reco_utils.dataset.download_utils import maybe_download
 
 
 def flat_config(config):
