@@ -8,7 +8,7 @@ import sys
 try:
     from pyspark.sql import SparkSession
 except ImportError:
-    SparkSession = None  # skip this import if we are in pure python environment
+    pass  # skip this import if we are in pure python environment
 
 
 def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G", packages=None, jars=None):
@@ -19,6 +19,8 @@ def start_or_get_spark(app_name="Sample", url="local[*]", memory="10G", packages
         url (str): URL for spark master
         memory (str): Size of memory for spark driver
         packages (list): list of packages to install
+        jars (list): list of jar files to add
+
     Returns:
         obj: Spark context.
     """
