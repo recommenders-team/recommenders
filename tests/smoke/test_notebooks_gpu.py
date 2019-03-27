@@ -97,7 +97,7 @@ def test_notebook_xdeepfm(notebooks):
             EPOCHS_FOR_SYNTHETIC_RUN=20,
             EPOCHS_FOR_CRITEO_RUN=1,
             BATCH_SIZE_SYNTHETIC=128,
-            BATCH_SIZE_CRITEO=2048,
+            BATCH_SIZE_CRITEO=512,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
