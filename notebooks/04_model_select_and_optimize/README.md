@@ -35,3 +35,8 @@ To configure this notebook to communicate with your workspace, type in your Azur
     "workspace_name": "<workspace-name>"
 }
 ```
+
+### NNI Configuration
+The NNI command `nnictl` comes installed with the conda environment. 
+In order to use the SMAC tuner, it has to be installed first with the following command 
+`nnictl package install --name=SMAC`.
