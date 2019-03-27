@@ -33,11 +33,17 @@ OUTPUT_NOTEBOOK = "wide_deep.ipynb"
 
 
 def _log(metric, value):
+    """AzureML log wrapper.
+
+    Record list of int or float as a list metrics so that we can plot it from AzureML workspace portal.
+    Otherwise, record as a single value of the metric.
+    """
     if run is not None:
-        if isinstance(value, list) and len(value) > 0 and isinstance(value[0], (int, float))
+        if isinstance(value, list) and len(value) > 0 and isinstance(value[0], (int, float)):
             run.log_list(metric, value)
         else:
-            run.log(metric, value)
+            # Force cast to str since run.log will raise an error if the value is iterable.
+            run.log(metric, str(value))
     print(metric, "=", value)
 
 
