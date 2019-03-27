@@ -62,6 +62,6 @@ def test_mmlspark_lightgbm_criteo_runs(notebooks):
         parameters=dict(
             DATA_SIZE="sample",
             NUM_ITERATIONS=10,
-            EARLY_STOPPING_ROUND=2
+            EARLY_STOPPING_ROUND=2,
         )
     )
