@@ -27,6 +27,7 @@ def start_or_get_spark(
         memory (str): Size of memory for spark driver
         packages (list): list of packages to install
         jars (list): list of jar files to add
+        repositories (list): list of repositories
 
     Returns:
         obj: Spark context.
