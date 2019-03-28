@@ -405,7 +405,7 @@ def load_spark_df(
     with download_path(local_cache_path) as path:
         filepath = os.path.join(path, "ml-{}.zip".format(size)) 
         datapath, item_datapath = _maybe_download_and_extract(size, filepath)
-        spark_datapath = "file://" + datapath
+        spark_datapath = "file:///" + datapath  # shorten form of file://localhost/
 
         # Load movie features such as title, genres, and release year.
         # Since the file size is small, we directly load as pd.DataFrame from the driver node
