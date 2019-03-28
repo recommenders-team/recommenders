@@ -9,7 +9,7 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 * [Compute environments](#compute-environments)
 * [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
-  * [Setup Requirements](#setup-requirements)
+  * [Requirements](#requirements)
   * [Dependencies setup](#dependencies-setup)
   * [Register the conda environment as a kernel in Jupyter](#Register-the-conda-environment-as-a-kernel-in-Jupyter)
   * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
@@ -136,7 +136,7 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 
 ## Setup guide for Azure Databricks
 
-### Requirements
+### Requirements of Azure Databricks
 
 * Databricks Runtime version 4.3 (Apache Spark 2.3.1, Scala 2.11) or greater
 * Python 3
