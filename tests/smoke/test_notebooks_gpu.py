@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from tempfile import TemporaryDirectory
 import papermill as pm
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
@@ -128,30 +127,29 @@ def test_notebook_dkn(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_wide_deep(notebooks):
+def test_wide_deep(notebooks, tmpdir):
     notebook_path = notebooks["wide_deep"]
 
-    with TemporaryDirectory() as tmp_dir:
-        params = {
-            "MOVIELENS_DATA_SIZE": "100k",
-            "EPOCHS": 1,
-            "EVALUATE_WHILE_TRAINING": False,
-            "MODEL_DIR": tmp_dir,
-            "EXPORT_DIR_BASE": tmp_dir,
-            "RATING_METRICS": ["rmse", "mae"],
-            "RANKING_METRICS": ["ndcg_at_k", "precision_at_k"],
-        }
-        pm.execute_notebook(
-            notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
-        )
-        results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    tmp_dir = str(tmpdir.mkdir("wide_deep_0"))
+    params = {
+        "MOVIELENS_DATA_SIZE": "100k",
+        "EPOCHS": 1,
+        "EVALUATE_WHILE_TRAINING": False,
+        "MODEL_DIR": tmp_dir,
+        "EXPORT_DIR_BASE": tmp_dir,
+        "RATING_METRICS": ["rmse", "mae"],
+        "RANKING_METRICS": ["ndcg_at_k", "precision_at_k"],
+    }
+    pm.execute_notebook(
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-        # Model performance is highly dependant on the initial random weights
-        # when epochs is small with a small dataset.
-        # Therefore, in the smoke-test context, rather check if the model training is working
-        # with minimum performance metrics as follows:
-        assert results["rmse"] < 2.0
-        assert results["mae"] < 2.0
-        assert results["ndcg_at_k"] > 0.0
-        assert results["precision_at_k"] > 0.0
-
+    # Model performance is highly dependant on the initial random weights
+    # when epochs is small with a small dataset.
+    # Therefore, in the smoke-test context, rather check if the model training is working
+    # with minimum performance metrics as follows:
+    assert results["rmse"] < 2.0
+    assert results["mae"] < 2.0
+    assert results["ndcg_at_k"] > 0.0
+    assert results["precision_at_k"] > 0.0
