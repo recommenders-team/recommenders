@@ -94,6 +94,7 @@ To set these variables every time the environment is activated, we can follow th
 #!/bin/sh
 export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
 export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
+unset SPARK_HOME
 ```
 
 This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
@@ -169,18 +170,17 @@ This option utilizes an installation script to do the setup, and it requires add
 >        databricks clusters start --cluster-id <CLUSTER_ID>`
 >        ```
 
+The installation script has a number of options that can also deal with different databricks-cli profiles, install a version of the mmlspark library, overwrite the libraries, or prepare the cluster for operationalization. For all options, please see:
+
+```{shell}
+python scripts/databricks_install.py -h
+```
 
 Once you have confirmed the databricks cluster is *RUNNING*, install the modules within this repository with the following commands. 
 
 ```{shell}
 cd Recommenders
 python scripts/databricks_install.py <CLUSTER_ID>
-```
-
-The installation script has a number of options that can also deal with different databricks-cli profiles, install a version of the mmlspark library, or prepare the cluster for operationalization. For all options, please see:
-
-```{shell}
-python scripts/databricks_install.py -h
 ```
 
 **Note** If you are planning on running through the sample code for operationalization [here](notebooks/05_operationalize/als_movie_o16n.ipynb), you need to prepare the cluster for operationalization. You can do so by adding an additional option to the script run. <CLUSTER_ID> is the same as that mentioned above, and can be identified by running `databricks clusters list` and selecting the appropriate cluster.
