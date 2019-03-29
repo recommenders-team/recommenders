@@ -54,7 +54,7 @@ def test_load_pandas_df(
     """Test MovieLens dataset load into pd.DataFrame
     """
     # Test if correct data are loaded and local_cache_path works
-    tmp_dir = str(tmpdir.mkdir("load_pandas_df"))
+    tmp_dir = tmpdir.mkdir("load_pandas_df")
 
     # Test if can handle different size of header columns
     header = ["a"]
@@ -117,7 +117,7 @@ def test_load_item_df(
 ):
     """Test movielens item data load (not rating data)
     """
-    tmp_dir = str(tmpdir.mkdir("load_item_df"))
+    tmp_dir = tmpdir.mkdir("load_item_df")
 
     df = load_item_df(
         size, local_cache_path=tmp_dir, movie_col=None, title_col="title"
@@ -173,7 +173,7 @@ def test_load_spark_df(
     spark = start_or_get_spark("MovieLensLoaderTesting")
 
     # Test if correct data are loaded and local_cache_path works
-    tmp_dir = str(tmpdir.mkdir("load_spark_df"))
+    tmp_dir = tmpdir.mkdir("load_spark_df")
 
     # Test if can handle different size of header columns
     header = ["1", "2"]
@@ -229,7 +229,7 @@ def test_load_spark_df(
 def test_download_and_extract_movielens(size, tmpdir):
     """Test movielens data download and extract
     """
-    tmp_dir = str(tmpdir.mkdir("download_and_extract_movielens"))
+    tmp_dir = tmpdir.mkdir("download_and_extract_movielens")
 
     zip_path = os.path.join(tmp_dir, "ml.zip")
     download_movielens(size, dest_path=zip_path)
