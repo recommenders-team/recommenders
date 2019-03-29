@@ -17,7 +17,7 @@ def start_or_get_spark(
     memory="10G", 
     packages=None, 
     jars=None, 
-    repositories=None
+    repository=None
     ):
     """Start Spark if not started
 
@@ -27,7 +27,7 @@ def start_or_get_spark(
         memory (str): Size of memory for spark driver
         packages (list): list of packages to install
         jars (list): list of jar files to add
-        repositories (list): list of repositories
+        repository (str): The maven repository
 
     Returns:
         obj: Spark context.
@@ -38,8 +38,8 @@ def start_or_get_spark(
         submit_args = '--packages {} '.format(','.join(packages))
     if jars is not None:
         submit_args += '--jars {} '.format(','.join(jars))
-    if repositories is not None:
-        submit_args += "--repositories {}".format(",".join(repositories))
+    if repository is not None:
+        submit_args += "--repositories {}".format(repository)
     if submit_args:
         os.environ['PYSPARK_SUBMIT_ARGS'] = '{} pyspark-shell'.format(submit_args)
 
