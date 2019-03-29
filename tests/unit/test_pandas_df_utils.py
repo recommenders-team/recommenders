@@ -97,7 +97,7 @@ def test_filter_by():
     assert len(filtered_df.loc[(user_df['user_id'] == 1)]) == 0
 
 
-def test_csv_to_libffm():
+def test_csv_to_libffm(tmpdir):
     df_feature = pd.DataFrame({
         'rating': [1, 0, 0, 1, 1],
         'field1': ['xxx1', 'xxx2', 'xxx4', 'xxx4', 'xxx4'],
@@ -105,58 +105,61 @@ def test_csv_to_libffm():
         'field3': [1.0, 2.0, 3.0, 4.0, 5.0],
         'field4': ['1', '2', '3', '4', '5']
     })
-
-    import tempfile
     import os
+    import shutil
 
-    filedir = tempfile.gettempdir()
-    filename = 'test'
-    filepath = os.path.join(filedir, filename)
+    filedir = tmpdir.mkdir("test_csv_libffm") 
+    filepath = str(filedir.join("test")) 
 
-    converter = LibffmConverter(filepath=filepath).fit(df_feature)
-    df_feature_libffm = converter.transform(df_feature)
+    try:
+        converter = LibffmConverter(filepath=filepath).fit(df_feature)
+        df_feature_libffm = converter.transform(df_feature)
 
-    # Check the input column types. For example, a bool type is not allowed.
-    df_feature_wrong_type = df_feature.copy()
-    df_feature_wrong_type['field4'] = True
-    with pytest.raises(TypeError) as e:
-        LibffmConverter().fit(df_feature_wrong_type)
-        assert e.value == "Input columns should be only object and/or numeric types."
+        # Check the input column types. For example, a bool type is not allowed.
+        df_feature_wrong_type = df_feature.copy()
+        df_feature_wrong_type['field4'] = True
+        with pytest.raises(TypeError) as e:
+            LibffmConverter().fit(df_feature_wrong_type)
+            assert e.value == "Input columns should be only object and/or numeric types."
 
-    # Check if the dim is the same.
-    assert df_feature_libffm.shape == df_feature.shape
+        # Check if the dim is the same.
+        assert df_feature_libffm.shape == df_feature.shape
 
-    # Check if the columns are converted successfully.
-    assert df_feature_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:2:3', '3:3:1.0', '4:4:1']
+        # Check if the columns are converted successfully.
+        assert df_feature_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:2:3', '3:3:1.0', '4:4:1']
 
-    # Check if the duplicated column entries are indexed correctly.
-    # It should skip counting the duplicated features in a field column.
-    assert df_feature_libffm.iloc[-1, :].values.tolist() == [1, '1:3:1', '2:2:7', '3:3:5.0', '4:8:1']
+        # Check if the duplicated column entries are indexed correctly.
+        # It should skip counting the duplicated features in a field column.
+        assert df_feature_libffm.iloc[-1, :].values.tolist() == [1, '1:3:1', '2:2:7', '3:3:5.0', '4:8:1']
 
-    # Check if the file is written successfully.
-    assert os.path.isfile(filepath)
+        # Check if the file is written successfully.
+        assert os.path.isfile(filepath)
 
-    with open(filepath, 'r') as f:
-        line = f.readline()
-        assert line == '1 1:1:1 2:2:3 3:3:1.0 4:4:1\n'
+        with open(filepath, 'r') as f:
+            line = f.readline()
+            assert line == '1 1:1:1 2:2:3 3:3:1.0 4:4:1\n'
 
-    # Parameters in the transformation should be reported correctly.
-    params = converter.get_params()
-    assert params == {
-        'field count': 4,
-        'feature count': 8,
-        'file path': '/tmp/test'
-    }
+        # Parameters in the transformation should be reported correctly.
+        params = converter.get_params()
+        assert params == {
+            'field count': 4,
+            'feature count': 8,
+            'file path': filepath
+        }
 
-    # Dataset with the same columns should be transformable with a fitted converter.
-    df_feature_new = pd.DataFrame({
-        'rating': [1, 0, 0, 1, 1, 1],
-        'field1': ['xxx1', 'xxx2', 'xxx4', 'xxx4', 'xxx4', 'xxx3'],
-        'field2': [3, 4, 5, 6, 7, 8],
-        'field3': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-        'field4': ['1', '2', '3', '4', '5', '6']
-    })
-    df_feature_new_libffm = converter.transform(df_feature_new)
+        # Dataset with the same columns should be transformable with a fitted converter.
+        df_feature_new = pd.DataFrame({
+            'rating': [1, 0, 0, 1, 1, 1],
+            'field1': ['xxx1', 'xxx2', 'xxx4', 'xxx4', 'xxx4', 'xxx3'],
+            'field2': [3, 4, 5, 6, 7, 8],
+            'field3': [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
+            'field4': ['1', '2', '3', '4', '5', '6']
+        })
+        df_feature_new_libffm = converter.transform(df_feature_new)
 
-    assert df_feature_new_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:2:3', '3:3:1.0', '4:5:1']
-    assert df_feature_new_libffm.iloc[-1, :].values.tolist() == [1, '1:4:1', '2:2:8', '3:3:6.0', '4:10:1']
+        assert df_feature_new_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:2:3', '3:3:1.0', '4:5:1']
+        assert df_feature_new_libffm.iloc[-1, :].values.tolist() == [1, '1:4:1', '2:2:8', '3:3:6.0', '4:10:1']
+    finally:
+        shutil.rmtree(filedir)
+
+
