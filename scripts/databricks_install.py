@@ -26,7 +26,7 @@ from databricks_cli.dbfs.api import DbfsApi
 from databricks_cli.libraries.api import LibrariesApi
 from databricks_cli.dbfs.dbfs_path import DbfsPath
 
-from scripts.generate_conda_file import PIP_BASE
+from generate_conda_file import PIP_BASE
 
 CLUSTER_NOT_FOUND_MSG = """
     Cannot find the target cluster {}. Please check if you entered the valid id. 
