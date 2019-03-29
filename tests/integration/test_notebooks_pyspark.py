@@ -33,3 +33,23 @@ def test_als_pyspark_integration(notebooks):
     assert results["mae"] == pytest.approx(0.68023, rel=TOL, abs=ABS_TOL)
     assert results["exp_var"] == pytest.approx(0.4094, rel=TOL, abs=ABS_TOL)
     assert results["rsquared"] == pytest.approx(0.4038, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.spark
+@pytest.mark.integration
+@pytest.mark.skip(reason="It takes too long in the current test machine")
+def test_mmlspark_lightgbm_criteo_integration(notebooks):
+    notebook_path = notebooks["mmlspark_lightgbm_criteo"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            DATA_SIZE="full",
+            NUM_ITERATIONS=50,
+            EARLY_STOPPING_ROUND=10
+        )
+    )
+    nb = pm.read_notebook(OUTPUT_NOTEBOOK)
+    results = nb.dataframe.set_index("name")["value"]
+    # assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)

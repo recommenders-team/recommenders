@@ -68,7 +68,7 @@ PIP_BASE = {
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
-    "databricks-cli": "databricks-cli==0.8.4",
+    "databricks-cli": "databricks-cli==0.8.6",
     "dataclasses": "dataclasses>=0.6",
     "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
