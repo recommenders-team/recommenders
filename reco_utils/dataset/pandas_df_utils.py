@@ -125,12 +125,6 @@ class LibffmConverter(object):
         filepath (str or None): file path where the output is stored - it can be None or a string
     """
     def __init__(self, filepath=None):
-        if filepath is not None:
-            # Check the existence of path
-            import os
-            if not os.path.exists(filepath):
-                raise ValueError("The specified file path {} does not exist".format(self.filepath))
-        
         self.filepath = filepath
     
     def fit(self, df, col_rating=DEFAULT_RATING_COL):
