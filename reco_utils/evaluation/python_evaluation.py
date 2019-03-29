@@ -39,10 +39,9 @@ class Evaluation:
         self.col_prediction = col_prediction
 
         # check existence of input columns
-        columns = [col_user, col_item, col_rating]
-        if not has_columns(df_true, columns=columns):
+        if not has_columns(df_true, columns=[col_user, col_item, col_rating]):
             raise ValueError("Truth DataFrame is missing required columns")
-        if not has_columns(df_pred, columns=columns):
+        if not has_columns(df_pred, columns=[col_user, col_item, col_prediction]):
             raise ValueError("Prediction DataFrame is missing required columns")
 
         if not has_same_base_dtype(df_true, df_pred, columns=[col_user, col_item]):
@@ -110,49 +109,10 @@ class RatingEvaluation(Evaluation):
         return df_merged[col_true], df_merged[col_pred]
 
     @property
-    def rmse(self):
-        """Calculate Root Mean Squared Error between rating and prediction columns
-
-        Returns:
-            float: Root Mean Squared Error
-        """
-
-        return np.sqrt(mean_squared_error(self.y_true, self.y_pred))
-
-    @property
-    def mae(self):
-        """Calculate Mean Absolute Error
-
-        Returns:
-            float: Mean Absolute Error
-        """
-
-        return mean_absolute_error(self.y_true, self.y_pred)
-
-    @property
-    def rsquared(self):
-        """Calculate R squared
-
-        Returns:
-            float: R squared (min=0, max=1).
-        """
-
-        return r2_score(self.y_true, self.y_pred)
-
-    @property
-    def exp_var(self):
-        """Calculate explained variance
-
-        Returns:
-            float: Explained variance (min=0, max=1).
-        """
-        return explained_variance_score(self.y_true, self.y_pred)
-
     def auc(self):
         """
-        Calculate the Area-Under-Curve metric for implicit feedback typed
-        recommender, where rating is binary and prediction is float number ranging
-        from 0 to 1.
+        Calculate the Area-Under-Curve metric for implicit feedback typed recommendations,
+        where rating is binary and prediction is float number ranging from 0 to 1.
 
         https://en.wikipedia.org/wiki/Receiver_operating_characteristic#Area_under_the_curve
 
@@ -166,21 +126,79 @@ class RatingEvaluation(Evaluation):
             float: auc_score (min=0, max=1).
         """
 
+        if self.y_true.shape[0] == 0:
+            return 0.0
+
         return roc_auc_score(self.y_true, self.y_pred)
 
+    @property
+    def exp_var(self):
+        """Calculate explained variance
+
+        Returns:
+            float: Explained variance (min=0, max=1).
+        """
+
+        if self.y_true.shape[0] == 0:
+            return 0.0
+
+        return explained_variance_score(self.y_true, self.y_pred)
+
+    @property
     def logloss(self):
         """
-        Calculate the logloss metric for implicit feedback typed
-        recommender, where rating is binary and prediction is float number ranging
-        from 0 to 1.
+        Calculate the logloss metric for implicit feedback typed recommendations,
+        where rating is binary and prediction is float number ranging from 0 to 1.
 
         https://en.wikipedia.org/wiki/Loss_functions_for_classification#Cross_entropy_loss_(Log_Loss)
 
         Returns:
-            float: log_loss_score (min=-\inf, max=\inf).
+            float: log_loss_score (min=-inf, max=inf)
         """
 
+        if self.y_true.shape[0] == 0:
+            return np.inf
+
         return log_loss(self.y_true, self.y_pred)
+
+    @property
+    def mae(self):
+        """Calculate Mean Absolute Error
+
+        Returns:
+            float: Mean Absolute Error
+        """
+
+        if self.y_true.shape[0] == 0:
+            return np.inf
+
+        return mean_absolute_error(self.y_true, self.y_pred)
+
+    @property
+    def rmse(self):
+        """Calculate Root Mean Squared Error between rating and prediction columns
+
+        Returns:
+            float: Root Mean Squared Error
+        """
+
+        if self.y_true.shape[0] == 0:
+            return np.inf
+
+        return np.sqrt(mean_squared_error(self.y_true, self.y_pred))
+
+    @property
+    def rsquared(self):
+        """Calculate R squared
+
+        Returns:
+            float: R squared (min=0, max=1).
+        """
+
+        if self.y_true.shape[0] == 0:
+            return 0.0
+
+        return r2_score(self.y_true, self.y_pred)
 
 
 class RankingEvaluation(Evaluation):
@@ -256,6 +274,7 @@ class RankingEvaluation(Evaluation):
         df_merge = pd.merge(df_hit, df_true, on=[self.col_user, self.col_item])
         return df_merge[[self.col_user, self.col_item, self.col_rank]]
 
+    @property
     def precision_at_k(self):
         """Precision at K
 
@@ -275,6 +294,7 @@ class RankingEvaluation(Evaluation):
 
         return (self.df_hit_count['hit'] / self.k).mean()
 
+    @property
     def recall_at_k(self):
         """Recall at K
         Maximum value is 1 even when fewer than k items exist for a user in rating_true
@@ -288,6 +308,7 @@ class RankingEvaluation(Evaluation):
 
         return (self.df_hit_count['hit'] / self.df_hit_count['actual']).mean()
 
+    @property
     def ndcg_at_k(self):
         """Normalized Discounted Cumulative Gain (nDCG)
         Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain
@@ -313,6 +334,7 @@ class RankingEvaluation(Evaluation):
         # DCG over IDCG is the normalized DCG
         return (df_ndcg['dcg'] / df_ndcg['idcg']).mean()
 
+    @property
     def map_at_k(self):
         """
         The implementation of the MAP is referenced from Spark MLlib evaluation metrics.
