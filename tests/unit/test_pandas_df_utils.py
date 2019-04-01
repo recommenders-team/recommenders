@@ -97,7 +97,7 @@ def test_filter_by():
     assert len(filtered_df.loc[(user_df['user_id'] == 1)]) == 0
 
 
-def test_csv_to_libffm(tmpdir):
+def test_csv_to_libffm():
     df_feature = pd.DataFrame({
         'rating': [1, 0, 0, 1, 1],
         'field1': ['xxx1', 'xxx2', 'xxx4', 'xxx4', 'xxx4'],
@@ -105,13 +105,12 @@ def test_csv_to_libffm(tmpdir):
         'field3': [1.0, 2.0, 3.0, 4.0, 5.0],
         'field4': ['1', '2', '3', '4', '5']
     })
+    from tempfile import TemporaryDirectory
     import os
-    import shutil
 
-    filedir = tmpdir.mkdir("test_csv_libffm") 
-    filepath = str(filedir.join("test")) 
+    with TemporaryDirectory() as td:
+        filepath = os.path.join(td, "test")
 
-    try:
         converter = LibffmConverter(filepath=filepath).fit(df_feature)
         df_feature_libffm = converter.transform(df_feature)
 
@@ -159,7 +158,5 @@ def test_csv_to_libffm(tmpdir):
 
         assert df_feature_new_libffm.iloc[0, :].values.tolist() == [1, '1:1:1', '2:2:3', '3:3:1.0', '4:5:1']
         assert df_feature_new_libffm.iloc[-1, :].values.tolist() == [1, '1:4:1', '2:2:8', '3:3:6.0', '4:10:1']
-    finally:
-        shutil.rmtree(filedir)
 
 
