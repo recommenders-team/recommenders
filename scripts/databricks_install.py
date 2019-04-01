@@ -49,7 +49,7 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "5": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/1.3.5/azure-cosmosdb-spark_2.4.0_2.11-1.3.5-uber.jar",
 }
 
-PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"]]
+PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], PIP_BASE["papermill"]]
 
 PYPI_O16N_LIBS = [
     "azure-cli==2.0.56",
