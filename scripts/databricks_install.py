@@ -231,7 +231,8 @@ if __name__ == "__main__":
     from scripts.generate_conda_file import PIP_BASE
 
     ## depend on PIP_BASE:
-    PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"]]
+    PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], PIP_BASE["papermill"]]
+
     PYPI_O16N_LIBS = [
         "azure-cli==2.0.56",
         "azureml-sdk[databricks]==1.0.8",
