@@ -33,3 +33,22 @@ def test_als_pyspark_smoke(notebooks):
     assert results["mae"] == pytest.approx(0.7508, rel=TOL, abs=ABS_TOL)
     assert results["exp_var"] == pytest.approx(0.2672, rel=TOL, abs=ABS_TOL)
     assert results["rsquared"] == pytest.approx(0.2611, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.smoke
+@pytest.mark.spark
+def test_mmlspark_lightgbm_criteo_smoke(notebooks):
+    notebook_path = notebooks["mmlspark_lightgbm_criteo"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            DATA_SIZE="sample",
+            NUM_ITERATIONS=50,
+            EARLY_STOPPING_ROUND=10
+        )
+    )
+    nb = pm.read_notebook(OUTPUT_NOTEBOOK)
+    results = nb.dataframe.set_index("name")["value"]
+    assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)

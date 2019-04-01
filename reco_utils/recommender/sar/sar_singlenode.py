@@ -332,6 +332,7 @@ class SARSingleNode:
         """
 
         test_scores = self.score(test)
+        user_ids = test[self.col_user].map(self.user2index).values
 
         # create mapping of new items to zeros
         item_ids = test[self.col_item].map(self.item2index).values
@@ -348,9 +349,7 @@ class SARSingleNode:
             {
                 self.col_user: test[self.col_user].values,
                 self.col_item: test[self.col_item].values,
-                self.col_prediction: test_scores[
-                    np.arange(test_scores.shape[0]), item_ids
-                ],
+                self.col_prediction: test_scores[user_ids, item_ids]
             }
         )
 

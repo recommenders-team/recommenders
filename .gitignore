@@ -112,6 +112,9 @@ aml_config
 aml_scripts
 aml_data
 
+# Spark
+spark-warehouse/
+
 ##########################
 .DS_Store
 .~*
