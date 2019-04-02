@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 # this script is called by AzureML notebooks to create workspace config file for the first run 
 subscription_id = os.getenv("SUBSCRIPTION_ID", default="<my-subscription-id>")
 resource_group = os.getenv("RESOURCE_GROUP", default="<my-resource-group>")
