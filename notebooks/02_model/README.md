@@ -7,6 +7,7 @@ In this directory, notebooks are provided to give a deep dive into training mode
 | Notebook | Environment | Description |
 | --- | --- | --- |
 | [als_deep_dive](als_deep_dive.ipynb) | PySpark | Deep dive on the ALS algorithm and implementation.
+| [mmlspark_lightgbm_criteo](mmlspark_lightgbm_criteo.ipynb) | PySpark | LightGBM gradient boosting tree algorithm implementation in MML Spark with Criteo dataset.
 | [baseline_deep_dive](baseline_deep_dive.ipynb) | --- | Deep dive on baseline performance estimation.
 | [ncf_deep_dive](ncf_deep_dive.ipynb) | Python CPU, GPU | Deep dive on a NCF algorithm and implementation.
 | [rbm_deep_dive](rbm_deep_dive.ipynb)| Python CPU, GPU | Deep dive on the rbm algorithm and its implementation.

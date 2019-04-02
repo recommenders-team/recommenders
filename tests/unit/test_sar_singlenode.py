@@ -1,9 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import itertools
+
 import pytest
 import numpy as np
 import pandas as pd
+
 from reco_utils.common.constants import PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 from reco_utils.recommender.sar import TIME_NOW
@@ -55,6 +58,22 @@ def test_predict(
     preds = model.predict(testset)
 
     assert len(preds) == 2
+    assert isinstance(preds, pd.DataFrame)
+    assert preds[header["col_user"]].dtype == trainset[header["col_user"]].dtype
+    assert preds[header["col_item"]].dtype == trainset[header["col_item"]].dtype
+    assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
+
+
+def test_predict_all_items(train_test_dummy_timestamp, header):
+    model = SARSingleNode(**header)
+    trainset, _ = train_test_dummy_timestamp
+    model.fit(trainset)
+
+    user_items = itertools.product(trainset[header["col_user"]].unique(), trainset[header["col_item"]].unique())
+    testset = pd.DataFrame(user_items, columns=[header["col_user"], header["col_item"]])
+    preds = model.predict(testset)
+
+    assert len(preds) == len(testset)
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == trainset[header["col_user"]].dtype
     assert preds[header["col_item"]].dtype == trainset[header["col_item"]].dtype
