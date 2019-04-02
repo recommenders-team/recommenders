@@ -1,4 +1,6 @@
+import json
 import numpy as np
+import os
 import requests
 import time
 
@@ -26,9 +28,14 @@ def get_trials(optimize_mode):
     if optimize_mode not in ['minimize', 'maximize']:
         raise ValueError("optimize_mode should equal either 'minimize' or 'maximize'")
     all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
-    trials = [(eval(trial['finalMetricData'][0]['data']), trial['logPath']) for trial in all_trials]
+    trials = [(eval(trial['finalMetricData'][0]['data']), trial['logPath'].split(':')[-1]) for trial in all_trials]
     optimize_fn = np.argmax if optimize_mode == 'maximize' else np.argmin
     ind_best = optimize_fn([trial[0]['default'] for trial in trials])
     best_trial = trials[ind_best]
-    trial_log_path = trials[-1][1].split(':')[-1]
-    return trials, best_trial, trial_log_path
+    # Read the metrics from the trial directory in order to get the name of the default metric
+    with open(os.path.join(best_trial[1], "metrics.json"), "r") as fp:
+            best_metrics = json.load(fp)
+    with open(os.path.join(best_trial[1], "parameter.cfg"), "r") as fp:
+            best_params = json.load(fp)
+    best_trial_path = best_trial[1]
+    return trials, best_metrics, best_params, best_trial_path
