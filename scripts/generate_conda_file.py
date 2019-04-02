@@ -69,7 +69,7 @@ PIP_BASE = {
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
-    "databricks-cli": "databricks-cli==0.8.4",
+    "databricks-cli": "databricks-cli==0.8.6",
     "dataclasses": "dataclasses>=0.6",
     "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
@@ -77,7 +77,7 @@ PIP_BASE = {
     "memory-profiler": "memory-profiler>=0.54.0",
     "nni": "nni==0.5.2.1"
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
-    "papermill": "papermill>=0.15.0",
+    "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "tqdm": "tqdm==4.31.1",
 }
