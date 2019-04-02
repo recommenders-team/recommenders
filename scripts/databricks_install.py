@@ -26,7 +26,6 @@ from databricks_cli.dbfs.api import DbfsApi
 from databricks_cli.libraries.api import LibrariesApi
 from databricks_cli.dbfs.dbfs_path import DbfsPath
 
-from scripts.generate_conda_file import PIP_BASE
 
 CLUSTER_NOT_FOUND_MSG = """
     Cannot find the target cluster {}. Please check if you entered the valid id. 
@@ -49,13 +48,6 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "5": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/1.3.5/azure-cosmosdb-spark_2.4.0_2.11-1.3.5-uber.jar",
 }
 
-PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], PIP_BASE["papermill"]]
-
-PYPI_O16N_LIBS = [
-    "azure-cli==2.0.56",
-    "azureml-sdk[databricks]==1.0.8",
-    PIP_BASE["pydocumentdb"],
-]
 
 MMLSPARK_INFO = {"maven": {"coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.16.dev8+2.g6a5318b",
                           "repo": "https://mmlspark.azureedge.net/maven"}
@@ -74,6 +66,7 @@ PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
 
+## Additional dependencies met below.
 
 def create_egg(
     path_to_recommenders_repo_root=os.getcwd(),
@@ -232,6 +225,19 @@ if __name__ == "__main__":
     # Check for extension of eggname
     if not args.eggname.endswith(".egg"):
         args.eggname += ".egg"
+
+    # make sure path_to_recommenders is on sys.path to allow for import
+    sys.path.append(args.path_to_recommenders)
+    from scripts.generate_conda_file import PIP_BASE
+
+    ## depend on PIP_BASE:
+    PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], PIP_BASE["papermill"]]
+
+    PYPI_O16N_LIBS = [
+        "azure-cli==2.0.56",
+        "azureml-sdk[databricks]==1.0.8",
+        PIP_BASE["pydocumentdb"],
+    ]
 
     #################
     # Create the egg:
