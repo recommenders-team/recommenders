@@ -49,9 +49,12 @@ COSMOSDB_JAR_FILE_OPTIONS = {
 }
 
 
-MMLSPARK_INFO = {"maven": {"coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.16.dev8+2.g6a5318b",
-                          "repo": "https://mmlspark.azureedge.net/maven"}
-                }
+MMLSPARK_INFO = {
+    "maven": {
+        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.16.dev8+2.g6a5318b",
+        "repo": "https://mmlspark.azureedge.net/maven",
+    }
+}
 
 DEFAULT_CLUSTER_CONFIG = {
     "cluster_name": "DB_CLUSTER",
@@ -197,9 +200,7 @@ if __name__ == "__main__":
         default="dbfs:/FileStore/jars",
     )
     parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Whether to overwrite existing files.",
+        "--overwrite", action="store_true", help="Whether to overwrite existing files."
     )
     parser.add_argument(
         "--prepare-o16n",
@@ -207,9 +208,7 @@ if __name__ == "__main__":
         help="Whether to install additional libraries for operationalization.",
     )
     parser.add_argument(
-        "--mmlspark",
-        action="store_true",
-        help="Whether to install mmlspark.",
+        "--mmlspark", action="store_true", help="Whether to install mmlspark."
     )
     parser.add_argument(
         "--create-cluster",
@@ -273,8 +272,20 @@ if __name__ == "__main__":
 
     # Check if file exists to alert user.
     print("Uploading {} to databricks at {}".format(args.eggname, upload_path))
-    if dbfs_file_exists(my_api_client, upload_path) and args.overwrite:
-        print("Overwriting file at {}".format(upload_path))
+    if dbfs_file_exists(my_api_client, upload_path):
+        if args.overwrite:
+            print("Overwriting file at {}".format(upload_path))
+        else:
+            raise IOError(
+                """
+            {} already exists on databricks cluster. 
+            This is likely an older version of the library.
+            Please use the '--overwrite' flag to proceed.
+            """.format(
+                    upload_path
+                )
+            )
+
     DbfsApi(my_api_client).cp(
         recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
     )
