@@ -24,8 +24,7 @@ from reco_utils.common.constants import (
 
 
 def check_column_dtypes(f):
-    """
-    Checks columns of dataframe inputs.
+    """Checks columns of dataframe inputs.
 
     This includes the checks on 
         1. whether the input columns exist in the input dataframes.
@@ -110,18 +109,15 @@ def merge_rating_true_pred(
     # Apart from merging both dataframes, pd.merge will rename the columns with the suffixes only if the rating
     # column name of rating_true is the same as the name rating column name in rating_pred
     rating_true_pred = pd.merge(
-            rating_true,
-            rating_pred,
-            on=[col_user, col_item],
-            suffixes=suffixes,
-        )
+        rating_true, rating_pred, on=[col_user, col_item], suffixes=suffixes
+    )
     if col_rating == col_prediction:
         column_select_true = col_rating + suffixes[0]
         column_select_pred = col_prediction + suffixes[1]
     else:
         column_select_true = col_rating
         column_select_pred = col_prediction
-    return rating_true_pred[column_select_true], column_select_true[column_select_pred]
+    return rating_true_pred[column_select_true], rating_true_pred[column_select_pred]
 
 
 @check_column_dtypes
@@ -246,8 +242,7 @@ def auc(
     col_rating=DEFAULT_RATING_COL,
     col_prediction=PREDICTION_COL,
 ):
-    """
-    Calculate the Area-Under-Curve metric for implicit feedback typed
+    """Calculate the Area-Under-Curve metric for implicit feedback typed
     recommender, where rating is binary and prediction is float number ranging
     from 0 to 1.
 
@@ -285,8 +280,7 @@ def logloss(
     col_rating=DEFAULT_RATING_COL,
     col_prediction=PREDICTION_COL,
 ):
-    """
-    Calculate the logloss metric for implicit feedback typed
+    """Calculate the logloss metric for implicit feedback typed
     recommender, where rating is binary and prediction is float number ranging
     from 0 to 1.
 
@@ -597,11 +591,11 @@ def map_at_k(
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
 ):
-    """
-    The implementation of the MAP is referenced from Spark MLlib evaluation metrics.
+    """Mean Average Precision at k
+    The implementation of MAP is referenced from Spark MLlib evaluation metrics.
     https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
 
-    Get mean average precision at k. A good reference can be found at
+    A good reference can be found at:
     http://web.stanford.edu/class/cs276/handouts/EvaluationNew-handout-6-per.pdf
 
     Note:
