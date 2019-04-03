@@ -90,7 +90,8 @@ def merge_rating_true_pred(
     col_rating=DEFAULT_RATING_COL,
     col_prediction=PREDICTION_COL,
 ):
-    """Join truth and prediction data frames on userID and itemID
+    """Join truth and prediction data frames on userID and itemID and return the true
+    and predicted rated with the correct index.
     
     Args:
         rating_true (pd.DataFrame): True data.
@@ -101,9 +102,9 @@ def merge_rating_true_pred(
         col_prediction (str): column name for prediction.
 
     Returns:
-        pd.DataFrame: Merged pd.DataFrame
-        str: Column with the true ratings
-        str: Column with the predicted ratings
+        np.array: Array with the true ratings
+        np.array: Array with the predicted ratings
+
     """
     suffixes = ["_true", "_pred"]
     # Apart from merging both dataframes, pd.merge will rename the columns with the suffixes only if the rating
@@ -120,7 +121,7 @@ def merge_rating_true_pred(
     else:
         column_select_true = col_rating
         column_select_pred = col_prediction
-    return rating_true_pred, column_select_true, column_select_pred
+    return rating_true_pred[column_select_true], column_select_true[column_select_pred]
 
 
 @check_column_dtypes
@@ -145,15 +146,11 @@ def rmse(
     Returns:
         float: Root mean squared error.
     """
-    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
 
-    return np.sqrt(
-        mean_squared_error(
-            rating_true_pred[column_select_true], rating_true_pred[column_select_pred]
-        )
-    )
+    return np.sqrt(mean_squared_error(y_true, y_pred))
 
 
 @check_column_dtypes
@@ -178,12 +175,10 @@ def mae(
     Returns:
         float: Mean Absolute Error.
     """
-    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
-    return mean_absolute_error(
-        rating_true_pred[column_select_true], rating_true_pred[column_select_pred]
-    )
+    return mean_absolute_error(y_true, y_pred)
 
 
 @check_column_dtypes
@@ -208,12 +203,10 @@ def rsquared(
     Returns:
         float: R squared (min=0, max=1).
     """
-    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
-    return r2_score(
-        rating_true_pred[column_select_true], rating_true_pred[column_select_pred]
-    )
+    return r2_score(y_true, y_pred)
 
 
 @check_column_dtypes
@@ -238,12 +231,10 @@ def exp_var(
     Returns:
         float: Explained variance (min=0, max=1).
     """
-    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
-    return explained_variance_score(
-        rating_true_pred[column_select_true], rating_true_pred[column_select_pred]
-    )
+    return explained_variance_score(y_true, y_pred)
 
 
 @check_column_dtypes
@@ -279,15 +270,10 @@ def auc(
     Return:
         float: auc_score (min=0, max=1).
     """
-    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
-    auc_score = roc_auc_score(
-        rating_true_pred[column_select_true].values,
-        rating_true_pred[column_select_pred].values,
-    )
-
-    return auc_score
+    return roc_auc_score(y_true, y_pred)
 
 
 @check_column_dtypes
@@ -317,16 +303,10 @@ def logloss(
     Return:
         float: log_loss_score (min=-\inf, max=\inf).
     """
-    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
-
-    log_loss_score = log_loss(
-        rating_true_pred[column_select_true].values,
-        rating_true_pred[column_select_pred].values,
-    )
-
-    return log_loss_score
+    return log_loss(y_true, y_pred)
 
 
 def merge_ranking_true_pred(

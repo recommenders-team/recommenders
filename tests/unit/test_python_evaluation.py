@@ -148,7 +148,7 @@ def test_column_dtypes_match(python_data):
 def test_merge_rating(python_data):
     rating_true, rating_pred, _ = python_data(binary_rating=False)
 
-    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true,
         rating_pred,
         col_user=DEFAULT_USER_COL,
@@ -156,12 +156,10 @@ def test_merge_rating(python_data):
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL
     )
-
-    assert isinstance(rating_true_pred, pd.DataFrame)
-
-    columns = rating_true_pred.columns
-    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, column_select_true, column_select_pred]
-    assert set(columns).intersection(set(columns_exp)) is not None
+    
+    assert isinstance(y_true, np.array)
+    assert isinstance(y_pred, np.array)
+    assert y_true.shape == y_pred.shape
 
 
 def test_merge_ranking(python_data):
