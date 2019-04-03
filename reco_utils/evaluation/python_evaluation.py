@@ -178,7 +178,7 @@ def mae(
     Returns:
         float: Mean Absolute Error.
     """
-        rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred((
+    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred((
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return mean_absolute_error(
@@ -208,7 +208,7 @@ def rsquared(
     Returns:
         float: R squared (min=0, max=1).
     """
-        rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred((
+    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred((
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return r2_score(
@@ -238,7 +238,7 @@ def exp_var(
     Returns:
         float: Explained variance (min=0, max=1).
     """
-        rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred((
+    rating_true_pred, column_select_true, column_select_pred = merge_rating_true_pred((
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
     return explained_variance_score(
