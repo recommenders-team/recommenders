@@ -11,6 +11,7 @@ try:
     ws = Workspace.from_config()
 except:
     try:
+        # access existing workspace 
         ws = Workspace(
             subscription_id=subscription_id,
             resource_group=resource_group,
@@ -18,11 +19,24 @@ except:
         )
         ws.write_config()
     except:
-        ws = None
+        try:
+            # create a new workspace
+            ws = Workspace.create(
+                name=workspace_name,
+                subscription_id=subscription_id,
+                resource_group=resource_group,
+                location = workspace_region,
+                create_resource_group = True,
+                exist_ok = True
+            )
+            ws.write_config()
+        except:
+            ws = None
+    
 
 if ws is None:
     raise ValueError(
-        """Cannot access the AzureML workspace w/ the config info provided.
+        """Failed to create AzureML workspace w/ the config info provided.
         Please check if you entered the correct id, group name and workspace name"""
     )
 else:
