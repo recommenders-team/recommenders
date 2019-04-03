@@ -158,8 +158,8 @@ def test_merge_rating(python_data):
         col_prediction=PREDICTION_COL
     )
     
-    assert isinstance(y_true, np.array)
-    assert isinstance(y_pred, np.array)
+    assert isinstance(y_true, np.ndarray)
+    assert isinstance(y_pred, np.ndarray)
     assert y_true.shape == y_pred.shape
 
 
