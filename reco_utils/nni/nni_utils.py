@@ -18,10 +18,19 @@ def check_experiment_status():
     while True:
         time.sleep(20)
         status = get_experiment_status(NNI_STATUS_URL)
-        if status == 'DONE':
+        if status == 'DONE' or status == 'NO_MORE_TRIAL':
             break
         elif status != 'RUNNING':
             raise RuntimeError("NNI experiment failed to complete with status {}".format(status))
+
+
+def check_stopped():
+    while True:
+        time.sleep(20)
+        try:
+            get_experiment_status(NNI_STATUS_URL)
+        except:
+            break
 
 
 def get_trials(optimize_mode):
