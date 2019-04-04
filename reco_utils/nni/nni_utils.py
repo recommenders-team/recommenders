@@ -33,6 +33,14 @@ def check_stopped():
             break
 
 
+def check_metrics_written():
+    while True:
+        time.sleep(20)
+        all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
+        if np.all(['finalMetricData' in trial for trial in all_trials]):
+            break
+
+
 def get_trials(optimize_mode):
     if optimize_mode not in ['minimize', 'maximize']:
         raise ValueError("optimize_mode should equal either 'minimize' or 'maximize'")
