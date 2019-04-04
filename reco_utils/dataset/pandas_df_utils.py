@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import logging
+
 import pandas as pd
 import numpy as np
 
@@ -10,6 +12,9 @@ from reco_utils.common.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_LABEL_COL
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def user_item_pairs(
@@ -315,3 +320,51 @@ def negative_feedback_sampler(
     )
 
     return df_sample
+
+
+def has_columns(df, columns):
+    """Check if DataFrame has necessary columns
+
+    Args:
+        df (pd.DataFrame): DataFrame
+        columns (list(str): columns to check for
+    Returns:
+        bool: True if DataFrame has specified columns
+    """
+
+    result = True
+    for column in columns:
+        if column not in df.columns:
+            logger.error('Missing column: {} in DataFrame'.format(column))
+            result = False
+
+    return result
+
+
+def has_same_base_dtype(df_1, df_2, columns=None):
+    """Check if specified columns have the same base dtypes across both DataFrames
+
+    Args:
+        df_1 (pd.DataFrame): first DataFrame
+        df_2 (pd.DataFrame): second DataFrame
+        columns (list(str)): columns to check, None checks all columns
+    Returns:
+        bool: True if DataFrames columns have the same base dtypes
+    """
+
+    if columns is None:
+        if any(set(df_1.columns).symmetric_difference(set(df_2.columns))):
+            logger.error('Cannot test all columns because they are not all shared across DataFrames')
+            return False
+        columns = df_1.columns
+
+    if not (has_columns(df=df_1, columns=columns) and has_columns(df=df_2, columns=columns)):
+        return False
+
+    result = True
+    for column in columns:
+        if df_1[column].dtype.type.__base__ != df_2[column].dtype.type.__base__:
+            logger.error('Columns {} do not have the same base datatype'.format(column))
+            result = False
+
+    return result
