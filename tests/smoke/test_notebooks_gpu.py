@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import shutil
 import papermill as pm
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
@@ -128,16 +127,16 @@ def test_notebook_dkn(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_wide_deep(notebooks):
+def test_wide_deep(notebooks, tmpdir):
     notebook_path = notebooks["wide_deep"]
 
-    MODEL_DIR = "model_checkpoints"
+    tmp_dir = str(tmpdir.mkdir("wide_deep_0"))
     params = {
         "MOVIELENS_DATA_SIZE": "100k",
         "EPOCHS": 1,
         "EVALUATE_WHILE_TRAINING": False,
-        "MODEL_DIR": MODEL_DIR,
-        "EXPORT_DIR_BASE": MODEL_DIR,
+        "MODEL_DIR": tmp_dir,
+        "EXPORT_DIR_BASE": tmp_dir,
         "RATING_METRICS": ["rmse", "mae"],
         "RANKING_METRICS": ["ndcg_at_k", "precision_at_k"],
     }
@@ -154,5 +153,3 @@ def test_wide_deep(notebooks):
     assert results["mae"] < 2.0
     assert results["ndcg_at_k"] > 0.0
     assert results["precision_at_k"] > 0.0
-
-    shutil.rmtree(MODEL_DIR, ignore_errors=True)
