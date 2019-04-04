@@ -148,16 +148,15 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
         )
     ],
 )
-def test_wide_deep(notebooks, size, epochs, expected_values, tmpdir):
+def test_wide_deep(notebooks, size, epochs, expected_values, tmp):
     notebook_path = notebooks["wide_deep"]
 
-    tmp_dir = str(tmpdir.mkdir("wide_deep"))
     params = {
         "MOVIELENS_DATA_SIZE": size,
         "EPOCHS": epochs,
         "EVALUATE_WHILE_TRAINING": False,
-        "MODEL_DIR": tmp_dir,
-        "EXPORT_DIR_BASE": tmp_dir,
+        "MODEL_DIR": tmp,
+        "EXPORT_DIR_BASE": tmp,
         "RATING_METRICS": ["rmse", "mae", "rsquared", "exp_var"],
         "RANKING_METRICS": ["ndcg_at_k", "map_at_k", "precision_at_k", "recall_at_k"],
     }
