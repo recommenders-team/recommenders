@@ -130,7 +130,7 @@ def test_column_dtypes_match(python_data):
     rating_true_copy[DEFAULT_USER_COL] = rating_true_copy[DEFAULT_USER_COL].astype(str)
     rating_true_copy[DEFAULT_RATING_COL] = rating_true_copy[DEFAULT_RATING_COL].astype(str)
 
-    with pytest.raises(TypeError) as e_info:
+    with pytest.raises(AssertionError) as e_info:
         f = Mock()
         f_d = check_column_dtypes(f)
         f_d(
@@ -336,26 +336,26 @@ def test_python_logloss(python_data, target_metrics):
 def test_python_errors(python_data):
     rating_true, rating_pred, _ = python_data(binary_rating=False)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         rmse(rating_true, rating_true, col_user="not_user")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         mae(rating_pred, rating_pred, col_rating=PREDICTION_COL, col_user="not_user")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         rsquared(rating_true, rating_pred, col_item="not_item")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         exp_var(rating_pred, rating_pred, col_rating=PREDICTION_COL, col_item="not_item")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         precision_at_k(rating_true, rating_pred, col_rating="not_rating")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         recall_at_k(rating_true, rating_pred, col_prediction="not_prediction")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         ndcg_at_k(rating_true, rating_true, col_user="not_user")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(AssertionError):
         map_at_k(rating_pred, rating_pred, col_rating=PREDICTION_COL, col_user="not_user")
