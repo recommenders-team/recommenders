@@ -157,10 +157,12 @@ def test_merge_rating(python_data):
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL
     )
+    target_y_true = np.array([3, 3, 5, 5, 3, 3, 2, 1])
+    target_y_pred = np.array([14, 12, 7, 8, 13, 6, 11, 5])
     
-    assert isinstance(y_true, np.ndarray)
-    assert isinstance(y_pred, np.ndarray)
     assert y_true.shape == y_pred.shape
+    assert np.all(y_true == target_y_true)
+    assert np.all(y_pred == target_y_pred)
 
 
 def test_merge_ranking(python_data):
