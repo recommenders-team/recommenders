@@ -24,12 +24,9 @@ except ImportError:
 
 
 @pytest.fixture
-def tmp_dir(tmp_path_factory):
-    td = TemporaryDirectory(dir=tmp_path_factory.getbasetemp())
-    try:
-        yield td.name
-    finally:
-        td.cleanup()
+def tmp(tmp_path_factory):
+    with TemporaryDirectory(dir=tmp_path_factory.getbasetemp()) as td:
+        yield td
 
 
 @pytest.fixture(scope="session")

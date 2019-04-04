@@ -56,10 +56,10 @@ def test_ncf_deep_dive(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
-def test_wide_deep(notebooks, tmp_dir):
+def test_wide_deep(notebooks, tmp):
     notebook_path = notebooks["wide_deep"]
 
-    model_dir = os.path.join(tmp_dir, "wide_deep_0")
+    model_dir = os.path.join(tmp, "wide_deep_0")
     os.mkdir(model_dir)
     params = {
         'MOVIELENS_DATA_SIZE': '100k',
@@ -78,7 +78,7 @@ def test_wide_deep(notebooks, tmp_dir):
     )
 
     # Test w/o item features
-    model_dir = os.path.join(tmp_dir, "wide_deep_1")
+    model_dir = os.path.join(tmp, "wide_deep_1")
     os.mkdir(model_dir)
     params = {
         'MOVIELENS_DATA_SIZE': '100k',

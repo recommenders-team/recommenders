@@ -67,17 +67,17 @@ def test_load_pandas_df(
     title_example,
     genres_example,
     year_example,
-    tmp_dir,
+    tmp,
 ):
     """Test MovieLens dataset load as pd.DataFrame
     """
     # Test if correct data are loaded
     header = ["a", "b", "c"]
-    df = load_pandas_df(size=size, local_cache_path=tmp_dir, header=header)
+    df = load_pandas_df(size=size, local_cache_path=tmp, header=header)
     assert len(df) == num_samples
     assert len(df.columns) == len(header)
     # Test if raw-zip file, rating file, and item file are cached
-    assert len(os.listdir(tmp_dir)) == 3
+    assert len(os.listdir(tmp)) == 3
 
     # Test title, genres, and released year load
     header = ["a", "b", "c", "d", "e"]
@@ -85,7 +85,7 @@ def test_load_pandas_df(
         df = load_pandas_df(
             size=size,
             header=header,
-            local_cache_path=tmp_dir,
+            local_cache_path=tmp,
             title_col="Title",
             genres_col="Genres",
             year_col="Year",
@@ -144,18 +144,18 @@ def test_load_item_df(
     title_example,
     genres_example,
     year_example,
-    tmp_dir,
+    tmp,
 ):
     """Test movielens item data load (not rating data)
     """
-    df = load_item_df(size, local_cache_path=tmp_dir, title_col="title")
+    df = load_item_df(size, local_cache_path=tmp, title_col="title")
     assert len(df) == num_movies
     # movie_col and title_col should be loaded
     assert len(df.columns) == 2
     assert df["title"][0] == title_example
 
     # Test title and genres
-    df = load_item_df(size, local_cache_path=tmp_dir, movie_col="item", genres_col="genres", year_col="year")
+    df = load_item_df(size, local_cache_path=tmp, movie_col="item", genres_col="genres", year_col="year")
     assert len(df) == num_movies
     # movile_col, genres_col and year_col
     assert len(df.columns) == 3
@@ -207,7 +207,7 @@ def test_load_spark_df(
     title_example,
     genres_example,
     year_example,
-    tmp_dir,
+    tmp,
 ):
     """Test MovieLens dataset load into pySpark.DataFrame
     """
@@ -223,13 +223,13 @@ def test_load_spark_df(
     )
     with pytest.warns(Warning):
         df = load_spark_df(
-            spark, size=size, local_cache_path=tmp_dir, header=header, schema=schema
+            spark, size=size, local_cache_path=tmp, header=header, schema=schema
         )
         assert df.count() == num_samples
         # Test if schema is used when both schema and header are provided
         assert len(df.columns) == len(schema)
         # Test if raw-zip file, rating file, and item file are cached
-        assert len(os.listdir(tmp_dir)) == 3
+        assert len(os.listdir(tmp)) == 3
 
     # Test title, genres, and released year load
     header = ["a", "b", "c", "d", "e"]
@@ -237,7 +237,7 @@ def test_load_spark_df(
         df = load_spark_df(
             spark,
             size=size,
-            local_cache_path=tmp_dir,
+            local_cache_path=tmp,
             header=header,
             title_col="Title",
             genres_col="Genres",
@@ -269,20 +269,20 @@ def test_load_spark_df(
 
 @pytest.mark.integration
 @pytest.mark.parametrize("size", ["1m", "10m", "20m"])
-def test_download_and_extract_movielens(size, tmp_dir):
+def test_download_and_extract_movielens(size, tmp):
     """Test movielens data download and extract
     """
-    zip_path = os.path.join(tmp_dir, "ml.zip")
+    zip_path = os.path.join(tmp, "ml.zip")
     download_movielens(size, dest_path=zip_path)
-    assert len(os.listdir(tmp_dir)) == 1
+    assert len(os.listdir(tmp)) == 1
     assert os.path.exists(zip_path)
 
-    rating_path = os.path.join(tmp_dir, "rating.dat")
-    item_path = os.path.join(tmp_dir, "item.dat")
+    rating_path = os.path.join(tmp, "rating.dat")
+    item_path = os.path.join(tmp, "item.dat")
     extract_movielens(
         size, rating_path=rating_path, item_path=item_path, zip_path=zip_path
     )
     # Test if raw-zip file, rating file, and item file are cached
-    assert len(os.listdir(tmp_dir)) == 3
+    assert len(os.listdir(tmp)) == 3
     assert os.path.exists(rating_path)
     assert os.path.exists(item_path)
