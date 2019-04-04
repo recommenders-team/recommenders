@@ -44,6 +44,7 @@ ITEM_COL = "MovieId"
 RATING_COL = "Rating"
 TIMESTAMP_COL = "Timestamp"
 PREDICTION_COL = "prediction"
+SEED = 77
 
 
 def prepare_training_als(train):
