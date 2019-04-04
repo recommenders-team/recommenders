@@ -29,6 +29,14 @@ def check_column_dtypes(f):
     This includes the checks on 
         1. whether the input columns exist in the input dataframes.
         2. whether the data types of col_user as well as col_item are matched in the two input dataframes.
+        
+    Args:
+        rating_true (pd.DataFrame): True data.
+        rating_pred (pd.DataFrame): Predicted data.
+        col_user (str): column name for user.
+        col_item (str): column name for item.
+        col_rating (str): column name for rating.
+        col_prediction (str): column name for prediction.
     """
 
     @wraps(f)
