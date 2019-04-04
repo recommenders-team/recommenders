@@ -4,16 +4,17 @@
 # NOTE: This file is used by pytest to inject fixtures automatically. As it is explained in the documentation
 # https://docs.pytest.org/en/latest/fixture.html:
 # "If during implementing your tests you realize that you want to use a fixture function from multiple test files
-# you can move it to a conftest.py file. You don’t need to import the fixture you want to use in a test, it
-# automatically gets discovered by pytest."
+# you can move it to a conftest.py file. You don't need to import the module you defined your fixtures to use in a test,
+# it automatically gets discovered by pytest and thus you can simply receive fixture objects by naming them as
+# an input argument in the test."
 
 import calendar
 import datetime
 import os
-import numpy as np
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
+from tempfile import TemporaryDirectory
 from tests.notebooks_common import path_notebooks
 from reco_utils.common.general_utils import get_number_processors, get_physical_memory
 
@@ -21,6 +22,12 @@ try:
     from pyspark.sql import SparkSession
 except ImportError:
     pass  # so the environment without spark doesn't break
+
+
+@pytest.fixture
+def tmp(tmp_path_factory):
+    with TemporaryDirectory(dir=tmp_path_factory.getbasetemp()) as td:
+        yield td
 
 
 @pytest.fixture(scope="session")
