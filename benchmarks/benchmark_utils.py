@@ -8,19 +8,12 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 import numpy as np
-import seaborn as sns
-import papermill as pm
-import pyspark
 from pyspark.ml.recommendation import ALS
 import pyspark.sql.functions as F
 from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField
 from pyspark.sql.types import StringType, FloatType, IntegerType, LongType
-import torch
-import fastai
 from fastai.collab import EmbeddingDotBias, collab_learner, CollabDataBunch, load_learner
-import tensorflow as tf
-import surprise
 
 from reco_utils.common.general_utils import get_number_processors
 from reco_utils.common.timer import Timer
@@ -59,25 +52,12 @@ def prepare_training_als(train):
     spark = start_or_get_spark()
     return spark.createDataFrame(train, schema)
 
-def prepare_training_svd(train):
-    reader = surprise.Reader('ml-100k', rating_scale=(1, 5))
-    return surprise.Dataset.load_from_df(train.drop(TIMESTAMP_COL, axis=1), reader=reader).build_full_trainset()
 
-def prepare_training_fastai(train):
-    data = train.copy()
-    data[USER_COL] = data[USER_COL].astype('str')
-    data[ITEM_COL] = data[ITEM_COL].astype('str')
-    data = CollabDataBunch.from_df(data, user_name=USER_COL, item_name=ITEM_COL, rating_name=RATING_COL)
-    return data
-
-def prepare_training_ncf(train):
-    data = NCFDataset(train=train, 
-                      col_user=USER_COL,
-                      col_item=ITEM_COL,
-                      col_rating=RATING_COL,
-                      col_timestamp=TIMESTAMP_COL,
-                      seed=SEED)
-    return data
+def train_als(params, data):
+    symbol = ALS(**params)
+    with Timer() as t:
+        model = symbol.fit(data)
+    return model, t
 
 
 def prepare_metrics_als(train, test):
@@ -93,75 +73,11 @@ def prepare_metrics_als(train, test):
     return prepare_training_als(train), spark.createDataFrame(test, schema)
 
 
-def prepare_metrics_fastai(train, test):
-    data = test.copy()
-    data[USER_COL] = data[USER_COL].astype('str')
-    data[ITEM_COL] = data[ITEM_COL].astype('str')
-    return train, data
-
-def train_als(params, data):
-    symbol = ALS(**params)
-    with Timer() as t:
-        model = symbol.fit(data)
-    return model, t
-
-def train_svd(params, data):
-    model = surprise.SVD(**params)
-    with Timer() as t:
-        model.fit(data)
-    return model, t
-
-def train_fastai(params, data):
-    model = collab_learner(data, 
-                           n_factors=params["n_factors"],
-                           y_range=params["y_range"],
-                           wd=params["wd"]
-                          )
-    with Timer() as t:
-        model.fit_one_cycle(cyc_len=params["epochs"], max_lr=params["max_lr"])
-    return model, t
-
-def train_sar_single_node(params, data):
-    model = SARSingleNode(**params)
-    model.set_index(data)    
-    with Timer() as t:
-        model.fit(data)
-    return model, t
-    
-def train_ncf(params, data):
-    model = NCF(n_users=data.n_users, n_items=data.n_items, **params)
-    with Timer() as t:
-        model.fit(data)
-    return model, t
-
 def predict_als(model, test):
     with Timer() as t:
         preds = model.transform(test)
     return preds, t
 
-
-def predict_svd(model, test):
-    with Timer() as t:
-        preds = [model.predict(row[USER_COL], row[ITEM_COL], row[RATING_COL])
-                       for (_, row) in test.iterrows()]
-        preds = pd.DataFrame(preds)
-        preds = preds.rename(index=str, columns={"uid": USER_COL, 
-                                                 "iid": ITEM_COL,
-                                                 "est": PREDICTION_COL})
-        preds = preds.drop(["details", "r_ui"], axis="columns")
-        for col in [USER_COL, ITEM_COL]:
-            preds[col] = preds[col].astype(int)
-    return preds, t
-
-    
-def predict_fastai(model, test):
-    with Timer() as t:
-        preds = score(model, 
-                      test_df=test, 
-                      user_col=USER_COL, 
-                      item_col=ITEM_COL, 
-                      prediction_col=PREDICTION_COL)
-    return preds, t
 
 def recommend_k_als(model, test, train):
     with Timer() as t:
@@ -180,12 +96,32 @@ def recommend_k_als(model, test, train):
         top_k_scores = dfs_pred_exclude_train.filter(dfs_pred_exclude_train["train." + RATING_COL].isNull()) \
             .select('pred.' + USER_COL, 'pred.' + ITEM_COL, 'pred.' + PREDICTION_COL)
     return top_k_scores, t
-    
 
-def recommend_k_sar_single_node(model, test, train):
+
+def prepare_training_svd(train):
+    reader = surprise.Reader('ml-100k', rating_scale=(1, 5))
+    return surprise.Dataset.load_from_df(train.drop(TIMESTAMP_COL, axis=1), reader=reader).build_full_trainset()
+
+
+def train_svd(params, data):
+    model = surprise.SVD(**params)
     with Timer() as t:
-        top_k_scores = model.recommend_k_items(test)
-    return top_k_scores, t
+        model.fit(data)
+    return model, t
+
+
+def predict_svd(model, test):
+    with Timer() as t:
+        preds = [model.predict(row[USER_COL], row[ITEM_COL], row[RATING_COL])
+                       for (_, row) in test.iterrows()]
+        preds = pd.DataFrame(preds)
+        preds = preds.rename(index=str, columns={"uid": USER_COL, 
+                                                 "iid": ITEM_COL,
+                                                 "est": PREDICTION_COL})
+        preds = preds.drop(["details", "r_ui"], axis="columns")
+        for col in [USER_COL, ITEM_COL]:
+            preds[col] = preds[col].astype(int)
+    return preds, t
 
 
 def recommend_k_svd(model, test, train):
@@ -200,16 +136,53 @@ def recommend_k_svd(model, test, train):
     return top_k_scores, t
 
 
+def prepare_training_fastai(train):
+    data = train.copy()
+    data[USER_COL] = data[USER_COL].astype('str')
+    data[ITEM_COL] = data[ITEM_COL].astype('str')
+    data = CollabDataBunch.from_df(data, user_name=USER_COL, item_name=ITEM_COL, rating_name=RATING_COL)
+    return data
+
+
+def train_fastai(params, data):
+    model = collab_learner(data, 
+                           n_factors=params["n_factors"],
+                           y_range=params["y_range"],
+                           wd=params["wd"]
+                          )
+    with Timer() as t:
+        model.fit_one_cycle(cyc_len=params["epochs"], max_lr=params["max_lr"])
+    return model, t
+
+
+def prepare_metrics_fastai(train, test):
+    data = test.copy()
+    data[USER_COL] = data[USER_COL].astype('str')
+    data[ITEM_COL] = data[ITEM_COL].astype('str')
+    return train, data
+
+
+def predict_fastai(model, test):
+    with Timer() as t:
+        preds = score(model, 
+                      test_df=test, 
+                      user_col=USER_COL, 
+                      item_col=ITEM_COL, 
+                      prediction_col=PREDICTION_COL)
+    return preds, t
+
+
 def recommend_k_fastai(model, test, train):
     with Timer() as t: 
-        total_users, total_items = model.data.classes.values()
-        total_items = np.array(total_items[1:])
-        total_users = np.array(total_users[1:])
+        total_users, total_items = model.data.train_ds.x.classes.values()
+        total_items = total_items[1:]
+        total_users = total_users[1:]
         test_users = test[USER_COL].unique()
         test_users = np.intersect1d(test_users, total_users)
         users_items = cartesian_product(test_users, total_items)
         users_items = pd.DataFrame(users_items, columns=[USER_COL, ITEM_COL])
-        training_removed = pd.concat([users_items, train[[USER_COL, ITEM_COL]]]).drop_duplicates(keep=False)
+        training_removed = pd.merge(users_items, train.astype(str), on=[USER, ITEM], how='left')
+        training_removed = training_removed[training_removed[RATING].isna()][[USER, ITEM]]
         top_k_scores = score(model, 
                              test_df=training_removed,
                              user_col=USER_COL, 
@@ -217,6 +190,23 @@ def recommend_k_fastai(model, test, train):
                              prediction_col=PREDICTION_COL, 
                              top_k=TOP_K)
     return top_k_scores, t
+
+
+def prepare_training_ncf(train):
+    data = NCFDataset(train=train, 
+                      col_user=USER_COL,
+                      col_item=ITEM_COL,
+                      col_rating=RATING_COL,
+                      col_timestamp=TIMESTAMP_COL,
+                      seed=SEED)
+    return data
+
+
+def train_ncf(params, data):
+    model = NCF(n_users=data.n_users, n_items=data.n_items, **params)
+    with Timer() as t:
+        model.fit(data)
+    return model, t
 
 
 def recommend_k_ncf(model, test, train):
@@ -232,6 +222,21 @@ def recommend_k_ncf(model, test, train):
         merged = pd.merge(train, top_k_scores, on=[USER_COL, ITEM_COL], how="outer")
         top_k_scores = merged[merged[RATING_COL].isnull()].drop(RATING_COL, axis=1)
     return top_k_scores, t
+
+
+def train_sar(params, data):
+    model = SARSingleNode(**params)
+    model.set_index(data)    
+    with Timer() as t:
+        model.fit(data)
+    return model, t
+    
+
+def recommend_k_sar(model, test, train):
+    with Timer() as t:
+        top_k_scores = model.recommend_k_items(test)
+    return top_k_scores, t
+
 
 def rating_metrics_pyspark(test, predictions):
     rating_eval = SparkRatingEvaluation(test, 
