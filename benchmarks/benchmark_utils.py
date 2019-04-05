@@ -1,12 +1,7 @@
 import sys
 sys.path.append("../")
 import os
-import json
-import shutil
-import tempfile
 import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
 import numpy as np
 from pyspark.ml.recommendation import ALS
 import pyspark.sql.functions as F
@@ -14,6 +9,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField
 from pyspark.sql.types import StringType, FloatType, IntegerType, LongType
 from fastai.collab import EmbeddingDotBias, collab_learner, CollabDataBunch, load_learner
+import surprise
 
 from reco_utils.common.general_utils import get_number_processors
 from reco_utils.common.timer import Timer
@@ -32,6 +28,7 @@ from reco_utils.evaluation.python_evaluation import map_at_k, ndcg_at_k, precisi
 from reco_utils.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
 
 
+TOP_K = 10
 USER_COL = "UserId"
 ITEM_COL = "MovieId"
 RATING_COL = "Rating"
@@ -140,7 +137,7 @@ def prepare_training_fastai(train):
     data = train.copy()
     data[USER_COL] = data[USER_COL].astype('str')
     data[ITEM_COL] = data[ITEM_COL].astype('str')
-    data = CollabDataBunch.from_df(data, user_name=USER_COL, item_name=ITEM_COL, rating_name=RATING_COL)
+    data = CollabDataBunch.from_df(data, user_name=USER_COL, item_name=ITEM_COL, rating_name=RATING_COL, valid_pct=0)
     return data
 
 
@@ -181,8 +178,8 @@ def recommend_k_fastai(model, test, train):
         test_users = np.intersect1d(test_users, total_users)
         users_items = cartesian_product(test_users, total_items)
         users_items = pd.DataFrame(users_items, columns=[USER_COL, ITEM_COL])
-        training_removed = pd.merge(users_items, train.astype(str), on=[USER, ITEM], how='left')
-        training_removed = training_removed[training_removed[RATING].isna()][[USER, ITEM]]
+        training_removed = pd.merge(users_items, train.astype(str), on=[USER_COL, ITEM_COL], how='left')
+        training_removed = training_removed[training_removed[RATING_COL].isna()][[USER_COL, ITEM_COL]]
         top_k_scores = score(model, 
                              test_df=training_removed,
                              user_col=USER_COL, 
