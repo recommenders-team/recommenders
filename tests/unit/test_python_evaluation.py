@@ -168,7 +168,7 @@ def test_merge_rating(python_data):
 def test_merge_ranking(python_data):
     ranking_true, ranking_pred, _ = python_data(binary_rating=False)
 
-    ranking_true_pred, data_hit, n_users = merge_ranking_true_pred(
+    data_hit, data_hit_count = merge_ranking_true_pred(
         ranking_true,
         ranking_pred,
         col_user=DEFAULT_USER_COL,
@@ -178,15 +178,13 @@ def test_merge_ranking(python_data):
         relevancy_method="top_k"
     )
 
-    assert isinstance(ranking_true_pred, pd.DataFrame)
+    assert isinstance(data_hit_count, pd.DataFrame)
 
-    columns = ranking_true_pred.columns
+    columns = data_hit_count.columns
     columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, PREDICTION_COL]
     assert set(columns).intersection(set(columns_exp)) is not None
 
     assert isinstance(data_hit, pd.DataFrame)
-
-    assert isinstance(n_users, int)
 
 
 def test_python_rmse(python_data, target_metrics):
@@ -223,10 +221,10 @@ def test_python_ndcg_at_k(python_data, target_metrics):
     rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
 
     assert ndcg_at_k(
-        k=10,
         rating_true=rating_true,
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL,
+        k=10,
     ) == 1
     assert ndcg_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert ndcg_at_k(rating_true, rating_pred, k=10) == target_metrics["ndcg"]
@@ -236,10 +234,10 @@ def test_python_map_at_k(python_data, target_metrics):
     rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
 
     assert map_at_k(
-        k=10,
         rating_true=rating_true,
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL,
+        k=10,
     ) == 1
     assert map_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert map_at_k(rating_true, rating_pred, k=10) == target_metrics["map"]
@@ -248,10 +246,10 @@ def test_python_map_at_k(python_data, target_metrics):
 def test_python_precision(python_data, target_metrics):
     rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
     assert precision_at_k(
-        k=10,
         rating_true=rating_true,
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL,
+        k=10,
     ) == 0.6
     assert precision_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert precision_at_k(rating_true, rating_pred, k=10) == target_metrics["precision"]
@@ -261,11 +259,11 @@ def test_python_precision(python_data, target_metrics):
         {DEFAULT_USER_COL: [1, 1, 1], DEFAULT_ITEM_COL: [1, 2, 3], DEFAULT_RATING_COL: [5, 4, 3]}
     )
     assert precision_at_k(
-        k=3,
         rating_true=single_user,
         rating_pred=single_user,
         col_rating=DEFAULT_RATING_COL,
         col_prediction=DEFAULT_RATING_COL,
+        k=3,
     ) == 1
 
     same_items = pd.DataFrame(
@@ -276,16 +274,19 @@ def test_python_precision(python_data, target_metrics):
         }
     )
     assert precision_at_k(
-        k=3,
         rating_true=same_items,
         rating_pred=same_items,
-        col_prediction=DEFAULT_RATING_COL
+        col_prediction=DEFAULT_RATING_COL,
+        k=3,
     ) == 1
 
     # Check that if the sample size is smaller than k, the maximum precision can not be 1
     # if we do precision@5 when there is only 3 items, we can get a maximum of 3/5.
     assert precision_at_k(
-        k=5, rating_true=same_items, rating_pred=same_items, col_prediction=DEFAULT_RATING_COL
+        rating_true=same_items,
+        rating_pred=same_items,
+        col_prediction=DEFAULT_RATING_COL,
+        k=5,
     ) == 0.6
 
 
@@ -293,7 +294,10 @@ def test_python_recall(python_data, target_metrics):
     rating_true, rating_pred, rating_nohit = python_data(binary_rating=False)
 
     assert recall_at_k(
-        k=10, rating_true=rating_true, rating_pred=rating_true, col_prediction=DEFAULT_RATING_COL
+        rating_true=rating_true,
+        rating_pred=rating_true,
+        col_prediction=DEFAULT_RATING_COL,
+        k=10,
     ) == pytest.approx(1, TOL)
     assert recall_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert recall_at_k(rating_true, rating_pred, k=10) == target_metrics["recall"]
