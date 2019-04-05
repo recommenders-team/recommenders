@@ -57,10 +57,14 @@ def check_column_dtypes(func):
             col_prediction (str): column name for prediction
         """
 
-        assert has_columns(rating_true, [col_user, col_item, col_rating])
-        assert has_columns(rating_pred, [col_user, col_item, col_prediction])
-
-        assert has_same_base_dtype(rating_true, rating_pred, columns=[col_user, col_item])
+        if not has_columns(rating_true, [col_user, col_item, col_rating]):
+            raise ValueError("Missing columns in true rating DataFrame")
+        if not has_columns(rating_pred, [col_user, col_item, col_prediction]):
+            raise ValueError("Missing columns in predicted rating DataFrame")
+        if not has_same_base_dtype(
+            rating_true, rating_pred, columns=[col_user, col_item]
+        ):
+            raise ValueError("Columns in provided DataFrames are not the same datatype")
 
         return func(
             rating_true=rating_true,
@@ -100,9 +104,9 @@ def merge_rating_true_pred(
         np.array: Array with the predicted ratings
 
     """
+
+    # pd.merge will apply suffixes to columns which have the same name across both dataframes
     suffixes = ["_true", "_pred"]
-    # Apart from merging both dataframes, pd.merge will rename the columns with the suffixes only if the rating
-    # column name of rating_true is the same as the name prediction column name in rating_pred
     rating_true_pred = pd.merge(
         rating_true, rating_pred, on=[col_user, col_item], suffixes=suffixes
     )
@@ -677,4 +681,3 @@ def get_top_k_items(
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
-

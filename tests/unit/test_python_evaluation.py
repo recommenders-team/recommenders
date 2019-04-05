@@ -130,10 +130,9 @@ def test_column_dtypes_match(python_data):
     rating_true_copy[DEFAULT_USER_COL] = rating_true_copy[DEFAULT_USER_COL].astype(str)
     rating_true_copy[DEFAULT_RATING_COL] = rating_true_copy[DEFAULT_RATING_COL].astype(str)
 
-    with pytest.raises(AssertionError) as e_info:
-        f = Mock()
-        f_d = check_column_dtypes(f)
-        f_d(
+    expected_error = "Columns in provided DataFrames are not the same datatype"
+    with pytest.raises(ValueError, match=expected_error):
+        check_column_dtypes(Mock())(
             rating_true_copy,
             rating_pred,
             col_user=DEFAULT_USER_COL,
@@ -141,9 +140,6 @@ def test_column_dtypes_match(python_data):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=PREDICTION_COL
         )
-
-        # Error message is expected when there is mismatch.
-        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format(DEFAULT_USER_COL)
 
 
 def test_merge_rating(python_data):
@@ -336,26 +332,26 @@ def test_python_logloss(python_data, target_metrics):
 def test_python_errors(python_data):
     rating_true, rating_pred, _ = python_data(binary_rating=False)
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         rmse(rating_true, rating_true, col_user="not_user")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         mae(rating_pred, rating_pred, col_rating=PREDICTION_COL, col_user="not_user")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         rsquared(rating_true, rating_pred, col_item="not_item")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         exp_var(rating_pred, rating_pred, col_rating=PREDICTION_COL, col_item="not_item")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         precision_at_k(rating_true, rating_pred, col_rating="not_rating")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         recall_at_k(rating_true, rating_pred, col_prediction="not_prediction")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         ndcg_at_k(rating_true, rating_true, col_user="not_user")
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(ValueError):
         map_at_k(rating_pred, rating_pred, col_rating=PREDICTION_COL, col_user="not_user")
