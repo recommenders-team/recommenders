@@ -20,7 +20,7 @@ def check_experiment_status():
         status = get_experiment_status(NNI_STATUS_URL)
         if status in ['DONE', 'TUNER_NO_MORE_TRIAL']:
             break
-        elif status != 'RUNNING':
+        elif status not in ['RUNNING', 'NO_MORE_TRIAL']:
             raise RuntimeError("NNI experiment failed to complete with status {}".format(status))
 
 
