@@ -150,16 +150,18 @@ def evaluation_log_hook(
     )
 
 
-class Logger(abc.ABC):
-    @abc.abstractmethod
-    def log(self, tag, value):
-        """Custom logger class for evaluation_log_hook
+class MetricsLogger:
+    def __init__(self):
+        """Log metrics. Each metric's log will be stored in the corresponding list."""
+        self._log = {}
 
-        Args:
-            tag (str): tag for the log value. E.g. "rmse"
-            value (str): value to log. E.g. "0.03"
-        """
-        pass
+    def log(self, metric, value):
+        if metric not in self._log:
+            self._log[metric] = []
+        self._log[metric].append(value)
+
+    def get_log(self):
+        return self._log
 
 
 class _TrainLogHook(tf.train.SessionRunHook):
