@@ -43,6 +43,7 @@ CONDA_BASE = {
     "matplotlib": "matplotlib>=2.2.2",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4",
+    "pip": "pip>=19.0.3",
     "pymongo": "pymongo>=3.6.1",
     "python": "python==3.6.8",
     "pytest": "pytest>=3.6.4",

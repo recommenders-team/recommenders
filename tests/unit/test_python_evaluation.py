@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import numpy as np
 import pandas as pd
 import pytest
 from mock import Mock
@@ -148,7 +149,7 @@ def test_column_dtypes_match(python_data):
 def test_merge_rating(python_data):
     rating_true, rating_pred, _ = python_data(binary_rating=False)
 
-    rating_true_pred = merge_rating_true_pred(
+    y_true, y_pred = merge_rating_true_pred(
         rating_true,
         rating_pred,
         col_user=DEFAULT_USER_COL,
@@ -156,12 +157,12 @@ def test_merge_rating(python_data):
         col_rating=DEFAULT_RATING_COL,
         col_prediction=PREDICTION_COL
     )
-
-    assert isinstance(rating_true_pred, pd.DataFrame)
-
-    columns = rating_true_pred.columns
-    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, PREDICTION_COL]
-    assert set(columns).intersection(set(columns_exp)) is not None
+    target_y_true = np.array([3, 3, 5, 5, 3, 3, 2, 1])
+    target_y_pred = np.array([14, 12, 7, 8, 13, 6, 11, 5])
+    
+    assert y_true.shape == y_pred.shape
+    assert np.all(y_true == target_y_true)
+    assert np.all(y_pred == target_y_pred)
 
 
 def test_merge_ranking(python_data):

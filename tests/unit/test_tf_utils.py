@@ -11,7 +11,7 @@ from reco_utils.common.tf_utils import (
     pandas_input_fn,
     build_optimizer,
     evaluation_log_hook,
-    Logger,
+    MetricsLogger,
     MODEL_DIR
 )
 from reco_utils.recommender.wide_deep.wide_deep_utils import (
@@ -103,19 +103,7 @@ def test_evaluation_log_hook(pd_df):
         'deep_'+MODEL_DIR, deep_columns=deep_columns, save_checkpoints_steps=train_steps//hook_frequency
     )
 
-    class EvaluationLogger(Logger):
-        def __init__(self):
-            self.eval_log = {}
-
-        def log(self, metric, value):
-            if metric not in self.eval_log:
-                self.eval_log[metric] = []
-            self.eval_log[metric].append(value)
-
-        def get_log(self):
-            return self.eval_log
-
-    evaluation_logger = EvaluationLogger()
+    evaluation_logger = MetricsLogger()
 
     hooks = [
         evaluation_log_hook(
