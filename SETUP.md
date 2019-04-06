@@ -186,7 +186,7 @@ python scripts/databricks_install.py <CLUSTER_ID>
 **Note** If you are planning on running through the sample code for operationalization [here](notebooks/05_operationalize/als_movie_o16n.ipynb), you need to prepare the cluster for operationalization. You can do so by adding an additional option to the script run. <CLUSTER_ID> is the same as that mentioned above, and can be identified by running `databricks clusters list` and selecting the appropriate cluster.
 
 ```{shell}
-./scripts/databricks_install.py --prepare-o16n <CLUSTER_ID>
+python ./scripts/databricks_install.py --prepare-o16n <CLUSTER_ID>
 ```
 
 See below for details.
@@ -238,7 +238,7 @@ This option utilizes the installation script to do the setup. Just run the insta
 with an additional option. If you have already run the script once to upload and install the `Recommenders.egg` library, you can also add an `--overwrite` option:
 
 ```{shell}
-scripts/databricks_install.py --overwrite --prepare-o16n <CLUSTER_ID>
+python scripts/databricks_install.py --overwrite --prepare-o16n <CLUSTER_ID>
 ```
 
 This script does all of the steps described in the *Manual setup* section below.
