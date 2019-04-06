@@ -41,7 +41,7 @@ We install the dependencies with Conda. As a pre-requisite, we want to make sure
 
 ```{shell}
 conda update conda -n root
-conda update anaconda
+conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
 We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda file, depending of the environment we want to use. This will create the environment using the Python version 3.6 with all the correct dependencies.
