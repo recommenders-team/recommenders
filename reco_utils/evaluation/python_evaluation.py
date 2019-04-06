@@ -364,7 +364,7 @@ def merge_ranking_true_pred(
     """
 
     # Make sure the prediction and true data frames have the same set of users
-    common_users = list(set(rating_true[col_user]).intersection(set(rating_pred[col_user])))
+    common_users = set(rating_true[col_user]).intersection(set(rating_pred[col_user]))
     rating_true_common = rating_true[rating_true[col_user].isin(common_users)]
     rating_pred_common = rating_pred[rating_pred[col_user].isin(common_users)]
 
@@ -378,7 +378,7 @@ def merge_ranking_true_pred(
         top_k = threshold
     else:
         raise NotImplementedError('Invalid relevancy_method')
-    df_hit = get_top_k_items(dataframe=rating_pred_common, col_rating=col_prediction, k=top_k)
+    df_hit = get_top_k_items(dataframe=rating_pred_common, col_user=col_user, col_rating=col_prediction, k=top_k)
     df_hit["rank"] = df_hit.groupby(col_user)[col_prediction].rank(method="first", ascending=False)
     df_hit = pd.merge(df_hit, rating_true_common, on=[col_user, col_item])[[col_user, col_item, "rank"]]
 
