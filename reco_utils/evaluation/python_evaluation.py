@@ -21,7 +21,7 @@ from reco_utils.common.constants import (
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
-from reco_utils.dataset.pandas_df_utils import has_columns, has_same_base_dtype
+from reco_utils.dataset.pandas_df_utils import has_columns, has_same_base_dtype, lru_cache_df
 
 
 def check_column_dtypes(func):
@@ -81,6 +81,7 @@ def check_column_dtypes(func):
 
 
 @check_column_dtypes
+@lru_cache_df(maxsize=1)
 def merge_rating_true_pred(
     rating_true,
     rating_pred,
@@ -333,6 +334,7 @@ def logloss(
 
 
 @check_column_dtypes
+@lru_cache_df(maxsize=1)
 def merge_ranking_true_pred(
     rating_true,
     rating_pred,
@@ -382,8 +384,8 @@ def merge_ranking_true_pred(
 
     # count the number of hits vs actual relevant items per user
     df_hit_count = pd.merge(
-        df_hit.groupby(col_user).size().reset_index().rename(columns={0: 'hit'}),
-        rating_true_common.groupby(col_user).size().reset_index().rename(columns={0: 'actual'}),
+        df_hit.groupby(col_user, as_index=False)[col_user].agg({'hit': 'count'}),
+        rating_true_common.groupby(col_user, as_index=False)[col_user].agg({'actual': 'count'}),
         on=col_user
     )
 
