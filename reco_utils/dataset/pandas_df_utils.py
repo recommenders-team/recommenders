@@ -405,10 +405,10 @@ def has_same_base_dtype(df_1, df_2, columns=None):
     return result
 
 
-class PandaHash:
+class PandasHash:
     """Wrapper class to allow pandas DataFrames to be hashable"""
 
-    # reserve space just for a single dataframe
+    # reserve space just for a single DataFrame
     __slots__ = 'df'
 
     def __init__(self, df):
@@ -445,27 +445,27 @@ def lru_cache_df(maxsize, typed=False):
         typed (bool): arguments of different types are cached separately
     """
 
-    def to_panda_hash(val):
+    def to_pandas_hash(val):
         """Return PandaHash object if input is a DataFrame otherwise return input unchanged"""
-        return PandaHash(val) if isinstance(val, pd.DataFrame) else val
+        return PandasHash(val) if isinstance(val, pd.DataFrame) else val
 
-    def from_panda_hash(val):
+    def from_pandas_hash(val):
         """Extract DataFrame if input is PandaHash object otherwise return input unchanged"""
-        return val.df if isinstance(val, PandaHash) else val
+        return val.df if isinstance(val, PandasHash) else val
 
     def decorating_function(user_function):
         @wraps(user_function)
         def wrapper(*args, **kwargs):
             # convert DataFrames in args and kwargs to PandaHash objects
-            args = tuple([to_panda_hash(a) for a in args])
-            kwargs = dict([(k, to_panda_hash(v)) for k, v in kwargs.items()])
+            args = tuple([to_pandas_hash(a) for a in args])
+            kwargs = dict([(k, to_pandas_hash(v)) for k, v in kwargs.items()])
             return cached_wrapper(*args, **kwargs)
 
         @lru_cache(maxsize=maxsize, typed=typed)
         def cached_wrapper(*args, **kwargs):
             # get DataFrames from PandaHash objects in args and kwargs
-            args = tuple([from_panda_hash(a) for a in args])
-            kwargs = dict([(k, from_panda_hash(v)) for k, v in kwargs.items()])
+            args = tuple([from_pandas_hash(a) for a in args])
+            kwargs = dict([(k, from_pandas_hash(v)) for k, v in kwargs.items()])
             return user_function(*args, **kwargs)
 
         # retain lru_cache attributes
