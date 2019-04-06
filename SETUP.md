@@ -86,36 +86,42 @@ Additionally, if you want to test a particular version of spark, you may pass th
 
     python scripts/generate_conda_file.py --pyspark-version 2.4.0
 
-**NOTE** - for a PySpark environment, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
-
-To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux). Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`, we create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
-
-```bash
-#!/bin/sh
-export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
-export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
-unset SPARK_HOME
-```
-
-This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
-
-```bash
-#!/bin/sh
-unset PYSPARK_PYTHON
-unset PYSPARK_DRIVER_PYTHON
-```
 </details>
 
 <details>
 <summary><strong><em>All environments</em></strong></summary>
 
-To install all three environments:
+To install the PySpark GPU environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py --gpu --pyspark
     conda env create -f reco_full.yaml
 
 </details>
+
+
+> **NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
+> 
+> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux). Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`, we create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
+> 
+> ```bash
+> #!/bin/sh
+> export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
+> export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
+> export SPARK_HOME_BACKUP=$SPARK_HOME
+> unset SPARK_HOME
+> ```
+>
+> This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
+>
+> ```bash
+> #!/bin/sh
+> unset PYSPARK_PYTHON
+> unset PYSPARK_DRIVER_PYTHON
+> export SPARK_HOME=$SPARK_HOME_BACKUP
+> unset $SPARK_HOME_BACKUP
+> ```
+
 
 ### Register the conda environment as a kernel in Jupyter
 
