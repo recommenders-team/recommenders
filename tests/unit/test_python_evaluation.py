@@ -130,10 +130,9 @@ def test_column_dtypes_match(python_data):
     rating_true_copy[DEFAULT_USER_COL] = rating_true_copy[DEFAULT_USER_COL].astype(str)
     rating_true_copy[DEFAULT_RATING_COL] = rating_true_copy[DEFAULT_RATING_COL].astype(str)
 
-    with pytest.raises(TypeError) as e_info:
-        f = Mock()
-        f_d = check_column_dtypes(f)
-        f_d(
+    expected_error = "Columns in provided DataFrames are not the same datatype"
+    with pytest.raises(ValueError, match=expected_error):
+        check_column_dtypes(Mock())(
             rating_true_copy,
             rating_pred,
             col_user=DEFAULT_USER_COL,
@@ -141,9 +140,6 @@ def test_column_dtypes_match(python_data):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=PREDICTION_COL
         )
-
-        # Error message is expected when there is mismatch.
-        assert str(e_info.value) == "Data types of column {} are different in true and prediction".format(DEFAULT_USER_COL)
 
 
 def test_merge_rating(python_data):

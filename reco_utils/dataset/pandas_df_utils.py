@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import logging
+
 import pandas as pd
 import numpy as np
 
@@ -8,8 +10,11 @@ from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
-    DEFAULT_LABEL_COL
+    DEFAULT_LABEL_COL,
 )
+
+
+logger = logging.getLogger(__name__)
 
 
 def user_item_pairs(
@@ -124,9 +129,10 @@ class LibffmConverter(object):
         feature_count (int): count of feature in the libffm format data
         filepath (str or None): file path where the output is stored - it can be None or a string
     """
+
     def __init__(self, filepath=None):
         self.filepath = filepath
-    
+
     def fit(self, df, col_rating=DEFAULT_RATING_COL):
         """Fit the dataframe for libffm format. In there method does nothing but check the validity of 
         the input columns
@@ -140,11 +146,18 @@ class LibffmConverter(object):
         """
         # Check column types.
         types = df.dtypes
-        if not all([x == object or np.issubdtype(x, np.integer) or x == np.float for x in types]):
+        if not all(
+            [
+                x == object or np.issubdtype(x, np.integer) or x == np.float
+                for x in types
+            ]
+        ):
             raise TypeError("Input columns should be only object and/or numeric types.")
 
         if col_rating not in df.columns:
-            raise TypeError("Column of {} is not in input dataframe columns".format(col_rating))
+            raise TypeError(
+                "Column of {} is not in input dataframe columns".format(col_rating)
+            )
 
         self.col_rating = col_rating
         self.field_names = list(df.drop(col_rating, axis=1).columns)
@@ -162,10 +175,16 @@ class LibffmConverter(object):
             pd.DataFrame: output libffm format dataframe.
         """
         if not self.col_rating in df.columns:
-            raise ValueError("Input dataset does not contain the label column {} in the fitting dataset".format(self.col_rating))
+            raise ValueError(
+                "Input dataset does not contain the label column {} in the fitting dataset".format(
+                    self.col_rating
+                )
+            )
 
         if not all([x in df.columns for x in self.field_names]):
-            raise ValueError("Not all columns in the input dataset appear in the fitting dataset")
+            raise ValueError(
+                "Not all columns in the input dataset appear in the fitting dataset"
+            )
 
         # Encode field-feature.
         idx = 1
@@ -191,7 +210,9 @@ class LibffmConverter(object):
             return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
         for col_index, col in enumerate(self.field_names):
-            df[col] = df[col].apply(lambda x: _convert(col, x, col_index+1, field_feature_dict))
+            df[col] = df[col].apply(
+                lambda x: _convert(col, x, col_index + 1, field_feature_dict)
+            )
 
         # Move rating column to the first.
         column_names = self.field_names[:]
@@ -199,7 +220,7 @@ class LibffmConverter(object):
         df = df[column_names]
 
         if self.filepath is not None:
-            np.savetxt(self.filepath, df.values, delimiter=' ', fmt='%s')
+            np.savetxt(self.filepath, df.values, delimiter=" ", fmt="%s")
 
         return df
 
@@ -222,18 +243,19 @@ class LibffmConverter(object):
             dict: parameters field count, feature count, and file path.
         """
         return {
-            'field count': self.field_count, 
-            'feature count': self.feature_count,
-            'file path': self.filepath
+            "field count": self.field_count,
+            "feature count": self.feature_count,
+            "file path": self.filepath,
         }
 
+
 def negative_feedback_sampler(
-    df, 
+    df,
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_label=DEFAULT_LABEL_COL,
     ratio_neg_per_user=1,
-    seed=42
+    seed=42,
 ):
     """Utility function to sample negative feedback from user-item interaction dataset.
 
@@ -284,7 +306,11 @@ def negative_feedback_sampler(
     items = df[col_item].unique()
 
     # Create a dataframe for all user-item pairs
-    df_neg = user_item_pairs(pd.DataFrame(users, columns=[col_user]), pd.DataFrame(items, columns=[col_item]), user_item_filter_df = df)
+    df_neg = user_item_pairs(
+        pd.DataFrame(users, columns=[col_user]),
+        pd.DataFrame(items, columns=[col_item]),
+        user_item_filter_df=df,
+    )
     df_neg[col_label] = 0
 
     df_pos = df.copy()
@@ -295,19 +321,26 @@ def negative_feedback_sampler(
 
     # Sample negative feedback from the combined dataframe.
     df_sample = (
-        df_all
-        .groupby(col_user)
+        df_all.groupby(col_user)
         .apply(
             lambda x: pd.concat(
                 [
                     x[x[col_label] == 1],
-                    x[x[col_label] == 0].sample(min(
-                        max(round(len(x[x[col_label] == 1])*ratio_neg_per_user), 1),
-                        len(x[x[col_label] == 0])
-                    ), random_state=seed, replace=False) if len(x[x[col_label] == 0] > 0) else pd.DataFrame({}, columns=[col_user, col_item, col_label])
-                ], 
+                    x[x[col_label] == 0].sample(
+                        min(
+                            max(
+                                round(len(x[x[col_label] == 1]) * ratio_neg_per_user), 1
+                            ),
+                            len(x[x[col_label] == 0]),
+                        ),
+                        random_state=seed,
+                        replace=False,
+                    )
+                    if len(x[x[col_label] == 0] > 0)
+                    else pd.DataFrame({}, columns=[col_user, col_item, col_label]),
+                ],
                 ignore_index=True,
-                sort=True
+                sort=True,
             )
         )
         .reset_index(drop=True)
@@ -315,3 +348,57 @@ def negative_feedback_sampler(
     )
 
     return df_sample
+
+
+def has_columns(df, columns):
+    """Check if DataFrame has necessary columns
+
+    Args:
+        df (pd.DataFrame): DataFrame
+        columns (list(str): columns to check for
+
+    Returns:
+        bool: True if DataFrame has specified columns
+    """
+
+    result = True
+    for column in columns:
+        if column not in df.columns:
+            logger.error("Missing column: {} in DataFrame".format(column))
+            result = False
+
+    return result
+
+
+def has_same_base_dtype(df_1, df_2, columns=None):
+    """Check if specified columns have the same base dtypes across both DataFrames
+
+    Args:
+        df_1 (pd.DataFrame): first DataFrame
+        df_2 (pd.DataFrame): second DataFrame
+        columns (list(str)): columns to check, None checks all columns
+
+    Returns:
+        bool: True if DataFrames columns have the same base dtypes
+    """
+
+    if columns is None:
+        if any(set(df_1.columns).symmetric_difference(set(df_2.columns))):
+            logger.error(
+                "Cannot test all columns because they are not all shared across DataFrames"
+            )
+            return False
+        columns = df_1.columns
+
+    if not (
+        has_columns(df=df_1, columns=columns) and has_columns(df=df_2, columns=columns)
+    ):
+        return False
+
+    result = True
+    for column in columns:
+        if df_1[column].dtype.type.__base__ != df_2[column].dtype.type.__base__:
+            logger.error("Columns {} do not have the same base datatype".format(column))
+            result = False
+
+    return result
