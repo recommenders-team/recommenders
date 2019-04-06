@@ -23,9 +23,8 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements. Currently, this repository supports the following environments:
 
-* Python CPU
-* Python GPU
-* PySpark
+* Python CPU / GPU
+* PySpark CPU / GPU
 
 ## Setup guide for Local or DSVM
 
@@ -74,7 +73,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
 </details>
 
 <details>
-<summary><strong><em>PySpark environment</em></strong></summary>
+<summary><strong><em>PySpark CPU environment</em></strong></summary>
 
 To install the PySpark environment, which by default installs the CPU environment:
 
@@ -89,7 +88,7 @@ Additionally, if you want to test a particular version of spark, you may pass th
 </details>
 
 <details>
-<summary><strong><em>All environments</em></strong></summary>
+<summary><strong><em>PySpark GPU environment</em></strong></summary>
 
 To install the PySpark GPU environment:
 
@@ -119,7 +118,7 @@ To install the PySpark GPU environment:
 > unset PYSPARK_PYTHON
 > unset PYSPARK_DRIVER_PYTHON
 > export SPARK_HOME=$SPARK_HOME_BACKUP
-> unset $SPARK_HOME_BACKUP
+> unset SPARK_HOME_BACKUP
 > ```
 
 
