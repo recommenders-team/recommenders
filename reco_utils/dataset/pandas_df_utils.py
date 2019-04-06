@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from functools import lru_cache, wraps
 import logging
 
 import pandas as pd
@@ -402,3 +403,74 @@ def has_same_base_dtype(df_1, df_2, columns=None):
             result = False
 
     return result
+
+
+class PandaHash:
+    """Wrapper class to allow pandas DataFrames to be hashable"""
+
+    # reserve space just for a single dataframe
+    __slots__ = 'df'
+
+    def __init__(self, df):
+        """Initialize class
+        Args:
+            df (pd.DataFrame): DataFrame
+        """
+        self.df = df
+
+    def __eq__(self, other):
+        """Overwrite equality comparison
+        Args:
+            other (pd.DataFrame): DataFrame to compare
+
+        Returns:
+            bool: whether other DataFrame is the same as this DataFrame
+        """
+        return hash(self) == hash(other)
+
+    def __hash__(self):
+        """Overwrite hash operator for use with DataFrames
+
+        Returns:
+            int: hashed value of DataFrame
+        """
+        return hash(tuple(pd.util.hash_pandas_object(self.df)) + tuple(self.df.columns))
+
+
+def lru_cache_df(maxsize, typed=False):
+    """Least-recently-used cache decorator
+
+    Args:
+        maxsize (int|None): max size of cache, if set to None cache is boundless
+        typed (bool): arguments of different types are cached separately
+    """
+
+    def to_panda_hash(val):
+        """Return PandaHash object if input is a DataFrame otherwise return input unchanged"""
+        return PandaHash(val) if isinstance(val, pd.DataFrame) else val
+
+    def from_panda_hash(val):
+        """Extract DataFrame if input is PandaHash object otherwise return input unchanged"""
+        return val.df if isinstance(val, PandaHash) else val
+
+    def decorating_function(user_function):
+        @wraps(user_function)
+        def wrapper(*args, **kwargs):
+            # convert DataFrames in args and kwargs to PandaHash objects
+            args = tuple([to_panda_hash(a) for a in args])
+            kwargs = dict([(k, to_panda_hash(v)) for k, v in kwargs.items()])
+            return cached_wrapper(*args, **kwargs)
+
+        @lru_cache(maxsize=maxsize, typed=typed)
+        def cached_wrapper(*args, **kwargs):
+            # get DataFrames from PandaHash objects in args and kwargs
+            args = tuple([from_panda_hash(a) for a in args])
+            kwargs = dict([(k, from_panda_hash(v)) for k, v in kwargs.items()])
+            return user_function(*args, **kwargs)
+
+        # retain lru_cache attributes
+        wrapper.cache_info = cached_wrapper.cache_info
+        wrapper.cache_clear = cached_wrapper.cache_clear
+
+        return wrapper
+    return decorating_function
