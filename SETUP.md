@@ -32,7 +32,7 @@ Depending on the type of recommender system and the notebook that needs to be ru
 
 * Machine running Linux, Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/about)) or macOS
 * Anaconda with Python version >= 3.6.
-  * This is pre-installed on Azure DSVM. For local setup [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
+  * This is pre-installed on Azure DSVM such that one can run the following steps directly. For local setup, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
@@ -88,7 +88,7 @@ Additionally, if you want to test a particular version of spark, you may pass th
 </details>
 
 <details>
-<summary><strong><em>PySpark GPU environment</em></strong></summary>
+<summary><strong><em>PySpark & GPU environment</em></strong></summary>
 
 To install the PySpark GPU environment:
 
