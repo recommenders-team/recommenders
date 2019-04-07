@@ -73,7 +73,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
 </details>
 
 <details>
-<summary><strong><em>PySpark CPU environment</em></strong></summary>
+<summary><strong><em>PySpark environment</em></strong></summary>
 
 To install the PySpark environment, which by default installs the CPU environment:
 
