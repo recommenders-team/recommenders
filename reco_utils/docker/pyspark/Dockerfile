@@ -27,6 +27,7 @@ RUN conda install --quiet --yes \
     "lightgbm==2.2.1" 
 
 RUN pip install \
+    "azureml-sdk[notebooks,tensorboard,contrib]==1.0.18" \
     "idna==2.7" \
     "memory-profiler>=0.54.0" \
     "papermill>=0.15.0" \
