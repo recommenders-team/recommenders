@@ -21,7 +21,11 @@ from reco_utils.common.constants import (
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
-from reco_utils.dataset.pandas_df_utils import has_columns, has_same_base_dtype, lru_cache_df
+from reco_utils.dataset.pandas_df_utils import (
+    has_columns,
+    has_same_base_dtype,
+    lru_cache_df,
+)
 
 
 def check_column_dtypes(func):
@@ -149,7 +153,7 @@ def rmse(
         col_user=col_user,
         col_item=col_item,
         col_rating=col_rating,
-        col_prediction=col_prediction
+        col_prediction=col_prediction,
     )
     return np.sqrt(mean_squared_error(y_true, y_pred))
 
@@ -182,7 +186,7 @@ def mae(
         col_user=col_user,
         col_item=col_item,
         col_rating=col_rating,
-        col_prediction=col_prediction
+        col_prediction=col_prediction,
     )
     return mean_absolute_error(y_true, y_pred)
 
@@ -215,7 +219,7 @@ def rsquared(
         col_user=col_user,
         col_item=col_item,
         col_rating=col_rating,
-        col_prediction=col_prediction
+        col_prediction=col_prediction,
     )
     return r2_score(y_true, y_pred)
 
@@ -248,7 +252,7 @@ def exp_var(
         col_user=col_user,
         col_item=col_item,
         col_rating=col_rating,
-        col_prediction=col_prediction
+        col_prediction=col_prediction,
     )
     return explained_variance_score(y_true, y_pred)
 
@@ -291,7 +295,7 @@ def auc(
         col_user=col_user,
         col_item=col_item,
         col_rating=col_rating,
-        col_prediction=col_prediction
+        col_prediction=col_prediction,
     )
     return roc_auc_score(y_true, y_pred)
 
@@ -328,7 +332,7 @@ def logloss(
         col_user=col_user,
         col_item=col_item,
         col_rating=col_rating,
-        col_prediction=col_prediction
+        col_prediction=col_prediction,
     )
     return log_loss(y_true, y_pred)
 
@@ -360,36 +364,51 @@ def merge_ranking_true_pred(
         threshold (float): threshold of top items per user (optional)
 
     Returns:
-        pd.DataFrame, pd.DataFrame: DataFrame of recommendation hits, and hit counts vs actual relevant items per user
+        pd.DataFrame, pd.DataFrame, int:
+            DataFrame of recommendation hits
+            DataFrmae of hit counts vs actual relevant items per user
+            number of unique user ids
     """
 
     # Make sure the prediction and true data frames have the same set of users
     common_users = set(rating_true[col_user]).intersection(set(rating_pred[col_user]))
     rating_true_common = rating_true[rating_true[col_user].isin(common_users)]
     rating_pred_common = rating_pred[rating_pred[col_user].isin(common_users)]
+    n_users = len(common_users)
 
     # Return hit items in prediction data frame with ranking information. This is used for calculating NDCG and MAP.
     # Use first to generate unique ranking values for each item. This is to align with the implementation in
     # Spark evaluation metrics, where index of each recommended items (the indices are unique to items) is used
     # to calculate penalized precision of the ordered items.
-    if relevancy_method == 'top_k':
+    if relevancy_method == "top_k":
         top_k = k
-    elif relevancy_method == 'by_threshold':
+    elif relevancy_method == "by_threshold":
         top_k = threshold
     else:
-        raise NotImplementedError('Invalid relevancy_method')
-    df_hit = get_top_k_items(dataframe=rating_pred_common, col_user=col_user, col_rating=col_prediction, k=top_k)
-    df_hit["rank"] = df_hit.groupby(col_user)[col_prediction].rank(method="first", ascending=False)
-    df_hit = pd.merge(df_hit, rating_true_common, on=[col_user, col_item])[[col_user, col_item, "rank"]]
+        raise NotImplementedError("Invalid relevancy_method")
+    df_hit = get_top_k_items(
+        dataframe=rating_pred_common,
+        col_user=col_user,
+        col_rating=col_prediction,
+        k=top_k,
+    )
+    df_hit["rank"] = df_hit.groupby(col_user)[col_prediction].rank(
+        method="first", ascending=False
+    )
+    df_hit = pd.merge(df_hit, rating_true_common, on=[col_user, col_item])[
+        [col_user, col_item, "rank"]
+    ]
 
     # count the number of hits vs actual relevant items per user
     df_hit_count = pd.merge(
-        df_hit.groupby(col_user, as_index=False)[col_user].agg({'hit': 'count'}),
-        rating_true_common.groupby(col_user, as_index=False)[col_user].agg({'actual': 'count'}),
-        on=col_user
+        df_hit.groupby(col_user, as_index=False)[col_user].agg({"hit": "count"}),
+        rating_true_common.groupby(col_user, as_index=False)[col_user].agg(
+            {"actual": "count"}
+        ),
+        on=col_user,
     )
 
-    return df_hit, df_hit_count
+    return df_hit, df_hit_count, n_users
 
 
 def precision_at_k(
@@ -427,7 +446,7 @@ def precision_at_k(
         float: precision at k (min=0, max=1)
     """
 
-    df_hit, df_hit_count = merge_ranking_true_pred(
+    df_hit, df_hit_count, n_users = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
@@ -442,7 +461,7 @@ def precision_at_k(
     if df_hit.shape[0] == 0:
         return 0.0
 
-    return (df_hit_count['hit'] / k).mean()
+    return (df_hit_count["hit"] / k).sum() / n_users
 
 
 def recall_at_k(
@@ -474,7 +493,7 @@ def recall_at_k(
             k items exist for a user in rating_true.
     """
 
-    df_hit, df_hit_count = merge_ranking_true_pred(
+    df_hit, df_hit_count, n_users = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
@@ -489,7 +508,7 @@ def recall_at_k(
     if df_hit.shape[0] == 0:
         return 0.0
 
-    return (df_hit_count['hit'] / df_hit_count['actual']).mean()
+    return (df_hit_count["hit"] / df_hit_count["actual"]).sum() / n_users
 
 
 def ndcg_at_k(
@@ -522,7 +541,7 @@ def ndcg_at_k(
         float: nDCG at k (min=0, max=1).
     """
 
-    df_hit, df_hit_count = merge_ranking_true_pred(
+    df_hit, df_hit_count, n_users = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
@@ -537,19 +556,20 @@ def ndcg_at_k(
     if df_hit.shape[0] == 0:
         return 0.0
 
-    # calculate discount gain for hit items
-    df_dcg = df_hit.sort_values(by=[col_user, "rank"])
+    # calculate discounted gain for hit items
+    df_dcg = df_hit.copy()
     # relevance in this case is always 1
     df_dcg["dcg"] = 1 / np.log1p(df_dcg["rank"])
-    # sum up discount gain to get cumulative gain
-    df_dcg = df_dcg.groupby(col_user).agg({"dcg": "sum"}).reset_index()
-
-    # calculate maximum discounted accumulative gain.
+    # sum up discount gained to get discount cumulative gain
+    df_dcg = df_dcg.groupby(col_user, as_index=False).agg({"dcg": "sum"})
+    # calculate ideal discounted cumulative gain
     df_ndcg = pd.merge(df_dcg, df_hit_count, on=[col_user])
-    df_ndcg['idcg'] = df_ndcg['actual'].apply(lambda x: sum(1 / np.log1p(range(1, min(x, k) + 1))))
+    df_ndcg["idcg"] = df_ndcg["actual"].apply(
+        lambda x: sum(1 / np.log1p(range(1, min(x, k) + 1)))
+    )
 
     # DCG over IDCG is the normalized DCG
-    return (df_ndcg['dcg'] / df_ndcg['idcg']).mean()
+    return (df_ndcg["dcg"] / df_ndcg["idcg"]).sum() / n_users
 
 
 def map_at_k(
@@ -591,7 +611,7 @@ def map_at_k(
         float: MAP at k (min=0, max=1).
     """
 
-    df_hit, df_hit_count = merge_ranking_true_pred(
+    df_hit, df_hit_count, n_users = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
@@ -612,7 +632,7 @@ def map_at_k(
     df_hit_sorted = df_hit_sorted.groupby(col_user).agg({"rr": "sum"}).reset_index()
 
     df_merge = pd.merge(df_hit_sorted, df_hit_count, on=col_user)
-    return (df_merge['rr'] / df_merge['actual']).mean()
+    return (df_merge["rr"] / df_merge["actual"]).sum() / n_users
 
 
 def get_top_k_items(
