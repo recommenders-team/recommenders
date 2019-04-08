@@ -21,17 +21,16 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 ## Compute environments
 
-Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements. Currently, this repository supports the following environments:
+Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements.
+Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark**.
 
-* Python CPU / GPU
-* PySpark CPU / GPU
 
 ## Setup guide for Local or DSVM
 
 ### Requirements
 
-* Machine running Linux, Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/about)) or macOS
-* Anaconda with Python version >= 3.6.
+* A machine running Linux, Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/about)) or macOS
+* Anaconda with Python version >= 3.6
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. For local setup, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
@@ -44,27 +43,25 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda file, depending of the environment we want to use. This will create the environment using the Python version 3.6 with all the correct dependencies.
+We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda file depending on the environment you want to use.
+This will create the environment using the Python version 3.6 with all the correct dependencies.
 
-To install each environment, first we need to generate a conda yaml file and then install the environment. We can specify the environment name with the input `-n`.
+To install each environment, first generate a conda yaml file for the target environment, then create the environment by using the yaml file. 
 
-Click on the following menus to see more details:
-
-<details>
-<summary><strong><em>Python CPU environment</em></strong></summary>
-
-Assuming the repo is cloned as `Recommenders` in the local system, to install the Python CPU environment:
+Assuming the repo is cloned as `Recommenders` in the local system, to install a base (Python CPU) environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py
     conda env create -f reco_base.yaml 
 
-</details>
+You can specify the environment name as well with the flag `-n`.
+
+Click on the following menus to see how to install Python GPU and PySpark environments:
 
 <details>
 <summary><strong><em>Python GPU environment</em></strong></summary>
 
-Assuming that you have a GPU machine, to install the Python GPU environment, which by default installs the CPU environment:
+Assuming that you have a GPU machine, to install the Python GPU environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py --gpu
@@ -75,7 +72,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
 <details>
 <summary><strong><em>PySpark environment</em></strong></summary>
 
-To install the PySpark environment, which by default installs the CPU environment:
+To install the PySpark environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py --pyspark
@@ -88,9 +85,10 @@ Additionally, if you want to test a particular version of spark, you may pass th
 </details>
 
 <details>
-<summary><strong><em>PySpark & GPU environment</em></strong></summary>
+<summary><strong><em>Full (PySpark & Python GPU) environment</em></strong></summary>
 
-To install the PySpark GPU environment:
+With this environment, you can run both PySpark and Python GPU notebooks in this repository.
+To install the environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py --gpu --pyspark
@@ -128,6 +126,8 @@ We can register our created conda environment to appear as a kernel in the Jupyt
 
     conda activate my_env_name
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
+    
+If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
 
 ### Troubleshooting for the DSVM
 
