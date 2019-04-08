@@ -12,10 +12,8 @@ ARG RECO_PATH=$WORK_PATH/Recommenders
 USER root
 
 # Clone repo & discard notebooks that cannot be run in this environment
-RUN git clone https://github.com/Microsoft/Recommenders.git && \
-    cp -rf Recommenders $WORK_PATH && \
-    rm 
-
+RUN git clone --single-branch --branch only_pyspark https://github.com/Microsoft/Recommenders.git && \
+    cp -rf Recommenders $WORK_PATH 
 
 # Install the needed packages
 RUN conda install --quiet --yes \
