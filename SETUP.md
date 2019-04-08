@@ -269,3 +269,29 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
    7. Restart the cluster.
 
 </details>
+
+## Setup guide for Docker
+
+Docker images of the repo for different environment are provided. Dockerfiles can be found at `Recommenders/reco_utils/docker` if one would like to build Docker images on his/her own.
+
+Assuming Docker is pre-installed and configured (**NOTE** `docker` command is already available in the Azure Data Science Virtual Machine. For installation of Docker in on a Linux machine, check instructions [here](https://docs.docker.com/install/)), for example, a PySpark Docker image can be built by the following command line
+>   ```{shell}
+>   cd Recommenders/reco_utils/docker/pyspark
+>   docker build -t <image_name>/<tag> .
+>   ```
+
+The Docker image is based on the [Jupyter Notebook Pyspark image](https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook), so it allows the user to run Jupyter notebooks in a browser when a container of the Docker image is turned on
+
+For example, to run the built image in an interactive manner, do the following 
+>   ```{shell}
+>   docker run --rm -p 8888:8888 <image_name>/<tag>
+>   ```
+Then the message in the console will advise with a link to open (in the browser) to run the notebooks. Ideally, after opening the link, the notebook homepage should appear where one can find all the contents in the Recommender repository. There are other use case scenarios of running the built image, details can be found in [here](https://github.com/jupyter/docker-stacks).
+
+Currently, the following Docker images are supported for different use cases of the repository
+
+Enviroment | Description |
+------------|------------|
+~~Python CPU~~|CPU version that allows runs of the non-Spark and non-GPU notebooks 
+PySpark|PySpark environment that allows runs of PySpark notebooks
+~~Python GPU~~|GPU environment that allows runs of deep learning notebooks
