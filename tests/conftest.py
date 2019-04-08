@@ -250,5 +250,8 @@ def notebooks():
         "spark_tuning": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "tuning_spark_als.ipynb"
         ),
+        "nni_tuning_svd": os.path.join(
+            folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"
+        )
     }
     return paths
