@@ -406,35 +406,45 @@ def has_same_base_dtype(df_1, df_2, columns=None):
 
 
 class PandasHash:
-    """Wrapper class to allow pandas DataFrames to be hashable"""
+    """Wrapper class to allow pandas objects (DataFrames or Series) to be hashable"""
 
-    # reserve space just for a single DataFrame
-    __slots__ = 'df'
+    # reserve space just for a single pandas object
+    __slots__ = 'pandas_object'
 
-    def __init__(self, df):
+    def __init__(self, pandas_object):
         """Initialize class
         Args:
-            df (pd.DataFrame): DataFrame
+            pandas_object (pd.DataFrame|pd.Series): pandas object
         """
-        self.df = df
+
+        if not isinstance(pandas_object, (pd.DataFrame, pd.Series)):
+            raise TypeError('Can only wrap pandas DataFrame or Series objects')
+        self.pandas_object = pandas_object
 
     def __eq__(self, other):
         """Overwrite equality comparison
         Args:
-            other (pd.DataFrame): DataFrame to compare
+            other (pd.DataFrame|pd.Series): pandas object to compare
 
         Returns:
-            bool: whether other DataFrame is the same as this DataFrame
+            bool: whether other object is the same as this one
         """
+
         return hash(self) == hash(other)
 
     def __hash__(self):
-        """Overwrite hash operator for use with DataFrames
+        """Overwrite hash operator for use with pandas objects
 
         Returns:
-            int: hashed value of DataFrame
+            int: hashed value of object
         """
-        return hash(tuple(pd.util.hash_pandas_object(self.df)) + tuple(self.df.columns))
+
+        hashable = tuple(self.pandas_object.values.tobytes())
+        if isinstance(self.pandas_object, pd.DataFrame):
+            hashable += tuple(self.pandas_object.columns)
+        else:
+            hashable += tuple(self.pandas_object.name)
+        return hash(hashable)
 
 
 def lru_cache_df(maxsize, typed=False):
@@ -451,21 +461,21 @@ def lru_cache_df(maxsize, typed=False):
 
     def from_pandas_hash(val):
         """Extract DataFrame if input is PandaHash object otherwise return input unchanged"""
-        return val.df if isinstance(val, PandasHash) else val
+        return val.pandas_object if isinstance(val, PandasHash) else val
 
     def decorating_function(user_function):
         @wraps(user_function)
         def wrapper(*args, **kwargs):
             # convert DataFrames in args and kwargs to PandaHash objects
             args = tuple([to_pandas_hash(a) for a in args])
-            kwargs = dict([(k, to_pandas_hash(v)) for k, v in kwargs.items()])
+            kwargs = {k: to_pandas_hash(v) for k, v in kwargs.items()}
             return cached_wrapper(*args, **kwargs)
 
         @lru_cache(maxsize=maxsize, typed=typed)
         def cached_wrapper(*args, **kwargs):
             # get DataFrames from PandaHash objects in args and kwargs
             args = tuple([from_pandas_hash(a) for a in args])
-            kwargs = dict([(k, from_pandas_hash(v)) for k, v in kwargs.items()])
+            kwargs = {k: from_pandas_hash(v) for k, v in kwargs.items()}
             return user_function(*args, **kwargs)
 
         # retain lru_cache attributes
