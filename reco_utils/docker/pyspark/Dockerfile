@@ -15,8 +15,6 @@ USER root
 RUN git clone https://github.com/Microsoft/Recommenders.git && \
     cp -rf Recommenders $WORK_PATH 
 
-USER $NB_UID
-
 # Install the needed packages
 RUN conda install --quiet --yes \
     "mock==2.0.0" \
