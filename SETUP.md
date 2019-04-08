@@ -31,7 +31,7 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 
 * A machine running Linux, Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/about)) or macOS
 * Anaconda with Python version >= 3.6
-  * This is pre-installed on Azure DSVM such that one can run the following steps directly. For local setup, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
+  * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
@@ -43,12 +43,9 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda file depending on the environment you want to use.
-This will create the environment using the Python version 3.6 with all the correct dependencies.
+We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda-environment yaml file which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
 
-To install each environment, first generate a conda yaml file for the target environment, then create the environment by using the yaml file. 
-
-Assuming the repo is cloned as `Recommenders` in the local system, to install a base (Python CPU) environment:
+Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
     cd Recommenders
     python scripts/generate_conda_file.py
