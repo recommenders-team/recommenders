@@ -134,12 +134,12 @@ To install the environment:
 > <details><summary><strong><em>Windows</em></strong></summary>
 > 
 > To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
-> Assuming that we have installed the environment in `c:/anaconda/envs/reco_pyspark`,
-> create the file `c:/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.bat` and add:
+> Assuming that we have installed the environment in `c:\anaconda\envs\reco_pyspark`,
+> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\activate.d\env_vars.bat` and add:
 > 
 >     @echo off
->     set PYSPARK_PYTHON=/anaconda/envs/reco_full/python.exe
->     set PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_full/python.exe
+>     set PYSPARK_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
+>     set PYSPARK_DRIVER_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
 >     set SPARK_HOME_BACKUP=%SPARK_HOME%
 >     set SPARK_HOME=
 >     set PYTHONPATH_BACKUP=%PYTHONPATH%
@@ -147,7 +147,7 @@ To install the environment:
 > 
 > This will export the variables every time we do `conda activate reco_pyspark`.
 > To unset these variables when we deactivate the environment,
-> create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.bat` and add:
+> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\deactivate.d\env_vars.bat` and add:
 > 
 >     @echo off
 >     set PYSPARK_PYTHON=
