@@ -2,7 +2,7 @@
 
 This document describes how to setup all the dependencies to run the notebooks in this repository in following platforms:
 
-* Local (Linux, MacOS or Windows) or DSVM (Linux or Windows)
+* Local (Linux, MacOS or Windows) or [DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (Linux or Windows)
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
 
 
@@ -97,10 +97,10 @@ To install the environment:
 </details>
 
 
-**NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables
-`PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
-
-Click on the following menus to see details:
+> **NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables
+> `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
+>
+> Click on the following menus to see details:
 
 <details>
 <summary><strong><em>Linux or MacOS</em></strong></summary>
