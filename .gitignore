@@ -120,7 +120,6 @@ Untitled*.ipynb
 ~$*
 output.ipynb
 conda*.yaml
-reco_*.yaml
 .idea/
 *.npz
 *.data
@@ -128,15 +127,7 @@ reco_*.yaml
 *.csv
 *.zip
 .vscode/
-scripts/repo_metrics/config.py
-movies.dat
-ratings.dat
-u.item
-u.data
-ml-100k/
-ml-10M100K/
-ml-1m/
-ml-20m/
+tools/repo_metrics/config.py
 *.jar
 *.item
 *.pkl
