@@ -21,25 +21,21 @@ from reco_utils.common.constants import (
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
+from reco_utils.dataset.pandas_df_utils import has_columns, has_same_base_dtype
 
 
-def check_column_dtypes(f):
-    """Checks columns of dataframe inputs.
+def check_column_dtypes(func):
+    """Checks columns of DataFrame inputs
 
     This includes the checks on 
-        1. whether the input columns exist in the input dataframes.
-        2. whether the data types of col_user as well as col_item are matched in the two input dataframes.
-        
+        1. whether the input columns exist in the input DataFrames
+        2. whether the data types of col_user as well as col_item are matched in the two input DataFrames.
+
     Args:
-        rating_true (pd.DataFrame): True data.
-        rating_pred (pd.DataFrame): Predicted data.
-        col_user (str): column name for user.
-        col_item (str): column name for item.
-        col_rating (str): column name for rating.
-        col_prediction (str): column name for prediction.
+        func (function): function that will be wrapped
     """
 
-    @wraps(f)
+    @wraps(func)
     def check_column_dtypes_wrapper(
         rating_true,
         rating_pred,
@@ -50,32 +46,27 @@ def check_column_dtypes(f):
         *args,
         **kwargs
     ):
-        # check existence of input columns.
-        for col in [col_user, col_item, col_rating]:
-            if col not in rating_true.columns:
-                raise ValueError("schema of y_true not valid. missing {}".format(col))
+        """Check columns of DataFrame inputs
 
-        for col in [col_user, col_item, col_prediction]:
-            if col not in rating_pred.columns:
-                raise ValueError("schema of y_true not valid. missing {}".format(col))
+        Args:
+            rating_true (pd.DataFrame): True data
+            rating_pred (pd.DataFrame): Predicted data
+            col_user (str): column name for user
+            col_item (str): column name for item
+            col_rating (str): column name for rating
+            col_prediction (str): column name for prediction
+        """
 
-        # check matching of input column types. the evaluator requires two dataframes have the same
-        # data types of the input columns.
-        if rating_true[col_user].dtypes != rating_pred[col_user].dtypes:
-            raise TypeError(
-                "data types of column {} are different in true and prediction".format(
-                    col_user
-                )
-            )
+        if not has_columns(rating_true, [col_user, col_item, col_rating]):
+            raise ValueError("Missing columns in true rating DataFrame")
+        if not has_columns(rating_pred, [col_user, col_item, col_prediction]):
+            raise ValueError("Missing columns in predicted rating DataFrame")
+        if not has_same_base_dtype(
+            rating_true, rating_pred, columns=[col_user, col_item]
+        ):
+            raise ValueError("Columns in provided DataFrames are not the same datatype")
 
-        if rating_true[col_item].dtypes != rating_pred[col_item].dtypes:
-            raise TypeError(
-                "data types of column {} are different in true and prediction".format(
-                    col_item
-                )
-            )
-
-        return f(
+        return func(
             rating_true=rating_true,
             rating_pred=rating_pred,
             col_user=col_user,
@@ -113,9 +104,9 @@ def merge_rating_true_pred(
         np.array: Array with the predicted ratings
 
     """
+
+    # pd.merge will apply suffixes to columns which have the same name across both dataframes
     suffixes = ["_true", "_pred"]
-    # Apart from merging both dataframes, pd.merge will rename the columns with the suffixes only if the rating
-    # column name of rating_true is the same as the name rating column name in rating_pred
     rating_true_pred = pd.merge(
         rating_true, rating_pred, on=[col_user, col_item], suffixes=suffixes
     )
@@ -153,7 +144,6 @@ def rmse(
     y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
     )
-
     return np.sqrt(mean_squared_error(y_true, y_pred))
 
 
@@ -303,7 +293,7 @@ def logloss(
         col_prediction (str): column name for prediction.
 
     Return:
-        float: log_loss_score (min=-\inf, max=\inf).
+        float: log_loss_score (min=-inf, max=inf).
     """
     y_true, y_pred = merge_rating_true_pred(
         rating_true, rating_pred, col_user, col_item, col_rating, col_prediction
@@ -691,4 +681,3 @@ def get_top_k_items(
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
-
