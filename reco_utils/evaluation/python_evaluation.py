@@ -116,13 +116,11 @@ def merge_rating_true_pred(
     rating_true_pred = pd.merge(
         rating_true, rating_pred, on=[col_user, col_item], suffixes=suffixes
     )
-    if col_rating == col_prediction:
-        column_select_true = col_rating + suffixes[0]
-        column_select_pred = col_prediction + suffixes[1]
-    else:
-        column_select_true = col_rating
-        column_select_pred = col_prediction
-    return rating_true_pred[column_select_true], rating_true_pred[column_select_pred]
+    if col_rating in rating_pred.columns:
+        col_rating = col_rating + suffixes[0]
+    if col_prediction in rating_true.columns:
+        col_prediction = col_prediction + suffixes[1]
+    return rating_true_pred[col_rating], rating_true_pred[col_prediction]
 
 
 def rmse(
