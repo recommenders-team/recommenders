@@ -63,13 +63,15 @@ The table below lists recommender algorithms available in the repository at the 
 
 **Preliminary Comparison**
 
-We provide a [comparison notebook](notebooks/03_evaluate/comparison.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, data (MovieLens 1M) is randomly split into training/test sets at a 75/25 ratio. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use k = 10 (top 10 recommended items). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 P100 GPU). Spark ALS is run in local standalone mode. 
+We provide a [benchmark notebook](benchmark/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, MovieLens dataset is splitted into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 P100 GPU). Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k.
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance | 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| [ALS](notebooks/00_quick_start/als_movielens.ipynb) | 0.002020 | 0.024313 | 0.030677 | 0.009649 | 0.860502 | 0.680608 | 0.406014 | 0.411603 | 
-| [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.010915 | 0.102398 | 0.092996 | 0.025362 | 0.888991 | 0.696781 | 0.364178 | 0.364178 | 
-| [FastAI](notebooks/00_quick_start/fastai_movielens.ipynb) | 0.023022 |0.168714 |0.154761 |0.050153 |0.887224 |0.705609 |0.371552 |0.374281 |
+| [ALS](notebooks/00_quick_start/als_movielens.ipynb) | 0.004816 |	0.043913 |	0.047190 |	0.016973 | 0.966489 |	0.751543 |	0.253340 |	0.249395 | 
+| [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.015410	| 0.111125 |	0.099152 |	0.034326 | 0.945304	| 0.744339 |	0.281940 |	0.281986 | 
+| [SAR](notebooks/00_quick_start/sar_movielens.ipynb) | 0.003903 | 0.033111 |	0.040827 |	0.024010 | N/A |	N/A |	N/A |	N/A |
+| [NCF](notebooks/02_model/ncf_deep_dive.ipynb) | 0.091607 |	0.357497 |	0.313680 |	0.164433 | N/A |	N/A |	N/A |	N/A |
+| [FastAI](notebooks/00_quick_start/fastai_movielens.ipynb) | 0.027357	| 0.158870 |	0.140403	| 0.056657 | 0.903492 |	0.714408 |	0.344057	| 0.344997 |
 
 
 ## Contributing

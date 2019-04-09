@@ -302,9 +302,6 @@ class NCF:
         self.id2user = data.id2user
         self.id2item = data.id2item
 
-        # output the model type
-        print("Training model: %s" % self.model_type)
-
         # loop for n_epochs
         for epoch_count in range(1, self.n_epochs + 1):
 
