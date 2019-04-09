@@ -4,6 +4,7 @@
 import os
 import pytest
 import papermill as pm
+import shutil
 import subprocess
 import sys
 
