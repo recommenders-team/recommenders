@@ -72,13 +72,14 @@ def test_lightgbm(notebooks):
 @pytest.mark.notebooks
 def test_nni_tuning(notebooks, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
-    # First stop NNI if running
-    proc = subprocess.run([sys.prefix + '/bin/nnictl', 'stop'])
+    # First stop NNI in case it is running
+    subprocess.run([sys.prefix + '/bin/nnictl', 'stop'])
     check_stopped()
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
                         parameters=dict(MOVIELENS_DATA_SIZE="100k",
                                         SURPRISE_READER="ml-100k",
                                         TMP_DIR=tmp,
                                         MAX_TRIAL_NUM=10))
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-    results.to_csv("results.csv")
+    # Clean up logs, saved models etc. under the NNI path
+    nni_path = pm.read_notebook(OUTPUT_NOTEBOOK).data["nni_path"]
+    shutil.rmtree(nni_path, ignore_errors=True)
