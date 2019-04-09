@@ -372,7 +372,7 @@ def _get_top_k_items(
         )
         .where(col("rank") <= k)
         .groupby(col_user)
-        .agg(F.collect_list('item').alias(col_prediction))
+        .agg(F.collect_list(col_item).alias(col_prediction))
     )
 
     return items_for_user
