@@ -1,26 +1,16 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import random
 import numpy as np
 import pandas as pd
 import warnings
-
-randomize_seed = 10 # fixing a random seed for reproducibility of results
-random.seed(randomize_seed)
-from numpy.random import seed
-seed(randomize_seed)
-
 import sys
-# Path to the folder where Pymanopt's code is residing. 
-pymanopt_path = "..//third_party_tools" 
-# The Pymanopt code has been downloaded via: pip install pymanopt  
+# sys.path.append("./pymanopt/")
+# The Pymanopt code has been used and was downloaded via: pip install pymanopt  
 # Online code of Pymanopt: https://github.com/pymanopt/pymanopt
 # Online license link: https://github.com/pymanopt/pymanopt/blob/master/LICENSE
-# Pymanopt is licensed under the BSD 3-Clause "New" or "Revised" License - 
-# A permissive license similar to the BSD 2-Clause License, but with a 
-# 3rd clause that prohibits others from using the name of the project or its 
-# contributors to promote derived products without written consent.
-# The offline license file of pymanopt can be found in the directory 
-# "..\\third_party_tools\pymanopt"
-sys.path.insert(0, pymanopt_path)
+# Pymanopt is licensed under the BSD 3-Clause "New" or "Revised" License.
 
 from pymanopt import Problem
 from pymanopt.solvers import ConjugateGradientMS # Modified Conjugate Gradient 
@@ -31,7 +21,6 @@ from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
 import time 
 from numba import jit, njit, prange
-
 
 class RLRMCalgorithm(object):
     """
@@ -64,42 +53,29 @@ class RLRMCalgorithm(object):
         print("Rank: %i, Regularization parameter: %e" % (self.rank, self.C))
         # Initialization # starting point on the manifold
         initialize_dict = {'random': 0, 'svd': 1}
-        # t1 = time.time()
         if initialize_dict.get(self.initialize_flag)==0:#rndom
             W0=None
-            # self.init_time = 0.0
         elif initialize_dict.get(self.initialize_flag)==1:#svd
             U0, B0, V0 = svds(entries_train_csr, k=self.rank)
             W0 = [U0, V0.T, np.diag(B0)]
-            # self.init_time = time.time()-t1
-            # print("\nSVD-based initialization time: %.2f sec.\n" % (init_time))
-        else:#default option when given incorrect option
+        else: # default option when given incorrect option
             print("Initialization flag not recognized. Setting it to random (default).")
             W0=None
-            # self.init_time = 0.0
         return W0
 
-    def fit(self, entries_train_csr, entries_test_csr=None, verbosity = 0, iterwise_rmse = False):
-    	# train data
-        # self.entries_train_csr = entries_train_csr
-        # self.entries_train_csr_data = entries_train_csr.data
-        # self.entries_train_csr_indices = entries_train_csr.indices
-        # self.entries_train_csr_indptr = entries_train_csr.indptr
-
+    def fit(self,RLRMCdata,verbosity = 0,compute_iter_rmse = False):
         # initialize the model
-        W0 = self._init_train(entries_train_csr)
+        W0 = self._init_train(RLRMCdata.train)
+        self.user2id = RLRMCdata.user2id
+        self.item2id = RLRMCdata.item2id
+        self.id2user = RLRMCdata.id2user
+        self.id2item = RLRMCdata.id2item
 
-        # test data
-        # self.entries_test_csr = entries_test_csr
-        # self.entries_test_csr_data = entries_test_csr.data
-        # self.entries_test_csr_indices = entries_test_csr.indices
-        # self.entries_test_csr_indptr = entries_test_csr.indptr
-
-        # global variable residual
-        residual_global = np.zeros(entries_train_csr.data.shape,dtype=np.float64)
+        # residual variable
+        residual_global = np.zeros(RLRMCdata.train.data.shape,dtype=np.float64)
 
         ###################Riemannian first-order algorithm######################
-        # first-order algorithm
+
         solver = ConjugateGradientMS(maxtime=self.max_time, 
             maxiter=self.maxiter, linesearch=LineSearchBackTracking())#, logverbosity=2)
         # construction of manifold
@@ -110,22 +86,16 @@ class RLRMCalgorithm(object):
             ])
         problem = Problem(
             manifold=manifold, 
-            cost=lambda x: self.cost(x,entries_train_csr.data,entries_train_csr.indices,entries_train_csr.indptr,residual_global), 
-            egrad=lambda z: self.egrad(z,entries_train_csr.indices,entries_train_csr.indptr,residual_global), 
+            cost=lambda x: self.cost(x,RLRMCdata.train.data,RLRMCdata.train.indices,RLRMCdata.train.indptr,residual_global), 
+            egrad=lambda z: self.egrad(z,RLRMCdata.train.indices,RLRMCdata.train.indptr,residual_global), 
             verbosity=verbosity)
         
-        if iterwise_rmse:
-            if (entries_test_csr is None):
-                Wopt, self.stats = solver.solve(problem, x=W0,
-                    compute_stats=lambda x,y,z: self.my_stats(x,y,z,residual_global))
-        if (entries_test_csr is None) or (not iterwise_test_rmse):
-            Wopt, self.stats = solver.solve(problem, x=W0)
-        else:
-            residual_test_global = (np.zeros(entries_test_csr.data.shape,dtype=np.float64))
-            Wopt, self.stats = solver.solve(problem, x=W0, 
-                compute_stats=lambda x,y,z: self.my_stats(x,y,z,residual_global,entries_test_csr.data,entries_test_csr.indices,entries_test_csr.indptr,residual_test_global))
+        residual_test_global = (np.zeros(RLRMCdata.test.data.shape,dtype=np.float64))
+        Wopt, self.stats = solver.solve(problem, x=W0, 
+            compute_stats=lambda x,y,z: self.my_stats(x,y,z,residual_global,RLRMCdata.test.data,RLRMCdata.test.indices,
+                RLRMCdata.test.indptr,residual_test_global,verbosity,compute_iter_rmse))
         self.L = np.dot(Wopt[0], Wopt[2])
-        self.R = Wopt[1].T
+        self.R = Wopt[1]
         
 
     # computes residual_global = a*b - cd at given indices in csr_matrix format
@@ -144,37 +114,39 @@ class RLRMCalgorithm(object):
 
     # computes user-defined statistics per iteration
     def my_stats(self,weights,given_stats,stats,residual_global,entries_test_csr_data=None,
-        entries_test_csr_indices=None,entries_test_csr_indptr=None,residual_test_global=None):
-        iter = given_stats[0]
+        entries_test_csr_indices=None,entries_test_csr_indptr=None,residual_test_global=None,
+        verbosity=0,compute_iter_rmse=False):
+        iteration = given_stats[0]
         cost = given_stats[1]
         gradnorm = given_stats[2]
         time_iter = given_stats[3]
-        U1 = weights[0]
-        U2 = weights[1]
-        B = weights[2]
-        U1_dot_B = np.dot(U1, B)
-        train_mse = np.mean(residual_global ** 2)
-        train_rmse = sqrt(train_mse)
-        # Prediction
-        if entries_test_csr_data is not None:
-            RLRMCalgorithm.computeLoss_csrmatrix(
-                U1_dot_B,
-                U2.T,
-                entries_test_csr_data,
-                entries_test_csr_indices,
-                entries_test_csr_indptr,
-                residual_test_global)
-            test_mse = np.mean(residual_test_global ** 2)
-            test_rmse = sqrt(test_mse)
-            print(
-                'Train RMSE: %.4f, Test RMSE: %.4f, Total time: %.2f' 
-                % (train_rmse, test_rmse,time_iter))
-        stats.setdefault("iteration", []).append(iter)
+        stats.setdefault("iteration", []).append(iteration)
         stats.setdefault("time", []).append(time_iter)
         stats.setdefault("objective", []).append(cost)
         stats.setdefault("gradnorm", []).append(gradnorm)
-        stats.setdefault("trainRMSE", []).append(train_rmse)
-        stats.setdefault("testRMSE", []).append(test_rmse)
+        if compute_iter_rmse:
+            U1 = weights[0]
+            U2 = weights[1]
+            B = weights[2]
+            U1_dot_B = np.dot(U1, B)
+            train_mse = np.mean(residual_global ** 2)
+            train_rmse = sqrt(train_mse)
+            stats.setdefault("trainRMSE", []).append(train_rmse)
+            # Prediction
+            if entries_test_csr_data is not None:
+                RLRMCalgorithm.computeLoss_csrmatrix(
+                    U1_dot_B,
+                    U2.T,
+                    entries_test_csr_data,
+                    entries_test_csr_indices,
+                    entries_test_csr_indptr,
+                    residual_test_global)
+                test_mse = np.mean(residual_test_global ** 2)
+                test_rmse = sqrt(test_mse)
+                stats.setdefault("testRMSE", []).append(test_rmse)
+                if verbosity >= 2:
+                    print('Train RMSE: %.4f, Test RMSE: %.4f, Total time: %.2f' 
+                        % (train_rmse, test_rmse,time_iter))
         return
 
     # computes the objective function at a given point
@@ -208,4 +180,45 @@ class RLRMCalgorithm(object):
         gradB = (gradB_asymm + gradB_asymm.T)/2.0
         gradU2 = residual_global_csr.T.dot(U1_dot_B)
         return [gradU1, gradU2, gradB]
+
+    def predict(self,user_input,item_input,low_memory=False):
+        """ predict function of this trained model
+            Args:
+                user_input ( list or element of list ): userID or userID list 
+                item_input ( list or element of list ): itemID or itemID list
+            Returns:
+                list or float: list of predicted rating or predicted rating score. 
+        """
+        # index converting
+        user_input = np.array([self.user2id[x] for x in user_input]) # rows
+        item_input = np.array([self.item2id[x] for x in item_input]) # columns
+        num_test = user_input.shape[0]
+        if num_test!=item_input.shape[0]:
+            print("ERROR! Dimension mismatch in test data.")
+            return None
+        output = np.empty(item_input.shape,dtype=np.float64)
+        output.fill(-self.train_mean)
+        L = self.L
+        R = self.R
+        if low_memory:
+            # for-loop
+            for i in np.arange(num_test):
+                output[i]+= np.dot(L[user_input[i],:],R[item_input[i],:])
+        else:
+            # matrix multiplication
+            d = self.model_param.get('num_row')
+            T = self.model_param.get('num_col')
+            test = csr_matrix((output, (user_input, item_input)),shape=(d,T))
+            RLRMCalgorithm.computeLoss_csrmatrix(
+                L,
+                R.T,
+                test.data,
+                test.indices,
+                test.indptr,
+                output)
+            lin_index_org = np.ravel_multi_index((user_input,item_input),dims=(d,T),mode='raise', order='C')
+            idx1 = np.argsort(lin_index_org)
+            idx2 = np.argsort(idx1)
+            output = output[idx2]
+        return output
 

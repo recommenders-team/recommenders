@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import random
 import numpy as np
 import pandas as pd
@@ -24,7 +27,6 @@ class RLRMCdataset(object):
         train,
         test=None,
         mean_center = True,
-        initialize_flag = 'random',
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
@@ -34,7 +36,6 @@ class RLRMCdataset(object):
         """
         Constructor
         """
-
         # initialize user and item index
         self.user_idx = None
         self.item_idx = None
@@ -59,6 +60,7 @@ class RLRMCdataset(object):
             list: train and test pandas.DataFrame Dataset, which have been reindexed.
         
         """
+        # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/master/reco_utils/recommender/ncf/dataset.py
         # If testing dataset is None
         df = train if test is None else train.append(test)
 
