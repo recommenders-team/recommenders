@@ -1,12 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
+import numpy as np
 import pandas as pd
+import pytest
+
 from reco_utils.dataset.pandas_df_utils import (
     user_item_pairs,
     filter_by,
-    LibffmConverter
+    LibffmConverter,
+    has_same_base_dtype,
+    has_columns,
+    lru_cache_df,
 )
 
 
@@ -160,3 +165,69 @@ def test_csv_to_libffm():
         assert df_feature_new_libffm.iloc[-1, :].values.tolist() == [1, '1:4:1', '2:2:8', '3:3:6.0', '4:10:1']
 
 
+def test_has_columns():
+    df_1 = pd.DataFrame(dict(a=[1, 2, 3]))
+    df_2 = pd.DataFrame(dict(b=[7, 8, 9], a=[1, 2, 3]))
+
+    assert has_columns(df_1, ['a'])
+    assert has_columns(df_2, ['a'])
+    assert has_columns(df_2, ['a', 'b'])
+    assert not has_columns(df_2, ['a', 'b', 'c'])
+
+
+def test_has_same_base_dtype():
+    arr_int32 = np.array([1, 2, 3], dtype=np.int32)
+    arr_int64 = np.array([1, 2, 3], dtype=np.int64)
+    arr_float32 = np.array([1, 2, 3], dtype=np.float32)
+    arr_float64 = np.array([1, 2, 3], dtype=np.float64)
+    arr_str = ['a', 'b', 'c']
+
+    df_1 = pd.DataFrame(dict(a=arr_int32, b=arr_int64))
+    df_2 = pd.DataFrame(dict(a=arr_int64, b=arr_int32))
+    df_3 = pd.DataFrame(dict(a=arr_float32, b=arr_int32))
+    df_4 = pd.DataFrame(dict(a=arr_float64, b=arr_float64))
+    df_5 = pd.DataFrame(dict(a=arr_float64, b=arr_float64, c=arr_float64))
+    df_6 = pd.DataFrame(dict(a=arr_str))
+
+    # all columns match
+    assert has_same_base_dtype(df_1, df_2)
+    # specific column matches
+    assert has_same_base_dtype(df_3, df_4, columns=['a'])
+    # some column types do not match
+    assert not has_same_base_dtype(df_3, df_4)
+    # column types do not match
+    assert not has_same_base_dtype(df_1, df_3, columns=['a'])
+    # all columns are not shared
+    assert not has_same_base_dtype(df_4, df_5)
+    # column types do not match
+    assert not has_same_base_dtype(df_5, df_6, columns=['a'])
+    # assert string columns match
+    assert has_same_base_dtype(df_6, df_6)
+
+
+def test_lru_cache_df():
+    df1 = pd.DataFrame(dict(a=[1, 2, 3], b=['a', 'b', 'c']))
+    df2 = pd.DataFrame(dict(a=[1, 2, 3], c=['a', 'b', 'c']))
+    df3 = pd.DataFrame(dict(a=[1, 2, 3], b=['a', 'b', 'd']))
+
+    @lru_cache_df(maxsize=2)
+    def cached_func(df):
+        pass
+
+    assert 'CacheInfo(hits=0, misses=0, maxsize=2, currsize=0)' == str(cached_func.cache_info())
+    cached_func(df1)
+    assert 'CacheInfo(hits=0, misses=1, maxsize=2, currsize=1)' == str(cached_func.cache_info())
+    cached_func(df1)
+    assert 'CacheInfo(hits=1, misses=1, maxsize=2, currsize=1)' == str(cached_func.cache_info())
+    cached_func(df2)
+    assert 'CacheInfo(hits=1, misses=2, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df2)
+    assert 'CacheInfo(hits=2, misses=2, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df3)
+    assert 'CacheInfo(hits=2, misses=3, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df1)
+    assert 'CacheInfo(hits=2, misses=4, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df3)
+    assert 'CacheInfo(hits=3, misses=4, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func.cache_clear()
+    assert 'CacheInfo(hits=0, misses=0, maxsize=2, currsize=0)' == str(cached_func.cache_info())

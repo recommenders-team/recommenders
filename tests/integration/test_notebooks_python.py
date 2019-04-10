@@ -120,14 +120,14 @@ def test_surprise_svd_integration(notebooks, size, expected_values):
         (
             "1m",
             dict(
-                rmse=0.958504,
-                mae=0.686706,
-                rsquared=0.26606,
-                exp_var=0.266197,
-                map=0.186626,
-                ndcg=0.681827,
-                precision=0.5748,
-                recall=0.186626,
+                rmse=0.959885,
+                mae=0.690133,
+                rsquared=0.264014,
+                exp_var=0.264417,
+                map=0.004857,
+                ndcg=0.055128,
+                precision=0.061142,
+                recall=0.017789,
             ),
         )
     ],
