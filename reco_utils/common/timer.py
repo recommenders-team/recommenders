@@ -22,7 +22,7 @@ class Timer(object):
         >>> t.interval < 1
         True
         >>> "Time elapsed {}".format(t) #doctest: +ELLIPSIS
-        'Time elapsed 0:00:...'
+        'Time elapsed 1...'
     """
 
     def __init__(self):
