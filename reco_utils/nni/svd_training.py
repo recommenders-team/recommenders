@@ -29,12 +29,10 @@ def svd_training(params):
     train_data = pd.read_pickle(path=os.path.join(params['datastore'], params['train_datapath']))
     validation_data = pd.read_pickle(path=os.path.join(params['datastore'], params['validation_datapath']))
 
-    svd = surprise.SVD(random_state=params['random_state'], n_epochs=params['epochs'], verbose=params['verbose'],
-                       biased=params['biased'], n_factors=params['n_factors'], init_mean=params['init_mean'],
-                       init_std_dev=params['init_std_dev'], lr_all=params['lr_all'], reg_all=params['reg_all'],
-                       lr_bu=params['lr_bu'], lr_bi=params['lr_bi'], lr_pu=params['lr_pu'], lr_qi=params['lr_qi'],
-                       reg_bu=params['reg_bu'], reg_bi=params['reg_bi'], reg_pu=params['reg_pu'],
-                       reg_qi=params['reg_qi'])
+    svd_params = {p: params[p] for p in ['random_state', 'n_epochs', 'verbose', 'biased', 'n_factors', 'init_mean',
+                                         'init_std_dev', 'lr_all', 'reg_all', 'lr_bu', 'lr_bi', 'lr_pu', 'lr_qi',
+                                         'reg_bu', 'reg_bi', 'reg_pu', 'reg_qi']}
+    svd = surprise.SVD(**svd_params)
 
     train_set = surprise.Dataset.load_from_df(train_data, reader=surprise.Reader(params['surprise_reader'])) \
         .build_full_trainset()
@@ -102,7 +100,7 @@ def get_params():
     # Training parameters
     parser.add_argument('--random-state', type=int, dest='random_state', default=0)
     parser.add_argument('--verbose', dest='verbose', action='store_true')
-    parser.add_argument('--epochs', type=int, dest='epochs', default=30)
+    parser.add_argument('--epochs', type=int, dest='n_epochs', default=30)
     parser.add_argument('--biased', dest='biased', action='store_true')
     parser.add_argument('--primary-metric', dest='primary_metric', default='rmse')
     # Hyperparameters to be tuned
@@ -126,7 +124,7 @@ def get_params():
 
 def main(params):
     logger.debug("Args: %s", str(params))
-    logger.debug('Number of epochs %d', params["epochs"])
+    logger.debug('Number of epochs %d', params["n_epochs"])
 
     svd = svd_training(params)
     # Save SVD model to the output directory for later use
@@ -142,7 +140,7 @@ if __name__ == "__main__":
         # in the case of Hyperband, use STEPS to allocate the number of epochs SVD will run for 
         if 'STEPS' in tuner_params:
             steps_param = tuner_params['STEPS']
-            params['epochs'] = int(np.rint(steps_param))    
+            params['n_epochs'] = int(np.rint(steps_param))
         params.update(tuner_params)
         main(params)
     except Exception as exception:
