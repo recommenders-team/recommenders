@@ -11,6 +11,16 @@ from pyspark.sql.types import StringType, FloatType, IntegerType, LongType
 from fastai.collab import EmbeddingDotBias, collab_learner, CollabDataBunch, load_learner
 import surprise
 
+from reco_utils.common.constants import (
+    COL_DICT, 
+    DEFAULT_K, 
+    DEFAULT_USER_COL, 
+    DEFAULT_ITEM_COL, 
+    DEFAULT_RATING_COL, 
+    DEFAULT_PREDICTION_COL,
+    DEFAULT_TIMESTAMP_COL,
+    SEED
+)
 from reco_utils.common.general_utils import get_number_processors
 from reco_utils.common.timer import Timer
 from reco_utils.common.gpu_utils import get_cuda_version, get_cudnn_version
@@ -28,22 +38,13 @@ from reco_utils.evaluation.python_evaluation import map_at_k, ndcg_at_k, precisi
 from reco_utils.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
 
 
-TOP_K = 10
-USER_COL = "UserId"
-ITEM_COL = "MovieId"
-RATING_COL = "Rating"
-TIMESTAMP_COL = "Timestamp"
-PREDICTION_COL = "prediction"
-SEED = 77
-
-
 def prepare_training_als(train):
     schema = StructType(
     (
-        StructField(USER_COL, IntegerType()),
-        StructField(ITEM_COL, IntegerType()),
-        StructField(RATING_COL, FloatType()),
-        StructField(TIMESTAMP_COL, LongType()),
+        StructField(DEFAULT_USER_COL, IntegerType()),
+        StructField(DEFAULT_ITEM_COL, IntegerType()),
+        StructField(DEFAULT_RATING_COL, FloatType()),
+        StructField(DEFAULT_TIMESTAMP_COL, LongType()),
     )
     )
     spark = start_or_get_spark()
@@ -60,10 +61,10 @@ def train_als(params, data):
 def prepare_metrics_als(train, test):
     schema = StructType(
     (
-        StructField(USER_COL, IntegerType()),
-        StructField(ITEM_COL, IntegerType()),
-        StructField(RATING_COL, FloatType()),
-        StructField(TIMESTAMP_COL, LongType()),
+        StructField(DEFAULT_USER_COL, IntegerType()),
+        StructField(DEFAULT_ITEM_COL, IntegerType()),
+        StructField(DEFAULT_RATING_COL, FloatType()),
+        StructField(DEFAULT_TIMESTAMP_COL, LongType()),
     )
     )
     spark = start_or_get_spark()
@@ -79,25 +80,25 @@ def predict_als(model, test):
 def recommend_k_als(model, test, train):
     with Timer() as t:
         # Get the cross join of all user-item pairs and score them.
-        users = train.select(USER_COL).distinct()
-        items = train.select(ITEM_COL).distinct()
+        users = train.select(DEFAULT_USER_COL).distinct()
+        items = train.select(DEFAULT_ITEM_COL).distinct()
         user_item = users.crossJoin(items)
         dfs_pred = model.transform(user_item)
 
         # Remove seen items.
         dfs_pred_exclude_train = dfs_pred.alias("pred").join(
             train.alias("train"),
-            (dfs_pred[USER_COL] == train[USER_COL]) & (dfs_pred[ITEM_COL] == train[ITEM_COL]),
+            (dfs_pred[DEFAULT_USER_COL] == train[DEFAULT_USER_COL]) & (dfs_pred[DEFAULT_ITEM_COL] == train[DEFAULT_ITEM_COL]),
             how='outer'
         )
-        top_k_scores = dfs_pred_exclude_train.filter(dfs_pred_exclude_train["train." + RATING_COL].isNull()) \
-            .select('pred.' + USER_COL, 'pred.' + ITEM_COL, 'pred.' + PREDICTION_COL)
-    return top_k_scores, t
+        topk_scores = dfs_pred_exclude_train.filter(dfs_pred_exclude_train["train." + DEFAULT_RATING_COL].isNull()) \
+            .select('pred.' + DEFAULT_USER_COL, 'pred.' + DEFAULT_ITEM_COL, 'pred.' + DEFAULT_PREDICTION_COL)
+    return topk_scores, t
 
 
 def prepare_training_svd(train):
     reader = surprise.Reader('ml-100k', rating_scale=(1, 5))
-    return surprise.Dataset.load_from_df(train.drop(TIMESTAMP_COL, axis=1), reader=reader).build_full_trainset()
+    return surprise.Dataset.load_from_df(train.drop(DEFAULT_TIMESTAMP_COL, axis=1), reader=reader).build_full_trainset()
 
 
 def train_svd(params, data):
@@ -109,14 +110,14 @@ def train_svd(params, data):
 
 def predict_svd(model, test):
     with Timer() as t:
-        preds = [model.predict(row[USER_COL], row[ITEM_COL], row[RATING_COL])
+        preds = [model.predict(row[DEFAULT_USER_COL], row[DEFAULT_ITEM_COL], row[DEFAULT_RATING_COL])
                        for (_, row) in test.iterrows()]
         preds = pd.DataFrame(preds)
-        preds = preds.rename(index=str, columns={"uid": USER_COL, 
-                                                 "iid": ITEM_COL,
-                                                 "est": PREDICTION_COL})
+        preds = preds.rename(index=str, columns={"uid": DEFAULT_USER_COL, 
+                                                 "iid": DEFAULT_ITEM_COL,
+                                                 "est": DEFAULT_PREDICTION_COL})
         preds = preds.drop(["details", "r_ui"], axis="columns")
-        for col in [USER_COL, ITEM_COL]:
+        for col in [DEFAULT_USER_COL, DEFAULT_ITEM_COL]:
             preds[col] = preds[col].astype(int)
     return preds, t
 
@@ -124,20 +125,20 @@ def predict_svd(model, test):
 def recommend_k_svd(model, test, train):
     with Timer() as t:
         preds_lst = []
-        for user in train[USER_COL].unique():
-            for item in train[ITEM_COL].unique():
+        for user in train[DEFAULT_USER_COL].unique():
+            for item in train[DEFAULT_ITEM_COL].unique():
                 preds_lst.append([user, item, model.predict(user, item).est])
-        top_k_scores = pd.DataFrame(data=preds_lst, columns=[USER_COL, ITEM_COL, PREDICTION_COL])
-        merged = pd.merge(train, top_k_scores, on=[USER_COL, ITEM_COL], how="outer")
-        top_k_scores = merged[merged[RATING_COL].isnull()].drop(RATING_COL, axis=1)
-    return top_k_scores, t
+        topk_scores = pd.DataFrame(data=preds_lst, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_PREDICTION_COL])
+        merged = pd.merge(train, topk_scores, on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL], how="outer")
+        topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(DEFAULT_RATING_COL, axis=1)
+    return topk_scores, t
 
 
 def prepare_training_fastai(train):
     data = train.copy()
-    data[USER_COL] = data[USER_COL].astype('str')
-    data[ITEM_COL] = data[ITEM_COL].astype('str')
-    data = CollabDataBunch.from_df(data, user_name=USER_COL, item_name=ITEM_COL, rating_name=RATING_COL, valid_pct=0)
+    data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype('str')
+    data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype('str')
+    data = CollabDataBunch.from_df(data, user_name=DEFAULT_USER_COL, item_name=DEFAULT_ITEM_COL, rating_name=DEFAULT_RATING_COL, valid_pct=0)
     return data
 
 
@@ -154,8 +155,8 @@ def train_fastai(params, data):
 
 def prepare_metrics_fastai(train, test):
     data = test.copy()
-    data[USER_COL] = data[USER_COL].astype('str')
-    data[ITEM_COL] = data[ITEM_COL].astype('str')
+    data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype('str')
+    data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype('str')
     return train, data
 
 
@@ -163,9 +164,9 @@ def predict_fastai(model, test):
     with Timer() as t:
         preds = score(model, 
                       test_df=test, 
-                      user_col=USER_COL, 
-                      item_col=ITEM_COL, 
-                      prediction_col=PREDICTION_COL)
+                      user_col=DEFAULT_USER_COL, 
+                      item_col=DEFAULT_ITEM_COL, 
+                      prediction_col=DEFAULT_PREDICTION_COL)
     return preds, t
 
 
@@ -174,29 +175,30 @@ def recommend_k_fastai(model, test, train):
         total_users, total_items = model.data.train_ds.x.classes.values()
         total_items = total_items[1:]
         total_users = total_users[1:]
-        test_users = test[USER_COL].unique()
+        test_users = test[DEFAULT_USER_COL].unique()
         test_users = np.intersect1d(test_users, total_users)
         users_items = cartesian_product(test_users, total_items)
-        users_items = pd.DataFrame(users_items, columns=[USER_COL, ITEM_COL])
-        training_removed = pd.merge(users_items, train.astype(str), on=[USER_COL, ITEM_COL], how='left')
-        training_removed = training_removed[training_removed[RATING_COL].isna()][[USER_COL, ITEM_COL]]
-        top_k_scores = score(model, 
+        users_items = pd.DataFrame(users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL])
+        training_removed = pd.merge(users_items, train.astype(str), on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL], how='left')
+        training_removed = training_removed[training_removed[DEFAULT_RATING_COL].isna()][[DEFAULT_USER_COL, DEFAULT_ITEM_COL]]
+        topk_scores = score(model, 
                              test_df=training_removed,
-                             user_col=USER_COL, 
-                             item_col=ITEM_COL, 
-                             prediction_col=PREDICTION_COL, 
-                             top_k=TOP_K)
-    return top_k_scores, t
+                             user_col=DEFAULT_USER_COL, 
+                             item_col=DEFAULT_ITEM_COL, 
+                             prediction_col=DEFAULT_PREDICTION_COL, 
+                             top_k=DEFAULT_K)
+    return topk_scores, t
 
 
 def prepare_training_ncf(train):
-    data = NCFDataset(train=train, 
-                      col_user=USER_COL,
-                      col_item=ITEM_COL,
-                      col_rating=RATING_COL,
-                      col_timestamp=TIMESTAMP_COL,
-                      seed=SEED)
-    return data
+    return NCFDataset(
+        train=train,  
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_timestamp=DEFAULT_TIMESTAMP_COL,
+        seed=SEED
+    )
 
 
 def train_ncf(params, data):
@@ -209,16 +211,16 @@ def train_ncf(params, data):
 def recommend_k_ncf(model, test, train):
     with Timer() as t: 
         users, items, preds = [], [], []
-        item = list(train[ITEM_COL].unique())
-        for user in train[USER_COL].unique():
+        item = list(train[DEFAULT_ITEM_COL].unique())
+        for user in train[DEFAULT_USER_COL].unique():
             user = [user] * len(item) 
             users.extend(user)
             items.extend(item)
             preds.extend(list(model.predict(user, item, is_list=True)))
-        top_k_scores = pd.DataFrame(data={USER_COL: users, ITEM_COL:items, PREDICTION_COL:preds})
-        merged = pd.merge(train, top_k_scores, on=[USER_COL, ITEM_COL], how="outer")
-        top_k_scores = merged[merged[RATING_COL].isnull()].drop(RATING_COL, axis=1)
-    return top_k_scores, t
+        topk_scores = pd.DataFrame(data={DEFAULT_USER_COL: users, DEFAULT_ITEM_COL:items, DEFAULT_PREDICTION_COL:preds})
+        merged = pd.merge(train, topk_scores, on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL], how="outer")
+        topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(DEFAULT_RATING_COL, axis=1)
+    return topk_scores, t
 
 
 def train_sar(params, data):
@@ -231,17 +233,12 @@ def train_sar(params, data):
 
 def recommend_k_sar(model, test, train):
     with Timer() as t:
-        top_k_scores = model.recommend_k_items(test)
-    return top_k_scores, t
+        topk_scores = model.recommend_k_items(test)
+    return topk_scores, t
 
 
 def rating_metrics_pyspark(test, predictions):
-    rating_eval = SparkRatingEvaluation(test, 
-                                        predictions, 
-                                        col_user=USER_COL, 
-                                        col_item=ITEM_COL, 
-                                        col_rating=RATING_COL, 
-                                        col_prediction=PREDICTION_COL)
+    rating_eval = SparkRatingEvaluation(test, predictions, **COL_DICT)
     return {
         "RMSE": rating_eval.rmse(),
         "MAE": rating_eval.mae(),
@@ -250,15 +247,12 @@ def rating_metrics_pyspark(test, predictions):
     }
     
     
-def ranking_metrics_pyspark(test, predictions, k=10):
+def ranking_metrics_pyspark(test, predictions, k=DEFAULT_K):
     rank_eval = SparkRankingEvaluation(test, 
                                        predictions, 
                                        k=k, 
-                                       col_user=USER_COL, 
-                                       col_item=ITEM_COL, 
-                                       col_rating=RATING_COL, 
-                                       col_prediction=PREDICTION_COL, 
-                                       relevancy_method="top_k")
+                                       relevancy_method="top_k",
+                                       **COL_DICT)
     return {
         "MAP": rank_eval.map_at_k(),
         "nDCG@k": rank_eval.ndcg_at_k(),
@@ -268,30 +262,18 @@ def ranking_metrics_pyspark(test, predictions, k=10):
     
     
 def rating_metrics_python(test, predictions):
-    cols = {
-        "col_user": USER_COL, 
-        "col_item": ITEM_COL, 
-        "col_rating": RATING_COL, 
-        "col_prediction": PREDICTION_COL
-    }
     return {
-        "RMSE": rmse(test, predictions, **cols),
-        "MAE": mae(test, predictions, **cols),
-        "R2": rsquared(test, predictions, **cols),
-        "Explained Variance": exp_var(test, predictions, **cols)
+        "RMSE": rmse(test, predictions, **COL_DICT),
+        "MAE": mae(test, predictions, **COL_DICT),
+        "R2": rsquared(test, predictions, **COL_DICT),
+        "Explained Variance": exp_var(test, predictions, **COL_DICT)
     }
     
     
-def ranking_metrics_python(test, predictions, k=10):
-    cols = {
-        "col_user": USER_COL, 
-        "col_item": ITEM_COL, 
-        "col_rating": RATING_COL, 
-        "col_prediction": PREDICTION_COL
-    }
+def ranking_metrics_python(test, predictions, k=DEFAULT_K):
     return {
-        "MAP": map_at_k(test, predictions, k=k, **cols),
-        "nDCG@k": ndcg_at_k(test, predictions, k=k, **cols),
-        "Precision@k": precision_at_k(test, predictions, k=k, **cols),
-        "Recall@k": recall_at_k(test, predictions, k=k, **cols)
+        "MAP": map_at_k(test, predictions, k=k, **COL_DICT),
+        "nDCG@k": ndcg_at_k(test, predictions, k=k, **COL_DICT),
+        "Precision@k": precision_at_k(test, predictions, k=k, **COL_DICT),
+        "Recall@k": recall_at_k(test, predictions, k=k, **COL_DICT)
     }

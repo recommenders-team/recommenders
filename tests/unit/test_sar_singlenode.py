@@ -7,7 +7,7 @@ import pytest
 import numpy as np
 import pandas as pd
 
-from reco_utils.common.constants import PREDICTION_COL
+from reco_utils.common.constants import DEFAULT_PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 from reco_utils.recommender.sar import TIME_NOW
 from tests.sar_common import read_matrix, load_userpred, load_affinity
@@ -61,7 +61,7 @@ def test_predict(
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == trainset[header["col_user"]].dtype
     assert preds[header["col_item"]].dtype == trainset[header["col_item"]].dtype
-    assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
+    assert preds[DEFAULT_PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
 def test_predict_all_items(train_test_dummy_timestamp, header):
@@ -77,7 +77,7 @@ def test_predict_all_items(train_test_dummy_timestamp, header):
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == trainset[header["col_user"]].dtype
     assert preds[header["col_item"]].dtype == trainset[header["col_item"]].dtype
-    assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
+    assert preds[DEFAULT_PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
 @pytest.mark.parametrize(
