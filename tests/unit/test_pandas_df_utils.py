@@ -11,6 +11,7 @@ from reco_utils.dataset.pandas_df_utils import (
     LibffmConverter,
     has_same_base_dtype,
     has_columns,
+    lru_cache_df,
 )
 
 
@@ -202,3 +203,31 @@ def test_has_same_base_dtype():
     assert not has_same_base_dtype(df_5, df_6, columns=['a'])
     # assert string columns match
     assert has_same_base_dtype(df_6, df_6)
+
+
+def test_lru_cache_df():
+    df1 = pd.DataFrame(dict(a=[1, 2, 3], b=['a', 'b', 'c']))
+    df2 = pd.DataFrame(dict(a=[1, 2, 3], c=['a', 'b', 'c']))
+    df3 = pd.DataFrame(dict(a=[1, 2, 3], b=['a', 'b', 'd']))
+
+    @lru_cache_df(maxsize=2)
+    def cached_func(df):
+        pass
+
+    assert 'CacheInfo(hits=0, misses=0, maxsize=2, currsize=0)' == str(cached_func.cache_info())
+    cached_func(df1)
+    assert 'CacheInfo(hits=0, misses=1, maxsize=2, currsize=1)' == str(cached_func.cache_info())
+    cached_func(df1)
+    assert 'CacheInfo(hits=1, misses=1, maxsize=2, currsize=1)' == str(cached_func.cache_info())
+    cached_func(df2)
+    assert 'CacheInfo(hits=1, misses=2, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df2)
+    assert 'CacheInfo(hits=2, misses=2, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df3)
+    assert 'CacheInfo(hits=2, misses=3, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df1)
+    assert 'CacheInfo(hits=2, misses=4, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func(df3)
+    assert 'CacheInfo(hits=3, misses=4, maxsize=2, currsize=2)' == str(cached_func.cache_info())
+    cached_func.cache_clear()
+    assert 'CacheInfo(hits=0, misses=0, maxsize=2, currsize=0)' == str(cached_func.cache_info())
