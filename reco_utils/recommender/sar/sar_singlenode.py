@@ -70,6 +70,7 @@ class SARSingleNode:
         self.model_str = "sar_ref"
         self.user_affinity = None
         self.item_similarity = None
+        self.item_frequencies = None
 
         # threshold - items below this number get set to zero in co-occurrence counts
         if self.threshold <= 0:
@@ -171,8 +172,8 @@ class SARSingleNode:
             self.set_index(df)
 
         logger.info("Collecting user affinity matrix")
-        if not np.issubdtype(df[self.col_rating].dtype, np.floating):
-            raise TypeError("Rating column data type must be floating point")
+        if not np.issubdtype(df[self.col_rating].dtype, np.number):
+            raise TypeError("Rating column data type must be numeric")
 
         # copy the DataFrame to avoid modification of the input
         temp_df = df[[self.col_user, self.col_item, self.col_rating]].copy()
@@ -223,6 +224,8 @@ class SARSingleNode:
 
         # free up some space
         del temp_df
+
+        self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
         if self.similarity_type == sar.SIM_COOCCUR:
@@ -281,6 +284,63 @@ class SARSingleNode:
 
         return test_scores
 
+    def _get_top_k_items(self, users, scores, top_k, sort_top_k=False):
+        """Extract top K items from score matrix, optionally sort results per user
+
+        Args:
+            users (pd.Series): test users
+            scores (np.array): score matrix
+            top_k (int): number of top items to recommend
+            sort_top_k (bool): flag to sort top k results
+
+        Returns:
+            pd.DataFrame: top k recommendation items for each user
+        """
+
+        if self.n_items < top_k:
+            logger.warning(
+                "Number of items is less than top_k, limiting top_k to number of items"
+            )
+        k = min(top_k, self.n_items)
+
+        test_user_idx = np.arange(scores.shape[0])[:, None]
+
+        # get top K items and scores
+        logger.info("Getting top K")
+        # this determines the un-ordered top-k item indices for each user
+        top_items = np.argpartition(scores, -k, axis=1)[:, -k:]
+        top_scores = scores[test_user_idx, top_items]
+
+        if sort_top_k:
+            sort_ind = np.argsort(-top_scores)
+            top_items = top_items[test_user_idx, sort_ind]
+            top_scores = top_scores[test_user_idx, sort_ind]
+
+        df = pd.DataFrame(
+            {
+                self.col_user: np.repeat(users.drop_duplicates().values, k),
+                self.col_item: [
+                    self.index2item[item] for item in np.array(top_items).flatten()
+                ],
+                self.col_prediction: np.array(top_scores).flatten(),
+            }
+        )
+
+        # drop invalid items
+        return df.replace(-np.inf, np.nan).dropna()
+
+    def recommend_popular_items(self, top_k=10, sort_top_k=False):
+        test_users = pd.Series([0])
+        test_scores = np.array([self.item_frequencies])
+
+        # ensure we're working with a dense matrix
+        if isinstance(test_scores, sparse.spmatrix):
+            test_scores = test_scores.todense()
+
+        return self._get_top_k_items(
+            users=test_users, scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
+        )
+
     def recommend_similar_items(self, items, top_k=10, sort_top_k=False):
         """Recommend top K items similar to the provided seed items
 
@@ -328,7 +388,7 @@ class SARSingleNode:
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.todense()
 
-        return self.get_top_k_items(
+        return self._get_top_k_items(
             users=test_users, scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
         )
 
@@ -346,57 +406,12 @@ class SARSingleNode:
         """
 
         test_scores = self.score(test, remove_seen=remove_seen)
-        return self.get_top_k_items(
+        return self._get_top_k_items(
             users=test[self.col_user],
             scores=test_scores,
             top_k=top_k,
             sort_top_k=sort_top_k,
         )
-
-    def get_top_k_items(self, users, scores, top_k, sort_top_k=False):
-        """Extract top K items from score matrix, optionally sort results per user
-
-        Args:
-            users (pd.Series): test users
-            scores (np.array): score matrix
-            top_k (int): number of top items to recommend
-            sort_top_k (bool): flag to sort top k results
-
-        Returns:
-            pd.DataFrame: top k recommendation items for each user
-        """
-
-        if self.n_items < top_k:
-            logger.warning(
-                "Number of items is less than top_k, limiting top_k to number of items"
-            )
-        k = min(top_k, self.n_items)
-
-        test_user_idx = np.arange(scores.shape[0])[:, None]
-
-        # get top K items and scores
-        logger.info("Getting top K")
-        # this determines the un-ordered top-k item indices for each user
-        top_items = np.argpartition(scores, -k, axis=1)[:, -k:]
-        top_scores = scores[test_user_idx, top_items]
-
-        if sort_top_k:
-            sort_ind = np.argsort(-top_scores)
-            top_items = top_items[test_user_idx, sort_ind]
-            top_scores = top_scores[test_user_idx, sort_ind]
-
-        df = pd.DataFrame(
-            {
-                self.col_user: np.repeat(users.drop_duplicates().values, k),
-                self.col_item: [
-                    self.index2item[item] for item in np.array(top_items).flatten()
-                ],
-                self.col_prediction: np.array(top_scores).flatten(),
-            }
-        )
-
-        # drop invalid items
-        return df.replace(-np.inf, np.nan).dropna()
 
     def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set

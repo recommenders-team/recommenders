@@ -230,15 +230,15 @@ def test_recommend_similar_items(header, pandas_dummy):
             header["col_item"]: [1, 5, 1, 10, 2, 6],
         }
     )
-    actual = sar.recommend_similar_items(items, top_k=3)
+    actual = sar.recommend_similar_items(items, top_k=3, sort_top_k=True)
     assert_frame_equal(expected, actual)
 
     # test with items, users, and ratings
     expected = pd.DataFrame(
         dict(
             UserId=[100, 100, 100, 1, 1, 1],
-            MovieId=[2, 4, 3, 10, 4, 3],
-            prediction=[5.0, 5.0, 5.0, 4.0, 8.0, 8.0],
+            MovieId=[2, 4, 3, 4, 3, 10],
+            prediction=[5.0, 5.0, 5.0, 8.0, 8.0, 4.0],
         )
     )
     items = pd.DataFrame(
@@ -249,4 +249,24 @@ def test_recommend_similar_items(header, pandas_dummy):
         }
     )
     actual = sar.recommend_similar_items(items, top_k=3)
+    assert_frame_equal(expected, actual)
+
+
+def test_recommend_popular_items(header):
+
+    train_df = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 1, 2, 2, 2, 3, 3, 3],
+            header["col_item"]: [1, 2, 3, 1, 3, 4, 5, 6, 1],
+            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        }
+    )
+
+    sar = SARSingleNode(**header)
+    sar.fit(train_df)
+
+    expected = pd.DataFrame(
+        dict(UserId=[0, 0, 0], MovieId=[1, 3, 4], prediction=[3, 2, 1])
+    )
+    actual = sar.recommend_popular_items(top_k=3, sort_top_k=True)
     assert_frame_equal(expected, actual)
