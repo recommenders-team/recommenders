@@ -14,7 +14,7 @@ Please see the [setup guide](SETUP.md) for more details on setting up your machi
 
 To setup on your local machine:
 1. Install Anaconda with Python >= 3.6. [Miniconda](https://conda.io/miniconda.html) is a quick way to get started.
-2. Clone the repository
+2. Clone the repository:
     ```
     git clone https://github.com/Microsoft/Recommenders
     ```
