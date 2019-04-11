@@ -6,6 +6,7 @@ import itertools
 import pytest
 import numpy as np
 import pandas as pd
+from pandas.util.testing import assert_frame_equal
 
 from reco_utils.common.constants import PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
@@ -146,7 +147,7 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
     user_index = model.user2index[sar_settings["TEST_USER_ID"]]
-    test_user_affinity = np.reshape(
+    sar_user_affinity = np.reshape(
         np.array(
             _rearrange_to_test(
                 model.user_affinity, None, items, None, model.item2index
@@ -155,8 +156,8 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         -1,
     )
     assert np.allclose(
-        true_user_affinity.astype(test_user_affinity.dtype),
-        test_user_affinity,
+        true_user_affinity.astype(sar_user_affinity.dtype),
+        sar_user_affinity,
         atol=sar_settings["ATOL"],
     )
 
@@ -198,3 +199,28 @@ def test_recommend_k_items(
     test_scores = np.array(test_results["prediction"])
     assert true_items == test_items
     assert np.allclose(true_scores, test_scores, atol=sar_settings["ATOL"])
+
+
+def test_recommend_similar_items(header, pandas_dummy):
+
+    sar = SARSingleNode(**header)
+    sar.fit(pandas_dummy)
+
+    # FIXME: confirm values for items and predictions (print out item similarity)
+    # test with just items provided
+    expected = pd.DataFrame(dict(UserId=[0, 0, 0], MovieId=[8, 7, 6], prediction=[2., 2., 2.]))
+    items = pd.DataFrame({header["col_item"]: [1, 5, 10]})
+    actual = sar.recommend_similar_items(items, top_k=3)
+    assert_frame_equal(expected, actual)
+
+    # test with items and users
+    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[2, 4, 3, 6, 4, 1], prediction=[2.0, 2.0, 2.0, 1.0, 2.0, 2.0]))
+    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 10, 1, 2, 3]})
+    actual = sar.recommend_similar_items(items, top_k=3)
+    assert_frame_equal(expected, actual)
+
+    # test with items, users, and ratings
+    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[2, 4, 10, 6, 4, 1], prediction=[2.0, 2.0, 2.0, 3.0, 9.0, 9.0]))
+    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 10, 1, 2, 3], header["col_rating"]: [1, 2, 3, 1, 5, 4]})
+    actual = sar.recommend_similar_items(items, top_k=3)
+    assert_frame_equal(expected, actual)
