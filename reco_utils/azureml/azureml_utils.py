@@ -38,7 +38,6 @@ def get_or_create_workspace(
 
     # define fallback options in order to try
     options = [
-        (Workspace.from_config, dict(path=config_path)),
         (
             Workspace,
             dict(
@@ -47,6 +46,7 @@ def get_or_create_workspace(
                 workspace_name=workspace_name,
             ),
         ),
+        (Workspace.from_config, dict(path=config_path)),
         (
             Workspace.create,
             dict(
