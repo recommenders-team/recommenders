@@ -136,7 +136,9 @@ import pytest
 import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
+
 TOL = 0.05
+
 
 @pytest.mark.smoke
 def test_sar_single_node_smoke(notebooks):
