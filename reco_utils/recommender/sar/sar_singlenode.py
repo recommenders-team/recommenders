@@ -315,8 +315,7 @@ class SARSingleNode:
 
         # generate pseudo user affinity using seed items
         pseudo_affinity = sparse.coo_matrix(
-            (ratings, (user_ids, item_ids)),
-            shape=(n_users, self.n_items),
+            (ratings, (user_ids, item_ids)), shape=(n_users, self.n_items)
         ).tocsr()
 
         # calculate raw scores with a matrix multiplication
@@ -329,7 +328,9 @@ class SARSingleNode:
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.todense()
 
-        return self.get_top_k_items(users=test_users, scores=test_scores, top_k=top_k, sort_top_k=sort_top_k)
+        return self.get_top_k_items(
+            users=test_users, scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
+        )
 
     def recommend_k_items(self, test, top_k=10, sort_top_k=False, remove_seen=False):
         """Recommend top K items for all users which are in the test set
@@ -345,7 +346,12 @@ class SARSingleNode:
         """
 
         test_scores = self.score(test, remove_seen=remove_seen)
-        return self.get_top_k_items(users=test[self.col_user], scores=test_scores, top_k=top_k, sort_top_k=sort_top_k)
+        return self.get_top_k_items(
+            users=test[self.col_user],
+            scores=test_scores,
+            top_k=top_k,
+            sort_top_k=sort_top_k,
+        )
 
     def get_top_k_items(self, users, scores, top_k, sort_top_k=False):
         """Extract top K items from score matrix, optionally sort results per user
@@ -361,7 +367,9 @@ class SARSingleNode:
         """
 
         if self.n_items < top_k:
-            logger.warning('Number of items is less than top_k, limiting top_k to number of items')
+            logger.warning(
+                "Number of items is less than top_k, limiting top_k to number of items"
+            )
         k = min(top_k, self.n_items)
 
         test_user_idx = np.arange(scores.shape[0])[:, None]
@@ -379,9 +387,7 @@ class SARSingleNode:
 
         df = pd.DataFrame(
             {
-                self.col_user: np.repeat(
-                    users.drop_duplicates().values, k
-                ),
+                self.col_user: np.repeat(users.drop_duplicates().values, k),
                 self.col_item: [
                     self.index2item[item] for item in np.array(top_items).flatten()
                 ],
@@ -419,7 +425,7 @@ class SARSingleNode:
             {
                 self.col_user: test[self.col_user].values,
                 self.col_item: test[self.col_item].values,
-                self.col_prediction: test_scores[user_ids, item_ids]
+                self.col_prediction: test_scores[user_ids, item_ids],
             }
         )
 

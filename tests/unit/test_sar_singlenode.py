@@ -70,7 +70,9 @@ def test_predict_all_items(train_test_dummy_timestamp, header):
     trainset, _ = train_test_dummy_timestamp
     model.fit(trainset)
 
-    user_items = itertools.product(trainset[header["col_user"]].unique(), trainset[header["col_item"]].unique())
+    user_items = itertools.product(
+        trainset[header["col_user"]].unique(), trainset[header["col_item"]].unique()
+    )
     testset = pd.DataFrame(user_items, columns=[header["col_user"], header["col_item"]])
     preds = model.predict(testset)
 
@@ -207,19 +209,44 @@ def test_recommend_similar_items(header, pandas_dummy):
     sar.fit(pandas_dummy)
 
     # test with just items provided
-    expected = pd.DataFrame(dict(UserId=[0, 0, 0], MovieId=[8, 7, 6], prediction=[2.0, 2.0, 2.0]))
+    expected = pd.DataFrame(
+        dict(UserId=[0, 0, 0], MovieId=[8, 7, 6], prediction=[2.0, 2.0, 2.0])
+    )
     items = pd.DataFrame({header["col_item"]: [1, 5, 10]})
     actual = sar.recommend_similar_items(items, top_k=3)
     assert_frame_equal(expected, actual)
 
     # test with items and users
-    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[8, 7, 6, 10, 4, 3], prediction=[2.0, 2.0, 2.0, 1.0, 2.0, 2.0]))
-    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 1, 10, 2, 6]})
+    expected = pd.DataFrame(
+        dict(
+            UserId=[100, 100, 100, 1, 1, 1],
+            MovieId=[8, 7, 6, 10, 4, 3],
+            prediction=[2.0, 2.0, 2.0, 1.0, 2.0, 2.0],
+        )
+    )
+    items = pd.DataFrame(
+        {
+            header["col_user"]: [100, 100, 1, 100, 1, 1],
+            header["col_item"]: [1, 5, 1, 10, 2, 6],
+        }
+    )
     actual = sar.recommend_similar_items(items, top_k=3)
     assert_frame_equal(expected, actual)
 
     # test with items, users, and ratings
-    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[2, 4, 3, 10, 4, 3], prediction=[5.0, 5.0, 5.0, 4.0, 8.0, 8.0]))
-    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 1, 10, 2, 6], header["col_rating"]: [5, 1, 3, 1, 5, 4]})
+    expected = pd.DataFrame(
+        dict(
+            UserId=[100, 100, 100, 1, 1, 1],
+            MovieId=[2, 4, 3, 10, 4, 3],
+            prediction=[5.0, 5.0, 5.0, 4.0, 8.0, 8.0],
+        )
+    )
+    items = pd.DataFrame(
+        {
+            header["col_user"]: [100, 100, 1, 100, 1, 1],
+            header["col_item"]: [1, 5, 1, 10, 2, 6],
+            header["col_rating"]: [5, 1, 3, 1, 5, 4],
+        }
+    )
     actual = sar.recommend_similar_items(items, top_k=3)
     assert_frame_equal(expected, actual)
