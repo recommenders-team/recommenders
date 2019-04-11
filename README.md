@@ -30,7 +30,7 @@ To setup on your local machine:
     conda activate reco_base
     python -m ipykernel install --user --name reco_base --display-name "Python (reco)"
     ```
-5. Start the Jupyter notebook server
+5. Start the Jupyter notebook server:
     ```
     cd notebooks
     jupyter notebook
