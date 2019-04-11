@@ -206,21 +206,20 @@ def test_recommend_similar_items(header, pandas_dummy):
     sar = SARSingleNode(**header)
     sar.fit(pandas_dummy)
 
-    # FIXME: confirm values for items and predictions (print out item similarity)
     # test with just items provided
-    expected = pd.DataFrame(dict(UserId=[0, 0, 0], MovieId=[8, 7, 6], prediction=[2., 2., 2.]))
+    expected = pd.DataFrame(dict(UserId=[0, 0, 0], MovieId=[8, 7, 6], prediction=[2.0, 2.0, 2.0]))
     items = pd.DataFrame({header["col_item"]: [1, 5, 10]})
     actual = sar.recommend_similar_items(items, top_k=3)
     assert_frame_equal(expected, actual)
 
     # test with items and users
-    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[2, 4, 3, 6, 4, 1], prediction=[2.0, 2.0, 2.0, 1.0, 2.0, 2.0]))
-    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 10, 1, 2, 3]})
+    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[8, 7, 6, 10, 4, 3], prediction=[2.0, 2.0, 2.0, 1.0, 2.0, 2.0]))
+    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 1, 10, 2, 6]})
     actual = sar.recommend_similar_items(items, top_k=3)
     assert_frame_equal(expected, actual)
 
     # test with items, users, and ratings
-    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[2, 4, 10, 6, 4, 1], prediction=[2.0, 2.0, 2.0, 3.0, 9.0, 9.0]))
-    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 10, 1, 2, 3], header["col_rating"]: [1, 2, 3, 1, 5, 4]})
+    expected = pd.DataFrame(dict(UserId=[100, 100, 100, 1, 1, 1], MovieId=[2, 4, 3, 10, 4, 3], prediction=[5.0, 5.0, 5.0, 4.0, 8.0, 8.0]))
+    items = pd.DataFrame({header["col_user"]: [100, 100, 1, 100, 1, 1], header["col_item"]: [1, 5, 1, 10, 2, 6], header["col_rating"]: [5, 1, 3, 1, 5, 4]})
     actual = sar.recommend_similar_items(items, top_k=3)
     assert_frame_equal(expected, actual)
