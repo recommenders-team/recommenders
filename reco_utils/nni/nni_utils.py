@@ -15,11 +15,12 @@ def get_experiment_status(status_url):
     return nni_status['status']
 
 
-def check_experiment_status():
+def check_experiment_status(waiting_time=WAITING_TIME * MAX_RETRIES):
     # Checks the status of the current experiment on the NNI REST endpoint
     # Waits until the tuning has completed
     i = 0
-    while i < MAX_RETRIES:
+    max_retries = int(waiting_time / WAITING_TIME) + 1
+    while i < max_retries:
         status = get_experiment_status(NNI_STATUS_URL)
         if status in ['DONE', 'TUNER_NO_MORE_TRIAL']:
             break
@@ -27,7 +28,7 @@ def check_experiment_status():
             raise RuntimeError("NNI experiment failed to complete with status {}".format(status))
         time.sleep(WAITING_TIME)
         i += 1
-    if i == MAX_RETRIES:
+    if i == max_retries:
         raise TimeoutError("check_experiment_status() timed out")
 
 
