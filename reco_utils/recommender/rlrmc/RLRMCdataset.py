@@ -19,26 +19,35 @@ from reco_utils.common.constants import (
 
 class RLRMCdataset(object):
     """
-    classdocs
+    RLRMC dataset implementation. Creates sparse data structures for RLRMC algorithm
     """
 
     def __init__(
         self,
         train,
         test=None,
-        mean_center = True,
+        mean_center=True,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
         # seed=42,
     ):
-        """
-        Constructor
+        """Initialize parameters
+
+        Args:
+            train (pandas.DataFrame: training data with at least columns (col_user, col_item, col_rating)
+            test (pandas.DataFrame): test data with at least columns (col_user, col_item, col_rating). test can be None, if so, we only process the training data
+            mean_center (bool): flag to mean center the ratings in train (and test) data
+            col_user (str): user column name
+            col_item (str): item column name
+            col_rating (str): rating column name
+            col_timestamp (str): timestamp column name
         """
         # initialize user and item index
         self.user_idx = None
         self.item_idx = None
+
         # get col name of user, item and rating
         self.col_user = col_user
         self.col_item = col_item
@@ -46,16 +55,16 @@ class RLRMCdataset(object):
         self.col_timestamp = col_timestamp
         # set random seed
         # random.seed(seed)
+
         # data preprocessing for training and test data
         self._data_processing(train, test, mean_center)
-
 
     def _data_processing(self, train, test=None, mean_center=True):
         """ process the dataset to reindex userID and itemID 
         Args:
             train (pandas.DataFrame): training data with at least columns (col_user, col_item, col_rating) 
-            test (pandas.DataFrame): test data with at least columns (col_user, col_item, col_rating)
-                    test can be None, if so, we only process the training data
+            test (pandas.DataFrame): test data with at least columns (col_user, col_item, col_rating). test can be None, if so, we only process the training data
+            mean_center (bool): flag to mean center the ratings in train (and test) data
         Returns:
             list: train and test pandas.DataFrame Dataset, which have been reindexed.
         
@@ -91,30 +100,33 @@ class RLRMCdataset(object):
 
         df_train = self._reindex(train)
 
-        d = len(user_idx) # number of rows
-        T = len(item_idx) # number of columns
+        d = len(user_idx)  # number of rows
+        T = len(item_idx)  # number of columns
 
-        rows_train = df_train['userID'].values
-        cols_train = df_train['itemID'].values
-        entries_omega = df_train['rating'].values
+        rows_train = df_train["userID"].values
+        cols_train = df_train["itemID"].values
+        entries_omega = df_train["rating"].values
         if mean_center:
             train_mean = np.mean(entries_omega)
         else:
             train_mean = 0.0
         entries_train = entries_omega - train_mean
-        self.model_param = {'num_row': d, 'num_col': T, 'train_mean': train_mean}
+        self.model_param = {"num_row": d, "num_col": T, "train_mean": train_mean}
 
-        self.train = (csr_matrix((entries_train.T.ravel(), (rows_train, cols_train)),shape=(d,T)))
-        
+        self.train = csr_matrix(
+            (entries_train.T.ravel(), (rows_train, cols_train)), shape=(d, T)
+        )
+
         if test is not None:
             df_test = self._reindex(test)
-            rows_test = df_test['userID'].values
-            cols_test = df_test['itemID'].values
-            entries_test = df_test['rating'].values - train_mean
-            self.test = (csr_matrix((entries_test.T.ravel(), (rows_test, cols_test)),shape=(d,T)))
+            rows_test = df_test["userID"].values
+            cols_test = df_test["itemID"].values
+            entries_test = df_test["rating"].values - train_mean
+            self.test = csr_matrix(
+                (entries_test.T.ravel(), (rows_test, cols_test)), shape=(d, T)
+            )
         else:
             self.test = None
-
 
     def _reindex(self, df):
         """ process dataset to reindex userID and itemID
