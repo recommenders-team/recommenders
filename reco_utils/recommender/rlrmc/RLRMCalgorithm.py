@@ -26,6 +26,7 @@ from numba import jit, njit, prange
 
 logger = logging.getLogger(__name__)
 
+
 class RLRMCalgorithm(object):
     """
     RLRMC algorithm implementation.
@@ -64,23 +65,35 @@ class RLRMCalgorithm(object):
         logger.info("Hyper-parameters of the algorithm")
         logger.info("Rank: %i, Regularization parameter: %e" % (self.rank, self.C))
         # Initialization # starting point on the manifold
-        if self.initialize_flag == 'random':  # rndom
+        if self.initialize_flag == "random":  # rndom
             W0 = None
-        elif self.initialize_flag == 'svd':  # svd
+        elif self.initialize_flag == "svd":  # svd
             U0, B0, V0 = svds(entries_train_csr, k=self.rank)
             W0 = [U0, V0.T, np.diag(B0)]
         else:  # default option when given incorrect option
-            logger.warning("Initialization flag not recognized. Setting it to random (default).")
+            logger.warning(
+                "Initialization flag not recognized. Setting it to random (default)."
+            )
             W0 = None
         return W0
 
-    def fit(self, RLRMCdata, verbosity=0, compute_iter_rmse=False):
-        """Main fit method for RLRMC
+    def fit_and_evaluate(self, RLRMCdata, verbosity=0):
+        """Main fit and evalute method for RLRMC. In addition to fitting the model, it also computes the per iteration statistics in train (and validation) datasets.
 
         Args:
             RLRMCdata (RLRMCdataset): the RLRMCdataset object.
             verbosity (int): verbosity of Pymanopt. Possible values are 0 (least verbose), 1, or 2 (most verbose). 
-            compute_iter_rmse (bool): flag to compute the per iteration statistics in train (and test) datasets.
+        """
+        # it calls fit method with appropriate arguments
+        self.fit(RLRMCdata, verbosity, True)
+
+    def fit(self, RLRMCdata, verbosity=0, _evaluate=False):
+        """the underlying fit method for RLRMC
+
+        Args:
+            RLRMCdata (RLRMCdataset): the RLRMCdataset object.
+            verbosity (int): verbosity of Pymanopt. Possible values are 0 (least verbose), 1, or 2 (most verbose). 
+            _evaluate (bool): flag to compute the per iteration statistics in train (and validation) datasets.
         """
         # initialize the model
         W0 = self._init_train(RLRMCdata.train)
@@ -122,23 +135,26 @@ class RLRMCalgorithm(object):
             verbosity=verbosity,
         )
 
-        residual_test_global = np.zeros(RLRMCdata.test.data.shape, dtype=np.float64)
-        Wopt, self.stats = solver.solve(
-            problem,
-            x=W0,
-            compute_stats=lambda x, y, z: self._my_stats(
-                x,
-                y,
-                z,
-                residual_global,
-                RLRMCdata.test.data,
-                RLRMCdata.test.indices,
-                RLRMCdata.test.indptr,
-                residual_test_global,
-                verbosity,
-                compute_iter_rmse,
-            ),
-        )
+        if _evaluate:
+            residual_validation_global = np.zeros(
+                RLRMCdata.validation.data.shape, dtype=np.float64
+            )
+            Wopt, self.stats = solver.solve(
+                problem,
+                x=W0,
+                compute_stats=lambda x, y, z: self._my_stats(
+                    x,
+                    y,
+                    z,
+                    residual_global,
+                    RLRMCdata.validation.data,
+                    RLRMCdata.validation.indices,
+                    RLRMCdata.validation.indptr,
+                    residual_validation_global,
+                ),
+            )
+        else:
+            Wopt, self.stats = solver.solve(problem, x=W0)
         self.L = np.dot(Wopt[0], Wopt[2])
         self.R = Wopt[1]
 
@@ -163,12 +179,10 @@ class RLRMCalgorithm(object):
         given_stats,
         stats,
         residual_global,
-        entries_test_csr_data=None,
-        entries_test_csr_indices=None,
-        entries_test_csr_indptr=None,
-        residual_test_global=None,
-        verbosity=0,
-        compute_iter_rmse=False,
+        entries_validation_csr_data=None,
+        entries_validation_csr_indices=None,
+        entries_validation_csr_indptr=None,
+        residual_validation_global=None,
     ):
         iteration = given_stats[0]
         cost = given_stats[1]
@@ -178,32 +192,32 @@ class RLRMCalgorithm(object):
         stats.setdefault("time", []).append(time_iter)
         stats.setdefault("objective", []).append(cost)
         stats.setdefault("gradnorm", []).append(gradnorm)
-        if compute_iter_rmse:
-            U1 = weights[0]
-            U2 = weights[1]
-            B = weights[2]
-            U1_dot_B = np.dot(U1, B)
-            train_mse = np.mean(residual_global ** 2)
-            train_rmse = sqrt(train_mse)
-            stats.setdefault("trainRMSE", []).append(train_rmse)
-            # Prediction
-            if entries_test_csr_data is not None:
-                RLRMCalgorithm._computeLoss_csrmatrix(
-                    U1_dot_B,
-                    U2.T,
-                    entries_test_csr_data,
-                    entries_test_csr_indices,
-                    entries_test_csr_indptr,
-                    residual_test_global,
-                )
-                test_mse = np.mean(residual_test_global ** 2)
-                test_rmse = sqrt(test_mse)
-                stats.setdefault("testRMSE", []).append(test_rmse)
-                if verbosity >= 2:
-                    print(
-                        "Train RMSE: %.4f, Test RMSE: %.4f, Total time: %.2f"
-                        % (train_rmse, test_rmse, time_iter)
-                    )
+        U1 = weights[0]
+        U2 = weights[1]
+        B = weights[2]
+        U1_dot_B = np.dot(U1, B)
+        train_mse = np.mean(residual_global ** 2)
+        train_rmse = sqrt(train_mse)
+        stats.setdefault("trainRMSE", []).append(train_rmse)
+        # Prediction
+        if entries_validation_csr_data is not None:
+            RLRMCalgorithm._computeLoss_csrmatrix(
+                U1_dot_B,
+                U2.T,
+                entries_validation_csr_data,
+                entries_validation_csr_indices,
+                entries_validation_csr_indptr,
+                residual_validation_global,
+            )
+            validation_mse = np.mean(residual_validation_global ** 2)
+            validation_rmse = sqrt(validation_mse)
+            stats.setdefault("validationRMSE", []).append(validation_rmse)
+            logger.info(
+                "Train RMSE: %.4f, Validation RMSE: %.4f, Total time: %.2f"
+                % (train_rmse, validation_rmse, time_iter)
+            )
+        else:
+            logger.info("Train RMSE: %.4f, Total time: %.2f" % (train_rmse, time_iter))
         return
 
     # computes the objective function at a given point
