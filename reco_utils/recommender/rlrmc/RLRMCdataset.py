@@ -25,7 +25,7 @@ class RLRMCdataset(object):
     def __init__(
         self,
         train,
-        test=None,
+        validation=None,
         mean_center=True,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
@@ -37,8 +37,8 @@ class RLRMCdataset(object):
 
         Args:
             train (pandas.DataFrame: training data with at least columns (col_user, col_item, col_rating)
-            test (pandas.DataFrame): test data with at least columns (col_user, col_item, col_rating). test can be None, if so, we only process the training data
-            mean_center (bool): flag to mean center the ratings in train (and test) data
+            validation (pandas.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
+            mean_center (bool): flag to mean center the ratings in train (and validation) data
             col_user (str): user column name
             col_item (str): item column name
             col_rating (str): rating column name
@@ -56,22 +56,22 @@ class RLRMCdataset(object):
         # set random seed
         # random.seed(seed)
 
-        # data preprocessing for training and test data
-        self._data_processing(train, test, mean_center)
+        # data preprocessing for training and validation data
+        self._data_processing(train, validation, mean_center)
 
-    def _data_processing(self, train, test=None, mean_center=True):
+    def _data_processing(self, train, validation=None, mean_center=True):
         """ process the dataset to reindex userID and itemID 
         Args:
             train (pandas.DataFrame): training data with at least columns (col_user, col_item, col_rating) 
-            test (pandas.DataFrame): test data with at least columns (col_user, col_item, col_rating). test can be None, if so, we only process the training data
-            mean_center (bool): flag to mean center the ratings in train (and test) data
+            validation (pandas.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
+            mean_center (bool): flag to mean center the ratings in train (and validation) data
         Returns:
-            list: train and test pandas.DataFrame Dataset, which have been reindexed.
+            list: train and validation pandas.DataFrame Dataset, which have been reindexed.
         
         """
         # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/master/reco_utils/recommender/ncf/dataset.py
-        # If testing dataset is None
-        df = train if test is None else train.append(test)
+        # If validation dataset is None
+        df = train if validation is None else train.append(validation)
 
         # Reindex user and item index
         if self.user_idx is None:
@@ -117,27 +117,28 @@ class RLRMCdataset(object):
             (entries_train.T.ravel(), (rows_train, cols_train)), shape=(d, T)
         )
 
-        if test is not None:
-            df_test = self._reindex(test)
-            rows_test = df_test["userID"].values
-            cols_test = df_test["itemID"].values
-            entries_test = df_test["rating"].values - train_mean
-            self.test = csr_matrix(
-                (entries_test.T.ravel(), (rows_test, cols_test)), shape=(d, T)
+        if validation is not None:
+            df_validation = self._reindex(validation)
+            rows_validation = df_validation["userID"].values
+            cols_validation = df_validation["itemID"].values
+            entries_validation = df_validation["rating"].values - train_mean
+            self.validation = csr_matrix(
+                (entries_validation.T.ravel(), (rows_validation, cols_validation)),
+                shape=(d, T),
             )
         else:
-            self.test = None
+            self.validation = None
 
     def _reindex(self, df):
         """ process dataset to reindex userID and itemID
         Args:
             df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating) 
         Returns:
-            list: train and test pandas.DataFrame Dataset, which have been reindexed.
+            list: train and validation pandas.DataFrame Dataset, which have been reindexed.
         
         """
 
-        # If testing dataset is None
+        # If validation dataset is None
         if df is None:
             return None
 
