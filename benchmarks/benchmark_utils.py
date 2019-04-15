@@ -31,7 +31,7 @@ from reco_utils.dataset.python_splitters import python_chrono_split
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
-from reco_utils.recommender.surprise.surprise_utils import surprise_trainset_to_df
+from reco_utils.recommender.surprise.surprise_utils import compute_rating_predictions, compute_ranking_predictions
 from reco_utils.recommender.fastai.fastai_utils import hide_fastai_progress_bar, cartesian_product, score
 from reco_utils.evaluation.spark_evaluation import SparkRatingEvaluation, SparkRankingEvaluation
 from reco_utils.evaluation.python_evaluation import map_at_k, ndcg_at_k, precision_at_k, recall_at_k
@@ -110,27 +110,22 @@ def train_svd(params, data):
 
 def predict_svd(model, test):
     with Timer() as t:
-        preds = [model.predict(row[DEFAULT_USER_COL], row[DEFAULT_ITEM_COL], row[DEFAULT_RATING_COL])
-                       for (_, row) in test.iterrows()]
-        preds = pd.DataFrame(preds)
-        preds = preds.rename(index=str, columns={"uid": DEFAULT_USER_COL, 
-                                                 "iid": DEFAULT_ITEM_COL,
-                                                 "est": DEFAULT_PREDICTION_COL})
-        preds = preds.drop(["details", "r_ui"], axis="columns")
-        for col in [DEFAULT_USER_COL, DEFAULT_ITEM_COL]:
-            preds[col] = preds[col].astype(int)
+        preds = compute_rating_predictions(model, 
+                                           test, 
+                                           usercol=DEFAULT_USER_COL, 
+                                           itemcol=DEFAULT_ITEM_COL, 
+                                           predcol=DEFAULT_PREDICTION_COL)
     return preds, t
 
 
 def recommend_k_svd(model, test, train):
-    with Timer() as t:
-        preds_lst = []
-        for user in train[DEFAULT_USER_COL].unique():
-            for item in train[DEFAULT_ITEM_COL].unique():
-                preds_lst.append([user, item, model.predict(user, item).est])
-        topk_scores = pd.DataFrame(data=preds_lst, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_PREDICTION_COL])
-        merged = pd.merge(train, topk_scores, on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL], how="outer")
-        topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(DEFAULT_RATING_COL, axis=1)
+    with Timer() as t:       
+        topk_scores = compute_ranking_predictions(model, 
+                                                  train, 
+                                                  usercol=DEFAULT_USER_COL, 
+                                                  itemcol=DEFAULT_ITEM_COL,
+                                                  predcol=DEFAULT_PREDICTION_COL, 
+                                                  recommend_seen=False)
     return topk_scores, t
 
 
