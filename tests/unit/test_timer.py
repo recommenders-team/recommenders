@@ -46,5 +46,5 @@ def test_timer(t):
 
 
 def test_timer_format(t):
-    assert str(t) == "0:00:00"
+    assert str(t) == "0.0000"
     assert str(t.interval) == "0"

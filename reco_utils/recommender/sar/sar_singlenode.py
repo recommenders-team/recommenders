@@ -31,7 +31,7 @@ class SARSingleNode:
         col_item=constants.DEFAULT_ITEM_COL,
         col_rating=constants.DEFAULT_RATING_COL,
         col_timestamp=constants.DEFAULT_TIMESTAMP_COL,
-        col_prediction=constants.PREDICTION_COL,
+        col_prediction=constants.DEFAULT_PREDICTION_COL,
         similarity_type=sar.SIM_JACCARD,
         time_decay_coefficient=sar.TIME_DECAY_COEFFICIENT,
         time_now=sar.TIME_NOW,
