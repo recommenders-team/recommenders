@@ -11,7 +11,6 @@ def qps_to_replicas(target_qps, processing_time, max_qp_replica=1, target_utiliz
         processing_time (float): the estimated amount of time (in seconds) your service call takes
         max_qp_replica (int): maximum number of concurrent queries per replica
         target_utilization (float): proportion of CPU utilization you think is ideal
-        verbose (bool): Print out a message before exiting
 
     Returns:
         replicas: Number of estimated replicas required to support a target number of queries per second
@@ -29,7 +28,6 @@ def replicas_to_qps(num_replicas, processing_time, max_qp_replica=1, target_util
         processing_time (float): the estimated amount of time (in seconds) your service call takes
         max_qp_replica (int): maximum number of concurrent queries per replica
         target_utilization (float): proportion of CPU utilization you think is ideal
-        verbose (bool): Print out a message before exiting
 
     Returns:
         qps: queries per second supported by the number of replicas
@@ -47,7 +45,6 @@ def total_cores_to_replicas(n_cores, cpu_cores_per_replica=0.1, overhead=0.1):
         cpu_cores_per_replica (float): Cores assigned to each replica. This can be fractional and corresponds to the 
             cpu_cores argument passed to AksWebservice.deploy_configuration() configuration
         overhead (float): Amount of overhead (as a proportion)
-        verbose (bool): Print out a message before exiting
 
     Returns:
         replicas: Total number of replicas supported by n_cores
