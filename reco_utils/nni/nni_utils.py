@@ -34,7 +34,7 @@ def check_experiment_status(waiting_time=WAITING_TIME * MAX_RETRIES):
 
 def check_stopped():
     # Checks that there is no NNI experiment active (the URL is not accessible)
-    # Use this after calling 'nnictl stop' for verification
+    # This method should be called after 'nnictl stop' for verification
     i = 0
     while i < MAX_RETRIES:
         try:
