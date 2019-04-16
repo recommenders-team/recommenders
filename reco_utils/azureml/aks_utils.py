@@ -1,8 +1,7 @@
 from math import ceil, floor
 
 def qps_to_replicas(target_qps, processing_time, max_qp_replica=1, target_utilization=0.7, verbose=True):
-    """
-    Provide a rough estimate of the number of replicas to support a given load (queries per second)
+    """Provide a rough estimate of the number of replicas to support a given load (queries per second)
     
     Args:
         target_qps (int): target queries per second that you want to support
@@ -10,6 +9,7 @@ def qps_to_replicas(target_qps, processing_time, max_qp_replica=1, target_utiliz
         max_qp_replica (int): maximum number of concurrent queries per replica
         target_utilization (float): proportion of CPU utilization you think is ideal
         verbose (bool): Print out a message before exiting
+
     Returns:
         replicas: Number of estimated replicas required to support a target number of queries per second
     """
@@ -20,8 +20,7 @@ def qps_to_replicas(target_qps, processing_time, max_qp_replica=1, target_utiliz
     return replicas
     
 def replicas_to_qps(num_replicas, processing_time, max_qp_replica=1, target_utilization=0.7, verbose=True):
-    """
-    Provide a rough estimate of the queries per second supported by a number of replicas
+    """Provide a rough estimate of the queries per second supported by a number of replicas
     
     Args:
         num_replicas (int): number of replicas 
@@ -29,6 +28,7 @@ def replicas_to_qps(num_replicas, processing_time, max_qp_replica=1, target_util
         max_qp_replica (int): maximum number of concurrent queries per replica
         target_utilization (float): proportion of CPU utilization you think is ideal
         verbose (bool): Print out a message before exiting
+        
     Returns:
         qps: queries per second supported by the number of replicas
     """
@@ -39,8 +39,7 @@ def replicas_to_qps(num_replicas, processing_time, max_qp_replica=1, target_util
 
 
 def total_cores_to_replicas(n_cores, cpu_cores_per_replica=0.1, overhead=0.1, verbose=True):
-    """
-    Provide a rough estimate of the number of replicas supported by a particular number of cores.
+    """Provide a rough estimate of the number of replicas supported by a particular number of cores.
 
     Args:
         n_cores (int): Total number of cores within an AKS cluster that you want to use
@@ -48,6 +47,7 @@ def total_cores_to_replicas(n_cores, cpu_cores_per_replica=0.1, overhead=0.1, ve
             cpu_cores argument passed to AksWebservice.deploy_configuration() configuration
         overhead (float): Amount of overhead (as a proportion)
         verbose (bool): Print out a message before exiting
+
     Returns:
         replicas: Total number of replicas supported by n_cores
     """
