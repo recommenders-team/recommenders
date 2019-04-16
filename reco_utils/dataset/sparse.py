@@ -18,7 +18,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
-    PREDICTION_COL,
+    DEFAULT_PREDICTION_COL,
 )
 
 # for logging
@@ -33,7 +33,7 @@ class AffinityMatrix:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_pred=PREDICTION_COL,
+        col_pred=DEFAULT_PREDICTION_COL,
         save_path=None,
     ):
         """Generate the user/item affinity matrix from a pandas dataframe and vice versa
