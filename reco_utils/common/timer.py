@@ -22,7 +22,7 @@ class Timer(object):
         >>> t.interval < 1
         True
         >>> "Time elapsed {}".format(t) #doctest: +ELLIPSIS
-        'Time elapsed 0:00:...'
+        'Time elapsed 1...'
     """
 
     def __init__(self):
@@ -38,7 +38,7 @@ class Timer(object):
         self.stop()
 
     def __str__(self):
-        return str(timedelta(seconds=self._interval))
+        return "{:0.4f}".format(self.interval)
 
     def start(self):
         """Start the timer."""
@@ -62,3 +62,4 @@ class Timer(object):
             raise ValueError("Timer has not been stopped, please use stop().")
         else:
             return self._interval
+

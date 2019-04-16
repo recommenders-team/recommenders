@@ -5,8 +5,11 @@ import os
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-
 from time import time
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class NCF:
@@ -292,6 +295,7 @@ class NCF:
 
     def fit(self, data):
         """ fit model with training data
+            
             Args: 
                 data ( NCFDataset ): initilized Dataset in ./dataset.py
         """
@@ -301,9 +305,6 @@ class NCF:
         self.item2id = data.item2id
         self.id2user = data.id2user
         self.id2item = data.id2item
-
-        # output the model type
-        print("Training model: %s" % self.model_type)
 
         # loop for n_epochs
         for epoch_count in range(1, self.n_epochs + 1):
@@ -335,8 +336,7 @@ class NCF:
 
             # output every self.verbose
             if self.verbose and epoch_count % self.verbose == 0:
-
-                print(
+                logger.info(
                     "Epoch %d [%.2fs]: train_loss = %.6f "
                     % (epoch_count, train_time, sum(train_loss) / len(train_loss))
                 )

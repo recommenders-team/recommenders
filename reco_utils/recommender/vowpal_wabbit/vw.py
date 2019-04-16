@@ -19,7 +19,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
-    PREDICTION_COL,
+    DEFAULT_PREDICTION_COL,
 )
 
 
@@ -32,7 +32,7 @@ class VW:
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         **kwargs,
     ):
         """Initialize model parameters
