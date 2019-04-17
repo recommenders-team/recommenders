@@ -37,71 +37,84 @@ def mocked_trials_get(url, content):
     return MockResponse(content)
     
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'some_status'}))
+def mock_exception():
+    raise Exception()
+
+
 def test_get_experiment_status():
-    assert 'some_status' == get_experiment_status(NNI_STATUS_URL)
+    content = {'status': 'some_status'}
+    with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
+        assert 'some_status' == get_experiment_status(NNI_STATUS_URL)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'DONE'}))
 def test_check_experiment_status_done():
-    check_experiment_status(1)
+    content = {'status': 'DONE'}
+    with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
+        check_experiment_status(wait=0.1, max_retries=1)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'TUNER_NO_MORE_TRIAL'}))
 def test_check_experiment_status_tuner_no_more_trial():
-    check_experiment_status(1)
+    content = {'status': 'TUNER_NO_MORE_TRIAL'}
+    with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
+        check_experiment_status(wait=0.1, max_retries=1)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'RUNNING'}))
 def test_check_experiment_status_running():
+    content = {'status': 'RUNNING'}
     with pytest.raises(TimeoutError) as excinfo:
-        check_experiment_status(1)
+        with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
+            check_experiment_status(wait=0.1, max_retries=1)
     assert "check_experiment_status() timed out" == str(excinfo.value)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'NO_MORE_TRIAL'}))
 def test_check_experiment_status_no_more_trial():
+    content = {'status': 'NO_MORE_TRIAL'}
     with pytest.raises(TimeoutError) as excinfo:
-        check_experiment_status(1)
+        with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
+            check_experiment_status(wait=0.1, max_retries=1)
     assert "check_experiment_status() timed out" == str(excinfo.value)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'some_failed_status'}))
 def test_check_experiment_status_failed():
+    content = {'status': 'some_failed_status'}
     with pytest.raises(RuntimeError) as excinfo:
-        check_experiment_status(1)
+        with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
+            check_experiment_status(wait=0.1, max_retries=1)
     assert "NNI experiment failed to complete with status some_failed_status" == str(excinfo.value)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'some_status'}))
 def test_check_stopped_timeout():
+    content = {'status': 'some_status'}
     with pytest.raises(TimeoutError) as excinfo:
-        check_stopped(wait=1, max_retries=1)
+        with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
+            check_stopped(wait=.1, max_retries=1)
     assert "check_stopped() timed out" == str(excinfo.value)
 
 
 def test_check_stopped():
-    check_stopped(wait=1, max_retries=1)
+    with patch('requests.get', side_effect=mock_exception):
+        check_stopped(wait=.1, max_retries=1)
 
 
-@patch('requests.get',
-       side_effect=lambda url: mocked_status_get(url, [{'finalMetricData': None}, {'finalMetricData': None}]))
 def test_check_metrics_written():
-    check_metrics_written(wait=1, max_retries=1)
+    content = [{'finalMetricData': None}, {'finalMetricData': None}]
+    with patch('requests.get', side_effect=lambda url: mocked_trials_get(url, content)):
+        check_metrics_written(wait=.1, max_retries=1)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_status_get(url, [{'logPath': '/p'}, {'logPath': '/q'}]))
 def test_check_metrics_written_timeout():
+    content = [{'logPath': '/p'}, {'logPath': '/q'}]
     with pytest.raises(TimeoutError) as excinfo:
-        check_metrics_written(wait=1, max_retries=1)
+        with patch('requests.get', side_effect=lambda url: mocked_trials_get(url, content)):
+            check_metrics_written(wait=.1, max_retries=1)
     assert "check_metrics_written() timed out" == str(excinfo.value)
 
 
 def test_get_trials():
     with TemporaryDirectory() as tmp_dir:
         mock_trials = [
-            {'finalMetricData': [{'data': '{"default": 1}'}], 'logPath': '1:{}'.format(tmp_dir)},
-            {'finalMetricData': [{'data': '{"default": 2}'}], 'logPath': '1:{}'.format(tmp_dir)}
+            {'finalMetricData': [{'data': '{"default": 1}'}], 'logPath': 'file://localhost:{}'.format(tmp_dir)},
+            {'finalMetricData': [{'data': '{"default": 2}'}], 'logPath': 'file://localhost:{}'.format(tmp_dir)}
         ]
         with open(os.path.join(tmp_dir, 'metrics.json'), 'w') as f:
             json.dump(dict(a=1), f)

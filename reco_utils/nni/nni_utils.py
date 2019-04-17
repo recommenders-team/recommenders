@@ -24,22 +24,22 @@ def get_experiment_status(status_url):
     return nni_status['status']
 
 
-def check_experiment_status(waiting_time=WAITING_TIME * MAX_RETRIES):
+def check_experiment_status(wait, max_retries=MAX_RETRIES):
     """ Checks the status of the current experiment on the NNI REST endpoint
     Waits until the tuning has completed
 
     Args:
-        waiting_time (int) : time to wait in seconds
+        wait (numeric) : time to wait in seconds
+        max_retries (int): max number of retries
     """
     i = 0
-    max_retries = int(waiting_time / WAITING_TIME) + 1
     while i < max_retries:
         status = get_experiment_status(NNI_STATUS_URL)
         if status in ['DONE', 'TUNER_NO_MORE_TRIAL']:
             break
         elif status not in ['RUNNING', 'NO_MORE_TRIAL']:
             raise RuntimeError("NNI experiment failed to complete with status {}".format(status))
-        time.sleep(WAITING_TIME)
+        time.sleep(wait)
         i += 1
     if i == max_retries:
         raise TimeoutError("check_experiment_status() timed out")
@@ -49,6 +49,10 @@ def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
     """
     Checks that there is no NNI experiment active (the URL is not accessible)
     This method should be called after 'nnictl stop' for verification
+
+    Args:
+        wait (numeric) : time to wait in seconds
+        max_retries (int): max number of retries
     """
     i = 0
     while i < max_retries:
@@ -93,7 +97,7 @@ def get_trials(optimize_mode):
     if optimize_mode not in ['minimize', 'maximize']:
         raise ValueError("optimize_mode should equal either 'minimize' or 'maximize'")
     all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
-    trials = [(eval(trial['finalMetricData'][0]['data']), trial['logPath'].split(':', 1)[-1]) for trial in all_trials]
+    trials = [(eval(trial['finalMetricData'][0]['data']), trial['logPath'].split(':', 2)[-1]) for trial in all_trials]
     sorted_trials = sorted(trials, key=lambda x: x[0]['default'], reverse=(optimize_mode == 'maximize'))
     best_trial_path = sorted_trials[0][1]
     # Read the metrics from the trial directory in order to get the name of the default metric
