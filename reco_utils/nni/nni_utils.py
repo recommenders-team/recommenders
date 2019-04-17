@@ -45,35 +45,35 @@ def check_experiment_status(waiting_time=WAITING_TIME * MAX_RETRIES):
         raise TimeoutError("check_experiment_status() timed out")
 
 
-def check_stopped():
+def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
     """
     Checks that there is no NNI experiment active (the URL is not accessible)
     This method should be called after 'nnictl stop' for verification
     """
     i = 0
-    while i < MAX_RETRIES:
+    while i < max_retries:
         try:
             get_experiment_status(NNI_STATUS_URL)
         except:
             break
-        time.sleep(WAITING_TIME)
+        time.sleep(wait)
         i += 1
-    if i == MAX_RETRIES:
+    if i == max_retries:
         raise TimeoutError("check_stopped() timed out")
 
 
-def check_metrics_written():
+def check_metrics_written(wait=WAITING_TIME, max_retries=MAX_RETRIES):
     """
     Waits until the metrics have been written to the trial logs
     """
     i = 0
-    while i < MAX_RETRIES:
+    while i < max_retries:
         all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
         if all(['finalMetricData' in trial for trial in all_trials]):
             break
-        time.sleep(WAITING_TIME)
+        time.sleep(wait)
         i += 1
-    if i == MAX_RETRIES:
+    if i == max_retries:
         raise TimeoutError("check_metrics_written() timed out")
 
 
