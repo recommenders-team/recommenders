@@ -2,11 +2,20 @@
 # Licensed under the MIT License.
 
 import json
-import pytest
+import os
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
-from reco_utils.nni.nni_utils import get_experiment_status, check_experiment_status, check_stopped, \
-    check_metrics_written, get_trials, NNI_STATUS_URL
+import pytest
+
+from reco_utils.nni.nni_utils import (
+    get_experiment_status,
+    check_experiment_status,
+    check_stopped,
+    check_metrics_written,
+    get_trials,
+    NNI_STATUS_URL,
+    NNI_TRIAL_JOBS_URL
+)
 
 
 class MockResponse:
@@ -18,70 +27,91 @@ class MockResponse:
         return self._content
 
 
-def mocked_requests_get(url, content):
+def mocked_status_get(url, content):
+    assert url.startswith(NNI_STATUS_URL)
     return MockResponse(content)
 
 
-def mock_exception():
-    raise Exception()
+def mocked_trials_get(url, content):
+    assert url.startswith(NNI_TRIAL_JOBS_URL)
+    return MockResponse(content)
+    
 
-
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, {'status': 'some_status'}))
-def test_get_experiment_status(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'some_status'}))
+def test_get_experiment_status():
     assert 'some_status' == get_experiment_status(NNI_STATUS_URL)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, {'status': 'DONE'}))
-def test_check_experiment_status_done(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'DONE'}))
+def test_check_experiment_status_done():
     check_experiment_status(1)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, {'status': 'TUNER_NO_MORE_TRIAL'}))
-def test_check_experiment_status_tuner_no_more_trial(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'TUNER_NO_MORE_TRIAL'}))
+def test_check_experiment_status_tuner_no_more_trial():
     check_experiment_status(1)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, {'status': 'RUNNING'}))
-def test_check_experiment_status_running(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'RUNNING'}))
+def test_check_experiment_status_running():
     with pytest.raises(TimeoutError) as excinfo:
         check_experiment_status(1)
     assert "check_experiment_status() timed out" == str(excinfo.value)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, {'status': 'NO_MORE_TRIAL'}))
-def test_check_experiment_status_no_more_trial(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'NO_MORE_TRIAL'}))
+def test_check_experiment_status_no_more_trial():
     with pytest.raises(TimeoutError) as excinfo:
         check_experiment_status(1)
     assert "check_experiment_status() timed out" == str(excinfo.value)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, {'status': 'some_failed_status'}))
-def test_check_experiment_status_failed(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'some_failed_status'}))
+def test_check_experiment_status_failed():
     with pytest.raises(RuntimeError) as excinfo:
         check_experiment_status(1)
     assert "NNI experiment failed to complete with status some_failed_status" == str(excinfo.value)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, {'status': 'some_status'}))
-def test_check_stopped_timeout(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, {'status': 'some_status'}))
+def test_check_stopped_timeout():
     with pytest.raises(TimeoutError) as excinfo:
         check_stopped(wait=1, max_retries=1)
     assert "check_stopped() timed out" == str(excinfo.value)
 
 
-@patch('requests.get', side_effect=mock_exception)
-def test_check_stopped(unused_class):
+def test_check_stopped():
     check_stopped(wait=1, max_retries=1)
 
 
 @patch('requests.get',
-       side_effect=lambda url: mocked_requests_get(url, [{'finalMetricData': None}, {'finalMetricData': None}]))
-def test_check_metrics_written(unused_class):
+       side_effect=lambda url: mocked_status_get(url, [{'finalMetricData': None}, {'finalMetricData': None}]))
+def test_check_metrics_written():
     check_metrics_written(wait=1, max_retries=1)
 
 
-@patch('requests.get', side_effect=lambda url: mocked_requests_get(url, [{'logPath': '/p'}, {'logPath': '/q'}]))
-def test_check_metrics_written_timeout(unused_class):
+@patch('requests.get', side_effect=lambda url: mocked_status_get(url, [{'logPath': '/p'}, {'logPath': '/q'}]))
+def test_check_metrics_written_timeout():
     with pytest.raises(TimeoutError) as excinfo:
         check_metrics_written(wait=1, max_retries=1)
     assert "check_metrics_written() timed out" == str(excinfo.value)
+
+
+def test_get_trials():
+    with TemporaryDirectory() as tmp_dir:
+        mock_trials = [
+            {'finalMetricData': [{'data': '{"default": 1}'}], 'logPath': '1:{}'.format(tmp_dir)},
+            {'finalMetricData': [{'data': '{"default": 2}'}], 'logPath': '1:{}'.format(tmp_dir)}
+        ]
+        with open(os.path.join(tmp_dir, 'metrics.json'), 'w') as f:
+            json.dump(dict(a=1), f)
+        with open(os.path.join(tmp_dir, 'parameter.cfg'), 'w') as f:
+            json.dump(dict(b=2), f)
+
+        with patch('requests.get', side_effect=lambda url: mocked_trials_get(url, mock_trials)):
+            trials, best_metrics, best_params, best_trial_path = get_trials(optimize_mode='maximize')
+
+        assert trials == [({'default': 1}, tmp_dir), ({'default': 2}, tmp_dir)]
+        assert best_metrics == {'a': 1}
+        assert best_params == {'b': 2}
+        assert best_trial_path == tmp_dir

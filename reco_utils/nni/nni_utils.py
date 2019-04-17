@@ -93,7 +93,7 @@ def get_trials(optimize_mode):
     if optimize_mode not in ['minimize', 'maximize']:
         raise ValueError("optimize_mode should equal either 'minimize' or 'maximize'")
     all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
-    trials = [(eval(trial['finalMetricData'][0]['data']), trial['logPath'].split(':')[-1]) for trial in all_trials]
+    trials = [(eval(trial['finalMetricData'][0]['data']), trial['logPath'].split(':', 1)[-1]) for trial in all_trials]
     sorted_trials = sorted(trials, key=lambda x: x[0]['default'], reverse=(optimize_mode == 'maximize'))
     best_trial_path = sorted_trials[0][1]
     # Read the metrics from the trial directory in order to get the name of the default metric
