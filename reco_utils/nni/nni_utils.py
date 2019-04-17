@@ -11,13 +11,26 @@ MAX_RETRIES = 5
 
 
 def get_experiment_status(status_url):
+    """
+    Helper method. Gets the experiment status from the REST endpoint
+
+    Args:
+        status_url (str): URL for the REST endpoint
+
+    Returns:
+        str: status of the experiment
+    """
     nni_status = requests.get(status_url).json()
     return nni_status['status']
 
 
 def check_experiment_status(waiting_time=WAITING_TIME * MAX_RETRIES):
-    # Checks the status of the current experiment on the NNI REST endpoint
-    # Waits until the tuning has completed
+    """ Checks the status of the current experiment on the NNI REST endpoint
+    Waits until the tuning has completed
+
+    Args:
+        waiting_time (int) : time to wait in seconds
+    """
     i = 0
     max_retries = int(waiting_time / WAITING_TIME) + 1
     while i < max_retries:
@@ -33,8 +46,10 @@ def check_experiment_status(waiting_time=WAITING_TIME * MAX_RETRIES):
 
 
 def check_stopped():
-    # Checks that there is no NNI experiment active (the URL is not accessible)
-    # This method should be called after 'nnictl stop' for verification
+    """
+    Checks that there is no NNI experiment active (the URL is not accessible)
+    This method should be called after 'nnictl stop' for verification
+    """
     i = 0
     while i < MAX_RETRIES:
         try:
@@ -48,7 +63,9 @@ def check_stopped():
 
 
 def check_metrics_written():
-    # Waits until the metrics have been written to the trial logs
+    """
+    Waits until the metrics have been written to the trial logs
+    """
     i = 0
     while i < MAX_RETRIES:
         all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
