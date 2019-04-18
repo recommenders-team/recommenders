@@ -8,7 +8,7 @@ from itertools import product
 
 def generate_param_grid(params):
     """Generator of parameter grids
-    Generate parameter lists from a paramater dictionary in the form of
+    Generate parameter lists from a parameter dictionary in the form of
     {
         "param1": [value1, value2],
         "param2": [value1, value2]
