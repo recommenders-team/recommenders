@@ -7,7 +7,7 @@ import shutil
 import warnings
 import pandas as pd
 from zipfile import ZipFile
-from reco_utils.dataset.url_utils import maybe_download, download_path
+from reco_utils.dataset.download_utils import maybe_download, download_path
 from reco_utils.common.notebook_utils import is_databricks
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -136,12 +136,12 @@ DEFAULT_HEADER = (
 
 # Warning and error messages
 WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
-    (user id, movie id, rating, and timestamp), but more than four column headers are provided.
-    Will only use the first four column headers."""
+    (user id, movie id, rating, and timestamp), but more than four column names are provided.
+    Will only use the first four column names."""
 WARNING_HAVE_SCHEMA_AND_HEADER = """Both schema and header are provided.
     The header argument will be ignored."""
 ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m}"
-ERROR_NO_HEADER = "No header (schema) information"
+ERROR_NO_HEADER = "No header (schema) information. At least user and movie column names should be provided"
 
 
 def load_pandas_df(
@@ -154,7 +154,8 @@ def load_pandas_df(
 ):
     """Loads the MovieLens dataset as pd.DataFrame.
 
-    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
+    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load.
+    To load movie information only, you can use load_item_df function. 
 
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
@@ -168,17 +169,32 @@ def load_pandas_df(
 
     Returns:
         pd.DataFrame: Movie rating dataset.
+        
+    Examples:
+        To load just user-id, item-id, and ratings from MovieLens-1M dataset,
+        >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating'))
+
+        To load rating's timestamp together,
+        >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+
+        To load movie's title, genres, and released year info along with the ratings data,
+        >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
+        ...     title_col='Title',
+        ...     genres_col='Genres',
+        ...     year_col='Year'
+        ... )
     """
     size = size.lower()
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
-    if header is None or len(header) == 0:
-        raise ValueError(ERROR_NO_HEADER)
 
-    if len(header) > 4:
+    if header is None or len(header) < 2:
+        raise ValueError(ERROR_NO_HEADER)
+    elif len(header) > 4:
         warnings.warn(WARNING_MOVIE_LENS_HEADER)
         header = header[:4]
-    movie_col = DEFAULT_ITEM_COL if len(header) < 2 else header[1]
+
+    movie_col = header[1]
 
     with download_path(local_cache_path) as path:
         filepath = os.path.join(path, "ml-{}.zip".format(size)) 
@@ -190,10 +206,6 @@ def load_pandas_df(
         )
 
         # Load rating data
-        if len(header) == 1 and item_df is not None:
-            # MovieID should be loaded to merge rating df w/ item_df
-            header = [header[0], movie_col]
-
         df = pd.read_csv(
             datapath,
             sep=DATA_FORMAT[size].separator,
@@ -253,11 +265,11 @@ def load_item_df(
 
 def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col):
     """Loads Movie info"""
-    item_header = []
-    usecols = []
-    if movie_col is not None:
-        item_header.append(movie_col)
-        usecols.append(0)
+    if title_col is None and genres_col is None and year_col is None:
+        return None
+
+    item_header = [movie_col]
+    usecols = [0]
 
     # Year is parsed from title
     if title_col is not None or year_col is not None:
@@ -275,9 +287,6 @@ def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_co
         else:
             item_header.append(genres_col)
             usecols.append(2)  # genres column
-
-    if len(item_header) == 0:
-        return None
 
     item_df = pd.read_csv(
         item_datapath,
@@ -333,6 +342,7 @@ def load_spark_df(
     """Loads the MovieLens dataset as pySpark.DataFrame.
 
     Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
+    To load movie information only, you can use load_item_df function. 
 
     Args:
         spark (pySpark.SparkSession)
@@ -358,30 +368,44 @@ def load_spark_df(
 
     Returns:
         pySpark.DataFrame: Movie rating dataset.
+        
+    Examples:
+        To load just user-id, item-id, and ratings from MovieLens-1M dataset,
+        >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'))
+
+        To load rating's timestamp together,
+        >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+
+        To load movie's title, genres, and released year info along with the ratings data,
+        >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
+        ...     title_col='Title',
+        ...     genres_col='Genres',
+        ...     year_col='Year'
+        ... )
+
+        On DataBricks, pass the dbutils argument as follows:
+        >>> spark_df = load_spark_df(spark, dbutils=dbutils)
     """
     size = size.lower()
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     schema = _get_schema(header, schema)
-    if schema is None:
+    if schema is None or len(schema) < 2:
         raise ValueError(ERROR_NO_HEADER)
 
-    movie_col = DEFAULT_ITEM_COL if len(schema) < 2 else schema[1].name
+    movie_col = schema[1].name
 
     with download_path(local_cache_path) as path:
         filepath = os.path.join(path, "ml-{}.zip".format(size)) 
         datapath, item_datapath = _maybe_download_and_extract(size, filepath)
-        spark_datapath = "file://" + datapath
+        spark_datapath = "file:///" + datapath  # shorten form of file://localhost/
 
         # Load movie features such as title, genres, and release year.
         # Since the file size is small, we directly load as pd.DataFrame from the driver node
         # and then convert into spark.DataFrame
-        item_df = spark.createDataFrame(
-            _load_item_df(
-                size, item_datapath, movie_col, title_col, genres_col, year_col
-            )
-        )
+        item_pd_df = _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+        item_df = spark.createDataFrame(item_pd_df) if item_pd_df is not None else None
 
         if is_databricks():
             if dbutils is None:
@@ -396,11 +420,6 @@ def load_spark_df(
             dbfs_datapath = "dbfs:/tmp/" + datapath
             dbutils.fs.mv(spark_datapath, dbfs_datapath)
             spark_datapath = dbfs_datapath
-
-        # Load rating data
-        if len(schema) == 1 and item_df is not None:
-            # MovieID should be loaded to merge rating df w/ item_df
-            schema.add(StructField(movie_col, IntegerType()))
 
         # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
         separator = DATA_FORMAT[size].separator

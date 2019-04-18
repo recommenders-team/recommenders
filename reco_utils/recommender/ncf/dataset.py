@@ -288,7 +288,7 @@ class Dataset(object):
             batch_indices = indices[begin_idx:end_idx]
 
             # train_loader() could be called and used by our users in other situations,
-            # who expect the not re-indexed data. So we convert id --> orignal user and item
+            # who expect the not re-indexed data. So we convert id --> original user and item
             # when returning batch
 
             yield [
@@ -303,7 +303,7 @@ class Dataset(object):
             Returns:
                 list: userID list, itemID list, rating list.
                 public data loader return the userID, itemID consistent with raw data
-                the first (userID, itemID, rating) is the positve one
+                the first (userID, itemID, rating) is the positive one
         """
 
         # yield batch of test data

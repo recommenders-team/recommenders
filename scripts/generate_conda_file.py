@@ -43,6 +43,7 @@ CONDA_BASE = {
     "matplotlib": "matplotlib>=2.2.2",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4",
+    "pip": "pip>=19.0.3",
     "pymongo": "pymongo>=3.6.1",
     "python": "python==3.6.8",
     "pytest": "pytest>=3.6.4",
@@ -51,6 +52,7 @@ CONDA_BASE = {
     "scikit-learn": "scikit-learn==0.19.1",
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
+    "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
 }
@@ -64,18 +66,19 @@ CONDA_GPU = {
 }
 
 PIP_BASE = {
-    "azureml-sdk[notebooks,tensorboard,contrib]": "azureml-sdk[notebooks,tensorboard,contrib]==1.0.18",
+    "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.18",
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
-    "databricks-cli": "databricks-cli==0.8.4",
+    "databricks-cli": "databricks-cli==0.8.6",
     "dataclasses": "dataclasses>=0.6",
     "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "memory-profiler": "memory-profiler>=0.54.0",
+    "nni": "nni==0.5.2.1",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
-    "papermill": "papermill>=0.15.0",
+    "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "tqdm": "tqdm==4.31.1",
 }

@@ -7,8 +7,8 @@ import psutil
 
 def invert_dictionary(dictionary):
     """Invert a dictionary
-    NOTE: If the dictionary has unique keys and unique values, the invertion would be perfect. However, if there are
-    repeated values, the invertion can take different keys
+    NOTE: If the dictionary has unique keys and unique values, the inversion would be perfect. However, if there are
+    repeated values, the inversion can take different keys
 
     Args:
         dictionary (dict): A dictionary
@@ -37,7 +37,7 @@ def get_number_processors():
     try:
         num = os.cpu_count()
     except Exception:
-        import multiprocessing  # force exception in case mutiprocessing is not installed
+        import multiprocessing  # force exception in case multiprocessing is not installed
 
         num = multiprocessing.cpu_count()
     return num

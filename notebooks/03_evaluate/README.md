@@ -5,7 +5,6 @@ In this directory, a notebook is provided to illustrate evaluating models using 
 | Notebook | Description | 
 | --- | --- | 
 | [evaluation](evaluation.ipynb) | Examples of different rating and ranking metrics in Python+CPU and PySpark environments.
-| [comparison](comparison.ipynb) | Example of comparing different algorithms for both Rating and Ranking metrics
 
 Two approaches for evaluating model performance are demonstrated along with their respective metrics.
 1. Rating Metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items

@@ -108,9 +108,13 @@ venv.bak/
 **/outputs
 
 # Azure ML
-aml_config
-aml_scripts
-aml_data
+config.json
+aml_config/
+aml_scripts/
+aml_data/
+
+# Spark
+spark-warehouse/
 
 ##########################
 .DS_Store
