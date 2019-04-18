@@ -149,7 +149,7 @@ def split_pandas_data_with_ratios(data, ratios, seed=42, shuffle=False):
         shuffle (bool): whether data will be shuffled when being split.
 
     Returns:
-        list: List of pd.DataFrame splitted by the given specifications.
+        list: List of pd.DataFrame split by the given specifications.
     """
     if sum(ratios) != 1.0:
         raise ValueError("The ratios have to sum to 1")

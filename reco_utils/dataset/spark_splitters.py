@@ -22,7 +22,7 @@ def spark_random_split(data, ratio=0.75, seed=42):
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halfs and the ratio argument indicates the ratio of 
+            it splits data into two halves and the ratio argument indicates the ratio of 
             training data set; if it is a list of float numbers, the splitter splits 
             data into several portions corresponding to the split ratios. If a list 
             is provided and the ratios are not summed to 1, they will be normalized.
@@ -137,7 +137,7 @@ def spark_stratified_split(
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halfs and the ratio argument indicates the ratio of
+            it splits data into two halves and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
