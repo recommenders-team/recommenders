@@ -13,7 +13,7 @@ The machine we used to perform the benchmarks is a Standard NC6s_v2 [Azure DSVM]
 * MovieLens 10M: 10 million ratings from 72000 users on 10000 movies.
 * MovieLens 20M: 20 million ratings from 138000 users on 27000 movies
 
-The MovieLens benchmark can be seen at [movielens.ipynb](movielens.ipynb). In this notebook, MovieLens dataset is splitted into training/test sets at a `75/25` ratio using a stratified split. For ranking metrics we use `k=10` (top 10 recommended items). The algorithms used in this benchmark are [ALS](../notebooks/00_quick_start/als_movielens.ipynb), [SVD](../notebooks/02_model/surprise_svd_deep_dive.ipynb), [SAR](../notebooks/00_quick_start/sar_movielens.ipynb), [NCF](../notebooks/00_quick_start/ncf_movielens.ipynb) and [FastAI](../notebooks/00_quick_start/fastai_movielens.ipynb).
+The MovieLens benchmark can be seen at [movielens.ipynb](movielens.ipynb). In this notebook, the MovieLens dataset is split into training / test sets using a stratified splitting method that takes 75% of each user's ratings as training data, and the remaining 25% ratings as test data. For ranking metrics we use `k=10` (top 10 recommended items). The algorithms used in this benchmark are [ALS](../notebooks/00_quick_start/als_movielens.ipynb), [SVD](../notebooks/02_model/surprise_svd_deep_dive.ipynb), [SAR](../notebooks/00_quick_start/sar_movielens.ipynb), [NCF](../notebooks/00_quick_start/ncf_movielens.ipynb) and [FastAI](../notebooks/00_quick_start/fastai_movielens.ipynb).
 
 |  | Data | Algo | Environment | Train time (s) | Predicting time (s) | RMSE | MAE | R2 | Explained Variance | Recommending time (s) | MAP | nDCG@k | Precision@k | Recall@k |
 | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: | :-: |
