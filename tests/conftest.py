@@ -199,11 +199,15 @@ def notebooks():
 
     # Path for the notebooks
     paths = {
-        "template": os.path.join(folder_notebooks, "template.ipynb"),
+        "template": os.path.join(
+            folder_notebooks, "template.ipynb"
+        ),
         "sar_single_node": os.path.join(
             folder_notebooks, "00_quick_start", "sar_movielens.ipynb"
         ),
-        "ncf": os.path.join(folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"),
+        "ncf": os.path.join(
+            folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"
+        ),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_movielens.ipynb"
         ),
@@ -246,9 +250,14 @@ def notebooks():
         "mmlspark_lightgbm_criteo": os.path.join(
             folder_notebooks, "02_model", "mmlspark_lightgbm_criteo.ipynb"
         ),
-        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
+        "evaluation": os.path.join(
+            folder_notebooks, "03_evaluate", "evaluation.ipynb"
+        ),
         "spark_tuning": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "tuning_spark_als.ipynb"
         ),
+        "nni_tuning_svd": os.path.join(
+            folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"
+        )
     }
     return paths

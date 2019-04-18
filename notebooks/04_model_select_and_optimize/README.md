@@ -7,6 +7,7 @@ In this directory, notebooks are provided to demonstrate how to tune and optimiz
 | [tuning_spark_als](tuning_spark_als.ipynb) | Step by step tutorials on how to fine tune hyperparameters for Spark based recommender model (illustrated by Spark ALS) with [Spark native construct](https://spark.apache.org/docs/2.3.1/ml-tuning.html) and [`hyperopt` package](http://hyperopt.github.io/hyperopt/).
 | [azureml_hyperdrive_wide_and_deep](azureml_hyperdrive_wide_and_deep.ipynb) | Quickstart tutorial on utilizing [Azure Machine Learning service](https://azure.microsoft.com/en-us/services/machine-learning-service/) for hyperparameter tuning of wide-and-deep model.
 | [azureml_hyperdrive_surprise_svd](azureml_hyperdrive_surprise_svd.ipynb) | Quickstart tutorial on utilizing [Azure Machine Learning service](https://azure.microsoft.com/en-us/services/machine-learning-service/) for hyperparameter tuning of the matrix factorization method SVD from [Surprise library](https://surprise.readthedocs.io/en/stable/).
+| [nni_surprise_svd](nni_surprise_svd.ipynb) | Quickstart tutorial on utilizing the [Neural Network Intelligence toolkit](https://github.com/Microsoft/nni) for hyperparameter tuning of the matrix factorization method SVD from [Surprise library](https://surprise.readthedocs.io/en/stable/).
 
 ### Prerequisites
 To run the examples running on the Azure Machine Learning service, the [`azureml-sdk`](https://pypi.org/project/azureml-sdk/) is required. The AzureML Python SDK is already installed after setting up the conda environments from this repository (see [SETUP.md](../../SETUP.md)). 
@@ -34,3 +35,8 @@ To configure this notebook to communicate with your workspace, type in your Azur
     "workspace_name": "<workspace-name>"
 }
 ```
+
+### NNI Configuration
+The NNI command `nnictl` comes installed with the conda environment. 
+In order to use the SMAC tuner, it has to be installed first with the following command 
+`nnictl package install --name=SMAC`.

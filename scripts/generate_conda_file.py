@@ -52,6 +52,7 @@ CONDA_BASE = {
     "scikit-learn": "scikit-learn==0.19.1",
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
+    "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
 }
@@ -75,6 +76,7 @@ PIP_BASE = {
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "memory-profiler": "memory-profiler>=0.54.0",
+    "nni": "nni==0.5.2.1",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
