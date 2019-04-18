@@ -17,6 +17,7 @@
 
 import argparse
 import textwrap
+from sys import platform
 
 
 HELP_MSG = """
@@ -76,7 +77,6 @@ PIP_BASE = {
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nni": "nni==0.5.2.1",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
@@ -85,6 +85,10 @@ PIP_BASE = {
 
 PIP_PYSPARK = {}
 PIP_GPU = {}
+
+PIP_LINUX = {
+    "nni": "nni==0.5.2.1",
+}
 
 
 if __name__ == "__main__":
@@ -145,6 +149,10 @@ if __name__ == "__main__":
     if args.gpu:
         conda_packages.update(CONDA_GPU)
         pip_packages.update(PIP_GPU)
+
+    # check for os platform support
+    if platform in ['linux', 'darwin']:
+        pip_packages.update(PIP_LINUX)
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)
