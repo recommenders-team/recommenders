@@ -16,7 +16,7 @@ class TqdmUpTo(tqdm):
     """Wrapper class for the progress bar tqdm to get `update_to(n)` functionality"""
 
     def update_to(self, b=1, bsize=1, tsize=None):
-        """A progress bar showing how much is left to finish the opperation
+        """A progress bar showing how much is left to finish the operation
         
         Args:
             b (int): Number of blocks transferred so far.
@@ -58,14 +58,29 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
 
 
 @contextmanager
-def download_path(path):
-    tmp_dir = TemporaryDirectory()
+def download_path(path=None):
+    """Return a path to download data. If `path=None`, then it yields a temporal path that is eventually deleted, 
+    otherwise the real path of the input. 
+
+    Args:
+        path (str): Path to download data.
+
+    Returns:
+        str: Real path where the data is stored.
+
+    Examples:
+        >>> with download_path() as path:
+        >>> ... maybe_download(url="http://example.com/file.zip", work_directory=path)
+
+    """
     if path is None:
-        path = tmp_dir.name
+        tmp_dir = TemporaryDirectory()
+        try:
+            yield tmp_dir.name
+        finally:
+            tmp_dir.cleanup()
     else:
         path = os.path.realpath(path)
-
-    try:
         yield path
-    finally:
-        tmp_dir.cleanup()
+
+    

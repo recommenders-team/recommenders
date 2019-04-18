@@ -1,15 +1,16 @@
 # Setup guide
 
-This document describes how to setup all the dependencies to run the notebooks in this repository in two different platforms:
+This document describes how to setup all the dependencies to run the notebooks in this repository in following platforms:
 
-* Linux Machine: Local or [Azure Data Science Virtual Machine (DSVM)](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/)
+* Local (Linux, MacOS or Windows) or [DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (Linux or Windows)
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
+
 
 ## Table of Contents
 
 * [Compute environments](#compute-environments)
 * [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
-  * [Setup Requirements](#setup-requirements)
+  * [Requirements](#requirements)
   * [Dependencies setup](#dependencies-setup)
   * [Register the conda environment as a kernel in Jupyter](#Register-the-conda-environment-as-a-kernel-in-Jupyter)
   * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
@@ -21,51 +22,46 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 ## Compute environments
 
-Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements. Currently, this repository supports the following environments:
+Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements.
+Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark**.
 
-* Python CPU
-* Python GPU
-* PySpark
 
 ## Setup guide for Local or DSVM
 
 ### Requirements
 
-* Machine running Linux, Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/about)) or macOS
-* Anaconda with Python version >= 3.6.
-  * This is pre-installed on Azure DSVM, for local setup [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
+* A machine running Linux, MacOS or Windows
+* Anaconda with Python version >= 3.6
+  * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine,
+  [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
 
-We install the dependencies with Conda. As a pre-requisite, we want to make sure that Anaconda and the package manager Conda are both up to date:
+As a pre-requisite to install the dependencies with Conda, make sure that Anaconda and the package manager Conda are both up to date:
 
 ```{shell}
 conda update conda -n root
-conda update anaconda
+conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda file, depending of the environment we want to use. This will create the environment using the Python version 3.6 with all the correct dependencies.
+We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda-environment yaml file
+which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
 
-To install each environment, first we need to generate a conda yaml file and then install the environment. We can specify the environment name with the input `-n`.
-
-Click on the following menus to see more details:
-
-<details>
-<summary><strong><em>Python CPU environment</em></strong></summary>
-
-Assuming the repo is cloned as `Recommenders` in the local system, to install the Python CPU environment:
+Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
     cd Recommenders
     python scripts/generate_conda_file.py
     conda env create -f reco_base.yaml 
 
-</details>
+You can specify the environment name as well with the flag `-n`.
+
+Click on the following menus to see how to install Python GPU and PySpark environments:
 
 <details>
 <summary><strong><em>Python GPU environment</em></strong></summary>
 
-Assuming that you have a GPU machine, to install the Python GPU environment, which by default installs the CPU environment:
+Assuming that you have a GPU machine, to install the Python GPU environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py --gpu
@@ -76,7 +72,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment, whi
 <details>
 <summary><strong><em>PySpark environment</em></strong></summary>
 
-To install the PySpark environment, which by default installs the CPU environment:
+To install the PySpark environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py --pyspark
@@ -86,29 +82,13 @@ Additionally, if you want to test a particular version of spark, you may pass th
 
     python scripts/generate_conda_file.py --pyspark-version 2.4.0
 
-**NOTE** - for a PySpark environment, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
-
-To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux). Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`, we create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
-
-```bash
-#!/bin/sh
-export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
-export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
-```
-
-This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
-
-```bash
-#!/bin/sh
-unset PYSPARK_PYTHON
-unset PYSPARK_DRIVER_PYTHON
-```
 </details>
 
 <details>
-<summary><strong><em>All environments</em></strong></summary>
+<summary><strong><em>Full (PySpark & Python GPU) environment</em></strong></summary>
 
-To install all three environments:
+With this environment, you can run both PySpark and Python GPU notebooks in this repository.
+To install the environment:
 
     cd Recommenders
     python scripts/generate_conda_file.py --gpu --pyspark
@@ -116,12 +96,78 @@ To install all three environments:
 
 </details>
 
+
+> **NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables
+> `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
+>
+> Click on the following menus to see details:
+>
+> <details>
+> <summary><strong><em>Linux or MacOS</em></strong></summary>
+>
+> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
+> Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`,
+> create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
+>
+>     ```bash
+>     #!/bin/sh
+>     export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
+>     export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
+>     export SPARK_HOME_BACKUP=$SPARK_HOME
+>     unset SPARK_HOME
+>     ```
+>
+> This will export the variables every time we do `conda activate reco_pyspark`.
+> To unset these variables when we deactivate the environment,
+> create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
+>
+>     ```bash
+>     #!/bin/sh
+>     unset PYSPARK_PYTHON
+>     unset PYSPARK_DRIVER_PYTHON
+>     export SPARK_HOME=$SPARK_HOME_BACKUP
+>     unset SPARK_HOME_BACKUP
+>     ```
+> 
+> </details>
+>
+> <details><summary><strong><em>Windows</em></strong></summary>
+> 
+> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
+> Assuming that we have installed the environment in `c:\anaconda\envs\reco_pyspark`,
+> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\activate.d\env_vars.bat` and add:
+> 
+>     @echo off
+>     set PYSPARK_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
+>     set PYSPARK_DRIVER_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
+>     set SPARK_HOME_BACKUP=%SPARK_HOME%
+>     set SPARK_HOME=
+>     set PYTHONPATH_BACKUP=%PYTHONPATH%
+>     set PYTHONPATH=
+> 
+> This will export the variables every time we do `conda activate reco_pyspark`.
+> To unset these variables when we deactivate the environment,
+> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\deactivate.d\env_vars.bat` and add:
+> 
+>     @echo off
+>     set PYSPARK_PYTHON=
+>     set PYSPARK_DRIVER_PYTHON=
+>     set SPARK_HOME=%SPARK_HOME_BACKUP%
+>     set SPARK_HOME_BACKUP=
+>     set PYTHONPATH=%PYTHONPATH_BACKUP%
+>     set PYTHONPATH_BACKUP=
+> 
+> </details>
+
+
 ### Register the conda environment as a kernel in Jupyter
 
 We can register our created conda environment to appear as a kernel in the Jupyter notebooks.
 
     conda activate my_env_name
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
+    
+If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
 
 ### Troubleshooting for the DSVM
 
@@ -136,7 +182,7 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 
 ## Setup guide for Azure Databricks
 
-### Requirements
+### Requirements of Azure Databricks
 
 * Databricks Runtime version 4.3 (Apache Spark 2.3.1, Scala 2.11) or greater
 * Python 3
@@ -169,6 +215,11 @@ This option utilizes an installation script to do the setup, and it requires add
 >        databricks clusters start --cluster-id <CLUSTER_ID>`
 >        ```
 
+The installation script has a number of options that can also deal with different databricks-cli profiles, install a version of the mmlspark library, overwrite the libraries, or prepare the cluster for operationalization. For all options, please see:
+
+```{shell}
+python scripts/databricks_install.py -h
+```
 
 Once you have confirmed the databricks cluster is *RUNNING*, install the modules within this repository with the following commands. 
 
@@ -177,16 +228,10 @@ cd Recommenders
 python scripts/databricks_install.py <CLUSTER_ID>
 ```
 
-The installation script has a number of options that can also deal with different databricks-cli profiles, install a version of the mmlspark library, or prepare the cluster for operationalization. For all options, please see:
-
-```{shell}
-python scripts/databricks_install.py -h
-```
-
 **Note** If you are planning on running through the sample code for operationalization [here](notebooks/05_operationalize/als_movie_o16n.ipynb), you need to prepare the cluster for operationalization. You can do so by adding an additional option to the script run. <CLUSTER_ID> is the same as that mentioned above, and can be identified by running `databricks clusters list` and selecting the appropriate cluster.
 
 ```{shell}
-./scripts/databricks_install.py --prepare-o16n <CLUSTER_ID>
+python ./scripts/databricks_install.py --prepare-o16n <CLUSTER_ID>
 ```
 
 See below for details.
@@ -238,7 +283,7 @@ This option utilizes the installation script to do the setup. Just run the insta
 with an additional option. If you have already run the script once to upload and install the `Recommenders.egg` library, you can also add an `--overwrite` option:
 
 ```{shell}
-scripts/databricks_install.py --overwrite --prepare-o16n <CLUSTER_ID>
+python scripts/databricks_install.py --overwrite --prepare-o16n <CLUSTER_ID>
 ```
 
 This script does all of the steps described in the *Manual setup* section below.

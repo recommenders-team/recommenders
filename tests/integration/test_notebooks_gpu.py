@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import shutil
 import papermill as pm
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
@@ -149,16 +148,15 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
         )
     ],
 )
-def test_wide_deep(notebooks, size, epochs, expected_values):
+def test_wide_deep(notebooks, size, epochs, expected_values, tmp):
     notebook_path = notebooks["wide_deep"]
 
-    MODEL_DIR = "model_checkpoints"
     params = {
         "MOVIELENS_DATA_SIZE": size,
         "EPOCHS": epochs,
         "EVALUATE_WHILE_TRAINING": False,
-        "MODEL_DIR": MODEL_DIR,
-        "EXPORT_DIR_BASE": MODEL_DIR,
+        "MODEL_DIR": tmp,
+        "EXPORT_DIR_BASE": tmp,
         "RATING_METRICS": ["rmse", "mae", "rsquared", "exp_var"],
         "RANKING_METRICS": ["ndcg_at_k", "map_at_k", "precision_at_k", "recall_at_k"],
     }
@@ -169,5 +167,3 @@ def test_wide_deep(notebooks, size, epochs, expected_values):
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
-
-    shutil.rmtree(MODEL_DIR, ignore_errors=True)

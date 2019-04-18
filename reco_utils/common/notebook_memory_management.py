@@ -16,7 +16,7 @@ from __future__ import absolute_import  # avoid hiding global modules with local
 from __future__ import print_function  # force use of print("hello")
 from __future__ import (
     unicode_literals
-)  # force unadorned strings "" to be unicode without prepending u""
+)  # force unadorned strings "" to be Unicode without prepending u""
 import time
 import memory_profiler
 from IPython import get_ipython
