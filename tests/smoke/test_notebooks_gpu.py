@@ -85,7 +85,6 @@ def test_fastai_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_xdeepfm_smoke(notebooks):
     notebook_path = notebooks["xdeepfm_quickstart"]
     pm.execute_notebook(
@@ -109,7 +108,6 @@ def test_xdeepfm_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_dkn_smoke(notebooks):
     notebook_path = notebooks["dkn_quickstart"]
     pm.execute_notebook(
