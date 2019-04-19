@@ -83,12 +83,16 @@ PIP_BASE = {
     "tqdm": "tqdm==4.31.1",
 }
 
-PIP_PYSPARK = {}
 PIP_GPU = {}
+PIP_PYSPARK = {}
 
+PIP_DARWIN = {
+    "nni": "nni==0.5.2.1",
+}
 PIP_LINUX = {
     "nni": "nni==0.5.2.1",
 }
+PIP_WIN32 = {}
 
 
 if __name__ == "__main__":
@@ -151,8 +155,12 @@ if __name__ == "__main__":
         pip_packages.update(PIP_GPU)
 
     # check for os platform support
-    if platform in ['linux', 'darwin']:
+    if platform == 'darwin':
+        pip_packages.update(PIP_DARWIN)
+    if platform == 'linux':
         pip_packages.update(PIP_LINUX)
+    if platform == 'win32':
+        pip_packages.update(PIP_WIN32)
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)
