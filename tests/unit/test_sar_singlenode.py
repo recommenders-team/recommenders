@@ -10,7 +10,6 @@ from pandas.util.testing import assert_frame_equal
 
 from reco_utils.common.constants import DEFAULT_PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
-from reco_utils.recommender.sar import TIME_NOW
 from tests.sar_common import read_matrix, load_userpred, load_affinity
 
 
@@ -102,7 +101,6 @@ def test_sar_item_similarity(
         similarity_type=similarity_type,
         timedecay_formula=False,
         time_decay_coefficient=30,
-        time_now=TIME_NOW,
         threshold=threshold,
         **header
     )
@@ -153,7 +151,7 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         np.array(
             _rearrange_to_test(
                 model.user_affinity, None, items, None, model.item2index
-            )[user_index,].todense()
+            )[user_index, ].todense()
         ),
         -1,
     )

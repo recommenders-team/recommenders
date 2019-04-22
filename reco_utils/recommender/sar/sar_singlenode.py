@@ -7,6 +7,7 @@ Reference implementation of SAR in python/numpy/pandas.
 This is not meant to be particularly performant or scalable, just
 a simple and readable implementation.
 """
+
 import numpy as np
 import pandas as pd
 import logging
@@ -16,6 +17,12 @@ from reco_utils.common.python_utils import jaccard, lift, exponential_decay, get
 from reco_utils.common import constants
 from reco_utils.recommender import sar
 
+
+SIMILARITY_TYPES = {
+    "COOCCUR": "cooccurrence",
+    "JACCARD": "jaccard",
+    "LIFT": "lift",
+}
 
 logger = logging.getLogger()
 
@@ -31,11 +38,11 @@ class SARSingleNode:
         col_rating=constants.DEFAULT_RATING_COL,
         col_timestamp=constants.DEFAULT_TIMESTAMP_COL,
         col_prediction=constants.DEFAULT_PREDICTION_COL,
-        similarity_type=sar.SIM_JACCARD,
-        time_decay_coefficient=sar.TIME_DECAY_COEFFICIENT,
-        time_now=sar.TIME_NOW,
-        timedecay_formula=sar.TIMEDECAY_FORMULA,
-        threshold=sar.THRESHOLD,
+        similarity_type=SIMILARITY_TYPES["JACCARD"],
+        time_decay_coefficient=30,
+        time_now=None,
+        timedecay_formula=False,
+        threshold=1,
     ):
         """Initialize model parameters
 
@@ -45,7 +52,7 @@ class SARSingleNode:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             col_prediction (str): prediction column name
-            similarity_type (str): [None, 'jaccard', 'lift'] option for computing item-item similarity
+            similarity_type (str): ['cooccur', 'jaccard', 'lift'] option for computing item-item similarity
             time_decay_coefficient (float): number of days till ratings are decayed by 1/2
             time_now (int | None): current time for time decay calculation
             timedecay_formula (bool): flag to apply time decay
@@ -60,8 +67,7 @@ class SARSingleNode:
         self.remove_seen = remove_seen
 
         self.similarity_type = similarity_type
-        # convert to seconds
-        self.time_decay_half_life = time_decay_coefficient * 24 * 60 * 60
+        self.time_decay_half_life = time_decay_coefficient * 24 * 60 * 60  # convert to seconds
         self.time_decay_flag = timedecay_formula
         self.time_now = time_now
         self.threshold = threshold
@@ -76,8 +82,8 @@ class SARSingleNode:
             raise ValueError("Threshold cannot be < 1")
 
         # column for mapping user / item ids to internal indices
-        self.col_item_id = sar.INDEXED_ITEMS
-        self.col_user_id = sar.INDEXED_USERS
+        self.col_item_id = '_indexed_items'
+        self.col_user_id = '_indexed_users'
 
         # obtain all the users and items from both training and test data
         self.n_users = None
@@ -227,14 +233,14 @@ class SARSingleNode:
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
-        if self.similarity_type == sar.SIM_COOCCUR:
+        if self.similarity_type == SIMILARITY_TYPES['COOCCUR']:
             self.item_similarity = item_cooccurrence
-        elif self.similarity_type == sar.SIM_JACCARD:
+        elif self.similarity_type == SIMILARITY_TYPES['JACCARD']:
             logger.info("Calculating jaccard")
             self.item_similarity = jaccard(item_cooccurrence).astype(
                 df[self.col_rating].dtype
             )
-        elif self.similarity_type == sar.SIM_LIFT:
+        elif self.similarity_type == SIMILARITY_TYPES['LIFT']:
             logger.info("Calculating lift")
             self.item_similarity = lift(item_cooccurrence).astype(
                 df[self.col_rating].dtype
