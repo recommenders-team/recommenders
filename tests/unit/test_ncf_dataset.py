@@ -9,6 +9,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
+    SEED,
 )
 from reco_utils.recommender.ncf.dataset import Dataset
 from tests.ncf_common import python_dataset_ncf, test_specs_ncf
@@ -21,7 +22,7 @@ BATCH_SIZE = 32
 
 def test_data_preprocessing(python_dataset_ncf):
     train, test = python_dataset_ncf
-    data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
+    data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST, seed=SEED)
     
     # shape
     assert len(data.train) == len(train)
@@ -43,7 +44,7 @@ def test_data_preprocessing(python_dataset_ncf):
 
 def test_train_loader(python_dataset_ncf):
     train, test = python_dataset_ncf
-    data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
+    data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST, seed=SEED)
 
     # collect positvie user-item dict
     positive_pool = {}

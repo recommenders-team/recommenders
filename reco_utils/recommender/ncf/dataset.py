@@ -26,7 +26,7 @@ class Dataset(object):
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
-        seed=42,
+        seed=None,
     ):
         """
         Constructor

@@ -14,6 +14,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
+    SEED,
 )
 from tests.ncf_common import python_dataset_ncf, test_specs_ncf
 
@@ -27,7 +28,7 @@ N_NEG_TEST = 10
     "model_type, n_users, n_items", [("NeuMF", 1, 1), ("GMF", 10, 10), ("MLP", 4, 8)]
 )
 def test_init(model_type, n_users, n_items):
-    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type)
+    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, seed=SEED)
     # model type
     assert model.model_type == model_type.lower()
     # number of users in dataset
@@ -55,7 +56,7 @@ def test_regular_save_load(model_type, n_users, n_items):
     if os.path.exists(ckpt):
         shutil.rmtree(ckpt)
 
-    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type)
+    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, seed=SEED)
     model.save(ckpt)
     if model.model_type == "neumf":
         P = model.sess.run(model.embedding_gmf_P)
@@ -68,7 +69,7 @@ def test_regular_save_load(model_type, n_users, n_items):
         Q = model.sess.run(model.embedding_mlp_Q)
 
     del model
-    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type)
+    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, seed=SEED)
 
     if model.model_type == "neumf":
         model.load(neumf_dir=ckpt)
