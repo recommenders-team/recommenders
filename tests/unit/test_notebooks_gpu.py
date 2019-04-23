@@ -56,6 +56,23 @@ def test_ncf_deep_dive(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
+def test_xdeepfm(notebooks):
+    notebook_path = notebooks["xdeepfm_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            EPOCHS_FOR_SYNTHETIC_RUN=1,
+            EPOCHS_FOR_CRITEO_RUN=1,
+            BATCH_SIZE_SYNTHETIC=128,
+            BATCH_SIZE_CRITEO=512,
+        ),
+    )
+
+
+@pytest.mark.notebooks
+@pytest.mark.gpu
 def test_wide_deep(notebooks, tmp):
     notebook_path = notebooks["wide_deep"]
 
