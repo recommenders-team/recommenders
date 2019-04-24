@@ -1,3 +1,8 @@
+# This code is modified from Pymanopt: Copyright (c) 2015-2016, Pymanopt Developers. All rights reserved.
+# Online code of Pymanopt: https://github.com/pymanopt/pymanopt
+# Pymanopt is licensed under the BSD 3-Clause "New" or "Revised" License
+# Online license link: https://github.com/pymanopt/pymanopt/blob/master/LICENSE
+
 from __future__ import print_function, division
 
 import time
@@ -5,16 +10,14 @@ from copy import deepcopy
 
 import numpy as np
 
-from pymanopt.solvers.linesearch import LineSearchAdaptive, LineSearchBackTracking
+from pymanopt.solvers.linesearch import LineSearchAdaptive
 from pymanopt.solvers.solver import Solver
 from pymanopt import tools
-#import ipdb
-#import scipy.io
 
 
 BetaTypes = tools.make_enum(
-    "BetaTypes",
-    "FletcherReeves PolakRibiere HestenesStiefel HagerZhang".split())
+    "BetaTypes", "FletcherReeves PolakRibiere HestenesStiefel HagerZhang".split()
+)
 
 
 class ConjugateGradientMS(Solver):
@@ -23,8 +26,14 @@ class ConjugateGradientMS(Solver):
     conjugategradient.m from the manopt MATLAB package.
     """
 
-    def __init__(self, beta_type=BetaTypes.HestenesStiefel, orth_value=np.inf,
-                 linesearch=None, *args, **kwargs):
+    def __init__(
+        self,
+        beta_type=BetaTypes.HestenesStiefel,
+        orth_value=np.inf,
+        linesearch=None,
+        *args,
+        **kwargs
+    ):
         """
         Instantiate gradient solver class.
         Variable attributes (defaults in brackets):
@@ -46,7 +55,7 @@ class ConjugateGradientMS(Solver):
         if linesearch is None:
             self._linesearch = LineSearchAdaptive()
         else:
-            self._linesearch = linesearch#LineSearchBackTracking()
+            self._linesearch = linesearch  # LineSearchBackTracking()
         self.linesearch = None
 
     def solve(self, problem, x=None, reuselinesearch=False, compute_stats=None):
@@ -93,15 +102,13 @@ class ConjugateGradientMS(Solver):
         # stats = {'iteration': [],'time': [],'objective': [],'trainRMSE': [],'testRMSE': []}
         stepsize = np.nan
         cumulative_time = 0.0
-        
+
         time0 = time.time()
         t0 = time.time()
 
         # If no starting point is specified, generate one at random.
         if x is None:
             x = man.rand()
-            #scipy.io.savemat('F:/pratik/Multitask/Codes/MatrixCompletion/python_implementations/polar_factorization/initialize.mat', mdict={'Uinit': x[0], 'Vinit': x[1], 'Binit': x[2]})
-            #ipdb.set_trace()
 
         # Calculate initial cost-related quantities
         cost = objective(x)
@@ -112,33 +119,41 @@ class ConjugateGradientMS(Solver):
 
         # Initial descent direction is the negative gradient
         desc_dir = -Pgrad
-        time_iter = time.time()-t0
+        time_iter = time.time() - t0
         cumulative_time += time_iter
 
-        self._start_optlog(extraiterfields=['gradnorm'],
-                           solverparams={'beta_type': self._beta_type,
-                                         'orth_value': self._orth_value,
-                                         'linesearcher': linesearch})
+        self._start_optlog(
+            extraiterfields=["gradnorm"],
+            solverparams={
+                "beta_type": self._beta_type,
+                "orth_value": self._orth_value,
+                "linesearcher": linesearch,
+            },
+        )
 
         while True:
             if verbosity >= 2:
                 print("%5d\t%+.16e\t%.8e" % (iter, cost, gradnorm))
             if compute_stats is not None:
-                compute_stats(x,[iter,cost,gradnorm,cumulative_time],stats)
-            
+                compute_stats(x, [iter, cost, gradnorm, cumulative_time], stats)
+
             if self._logverbosity >= 2:
                 self._append_optlog(iter, x, cost, gradnorm=gradnorm)
 
             t0 = time.time()
-            #stop_reason = self._check_stopping_criterion(
+            # stop_reason = self._check_stopping_criterion(
             #    time0, gradnorm=gradnorm, iter=iter + 1, stepsize=stepsize)
             stop_reason = self._check_stopping_criterion(
-                time.time()-cumulative_time, gradnorm=gradnorm, iter=iter + 1, stepsize=stepsize)
+                time.time() - cumulative_time,
+                gradnorm=gradnorm,
+                iter=iter + 1,
+                stepsize=stepsize,
+            )
 
             if stop_reason:
                 if verbosity >= 1:
                     print(stop_reason)
-                    print('')
+                    print("")
                 break
 
             # The line search algorithms require the directional derivative of
@@ -151,17 +166,17 @@ class ConjugateGradientMS(Solver):
             if df0 >= 0:
                 # Or we switch to the negative gradient direction.
                 if verbosity >= 3:
-                    print("Conjugate gradient info: got an ascent direction "
-                          "(df0 = %.2f), reset to the (preconditioned) "
-                          "steepest descent direction." % df0)
+                    print(
+                        "Conjugate gradient info: got an ascent direction "
+                        "(df0 = %.2f), reset to the (preconditioned) "
+                        "steepest descent direction." % df0
+                    )
                 # Reset to negative gradient: this discards the CG memory.
                 desc_dir = -Pgrad
                 df0 = -gradPgrad
 
             # Execute line search
-            # ipdb.set_trace()
-            stepsize, newx = linesearch.search(objective, man, x, desc_dir,
-                                               cost, df0)
+            stepsize, newx = linesearch.search(objective, man, x, desc_dir, cost, df0)
 
             # Compute the new cost-related quantities for newx
             newcost = objective(newx)
@@ -192,39 +207,38 @@ class ConjugateGradientMS(Solver):
                     diff = newgrad - oldgrad
                     ip_diff = man.inner(newx, Pnewgrad, diff)
                     try:
-                        beta = max(0,
-                                   ip_diff / man.inner(newx, diff, desc_dir))
+                        beta = max(0, ip_diff / man.inner(newx, diff, desc_dir))
                     # if ip_diff = man.inner(newx, diff, desc_dir) = 0
                     except ZeroDivisionError:
                         beta = 1
-                    #print(ip_diff,beta,man.inner(newx, diff, desc_dir))
+                    # print(ip_diff,beta,man.inner(newx, diff, desc_dir))
                 elif self._beta_type == BetaTypes.HagerZhang:
                     diff = newgrad - oldgrad
                     Poldgrad = man.transp(x, newx, Pgrad)
                     Pdiff = Pnewgrad - Poldgrad
                     deno = man.inner(newx, diff, desc_dir)
                     numo = man.inner(newx, diff, Pnewgrad)
-                    numo -= (2 * man.inner(newx, diff, Pdiff) *
-                             man.inner(newx, desc_dir, newgrad) / deno)
+                    numo -= (
+                        2
+                        * man.inner(newx, diff, Pdiff)
+                        * man.inner(newx, desc_dir, newgrad)
+                        / deno
+                    )
                     beta = numo / deno
                     # Robustness (see Hager-Zhang paper mentioned above)
                     desc_dir_norm = man.norm(newx, desc_dir)
                     eta_HZ = -1 / (desc_dir_norm * min(0.01, gradnorm))
                     beta = max(beta, eta_HZ)
                 else:
-                    types = ", ".join(
-                        ["BetaTypes.%s" % t for t in BetaTypes._fields])
+                    types = ", ".join(["BetaTypes.%s" % t for t in BetaTypes._fields])
                     raise ValueError(
-                        "Unknown beta_type %s. Should be one of %s." % (
-                            self._beta_type, types))
+                        "Unknown beta_type %s. Should be one of %s."
+                        % (self._beta_type, types)
+                    )
 
                 desc_dir = -Pnewgrad + beta * desc_dir
 
             # Update the necessary variables for the next iteration.
-            #print(np.linalg.norm(desc_dir[2][:]))
-            #print(np.linalg.norm(newgrad[2][:]))
-            #print(np.linalg.norm(grad[2][:]))
-            #ipdb.set_trace()
             x = newx
             cost = newcost
             grad = newgrad
@@ -232,13 +246,19 @@ class ConjugateGradientMS(Solver):
             gradnorm = newgradnorm
             gradPgrad = newgradPnewgrad
             iter += 1
-            time_iter = time.time()-t0
+            time_iter = time.time() - t0
             cumulative_time += time_iter
 
         if self._logverbosity <= 0:
             return x, stats
         else:
-            self._stop_optlog(x, cost, stop_reason, time0,
-                              stepsize=stepsize, gradnorm=gradnorm,
-                              iter=iter)
+            self._stop_optlog(
+                x,
+                cost,
+                stop_reason,
+                time0,
+                stepsize=stepsize,
+                gradnorm=gradnorm,
+                iter=iter,
+            )
             return x, stats, self._optlog

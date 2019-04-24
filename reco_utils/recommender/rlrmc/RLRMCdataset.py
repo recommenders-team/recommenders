@@ -1,13 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import random
 import numpy as np
 import pandas as pd
-import warnings
-from math import sqrt
 from scipy.sparse import csr_matrix
-from scipy.sparse.linalg import svds
 
 from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
