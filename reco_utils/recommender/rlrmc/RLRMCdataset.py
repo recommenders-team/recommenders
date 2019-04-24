@@ -26,6 +26,7 @@ class RLRMCdataset(object):
         self,
         train,
         validation=None,
+        test=None,
         mean_center=True,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
@@ -57,9 +58,9 @@ class RLRMCdataset(object):
         # random.seed(seed)
 
         # data preprocessing for training and validation data
-        self._data_processing(train, validation, mean_center)
+        self._data_processing(train, validation, test, mean_center)
 
-    def _data_processing(self, train, validation=None, mean_center=True):
+    def _data_processing(self, train, validation=None, test=None, mean_center=True):
         """ process the dataset to reindex userID and itemID 
         Args:
             train (pandas.DataFrame): training data with at least columns (col_user, col_item, col_rating) 
@@ -72,6 +73,7 @@ class RLRMCdataset(object):
         # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/master/reco_utils/recommender/ncf/dataset.py
         # If validation dataset is None
         df = train if validation is None else train.append(validation)
+        df = df if test is None else df.append(test)
 
         # Reindex user and item index
         if self.user_idx is None:
