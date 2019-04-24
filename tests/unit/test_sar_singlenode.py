@@ -151,7 +151,7 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         np.array(
             _rearrange_to_test(
                 model.user_affinity, None, items, None, model.item2index
-            )[user_index, ].todense()
+            )[user_index,].todense()
         ),
         -1,
     )
@@ -238,7 +238,7 @@ def test_get_item_based_topk(header, pandas_dummy):
             MovieId=[2, 4, 3, 4, 3, 10],
             prediction=[5.0, 5.0, 5.0, 8.0, 8.0, 4.0],
         )
-    ).set_index(['UserId', 'MovieId'])
+    ).set_index(["UserId", "MovieId"])
     items = pd.DataFrame(
         {
             header["col_user"]: [100, 100, 1, 100, 1, 1],
@@ -246,7 +246,7 @@ def test_get_item_based_topk(header, pandas_dummy):
             header["col_rating"]: [5, 1, 3, 1, 5, 4],
         }
     )
-    actual = sar.get_item_based_topk(items, top_k=3).set_index(['UserId', 'MovieId'])
+    actual = sar.get_item_based_topk(items, top_k=3).set_index(["UserId", "MovieId"])
     assert_frame_equal(expected, actual, check_like=True)
 
 
@@ -256,15 +256,13 @@ def test_get_popularity_based_topk(header):
         {
             header["col_user"]: [1, 1, 1, 2, 2, 2, 3, 3, 3],
             header["col_item"]: [1, 2, 3, 1, 3, 4, 5, 6, 1],
-            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3]
+            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3],
         }
     )
 
     sar = SARSingleNode(**header)
     sar.fit(train_df)
 
-    expected = pd.DataFrame(
-        dict(MovieId=[1, 3, 4], prediction=[3, 2, 1])
-    )
+    expected = pd.DataFrame(dict(MovieId=[1, 3, 4], prediction=[3, 2, 1]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
     assert_frame_equal(expected, actual)
