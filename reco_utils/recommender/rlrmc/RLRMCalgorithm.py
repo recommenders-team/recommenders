@@ -1,29 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import random
 import numpy as np
-import pandas as pd
-import warnings
-import sys
 import logging
 
-# sys.path.append("./pymanopt/")
-# The Pymanopt code has been used and was downloaded via: pip install pymanopt
-# Online code of Pymanopt: https://github.com/pymanopt/pymanopt
-# Online license link: https://github.com/pymanopt/pymanopt/blob/master/LICENSE
-# Pymanopt is licensed under the BSD 3-Clause "New" or "Revised" License.
-
 from pymanopt import Problem
-# from pymanopt.solvers import ConjugateGradientMS  # Modified Conjugate Gradient
-from reco_utils.recommender.rlrmc.conjugate_gradient_ms import ConjugateGradientMS 
+from reco_utils.recommender.rlrmc.conjugate_gradient_ms import ConjugateGradientMS
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 from pymanopt.manifolds import Stiefel, PositiveDefinite, Product
 from math import sqrt
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
-import time
-from numba import jit, njit, prange
+from numba import njit, prange
+
 
 logger = logging.getLogger(__name__)
 
