@@ -15,7 +15,8 @@ import logging
 # Pymanopt is licensed under the BSD 3-Clause "New" or "Revised" License.
 
 from pymanopt import Problem
-from pymanopt.solvers import ConjugateGradientMS  # Modified Conjugate Gradient
+# from pymanopt.solvers import ConjugateGradientMS  # Modified Conjugate Gradient
+from reco_utils.recommender.rlrmc.conjugate_gradient_ms import ConjugateGradientMS 
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 from pymanopt.manifolds import Stiefel, PositiveDefinite, Product
 from math import sqrt
