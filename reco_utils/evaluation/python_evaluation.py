@@ -17,7 +17,7 @@ from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
-    PREDICTION_COL,
+    DEFAULT_PREDICTION_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
@@ -46,7 +46,7 @@ def check_column_dtypes(func):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         *args,
         **kwargs
     ):
@@ -92,7 +92,7 @@ def merge_rating_true_pred(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """Join truth and prediction data frames on userID and itemID and return the true
     and predicted rated with the correct index.
@@ -129,7 +129,7 @@ def rmse(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """Calculate Root Mean Squared Error
 
@@ -162,7 +162,7 @@ def mae(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """Calculate Mean Absolute Error.
 
@@ -195,7 +195,7 @@ def rsquared(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """Calculate R squared
 
@@ -228,7 +228,7 @@ def exp_var(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """Calculate explained variance.
 
@@ -261,7 +261,7 @@ def auc(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """Calculate the Area-Under-Curve metric for implicit feedback typed
     recommender, where rating is binary and prediction is float number ranging
@@ -304,7 +304,7 @@ def logloss(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """Calculate the logloss metric for implicit feedback typed
     recommender, where rating is binary and prediction is float number ranging
@@ -415,7 +415,7 @@ def precision_at_k(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
@@ -468,7 +468,7 @@ def recall_at_k(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
@@ -515,7 +515,7 @@ def ndcg_at_k(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
@@ -576,7 +576,7 @@ def map_at_k(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=PREDICTION_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,

@@ -7,7 +7,7 @@ from pyspark.sql.functions import col, row_number, expr
 import pyspark.sql.functions as F
 
 from reco_utils.common.constants import (
-    PREDICTION_COL,
+    DEFAULT_PREDICTION_COL,
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -27,7 +27,7 @@ class SparkRatingEvaluation:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
     ):
         """Initializer.
         This is the Spark version of rating metrics evaluator.
@@ -161,7 +161,7 @@ class SparkRankingEvaluation:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         threshold=DEFAULT_THRESHOLD
     ):
         """Initialization.
@@ -340,7 +340,7 @@ def _get_top_k_items(
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         k=DEFAULT_K
 ):
     """Get the input customer-item-rating tuple in the format of Spark
@@ -383,7 +383,7 @@ def _get_relevant_items_by_threshold(
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         threshold=DEFAULT_THRESHOLD
 ):
     """Get relevant items for each customer in the input rating data.
@@ -427,7 +427,7 @@ def _get_relevant_items_by_timestamp(
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         k=DEFAULT_K
 ):
     """Get relevant items for each customer defined by timestamp.

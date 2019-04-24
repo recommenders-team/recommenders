@@ -17,6 +17,7 @@
 
 import argparse
 import textwrap
+from sys import platform
 
 
 HELP_MSG = """
@@ -52,6 +53,7 @@ CONDA_BASE = {
     "scikit-learn": "scikit-learn==0.19.1",
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
+    "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
 }
@@ -65,7 +67,7 @@ CONDA_GPU = {
 }
 
 PIP_BASE = {
-    "azureml-sdk[notebooks,tensorboard,contrib]": "azureml-sdk[notebooks,tensorboard,contrib]==1.0.18",
+    "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.18",
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
@@ -82,8 +84,16 @@ PIP_BASE = {
     "tqdm": "tqdm==4.31.1",
 }
 
-PIP_PYSPARK = {}
 PIP_GPU = {}
+PIP_PYSPARK = {}
+
+PIP_DARWIN = {
+    "nni": "nni==0.5.2.1",
+}
+PIP_LINUX = {
+    "nni": "nni==0.5.2.1",
+}
+PIP_WIN32 = {}
 
 
 if __name__ == "__main__":
@@ -144,6 +154,14 @@ if __name__ == "__main__":
     if args.gpu:
         conda_packages.update(CONDA_GPU)
         pip_packages.update(PIP_GPU)
+
+    # check for os platform support
+    if platform == 'darwin':
+        pip_packages.update(PIP_DARWIN)
+    if platform == 'linux':
+        pip_packages.update(PIP_LINUX)
+    if platform == 'win32':
+        pip_packages.update(PIP_WIN32)
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)

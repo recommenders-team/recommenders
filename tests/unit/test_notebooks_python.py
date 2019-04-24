@@ -3,6 +3,7 @@
 
 import pytest
 import papermill as pm
+
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
@@ -44,7 +45,7 @@ def test_baseline_deep_dive_runs(notebooks):
 def test_surprise_deep_dive_runs(notebooks):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
-    
+
 
 @pytest.mark.notebooks
 def test_vw_deep_dive_runs(notebooks):
@@ -61,7 +62,8 @@ def test_lightgbm(notebooks):
                                         NUM_OF_TREES=10,
                                         TREE_LEARNING_RATE=0.15,
                                         EARLY_STOPPING_ROUNDS=20,
-                                        METRIC="auc"),)
+                                        METRIC="auc"))
+
 
 @pytest.mark.notebooks
 def test_rlrmc_quickstart_runs(notebooks):

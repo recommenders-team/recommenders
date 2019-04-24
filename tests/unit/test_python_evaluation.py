@@ -10,7 +10,7 @@ from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
-    PREDICTION_COL,
+    DEFAULT_PREDICTION_COL,
 )
 from reco_utils.evaluation.python_evaluation import (
     check_column_dtypes,
@@ -86,7 +86,7 @@ def rating_pred():
                 11,
                 14,
             ],
-            PREDICTION_COL: [
+            DEFAULT_PREDICTION_COL: [
                 14,
                 13,
                 12,
@@ -117,7 +117,7 @@ def rating_nohit():
         {
             DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
             DEFAULT_ITEM_COL: [100] * 18,
-            PREDICTION_COL: [
+            DEFAULT_PREDICTION_COL: [
                 14,
                 13,
                 12,
@@ -153,8 +153,8 @@ def rating_true_binary(rating_true):
 @pytest.fixture
 def rating_pred_binary(rating_pred):
     # Normalize the predictions
-    rating_pred[PREDICTION_COL] = minmax_scale(
-        rating_pred[PREDICTION_COL].astype(float)
+    rating_pred[DEFAULT_PREDICTION_COL] = minmax_scale(
+        rating_pred[DEFAULT_PREDICTION_COL].astype(float)
     )
     return rating_pred
 
@@ -172,7 +172,7 @@ def test_column_dtypes_match(rating_true, rating_pred):
             col_user=DEFAULT_USER_COL,
             col_item=DEFAULT_ITEM_COL,
             col_rating=DEFAULT_RATING_COL,
-            col_prediction=PREDICTION_COL,
+            col_prediction=DEFAULT_PREDICTION_COL,
         )
 
 
@@ -183,7 +183,7 @@ def test_merge_rating(rating_true, rating_pred):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
     )
     target_y_true = np.array([3, 3, 5, 5, 3, 3, 2, 1])
     target_y_pred = np.array([14, 12, 7, 8, 13, 6, 11, 5])
@@ -201,7 +201,7 @@ def test_merge_ranking(rating_true, rating_pred):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         relevancy_method="top_k",
     )
 
@@ -209,7 +209,7 @@ def test_merge_ranking(rating_true, rating_pred):
 
     assert isinstance(data_hit_count, pd.DataFrame)
     columns = data_hit_count.columns
-    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, PREDICTION_COL]
+    columns_exp = [DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_PREDICTION_COL]
     assert set(columns).intersection(set(columns_exp)) is not None
 
     assert n_users == 3
@@ -369,7 +369,7 @@ def test_python_auc(rating_true_binary, rating_pred_binary):
         rating_true=rating_true_binary,
         rating_pred=rating_pred_binary,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
     ) == pytest.approx(0.75, TOL)
 
 
@@ -384,7 +384,7 @@ def test_python_logloss(rating_true_binary, rating_pred_binary):
         rating_true=rating_true_binary,
         rating_pred=rating_pred_binary,
         col_rating=DEFAULT_RATING_COL,
-        col_prediction=PREDICTION_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
     ) == pytest.approx(0.7835, TOL)
 
 
@@ -393,14 +393,14 @@ def test_python_errors(rating_true, rating_pred):
         rmse(rating_true, rating_true, col_user="not_user")
 
     with pytest.raises(ValueError):
-        mae(rating_pred, rating_pred, col_rating=PREDICTION_COL, col_user="not_user")
+        mae(rating_pred, rating_pred, col_rating=DEFAULT_PREDICTION_COL, col_user="not_user")
 
     with pytest.raises(ValueError):
         rsquared(rating_true, rating_pred, col_item="not_item")
 
     with pytest.raises(ValueError):
         exp_var(
-            rating_pred, rating_pred, col_rating=PREDICTION_COL, col_item="not_item"
+            rating_pred, rating_pred, col_rating=DEFAULT_PREDICTION_COL, col_item="not_item"
         )
 
     with pytest.raises(ValueError):
@@ -414,5 +414,5 @@ def test_python_errors(rating_true, rating_pred):
 
     with pytest.raises(ValueError):
         map_at_k(
-            rating_pred, rating_pred, col_rating=PREDICTION_COL, col_user="not_user"
+            rating_pred, rating_pred, col_rating=DEFAULT_PREDICTION_COL, col_user="not_user"
         )

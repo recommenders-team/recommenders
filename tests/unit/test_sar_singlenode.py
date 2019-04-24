@@ -6,8 +6,9 @@ import itertools
 import pytest
 import numpy as np
 import pandas as pd
+from pandas.util.testing import assert_frame_equal
 
-from reco_utils.common.constants import PREDICTION_COL
+from reco_utils.common.constants import DEFAULT_PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 from reco_utils.recommender.sar import TIME_NOW
 from tests.sar_common import read_matrix, load_userpred, load_affinity
@@ -61,7 +62,7 @@ def test_predict(
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == trainset[header["col_user"]].dtype
     assert preds[header["col_item"]].dtype == trainset[header["col_item"]].dtype
-    assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
+    assert preds[DEFAULT_PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
 def test_predict_all_items(train_test_dummy_timestamp, header):
@@ -69,7 +70,9 @@ def test_predict_all_items(train_test_dummy_timestamp, header):
     trainset, _ = train_test_dummy_timestamp
     model.fit(trainset)
 
-    user_items = itertools.product(trainset[header["col_user"]].unique(), trainset[header["col_item"]].unique())
+    user_items = itertools.product(
+        trainset[header["col_user"]].unique(), trainset[header["col_item"]].unique()
+    )
     testset = pd.DataFrame(user_items, columns=[header["col_user"], header["col_item"]])
     preds = model.predict(testset)
 
@@ -77,7 +80,7 @@ def test_predict_all_items(train_test_dummy_timestamp, header):
     assert isinstance(preds, pd.DataFrame)
     assert preds[header["col_user"]].dtype == trainset[header["col_user"]].dtype
     assert preds[header["col_item"]].dtype == trainset[header["col_item"]].dtype
-    assert preds[PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
+    assert preds[DEFAULT_PREDICTION_COL].dtype == trainset[header["col_rating"]].dtype
 
 
 @pytest.mark.parametrize(
@@ -146,7 +149,7 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
 
     true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
     user_index = model.user2index[sar_settings["TEST_USER_ID"]]
-    test_user_affinity = np.reshape(
+    sar_user_affinity = np.reshape(
         np.array(
             _rearrange_to_test(
                 model.user_affinity, None, items, None, model.item2index
@@ -155,8 +158,8 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         -1,
     )
     assert np.allclose(
-        true_user_affinity.astype(test_user_affinity.dtype),
-        test_user_affinity,
+        true_user_affinity.astype(sar_user_affinity.dtype),
+        sar_user_affinity,
         atol=sar_settings["ATOL"],
     )
 
@@ -198,3 +201,72 @@ def test_recommend_k_items(
     test_scores = np.array(test_results["prediction"])
     assert true_items == test_items
     assert np.allclose(true_scores, test_scores, atol=sar_settings["ATOL"])
+
+
+def test_get_item_based_topk(header, pandas_dummy):
+
+    sar = SARSingleNode(**header)
+    sar.fit(pandas_dummy)
+
+    # test with just items provided
+    expected = pd.DataFrame(
+        dict(UserId=[0, 0, 0], MovieId=[8, 7, 6], prediction=[2.0, 2.0, 2.0])
+    )
+    items = pd.DataFrame({header["col_item"]: [1, 5, 10]})
+    actual = sar.get_item_based_topk(items, top_k=3)
+    assert_frame_equal(expected, actual)
+
+    # test with items and users
+    expected = pd.DataFrame(
+        dict(
+            UserId=[100, 100, 100, 1, 1, 1],
+            MovieId=[8, 7, 6, 4, 3, 10],
+            prediction=[2.0, 2.0, 2.0, 2.0, 2.0, 1.0],
+        )
+    )
+    items = pd.DataFrame(
+        {
+            header["col_user"]: [100, 100, 1, 100, 1, 1],
+            header["col_item"]: [1, 5, 1, 10, 2, 6],
+        }
+    )
+    actual = sar.get_item_based_topk(items, top_k=3, sort_top_k=True)
+    assert_frame_equal(expected, actual)
+
+    # test with items, users, and ratings
+    expected = pd.DataFrame(
+        dict(
+            UserId=[100, 100, 100, 1, 1, 1],
+            MovieId=[2, 4, 3, 4, 3, 10],
+            prediction=[5.0, 5.0, 5.0, 8.0, 8.0, 4.0],
+        )
+    ).set_index(['UserId', 'MovieId'])
+    items = pd.DataFrame(
+        {
+            header["col_user"]: [100, 100, 1, 100, 1, 1],
+            header["col_item"]: [1, 5, 1, 10, 2, 6],
+            header["col_rating"]: [5, 1, 3, 1, 5, 4],
+        }
+    )
+    actual = sar.get_item_based_topk(items, top_k=3).set_index(['UserId', 'MovieId'])
+    assert_frame_equal(expected, actual, check_like=True)
+
+
+def test_get_popularity_based_topk(header):
+
+    train_df = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 1, 2, 2, 2, 3, 3, 3],
+            header["col_item"]: [1, 2, 3, 1, 3, 4, 5, 6, 1],
+            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3]
+        }
+    )
+
+    sar = SARSingleNode(**header)
+    sar.fit(train_df)
+
+    expected = pd.DataFrame(
+        dict(MovieId=[1, 3, 4], prediction=[3, 2, 1])
+    )
+    actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
+    assert_frame_equal(expected, actual)
