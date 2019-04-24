@@ -49,3 +49,14 @@ generated from a recommender for a application service.
 There may be other Azure service or products used in the notebooks. Introduction and/or reference of
 those will be provided in the notebooks.
 
+### Submit an existing notebook to Azure Machine Learning
+
+ The [run_notebook_on_azureml](/run_notebook_on_azureml.ipynb) notebook provides a scaffold to directly submit an existing notebook to AzureML compute targets. After setting up a compute target and creating a run configuration, simply replace the notebook file name and submit the notebook directly. 
+```python
+cfg = NotebookRunConfig(source_directory='../',
+                            notebook='notebooks/00_quick_start/' + NOTEBOOK_NAME,
+                            output_notebook='outputs/out.ipynb',
+                            parameters={"MOVIELENS_DATA_SIZE": "100k", "TOP_K": 10},
+                            run_config=run_config)
+```
+All metrics and parameters logged with `pm.record` will be stored on the run as tracked metrics. The initial notebook that was submitted, will be stored as an output notebook ```out.ipynb``` in the outputs tab of the Azure Portal. 

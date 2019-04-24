@@ -136,7 +136,7 @@ def extract_criteo(size, compressed_file, path=None):
     """Extract Criteo dataset tar.
 
     Args:
-        size (str): Size of criteo dataset. It can be "full" or "sample".
+        size (str): Size of Criteo dataset. It can be "full" or "sample".
         compressed_file (str): Path to compressed file.
         path (str): Path to extract the file.
     

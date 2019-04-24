@@ -34,10 +34,10 @@ class FFMTextIterator(BaseIterator):
         """Initialize an iterator. Create necessary placeholders for the model.
         
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
+            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
             graph (obj): the running graph. All created placeholder will be added to this graph.
-            col_spliter (str): column spliter in one line.
-            ID_spliter (str): ID spliter in one line.
+            col_spliter (str): column splitter in one line.
+            ID_spliter (str): ID splitter in one line.
         """
         self.feature_cnt = hparams.FEATURE_COUNT
         self.field_cnt = hparams.FIELD_COUNT

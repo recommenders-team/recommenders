@@ -15,7 +15,7 @@ from sklearn.metrics import (
 )
 
 def cal_metric(labels, preds, metrics):
-    """Calculate metrics,such as auc, logloss
+    """Calculate metrics such as AUC, logloss
     FIXME: refactor this with the reco metrics
     """
     res = {}
@@ -48,7 +48,7 @@ def unpackbits(x, num_bits):
     return (x & to_and).astype(bool).astype(int).reshape(xshape + [num_bits])
 
 class NumEncoder(object):
-    """Encode all the categorical features into numerical ones by sequntial label encoding, sequential count encoding, and binary encoding. Additionally, it also filters the low-frequency categories and fills the missing values, referring to the descriptions in 'notebooks/00_quick_start/lightgbm_tinycriteo.ipynb'.
+    """Encode all the categorical features into numerical ones by sequential label encoding, sequential count encoding, and binary encoding. Additionally, it also filters the low-frequency categories and fills the missing values, referring to the descriptions in 'notebooks/00_quick_start/lightgbm_tinycriteo.ipynb'.
     """
     def __init__(self, cate_cols, nume_cols, label_col, threshold=10, thresrate=0.99):
         """Init the class.

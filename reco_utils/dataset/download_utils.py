@@ -16,7 +16,7 @@ class TqdmUpTo(tqdm):
     """Wrapper class for the progress bar tqdm to get `update_to(n)` functionality"""
 
     def update_to(self, b=1, bsize=1, tsize=None):
-        """A progress bar showing how much is left to finish the opperation
+        """A progress bar showing how much is left to finish the operation
         
         Args:
             b (int): Number of blocks transferred so far.

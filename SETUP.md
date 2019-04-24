@@ -1,9 +1,10 @@
 # Setup guide
 
-This document describes how to setup all the dependencies to run the notebooks in this repository in two different platforms:
+This document describes how to setup all the dependencies to run the notebooks in this repository in following platforms:
 
-* Linux Machine: Local or [Azure Data Science Virtual Machine (DSVM)](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/)
+* Local (Linux, MacOS or Windows) or [DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (Linux or Windows)
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
+
 
 ## Table of Contents
 
@@ -29,21 +30,23 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 
 ### Requirements
 
-* A machine running Linux, Windows Subsystem for Linux ([WSL](https://docs.microsoft.com/en-us/windows/wsl/about)) or macOS
+* A machine running Linux, MacOS or Windows
 * Anaconda with Python version >= 3.6
-  * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
+  * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine,
+  [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
 
-We install the dependencies with Conda. As a pre-requisite, we want to make sure that Anaconda and the package manager Conda are both up to date:
+As a pre-requisite to install the dependencies with Conda, make sure that Anaconda and the package manager Conda are both up to date:
 
 ```{shell}
 conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda-environment yaml file which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
+We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda-environment yaml file
+which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
@@ -94,27 +97,67 @@ To install the environment:
 </details>
 
 
-> **NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
-> 
-> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux). Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`, we create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
-> 
-> ```bash
-> #!/bin/sh
-> export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
-> export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
-> export SPARK_HOME_BACKUP=$SPARK_HOME
-> unset SPARK_HOME
-> ```
+> **NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables
+> `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
 >
-> This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, we create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
+> Click on the following menus to see details:
 >
-> ```bash
-> #!/bin/sh
-> unset PYSPARK_PYTHON
-> unset PYSPARK_DRIVER_PYTHON
-> export SPARK_HOME=$SPARK_HOME_BACKUP
-> unset SPARK_HOME_BACKUP
-> ```
+> <details>
+> <summary><strong><em>Linux or MacOS</em></strong></summary>
+>
+> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
+> Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`,
+> create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
+>
+>     ```bash
+>     #!/bin/sh
+>     export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
+>     export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
+>     export SPARK_HOME_BACKUP=$SPARK_HOME
+>     unset SPARK_HOME
+>     ```
+>
+> This will export the variables every time we do `conda activate reco_pyspark`.
+> To unset these variables when we deactivate the environment,
+> create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
+>
+>     ```bash
+>     #!/bin/sh
+>     unset PYSPARK_PYTHON
+>     unset PYSPARK_DRIVER_PYTHON
+>     export SPARK_HOME=$SPARK_HOME_BACKUP
+>     unset SPARK_HOME_BACKUP
+>     ```
+> 
+> </details>
+>
+> <details><summary><strong><em>Windows</em></strong></summary>
+> 
+> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
+> Assuming that we have installed the environment in `c:\anaconda\envs\reco_pyspark`,
+> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\activate.d\env_vars.bat` and add:
+> 
+>     @echo off
+>     set PYSPARK_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
+>     set PYSPARK_DRIVER_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
+>     set SPARK_HOME_BACKUP=%SPARK_HOME%
+>     set SPARK_HOME=
+>     set PYTHONPATH_BACKUP=%PYTHONPATH%
+>     set PYTHONPATH=
+> 
+> This will export the variables every time we do `conda activate reco_pyspark`.
+> To unset these variables when we deactivate the environment,
+> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\deactivate.d\env_vars.bat` and add:
+> 
+>     @echo off
+>     set PYSPARK_PYTHON=
+>     set PYSPARK_DRIVER_PYTHON=
+>     set SPARK_HOME=%SPARK_HOME_BACKUP%
+>     set SPARK_HOME_BACKUP=
+>     set PYTHONPATH=%PYTHONPATH_BACKUP%
+>     set PYTHONPATH_BACKUP=
+> 
+> </details>
 
 
 ### Register the conda environment as a kernel in Jupyter
