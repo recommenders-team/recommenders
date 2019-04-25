@@ -307,10 +307,10 @@ class NCF:
         self.sess.run(assign_op)
 
     def fit(self, data):
-        """ fit model with training data
+        """Fit model with training data
             
-            Args: 
-                data (NCFDataset): initilized Dataset in ./dataset.py
+        Args: 
+            data (NCFDataset): initilized Dataset in ./dataset.py
         """
 
         # get user and item mapping dict
@@ -357,14 +357,14 @@ class NCF:
     def predict(self, user_input, item_input, is_list=False):
         """Predict function of this trained model
             
-            Args:
-                user_input ( list or element of list ): userID or userID list 
-                item_input ( list or element of list ): itemID or itemID list
-                is_list ( bool ): if true, the input is list type
+        Args:
+            user_input (list or element of list): userID or userID list 
+            item_input (list or element of list): itemID or itemID list
+            is_list (bool): if true, the input is list type
                 noting that list-wise type prediction is faster than element-wise's.
-            
-            Returns:
-                list or float: list of predicted rating or predicted rating score. 
+        
+        Returns:
+            list or float: list of predicted rating or predicted rating score. 
         """
 
         if is_list:
