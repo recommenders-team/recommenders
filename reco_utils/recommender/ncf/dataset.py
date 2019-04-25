@@ -24,25 +24,25 @@ class Dataset(object):
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
+        implicit=True,
         seed=42,
     ):
     """Constructor 
     
     Args:
-        train ([type]): [description]
-        test ([type], optional): [description]. Defaults to None.
-        n_neg (int, optional): [description]. Defaults to 4.
-        n_neg_test (int, optional): [description]. Defaults to 100.
-        col_user ([type], optional): [description]. Defaults to DEFAULT_USER_COL.
-        col_item ([type], optional): [description]. Defaults to DEFAULT_ITEM_COL.
-        col_rating ([type], optional): [description]. Defaults to DEFAULT_RATING_COL.
-        col_timestamp ([type], optional): [description]. Defaults to DEFAULT_TIMESTAMP_COL.
-        seed (int, optional): [description]. Defaults to 42.
+        train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
+        test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None, 
+            if so, we only process the training data.
+        n_neg (int): Number of negative samples for training set.
+        n_neg_test (int): Number of negative samples for test set.
+        col_user (str): User column name.
+        col_item (str): Item column name.
+        col_rating (str): Rating column name. 
+        col_timestamp (str): Timestamp column name.
+        implicit (bool): Ff true, set rating>0 to rating = 1 
+        seed (int): Seed.
     
-    Returns:
-        [type]: [description]
     """
-
         # initialize user and item index
         self.user_idx = None
         self.item_idx = None
@@ -55,24 +55,24 @@ class Dataset(object):
         self.col_rating = col_rating
         self.col_timestamp = col_timestamp
         # data preprocessing for training and test data
-        self.train, self.test = self._data_processing(train, test)
+        self.train, self.test = self._data_processing(train, test, implicit)
         # initialize negative sampling for training and test data
         self._init_train_data()
         self._init_test_data()
         # set random seed
         random.seed(seed)
 
-    def _data_processing(self, train, test, implicit=True):
-        """ process the dataset to reindex userID and itemID, also set rating as implicit feedback
+    def _data_processing(self, train, test, implicit):
+        """Process the dataset to reindex userID and itemID, also set rating as implicit feedback
 
         Args:
-            train (pandas.DataFrame): training data with at least columns (col_user, col_item, col_rating) 
-            test (pandas.DataFrame): test data with at least columns (col_user, col_item, col_rating)
-                    test can be None, if so, we only process the training data
-            implicit (bool): if true, set rating>0 to rating = 1 
+            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating). 
+            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating)
+                    test can be None, if so, we only process the training data.
+            implicit (bool): If true, set rating>0 to rating = 1.
 
         Returns:
-            list: train and test pandas.DataFrame Dataset, which have been reindexed.
+            list: train and test pd.DataFrame Dataset, which have been reindexed.
         
         """
         # If testing dataset is None
@@ -106,7 +106,7 @@ class Dataset(object):
         return self._reindex(train, implicit), self._reindex(test, implicit)
 
     def _reindex(self, df, implicit):
-        """ process dataset to reindex userID and itemID, also set rating as implicit feedback
+        """Process dataset to reindex userID and itemID, also set rating as implicit feedback
 
         Args:
             df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating) 
@@ -138,7 +138,7 @@ class Dataset(object):
         return df_reindex
 
     def _init_train_data(self):
-        """ return all negative items (in train dataset) and store them in self.interact_status[self.col_item + '_negative']
+        """Return all negative items (in train dataset) and store them in self.interact_status[self.col_item + '_negative']
         store train dataset in self.users, self.items and self.ratings
         
         """
@@ -167,7 +167,7 @@ class Dataset(object):
         self.ratings = np.array(self.ratings)
 
     def _init_test_data(self):
-        """ initialize self.test using 'leave-one-out' evaluation protocol in
+        """Initialize self.test using 'leave-one-out' evaluation protocol in
             paper https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
         """
         if self.test is not None:
@@ -237,9 +237,7 @@ class Dataset(object):
                 )
 
     def negative_sampling(self):
-        """ sample n_neg negative items per positive item
-            this function should be called every epoch
-        """
+        """Sample n_neg negative items per positive item, this function should be called every epoch."""
         self.users, self.items, self.ratings = [], [], []
 
         # sample n_neg negative samples for training
@@ -278,18 +276,19 @@ class Dataset(object):
         self.ratings = np.array(self.ratings)
 
     def train_loader(self, batch_size, shuffle=True):
-        """ feed train data every batch
-            Args:
-                batch size (int)
-                shuffle (bool): if true, train data will be shuffled
-            Returns:
-                list: userID list, itemID list, rating list.
+        """Feed train data every batch
+        
+        Args:
+            batch_size (int): Batch size.
+            shuffle (bool): Ff true, train data will be shuffled.
+        
+        Returns:
+            list: userID list, itemID list, rating list.
                 public data loader return the userID, itemID consistent with raw data
 
         """
 
         # yield batch of training data with `shuffle`
-
         indices = np.arange(len(self.users))
         if shuffle:
             random.shuffle(indices)
@@ -309,21 +308,18 @@ class Dataset(object):
             ]
 
     def test_loader(self):
-        """ feed leave-one-out data every user
+        """Feed leave-one-out data every user
+        
+        Generate test batch by every positive test instance,
+        (eg. \[1, 2, 1\] is a positive user & item pair in test set
+        (\[userID, itemID, rating\] for this tuple). This function
+        returns like \[\[1, 2, 1\], \[1, 3, 0\], \[1,6, 0\], ...\],
+        ie. following our *leave-one-out* evaluation protocol.
 
-            Returns:
-                list: userID list, itemID list, rating list.
+        Returns:
+            list: userID list, itemID list, rating list.
                 public data loader return the userID, itemID consistent with raw data
                 the first (userID, itemID, rating) is the positive one
         """
-
-        # yield batch of test data
-
-        # generate test batch by every positive test instance,
-        # (eg. \[1, 2, 1\] is a positive user & item pair in test set
-        # (\[userID, itemID, rating\] for this tuple). This function
-        # returns like \[\[1, 2, 1\], \[1, 3, 0\], \[1,6, 0\], ...\],
-        # ie. following our *leave-one-out* evaluation protocol.
-
         for test in self.test_data:
             yield test
