@@ -39,7 +39,7 @@ class Dataset(object):
         col_item (str): Item column name.
         col_rating (str): Rating column name. 
         col_timestamp (str): Timestamp column name.
-        implicit (bool): Ff true, set rating>0 to rating = 1 
+        implicit (bool): If true, set rating > 0 to rating = 1. 
         seed (int): Seed.
     
     """
