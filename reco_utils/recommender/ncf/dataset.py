@@ -12,9 +12,7 @@ from reco_utils.common.constants import (
 
 
 class Dataset(object):
-    """
-    classdocs
-    """
+    """Dataset class for NCF"""
 
     def __init__(
         self,
@@ -28,9 +26,22 @@ class Dataset(object):
         col_timestamp=DEFAULT_TIMESTAMP_COL,
         seed=42,
     ):
-        """
-        Constructor
-        """
+    """Constructor 
+    
+    Args:
+        train ([type]): [description]
+        test ([type], optional): [description]. Defaults to None.
+        n_neg (int, optional): [description]. Defaults to 4.
+        n_neg_test (int, optional): [description]. Defaults to 100.
+        col_user ([type], optional): [description]. Defaults to DEFAULT_USER_COL.
+        col_item ([type], optional): [description]. Defaults to DEFAULT_ITEM_COL.
+        col_rating ([type], optional): [description]. Defaults to DEFAULT_RATING_COL.
+        col_timestamp ([type], optional): [description]. Defaults to DEFAULT_TIMESTAMP_COL.
+        seed (int, optional): [description]. Defaults to 42.
+    
+    Returns:
+        [type]: [description]
+    """
 
         # initialize user and item index
         self.user_idx = None
