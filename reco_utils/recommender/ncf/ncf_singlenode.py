@@ -36,7 +36,7 @@ class NCF:
         verbose=1,
         seed=42,
     ):
-    """Initializer
+    """Constructor
     
     Args:
         n_users (int): Number of users in the dataset.
