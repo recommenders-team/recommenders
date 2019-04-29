@@ -27,22 +27,22 @@ class Dataset(object):
         implicit=True,
         seed=42,
     ):
-    """Constructor 
-    
-    Args:
-        train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
-        test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None, 
-            if so, we only process the training data.
-        n_neg (int): Number of negative samples for training set.
-        n_neg_test (int): Number of negative samples for test set.
-        col_user (str): User column name.
-        col_item (str): Item column name.
-        col_rating (str): Rating column name. 
-        col_timestamp (str): Timestamp column name.
-        implicit (bool): If true, set rating > 0 to rating = 1. 
-        seed (int): Seed.
-    
-    """
+        """Constructor 
+        
+        Args:
+            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
+            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None, 
+                if so, we only process the training data.
+            n_neg (int): Number of negative samples for training set.
+            n_neg_test (int): Number of negative samples for test set.
+            col_user (str): User column name.
+            col_item (str): Item column name.
+            col_rating (str): Rating column name. 
+            col_timestamp (str): Timestamp column name.
+            implicit (bool): If true, set rating > 0 to rating = 1. 
+            seed (int): Seed.
+        
+        """
         # initialize user and item index
         self.user_idx = None
         self.item_idx = None
