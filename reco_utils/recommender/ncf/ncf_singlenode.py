@@ -12,6 +12,9 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+MODEL_CHECKPOINT = "model.ckpt"
+
+
 class NCF:
     """Neural Collaborative Filtering (NCF) implementation
     
@@ -226,7 +229,7 @@ class NCF:
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
         saver = tf.train.Saver()
-        saver.save(self.sess, os.path.join(dir_name, "model.ckpt"))
+        saver.save(self.sess, os.path.join(dir_name, MODEL_CHECKPOINT))
 
     def load(self, gmf_dir=None, mlp_dir=None, neumf_dir=None, alpha=0.5):
         """Load model parameters for further use.
@@ -247,15 +250,15 @@ class NCF:
         # load pre-trained model
         if self.model_type == "gmf" and gmf_dir is not None:
             saver = tf.train.Saver()
-            saver.restore(self.sess, os.path.join(gmf_dir, "model.ckpt"))
+            saver.restore(self.sess, os.path.join(gmf_dir, MODEL_CHECKPOINT))
 
         elif self.model_type == "mlp" and mlp_dir is not None:
             saver = tf.train.Saver()
-            saver.restore(self.sess, os.path.join(mlp_dir, "model.ckpt"))
+            saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
 
         elif self.model_type == "neumf" and neumf_dir is not None:
             saver = tf.train.Saver()
-            saver.restore(self.sess, os.path.join(neumf_dir, "model.ckpt"))
+            saver.restore(self.sess, os.path.join(neumf_dir, MODEL_CHECKPOINT))
 
         elif self.model_type == "neumf" and gmf_dir is not None and mlp_dir is not None:
             # load neumf using gmf and mlp
@@ -277,7 +280,7 @@ class NCF:
         # load 'gmf' variable
         saver = tf.train.Saver(var_flow_restore)
         # restore
-        saver.restore(self.sess, os.path.join(gmf_dir, "model.ckpt"))
+        saver.restore(self.sess, os.path.join(gmf_dir, MODEL_CHECKPOINT))
 
         # load mlp part
         variables = tf.global_variables()
@@ -288,7 +291,7 @@ class NCF:
         # load 'gmf' variable
         saver = tf.train.Saver(var_flow_restore)
         # restore
-        saver.restore(self.sess, os.path.join(mlp_dir, "model.ckpt"))
+        saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
 
         # concat pretrain h_from_gmf and h_from_mlp
         vars_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="ncf")
@@ -388,6 +391,5 @@ class NCF:
         }
 
         # calculate predicted score
-        output = self.sess.run(self.output, feed_dict)
-        return output
+        return self.sess.run(self.output, feed_dict)
 
