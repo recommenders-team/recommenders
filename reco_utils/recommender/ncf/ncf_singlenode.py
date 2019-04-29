@@ -39,21 +39,21 @@ class NCF:
         verbose=1,
         seed=42,
     ):
-    """Constructor
-    
-    Args:
-        n_users (int): Number of users in the dataset.
-        n_items (int): Number of items in the dataset.
-        model_type (str): Model type.
-        n_factors (int): Dimension of latent space.
-        layer_sizes (list): Number of layers for MLP.
-        n_epochs (int): Number of epochs for training.
-        batch_size (int): Batch size.
-        learning_rate (float): Learning rate.
-        verbose (int): Whether to show the training output or not.
-        seed (int): Seed.
-    
-    """
+        """Constructor
+        
+        Args:
+            n_users (int): Number of users in the dataset.
+            n_items (int): Number of items in the dataset.
+            model_type (str): Model type.
+            n_factors (int): Dimension of latent space.
+            layer_sizes (list): Number of layers for MLP.
+            n_epochs (int): Number of epochs for training.
+            batch_size (int): Batch size.
+            learning_rate (float): Learning rate.
+            verbose (int): Whether to show the training output or not.
+            seed (int): Seed.
+        
+        """
         tf.set_random_seed(seed)
         np.random.seed(seed)
         self.n_users = n_users
