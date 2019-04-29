@@ -8,32 +8,6 @@ from tqdm import tqdm
 import collections
 import gc
 
-from sklearn.metrics import (
-        roc_auc_score,
-        log_loss,
-        mean_squared_error,
-)
-
-def cal_metric(labels, preds, metrics):
-    """Calculate metrics such as AUC, logloss
-    FIXME: refactor this with the reco metrics
-    """
-    res = {}
-    for metric in metrics:
-        if metric == "auc":
-            auc_res = roc_auc_score(np.asarray(labels), np.asarray(preds))
-            res["auc"] = round(auc_res, 4)
-        elif metric == "mse":
-            mse_res = mean_squared_error(np.asarray(labels), np.asarray(preds))
-            res["rmse"] = np.sqrt(round(mse_res, 4))
-        elif metric == "logloss":
-            # avoid logloss nan
-            preds = [max(min(p, 1.0 - 10e-12), 10e-12) for p in preds]
-            logloss_res = log_loss(np.asarray(labels), np.asarray(preds))
-            res["logloss"] = round(logloss_res, 4)
-        else:
-            raise ValueError("not define this metric {0}".format(metric))
-    return res
 
 def unpackbits(x, num_bits):
     """Convert a decimal value np.array into multi-binary value np.arrays ([1,2]->[[0,1],[1,0]])
@@ -82,6 +56,12 @@ class NumEncoder(object):
 
     def fit_transform(self, df):
         """Input a training set (pd.DataFrame) and return the converted 2 np.arrays (x,y).
+
+        Args:
+            df (pd.DataFrame): Input dataframe
+
+        Returns:
+            np.array, np.array: New features are labels.
         """
         df = df.astype(dtype=self.dtype_dict)
         self.samples = df.shape[0]
@@ -152,7 +132,7 @@ class NumEncoder(object):
         del df
         gc.collect()
         trn_x = np.array(rows)
-        return (trn_x, trn_y)
+        return trn_x, trn_y
 
     # for test dataset
     def transform(self, df):
