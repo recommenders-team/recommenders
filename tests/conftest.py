@@ -215,7 +215,7 @@ def notebooks():
             folder_notebooks, "00_quick_start", "fastai_movielens.ipynb"
         ),
         "xdeepfm_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "xdeepfm_synthetic.ipynb"
+            folder_notebooks, "00_quick_start", "xdeepfm_criteo.ipynb"
         ),
         "dkn_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "dkn_synthetic.ipynb"
@@ -255,6 +255,9 @@ def notebooks():
         ),
         "spark_tuning": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "tuning_spark_als.ipynb"
+        ),
+        "rlrmc_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "rlrmc_movielens.ipynb"
         ),
         "nni_tuning_svd": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"

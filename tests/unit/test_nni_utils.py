@@ -3,6 +3,7 @@
 
 import json
 import os
+import sys
 from tempfile import TemporaryDirectory
 from unittest.mock import patch
 import pytest
@@ -41,24 +42,28 @@ def mock_exception():
     raise Exception()
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_get_experiment_status():
     content = {'status': 'some_status'}
     with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
         assert 'some_status' == get_experiment_status(NNI_STATUS_URL)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_experiment_status_done():
     content = {'status': 'DONE'}
     with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
         check_experiment_status(wait=0.1, max_retries=1)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_experiment_status_tuner_no_more_trial():
     content = {'status': 'TUNER_NO_MORE_TRIAL'}
     with patch('requests.get', side_effect=lambda url: mocked_status_get(url, content)):
         check_experiment_status(wait=0.1, max_retries=1)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_experiment_status_running():
     content = {'status': 'RUNNING'}
     with pytest.raises(TimeoutError) as excinfo:
@@ -67,6 +72,7 @@ def test_check_experiment_status_running():
     assert "check_experiment_status() timed out" == str(excinfo.value)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_experiment_status_no_more_trial():
     content = {'status': 'NO_MORE_TRIAL'}
     with pytest.raises(TimeoutError) as excinfo:
@@ -75,6 +81,7 @@ def test_check_experiment_status_no_more_trial():
     assert "check_experiment_status() timed out" == str(excinfo.value)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_experiment_status_failed():
     content = {'status': 'some_failed_status'}
     with pytest.raises(RuntimeError) as excinfo:
@@ -83,6 +90,7 @@ def test_check_experiment_status_failed():
     assert "NNI experiment failed to complete with status some_failed_status" == str(excinfo.value)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_stopped_timeout():
     content = {'status': 'some_status'}
     with pytest.raises(TimeoutError) as excinfo:
@@ -91,17 +99,20 @@ def test_check_stopped_timeout():
     assert "check_stopped() timed out" == str(excinfo.value)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_stopped():
     with patch('requests.get', side_effect=mock_exception):
         check_stopped(wait=.1, max_retries=1)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_metrics_written():
     content = [{'finalMetricData': None}, {'finalMetricData': None}]
     with patch('requests.get', side_effect=lambda url: mocked_trials_get(url, content)):
         check_metrics_written(wait=.1, max_retries=1)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_check_metrics_written_timeout():
     content = [{'logPath': '/p'}, {'logPath': '/q'}]
     with pytest.raises(TimeoutError) as excinfo:
@@ -110,6 +121,7 @@ def test_check_metrics_written_timeout():
     assert "check_metrics_written() timed out" == str(excinfo.value)
 
 
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_get_trials():
     with TemporaryDirectory() as tmp_dir1, TemporaryDirectory() as tmp_dir2:
         mock_trials = [

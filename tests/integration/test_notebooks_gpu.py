@@ -130,6 +130,45 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
+    "syn_epochs, criteo_epochs, expected_values",
+    [
+        (
+            15,
+            30,
+            {
+                "res_syn": {
+                    "auc": 0.9666,
+                    "logloss": 0.253,
+                },
+                "res_real": {
+                    "auc": 0.7494,
+                    "logloss": 0.4929,
+                },
+            },
+        )
+    ],
+)
+def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_values):
+    notebook_path = notebooks["xdeepfm_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            EPOCHS_FOR_SYNTHETIC_RUN=syn_epochs,
+            EPOCHS_FOR_CRITEO_RUN=criteo_epochs,
+        ),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
+        assert results[key]["logloss"] == pytest.approx(value["logloss"], rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.integration
+@pytest.mark.gpu
+@pytest.mark.parametrize(
     "size, epochs, expected_values",
     [
         (
@@ -148,7 +187,7 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
         )
     ],
 )
-def test_wide_deep(notebooks, size, epochs, expected_values, tmp):
+def test_wide_deep_integration(notebooks, size, epochs, expected_values, tmp):
     notebook_path = notebooks["wide_deep"]
 
     params = {
