@@ -3,11 +3,9 @@
 
 import papermill as pm
 import pytest
-import shutil
-import subprocess
 import sys
 
-from reco_utils.nni.nni_utils import check_stopped
+from reco_utils.nni.nni_utils import check_experiment_status, NNI_STATUS_URL
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 TOL = 0.05
@@ -151,17 +149,19 @@ def test_vw_deep_dive_integration(notebooks, size, expected_values):
 
 
 @pytest.mark.integration
+@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
 def test_nni_tuning_svd(notebooks, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
-    # First stop NNI in case it is running
-    subprocess.run([sys.prefix + '/bin/nnictl', 'stop'])
-    check_stopped()
+    # First check if NNI is running
+    try:
+        check_experiment_status(NNI_STATUS_URL)
+        raise Exception('NNI Server must be stopped before running integration tests')
+    except:
+        pass
+
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
                         parameters=dict(MOVIELENS_DATA_SIZE="100k",
                                         SURPRISE_READER="ml-100k",
                                         TMP_DIR=tmp,
                                         MAX_TRIAL_NUM=1,
                                         NUM_EPOCHS=1))
-    # Clean up logs, saved models etc. under the NNI path
-    nni_path = pm.read_notebook(OUTPUT_NOTEBOOK).data["nni_path"]
-    shutil.rmtree(nni_path, ignore_errors=True)
