@@ -125,7 +125,7 @@ def recommend_k_svd(model, test, train):
                                                   usercol=DEFAULT_USER_COL, 
                                                   itemcol=DEFAULT_ITEM_COL,
                                                   predcol=DEFAULT_PREDICTION_COL, 
-                                                  recommend_seen=False)
+                                                  recommend_seen=True)
     return topk_scores, t
 
 
