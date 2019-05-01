@@ -25,7 +25,6 @@ class SARSingleNode:
 
     def __init__(
         self,
-        remove_seen=True,
         col_user=constants.DEFAULT_USER_COL,
         col_item=constants.DEFAULT_ITEM_COL,
         col_rating=constants.DEFAULT_RATING_COL,
@@ -56,9 +55,6 @@ class SARSingleNode:
         self.col_user = col_user
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
-
-        self.remove_seen = remove_seen
-
         self.similarity_type = similarity_type
         # convert to seconds
         self.time_decay_half_life = time_decay_coefficient * 24 * 60 * 60
