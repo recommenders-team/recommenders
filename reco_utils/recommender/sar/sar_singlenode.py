@@ -1,14 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""
-Reference implementation of SAR in python/numpy/pandas.
 
-This is not meant to be particularly performant or scalable, just
-a simple and readable implementation.
-"""
-
-from enum import Enum
 import numpy as np
 import pandas as pd
 import logging
@@ -23,7 +16,7 @@ from reco_utils.common.python_utils import (
 from reco_utils.common import constants
 
 
-SIMILARITY_TYPE = Enum("SIMILARITY_TYPE", "cooccurrence jaccard lift")
+SIMILARITY_TYPES = ["cooccurrence", "jaccard", "lift"]
 
 logger = logging.getLogger()
 
@@ -64,12 +57,9 @@ class SARSingleNode:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
         
-        try:
-            self.similarity_type = SIMILARITY_TYPE[similarity_type]
-        except KeyError:
-            raise KeyError(
-                'similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]'
-            )
+        if similarity_type not in SIMILARITY_TYPES:
+            raise ValueError('Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]')
+        self.similarity_type = similarity_type
         self.time_decay_half_life = (
             time_decay_coefficient * 24 * 60 * 60
         )  # convert to seconds
@@ -108,6 +98,7 @@ class SARSingleNode:
         indices in a sparse matrix, and the events as the data. Here, we're treating
         the ratings as the event weights.  We convert between different sparse-matrix
         formats to de-duplicate user-item pairs, otherwise they will get added up.
+        
         Args:
             df (pd.DataFrame): Indexed df of users and items.
             n_users (int): Number of users.
@@ -236,15 +227,15 @@ class SARSingleNode:
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
-        if self.similarity_type is SIMILARITY_TYPE.cooccurrence:
+        if self.similarity_type is SIMILARITY_TYPES[0]:
             logger.info("Using co-occurrence based similarity")
             self.item_similarity = item_cooccurrence
-        elif self.similarity_type is SIMILARITY_TYPE.jaccard:
+        elif self.similarity_type is SIMILARITY_TYPES[1]:
             logger.info("Using jaccard based similarity")
             self.item_similarity = jaccard(item_cooccurrence).astype(
                 df[self.col_rating].dtype
             )
-        elif self.similarity_type is SIMILARITY_TYPE.lift:
+        elif self.similarity_type is SIMILARITY_TYPES[2]:
             logger.info("Using lift based similarity")
             self.item_similarity = lift(item_cooccurrence).astype(
                 df[self.col_rating].dtype
