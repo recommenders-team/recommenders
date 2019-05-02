@@ -24,7 +24,7 @@ class Dataset(object):
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_timestamp=DEFAULT_TIMESTAMP_COL,
-        implicit=True,
+        binary=True,
         seed=42,
     ):
         """Constructor 
@@ -39,7 +39,7 @@ class Dataset(object):
             col_item (str): Item column name.
             col_rating (str): Rating column name. 
             col_timestamp (str): Timestamp column name.
-            implicit (bool): If true, set rating > 0 to rating = 1. 
+            binary (bool): If true, set rating > 0 to rating = 1. 
             seed (int): Seed.
         
         """
@@ -55,21 +55,21 @@ class Dataset(object):
         self.col_rating = col_rating
         self.col_timestamp = col_timestamp
         # data preprocessing for training and test data
-        self.train, self.test = self._data_processing(train, test, implicit)
+        self.train, self.test = self._data_processing(train, test, binary)
         # initialize negative sampling for training and test data
         self._init_train_data()
         self._init_test_data()
         # set random seed
         random.seed(seed)
 
-    def _data_processing(self, train, test, implicit):
-        """Process the dataset to reindex userID and itemID, also set rating as implicit feedback
+    def _data_processing(self, train, test, binary):
+        """Process the dataset to reindex userID and itemID, also set rating as binary feedback
 
         Args:
             train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating). 
             test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating)
                     test can be None, if so, we only process the training data.
-            implicit (bool): If true, set rating>0 to rating = 1.
+            binary (bool): If true, set rating>0 to rating = 1.
 
         Returns:
             list: train and test pd.DataFrame Dataset, which have been reindexed.
@@ -103,14 +103,14 @@ class Dataset(object):
             )
             self.id2item = {self.item2id[k]: k for k in self.item2id}
 
-        return self._reindex(train, implicit), self._reindex(test, implicit)
+        return self._reindex(train, binary), self._reindex(test, binary)
 
-    def _reindex(self, df, implicit):
-        """Process dataset to reindex userID and itemID, also set rating as implicit feedback
+    def _reindex(self, df, binary):
+        """Process dataset to reindex userID and itemID, also set rating as binary feedback
 
         Args:
             df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating) 
-            implicit (bool): if true, set rating>0 to rating = 1 
+            binary (bool): if true, set rating>0 to rating = 1 
 
         Returns:
             list: train and test pandas.DataFrame Dataset, which have been reindexed.
@@ -125,8 +125,8 @@ class Dataset(object):
         df = pd.merge(df, self.user_idx, on=self.col_user, how="left")
         df = pd.merge(df, self.item_idx, on=self.col_item, how="left")
 
-        # If implicit feedback, set rating as 1.0 or 0.0
-        if implicit:
+        # If binary feedback, set rating as 1.0 or 0.0
+        if binary:
             df[self.col_rating] = df[self.col_rating].apply(lambda x: float(x > 0))
 
         # Select relevant columns
