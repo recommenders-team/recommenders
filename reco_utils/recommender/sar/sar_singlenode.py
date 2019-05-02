@@ -61,8 +61,6 @@ class SARSingleNode:
         self.time_decay_flag = timedecay_formula
         self.time_now = time_now
         self.threshold = threshold
-
-        self.model_str = "sar_ref"
         self.user_affinity = None
         self.item_similarity = None
         self.item_frequencies = None
