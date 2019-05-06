@@ -157,7 +157,7 @@ class NCF:
                     output,
                     num_outputs=layer_size,
                     activation_fn=tf.nn.relu,
-                    weights_initializer=initializers.xavier_initializer(seed=self.seed),
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
             self.mlp_vector = output
 
@@ -172,7 +172,7 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
-                    weights_initializer=initializers.xavier_initializer(seed=self.seed),
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
                 self.output = tf.sigmoid(output)
 
@@ -183,7 +183,7 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
-                    weights_initializer=initializers.xavier_initializer(seed=self.seed),
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
                 self.output = tf.sigmoid(output)
 
@@ -196,7 +196,7 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
-                    weights_initializer=initializers.xavier_initializer(seed=self.seed),
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
                 self.output = tf.sigmoid(output)
 
@@ -384,4 +384,3 @@ class NCF:
         # calculate predicted score
         output = self.sess.run(self.output, feed_dict)
         return output
-
