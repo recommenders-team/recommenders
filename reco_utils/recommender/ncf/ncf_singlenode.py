@@ -326,7 +326,7 @@ class NCF:
             train_loss = []
 
             # calculate loss and update NCF parameters
-            for user_input, item_input, labels in data.train_loader(self.batch_size):
+            for user_input, item_input, labels in data.train_loader(self.batch_size, shuffle=(self.seed==None)):
 
                 user_input = np.array([self.user2id[x] for x in user_input])
                 item_input = np.array([self.item2id[x] for x in item_input])
