@@ -12,31 +12,60 @@ import logging
 logger = logging.getLogger(__name__)
 
 
+MODEL_CHECKPOINT = "model.ckpt"
+
+
 class NCF:
-    """NCF implementation"""
+    """Neural Collaborative Filtering (NCF) implementation
+    
+    Reference:
+    He, Xiangnan, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua. "Neural collaborative filtering." 
+    In Proceedings of the 26th International Conference on World Wide Web, pp. 173-182. International World Wide Web 
+    Conferences Steering Committee, 2017.
+
+    Link: https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
+    """
 
     def __init__(
         self,
         n_users,
         n_items,
         model_type="NeuMF",
-        random_state=0,
         n_factors=8,
         layer_sizes=[16, 8, 4],
         n_epochs=50,
         batch_size=64,
         learning_rate=5e-3,
         verbose=1,
-        save=False,
-        pretrain=False,
         seed=42,
     ):
-        # number of users in dataset
+        """Constructor
+        
+        Args:
+            n_users (int): Number of users in the dataset.
+            n_items (int): Number of items in the dataset.
+            model_type (str): Model type.
+            n_factors (int): Dimension of latent space.
+            layer_sizes (list): Number of layers for MLP.
+            n_epochs (int): Number of epochs for training.
+            batch_size (int): Batch size.
+            learning_rate (float): Learning rate.
+            verbose (int): Whether to show the training output or not.
+            seed (int): Seed.
+        
+        """
+        tf.set_random_seed(seed)
+        np.random.seed(seed)
         self.n_users = n_users
-        # number of items in dataset
         self.n_items = n_items
-        # model type
         self.model_type = model_type.lower()
+        self.n_factors = n_factors
+        self.layer_sizes = layer_sizes
+        self.n_epochs = n_epochs
+        self.verbose = verbose
+        self.batch_size = batch_size
+        self.learning_rate = learning_rate
+
         # check model type
         model_options = ["gmf", "mlp", "neumf"]
         if self.model_type not in model_options:
@@ -45,21 +74,7 @@ class NCF:
                     model_options
                 )
             )
-        # seed
-        tf.set_random_seed(seed)
-        np.random.seed(seed)
-        # dimension of latent space
-        self.n_factors = n_factors
-        # number of layers for mlp
-        self.layer_sizes = layer_sizes
-        # number of epochs for training
-        self.n_epochs = n_epochs
-        # training output or not
-        self.verbose = verbose
-        # set batch size
-        self.batch_size = batch_size
-        # set learning rate
-        self.learning_rate = learning_rate
+        
         # ncf layer input size
         self.ncf_layer_size = n_factors + layer_sizes[-1]
         # create ncf model
@@ -204,40 +219,46 @@ class NCF:
             ).minimize(self.loss)
 
     def save(self, dir_name):
-        """ save model parameters in `dir_name`
-            Args:
-                dir_name (str) : directory name, which should be folder name instead of file name
-                    we will create a new directory if not existing.
+        """Save model parameters in `dir_name`
+        
+        Args:
+            dir_name (str): directory name, which should be a folder name instead of file name
+                we will create a new directory if not existing.
         """
         # save trained model
         if not os.path.exists(dir_name):
             os.makedirs(dir_name)
         saver = tf.train.Saver()
-        saver.save(self.sess, os.path.join(dir_name, "model.ckpt"))
+        saver.save(self.sess, os.path.join(dir_name, MODEL_CHECKPOINT))
 
     def load(self, gmf_dir=None, mlp_dir=None, neumf_dir=None, alpha=0.5):
-        """ load model parameters for further use.
-            GMF model --> load parameters in `gmf_dir`
-            MLP model --> load parameters in `mlp_dir`
-            NeuMF model --> load parameters in `neumf_dir` or in `gmf_dir` and `mlp_dir`
-            Args:
-                gmf_dir, mlp_dir, neumf_dir ( str or None ): model parameters directory name
-            Returns:
-                load parameters in this model
+        """Load model parameters for further use.
+        GMF model --> load parameters in `gmf_dir`
+        MLP model --> load parameters in `mlp_dir`
+        NeuMF model --> load parameters in `neumf_dir` or in `gmf_dir` and `mlp_dir`
+        
+        Args:
+            gmf_dir (str): Directory name for GMF model.
+            mlp_dir (str): Directory name for MLP model.
+            neumf_dir (str): Directory name for neumf model.
+            alpha (float): the concatenation hyper-parameter for gmf and mlp output layer.
+        
+        Returns:
+            obj: Load parameters in this model.
         """
 
         # load pre-trained model
         if self.model_type == "gmf" and gmf_dir is not None:
             saver = tf.train.Saver()
-            saver.restore(self.sess, os.path.join(gmf_dir, "model.ckpt"))
+            saver.restore(self.sess, os.path.join(gmf_dir, MODEL_CHECKPOINT))
 
         elif self.model_type == "mlp" and mlp_dir is not None:
             saver = tf.train.Saver()
-            saver.restore(self.sess, os.path.join(mlp_dir, "model.ckpt"))
+            saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
 
         elif self.model_type == "neumf" and neumf_dir is not None:
             saver = tf.train.Saver()
-            saver.restore(self.sess, os.path.join(neumf_dir, "model.ckpt"))
+            saver.restore(self.sess, os.path.join(neumf_dir, MODEL_CHECKPOINT))
 
         elif self.model_type == "neumf" and gmf_dir is not None and mlp_dir is not None:
             # load neumf using gmf and mlp
@@ -247,13 +268,8 @@ class NCF:
             raise NotImplementedError
 
     def _load_neumf(self, gmf_dir, mlp_dir, alpha):
-        """ load gmf and mlp model parameters for further use in NeuMF.
+        """Load gmf and mlp model parameters for further use in NeuMF.
             NeuMF model --> load parameters in `gmf_dir` and `mlp_dir`
-            Args:
-                gmf_dir, mlp_dir ( str or None ): model parameters directory name
-                alpha ( float ): the concatenation hyper-parameter for gmf and mlp output layer
-            Returns:
-                load parameters in NeuMF model
         """
         # load gmf part
         variables = tf.global_variables()
@@ -264,7 +280,7 @@ class NCF:
         # load 'gmf' variable
         saver = tf.train.Saver(var_flow_restore)
         # restore
-        saver.restore(self.sess, os.path.join(gmf_dir, "model.ckpt"))
+        saver.restore(self.sess, os.path.join(gmf_dir, MODEL_CHECKPOINT))
 
         # load mlp part
         variables = tf.global_variables()
@@ -275,7 +291,7 @@ class NCF:
         # load 'gmf' variable
         saver = tf.train.Saver(var_flow_restore)
         # restore
-        saver.restore(self.sess, os.path.join(mlp_dir, "model.ckpt"))
+        saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
 
         # concat pretrain h_from_gmf and h_from_mlp
         vars_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="ncf")
@@ -294,10 +310,10 @@ class NCF:
         self.sess.run(assign_op)
 
     def fit(self, data):
-        """ fit model with training data
+        """Fit model with training data
             
-            Args: 
-                data ( NCFDataset ): initilized Dataset in ./dataset.py
+        Args: 
+            data (NCFDataset): initilized Dataset in ./dataset.py
         """
 
         # get user and item mapping dict
@@ -342,14 +358,16 @@ class NCF:
                 )
 
     def predict(self, user_input, item_input, is_list=False):
-        """ predict function of this trained model
-            Args:
-                user_input ( list or element of list ): userID or userID list 
-                item_input ( list or element of list ): itemID or itemID list
-                is_list ( bool ): if true, the input is list type
+        """Predict function of this trained model
+            
+        Args:
+            user_input (list or element of list): userID or userID list 
+            item_input (list or element of list): itemID or itemID list
+            is_list (bool): if true, the input is list type
                 noting that list-wise type prediction is faster than element-wise's.
-            Returns:
-                list or float: list of predicted rating or predicted rating score. 
+        
+        Returns:
+            list or float: list of predicted rating or predicted rating score. 
         """
 
         if is_list:
@@ -373,6 +391,5 @@ class NCF:
         }
 
         # calculate predicted score
-        output = self.sess.run(self.output, feed_dict)
-        return output
+        return self.sess.run(self.output, feed_dict)
 
