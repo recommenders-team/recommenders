@@ -40,9 +40,7 @@ To setup on your local machine:
 ## Install this reposity via PIP
 A [setup.py](setup.py) file is provied in order to simplify the installation of this project directly from Github. 
 
-    ```
     pip install git+http://github.com/microsoft/Recommenders
-    ```
 
 **NOTE** - The [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment.
 
