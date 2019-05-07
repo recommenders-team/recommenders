@@ -96,7 +96,7 @@ def query_entity_description(entityID):
     url = 'https://query.wikidata.org/sparql'
     r = requests.get(url, params = {'format': 'json', 'query': query})
     try:
-        description = r.json["results"]["bindings"][0]["o"]["value"]
+        description = r.json()["results"]["bindings"][0]["o"]["value"]
     except:
         description = "descriptionNotFound"
     return description
