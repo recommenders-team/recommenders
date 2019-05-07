@@ -39,6 +39,7 @@ To setup on your local machine:
 
 ## Install this reposity via PIP
 A [setup.py](setup.py) file is provied in order to simplify the installation of this project directly from Github. 
+
     ```
     pip install git+http://github.com/microsoft/Recommenders
     ```
