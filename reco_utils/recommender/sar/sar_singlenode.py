@@ -16,7 +16,7 @@ from reco_utils.common.python_utils import (
 from reco_utils.common import constants
 
 
-COOCUR = "cooccurrence"
+COOCCUR = "cooccurrence"
 JACCARD = "jaccard"
 LIFT = "lift"
 
@@ -59,7 +59,7 @@ class SARSingleNode:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
         
-        if similarity_type not in [COOCUR, JACCARD, LIFT]:
+        if similarity_type not in [COOCCUR, JACCARD, LIFT]:
             raise ValueError('Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]')
         self.similarity_type = similarity_type
         self.time_decay_half_life = (
@@ -229,7 +229,7 @@ class SARSingleNode:
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
-        if self.similarity_type is COOCUR:
+        if self.similarity_type is COOCCUR:
             logger.info("Using co-occurrence based similarity")
             self.item_similarity = item_cooccurrence
         elif self.similarity_type is JACCARD:
