@@ -67,11 +67,14 @@ We provide a [benchmark notebook](benchmark/movielens.ipynb) to illustrate how d
 
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance | 
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | 
-| [ALS](notebooks/00_quick_start/als_movielens.ipynb) | 0.004199 |	0.039901	 |0.043796 |	0.014580| 0.966788 |	0.754401 |	0.252924 |	0.248931 | 
-| [FastAI](notebooks/00_quick_start/fastai_movielens.ipynb) | 0.025503 |	0.147866 |	0.130329 |	0.053824 | 0.943084 |	0.744337 |	0.285308 |	0.287671 |
+| [ALS](notebooks/00_quick_start/als_movielens.ipynb) | 0.004732 |	0.044239 |	0.048462 |	0.017796 | 0.965038 |	0.753001 |	0.255647 |	0.251648 | 
+| [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 |	0.742690	| 0.291967 |	0.291971 |
+| [SAR](notebooks/00_quick_start/sar_movielens.ipynb) | 0.113028 |	0.388321 | 	0.333828 | 0.183179 | N/A |	N/A |	N/A |	N/A |
 | [NCF](notebooks/02_model/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A |	N/A |	N/A |	N/A |
-| [SAR](notebooks/00_quick_start/sar_movielens.ipynb) | 0.003903 | 0.033111 |	0.040827 |	0.024010 | N/A |	N/A |	N/A |	N/A |
-| [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.012387 |	0.096353 |	0.091304 |	0.031478 | 0.942123	| 0.744029 |	0.286765 |	0.286790 |
+| [FastAI](notebooks/00_quick_start/fastai_movielens.ipynb) | 0.025503 |	0.147866 |	0.130329 |	0.053824 | 0.943084 |	0.744337 |	0.285308 |	0.287671 |
+
+
+
 
 
 ## Contributing

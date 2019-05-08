@@ -58,8 +58,12 @@ def compute_rating_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEF
     return predictions.drop(['details', 'r_ui'], axis='columns')
 
 
-def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL,
-                            predcol=DEFAULT_PREDICTION_COL, recommend_seen=False):
+def compute_ranking_predictions(algo, 
+                                data, 
+                                usercol=DEFAULT_USER_COL, 
+                                itemcol=DEFAULT_ITEM_COL,
+                                predcol=DEFAULT_PREDICTION_COL, 
+                                remove_seen=False):
     """Computes predictions of an algorithm from Surprise on all users and items in data. can be used for computing
     ranking metrics like NDCG.
     
@@ -68,7 +72,7 @@ def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DE
         data (pd.DataFrame): the data from which to get the users and items
         usercol (str): name of the user column
         itemcol (str): name of the item column
-        recommend_seen (bool): flag to include (user, item) pairs that appear in data
+        remove_seen (bool): flag to remove (user, item) pairs seen in the training data
     
     Returns:
         pd.DataFrame: dataframe with usercol, itemcol, predcol
@@ -80,12 +84,11 @@ def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DE
 
     all_predictions = pd.DataFrame(data=preds_lst, columns=[usercol, itemcol, predcol])
 
-    if recommend_seen:
-        return all_predictions
-    else:
+    if remove_seen:
         tempdf = pd.concat([data[[usercol, itemcol]],
                             pd.DataFrame(data=np.ones(data.shape[0]), columns=['dummycol'], index=data.index)],
                             axis=1)
         merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
         return merged[merged['dummycol'].isnull()].drop('dummycol', axis=1)
-
+    else:
+        return all_predictions
