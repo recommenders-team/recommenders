@@ -125,7 +125,7 @@ def recommend_k_svd(model, test, train):
                                                   usercol=DEFAULT_USER_COL, 
                                                   itemcol=DEFAULT_ITEM_COL,
                                                   predcol=DEFAULT_PREDICTION_COL, 
-                                                  recommend_seen=False)
+                                                  remove_seen=True)
     return topk_scores, t
 
 
@@ -228,7 +228,7 @@ def train_sar(params, data):
 
 def recommend_k_sar(model, test, train):
     with Timer() as t:
-        topk_scores = model.recommend_k_items(test)
+        topk_scores = model.recommend_k_items(test, remove_seen=True)
     return topk_scores, t
 
 
