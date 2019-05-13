@@ -59,7 +59,7 @@ steps:
      python --version
      pip install azure-cli==2.0.46
      pip install --upgrade azureml-sdk[cli]
-     pip install -r tests/ci/requirements.txt
+#     pip install -r tests/ci/requirements.txt
   displayName: 'install cli'
 
 - task: AzureCLI@1
