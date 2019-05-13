@@ -56,7 +56,7 @@ steps:
   continueOnError: true
   
 - script: 
-     python scripts/generate_conda_file.py --gpu
+     python scripts/generate_conda_file.py
   displayName: ' generate_conda_file.py'
 
 - script: |
