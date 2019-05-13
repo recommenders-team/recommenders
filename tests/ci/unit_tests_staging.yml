@@ -39,7 +39,7 @@ steps:
   displayName: Add Conda to PATH
 
 - script: 'pip install azureml-sdk'
-  displayName: 'Prepare Conda Environment (using yml)'
+  displayName: 'install azureml-sdk'
   continueOnError: true
   
 - script: 
@@ -61,19 +61,6 @@ steps:
      pip install --upgrade azureml-sdk[cli]
      pip install -r tests/ci/requirements.txt
   displayName: 'install cli'
-
-#- script: |
-#     source activate reco_gp && \
-#     pytest tests/unit -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
-#  displayName: ' Python Script'
-  
-#- bash: |
-#    conda env list
-#    source activate reco_gpu
-#    pytest --version
-#    python -c "import azureml.core; print("SDK version:", azureml.core.VERSION)"
-#    pytest tests/unit/test_gpu_utils.py::test_get_number_gpus
-#  displayName: 'unit tests'
 
 - task: AzureCLI@1
   displayName: 'Create or get workspace'
