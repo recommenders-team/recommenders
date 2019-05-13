@@ -201,7 +201,7 @@ project_folder = "."
 print('before ScriptRunconfig')
 
 script_run_config = ScriptRunConfig(source_directory=project_folder,
-                                    script='./tests/ci/runpytest-template.py',
+                                    script='./tests/ci/runpytest.py',
                                     run_config=run_config)
 
 print('before submit')
