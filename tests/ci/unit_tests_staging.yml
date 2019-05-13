@@ -8,12 +8,12 @@
 variables:
 - group: AzureKeyVaultSecrets
 
-trigger:
+#trigger:
 #- azure-pipelines-bz
-  - master
+#  - master
 
-pr:
-- staging 
+#pr:
+#- staging 
   
 pool:
  vmImage: 'ubuntu-16.04'
