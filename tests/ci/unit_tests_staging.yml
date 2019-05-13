@@ -1,1 +1,77 @@
 # unit_tests_staging.yml
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+#
+# use variable group name
+variables:
+- group: AzureKeyVaultSecrets
+
+trigger:
+#- azure-pipelines-bz
+  - master
+
+pr:
+- staging 
+  
+pool:
+ vmImage: 'ubuntu-16.04'
+
+steps:
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.6'
+    architecture: 'x64'
+  displayName: 'Use Python 3.6'
+
+
+- script: | 
+   az login --service-principal -u $(ClientID) -p $(ClientSecret) --tenant $(TenantID)
+   
+  displayName: 'Login to Azure'
+
+
+
+- bash: |
+    echo "##vso[task.prependpath]/data/anaconda/bin"
+  displayName: Add Conda to PATH
+
+- script: 'pip install azureml-sdk'
+  displayName: 'install azureml-sdk'
+  continueOnError: true
+  
+- script: 
+     python scripts/generate_conda_file.py --gpu
+  displayName: ' generate_conda_file.py'
+
+- script: |
+     chmod +x scripts/*.py
+     ls -al scripts
+     chmod +x tests/ci/*.py
+     ls -al tests/ci
+     pwd
+     ls -al
+  displayName: 'ls'
+
+- script: |
+     python --version
+     pip install azure-cli==2.0.46
+     pip install --upgrade azureml-sdk[cli]
+#     pip install -r tests/ci/requirements.txt
+  displayName: 'install cli'
+
+- task: AzureCLI@1
+  displayName: 'Create or get workspace'
+  inputs:
+    azureSubscription: 'AzureML Nursery (15ae9cb6-95c1-483d-a0e3-b1a1a3b06324)'
+    scriptLocation: inlineScript
+    inlineScript: 'python tests/ci/submitpytest.py'
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **/test-*.xml'
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
