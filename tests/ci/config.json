@@ -1,5 +1,5 @@
 {
-    "subscription_id": "<> ",
+    "subscription_id": "<>",
     "resource_group": "recommender",
     "workspace_name": "RecoWS",
     "location": "eastus"
