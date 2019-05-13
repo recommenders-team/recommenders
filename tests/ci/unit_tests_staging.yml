@@ -34,6 +34,7 @@ steps:
 
 - script: |
    sed -i 's#"subscription_id": "<>"#"subscription_id": "$(SubscriptionID)"#g' ./tests/ci/config.json
+      sed -i 's#"subscription_id": "<>"#"subscription_id": "$(subscriptionid)"#g' aml_config/config.json
    echo my subscription is $(SubscriptionID)
    cat ./tests/ci/config.json
   displayName: 'replace subscription value'
@@ -55,7 +56,7 @@ steps:
   continueOnError: true
   
 - script: 
-     python scripts/generate_conda_file.py --gpu
+     python scripts/generate_conda_file.py
   displayName: ' generate_conda_file.py'
 
 - script: |
