@@ -77,6 +77,7 @@ steps:
 - task: AzureCLI@1
   displayName: 'Create or get workspace'
   inputs:
+    azureSubscription: 'AzureML Nursery (15ae9cb6-95c1-483d-a0e3-b1a1a3b06324)'
     scriptLocation: inlineScript
     inlineScript: 'python tests/ci/submitpytest.py'
 
