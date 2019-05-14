@@ -34,7 +34,6 @@ steps:
 
 - script: |
    sed -i 's#"subscription_id": "<>"#"subscription_id": "$(SubscriptionID)"#g' ./tests/ci/config.json
-      sed -i 's#"subscription_id": "<>"#"subscription_id": "$(subscriptionid)"#g' aml_config/config.json
    echo my subscription is $(SubscriptionID)
    cat ./tests/ci/config.json
   displayName: 'replace subscription value'
@@ -75,12 +74,9 @@ steps:
 #     pip install -r tests/ci/requirements.txt
   displayName: 'install cli'
 
-- task: AzureCLI@1
-  displayName: 'Create or get workspace'
-  inputs:
-    azureSubscription: 'AzureML Nursery (15ae9cb6-95c1-483d-a0e3-b1a1a3b06324)'
-    scriptLocation: inlineScript
-    inlineScript: 'python tests/ci/submitpytest.py'
+- script: 
+      python tests/ci/submitpytest.py
+  displayName: 'standalone pytest'
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results **/test-*.xml'
