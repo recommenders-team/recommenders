@@ -74,6 +74,10 @@ steps:
 #     pip install -r tests/ci/requirements.txt
   displayName: 'install cli'
 
+- script: 
+      python tests/ci/submitpytest.python
+  displayName: 'standalone pytest'
+  
 - task: AzureCLI@1
   displayName: 'Create or get workspace'
   inputs:
