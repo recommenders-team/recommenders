@@ -7,12 +7,11 @@ NNI_REST_ENDPOINT = 'http://localhost:8080/api/v1/nni'
 NNI_STATUS_URL = NNI_REST_ENDPOINT + '/check-status'
 NNI_TRIAL_JOBS_URL = NNI_REST_ENDPOINT + '/trial-jobs'
 WAITING_TIME = 20
-MAX_RETRIES = 5
+MAX_RETRIES = 10
 
 
 def get_experiment_status(status_url):
-    """
-    Helper method. Gets the experiment status from the REST endpoint
+    """Helper method. Gets the experiment status from the REST endpoint
 
     Args:
         status_url (str): URL for the REST endpoint
@@ -25,7 +24,7 @@ def get_experiment_status(status_url):
 
 
 def check_experiment_status(wait=WAITING_TIME, max_retries=MAX_RETRIES):
-    """ Checks the status of the current experiment on the NNI REST endpoint
+    """Checks the status of the current experiment on the NNI REST endpoint
     Waits until the tuning has completed
 
     Args:
@@ -46,8 +45,7 @@ def check_experiment_status(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 
 def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
-    """
-    Checks that there is no NNI experiment active (the URL is not accessible)
+    """Checks that there is no NNI experiment active (the URL is not accessible)
     This method should be called after 'nnictl stop' for verification
 
     Args:
@@ -67,8 +65,7 @@ def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 
 def check_metrics_written(wait=WAITING_TIME, max_retries=MAX_RETRIES):
-    """
-    Waits until the metrics have been written to the trial logs
+    """Waits until the metrics have been written to the trial logs
     """
     i = 0
     while i < max_retries:
@@ -82,7 +79,7 @@ def check_metrics_written(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 
 def get_trials(optimize_mode):
-    """    Obtain information about the trials of the current experiment via the REST endpoint
+    """Obtain information about the trials of the current experiment via the REST endpoint
 
     Args:
         optimize_mode (str): One of 'minimize', 'maximize'. Determines how to obtain the best default metric.
@@ -93,13 +90,13 @@ def get_trials(optimize_mode):
          dict: Best hyperparameters
          str: Log path for the best trial
     """
-
     if optimize_mode not in ['minimize', 'maximize']:
         raise ValueError("optimize_mode should equal either 'minimize' or 'maximize'")
     all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
     trials = [(eval(trial['finalMetricData'][0]['data']), trial['logPath'].split(':')[-1]) for trial in all_trials]
     sorted_trials = sorted(trials, key=lambda x: x[0]['default'], reverse=(optimize_mode == 'maximize'))
     best_trial_path = sorted_trials[0][1]
+    
     # Read the metrics from the trial directory in order to get the name of the default metric
     with open(os.path.join(best_trial_path, "metrics.json"), "r") as fp:
         best_metrics = json.load(fp)
