@@ -75,7 +75,7 @@ steps:
   displayName: 'install cli'
 
 - script: 
-      python tests/ci/submitpytest.python
+      python tests/ci/submitpytest.py
   displayName: 'standalone pytest'
   
 - task: AzureCLI@1
