@@ -78,13 +78,13 @@ steps:
       python tests/ci/submitpytest.py
   displayName: 'standalone pytest'
   
-- task: AzureCLI@1
-  displayName: 'Create or get workspace'
-  inputs:
-    azureSubscription: $(SubscriptionID)
-    #'AzureML Nursery (15ae9cb6-95c1-483d-a0e3-b1a1a3b06324)'
-    scriptLocation: inlineScript
-    inlineScript: 'python tests/ci/submitpytest.py'
+#- task: AzureCLI@1
+#  displayName: 'Create or get workspace'
+#  inputs:
+#    azureSubscription: $(SubscriptionID)
+#    #'AzureML Nursery (15ae9cb6-95c1-483d-a0e3-b1a1a3b06324)'
+#    scriptLocation: inlineScript
+#    inlineScript: 'python tests/ci/submitpytest.py'
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results **/test-*.xml'
