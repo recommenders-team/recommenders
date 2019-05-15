@@ -12,8 +12,8 @@ variables:
 #- azure-pipelines-bz
 #  - master
 
-#pr:
-#- staging 
+pr:
+- staging 
   
 pool:
  vmImage: 'ubuntu-16.04'
