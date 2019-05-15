@@ -32,22 +32,12 @@ import azureml.core
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
 from azureml.core import Experiment
-from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.runconfig import RunConfiguration
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core.runconfig import DEFAULT_CPU_IMAGE
 # uncomment if using gpu
 # from azureml.core.runconfig import DEFAULT_GPU_IMAGE
 from azureml.core.script_run_config import ScriptRunConfig
-
-'''
-print("This is the name of the script: ", sys.argv[0])
-print("Number of arguments: ", len(sys.argv))
-print("The arguments are: " , str(sys.argv))
-
-pytest_str = sys.argv[1]
-print("pytest_str ",pytest_str)
-'''
 
 # this is from
 # https://aidemos.visualstudio.com/DevOps%20for%20AI%20-%20Demo/_git/DevOps-For-AI-AML-Demo?path=%2Faml_service%2F00-WorkSpace.py&version=GBmaster
@@ -110,8 +100,8 @@ experiment = Experiment(workspace=ws, name=experiment_name)
 #
 # Check Available VM families
 #
-
-
+'''
+bz
 AmlCompute.supported_vmsizes(workspace=ws)
 # AmlCompute.supported_vmsizes(workspace = ws, location='southcentralus')
 
@@ -121,49 +111,7 @@ AmlCompute.supported_vmsizes(workspace=ws)
 # https://docs.microsoft.com/en-us/azure/machine-learning/service/tutorial-train-models-with-aml
 #
 '''
-bz
 
-# choose a name for your cluster
-
-compute_name = os.environ.get("AML_COMPUTE_CLUSTER_NAME", "cpucluster")
-
-compute_min_nodes = os.environ.get("AML_COMPUTE_CLUSTER_MIN_NODES", 0)
-compute_max_nodes = os.environ.get("AML_COMPUTE_CLUSTER_MAX_NODES", 4)
-
-# CPU VM = STANDARD_D2_V2. For using GPU VM, set SKU to STANDARD_NC6
-vm_size = os.environ.get("AML_COMPUTE_CLUSTER_SKU", "STANDARD_D2_V2")
-
-
-if compute_name in ws.compute_targets:
-    compute_target = ws.compute_targets[compute_name]
-    if compute_target and type(compute_target) is AmlCompute:
-        print('found compute target. just use it. ' + compute_name)
-else:
-    print('creating a new compute target...')
-    provisioning_config = AmlCompute. \
-        provisioning_configuration(vm_size=vm_size,
-                                   min_nodes=compute_min_nodes,
-                                   max_nodes=compute_max_nodes)
-
-    # create the cluster
-    compute_target = ComputeTarget.create(ws, compute_name,
-                                          provisioning_config)
-
-    # can poll for a minimum number of nodes and for
-    # a specific timeout. if no min node count is
-    # provided it will use the scale settings for the cluster
-    compute_target.wait_for_completion(show_output=True,
-                                       min_node_count=None,
-                                       timeout_in_minutes=20)
-
-    # For a more detailed view of current AmlCompute status, use get_status()
-    print(compute_target.get_status().serialize())
-
-#
-# Provision as a run based compute target
-#
-bz
-'''
 # create a new runconfig object
 run_config = RunConfiguration()
 
