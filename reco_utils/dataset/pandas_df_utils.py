@@ -25,6 +25,7 @@ def user_item_pairs(
     item_col=DEFAULT_ITEM_COL,
     user_item_filter_df=None,
     shuffle=True,
+    seed=None
 ):
     """Get all pairs of users and items data.
 
@@ -35,6 +36,7 @@ def user_item_pairs(
         item_col (str): Item id column name.
         user_item_filter_df (pd.DataFrame): User-item pairs to be used as a filter.
         shuffle (bool): If True, shuffles the result.
+        seed (int): Random seed for shuffle
 
     Returns:
         pd.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df
@@ -54,7 +56,7 @@ def user_item_pairs(
         users_items = filter_by(users_items, user_item_filter_df, [user_col, item_col])
 
     if shuffle:
-        users_items = users_items.sample(frac=1).reset_index(drop=True)
+        users_items = users_items.sample(frac=1, random_state=seed).reset_index(drop=True)
 
     return users_items
 
