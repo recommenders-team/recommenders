@@ -1,7 +1,10 @@
 import json
 import os
 import requests
+import subprocess
+import sys
 import time
+
 
 NNI_REST_ENDPOINT = "http://localhost:8080/api/v1/nni"
 NNI_STATUS_URL = NNI_REST_ENDPOINT + "/check-status"
@@ -10,7 +13,7 @@ WAITING_TIME = 20
 MAX_RETRIES = 10
 
 
-def get_experiment_status(status_url):
+def get_experiment_status(status_url=NNI_STATUS_URL):
     """Helper method. Gets the experiment status from the REST endpoint
 
     Args:
@@ -66,6 +69,10 @@ def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 def check_metrics_written(wait=WAITING_TIME, max_retries=MAX_RETRIES):
     """Waits until the metrics have been written to the trial logs
+    
+    Args:
+        wait (numeric) : time to wait in seconds
+        max_retries (int): max number of retries
     """
     i = 0
     while i < max_retries:
@@ -103,3 +110,26 @@ def get_trials(optimize_mode):
     with open(os.path.join(best_trial_path, "parameter.cfg"), "r") as fp:
         best_params = json.load(fp)
     return trials, best_metrics, best_params, best_trial_path
+
+
+def stop_nni():
+    """Stop nni experiment"""
+    proc = subprocess.run([sys.prefix + '/bin/nnictl', 'stop'])
+    if proc.returncode != 0:
+        raise RuntimeError("'nnictl stop' failed with code %d" % proc.returncode)
+    check_stopped()
+
+
+def start_nni(config_path, wait=WAITING_TIME, max_retries=MAX_RETRIES):
+    """Start nni experiment given a configuration yaml file
+
+    Args:
+        config_path (str): Configuration yaml file.
+        wait (numeric) : time to wait in seconds
+        max_retries (int): max number of retries
+    """
+    proc = subprocess.run([sys.prefix + '/bin/nnictl', 'create', '--config', config_path])
+    if proc.returncode != 0: 
+        raise RuntimeError("'nnictl create' failed with code %d" % proc.returncode)
+    check_experiment_status(wait=wait, max_retries=max_retries)
+
