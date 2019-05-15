@@ -23,7 +23,23 @@ IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THE SOFTWARE CODE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 """
-import sys
+
+import os
+import json
+# uncomment if needed
+# import sys
+import azureml.core
+from azureml.core.authentication import AzureCliAuthentication
+from azureml.core import Workspace
+from azureml.core import Experiment
+from azureml.core.compute import ComputeTarget, AmlCompute
+from azureml.core.runconfig import RunConfiguration
+from azureml.core.conda_dependencies import CondaDependencies
+from azureml.core.runconfig import DEFAULT_CPU_IMAGE
+# uncomment if using gpu
+# from azureml.core.runconfig import DEFAULT_GPU_IMAGE
+from azureml.core.script_run_config import ScriptRunConfig
+
 '''
 print("This is the name of the script: ", sys.argv[0])
 print("Number of arguments: ", len(sys.argv))
@@ -33,20 +49,15 @@ pytest_str = sys.argv[1]
 print("pytest_str ",pytest_str)
 '''
 
-from azureml.core import Workspace
-import os, json, sys
-import azureml.core
-from azureml.core.authentication import AzureCliAuthentication
-from azureml.core import Workspace
-import azureml.core
-
-# this is from https://aidemos.visualstudio.com/DevOps%20for%20AI%20-%20Demo/_git/DevOps-For-AI-AML-Demo?path=%2Faml_service%2F00-WorkSpace.py&version=GBmaster
-# another good ref is https://github.com/Microsoft/MLAKSDeployAML/blob/master/00_AML_Configuration.ipynb
+# this is from
+# https://aidemos.visualstudio.com/DevOps%20for%20AI%20-%20Demo/_git/DevOps-For-AI-AML-Demo?path=%2Faml_service%2F00-WorkSpace.py&version=GBmaster
+# another good ref is
+# https://github.com/Microsoft/MLAKSDeployAML/blob/master/00_AML_Configuration.ipynb
 #
 # Initialize a Workspace
-#
+
 print("SDK Version:", azureml.core.VERSION)
-print('current dir is ' +os.curdir)
+print('current dir is ' + os.curdir)
 with open("tests/ci/config.json") as f:
     config = json.load(f)
 
@@ -55,8 +66,8 @@ resource_group = config["resource_group"]
 subscription_id = config["subscription_id"]
 location = config["location"]
 
-print(" WS name ",workspace_name)
-print("subscription_id ",subscription_id)
+print(" WS name ", workspace_name)
+print("subscription_id ", subscription_id)
 
 cli_auth = AzureCliAuthentication()
 
@@ -69,7 +80,7 @@ try:
         auth=cli_auth,
     )
 
-except:
+except Exception:
     # this call might take a minute or two.
     print("Creating new workspace")
     ws = Workspace.create(
@@ -83,34 +94,34 @@ except:
 
 # print Workspace details
 print(ws.name, ws.resource_group, ws.location, ws.subscription_id, sep="\n")
-    
 #
 # https://github.com/Azure/MachineLearningNotebooks/blob/master/how-to-use-azureml/training/train-on-amlcompute/train-on-amlcompute.ipynb
-# useful experiment, etc info https://docs.microsoft.com/en-us/python/api/overview/azure/ml/intro?view=azure-ml-py
+# useful experiment, etc info
+# https://docs.microsoft.com/en-us/python/api/overview/azure/ml/intro?view=azure-ml-py
 
 #
 # Create an Experiment
 #
-from azureml.core import Experiment
-#experiment_name = 'train-on-amlcompute'
+
+# experiment_name = 'train-on-amlcompute'
 experiment_name = 'unit_tests_staging'
-experiment = Experiment(workspace = ws, name = experiment_name)
+experiment = Experiment(workspace=ws, name=experiment_name)
 
 #
 # Check Available VM families
 #
-from azureml.core.compute import ComputeTarget, AmlCompute
 
-AmlCompute.supported_vmsizes(workspace = ws)
-#AmlCompute.supported_vmsizes(workspace = ws, location='southcentralus')
+
+AmlCompute.supported_vmsizes(workspace=ws)
+# AmlCompute.supported_vmsizes(workspace = ws, location='southcentralus')
 
 #
 # Create a compute Resource
-# from here https://docs.microsoft.com/en-us/azure/machine-learning/service/tutorial-train-models-with-aml
+# from here
+# https://docs.microsoft.com/en-us/azure/machine-learning/service/tutorial-train-models-with-aml
 #
-from azureml.core.compute import AmlCompute
-from azureml.core.compute import ComputeTarget
-import os
+'''
+bz
 
 # choose a name for your cluster
 
@@ -119,7 +130,7 @@ compute_name = os.environ.get("AML_COMPUTE_CLUSTER_NAME", "cpucluster")
 compute_min_nodes = os.environ.get("AML_COMPUTE_CLUSTER_MIN_NODES", 0)
 compute_max_nodes = os.environ.get("AML_COMPUTE_CLUSTER_MAX_NODES", 4)
 
-# CPU VM = STANDARD_D2_V2. For using GPU VM, set SKU to STANDARD_NC6 
+# CPU VM = STANDARD_D2_V2. For using GPU VM, set SKU to STANDARD_NC6
 vm_size = os.environ.get("AML_COMPUTE_CLUSTER_SKU", "STANDARD_D2_V2")
 
 
@@ -129,28 +140,30 @@ if compute_name in ws.compute_targets:
         print('found compute target. just use it. ' + compute_name)
 else:
     print('creating a new compute target...')
-    provisioning_config = AmlCompute.provisioning_configuration(vm_size = vm_size,
-                                                                min_nodes = compute_min_nodes, 
-                                                                max_nodes = compute_max_nodes)
+    provisioning_config = AmlCompute. \
+        provisioning_configuration(vm_size=vm_size,
+                                   min_nodes=compute_min_nodes,
+                                   max_nodes=compute_max_nodes)
 
     # create the cluster
-    compute_target = ComputeTarget.create(ws, compute_name, provisioning_config)
-    
-    # can poll for a minimum number of nodes and for a specific timeout. 
-    # if no min node count is provided it will use the scale settings for the cluster
-    compute_target.wait_for_completion(show_output=True, min_node_count=None, timeout_in_minutes=20)
-    
-     # For a more detailed view of current AmlCompute status, use get_status()
+    compute_target = ComputeTarget.create(ws, compute_name,
+                                          provisioning_config)
+
+    # can poll for a minimum number of nodes and for
+    # a specific timeout. if no min node count is
+    # provided it will use the scale settings for the cluster
+    compute_target.wait_for_completion(show_output=True,
+                                       min_node_count=None,
+                                       timeout_in_minutes=20)
+
+    # For a more detailed view of current AmlCompute status, use get_status()
     print(compute_target.get_status().serialize())
 
 #
 # Provision as a run based compute target
 #
-from azureml.core.runconfig import RunConfiguration
-from azureml.core.conda_dependencies import CondaDependencies
-from azureml.core.runconfig import DEFAULT_CPU_IMAGE
-from azureml.core.runconfig import DEFAULT_GPU_IMAGE
-
+bz
+'''
 # create a new runconfig object
 run_config = RunConfiguration()
 
@@ -165,36 +178,36 @@ run_config.target = "amlcompute"
 run_config.amlcompute.vm_size = 'STANDARD_D2_V2'
 
 
-# Do NOT enable Docker 
+# enable Docker
 run_config.environment.docker.enabled = True
 
 # set Docker base image to the default CPU-based image
 
-#run_config.environment.docker.base_image = DEFAULT_CPU_IMAGE
+# run_config.environment.docker.base_image = DEFAULT_CPU_IMAGE
 # just to see if this is it bz
 run_config.environment.docker.base_image = DEFAULT_CPU_IMAGE
 
-#run_config.environment.docker.base_image = 'continuumio/miniconda3'
+# run_config.environment.docker.base_image = 'continuumio/miniconda3'
 
-# use conda_dependencies.yml to create a conda environment in the Docker image for execution
+# use conda_dependencies.yml to create a conda environment in the
+# Docker image for execution
 run_config.environment.python.user_managed_dependencies = False
 
-# auto-prepare the Docker image when used for execution (if it is not already prepared)
+# auto-prepare the Docker image when used for execution (if it is not already
+# prepared)
 run_config.auto_prepare_environment = True
-
-import os
 
 print("reco_base.yaml path")
 print(os.path.dirname('./reco_base.yaml'))
-print('reco_base.yaml exists ',os.path.exists('./reco_base.yaml'))
+print('reco_base.yaml exists ', os.path.exists('./reco_base.yaml'))
 
 # specify CondaDependencies obj
-run_config.environment.python.conda_dependencies = CondaDependencies(conda_dependencies_file_path='./reco_base.yaml')
+run_config.environment.python.conda_dependencies = CondaDependencies(
+    conda_dependencies_file_path='./reco_base.yaml')
 
 print("before import ScriptRunConfig")
 
 # Now submit a run on AmlCompute
-from azureml.core.script_run_config import ScriptRunConfig
 
 print("before folder = .")
 project_folder = "."
@@ -209,8 +222,7 @@ run = experiment.submit(script_run_config)
 print('after submit')
 run.wait_for_completion(show_output=True, wait_post_processing=True)
 
-# go to azure portal to see log in azure ws and look for experiment name and look for individual run
-print('files',run.get_file_names())
+# go to azure portal to see log in azure ws and look for experiment name and
+# look for individual run
+print('files', run.get_file_names())
 run.download_files(prefix='reports')
-
-
