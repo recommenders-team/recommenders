@@ -109,6 +109,7 @@ AmlCompute.supported_vmsizes(workspace=ws)
 # Create a compute Resource
 # from here
 # https://docs.microsoft.com/en-us/azure/machine-learning/service/tutorial-train-models-with-aml
+# https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-set-up-training-targets
 #
 '''
 

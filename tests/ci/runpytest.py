@@ -16,7 +16,7 @@ print('before subprocess.run')
 #                "-m","not notebooks and not spark and not gpu",
 #                "--junitxml=reports/test-unit.xml"])
 
-subprocess.run(["pytest", "tests/unit",
+subprocess.run(["pytest", "tests/unit/test_timer.py",
                 "-m", "not notebooks and not spark and not gpu",
                 "--junitxml=reports/test-unit.xml"])
 
