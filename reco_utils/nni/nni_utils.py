@@ -114,7 +114,7 @@ def get_trials(optimize_mode):
 
 def stop_nni():
     """Stop nni experiment"""
-    proc = subprocess.run([sys.prefix + '/bin/nnictl', 'stop'])
+    proc = subprocess.run([sys.prefix + "/bin/nnictl", "stop"])
     if proc.returncode != 0:
         raise RuntimeError("'nnictl stop' failed with code %d" % proc.returncode)
     check_stopped()
@@ -128,7 +128,9 @@ def start_nni(config_path, wait=WAITING_TIME, max_retries=MAX_RETRIES):
         wait (numeric) : time to wait in seconds
         max_retries (int): max number of retries
     """
-    proc = subprocess.run([sys.prefix + '/bin/nnictl', 'create', '--config', config_path])
+    nni_env = os.environ.copy()
+    nni_env["PATH"] = sys.prefix + "/bin:" + nni_env["PATH"]
+    proc = subprocess.run(["nnictl", "create", "--config", config_path], env=nni_env)
     if proc.returncode != 0: 
         raise RuntimeError("'nnictl create' failed with code %d" % proc.returncode)
     check_experiment_status(wait=wait, max_retries=max_retries)
