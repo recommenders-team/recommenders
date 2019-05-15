@@ -36,7 +36,7 @@ def check_experiment_status(wait=WAITING_TIME, max_retries=MAX_RETRIES):
         if nni_status["status"] in ["DONE", "TUNER_NO_MORE_TRIAL"]:
             break
         elif nni_status["status"] not in ["RUNNING", "NO_MORE_TRIAL"]:
-            raise RuntimeError("NNI experiment failed to complete with status {} - {}".format(nni_status["status"], 
+            raise RuntimeError("NNI experiment failed to complete with status {}: {}".format(nni_status["status"], 
                                                                                               nni_status["errors"]))
         time.sleep(wait)
         i += 1
