@@ -12,12 +12,17 @@ def find_wikidataID(name):
     """
     url = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&format=json&titles="
     r = requests.get(url+name.replace(" ", "%20"))
-    entityID = list(r.json()["query"]["pages"].keys())[0]
+    pageID = list(r.json()["query"]["pages"].keys())[0]
     try:
-        entityID = r.json()["query"]["pages"][entityID]["pageprops"]["wikibase_item"]
+        entity_id = r.json()["query"]["pages"][pageID]["pageprops"]["wikibase_item"]
     except:
-        entityID = "entityNotFound"
-    return entityID
+        r = requests.get(url+name.lower().replace(" ", "%20"))
+        pageID = list(r.json()["query"]["pages"].keys())[0]
+        try:
+            entity_id = r.json()["query"]["pages"][pageID]["pageprops"]["wikibase_item"]
+        except:
+            entity_id = "entityNotFound"
+    return entity_id
 
 def query_entity_links(entityID):
     """Query all linked pages from a wikidata entityID
