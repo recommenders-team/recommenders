@@ -5,22 +5,20 @@ import requests
 def find_wikidataID(name):
     """Find the entity ID in wikidata from a title string.
     Args:
-        name (str): A string with a wikidata page title.
+        name (str): A string with search terms (eg. "Batman (1989) film")
     Returns:
         entityID: wikidata entityID corresponding to the title string. 
                   'entityNotFound' will be returned if no page is found
     """
-    url = "https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&format=json&titles="
-    r = requests.get(url+name.replace(" ", "%20"))
-    pageID = list(r.json()["query"]["pages"].keys())[0]
+    r = requests.get("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="+name+"&format=json&prop=pageprops&ppprop=wikibase_item")
     try:
-        entity_id = r.json()["query"]["pages"][pageID]["pageprops"]["wikibase_item"]
-    except:
-        r = requests.get(url+name.lower().replace(" ", "%20"))
-        pageID = list(r.json()["query"]["pages"].keys())[0]
+        pageID = r.json()["query"]["search"][0]["pageid"]
+        r = requests.get("https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&format=json&pageids="+str(pageID))
         try:
-            entity_id = r.json()["query"]["pages"][pageID]["pageprops"]["wikibase_item"]
+            entity_id = r.json()["query"]["pages"][str(pageID)]["pageprops"]["wikibase_item"]
         except:
+            entity_id = "entityNotFound"
+    except:
             entity_id = "entityNotFound"
     return entity_id
 
