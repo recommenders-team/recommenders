@@ -22,10 +22,10 @@ def test_sar_single_node_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["map"] == pytest.approx(0.105815262, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg"] == pytest.approx(0.373197255, rel=TOL, abs=ABS_TOL)
-    assert results["precision"] == pytest.approx(0.326617179, rel=TOL, abs=ABS_TOL)
-    assert results["recall"] == pytest.approx(0.175956743, rel=TOL, abs=ABS_TOL)
+    assert results["map"] == pytest.approx(0.110591, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.382461, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.330753, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.176385, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
