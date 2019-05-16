@@ -73,7 +73,7 @@ def numpy_input_fn(
     y=None,
     batch_size=128,
     num_epochs=1,
-    shuffle=None,
+    shuffle=False,
     seed=None,
     queue_capacity=1000,
     num_threads=1
@@ -97,11 +97,6 @@ def numpy_input_fn(
     Returns:
         Function that has signature of ()->(dict of features, targets)
     """
-    if not isinstance(shuffle, bool):
-        raise ValueError('shuffle must be provided and explicitly set as boolean '
-                         '(it is recommended to set it as True for training); '
-                         'got {}'.format(shuffle))
-
     def input_fn():
         # Note that `x` should not be used after conversion to ordered_dict_data,
         # as type could be either dict or array.
