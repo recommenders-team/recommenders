@@ -4,11 +4,13 @@
 import pytest
 import shutil
 
+import numpy as np
 import pandas as pd
 import tensorflow as tf
 
 from reco_utils.common.tf_utils import (
     pandas_input_fn,
+    numpy_input_fn,
     build_optimizer,
     evaluation_log_hook,
     MetricsLogger,
@@ -59,10 +61,36 @@ def test_pandas_input_fn(pd_df):
             assert v.shape[1] == len(df[k][0])
 
     input_fn_with_label = pandas_input_fn(df, y_col=DEFAULT_RATING_COL)
-    X, y = input_fn_with_label()
-    features = df.copy()
-    features.pop(DEFAULT_RATING_COL)
-    assert len(X) == len(features.columns)
+    X, _ = input_fn_with_label()
+    assert len(X) == len(df.columns) - 1
+
+
+@pytest.mark.gpu
+def test_numpy_input_fn(pd_df):
+    df, _, _ = pd_df
+
+    X = {}
+    for col in df.columns:
+        values = df[col].values
+        if isinstance(values[0], (list, np.ndarray)):
+            values = np.array([l for l in values], dtype=np.float32)
+        X[col] = values
+
+    input_fn = numpy_input_fn(X)
+    sample = input_fn()
+
+    # check the input function returns all the columns
+    assert len(df.columns) == len(sample)
+    for k, v in sample.items():
+        assert k in df.columns.values
+        # check if a list feature column converted correctly
+        if len(v.shape) == 2:
+            assert v.shape[1] == len(df[k][0])
+
+    y = X.pop(DEFAULT_RATING_COL)
+    input_fn_with_label = numpy_input_fn(X, y=y)
+    X, _ = input_fn_with_label()
+    assert len(X) == len(df.columns) - 1
 
 
 @pytest.mark.gpu
