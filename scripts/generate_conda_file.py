@@ -80,6 +80,7 @@ PIP_BASE = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
+    "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
 }
 
@@ -157,10 +158,12 @@ if __name__ == "__main__":
     # check for os platform support
     if platform == 'darwin':
         pip_packages.update(PIP_DARWIN)
-    if platform == 'linux':
+    elif platform.startswith('linux'):
         pip_packages.update(PIP_LINUX)
-    if platform == 'win32':
+    elif platform == 'win32':
         pip_packages.update(PIP_WIN32)
+    else:
+        raise Exception('Unsupported platform, must be Windows, Linux, or macOS')
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)
