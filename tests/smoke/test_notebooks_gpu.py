@@ -31,11 +31,10 @@ def test_ncf_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    # There is too much variability to do an approx equal, just adding top values
-    assert results["map"] < 0.05
-    assert results["ndcg"] < 0.20
-    assert results["precision"] < 0.17
-    assert results["recall"] < 0.10
+    assert results["map"] == pytest.approx(0.0409234, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.1773, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.160127, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.0879193, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
@@ -53,14 +52,14 @@ def test_ncf_deep_dive_smoke(notebooks):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     # There is too much variability to do an approx equal, just adding top values
-    assert results["map"] < 0.05
-    assert results["ndcg"] < 0.35
-    assert results["precision"] < 0.17
-    assert results["recall"] < 0.1
-    assert results["map2"] < 0.05
-    assert results["ndcg2"] < 0.35
-    assert results["precision2"] < 0.17
-    assert results["recall2"] < 0.1
+    assert results["map"] == pytest.approx(0.0370396, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.29423, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.144539, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.0730272, rel=TOL, abs=ABS_TOL)
+    assert results["map2"] == pytest.approx(0.028952, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg2"] == pytest.approx(0.143744, rel=TOL, abs=ABS_TOL)
+    assert results["precision2"] == pytest.approx(0.127041, rel=TOL, abs=ABS_TOL)
+    assert results["recall2"] == pytest.approx(0.0584491, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
