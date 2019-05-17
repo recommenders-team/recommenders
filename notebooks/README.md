@@ -51,7 +51,7 @@ those will be provided in the notebooks.
 
 ### Submit an existing notebook to Azure Machine Learning
 
- The [run_notebook_on_azureml](/run_notebook_on_azureml.ipynb) notebook provides a scaffold to directly submit an existing notebook to AzureML compute targets. After setting up a compute target and creating a run configuration, simply replace the notebook file name and submit the notebook directly. 
+ The [run_notebook_on_azureml](./run_notebook_on_azureml.ipynb) notebook provides a scaffold to directly submit an existing notebook to AzureML compute targets. After setting up a compute target and creating a run configuration, simply replace the notebook file name and submit the notebook directly. 
 ```python
 cfg = NotebookRunConfig(source_directory='../',
                             notebook='notebooks/00_quick_start/' + NOTEBOOK_NAME,
