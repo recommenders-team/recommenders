@@ -10,6 +10,6 @@
 ### Checklist:
 <!--- Go over all the following points, and put an `x` in all the boxes that apply. -->
 <!--- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
-- [ ] My code follows the code style of this project, as detailed in our [contribution guidelines](../CONTRIBUTING.md).
-- [ ] I have added tests.
+- [ ] I have followed the [contribution guidelines](../CONTRIBUTING.md) and code style for this project.
+- [ ] I have added tests covering my contributions.
 - [ ] I have updated the documentation accordingly.
