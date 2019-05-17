@@ -272,3 +272,29 @@ def test_get_popularity_based_topk(header):
     expected = pd.DataFrame(dict(MovieId=[1, 3, 4], prediction=[3, 2, 1]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
     assert_frame_equal(expected, actual)
+
+
+def test_get_normalized_scores(train_test_dummy_timestamp, header):
+    model = SARSingleNode(**header)
+    trainset, testset = train_test_dummy_timestamp
+    model.fit(trainset)
+    actual = model.score(testset, remove_seen=True, normalized=True)
+    expected = np.array(
+        [
+            [0, 0, -np.inf, 0, 0, -np.inf, -np.inf, 0],
+            [-np.inf, -np.inf, 0, -np.inf, -np.inf, 0, 0, -np.inf],
+        ]
+    )
+    print(actual)
+    assert actual.shape == (2, 8)
+    assert isinstance(actual, np.ndarray)
+    assert np.isclose(expected, actual).all()
+
+    actual = model.score(testset, normalized=True)
+    expected = np.array(
+        [[0, 0, 1 / 3, 0, 0, 1 / 3, 1 / 3, 0], [0.2, 0.2, 0, 0.2, 0.2, 0, 0, 0.2]]
+    )
+
+    assert actual.shape == (2, 8)
+    assert isinstance(actual, np.ndarray)
+    assert np.isclose(expected, actual).all()
