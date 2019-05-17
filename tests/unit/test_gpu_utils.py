@@ -25,4 +25,4 @@ def test_get_cuda_version():
 
 @pytest.mark.gpu
 def test_get_cudnn_version():
-    assert get_cudnn_version() > "7.0.0" 
+    assert get_cudnn_version() > "7.0.0"
