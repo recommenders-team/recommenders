@@ -5,6 +5,7 @@
 import numpy as np
 import pandas as pd
 import logging
+from sklearn.preprocessing import normalize
 from scipy import sparse
 
 from reco_utils.common.python_utils import (
@@ -58,9 +59,11 @@ class SARSingleNode:
         self.col_user = col_user
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
-        
+
         if similarity_type not in [COOCCUR, JACCARD, LIFT]:
-            raise ValueError('Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]')
+            raise ValueError(
+                'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]'
+            )
         self.similarity_type = similarity_type
         self.time_decay_half_life = (
             time_decay_coefficient * 24 * 60 * 60
@@ -250,12 +253,13 @@ class SARSingleNode:
 
         logger.info("Done training")
 
-    def score(self, test, remove_seen=False):
+    def score(self, test, remove_seen=False, normalized=False):
         """Score all items for test users
 
         Args:
             test (pd.DataFrame): user to test
             remove_seen (bool): flag to remove items seen in training from recommendation
+            normalized (bool): flag to normalize per user scores to sum to 1
 
         Returns:
             np.ndarray
@@ -281,6 +285,18 @@ class SARSingleNode:
         # ensure we're working with a dense ndarray
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.toarray()
+
+        if normalized:
+            if remove_seen:
+                # need to adjust seen values so normalization works
+                neg_inf_idx = np.argwhere(np.isneginf(test_scores))
+                test_scores[neg_inf_idx[:, 0], neg_inf_idx[:, 1]] = 0
+
+            test_scores = normalize(test_scores, norm="l1", copy=False)
+
+            if remove_seen:
+                # reset seen values to negative infinity so they can be sorted and removed
+                test_scores[neg_inf_idx[:, 0], neg_inf_idx[:, 1]] = -np.inf
 
         return test_scores
 
@@ -309,7 +325,7 @@ class SARSingleNode:
             }
         )
 
-    def get_item_based_topk(self, items, top_k=10, sort_top_k=False):
+    def get_item_based_topk(self, items, top_k=10, sort_top_k=False, normalized=False):
         """Get top K similar items to provided seed items based on similarity metric defined.
         This method will take a set of items and use them to recommend the most similar items to that set
         based on the similarity matrix fit during training.
@@ -325,6 +341,7 @@ class SARSingleNode:
             items (pd.DataFrame): DataFrame with item, user (optional), and rating (optional) columns
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
+            normalized (bool): flag to normalize per user scores to sum to 1
 
         Returns:
             pd.DataFrame: sorted top k recommendation items
@@ -358,6 +375,11 @@ class SARSingleNode:
         # calculate raw scores with a matrix multiplication
         test_scores = pseudo_affinity.dot(self.item_similarity)
 
+        if normalized:
+            # first zero out items in the seed set so normalization works
+            test_scores[user_ids, item_ids] = 0
+            test_scores = normalize(test_scores, norm="l1", copy=False)
+
         # remove items in the seed set so recommended items are novel
         test_scores[user_ids, item_ids] = -np.inf
 
@@ -378,7 +400,9 @@ class SARSingleNode:
         # drop invalid items
         return df.replace(-np.inf, np.nan).dropna()
 
-    def recommend_k_items(self, test, top_k=10, sort_top_k=False, remove_seen=False):
+    def recommend_k_items(
+        self, test, top_k=10, sort_top_k=False, remove_seen=False, normalized=False
+    ):
         """Recommend top K items for all users which are in the test set
 
         Args:
@@ -386,12 +410,13 @@ class SARSingleNode:
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
             remove_seen (bool): flag to remove items seen in training from recommendation
+            normalized (bool): flag to normalize per user scores to sum to 1
 
         Returns:
             pd.DataFrame: top k recommendation items for each user
         """
 
-        test_scores = self.score(test, remove_seen=remove_seen)
+        test_scores = self.score(test, remove_seen=remove_seen, normalized=normalized)
 
         top_items, top_scores = get_top_k_scored_items(
             scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
