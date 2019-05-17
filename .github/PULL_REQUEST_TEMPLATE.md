@@ -13,6 +13,3 @@
 - [ ] My code follows the code style of this project, as detailed in our [contribution guidelines](../CONTRIBUTING.md).
 - [ ] I have added tests.
 - [ ] I have updated the documentation accordingly.
-
-
-
