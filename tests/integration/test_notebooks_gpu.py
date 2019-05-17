@@ -4,6 +4,7 @@
 import papermill as pm
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
+from reco_utils.common.constants import SEED
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 TOL = 0.5
@@ -25,10 +26,10 @@ def test_gpu_vm():
             "1m",
             10,
             {
-                "map": 0.024821,
-                "ndcg": 0.153396,
-                "precision": 0.143046,
-                "recall": 0.056590,
+                "map": 0.0255283,
+                "ndcg": 0.15656,
+                "precision": 0.145646,
+                "recall": 0.0557367,
             },
         ),
         # ("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})# takes too long
@@ -41,7 +42,7 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=512
+            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=512, SEED=SEED,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -60,14 +61,14 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
             10,
             512,
             {
-                "map": 0.045746,
-                "ndcg": 0.3739307,
-                "precision": 0.183987,
-                "recall": 0.105546,
-                "map2": 0.049723,
-                "ndcg2": 0.201361,
-                "precision2": 0.180276,
-                "recall2": 0.103631,
+                "map": 0.0435856,
+                "ndcg": 0.37586,
+                "precision": 0.169353,
+                "recall": 0.0923963,
+                "map2": 0.0510391,
+                "ndcg2": 0.202186,
+                "precision2": 0.179533,
+                "recall2": 0.106434,
             },
         )
     ],
@@ -81,7 +82,7 @@ def test_ncf_deep_dive_integration(
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=batch_size
+            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=batch_size, SEED=SEED,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -176,14 +177,14 @@ def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_valu
             "1m",
             10,
             {
-                "rmse": 0.911973,
-                "mae": 0.71469,
-                "rsquared": 0.335589,
-                "exp_var": 0.336365,
-                "ndcg_at_k": 0.0706927,
-                "map_at_k": 0.00849144,
-                "precision_at_k": 0.0571452,
-                "recall_at_k": 0.0180048,
+                "rmse": 0.908561,
+                "mae": 0.716604,
+                "rsquared": 0.340551,
+                "exp_var": 0.340557,
+                "ndcg_at_k": 0.0482291,
+                "map_at_k": 0.00553448,
+                "precision_at_k": 0.0434675,
+                "recall_at_k": 0.0139884,
             },
         )
     ],
