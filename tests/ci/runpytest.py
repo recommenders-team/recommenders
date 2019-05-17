@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import subprocess
 import os
 
@@ -5,16 +8,6 @@ from azureml.core import Run
 print('before run.get_context')
 run = Run.get_context()
 print('before subprocess.run')
-
-# subprocess.run(["python", "-m", "pytest","tests/unit",
-#                "-m","not notebooks and not spark and not gpu",
-#                "--junitxml=reports/test-unit.xml"])
-# subprocess.run(["pytest","tests/unit/test_python_utils.py",
-#                "-m","not notebooks and not spark and gpu",
-#                "--junitxml=reports/test-unit.xml"])
-# subprocess.run(["pytest","tests/unit/test_dataset.py",
-#                "-m","not notebooks and not spark and not gpu",
-#                "--junitxml=reports/test-unit.xml"])
 
 subprocess.run(["pytest", "tests/unit/test_timer.py",
                 "-m", "not notebooks and not spark and not gpu",
