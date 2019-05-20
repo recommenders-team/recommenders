@@ -7,6 +7,12 @@
 # use variable group name
 variables:
 - group: AzureKeyVaultSecrets
+- name : 'test_folder'
+  value : 'tests/unit'
+- name : 'test_env'
+  value : 'not notebooks and not spark and not gpu'
+- name : 'test_tag'
+  value : 'unit tests'
 
 #trigger:
 #- azure-pipelines-bz
@@ -14,7 +20,7 @@ variables:
 
 pr:
 - staging 
-  
+
 pool:
  vmImage: 'ubuntu-16.04'
 
@@ -25,7 +31,6 @@ steps:
     versionSpec: '3.6'
     architecture: 'x64'
   displayName: 'Use Python 3.6'
-
 
 - script: | 
    az login --service-principal -u $(ClientID) -p $(ClientSecret) --tenant $(TenantID)
@@ -55,10 +60,10 @@ steps:
   continueOnError: true
   
 - script: 
-     python scripts/generate_conda_file.py
+     python scripts/generate_conda_file.py --name reco
   displayName: ' generate_conda_file.py'
 
-- script: |
+- script: |    
      chmod +x scripts/*.py
      ls -al scripts
      chmod +x tests/ci/*.py
@@ -75,7 +80,7 @@ steps:
   displayName: 'install cli'
 
 - script: 
-      python tests/ci/submitpytest.py
+      python tests/ci/submit_AzureML_pytest.py
   displayName: 'standalone pytest'
 
 - task: PublishTestResults@2
