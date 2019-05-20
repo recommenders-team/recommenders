@@ -59,6 +59,7 @@ steps:
   displayName: ' generate_conda_file.py'
 
 - script: |
+     mv reco_base.yaml reco.yaml
      chmod +x scripts/*.py
      ls -al scripts
      chmod +x tests/ci/*.py
