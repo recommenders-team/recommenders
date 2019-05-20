@@ -28,33 +28,26 @@ def get_gpu_info():
     """Get information of GPUs.
 
     Returns:
-        list: List of gpu information dictionary {device_name, total_memory, used_memory}.
+        list: List of gpu information dictionary
+              {device_name, total_memory (in Mb), free_memory (in Mb)}.
               Returns an empty list if there is no cuda device available.
     """
     gpus = []
 
     try:
-        output = subprocess.check_output(
-            [
-                "nvidia-smi",
-                "--query-gpu=name,memory.total,memory.used",
-                "--format=csv,nounits,noheader",
-            ],
-            encoding="utf-8",
-        )
-        for o in output.split("\n"):
-            info = o.split(",")
-            if len(info) == 3:
-                gpu = dict()
-                gpu["device_name"] = info[0].strip()
-                gpu["total_memory"] = info[1].strip()
-                gpu["used_memory"] = info[2].strip()
-                gpus.append(gpu)
-    except subprocess.CalledProcessError as e:
-        warnings.warn(e.stdout)
-    except FileNotFoundError:
-        warnings.warn("GPU info is not available.")
-
+        for gpu in cuda.gpus:
+            with gpu:
+                meminfo = cuda.current_context().get_memory_info()
+                
+                g = {
+                    "device_name": gpu.name.decode('ASCII'),
+                    "total_memory": meminfo[1] / 1048576,  # Mb
+                    "free_memory": meminfo[0] / 1048576,   # Mb
+                }
+                gpus.append(g)
+    except CudaSupportError:
+        pass
+    
     return gpus
     
 

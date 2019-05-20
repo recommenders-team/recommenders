@@ -3,7 +3,18 @@
 
 import sys
 import pytest
-from reco_utils.common.gpu_utils import get_number_gpus, clear_memory_all_gpus, get_cuda_version, get_cudnn_version
+from reco_utils.common.gpu_utils import (
+    get_cuda_version,
+    get_cudnn_version,
+    get_gpu_info,
+    get_number_gpus,
+    clear_memory_all_gpus,
+)
+
+
+@pytest.mark.gpu
+def test_get_gpu_info():
+    assert len(get_gpu_info()) >= 1
 
 
 @pytest.mark.gpu
