@@ -55,11 +55,10 @@ steps:
   continueOnError: true
   
 - script: 
-     python scripts/generate_conda_file.py
+     python scripts/generate_conda_file.py --name reco
   displayName: ' generate_conda_file.py'
 
-- script: |
-     mv reco_base.yaml reco.yaml
+- script: |    
      chmod +x scripts/*.py
      ls -al scripts
      chmod +x tests/ci/*.py
