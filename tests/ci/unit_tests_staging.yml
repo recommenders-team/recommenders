@@ -7,6 +7,9 @@
 # use variable group name
 variables:
 - group: AzureKeyVaultSecrets
+  test_folder: 'tests/unit'
+  test_env : 'not notebooks and not spark and not gpu'
+  test_tag : 'unit tests'
 
 #trigger:
 #- azure-pipelines-bz
@@ -14,11 +17,6 @@ variables:
 
 pr:
 - staging 
-  
-variables:
-  test_folder: "tests/unit"
-  test_env : "not notebooks and not spark and not gpu"
-  test_tag : "unit tests"
 
 pool:
  vmImage: 'ubuntu-16.04'
@@ -30,7 +28,6 @@ steps:
     versionSpec: '3.6'
     architecture: 'x64'
   displayName: 'Use Python 3.6'
-
 
 - script: | 
    az login --service-principal -u $(ClientID) -p $(ClientSecret) --tenant $(TenantID)
