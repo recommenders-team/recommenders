@@ -4,7 +4,6 @@
 import papermill as pm
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
-from reco_utils.common.constants import SEED
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 TOL = 0.5
@@ -20,7 +19,7 @@ def test_gpu_vm():
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
-    "size, epochs, expected_values",
+    "size, epochs, expected_values, seed",
     [
         (
             "1m",
@@ -31,18 +30,19 @@ def test_gpu_vm():
                 "precision": 0.145646,
                 "recall": 0.0557367,
             },
+            42,
         ),
         # ("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})# takes too long
     ],
 )
-def test_ncf_integration(notebooks, size, epochs, expected_values):
+def test_ncf_integration(notebooks, size, epochs, expected_values, seed):
     notebook_path = notebooks["ncf"]
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=512, SEED=SEED,
+            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=512, SEED=seed,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -54,7 +54,7 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
-    "size, epochs, batch_size, expected_values",
+    "size, epochs, batch_size, expected_values, seed",
     [
         (
             "100k",
@@ -70,11 +70,12 @@ def test_ncf_integration(notebooks, size, epochs, expected_values):
                 "precision2": 0.179533,
                 "recall2": 0.106434,
             },
+            42,
         )
     ],
 )
 def test_ncf_deep_dive_integration(
-    notebooks, size, epochs, batch_size, expected_values
+    notebooks, size, epochs, batch_size, expected_values, seed
 ):
     notebook_path = notebooks["ncf_deep_dive"]
     pm.execute_notebook(
@@ -82,7 +83,7 @@ def test_ncf_deep_dive_integration(
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=batch_size, SEED=SEED,
+            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=batch_size, SEED=seed,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -131,7 +132,7 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
-    "syn_epochs, criteo_epochs, expected_values",
+    "syn_epochs, criteo_epochs, expected_values, seed",
     [
         (
             15,
@@ -146,10 +147,11 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
                     "logloss": 0.4926,
                 },
             },
+            42,
         )
     ],
 )
-def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_values):
+def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_values, seed):
     notebook_path = notebooks["xdeepfm_quickstart"]
     pm.execute_notebook(
         notebook_path,
@@ -158,7 +160,7 @@ def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_valu
         parameters=dict(
             EPOCHS_FOR_SYNTHETIC_RUN=syn_epochs,
             EPOCHS_FOR_CRITEO_RUN=criteo_epochs,
-            RANDOM_SEED=SEED,
+            RANDOM_SEED=seed,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -171,7 +173,7 @@ def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_valu
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
-    "size, epochs, expected_values",
+    "size, epochs, expected_values, seed",
     [
         (
             "1m",
@@ -186,10 +188,11 @@ def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_valu
                 "precision_at_k": 0.0434675,
                 "recall_at_k": 0.0139884,
             },
+            42,
         )
     ],
 )
-def test_wide_deep_integration(notebooks, size, epochs, expected_values, tmp):
+def test_wide_deep_integration(notebooks, size, epochs, expected_values, seed, tmp):
     notebook_path = notebooks["wide_deep"]
 
     params = {
@@ -200,7 +203,7 @@ def test_wide_deep_integration(notebooks, size, epochs, expected_values, tmp):
         "EXPORT_DIR_BASE": tmp,
         "RATING_METRICS": ["rmse", "mae", "rsquared", "exp_var"],
         "RANKING_METRICS": ["ndcg_at_k", "map_at_k", "precision_at_k", "recall_at_k"],
-        "RANDOM_SEED": SEED,
+        "RANDOM_SEED": seed,
     }
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
