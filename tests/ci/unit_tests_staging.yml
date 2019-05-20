@@ -6,7 +6,7 @@
 #
 # use variable group name
 variables:
-- group: AzureKeyVaultSecrets
+  group: AzureKeyVaultSecrets
   test_folder: 'tests/unit'
   test_env : 'not notebooks and not spark and not gpu'
   test_tag : 'unit tests'
