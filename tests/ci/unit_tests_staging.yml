@@ -7,9 +7,12 @@
 # use variable group name
 variables:
 - group: AzureKeyVaultSecrets
-- test_folder: 'tests/unit'
-- test_env : 'not notebooks and not spark and not gpu'
-- test_tag : 'unit tests'
+- name : 'test_folder'
+  value : 'tests/unit'
+- name : 'test_env'
+  value : 'not notebooks and not spark and not gpu'
+- name : 'test_tag'
+  value : 'unit tests'
 
 #trigger:
 #- azure-pipelines-bz
