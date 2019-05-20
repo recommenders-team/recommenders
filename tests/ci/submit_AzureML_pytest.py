@@ -81,8 +81,8 @@ def submit_exp():
     cpu_cluster.wait_for_completion(show_output=True)
 
     # Create a new runconfig object
-    run_amlcompute = RunConfiguration(max_run_duration_seconds=60*30)
-
+    #run_amlcompute = RunConfiguration(max_run_duration_seconds=60*30)
+    run_amlcompute = RunConfiguration()
     # Use the cpu_cluster you created above.
     run_amlcompute.target = cpu_cluster
 
