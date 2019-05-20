@@ -4,7 +4,6 @@
 import papermill as pm
 import pytest
 
-from reco_utils.common.constants import SEED
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
@@ -97,7 +96,7 @@ def test_xdeepfm_smoke(notebooks):
             EPOCHS_FOR_CRITEO_RUN=1,
             BATCH_SIZE_SYNTHETIC=128,
             BATCH_SIZE_CRITEO=512,
-            RANDOM_SEED=SEED,
+            RANDOM_SEED=42,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -138,7 +137,7 @@ def test_wide_deep_smoke(notebooks, tmp):
         "EXPORT_DIR_BASE": tmp,
         "RATING_METRICS": ["rmse", "mae"],
         "RANKING_METRICS": ["ndcg_at_k", "precision_at_k"],
-        "RANDOM_SEED": SEED,
+        "RANDOM_SEED": 42,
     }
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
