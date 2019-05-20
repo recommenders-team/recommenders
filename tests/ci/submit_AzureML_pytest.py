@@ -9,6 +9,7 @@ an experiment.
 '''
 
 import json
+import time
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
 from azureml.core import Experiment
@@ -81,7 +82,7 @@ def submit_exp():
     cpu_cluster.wait_for_completion(show_output=True)
 
     # Create a new runconfig object
-    #run_amlcompute = RunConfiguration(max_run_duration_seconds=60*30)
+    # run_amlcompute = RunConfiguration(max_run_duration_seconds=60*30)
     run_amlcompute = RunConfiguration()
     # Use the cpu_cluster you created above.
     run_amlcompute.target = cpu_cluster
@@ -109,13 +110,19 @@ def submit_exp():
 
     experiment = Experiment(workspace=ws, name=experiment_name)
     project_folder = "."
+    start_time = time.time
     script_run_config = ScriptRunConfig(source_directory=project_folder,
                                         script='./tests/ci/run_pytest.py',
                                         run_config=run_amlcompute)
+    elapsed_time = time.time - start_time
+    print(" after ScriptRunConfig ", elapsed_time)
     print('before submit')
     run = experiment.submit(script_run_config)
     print('after submit')
     run.wait_for_completion(show_output=True, wait_post_processing=True)
+    provisioning_time = time.time - elapsed_time
+    print(" Time to provision ", time.localtime(provisioning_time))
+    run.tag('Time to provision', time.localtime(provisioning_time))
 
     # go to azure portal to see log in azure ws and look for experiment name
     # and look for individual run
