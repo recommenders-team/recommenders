@@ -33,10 +33,17 @@ def mocked_status_get(url, content, error):
     assert url.startswith(NNI_STATUS_URL)
     return MockResponse(content, error)
 
+class MockResponseTrials:
+    # Class that mocks requests.models.Response
+    def __init__(self, content):
+        self._content = content
 
-def mocked_trials_get(url, content, error):
+    def json(self):
+        return self._content
+
+def mocked_trials_get(url, content):
     assert url.startswith(NNI_TRIAL_JOBS_URL)
-    return MockResponse(content, error)
+    return MockResponseTrials(content)
     
 
 def mock_exception():
