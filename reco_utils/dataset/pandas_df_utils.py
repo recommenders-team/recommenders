@@ -191,23 +191,23 @@ class LibffmConverter(object):
         idx = 1
         field_feature_dict = {}
         for field in self.field_names:
-            if df[field].dtype == object:
-                for feature in df[field].values:
-                    # Check whether (field, feature) tuple exists in the dict or not.
-                    # If not, put them into the key-values of the dict and count the index.
-                    if (field, feature) not in field_feature_dict:
-                        field_feature_dict[(field, feature)] = idx
+            for feature in df[field].values:
+                # Check whether (field, feature) tuple exists in the dict or not.
+                # If not, put them into the key-values of the dict and count the index.
+                if (field, feature) not in field_feature_dict:
+                    field_feature_dict[(field, feature)] = idx
+                    if df[field].dtype == object:
                         idx += 1
+            if df[field].dtype != object:
+                idx += 1
 
         self.field_count = len(self.field_names)
         self.feature_count = idx - 1
 
         def _convert(field, feature, field_index, field_feature_index_dict):
-            if isinstance(feature, str):
-                field_feature_index = field_feature_index_dict[(field, feature)]
+            field_feature_index = field_feature_index_dict[(field, feature)]
+            if isinstance(feature, str):                
                 feature = 1
-            else:
-                field_feature_index = field_index
             return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
         for col_index, col in enumerate(self.field_names):
