@@ -1,0 +1,355 @@
+%
+% File:    Macros for Journal of Machine Learning Research
+%      Very minor modification of macros for Journal of Artificial 
+%      Intelligence Research (jair.sty) 
+%
+% Suggestions: Submit an issue or pull request to 
+%   https://github.com/JournalMLR/jmlr-style-file
+%
+%   Last edited October 9, 2000 by Leslie Pack Kaelbling
+%   Last edited January 23, 2001 by Alex J. Smola (we should set up RCS or CVS)
+%   Last edited March 29, 2004 Erik G. Learned-Miller
+%   Last edited January 17, 2016 Charles Sutton 
+%   Last edited January 9, 2017 Charles Sutton 
+%    (We have now set up GIT, good thing that we waited for it to
+%     be invented.)
+%
+%          The name of this file should follow the article document
+%          type, e.g. \documentstyle[jmlr]{article}
+
+%          Copied and edited from similar file for Machine Learning Journal.
+% Original Author:  Jeff Schlimmer
+% Edited by: Kevin Thompson, Martha Del Alto, Helen Stewart, Steve Minton \& Pandu Nayak.
+% Last edited: Mon  May  3 20:40:00 1993 by kthompso (Kevin Thompson) on muir
+
+\typeout{Document Style `jmlr' -- January 2016.}
+
+\newif\if@abbrvbib\@abbrvbibfalse
+\DeclareOption{abbrvbib}{\@abbrvbibtrue}
+
+\newif\if@usehyper\@usehypertrue
+\DeclareOption{nohyperref}{\@usehyperfalse}
+\DeclareOption{hyperref}{\@usehypertrue}
+
+\DeclareOption*{\PackageWarning{jmlr}{Unknown ‘\CurrentOption’}}
+\ProcessOptions\relax
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             REQUIRED PACKAGES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\RequirePackage{epsfig}
+\RequirePackage{amssymb}
+\RequirePackage{natbib}
+\RequirePackage{graphicx}
+
+\if@usehyper
+\RequirePackage[colorlinks=false,allbordercolors={1 1 1}]{hyperref}
+\fi
+
+\if@abbrvbib
+\bibliographystyle{abbrvnat}
+\else
+\bibliographystyle{plainnat}
+\fi
+
+\bibpunct{(}{)}{;}{a}{,}{,}
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                             P A G E   S I Z E
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+% Change the overall width of the page.  If these parameters are
+%       changed, they will require corresponding changes in the
+%       maketitle section.
+%
+\renewcommand{\topfraction}{0.95}   % let figure take up nearly whole page
+\renewcommand{\textfraction}{0.05}  % let figure take up nearly whole page
+
+% Specify the dimensions of each page
+
+\oddsidemargin .25in    %   Note \oddsidemargin = \evensidemargin
+\evensidemargin .25in
+\marginparwidth 0.07 true in
+%\marginparwidth 0.75 true in
+%\topmargin 0 true pt           % Nominal distance from top of page to top of
+%\topmargin 0.125in
+\topmargin -0.5in
+\addtolength{\headsep}{0.25in}
+\textheight 8.5 true in       % Height of text (including footnotes & figures)
+\textwidth 6.0 true in        % Width of text line.
+\widowpenalty=10000
+\clubpenalty=10000
+\@twosidetrue \@mparswitchtrue \def\ds@draft{\overfullrule 5pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               S E C T I O N S
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Definitions for nicer (?) sections, etc., ideas from Pat Langley.
+% Numbering for sections, etc. is taken care of automatically.
+
+\def\@startsiction#1#2#3#4#5#6{\if@noskipsec \leavevmode \fi
+   \par \@tempskipa #4\relax
+   \@afterindenttrue
+   \ifdim \@tempskipa <\z@ \@tempskipa -\@tempskipa \@afterindentfalse\fi
+   \if@nobreak \everypar{}\else
+     \addpenalty{\@secpenalty}\addvspace{\@tempskipa}\fi \@ifstar
+     {\@ssect{#3}{#4}{#5}{#6}}{\@dblarg{\@sict{#1}{#2}{#3}{#4}{#5}{#6}}}}
+
+\def\@sict#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname}\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec.\hskip 0.1em}
+                    {\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\@sect#1#2#3#4#5#6[#7]#8{\ifnum #2>\c@secnumdepth
+     \def\@svsec{}\else 
+     \refstepcounter{#1}\edef\@svsec{\csname the#1\endcsname\hskip 0.5em }\fi
+     \@tempskipa #5\relax
+      \ifdim \@tempskipa>\z@ 
+        \begingroup #6\relax
+          \@hangfrom{\hskip #3\relax\@svsec}{\interlinepenalty \@M #8\par}
+        \endgroup
+       \csname #1mark\endcsname{#7}\addcontentsline
+         {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                      \protect\numberline{\csname the#1\endcsname}\fi
+                    #7}\else
+        \def\@svsechd{#6\hskip #3\@svsec #8\csname #1mark\endcsname
+                      {#7}\addcontentsline
+                           {toc}{#1}{\ifnum #2>\c@secnumdepth \else
+                             \protect\numberline{\csname the#1\endcsname}\fi
+                       #7}}\fi
+     \@xsect{#5}}
+
+\def\thesection {\arabic{section}}
+\def\thesubsection {\thesection.\arabic{subsection}}
+\def\section{\@startsiction{section}{1}{\z@}{-0.24in}{0.10in}
+             {\large\bf\raggedright}}
+\def\subsection{\@startsection{subsection}{2}{\z@}{-0.20in}{0.08in}
+                {\normalsize\bf\raggedright}}
+\def\subsubsection{\@startsection{subsubsection}{3}{\z@}{-0.18in}{0.08in}
+                {\normalsize\sc\raggedright}}
+\def\paragraph{\@startsiction{paragraph}{4}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+\def\subparagraph{\@startsiction{subparagraph}{5}{\z@}{1.5ex plus
+  0.5ex minus .2ex}{-1em}{\normalsize\bf}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                              F O O T N O T E S
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Change the size of the footnote rule
+%
+% \renewcommand{\footnoterule}{\vspace{10pt}\hrule width 0mm}
+
+\long\def\@makefntext#1{\@setpar{\@@par\@tempdima \hsize 
+             \advance\@tempdima-15pt\parshape \@ne 15pt \@tempdima}\par
+             \parindent 2em\noindent \hbox to \z@{\hss{\@thefnmark}. \hfil}#1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               A B S T R A C T
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% use \begin{abstract} .. \end{abstract} for abstracts.
+\renewenvironment{abstract}
+{\centerline{\large\bf Abstract}\vspace{0.7ex}%
+  \bgroup\leftskip 20pt\rightskip 20pt\small\noindent\ignorespaces}%
+{\par\egroup\vskip 0.25ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               KEYWORDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% use \begin{keywords} .. \end{keywords} for keywordss.
+\newenvironment{keywords}
+{\bgroup\leftskip 20pt\rightskip 20pt \small\noindent{\bf Keywords:} }%
+{\par\egroup\vskip 0.25ex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                        FIRST PAGE, TITLE, AUTHOR
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Author information can be set in various styles:
+% For several authors from the same institution:
+% \author{Author 1 \and ... \and Author n \\
+%         \addr{Address line} \\ ... \\ \addr{Address line}}
+% if the names do not fit well on one line use
+%         Author 1 \\ {\bf Author 2} \\ ... \\ {\bf Author n} \\
+% To start a seperate ``row'' of authors use \AND, as in
+% \author{Author 1 \\ \addr{Address line} \\  ... \\ \addr{Address line}
+%         \AND
+%         Author 2 \\ \addr{Address line} \\ ... \\ \addr{Address line} \And
+%         Author 3 \\ \addr{Address line} \\ ... \\ \addr{Address line}}
+
+% Title stuff, borrowed in part from aaai92.sty
+
+\newlength\aftertitskip     \newlength\beforetitskip
+\newlength\interauthorskip  \newlength\aftermaketitskip
+
+%% Changeable parameters.
+\setlength\aftertitskip{0.1in plus 0.2in minus 0.2in}
+\setlength\beforetitskip{0.05in plus 0.08in minus 0.08in}
+\setlength\interauthorskip{0.08in plus 0.1in minus 0.1in}
+\setlength\aftermaketitskip{0.3in plus 0.1in minus 0.1in}
+
+%% overall definition of maketitle, @maketitle does the real work
+\def\maketitle{\par
+ \begingroup
+   \def\thefootnote{\fnsymbol{footnote}}
+   \def\@makefnmark{\hbox to 0pt{$^{\@thefnmark}$\hss}}
+   \@maketitle \@thanks
+ \endgroup
+\setcounter{footnote}{0}
+ \let\maketitle\relax \let\@maketitle\relax
+ \gdef\@thanks{}\gdef\@author{}\gdef\@title{}\let\thanks\relax}
+
+\def\@startauthor{\noindent \normalsize\bf}
+\def\@endauthor{}
+\def\@starteditor{\noindent \small {\bf Editor:~}}
+\def\@endeditor{\normalsize}
+\def\@maketitle{\vbox{\hsize\textwidth
+ \linewidth\hsize \vskip \beforetitskip
+ {\begin{center} \Large\bf \@title \par \end{center}} \vskip \aftertitskip
+ {\def\and{\unskip\enspace{\rm and}\enspace}%
+  \def\addr{\small\it}%
+  \def\email{\hfill\small\sc}%
+  \def\name{\normalsize\bf}%
+  \def\AND{\@endauthor\rm\hss \vskip \interauthorskip \@startauthor}
+  \@startauthor \@author \@endauthor}
+
+  \vskip \aftermaketitskip
+  \noindent \@starteditor \@editor \@endeditor
+  \vskip \aftermaketitskip
+}}
+
+\def\editor#1{\gdef\@editor{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%
+%%% Pagestyle
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Defines the pagestyle for the title page.
+%% Usage: \jmlrheading{1}{1993}{1-15}{8/93}{9/93}{14-115}{Jane Q. Public and A. U. Thor}
+%%        \jmlrheading{vol}{year}{pages}{Submitted date}{published date}{paper id}{authors}
+%%
+%% If your paper required revisions that were reviewed by the action editor, then indicate
+%%  this by, e.g.
+%%   \jmlrheading{1}{1993}{1-15}{8/93; Revised 10/93}{12/93}{14-115}{Jane Q. Public and A. U. Thor}
+
+\def\firstpageno#1{\setcounter{page}{#1}}
+
+\def\jmlrheading#1#2#3#4#5#6#7{\def\ps@jmlrtps{\let\@mkboth\@gobbletwo%
+\def\@oddhead{\scriptsize Journal of Machine Learning Research #1 (#2) #3 \hfill Submitted #4; Published #5}%
+\def\@oddfoot{\parbox[t]{\textwidth}{\raggedright \scriptsize \copyright #2 #7.\\[5pt] 
+License: CC-BY 4.0, see \url{https://creativecommons.org/licenses/by/4.0/}. Attribution requirements
+are provided at \url{http://jmlr.org/papers/v#1/#6.html}.\hfill}}%
+
+\def\@evenhead{}\def\@evenfoot{}}%
+\thispagestyle{jmlrtps}}
+
+%% Defines the pagestyle for the rest of the pages
+%% Usage: \ShortHeadings{Minimizing Conflicts}{Minton et al}
+%%        \ShortHeadings{short title}{short authors}
+
+\def\ShortHeadings#1#2{\def\ps@jmlrps{\let\@mkboth\@gobbletwo%
+\def\@oddhead{\hfill {\small\sc #1} \hfill}%
+\def\@oddfoot{\hfill \small\rm \thepage \hfill}%
+\def\@evenhead{\hfill {\small\sc #2} \hfill}%
+\def\@evenfoot{\hfill \small\rm \thepage \hfill}}%
+\pagestyle{jmlrps}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               MISCELLANY
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Define macros for figure captions and table titles
+
+% Figurecaption prints the caption title flush left.
+% \def\figurecaption#1#2{\noindent\hangindent 42pt
+%                        \hbox to 36pt {\sl #1 \hfil}
+%                        \ignorespaces #2}
+% \def\figurecaption#1#2{\noindent\hangindent 46pt
+%                        \hbox to 41pt {\small\sl #1 \hfil}
+%                        \ignorespaces {\small #2}}
+\def\figurecaption#1#2{\noindent\hangindent 40pt
+                       \hbox to 36pt {\small\sl #1 \hfil}
+                       \ignorespaces {\small #2}}
+% Figurecenter prints the caption title centered.
+\def\figurecenter#1#2{\centerline{{\sl #1} #2}}
+\def\figurecenter#1#2{\centerline{{\small\sl #1} {\small #2}}}
+
+%
+%  Allow ``hanging indents'' in long captions
+%
+\long\def\@makecaption#1#2{
+   \vskip 10pt 
+   \setbox\@tempboxa\hbox{#1: #2}
+   \ifdim \wd\@tempboxa >\hsize               % IF longer than one line:
+       \begin{list}{#1:}{
+       \settowidth{\labelwidth}{#1:}
+       \setlength{\leftmargin}{\labelwidth}
+       \addtolength{\leftmargin}{\labelsep}
+        }\item #2 \end{list}\par   % Output in quote mode
+     \else                                    %   ELSE  center.
+       \hbox to\hsize{\hfil\box\@tempboxa\hfil}  
+   \fi}
+
+
+% Define strut macros for skipping spaces above and below text in a
+% tabular environment.
+\def\abovestrut#1{\rule[0in]{0in}{#1}\ignorespaces}
+\def\belowstrut#1{\rule[-#1]{0in}{#1}\ignorespaces}
+
+% Acknowledgments
+\long\def\acks#1{\vskip 0.3in\noindent{\large\bf Acknowledgments}\vskip 0.2in
+\noindent #1}
+
+% Research Note
+\long\def\researchnote#1{\noindent {\LARGE\it Research Note} #1}
+
+\renewcommand{\appendix}{\par
+  \setcounter{section}{0}
+  \setcounter{subsection}{0}
+  \def\thesection{\Alph{section}}
+\def\section{\@ifnextchar*{\@startsiction{section}{1}{\z@}{-0.24in}{0.10in}%
+             {\large\bf\raggedright}}%
+{\@startsiction{section}{1}{\z@}{-0.24in}{0.10in}
+             {\large\bf\raggedright Appendix\ }}}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                               PROOF, THEOREM, and FRIENDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\BlackBox}{\rule{1.5ex}{1.5ex}}  % end of proof
+\newenvironment{proof}{\par\noindent{\bf Proof\ }}{\hfill\BlackBox\\[2mm]}
+\newtheorem{example}{Example} 
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma} 
+\newtheorem{proposition}[theorem]{Proposition} 
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{axiom}[theorem]{Axiom}
+
+
+
