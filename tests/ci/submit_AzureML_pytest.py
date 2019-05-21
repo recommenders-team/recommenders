@@ -9,6 +9,7 @@ an experiment.
 '''
 
 import json
+import argparse
 # import time
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
@@ -22,6 +23,10 @@ from azureml.core.script_run_config import ScriptRunConfig
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.compute_target import ComputeTargetException
 
+HELP_MSG = """
+This program sets up an AzureML environment and submits a pytest script on aml.
+$ python dir/setup_AzureML_script_to_submits_pytest.py
+"""
 
 def submit_exp():
 
@@ -95,11 +100,11 @@ def submit_exp():
 
     # Use conda_dependencies.yml to create a conda environment in the Docker
     # image for execution
-    run_amlcompute.environment.python.user_managed_dependencies = False
+    # wb: run_amlcompute.environment.python.user_managed_dependencies = False
 
     # Auto-prepare the Docker image when used for execution (if it is not
     # already prepared)
-    run_amlcompute.auto_prepare_environment = True
+    # wb: run_amlcompute.auto_prepare_environment = True
 
     # Specify CondaDependencies obj, add necessary packages
 
@@ -132,4 +137,18 @@ def submit_exp():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Parser", type=str, help="Help mandatory string param"
+    )
+    parser.add_argument(
+        "--gpu", action="store_true", help="include packages for GPU support"
+    )
+    parser.add_argument(
+        "--not_notebooks_and_not_spark_and_not_gpu", action="store_true", help="pytest markers not notebooks and not spark and not gpu "
+    )
+    parser.add_argument(
+        "--tests/unit", action="store_true", help="folder/type_of_test such as tests/unit or tests/smoke or tests/integration"
+    )
+
+
     submit_exp()
