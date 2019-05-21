@@ -19,7 +19,8 @@ variables:
 #  - master
 
 pr:
-- staging 
+- staging
+- master 
 
 pool:
  vmImage: 'ubuntu-16.04'
