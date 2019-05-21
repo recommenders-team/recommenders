@@ -29,17 +29,20 @@
 
 \title{Microsoft/Recommenders: Best practices for building industry-grade recommender system}
 
-\author{\name Marina Meil \email mmp@stat.washington.edu \\
-       \addr Department of Statistics\\
-       University of Washington\\
-       Seattle, WA 98195-4322, USA
+\author{\name Le Zhang \email your@email.com \\
+       \addr One Microsoft Way \\
+       Redmond, WA 98052, USA
        \AND
-       \name Michael I.\ Jordan \email jordan@cs.berkeley.edu \\
-       \addr Division of Computer Science and Department of Statistics\\
-       University of California\\
-       Berkeley, CA 94720-1776, USA}
+       \name Jun-Ki Min \email jun.min@microsoft.com \\
+       \addr 1 Memorial Dr \\
+       Cambridge, MA 02142, USA
+       \AND
+       \name Authors \email your email \\
+       \addr your address line 1 \\
+       \addr your address line 2 \\
+       \addr your address line 3}
 
-\editor{Kevin Murphy and Bernhard Scholkopf}
+\editor{editors here}
 
 \maketitle
 
@@ -52,21 +55,46 @@
 \end{keywords}
 
 \section{Introduction}
-\subsection{Background}
 Recent decades have witnessed a great proliferation of recommendation systems. The technology has brought significant profits to many business verticals. From earlier algorithms such as similarity based collaborative filtering to the latest deep neural network based methods, recommendation technologies have evolved dramatically, which, to some extent, makes it challenging to practitioners to select and customize the optimal algorithms for a specific business scenario. In addition, operations such as data preprocessing, model evaluation, system operationalization etc. play a significant role in the lifecycle of developing a recommendation system; however, they are often neglected by practitioners. 
-Based on extensive experience in productization of recommendation systems in a variety of real-world application domains, an open source GitHub repository, \texttt Microsoft/Recommenders was created for sharing the best practices in building industry standard recommender system for varieties of application scenarios. The repository aims at helping developers / scientists / researchers to quickly build production-ready recommendation systems as well as to prototype novel ideas using the provided utility functions. 
+Based on extensive experience in productization of recommendation systems in a variety of real-world application domains, an open source GitHub repository, \texttt Microsoft/Recommenders was created for sharing the best practices in building industry standard recommender system for varieties of application scenarios. The repository aims at helping developers, scientists and researchers to quickly build production-ready recommendation systems as well as to prototype novel ideas using the provided utility functions.
 
-\subsection{General principles of Microsoft/Recommenders}
+In this paper we introduce Microsoft/Recommenders by describing the general principles, models and topics covered by the repository which includes implementation of modern state-of-the-art recommendation algorithms as well as more practical topics such as hyper-parameter tuning and operationalization.
+
+\section{Microsoft/Recommenders}
+\subsection{General principles of the repository}
 \begin{enumerate}
 \item \emph{The repository covers a wide spectrum of recommender algorithms. It includes classic methods such as collaborative filtering and factorization machine, as well as more recent deep learning algorithms with enhanced model accuracy, interpretability, and scalability.} The wide breadth of recommendation algorithms, as well as the DevOps pipeline that serves as a backbone underneath the codebase, offers convenience to the researchers and developers for trying different algorithms and selecting the optimal one for particular use case. 
 \item \emph{The algorithms are implemented and optimized for easy adoption and customization.} It is a common yet challenging task to generalize implementations of various components in a recommender system for development efficiency. The repository provides modular and reusable assets as utility functions (e.g. temporal or stratified split between training and testing data) with consistent formats, coding style, and standard APIs, to enable ready-for-use scenarios as well as user-customized solutions in a recommender system. In addition, the theoretical discussion and code implementation are put into Jupyter notebooks to provide interactive experience for the developers and have them quickly understand, implement or customize different recommendation algorithms. When necessary, the notebooks can be conveniently converted to production-ready codes with minimal efforts on refactoring. 
 \item \emph{The Recommenders repository avails heterogeneous computing platforms and data storage media on cloud that meet the requirements of the different workloads in a recommender system pipeline.} A commonly seen problem that arises in recommender system design is that the backend data processing pipeline and model building/serving pipeline should be architected under certain set of engineering constraints to satisfy the requirements of the frontend applications. To harness the complexity in system design, the Recommenders repository provides reference architectures that demonstrates how to build an enterprise level end-to-end recommendation system. For example, the reference architecture for a real-time recommender system shows data ingestion, data storage, model building, model deployment and model consumption by using various technologies like Spark, distributed database and Kubernetes on the cloud. 
 \item \emph{The repository provides an open, transparent, and collaborative platform for academic and open-source community for contributing and testing their own algorithms.} A major design principle of the repository is openness, to facilitate collaborations among researchers and developers in the field. More than 20 people contributed to the repository [4]. This is made available by the reusable and extensible utility functions. The recommenders repository became a well-recognized resource to acquire knowledge about recommendation engine beyond the basics. As of early May 2019, the repository has more than 3000 stars on Github and is forked close to 400 times. It was also covered and recognized by Hacker News, KDNuggets and O’Reilly Data Newsletter
+\end{enumerate}
+
+
+\subsection{Data preparation and model evaluation}
+\subsubsection{Data preparation}
+\subsubsection{Model evaluation}
+\subsubsubsection{Offline evaluation and metrics}
+\subsubsubsection{Online evaluation}
+\begin{itemize}
+  \item A/B testing
+  \item Multi-armed bandit
+\end{itemize}
+
+\subsection{Modeling and optimization}
+\subsubsection{Model deep dives}
+We covers algorithm-level details about each recommender model so that users can select a model that fits to their problem.
+\subsubsection{Hyper-parameter tuning}
+
+\subsection{Operationalization}
+\subsubsection{Large-scale model building and serving}
+\subsubsubsection{Distributed computing platform and database}
+\subsubsubsection{Containerization for real-time serving}
 
 {\noindent \em Remainder omitted in this sample. See http://www.jmlr.org/papers/ for full paper.}
 
-\section{Recommender algorithms}
+\section{Background}
 % Some brief general introduction goes to here
+This section lists recommender algorithms covered by Recommenders repository as of May 2019.
 
 \subsection{Classic algorithms}
 % Algorithms that have been practiced by developers and proven value in industry applications
@@ -83,32 +111,16 @@ Based on extensive experience in productization of recommendation systems in a v
       \item alternate leasting square
       \item nerual collaborative filtering
     \end{itemize}
+\end{itemize}
 \subsubsection{Content-based filtering algorithms}
 \begin{itemize}
   \item logistic regression
   \item gradient boosting techniques
   \item factorization machine
 \end{itemize}
-\subsection{Emerging technologies}
+\subsection{Emerging approaches}
 \subsubsection{Deep learning applications}
 \subsubsection{Enhancement with heterogeneous information}
-
-\section{Data preparation and model evaluation}
-\subsection{Data preparation}
-\subsection{Model evaluation}
-\subsubsection{Offline evaluation and metrics}
-\subsubsection{Online evaluation}
-\begin{itemize}
-  \item A/B testing
-  \item Multi-armed bandit
-\end{itemize}
-
-\section{Productionization}
-\subsection{Large-scale model building}
-\subsubsection{Hyperparameter tuning}
-\subsubsection{Distributed computing platform and database}
-\subsection{Model operationalization}
-\subsubsection{Container technology}
 
 % Acknowledgements should go at the end, before appendices and references
 
