@@ -189,13 +189,13 @@ class LibffmConverter(object):
 
         # Encode field-feature.
         idx = 1
-        field_feature_dict = {}
+        self.field_feature_dict = {}
         for field in self.field_names:
             for feature in df[field].values:
                 # Check whether (field, feature) tuple exists in the dict or not.
                 # If not, put them into the key-values of the dict and count the index.
-                if (field, feature) not in field_feature_dict:
-                    field_feature_dict[(field, feature)] = idx
+                if (field, feature) not in self.field_feature_dict:
+                    self.field_feature_dict[(field, feature)] = idx
                     if df[field].dtype == object:
                         idx += 1
             if df[field].dtype != object:
@@ -212,7 +212,7 @@ class LibffmConverter(object):
 
         for col_index, col in enumerate(self.field_names):
             df[col] = df[col].apply(
-                lambda x: _convert(col, x, col_index + 1, field_feature_dict)
+                lambda x: _convert(col, x, col_index + 1, self.field_feature_dict)
             )
 
         # Move rating column to the first.
