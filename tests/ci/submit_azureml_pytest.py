@@ -39,7 +39,7 @@ def submit_exp():
             subscription_id = config["subscription_id"]
             location = config["location"]
 
-            print(" WS name ", workspace_name)
+            print(" d3v2 WS name ", workspace_name)
             print("subscription_id ", subscription_id)
             print("location", location)
 
