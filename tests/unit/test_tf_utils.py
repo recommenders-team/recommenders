@@ -4,6 +4,7 @@
 import pytest
 import shutil
 
+import numpy as np
 import pandas as pd
 import tensorflow as tf
 
@@ -21,7 +22,8 @@ from reco_utils.recommender.wide_deep.wide_deep_utils import (
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL
+    DEFAULT_RATING_COL,
+    SEED,
 )
 from reco_utils.evaluation.python_evaluation import rmse
 
@@ -47,22 +49,47 @@ def pd_df():
 def test_pandas_input_fn(pd_df):
     df, _, _ = pd_df
 
-    input_fn = pandas_input_fn(df)
-    sample = input_fn()
+    # check dataset
+    dataset = pandas_input_fn(df)()
+    batch = dataset.make_one_shot_iterator().get_next()
+    with tf.Session() as sess:
+        features = sess.run(batch)
+        
+        # check the input function returns all the columns
+        assert len(features) == len(df.columns)
+        
+        for k, v in features.items():
+            assert k in df.columns.values
+            # check if a list feature column converted correctly
+            if len(v.shape) == 1:
+                assert np.array_equal(v, df[k].values)
+            elif len(v.shape) == 2:
+                assert v.shape[1] == len(df[k][0])
+    
+    # check dataset with shuffles
+    dataset = pandas_input_fn(df, shuffle=True, seed=SEED)()
+    batch = dataset.make_one_shot_iterator().get_next()
+    with tf.Session() as sess:
+        features = sess.run(batch)
+        print(features)
+        # check the input function returns all the columns
+        assert len(features) == len(df.columns)
+        
+        for k, v in features.items():
+            assert k in df.columns.values
+            # check if a list feature column converted correctly
+            if len(v.shape) == 1:
+                assert not np.array_equal(v, df[k].values)
+            elif len(v.shape) == 2:
+                assert v.shape[1] == len(df[k][0])
 
-    # check the input function returns all the columns
-    assert len(df.columns) == len(sample)
-    for k, v in sample.items():
-        assert k in df.columns.values
-        # check if a list feature column converted correctly
-        if len(v.shape) == 2:
-            assert v.shape[1] == len(df[k][0])
-
-    input_fn_with_label = pandas_input_fn(df, y_col=DEFAULT_RATING_COL)
-    X, y = input_fn_with_label()
-    features = df.copy()
-    features.pop(DEFAULT_RATING_COL)
-    assert len(X) == len(features.columns)
+    
+    # check dataset w/ label
+    dataset_with_label = pandas_input_fn(df, y_col=DEFAULT_RATING_COL)()
+    batch = dataset_with_label.make_one_shot_iterator().get_next()
+    with tf.Session() as sess:
+        features, label = sess.run(batch)
+        assert len(features) == len(df.columns) - 1  # label should not be in the features
 
 
 @pytest.mark.gpu
