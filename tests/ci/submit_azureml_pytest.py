@@ -68,7 +68,7 @@ def submit_exp():
         )
 
     # Choose a name for your CPU cluster
-    cpu_cluster_name = "persistentcpu"
+    cpu_cluster_name = "cluster-d3-v2"
     print("cpu_cluster_name", cpu_cluster_name)
     # Verify that cluster does not exist already
     # https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-set-up-training-targets
@@ -79,7 +79,7 @@ def submit_exp():
     except ComputeTargetException:
         print("create cluster")
         compute_config = AmlCompute.provisioning_configuration(
-                       vm_size='STANDARD_D2_V2',
+                       vm_size='STANDARD_D3_V2',
                        max_nodes=4)
         cpu_cluster = ComputeTarget.create(ws,
                                            cpu_cluster_name,
@@ -112,7 +112,7 @@ def submit_exp():
     run_amlcompute.environment.python.conda_dependencies = CondaDependencies(
             conda_dependencies_file_path='./reco.yaml')
 
-    experiment_name = 'unit_tests_staging'
+    experiment_name = 'unit_tests_staging-d3-v2'
 
     experiment = Experiment(workspace=ws, name=experiment_name)
     project_folder = "."
@@ -135,6 +135,7 @@ def submit_exp():
     print('files', run.get_file_names())
     run.download_files(prefix='reports')
     run.tag('persistentaml')
+    run.tag('d3_v2')
 
 
 if __name__ == "__main__":
