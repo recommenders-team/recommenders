@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import sys
-import subprocess
 import os
 import glob
 from numba import cuda
