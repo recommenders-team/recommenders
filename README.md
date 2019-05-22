@@ -59,7 +59,7 @@ The table below lists recommender algorithms currently available in the reposito
 | Wide and Deep | [Python CPU / Python GPU](notebooks/00_quick_start/wide_deep_movielens.ipynb) | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
 
 
-**NOTE** - <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
+**NOTE**: <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
 
 **Preliminary Comparison**
 
