@@ -44,9 +44,9 @@ steps:
    cat ./tests/ci/config.json
   displayName: 'replace subscription value'
 
-- script: 
-   sed -i 's#"tests/unit_or_smoke_int"#"tests/unit"#g' ./tests/ci/runpytest.py
-  displayName: 'replace unit or smoke or int'
+#- script: 
+#   sed -i 's#"tests/unit_or_smoke_int"#"tests/unit"#g' ./tests/ci/runpytest.py
+#  displayName: 'replace unit or smoke or int'
 
 - bash: |
     echo "##vso[task.prependpath]/data/anaconda/bin"
