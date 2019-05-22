@@ -149,19 +149,14 @@ def test_vw_deep_dive_integration(notebooks, size, expected_values):
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(sys.platform == 'win32', reason="nni not installable on windows")
+@pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
 def test_nni_tuning_svd(notebooks, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
-    # First check if NNI is running
-    try:
-        check_experiment_status(NNI_STATUS_URL)
-        raise Exception('NNI Server must be stopped before running integration tests')
-    except:
-        pass
-
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
                         parameters=dict(MOVIELENS_DATA_SIZE="100k",
                                         SURPRISE_READER="ml-100k",
                                         TMP_DIR=tmp,
                                         MAX_TRIAL_NUM=1,
-                                        NUM_EPOCHS=1))
+                                        NUM_EPOCHS=1,
+                                        WAITING_TIME=20,
+                                        MAX_RETRIES=10))

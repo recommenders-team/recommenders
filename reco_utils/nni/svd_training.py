@@ -57,7 +57,7 @@ def svd_training(params):
     if len(ranking_metrics) > 0:
         all_predictions = compute_ranking_predictions(svd, train_data, usercol=params['usercol'],
                                                       itemcol=params['itemcol'],
-                                                      recommend_seen=params['recommend_seen'])
+                                                      remove_seen=params['remove_seen'])
         k = params['k']
         for metric in ranking_metrics:
             result = getattr(evaluation, metric)(validation_data, all_predictions, col_prediction='prediction', k=k)
@@ -96,7 +96,7 @@ def get_params():
     parser.add_argument('--rating-metrics', type=str, nargs='*', dest='rating_metrics', default=[])
     parser.add_argument('--ranking-metrics', type=str, nargs='*', dest='ranking_metrics', default=[])
     parser.add_argument('--k', type=int, dest='k', default=None)
-    parser.add_argument('--recommend-seen', dest='recommend_seen', action='store_true')
+    parser.add_argument('--remove-seen', dest='remove_seen', action='store_false')
     # Training parameters
     parser.add_argument('--random-state', type=int, dest='random_state', default=0)
     parser.add_argument('--verbose', dest='verbose', action='store_true')
