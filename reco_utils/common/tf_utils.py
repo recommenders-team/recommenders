@@ -85,7 +85,7 @@ def build_optimizer(name, lr=0.001, **kwargs):
     """
     optimizers = dict(
         adadelta=tf.train.AdadeltaOptimizer,
-        adagrad=tf.train.AdagradDAOptimizer,
+        adagrad=tf.train.AdagradOptimizer,
         adam=tf.train.AdamOptimizer,
         ftrl=tf.train.FtrlOptimizer,
         momentum=tf.train.MomentumOptimizer,
