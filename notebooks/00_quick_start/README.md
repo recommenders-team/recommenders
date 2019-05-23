@@ -13,6 +13,7 @@ data preparation, model building, and model evaluation by using the utility func
 | [lightgbm](lightgbm_tinycriteo.ipynb) | Criteo | Python CPU | Utilizing LightGBM Boosting Tree to predict whether or not a user has clicked on an e-commerce ad |
 | [ncf](ncf_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Neural Collaborative Filtering (NCF) [1] to predict movie ratings in a Python+GPU (TensorFlow) environment.
 | [rbm](rbm_movielens.ipynb)| MovieLens | Python CPU, GPU | Utilizing the Restricted Boltzmann Machine (rbm) [4] to predict movie ratings in a Python+GPU (TensorFlow) environment.<br>
+| [rlrmc](rlrmc_movielens.ipynb) | Movielens | Python CPU | Utilizing the Riemannian Low-rank Matrix Completion (RLRMC) [6] to predict movie rating in a Python+CPU environment
 | [sar](sar_movielens.ipynb) | MovieLens | Python CPU | Utilizing Simple Algorithm for Recommendation (SAR) algorithm to predict movie ratings in a Python+CPU environment.
 | [sar_azureml](sar_movielens_with_azureml.ipynb)| MovieLens | Python CPU | An example of how to utilize and evaluate SAR using the [Azure Machine Learning service](https://docs.microsoft.com/azure/machine-learning/service/overview-what-is-azure-ml)(AzureML). It takes the content of the [sar quickstart notebook](sar_movielens.ipynb) and demonstrates how to use the power of the cloud to manage data, switch to powerful GPU machines, and monitor runs while training a model.
 | [wide-and-deep](wide_deep_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Wide-and-Deep Model (Wide-and-Deep) [5] to predict movie ratings in a Python+GPU (TensorFlow) environment.
@@ -23,3 +24,5 @@ data preparation, model building, and model evaluation by using the utility func
 [3] _xDeepFM: Combining Explicit and Implicit Feature Interactions for Recommender Systems_, Jianxun Lian, Xiaohuan Zhou, Fuzheng Zhang, Zhongxia Chen, Xing Xie and Guangzhong Sun. KDD 2018.<br>
 [4] _Restricted Boltzmann Machines for Collaborative Filtering_, Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton. ICML 2007.<br>
 [5] _Wide & Deep Learning for Recommender Systems_, Heng-Tze Cheng et al., arXiv:1606.07792 2016.
+[6] _A unified framework for structured low-rank matrix learning_, Pratik Jawanpuria and Bamdev Mishra, In International Conference on Machine Learning, 2018.
+
