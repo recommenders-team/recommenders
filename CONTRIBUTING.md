@@ -1,6 +1,6 @@
 # Contribution Guidelines
 
-Contribution are welcome! Here's a few things to know:
+Contributions are welcomed! Here's a few things to know:
 
 * [Steps to Contributing](#steps-to-contributing)
 * [Coding Guidelines](#recommenders-team-contribution-guidelines)
