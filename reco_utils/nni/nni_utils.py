@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import json
 import os
 import requests
@@ -39,8 +42,11 @@ def check_experiment_status(wait=WAITING_TIME, max_retries=MAX_RETRIES):
         if nni_status["status"] in ["DONE", "TUNER_NO_MORE_TRIAL"]:
             break
         elif nni_status["status"] not in ["RUNNING", "NO_MORE_TRIAL"]:
-            raise RuntimeError("NNI experiment failed to complete with status {} - {}".format(nni_status["status"], 
-                                                                                              nni_status["errors"][0]))
+            raise RuntimeError(
+                "NNI experiment failed to complete with status {} - {}".format(
+                    nni_status["status"], nni_status["errors"][0]
+                )
+            )
         time.sleep(wait)
         i += 1
     if i == max_retries:
@@ -100,10 +106,15 @@ def get_trials(optimize_mode):
     if optimize_mode not in ["minimize", "maximize"]:
         raise ValueError("optimize_mode should equal either minimize or maximize")
     all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
-    trials = [(eval(trial["finalMetricData"][0]["data"]), trial["logPath"].split(":")[-1]) for trial in all_trials]
-    sorted_trials = sorted(trials, key=lambda x: x[0]["default"], reverse=(optimize_mode == "maximize"))
+    trials = [
+        (eval(trial["finalMetricData"][0]["data"]), trial["logPath"].split(":")[-1])
+        for trial in all_trials
+    ]
+    sorted_trials = sorted(
+        trials, key=lambda x: x[0]["default"], reverse=(optimize_mode == "maximize")
+    )
     best_trial_path = sorted_trials[0][1]
-    
+
     # Read the metrics from the trial directory in order to get the name of the default metric
     with open(os.path.join(best_trial_path, "metrics.json"), "r") as fp:
         best_metrics = json.load(fp)
@@ -131,7 +142,6 @@ def start_nni(config_path, wait=WAITING_TIME, max_retries=MAX_RETRIES):
     nni_env = os.environ.copy()
     nni_env["PATH"] = sys.prefix + "/bin:" + nni_env["PATH"]
     proc = subprocess.run(["nnictl", "create", "--config", config_path], env=nni_env)
-    if proc.returncode != 0: 
+    if proc.returncode != 0:
         raise RuntimeError("'nnictl create' failed with code %d" % proc.returncode)
     check_experiment_status(wait=wait, max_retries=max_retries)
-
