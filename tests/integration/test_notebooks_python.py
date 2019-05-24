@@ -149,7 +149,8 @@ def test_vw_deep_dive_integration(notebooks, size, expected_values):
 
 
 @pytest.mark.integration
-@pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
+#@pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
+@pytest.mark.skip(reason="https://github.com/microsoft/recommenders/issues/746")
 def test_nni_tuning_svd(notebooks, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
