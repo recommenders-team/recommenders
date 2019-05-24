@@ -159,4 +159,4 @@ def test_nni_tuning_svd(notebooks, tmp):
                                         MAX_TRIAL_NUM=1,
                                         NUM_EPOCHS=1,
                                         WAITING_TIME=20,
-                                        MAX_RETRIES=10))
+                                        MAX_RETRIES=50))
