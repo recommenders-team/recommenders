@@ -120,7 +120,8 @@ def build_model(
     dnn_dropout=0.0,
     dnn_batch_norm=True,
     log_every_n_iter=1000,
-    save_checkpoints_steps=10000
+    save_checkpoints_steps=10000,
+    seed=None
 ):
     """Build wide-deep model.
     To generate wide model, pass wide_columns only.
@@ -138,12 +139,14 @@ def build_model(
         dnn_batch_norm (bool): Deep model's batch normalization flag.
         log_every_n_iter (int): Every log_every_n_iter steps, log the train loss.
         save_checkpoints_steps (int): Model checkpointing frequency.
+        seed (int): Random seed.
 
     Returns:
         tf.estimator.Estimator: Model
     """
     # TensorFlow training log frequency setup
     config = tf.estimator.RunConfig(
+        tf_random_seed=seed,
         log_step_count_steps=log_every_n_iter,
         save_checkpoints_steps=save_checkpoints_steps,
     )

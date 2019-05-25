@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import sys
 import pytest
 import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
@@ -37,6 +38,7 @@ def test_als_pyspark_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.spark
+@pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
 def test_mmlspark_lightgbm_criteo_smoke(notebooks):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
     pm.execute_notebook(

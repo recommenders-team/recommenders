@@ -17,6 +17,7 @@
 
 import argparse
 import textwrap
+from sys import platform
 
 
 HELP_MSG = """
@@ -76,15 +77,23 @@ PIP_BASE = {
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nni": "nni==0.5.2.1",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
+    "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
 }
 
-PIP_PYSPARK = {}
 PIP_GPU = {}
+PIP_PYSPARK = {}
+
+PIP_DARWIN = {
+    "nni": "nni==0.5.2.1",
+}
+PIP_LINUX = {
+    "nni": "nni==0.5.2.1",
+}
+PIP_WIN32 = {}
 
 
 if __name__ == "__main__":
@@ -145,6 +154,16 @@ if __name__ == "__main__":
     if args.gpu:
         conda_packages.update(CONDA_GPU)
         pip_packages.update(PIP_GPU)
+
+    # check for os platform support
+    if platform == 'darwin':
+        pip_packages.update(PIP_DARWIN)
+    elif platform.startswith('linux'):
+        pip_packages.update(PIP_LINUX)
+    elif platform == 'win32':
+        pip_packages.update(PIP_WIN32)
+    else:
+        raise Exception('Unsupported platform, must be Windows, Linux, or macOS')
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)
