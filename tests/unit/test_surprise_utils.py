@@ -96,7 +96,7 @@ def test_compute_ranking_predictions(rating_true):
     ).build_full_trainset()
     svd.fit(train_set)
 
-    preds = compute_ranking_predictions(svd, rating_true)
+    preds = compute_ranking_predictions(svd, rating_true, remove_seen=True)
     assert set(preds.columns) == {"userID", "itemID", "prediction"}
     assert preds["userID"].dtypes == rating_true["userID"].dtypes
     assert preds["itemID"].dtypes == rating_true["itemID"].dtypes
@@ -105,7 +105,7 @@ def test_compute_ranking_predictions(rating_true):
     assert preds[(preds["userID"] == user) & (preds["itemID"] == item)][
         "prediction"
     ].values == pytest.approx(svd.predict(user, item).est, rel=TOL)
-    # Test default recommend_seen=False
+    # Test default remove_seen=True
     assert pd.merge(rating_true, preds, on=["userID", "itemID"]).shape[0] == 0
     assert preds.shape[0] == (n_users * n_items - rating_true.shape[0])
 
@@ -115,7 +115,7 @@ def test_compute_ranking_predictions(rating_true):
         usercol="uid",
         itemcol="iid",
         predcol="pred",
-        recommend_seen=True,
+        remove_seen=False,
     )
     assert set(preds.columns) == {"uid", "iid", "pred"}
     assert preds["uid"].dtypes == rating_true["userID"].dtypes
@@ -125,7 +125,8 @@ def test_compute_ranking_predictions(rating_true):
     assert preds[(preds["uid"] == user) & (preds["iid"] == item)][
         "pred"
     ].values == pytest.approx(svd.predict(user, item).est, rel=TOL)
-    # Test recommend_seen=True
+    
+    # Test remove_seen=False
     assert (
         pd.merge(
             rating_true, preds, left_on=["userID", "itemID"], right_on=["uid", "iid"]
