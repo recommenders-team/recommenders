@@ -37,7 +37,7 @@ class NCF:
         batch_size=64,
         learning_rate=5e-3,
         verbose=1,
-        seed=42,
+        seed=None,
     ):
         """Constructor
         
@@ -54,8 +54,12 @@ class NCF:
             seed (int): Seed.
         
         """
+        
+        # seed
         tf.set_random_seed(seed)
         np.random.seed(seed)
+        self.seed = seed
+        
         self.n_users = n_users
         self.n_items = n_items
         self.model_type = model_type.lower()
@@ -74,7 +78,7 @@ class NCF:
                     model_options
                 )
             )
-        
+
         # ncf layer input size
         self.ncf_layer_size = n_factors + layer_sizes[-1]
         # create ncf model
@@ -102,7 +106,7 @@ class NCF:
             # set embedding table
             self.embedding_gmf_P = tf.Variable(
                 tf.truncated_normal(
-                    shape=[self.n_users, self.n_factors], mean=0.0, stddev=0.01
+                    shape=[self.n_users, self.n_factors], mean=0.0, stddev=0.01, seed=self.seed,
                 ),
                 name="embedding_gmf_P",
                 dtype=tf.float32,
@@ -110,7 +114,7 @@ class NCF:
 
             self.embedding_gmf_Q = tf.Variable(
                 tf.truncated_normal(
-                    shape=[self.n_items, self.n_factors], mean=0.0, stddev=0.01
+                    shape=[self.n_items, self.n_factors], mean=0.0, stddev=0.01, seed=self.seed,
                 ),
                 name="embedding_gmf_Q",
                 dtype=tf.float32,
@@ -122,6 +126,7 @@ class NCF:
                     shape=[self.n_users, int(self.layer_sizes[0] / 2)],
                     mean=0.0,
                     stddev=0.01,
+                    seed=self.seed,
                 ),
                 name="embedding_mlp_P",
                 dtype=tf.float32,
@@ -132,6 +137,7 @@ class NCF:
                     shape=[self.n_items, int(self.layer_sizes[0] / 2)],
                     mean=0.0,
                     stddev=0.01,
+                    seed=self.seed,
                 ),
                 name="embedding_mlp_Q",
                 dtype=tf.float32,
@@ -166,7 +172,10 @@ class NCF:
             # MLP Layers
             for layer_size in self.layer_sizes[1:]:
                 output = tf.contrib.layers.fully_connected(
-                    output, num_outputs=layer_size, activation_fn=tf.nn.relu
+                    output,
+                    num_outputs=layer_size,
+                    activation_fn=tf.nn.relu,
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
             self.mlp_vector = output
 
@@ -181,6 +190,7 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
                 self.output = tf.sigmoid(output)
 
@@ -191,6 +201,7 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
                 self.output = tf.sigmoid(output)
 
@@ -203,6 +214,7 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
+                    weights_initializer=tf.contrib.layers.xavier_initializer(seed=self.seed),
                 )
                 self.output = tf.sigmoid(output)
 
@@ -392,4 +404,3 @@ class NCF:
 
         # calculate predicted score
         return self.sess.run(self.output, feed_dict)
-
