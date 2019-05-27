@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import os, logging
+
+import logging
 import numpy as np
 import pandas as pd
 import category_encoders as ce
@@ -98,7 +99,6 @@ class NumEncoder(object):
             feats = df[item].values
             labels = df[self.label_name].values
             feat_encoding = {"mean": [], "count": []}
-            feat_temp_result = collections.defaultdict(lambda: [0, 0])
             self.save_cate_avgs[item] = collections.defaultdict(lambda: [0, 0])
             for idx in range(self.samples):
                 cur_feat = feats[idx]
