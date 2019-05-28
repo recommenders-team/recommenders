@@ -14,8 +14,8 @@ variables:
   value : 'tests/ci/run_pytest.py'
 - name  : 'testfolder'
   value : './tests/unit'
-- name  : 'testmarkers'
-  value : '"not notebooks and not spark and not gpu"'
+#- name  : 'testmarkers'
+#  value : '"not notebooks and not spark and not gpu"'
 - name  : 'junitxml'
   value : 'reports/test-unit.xml'
 #   
