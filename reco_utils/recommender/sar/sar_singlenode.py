@@ -5,7 +5,6 @@
 import numpy as np
 import pandas as pd
 import logging
-from sklearn.preprocessing import normalize
 from scipy import sparse
 
 from reco_utils.common.python_utils import (
@@ -39,6 +38,7 @@ class SARSingleNode:
         time_now=None,
         timedecay_formula=False,
         threshold=1,
+        normalize=False,
     ):
         """Initialize model parameters
 
@@ -53,6 +53,7 @@ class SARSingleNode:
             time_now (int | None): current time for time decay calculation
             timedecay_formula (bool): flag to apply time decay
             threshold (int): item-item co-occurrences below this threshold will be removed
+            normalize (bool): option for normalizing predictions to scale of original ratings
         """
         self.col_rating = col_rating
         self.col_item = col_item
@@ -79,6 +80,11 @@ class SARSingleNode:
         if self.threshold <= 0:
             raise ValueError("Threshold cannot be < 1")
 
+        # set flag to capture unity-rating user-affinity matrix for scaling scores
+        self.normalize = normalize
+        self.col_unity_rating = "_unity_rating"
+        self.unity_user_affinity = None
+
         # column for mapping user / item ids to internal indices
         self.col_item_id = "_indexed_items"
         self.col_user_id = "_indexed_users"
@@ -97,7 +103,7 @@ class SARSingleNode:
         # track user-item pairs seen during training
         self.seen_items = None
 
-    def compute_affinity_matrix(self, df, n_users, n_items):
+    def compute_affinity_matrix(self, df, rating_col):
         """ Affinity matrix
         The user-affinity matrix can be constructed by treating the users and items as
         indices in a sparse matrix, and the events as the data. Here, we're treating
@@ -105,28 +111,50 @@ class SARSingleNode:
         formats to de-duplicate user-item pairs, otherwise they will get added up.
         
         Args:
-            df (pd.DataFrame): Indexed df of users and items.
-            n_users (int): Number of users.
-            n_items (int): Number of items.
+            df (pd.DataFrame): Indexed df of users and items
+            rating_col (str): Name of column to use for ratings
 
         Returns:
             sparse.csr: Affinity matrix in Compressed Sparse Row (CSR) format.
         """
 
         return sparse.coo_matrix(
-            (df[self.col_rating], (df[self.col_user_id], df[self.col_item_id])),
-            shape=(n_users, n_items),
+            (df[rating_col], (df[self.col_user_id], df[self.col_item_id])),
+            shape=(self.n_users, self.n_items),
         ).tocsr()
 
-    def compute_coocurrence_matrix(self, df, n_users, n_items):
+    def compute_time_decay(self, df, decay_column):
+        """Compute time decay on provided column
+
+        Args:
+            df (pd.DataFrame): DataFrame of users and items
+            decay_column (str): column to decay
+
+        Returns:
+            DataFrame: with column decayed
+        """
+
+        # if time_now is None use the latest time
+        if not self.time_now:
+            self.time_now = df[self.col_timestamp].max()
+
+        # apply time decay to each rating
+        df[decay_column] *= exponential_decay(
+            value=df[self.col_timestamp],
+            max_val=self.time_now,
+            half_life=self.time_decay_half_life,
+        )
+
+        # group time decayed ratings by user-item and take the sum as the user-item affinity
+        return df.groupby([self.col_user, self.col_item]).sum().reset_index()
+
+    def compute_coocurrence_matrix(self, df):
         """ Co-occurrence matrix
         C = U'.transpose() * U'
         where U' is the user_affinity matrix with 1's as values (instead of ratings).
 
         Args:
-            df (pd.DataFrame): Indexed df of users and items.
-            n_users (int): Number of users.
-            n_items (int): Number of items.
+            df (pd.DataFrame): DataFrame of users and items
 
         Returns:
             np.array: Co-occurrence matrix
@@ -134,7 +162,7 @@ class SARSingleNode:
 
         user_item_hits = sparse.coo_matrix(
             (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])),
-            shape=(n_users, n_items),
+            shape=(self.n_users, self.n_items),
         ).tocsr()
 
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
@@ -180,25 +208,14 @@ class SARSingleNode:
             raise TypeError("Rating column data type must be numeric")
 
         # copy the DataFrame to avoid modification of the input
-        temp_df = df[[self.col_user, self.col_item, self.col_rating]].copy()
+        select_columns = [self.col_user, self.col_item, self.col_rating]
+        if self.time_decay_flag:
+            select_columns += [self.col_timestamp]
+        temp_df = df[select_columns].copy()
 
         if self.time_decay_flag:
             logger.info("Calculating time-decayed affinities")
-            # if time_now is None use the latest time
-            if not self.time_now:
-                self.time_now = df[self.col_timestamp].max()
-
-            # apply time decay to each rating
-            temp_df[self.col_rating] *= exponential_decay(
-                value=df[self.col_timestamp],
-                max_val=self.time_now,
-                half_life=self.time_decay_half_life,
-            )
-
-            # group time decayed ratings by user-item and take the sum as the user-item affinity
-            temp_df = (
-                temp_df.groupby([self.col_user, self.col_item]).sum().reset_index()
-            )
+            temp_df = self.compute_time_decay(df=temp_df, decay_column=self.col_rating)
         else:
             # without time decay use the latest user-item rating in the dataset as the affinity score
             logger.info("De-duplicating the user-item counts")
@@ -207,24 +224,27 @@ class SARSingleNode:
             )
 
         logger.info("Creating index columns")
-        # map users and items according to the two dicts. Add the two new columns to temp_df.
+        # add mapping of user and item ids to indices
         temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item2index)
         temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user2index)
+
+        if self.normalize:
+            logger.info("Calculating normalization factors")
+            temp_df[self.col_unity_rating] = 1.0
+            if self.time_decay_flag:
+                temp_df = self.compute_time_decay(df=temp_df, decay_column=self.col_unity_rating)
+            self.unity_user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_unity_rating)
 
         # retain seen items for removal at prediction time
         self.seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
 
         # affinity matrix
         logger.info("Building user affinity sparse matrix")
-        self.user_affinity = self.compute_affinity_matrix(
-            temp_df, self.n_users, self.n_items
-        )
+        self.user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_rating)
 
         # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
-        item_cooccurrence = self.compute_coocurrence_matrix(
-            temp_df, self.n_users, self.n_items
-        )
+        item_cooccurrence = self.compute_coocurrence_matrix(df=temp_df)
 
         # free up some space
         del temp_df
@@ -253,14 +273,14 @@ class SARSingleNode:
 
         logger.info("Done training")
 
-    def score(self, test, remove_seen=False, normalized=False):
+    def score(self, test, remove_seen=False, normalize=False):
         """Score all items for test users
 
         Args:
             test (pd.DataFrame): user to test
             remove_seen (bool): flag to remove items seen in training from recommendation
-            normalized (bool): flag to normalize per user scores to sum to 1
-
+            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
+ 1
         Returns:
             np.ndarray
         """
@@ -286,17 +306,17 @@ class SARSingleNode:
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.toarray()
 
-        if normalized:
-            if remove_seen:
-                # need to adjust seen values so normalization works
-                neg_inf_idx = np.argwhere(np.isneginf(test_scores))
-                test_scores[neg_inf_idx[:, 0], neg_inf_idx[:, 1]] = 0
-
-            test_scores = normalize(test_scores, norm="l1", copy=False)
-
-            if remove_seen:
-                # reset seen values to negative infinity so they can be sorted and removed
-                test_scores[neg_inf_idx[:, 0], neg_inf_idx[:, 1]] = -np.inf
+        if normalize:
+            if self.unity_user_affinity is None:
+                raise ValueError('Cannot use normalize flag during scoring if it was not set at model instantiation')
+            else:
+                test_scores = np.array(
+                    np.divide(
+                        test_scores,
+                        self.unity_user_affinity.dot(self.item_similarity)[user_ids, :]
+                    )
+                )
+                test_scores = np.where(np.isnan(test_scores), -np.inf, test_scores)
 
         return test_scores
 
@@ -325,7 +345,7 @@ class SARSingleNode:
             }
         )
 
-    def get_item_based_topk(self, items, top_k=10, sort_top_k=False, normalized=False):
+    def get_item_based_topk(self, items, top_k=10, sort_top_k=False, normalize=False):
         """Get top K similar items to provided seed items based on similarity metric defined.
         This method will take a set of items and use them to recommend the most similar items to that set
         based on the similarity matrix fit during training.
@@ -341,7 +361,7 @@ class SARSingleNode:
             items (pd.DataFrame): DataFrame with item, user (optional), and rating (optional) columns
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
-            normalized (bool): flag to normalize per user scores to sum to 1
+            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
 
         Returns:
             pd.DataFrame: sorted top k recommendation items
@@ -375,10 +395,11 @@ class SARSingleNode:
         # calculate raw scores with a matrix multiplication
         test_scores = pseudo_affinity.dot(self.item_similarity)
 
-        if normalized:
-            # first zero out items in the seed set so normalization works
-            test_scores[user_ids, item_ids] = 0
-            test_scores = normalize(test_scores, norm="l1", copy=False)
+        if normalize:
+            scaling_factors = sparse.coo_matrix(
+                (np.ones_like(ratings), (user_ids, item_ids)), shape=(n_users, self.n_items)
+            ).tocsr().dot(self.item_similarity)
+            test_scores = np.divide(test_scores, scaling_factors)
 
         # remove items in the seed set so recommended items are novel
         test_scores[user_ids, item_ids] = -np.inf
@@ -401,7 +422,7 @@ class SARSingleNode:
         return df.replace(-np.inf, np.nan).dropna()
 
     def recommend_k_items(
-        self, test, top_k=10, sort_top_k=False, remove_seen=False, normalized=False
+        self, test, top_k=10, sort_top_k=False, remove_seen=False, normalize=False
     ):
         """Recommend top K items for all users which are in the test set
 
@@ -410,13 +431,13 @@ class SARSingleNode:
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
             remove_seen (bool): flag to remove items seen in training from recommendation
-            normalized (bool): flag to normalize per user scores to sum to 1
+            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
 
         Returns:
             pd.DataFrame: top k recommendation items for each user
         """
 
-        test_scores = self.score(test, remove_seen=remove_seen, normalized=normalized)
+        test_scores = self.score(test, remove_seen=remove_seen, normalize=normalize)
 
         top_items, top_scores = get_top_k_scored_items(
             scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
