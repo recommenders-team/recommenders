@@ -7,7 +7,6 @@ pytest runs all tests in the specified test folder unless parameters
 are set otherwise.
 """
 
-import os
 import argparse
 import subprocess
 
@@ -34,7 +33,7 @@ def create_arg_parser():
     # test results file
     parser.add_argument("--junitxml", "-j",
                         action="store",
-                        default="--junitxml=reports/test-unit.xml",
+                        default="reports/test-unit.xml",
                         help="Test results")
 
     args = parser.parse_args()
@@ -75,10 +74,10 @@ def run_pytest(test_folder="./tests/unit",
     name_of_upload = "reports"
     path_on_disk = "./reports"
     run.upload_folder(name_of_upload, path_on_disk)
-    
-    print("os.listdir files", os.listdir("."))
-    print("os.listdir reports", os.listdir("./reports"))
-    print("os.listdir outputs", os.listdir("./outputs"))
+
+    # logger.debug(("os.listdir files", os.listdir("."))
+    # logger.debug(("os.listdir reports", os.listdir("./reports"))
+    # logger.debug(("os.listdir outputs", os.listdir("./outputs"))
 
     # Leveraged code from this  notebook:
     # https://msdata.visualstudio.com/Vienna/_search?action=contents&text=upload_folder&type=code&lp=code-Project&filters=ProjectFilters%7BVienna%7DRepositoryFilters%7BAzureMlCli%7D&pageSize=25&sortOptions=%5B%7B%22field%22%3A%22relevance%22%2C%22sortOrder%22%3A%22desc%22%7D%5D&result=DefaultCollection%2FVienna%2FAzureMlCli%2FGBmaster%2F%2Fsrc%2Fazureml-core%2Fazureml%2Fcore%2Frun.py
@@ -90,7 +89,7 @@ if __name__ == "__main__":
 
     # run_pytest()
     junit_str = "--junitxml="+args.junitxml
-    print('junit_str', junit_str)
+    # logger.debug(('junit_str', junit_str)
     run_pytest(test_folder=args.testfolder,
                test_markers=args.testmarkers,
                junitxml=junit_str)

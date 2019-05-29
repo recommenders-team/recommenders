@@ -219,6 +219,7 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
           run : AzureML run or trial
     """
     logger.debug('submit: testfolder', test_folder)
+    logger.debug("junitxml:",junitxml)
     project_folder = "."
 
     script_run_config = ScriptRunConfig(source_directory=project_folder,
@@ -229,7 +230,7 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
                                                    "--testmarkers",
                                                    test_markers,
                                                    "--junitxml",
-                                                   "reports/test-unit.xml"]
+                                                   junitxml]
                                         )
     run = experiment.submit(script_run_config)
     # waits only for configuration to complete
@@ -377,7 +378,7 @@ if __name__ == "__main__":
     logger.debug("exp: watch for experiment in azure named ", args.expname)
     # create new or use existing experiment
     experiment = Experiment(workspace=workspace, name=args.expname)
-    junitxml = "--j"+args.junitxml
+    junitxml = "--junitxml "+args.junitxml
     run = submit_experiment_to_azureml(test=args.test,
                                        test_folder=args.testfolder,
                                        test_markers=args.testmarkers,
