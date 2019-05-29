@@ -17,7 +17,7 @@ variables:
 - name  : 'testmarkers'
   value : '"not notebooks and not spark and not gpu"'
 - name  : 'junitxml'
-  value : 'reports/test-unit.xml'
+  value : '"reports/test-unit.xml"'
 #   
 - name  : 'maxnodes'
   value : 4
