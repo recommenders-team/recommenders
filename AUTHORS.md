@@ -54,7 +54,7 @@ To contributors: please add your name to the list when you submit a patch to the
    * FastAI notebook
 * **[Gianluca Campanella](https://github.com/gcampanella)**
    * Spark optimization and support
-* **[Heather Spetalnick (Shapiro)](https://github.com/heatherbshapiro)
+* **[Heather Spetalnick (Shapiro)](https://github.com/heatherbshapiro)**
    * AzureML documentation and support
 * **[Jianxun Lian](https://github.com/Leavingseason)**
    * xDeepFM algorithm
@@ -70,8 +70,8 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Mirco Milletarì](https://github.com/WessZumino)**
    * Restricted Boltzmann Machine algorithm
 * **[Nicolas Hug](https://github.com/NicolasHug)**
-   * Jupyter notebook demonstrating the use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations.
-* **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)
+   * Jupyter notebook demonstrating the use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations
+* **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
 * **[Robert Alexander](https://github.com/roalexan)**
    * Windows test pipelines
