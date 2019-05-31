@@ -211,15 +211,16 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
         junitxml     (str) - file of output summary of tests run
                              note "--junitxml" is required as part
                              of the string
-                             Example: "--junitxml=reports/test-unit.xml"
+                             Example: "--junitxml reports/test-unit.xml"
         run_config - environment configuration
         experiment - instance of an Experiment, a collection of
                      trials where each trial is a run.
     Return:
           run : AzureML run or trial
     """
+
     logger.debug('submit: testfolder', test_folder)
-    logger.debug("junitxml:",junitxml)
+    logger.debug("junitxml:", junitxml)
     project_folder = "."
 
     script_run_config = ScriptRunConfig(source_directory=project_folder,
@@ -229,7 +230,7 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
                                                    test_folder,
                                                    "--testmarkers",
                                                    test_markers,
-                                                   "--junitxml",
+                                                   "--xmlname",
                                                    junitxml]
                                         )
     run = experiment.submit(script_run_config)
@@ -334,12 +335,8 @@ def create_arg_parser():
     # github pull request, stored in AzureML experiment for info purposes
     parser.add_argument("--pr",
                         action="store",
-                        default="--pr MyPR",
+                        default="--pr PRTestRun",
                         help="If a pr triggered the test, list it here")
-    # cpu or gpu run
-    parser.add_argument("--cpu",
-                        action="store_true",
-                        help="If run uses a CPU")
 
     args = parser.parse_args()
 
@@ -347,7 +344,9 @@ def create_arg_parser():
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger(__name__)
+    logger = logging.getLogger("submit_azureml_pytest.py")
+    # logger.setLevel(logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
     args = create_arg_parser()
 
     if (args.dockerproc == "cpu"):
@@ -375,14 +374,14 @@ if __name__ == "__main__":
                                    docker_proc_type=docker_proc_type,
                                    conda_env_file=args.condafile)
 
-    logger.debug("exp: watch for experiment in azure named ", args.expname)
+    print("exp: In Azure, look for experiment named ", args.expname)
+
     # create new or use existing experiment
     experiment = Experiment(workspace=workspace, name=args.expname)
-    junitxml = "--junitxml "+args.junitxml
     run = submit_experiment_to_azureml(test=args.test,
                                        test_folder=args.testfolder,
                                        test_markers=args.testmarkers,
-                                       junitxml=junitxml,
+                                       junitxml=args.junitxml,
                                        run_config=run_config,
                                        experiment=experiment)
 

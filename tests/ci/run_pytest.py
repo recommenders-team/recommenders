@@ -9,6 +9,8 @@ are set otherwise.
 
 import argparse
 import subprocess
+import logging
+import os
 
 from azureml.core import Run
 
@@ -31,32 +33,21 @@ def create_arg_parser():
                         default="not notebooks and not spark and not gpu",
                         help="Specify test markers for test selection")
     # test results file
-    parser.add_argument("--junitxml", "-j",
+    parser.add_argument("--xmlname", "-j",
                         action="store",
                         default="reports/test-unit.xml",
                         help="Test results")
-
     args = parser.parse_args()
+
     return(args)
 
 
-def run_pytest(test_folder="./tests/unit",
-               test_markers="not notebooks and not spark and not gpu",
-               junitxml="--junitxml=reports/test-unit.xml"):
-    '''
-    This is the script that is submitted to AzureML to run pytest.
+if __name__ == "__main__":
+    logger = logging.getLogger("submit_azureml_pytest.py")
+    args = create_arg_parser()
 
-    Args:
-         test_folder  (str): folder that contains the tests that pytest runs
-         test_markers (str): test markers used by pytest "not notebooks and
-                             not spark and not gpu"
-         junitxml     (str): file of output summary of tests run
-                             note "--junitxml" is required as part of
-                             the string
-                                Example: "--junitxml=reports/test-unit.xml"
-    Return: none
+    logger.debug('junit_xml', args.xmlname)
 
-    '''
     # Run.get_context() is needed to save context as pytest causes corruption
     # of env vars
     run = Run.get_context()
@@ -66,30 +57,26 @@ def run_pytest(test_folder="./tests/unit",
                     "-m", "not notebooks and not spark and not gpu",
                     "--junitxml=reports/test-unit.xml"])
     '''
-
-    print('pytest run:', ["pytest", test_folder, "-m", test_markers, junitxml])
-    subprocess.run(["pytest", test_folder, "-m", test_markers, junitxml])
+    logger.debug("args.junitxml", args.xmlname)
+    logger.debug("junit=", "--junitxml="+args.xmlname)
+    logger.info('pytest run:',
+                ["pytest",
+                 args.testfolder,
+                 "-m",
+                 args.testmarkers,
+                 "--junitxml="+args.xmlname])
+    subprocess.run(["pytest",
+                    args.testfolder,
+                    "-m",
+                    args.testmarkers,
+                    "--junitxml="+args.xmlname])
+    #
+    # Leveraged code from this  notebook:
+    # https://msdata.visualstudio.com/Vienna/_search?action=contents&text=upload_folder&type=code&lp=code-Project&filters=ProjectFilters%7BVienna%7DRepositoryFilters%7BAzureMlCli%7D&pageSize=25&sortOptions=%5B%7B%22field%22%3A%22relevance%22%2C%22sortOrder%22%3A%22desc%22%7D%5D&result=DefaultCollection%2FVienna%2FAzureMlCli%2FGBmaster%2F%2Fsrc%2Fazureml-core%2Fazureml%2Fcore%2Frun.py
+    logger.debug("os.listdir files", os.listdir("."))
+    logger.debug("os.listdir reports", os.listdir("./reports"))
 
     #  files for AzureML
     name_of_upload = "reports"
     path_on_disk = "./reports"
     run.upload_folder(name_of_upload, path_on_disk)
-
-    # logger.debug(("os.listdir files", os.listdir("."))
-    # logger.debug(("os.listdir reports", os.listdir("./reports"))
-    # logger.debug(("os.listdir outputs", os.listdir("./outputs"))
-
-    # Leveraged code from this  notebook:
-    # https://msdata.visualstudio.com/Vienna/_search?action=contents&text=upload_folder&type=code&lp=code-Project&filters=ProjectFilters%7BVienna%7DRepositoryFilters%7BAzureMlCli%7D&pageSize=25&sortOptions=%5B%7B%22field%22%3A%22relevance%22%2C%22sortOrder%22%3A%22desc%22%7D%5D&result=DefaultCollection%2FVienna%2FAzureMlCli%2FGBmaster%2F%2Fsrc%2Fazureml-core%2Fazureml%2Fcore%2Frun.py
-
-
-if __name__ == "__main__":
-
-    args = create_arg_parser()
-
-    # run_pytest()
-    junit_str = "--junitxml="+args.junitxml
-    # logger.debug(('junit_str', junit_str)
-    run_pytest(test_folder=args.testfolder,
-               test_markers=args.testmarkers,
-               junitxml=junit_str)
