@@ -19,7 +19,7 @@ def qps_to_replicas(
             ideal
 
     Returns:
-        replicas: Number of estimated replicas required to support a target
+        int: Number of estimated replicas required to support a target
             number of queries per second
     """
     concurrent_queries = target_qps * processing_time / target_utilization
@@ -44,7 +44,7 @@ def replicas_to_qps(
         target_utilization (float): proportion of CPU utilization you think is ideal
 
     Returns:
-        qps: queries per second supported by the number of replicas
+        int: queries per second supported by the number of replicas
     """
     qps = floor(num_replicas * max_qp_replica * target_utilization / processing_time)
     logger.info(
@@ -68,10 +68,10 @@ def nodes_to_replicas(n_cores_per_node, n_nodes=3, cpu_cores_per_replica=0.1):
             cpu_cores argument passed to AksWebservice.deploy_configuration()
 
     Returns:
-        replicas: Total number of replicas supported by the configuration
+        int: Total number of replicas supported by the configuration
     """
     n_cores_avail = (n_cores_per_node - 0.5) * n_nodes - 4.45
-    replicas = floor(n_cores_avail / (cpu_cores_per_replica))
+    replicas = floor(n_cores_avail / cpu_cores_per_replica)
     logger.info(
         "Approximately {} replicas are supported by {} nodes with {} cores each.".format(
             replicas, n_nodes, n_cores_per_node
