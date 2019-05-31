@@ -38,7 +38,7 @@ variables:
 - name  : 'vmsize'
   value : 'STANDARD_D3_V2'
 - name  : 'dockerproc'
-  value : '--cpu'
+  value : 'cpu'
 - name  : 'expname'
   value : 'cpu_unit_tests'
 
@@ -81,11 +81,7 @@ steps:
 
 - script: |
      chmod +x scripts/*.py
-     ls -al scripts
      chmod +x tests/ci/*.py
-     ls -al tests/ci
-     pwd
-     ls -al
   displayName: 'ls'
 
 - script: |
@@ -94,7 +90,7 @@ steps:
   displayName: 'install cli'
 
 - script: 
-    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
+    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
   displayName: 'submit_azureml_pytest'
 
 - task: PublishTestResults@2
