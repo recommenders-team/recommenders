@@ -45,6 +45,8 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
+* **[Bamdev Mishra](https://github.com/bamdevm)**
+   * RLRMC algorithm
 * **[Beth Zeranski](https://github.com/bethz)**
    * AzureML tests
 * **[Dan Ciborowski](https://github.com/dciborow)**
