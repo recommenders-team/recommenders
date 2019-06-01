@@ -120,11 +120,11 @@ class LibffmConverter(object):
         >>> df_out = converter.transform(df_feature)
         >>> df_out
             rating field1 field2   field3 field4
-        0       1  1:1:1  2:2:3  3:3:1.0  4:4:1
-        1       0  1:2:1  2:2:4  3:3:2.0  4:5:1
-        2       0  1:3:1  2:2:5  3:3:3.0  4:6:1
-        3       1  1:3:1  2:2:6  3:3:4.0  4:7:1
-        4       1  1:3:1  2:2:7  3:3:5.0  4:8:1
+        0       1  1:1:1  2:4:3  3:5:1.0  4:4:1
+        1       0  1:2:1  2:4:4  3:5:2.0  4:5:1
+        2       0  1:3:1  2:4:5  3:5:3.0  4:6:1
+        3       1  1:3:1  2:4:6  3:5:4.0  4:7:1
+        4       1  1:3:1  2:4:7  3:5:5.0  4:8:1
 
     Args:
         filepath (str): path to save the converted data.
@@ -198,30 +198,30 @@ class LibffmConverter(object):
 
         # Encode field-feature.
         idx = 1
-        field_feature_dict = {}
+        self.field_feature_dict = {}
         for field in self.field_names:
-            if df[field].dtype == object:
-                for feature in df[field].values:
-                    # Check whether (field, feature) tuple exists in the dict or not.
-                    # If not, put them into the key-values of the dict and count the index.
-                    if (field, feature) not in field_feature_dict:
-                        field_feature_dict[(field, feature)] = idx
+            for feature in df[field].values:
+                # Check whether (field, feature) tuple exists in the dict or not.
+                # If not, put them into the key-values of the dict and count the index.
+                if (field, feature) not in self.field_feature_dict:
+                    self.field_feature_dict[(field, feature)] = idx
+                    if df[field].dtype == object:
                         idx += 1
+            if df[field].dtype != object:
+                idx += 1
 
         self.field_count = len(self.field_names)
         self.feature_count = idx - 1
 
         def _convert(field, feature, field_index, field_feature_index_dict):
-            if isinstance(feature, str):
-                field_feature_index = field_feature_index_dict[(field, feature)]
+            field_feature_index = field_feature_index_dict[(field, feature)]
+            if isinstance(feature, str):                
                 feature = 1
-            else:
-                field_feature_index = field_index
             return "{}:{}:{}".format(field_index, field_feature_index, feature)
 
         for col_index, col in enumerate(self.field_names):
             df[col] = df[col].apply(
-                lambda x: _convert(col, x, col_index + 1, field_feature_dict)
+                lambda x: _convert(col, x, col_index + 1, self.field_feature_dict)
             )
 
         # Move rating column to the first.

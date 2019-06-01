@@ -7,11 +7,12 @@ import logging
 import numpy as np
 import os
 import pandas as pd
-
+import nni
 import surprise
+import sys
+sys.path.append("../../")
 
 import reco_utils.evaluation.python_evaluation as evaluation
-from reco_utils.nni.nni_utils import nni
 from reco_utils.recommender.surprise.surprise_utils import (
     compute_rating_predictions,
     compute_ranking_predictions,
