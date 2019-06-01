@@ -76,6 +76,7 @@ PIP_BASE = {
     "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
+    "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
