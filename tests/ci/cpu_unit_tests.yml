@@ -1,13 +1,6 @@
-# cpu_unit_tests.yml
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 #
-#
-# NOTE: start with cpu to make sure everything still works
-#
-# use variable group name
 variables:
 - group: AzureKeyVaultSecrets
 - name  : 'test'
@@ -42,13 +35,11 @@ variables:
 - name  : 'expname'
   value : 'cpu_unit_tests'
 
-#trigger:
-#- azure-pipelines-bz
-# 
+trigger: none
 
-#pr:
-#- staging 
-#- master
+pr:
+- staging 
+- master
   
 pool:
  vmImage: 'ubuntu-16.04'
@@ -63,7 +54,6 @@ steps:
 
 - script: | 
    az login --service-principal -u $(ClientID) -p $(ClientSecret) --tenant $(TenantID)
-   
   displayName: 'Login to Azure'
 
 - bash: |
@@ -72,7 +62,6 @@ steps:
 
 - script: 
      pip install azureml-sdk
-  continueOnError: true
   displayName: 'install azureml-sdk'
   
 - script: 
@@ -81,11 +70,7 @@ steps:
 
 - script: |
      chmod +x scripts/*.py
-     ls -al scripts
      chmod +x tests/ci/*.py
-     ls -al tests/ci
-     pwd
-     ls -al
   displayName: 'ls'
 
 - script: |
