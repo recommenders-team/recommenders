@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4c143e155e67c1971d37fa1f91d2d102463415e6
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 #
@@ -10,7 +14,7 @@ variables:
 - name  : 'testmarkers'
   value : '"not notebooks and not spark and not gpu"'
 - name  : 'junitxml'
-  value : '"reports/test-unit.xml"'
+  value : 'reports/test-unit.xml'
 #   
 - name  : 'maxnodes'
   value : 4
@@ -31,7 +35,7 @@ variables:
 - name  : 'vmsize'
   value : 'STANDARD_D3_V2'
 - name  : 'dockerproc'
-  value : '--cpu'
+  value : 'cpu'
 - name  : 'expname'
   value : 'cpu_unit_tests'
 
@@ -79,7 +83,7 @@ steps:
   displayName: 'install cli'
 
 - script: 
-    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
+    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
   displayName: 'submit_azureml_pytest'
 
 - task: PublishTestResults@2
