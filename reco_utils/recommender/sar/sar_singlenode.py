@@ -135,7 +135,7 @@ class SARSingleNode:
         """
 
         # if time_now is None use the latest time
-        if not self.time_now:
+        if self.time_now is None:
             self.time_now = df[self.col_timestamp].max()
 
         # apply time decay to each rating
@@ -320,7 +320,7 @@ class SARSingleNode:
 
         return test_scores
 
-    def get_popularity_based_topk(self, top_k=10, sort_top_k=False):
+    def get_popularity_based_topk(self, top_k=10, sort_top_k=True):
         """Get top K most frequently occurring items across all users
 
         Args:
@@ -345,7 +345,7 @@ class SARSingleNode:
             }
         )
 
-    def get_item_based_topk(self, items, top_k=10, sort_top_k=False, normalize=False):
+    def get_item_based_topk(self, items, top_k=10, sort_top_k=True):
         """Get top K similar items to provided seed items based on similarity metric defined.
         This method will take a set of items and use them to recommend the most similar items to that set
         based on the similarity matrix fit during training.
@@ -361,7 +361,6 @@ class SARSingleNode:
             items (pd.DataFrame): DataFrame with item, user (optional), and rating (optional) columns
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
-            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
 
         Returns:
             pd.DataFrame: sorted top k recommendation items
@@ -395,12 +394,6 @@ class SARSingleNode:
         # calculate raw scores with a matrix multiplication
         test_scores = pseudo_affinity.dot(self.item_similarity)
 
-        if normalize:
-            scaling_factors = sparse.coo_matrix(
-                (np.ones_like(ratings), (user_ids, item_ids)), shape=(n_users, self.n_items)
-            ).tocsr().dot(self.item_similarity)
-            test_scores = np.divide(test_scores, scaling_factors)
-
         # remove items in the seed set so recommended items are novel
         test_scores[user_ids, item_ids] = -np.inf
 
@@ -422,7 +415,7 @@ class SARSingleNode:
         return df.replace(-np.inf, np.nan).dropna()
 
     def recommend_k_items(
-        self, test, top_k=10, sort_top_k=False, remove_seen=False, normalize=False
+        self, test, top_k=10, sort_top_k=True, remove_seen=False
     ):
         """Recommend top K items for all users which are in the test set
 
@@ -431,13 +424,12 @@ class SARSingleNode:
             top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
             remove_seen (bool): flag to remove items seen in training from recommendation
-            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
 
         Returns:
             pd.DataFrame: top k recommendation items for each user
         """
 
-        test_scores = self.score(test, remove_seen=remove_seen, normalize=normalize)
+        test_scores = self.score(test, remove_seen=remove_seen)
 
         top_items, top_scores = get_top_k_scored_items(
             scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
