@@ -24,10 +24,6 @@ variables:
   value : 'azure-pipelines-bz'
 - name  : 'clustername'
   value : 'Reco-cpu-test'
-# GPU
-#- name  : 'vmsize'
-#  value : 'STANDARD_NC6'
-# CPU
 - name  : 'vmsize'
   value : 'STANDARD_D3_V2'
 - name  : 'dockerproc'
