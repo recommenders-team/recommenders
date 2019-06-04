@@ -22,7 +22,6 @@ def create_arg_parser():
                         action="store",
                         default="./tests/unit",
                         help="Folder where tests are located")
-    # internal test purposes
     parser.add_argument("--num",
                         action="store",
                         default="99",
@@ -39,7 +38,7 @@ def create_arg_parser():
                         help="Test results")
     args = parser.parse_args()
 
-    return(args)
+    return args 
 
 
 if __name__ == "__main__":
