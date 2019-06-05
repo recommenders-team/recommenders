@@ -14,10 +14,6 @@ variables:
 #   
 - name  : 'maxnodes'
   value : 4
-#- name  : 'rg'
-#  value : 'recommender'
-#- name  : 'wsname'
-#  value : 'RecoWS'
 - name  : 'reponame'
   value : 'Recommenders'
 - name  : 'branch'
