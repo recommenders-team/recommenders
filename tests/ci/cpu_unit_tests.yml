@@ -11,13 +11,8 @@ variables:
   value : '"not notebooks and not spark and not gpu"'
 - name  : 'junitxml'
   value : 'reports/test-unit.xml'
-#   
 - name  : 'maxnodes'
   value : 4
-#- name  : 'rg'
-#  value : 'recommender'
-#- name  : 'wsname'
-#  value : 'RecoWS'
 - name  : 'reponame'
   value : 'Recommenders'
 - name  : 'branch'
