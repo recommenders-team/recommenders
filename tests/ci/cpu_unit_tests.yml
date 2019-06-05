@@ -11,13 +11,8 @@ variables:
   value : '"not notebooks and not spark and not gpu"'
 - name  : 'junitxml'
   value : 'reports/test-unit.xml'
-#   
 - name  : 'maxnodes'
   value : 4
-#- name  : 'rg'
-#  value : 'recommender'
-#- name  : 'wsname'
-#  value : 'RecoWS'
 - name  : 'reponame'
   value : 'Recommenders'
 - name  : 'branch'
@@ -52,30 +47,14 @@ steps:
    az login --service-principal -u $(ClientID) -p $(ClientSecret) --tenant $(TenantID)
   displayName: 'Login to Azure'
 
-- bash: |
-    echo "##vso[task.prependpath]/data/anaconda/bin"
-  displayName: Add Conda to PATH
+- template: env-setup.yml 
 
-- script: 
-     pip install azureml-sdk
-  displayName: 'install azureml-sdk'
-  
 - script: 
      python scripts/generate_conda_file.py --name reco 
   displayName: ' generate_conda_file.py'
 
-- script: |
-     chmod +x scripts/*.py
-     chmod +x tests/ci/*.py
-  displayName: 'ls'
-
-- script: |
-     pip install azure-cli
-     pip install --upgrade azureml-sdk[cli]
-  displayName: 'install cli'
-
 - script: 
-    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
+    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testfolder $(testfolder) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
   displayName: 'submit_azureml_pytest'
 
 - task: PublishTestResults@2
