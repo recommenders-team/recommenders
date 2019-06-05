@@ -11,7 +11,6 @@ variables:
   value : '"not notebooks and not spark and not gpu"'
 - name  : 'junitxml'
   value : 'reports/test-unit.xml'
-#   
 - name  : 'maxnodes'
   value : 4
 - name  : 'reponame'
@@ -48,22 +47,14 @@ steps:
    az login --service-principal -u $(ClientID) -p $(ClientSecret) --tenant $(TenantID)
   displayName: 'Login to Azure'
 
-- bash: |
-    echo "##vso[task.prependpath]/data/anaconda/bin"
-  displayName: Add Conda to PATH
-
-- script: 
-     pip install azureml-sdk &&
-     pip install azure-cli &&
-     pip install --upgrade azureml-sdk[cli]
-  displayName: 'pip install'
+- template: env-setup.yml 
 
 - script: 
      python scripts/generate_conda_file.py --name reco 
   displayName: ' generate_conda_file.py'
 
 - script: 
-    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
+    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testfolder $(testfolder) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
   displayName: 'submit_azureml_pytest'
 
 - task: PublishTestResults@2
