@@ -16,7 +16,7 @@ variables:
 - name  : 'reponame'
   value : 'Recommenders'
 - name  : 'branch'
-  value : 'azure-pipelines-bz'
+  value : 'bezeran-addgpu'
 - name  : 'clustername'
   value : 'Reco-gpu-test'
 # GPU
