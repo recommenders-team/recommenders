@@ -48,6 +48,7 @@ steps:
   displayName: 'Login to Azure'
 
 - template: env-setup.yml 
+  displayName: 'read template'
 
 - script: 
      python scripts/generate_conda_file.py --name reco 
