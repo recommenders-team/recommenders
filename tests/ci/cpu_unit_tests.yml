@@ -57,22 +57,14 @@ steps:
   displayName: Add Conda to PATH
 
 - script: 
-     pip install azureml-sdk
-  displayName: 'install azureml-sdk'
-  
+     pip install azureml-sdk &&
+     pip install azure-cli &&
+     pip install --upgrade azureml-sdk[cli]
+  displayName: 'pip install'
+
 - script: 
      python scripts/generate_conda_file.py --name reco 
   displayName: ' generate_conda_file.py'
-
-- script: |
-     chmod +x scripts/*.py
-     chmod +x tests/ci/*.py
-  displayName: 'ls'
-
-- script: |
-     pip install azure-cli
-     pip install --upgrade azureml-sdk[cli]
-  displayName: 'install cli'
 
 - script: 
     python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
