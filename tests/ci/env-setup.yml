@@ -1,0 +1,25 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# file: env-setup.yml
+#
+
+steps:
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.6'
+    architecture: 'x64'
+  displayName: 'Use Python 3.6'
+
+- bash: |
+    echo "##vso[task.prependpath]/data/anaconda/bin"
+  displayName: Add Conda to PATH
+
+- script: 
+     pip install azureml-sdk &&
+     pip install azure-cli &&
+     pip install --upgrade azureml-sdk[cli]
+  displayName: 'install azureml-sdk'
+
+
+
