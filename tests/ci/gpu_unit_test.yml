@@ -16,7 +16,7 @@ variables:
 - name  : 'reponame'
   value : 'Recommenders'
 - name  : 'branch'
-  value : 'bezeran-addgpu'
+  value : 'testJob'
 - name  : 'clustername'
   value : 'Reco-gpu-test'
 # GPU
