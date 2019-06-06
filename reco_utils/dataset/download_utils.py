@@ -31,7 +31,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         r = requests.get(url, stream=True)
         total_size = int(r.headers.get("content-length", 0))
         block_size = 1024
-        num_iterables = math.ceil(total_size // block_size)
+        num_iterables = math.ceil(total_size / block_size)
 
         with open(filepath, "wb") as file:
             for data in tqdm(
