@@ -63,7 +63,7 @@ jobs:
 
 - job : Integration
   dependsOn: Smoke
-  condition: suceeded('Smoke')
+  condition: succeeded('Smoke')
   displayName : 'Integration: Nightly_gpu_test'
   
   pool:
