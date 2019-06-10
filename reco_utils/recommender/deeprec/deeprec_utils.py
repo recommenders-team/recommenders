@@ -5,13 +5,7 @@
 import tensorflow as tf
 import six
 import os
-#from sklearn.metrics import (
-#    roc_auc_score,
-#    log_loss,
-#    mean_squared_error,
-#    accuracy_score,
-#    f1_score,
-#)
+
 
 from sklearn.metrics import roc_auc_score, log_loss, mean_squared_error,mean_absolute_error,r2_score,explained_variance_score,accuracy_score,f1_score
 import numpy as np
