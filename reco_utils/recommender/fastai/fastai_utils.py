@@ -12,7 +12,7 @@ from reco_utils.common import constants as cc
 
 
 def cartesian_product(*arrays):
-    """Compute the cartesian product in fastai algo. This is a helper function.
+    """Compute the Cartesian product in fastai algo. This is a helper function.
 
     Args:
         arrays (tuple of np.array): Input arrays

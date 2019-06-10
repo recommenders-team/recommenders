@@ -111,7 +111,7 @@ def load_spark_df(
         else:
             path = filepath
 
-        schema = _get_spark_schema(header)
+        schema = get_spark_schema(header)
         df = spark.read.csv(path, schema=schema, sep="\t", header=False)
         df.cache().count() # trigger execution to overcome spark's lazy evaluation
     return df
@@ -136,7 +136,7 @@ def extract_criteo(size, compressed_file, path=None):
     """Extract Criteo dataset tar.
 
     Args:
-        size (str): Size of criteo dataset. It can be "full" or "sample".
+        size (str): Size of Criteo dataset. It can be "full" or "sample".
         compressed_file (str): Path to compressed file.
         path (str): Path to extract the file.
     
@@ -160,7 +160,7 @@ def extract_criteo(size, compressed_file, path=None):
     return os.path.join(extracted_dir, filename_selector[size])
 
 
-def _get_spark_schema(header):
+def get_spark_schema(header=DEFAULT_HEADER):
     ## create schema
     schema = StructType()
     ## do label + ints

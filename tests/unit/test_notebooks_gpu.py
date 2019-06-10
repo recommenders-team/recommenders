@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import shutil
+import os
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
@@ -56,20 +56,37 @@ def test_ncf_deep_dive(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.gpu
-def test_wide_deep(notebooks):
+def test_xdeepfm(notebooks):
+    notebook_path = notebooks["xdeepfm_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            EPOCHS_FOR_SYNTHETIC_RUN=1,
+            EPOCHS_FOR_CRITEO_RUN=1,
+            BATCH_SIZE_SYNTHETIC=128,
+            BATCH_SIZE_CRITEO=512,
+        ),
+    )
+
+
+@pytest.mark.notebooks
+@pytest.mark.gpu
+def test_wide_deep(notebooks, tmp):
     notebook_path = notebooks["wide_deep"]
 
-    MODEL_DIR = 'model_checkpoints'
+    model_dir = os.path.join(tmp, "wide_deep_0")
+    os.mkdir(model_dir)
     params = {
         'MOVIELENS_DATA_SIZE': '100k',
-        'EPOCHS': 1,
+        'EPOCHS': 0,
         'EVALUATE_WHILE_TRAINING': False,
-        'MODEL_DIR': MODEL_DIR,
-        'EXPORT_DIR_BASE': MODEL_DIR,
-        'RATING_METRICS': ['rmse', 'mae'],
-        'RANKING_METRICS': ['ndcg_at_k', 'precision_at_k'],
+        'MODEL_DIR': model_dir,
+        'EXPORT_DIR_BASE': model_dir,
+        'RATING_METRICS': ['rmse'],
+        'RANKING_METRICS': ['ndcg_at_k'],
     }
-
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
@@ -77,4 +94,22 @@ def test_wide_deep(notebooks):
         parameters=params,
     )
 
-    shutil.rmtree(MODEL_DIR, ignore_errors=True)
+    # Test w/o item features
+    model_dir = os.path.join(tmp, "wide_deep_1")
+    os.mkdir(model_dir)
+    params = {
+        'MOVIELENS_DATA_SIZE': '100k',
+        'EPOCHS': 0,
+        'ITEM_FEAT_COL': None,
+        'EVALUATE_WHILE_TRAINING': True,
+        'MODEL_DIR': model_dir,
+        'EXPORT_DIR_BASE': model_dir,
+        'RATING_METRICS': ['rsquared'],
+        'RANKING_METRICS': ['map_at_k'],
+    }
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=params,
+    )
