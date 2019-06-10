@@ -95,3 +95,14 @@ This project welcomes contributions and suggestions. Before contributing, please
 
 **NOTE** - these tests are the nightly builds, which compute the smoke and integration tests. Master is our main branch and staging is our development branch. We use `pytest` for testing python utilities in [reco_utils](reco_utils) and `papermill` for the [notebooks](notebooks). For more information about the testing pipelines, please see the [test documentation](tests/README.md).
 
+## Data/Telemetry
+This repository collects usage data and sends it to Microsoft to help improve our products and services. Read Microsoft's [privacy statement to learn more](https://privacy.microsoft.com/en-US/privacystatement)
+
+To opt out of tracking, please go to the raw `.md` or `.ipynb` files and remove the following line of code:
+
+```sh
+    "![Impressions](https://PixelServer20190423114238.azurewebsites.net/api/impressions/Recommenders/README.png)"
+```
+This URL will be slightly different depending on the file.
+
+![Impressions](https://PixelServer20190423114238.azurewebsites.net/api/impressions/Recommenders/README.png)
