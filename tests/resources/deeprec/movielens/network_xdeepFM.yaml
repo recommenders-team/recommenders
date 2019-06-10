@@ -12,8 +12,8 @@ data:
 #model
 #model_type:deepFM or deepWide or dnn or ipnn or opnn or fm or lr
 model:
-    method : classification
-    #method : regression
+    #method : classification
+    method : regression
     model_type : xDeepFM
     dim : 10
     layer_sizes : [400, 400]
@@ -41,8 +41,8 @@ train:
     cross_l2 : 0.0000
     cross_l1 : 0.000
     learning_rate : 0.001
-    loss : log_loss
-    #loss : square_loss
+    #loss : log_loss
+    loss : square_loss
     optimizer : adam
     epochs : 10
     batch_size : 128
@@ -53,7 +53,9 @@ info:
     show_step : 20
     save_epoch : 2
     save_model: False
-    metrics : ['rmse','mae','rsquare','exp_var','auc','logloss']
+# remove auc from regression model
+    metrics : ['rmse','mae','rsquare','exp_var'] 
+   #metrics : ['rmse','mae','rsquare','exp_var','auc','logloss'] 
     ranking_metrics  : ['map_at_k','ndcg_at_k','precision_at_k','recall_at_k']
 
 

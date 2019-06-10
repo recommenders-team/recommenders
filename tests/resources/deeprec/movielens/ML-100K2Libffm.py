@@ -188,22 +188,22 @@ def create_final_file(filepath,flag, field_num): ##scoring_flag and filed_num ar
 if __name__ == "__main__":
     #user_feature_dict, user_feature_num = create_userid_dict("ml-100k/ml-100k/u.user", 3)
     #item_feature_dict, item_feature_num = create_itemid_dict("ml-100k/ml-100k/u.item", 4)
-    user_feature_dict, user_feature_num = create_userid_dict("./u.user", 3)
-    item_feature_dict, item_feature_num = create_itemid_dict("./u.item", 4)
+    user_feature_dict, user_feature_num = create_userid_dict("./ml-100k/u.user", 3)
+    item_feature_dict, item_feature_num = create_itemid_dict("./ml-100k/u.item", 4)
     
     print("feature_num: " + str(user_feature_num+item_feature_num))
 
     ## if do regression
     ## transform training data ua.base into ua.base.regerssion for regression
-    #create_final_file("ml-100k/ml-100k/ua.base",'regression',0) #0 is not used for regression
-    #create_final_file("ml-100k/ml-100k/ua.test",'regression',0) #0 is not used for regression
+    create_final_file("./ml-100k/ua.base",'regression',0) #0 is not used for regression
+    create_final_file("./ml-100k/ua.test",'regression',0) #0 is not used for regression
     
     #### if do classification
-    #create_final_file("./ua.base",'classification',0) #0 is not used
-    #create_final_file("./ua.test",'classification',0) #0 is not used
+    #create_final_file("./ml-100k/ua.base",'classification',0) #0 is not used
+    #create_final_file("./ml-100k/ua.test",'classification',0) #0 is not used
     
     ### if do recommendation on top N items
-    create_final_file("./ua.test",'classification_topN',2) #2 is number of fields
+    #create_final_file("./ml-100k/ua.test",'classification_topN',2) #2 is number of fields
     
 
 
