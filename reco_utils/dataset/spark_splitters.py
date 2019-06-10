@@ -149,8 +149,6 @@ def spark_stratified_split(
     Returns:
         list: Splits of the input data as spark.DataFrame.
     """
-    from pyspark.sql.functions import collect_list, size
-
     if not (filter_by == "user" or filter_by == "item"):
         raise ValueError("filter_by should be either 'user' or 'item'.")
 
