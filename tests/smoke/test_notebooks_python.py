@@ -72,6 +72,7 @@ def test_surprise_svd_smoke(notebooks):
     assert results["recall"] == pytest.approx(0.032, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.vw
 @pytest.mark.smoke
 def test_vw_deep_dive_smoke(notebooks):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
