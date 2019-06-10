@@ -17,6 +17,7 @@
 
 import argparse
 import textwrap
+from sys import platform
 
 
 HELP_MSG = """
@@ -43,6 +44,7 @@ CONDA_BASE = {
     "matplotlib": "matplotlib>=2.2.2",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4",
+    "pip": "pip>=19.0.3",
     "pymongo": "pymongo>=3.6.1",
     "python": "python==3.6.8",
     "pytest": "pytest>=3.6.4",
@@ -51,6 +53,7 @@ CONDA_BASE = {
     "scikit-learn": "scikit-learn==0.19.1",
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
+    "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
 }
@@ -64,7 +67,7 @@ CONDA_GPU = {
 }
 
 PIP_BASE = {
-    "azureml-sdk[notebooks,tensorboard,contrib]": "azureml-sdk[notebooks,tensorboard,contrib]==1.0.18",
+    "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.18",
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
@@ -73,15 +76,25 @@ PIP_BASE = {
     "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
+    "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
+    "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
 }
 
-PIP_PYSPARK = {}
 PIP_GPU = {}
+PIP_PYSPARK = {}
+
+PIP_DARWIN = {
+    "nni": "nni==0.5.2.1",
+}
+PIP_LINUX = {
+    "nni": "nni==0.5.2.1",
+}
+PIP_WIN32 = {}
 
 
 if __name__ == "__main__":
@@ -142,6 +155,16 @@ if __name__ == "__main__":
     if args.gpu:
         conda_packages.update(CONDA_GPU)
         pip_packages.update(PIP_GPU)
+
+    # check for os platform support
+    if platform == 'darwin':
+        pip_packages.update(PIP_DARWIN)
+    elif platform.startswith('linux'):
+        pip_packages.update(PIP_LINUX)
+    elif platform == 'win32':
+        pip_packages.update(PIP_WIN32)
+    else:
+        raise Exception('Unsupported platform, must be Windows, Linux, or macOS')
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)

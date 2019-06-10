@@ -7,7 +7,7 @@ import time
 from reco_utils.common.timer import Timer
 
 
-TOL = 0.01
+TOL = 0.03
 
 
 @pytest.fixture(scope="function")
@@ -17,7 +17,7 @@ def t():
 
 def test_no_time(t):
     assert t.interval == 0
-    assert t.running == False
+    assert t.running is False
 
 
 def test_stop_before_start(t):
@@ -33,18 +33,18 @@ def test_interval_before_stop(t):
 
 def test_timer(t):
     t.start()
-    assert t.running == True
+    assert t.running is True
     time.sleep(1)
     t.stop()
-    assert t.running == False
+    assert t.running is False
     assert t.interval == pytest.approx(1, abs=TOL)
     with Timer() as t2:
-        assert t2.running == True
+        assert t2.running is True
         time.sleep(1)
     assert t2.interval == pytest.approx(1, abs=TOL)
-    assert t2.running == False
+    assert t2.running is False
 
 
 def test_timer_format(t):
-    assert str(t) == "0:00:00"
+    assert str(t) == "0.0000"
     assert str(t.interval) == "0"

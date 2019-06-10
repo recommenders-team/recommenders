@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import sys
 import pytest
 import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
@@ -38,6 +39,7 @@ def test_als_pyspark_integration(notebooks):
 @pytest.mark.spark
 @pytest.mark.integration
 @pytest.mark.skip(reason="It takes too long in the current test machine")
+@pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
 def test_mmlspark_lightgbm_criteo_integration(notebooks):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
     pm.execute_notebook(
@@ -52,4 +54,4 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks):
     )
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
     results = nb.dataframe.set_index("name")["value"]
-    # assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)
+    assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)

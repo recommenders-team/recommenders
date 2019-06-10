@@ -26,7 +26,6 @@ from databricks_cli.dbfs.api import DbfsApi
 from databricks_cli.libraries.api import LibrariesApi
 from databricks_cli.dbfs.dbfs_path import DbfsPath
 
-from scripts.generate_conda_file import PIP_BASE
 
 CLUSTER_NOT_FOUND_MSG = """
     Cannot find the target cluster {}. Please check if you entered the valid id. 
@@ -49,17 +48,13 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "5": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/1.3.5/azure-cosmosdb-spark_2.4.0_2.11-1.3.5-uber.jar",
 }
 
-PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], PIP_BASE["papermill"]]
 
-PYPI_O16N_LIBS = [
-    "azure-cli==2.0.56",
-    "azureml-sdk[databricks]==1.0.8",
-    PIP_BASE["pydocumentdb"],
-]
-
-MMLSPARK_INFO = {"maven": {"coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.16.dev8+2.g6a5318b",
-                          "repo": "https://mmlspark.azureedge.net/maven"}
-                }
+MMLSPARK_INFO = {
+    "maven": {
+        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.16.dev8+2.g6a5318b",
+        "repo": "https://mmlspark.azureedge.net/maven",
+    }
+}
 
 DEFAULT_CLUSTER_CONFIG = {
     "cluster_name": "DB_CLUSTER",
@@ -74,6 +69,7 @@ PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
 
+## Additional dependencies met below.
 
 def create_egg(
     path_to_recommenders_repo_root=os.getcwd(),
@@ -204,9 +200,7 @@ if __name__ == "__main__":
         default="dbfs:/FileStore/jars",
     )
     parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Whether to overwrite existing files.",
+        "--overwrite", action="store_true", help="Whether to overwrite existing files."
     )
     parser.add_argument(
         "--prepare-o16n",
@@ -214,9 +208,7 @@ if __name__ == "__main__":
         help="Whether to install additional libraries for operationalization.",
     )
     parser.add_argument(
-        "--mmlspark",
-        action="store_true",
-        help="Whether to install mmlspark.",
+        "--mmlspark", action="store_true", help="Whether to install mmlspark."
     )
     parser.add_argument(
         "--create-cluster",
@@ -232,6 +224,19 @@ if __name__ == "__main__":
     # Check for extension of eggname
     if not args.eggname.endswith(".egg"):
         args.eggname += ".egg"
+
+    # make sure path_to_recommenders is on sys.path to allow for import
+    sys.path.append(args.path_to_recommenders)
+    from scripts.generate_conda_file import PIP_BASE
+
+    ## depend on PIP_BASE:
+    PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], PIP_BASE["papermill"]]
+
+    PYPI_O16N_LIBS = [
+        "azure-cli==2.0.56",
+        "azureml-sdk[databricks]==1.0.8",
+        PIP_BASE["pydocumentdb"],
+    ]
 
     #################
     # Create the egg:
@@ -267,8 +272,20 @@ if __name__ == "__main__":
 
     # Check if file exists to alert user.
     print("Uploading {} to databricks at {}".format(args.eggname, upload_path))
-    if dbfs_file_exists(my_api_client, upload_path) and args.overwrite:
-        print("Overwriting file at {}".format(upload_path))
+    if dbfs_file_exists(my_api_client, upload_path):
+        if args.overwrite:
+            print("Overwriting file at {}".format(upload_path))
+        else:
+            raise IOError(
+                """
+            {} already exists on databricks cluster. 
+            This is likely an older version of the library.
+            Please use the '--overwrite' flag to proceed.
+            """.format(
+                    upload_path
+                )
+            )
+
     DbfsApi(my_api_client).cp(
         recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
     )

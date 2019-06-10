@@ -10,7 +10,8 @@ import pytest
 from reco_utils.common.python_utils import (
     exponential_decay,
     jaccard,
-    lift
+    lift,
+    get_top_k_scored_items,
 )
 
 TOL = 0.0001
@@ -79,3 +80,11 @@ def test_exponential_decay():
     expected = np.array([0.25, 0.35355339, 0.5, 0.70710678, 1., 1.])
     actual = exponential_decay(value=values, max_val=5, half_life=2)
     assert np.allclose(actual, expected, atol=TOL)
+
+
+def test_get_top_k_scored_items():
+    scores = np.array([[1, 2, 3, 4, 5], [5, 4, 3, 2, 1], [1, 5, 3, 4, 2]])
+    top_items, top_scores = get_top_k_scored_items(scores=scores, top_k=3, sort_top_k=True)
+
+    assert np.array_equal(top_items, np.array([[4, 3, 2], [0, 1, 2], [1, 3, 2]]))
+    assert np.array_equal(top_scores, np.array([[5, 4, 3], [5, 4, 3], [5, 4, 3]]))

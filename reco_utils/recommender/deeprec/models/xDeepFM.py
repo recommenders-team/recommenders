@@ -150,7 +150,7 @@ class XDeepFMModel(BaseModel):
             res (bool): Whether use residual structure to fuse the results from each layer of CIN.
             direct (bool): If true, then all hidden units are connected to both next layer and output layer;
                     otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
-            bias (bool): Whether to add bais term when calculating the feature maps.
+            bias (bool): Whether to add bias term when calculating the feature maps.
             is_masked (bool): Controls whether to remove self-interaction in the first layer of CIN.
         
         Returns:
@@ -278,7 +278,7 @@ class XDeepFMModel(BaseModel):
             res (bool): Whether use residual structure to fuse the results from each layer of CIN.
             direct (bool): If true, then all hidden units are connected to both next layer and output layer;
                     otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
-            bias (bool): Whether to add bais term when calculating the feature maps.
+            bias (bool): Whether to add bias term when calculating the feature maps.
 
         Returns:
             obj: prediction score made by fast CIN.
