@@ -272,3 +272,34 @@ def test_get_popularity_based_topk(header):
     expected = pd.DataFrame(dict(MovieId=[1, 3, 4], prediction=[3, 2, 1]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
     assert_frame_equal(expected, actual)
+
+
+def test_get_normalized_scores(header):
+    train = pd.DataFrame({header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2],
+                          header["col_item"]: [1, 2, 3, 4, 1, 5, 6, 7],
+                          header["col_rating"]: [3., 4., 5., 4., 3., 2., 1., 5.],
+                          header["col_timestamp"]: [1, 20, 30, 400, 50, 60, 70, 800]})
+    test = pd.DataFrame({header["col_user"]: [1, 1, 1, 2, 2, 2],
+                         header["col_item"]: [5, 6, 7, 2, 3, 4],
+                         header["col_rating"]: [2., 1., 5., 3., 4., 5.]})
+
+    model = SARSingleNode(**header, timedecay_formula=True, normalize=True)
+    model.fit(train)
+    actual = model.score(test, remove_seen=True, normalize=True)
+    expected = np.array([
+            [-np.inf, -np.inf, -np.inf, -np.inf, 3., 3., 3.],
+            [-np.inf, 3., 3., 3., -np.inf, -np.inf, -np.inf],
+    ])
+    assert actual.shape == (2, 7)
+    assert isinstance(actual, np.ndarray)
+    assert np.isclose(expected, actual).all()
+
+    actual = model.score(test, normalize=True)
+    expected = np.array([
+        [3.80000633, 4.14285448, 4.14285448, 4.14285448, 3., 3., 3.],
+        [2.8000859, 3., 3., 3., 2.71441353, 2.71441353, 2.71441353]
+    ])
+
+    assert actual.shape == (2, 7)
+    assert isinstance(actual, np.ndarray)
+    assert np.isclose(expected, actual).all()
