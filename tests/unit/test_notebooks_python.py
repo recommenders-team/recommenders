@@ -47,6 +47,7 @@ def test_surprise_deep_dive_runs(notebooks):
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
 
+@pytest.mark.vw
 @pytest.mark.notebooks
 def test_vw_deep_dive_runs(notebooks):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
