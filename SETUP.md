@@ -305,7 +305,7 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
 
 1. Download the [appropriate jar](https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.3.0_2.11/1.2.2/azure-cosmosdb-spark_2.3.0_2.11-1.2.2-uber.jar) from MAVEN. **NOTE** This is the appropriate jar for spark versions `2.3.X`, and is the appropriate version for the recommended Azure Databricks run-time detailed above.
 2. Upload and install the jar by:
-   1. Log into your `Azure Databricks` workspace
+   1. Log into your `Azure Databricks` workspace.
    2. Select the `Clusters` button on the left.
    3. Select the cluster on which you want to import the library.
    4. Select the `Upload` and `Jar` options, and click in the box that has the text `Drop JAR here` in it.
