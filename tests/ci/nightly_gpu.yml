@@ -5,7 +5,7 @@ variables:
   test: 'tests/ci/run_pytest.py'
   maxnodes : 4
   reponame : 'Recommenders'
-  branch   : 'azure-pipelines-bz'
+  branch   : 'Testbranch'
   rg       : 'recommender'
   wsname   : 'RecoWS'
 # GPU
@@ -14,9 +14,7 @@ variables:
 
 trigger: none
 
-pr:
-- staging 
-- master
+pr: none
 
 jobs:
 - job : Smoke
