@@ -4,7 +4,7 @@
 import numpy as np
 
 from pyspark.sql import Window
-from pyspark.sql.functions import col, row_number, broadcast, rand
+from pyspark.sql.functions import col, row_number, broadcast, rand, collect_list, size
 
 from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
@@ -93,14 +93,10 @@ def spark_chrono_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
+    window_count = Window.partitionBy(split_by_column)
     window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp))
 
-    rating_grouped = (
-        data.groupBy(split_by_column)
-        .agg({col_timestamp: "count"})
-        .withColumnRenamed("count(" + col_timestamp + ")", "count")
-    )
-    rating_all = data.join(broadcast(rating_grouped), on=split_by_column)
+    rating_all = data.withColumn('count', size(collect_list(col_timestamp).over(window_count)))
 
     rating_rank = rating_all.withColumn(
         "rank", row_number().over(window_spec) / col("count")
@@ -175,15 +171,10 @@ def spark_stratified_split(
     ratio = ratio if multi_split else [ratio, 1 - ratio]
     ratio_index = np.cumsum(ratio)
 
+    window_count = Window.partitionBy(split_by_column)
     window_spec = Window.partitionBy(split_by_column).orderBy(rand(seed=seed))
 
-    rating_grouped = (
-        data.groupBy(split_by_column)
-        .agg({col_rating: "count"})
-        .withColumnRenamed("count(" + col_rating + ")", "count")
-    )
-    rating_all = data.join(broadcast(rating_grouped), on=split_by_column)
-
+    rating_all = data.withColumn('count', size(collect_list(col_rating).over(window_count)))
     rating_rank = rating_all.withColumn(
         "rank", row_number().over(window_spec) / col("count")
     )
