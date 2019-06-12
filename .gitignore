@@ -147,4 +147,3 @@ ml-20m/
 *.jar
 *.item
 *.pkl
-config.json
