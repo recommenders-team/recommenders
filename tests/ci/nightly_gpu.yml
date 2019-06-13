@@ -62,7 +62,7 @@ jobs:
 - job : Integration
   dependsOn: Smoke
   condition: succeeded('Smoke')
-  timeoutInMinutes: 90
+  timeoutInMinutes: 120
   displayName : 'Integration: Nightly_gpu_test'
   
   pool:
