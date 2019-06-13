@@ -4,10 +4,11 @@ import requests
 
 def find_wikidataID(name):
     """Find the entity ID in wikidata from a title string.
+
     Args:
         name (str): A string with search terms (eg. "Batman (1989) film")
     Returns:
-        entityID: wikidata entityID corresponding to the title string. 
+        (str): wikidata entityID corresponding to the title string. 
                   'entityNotFound' will be returned if no page is found
     """
     r = requests.get("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="+name+"&format=json&prop=pageprops&ppprop=wikibase_item")
@@ -24,10 +25,11 @@ def find_wikidataID(name):
 
 def query_entity_links(entityID):
     """Query all linked pages from a wikidata entityID
+
     Args:
         entityID (str): A wikidata page ID.
     Returns:
-        data (json): dictionary with linked pages.
+        (json): dictionary with linked pages.
     """
     query = """
     PREFIX entity: <http://www.wikidata.org/entity/>
@@ -66,24 +68,24 @@ def read_linked_entities(data):
     Args:
         data (json): dictionary with linked pages.
     Returns:
-        related_entities (list): List of liked entityIDs
-        related_names (list): List of liked entity names
+        (list): List of liked entityIDs
+        (list): List of liked entity names
     """
     related_entities = []
     related_names = []
     for c in data["results"]["bindings"]:
         related_entities.append(c["valUrl"]["value"].replace("http://www.wikidata.org/entity/", ""))
         related_names.append(c["valLabel"]["value"])
-    return (related_entities, related_names)
+    return related_entities, related_names
 
 def query_entity_description(entityID):
     """Query entity wikidata description from entityID
     Args:
         entityID (str): A wikidata page ID.
     Returns:
-        description (str): Wikidata short description of the entityID
-                           'descriptionNotFound' will be returned if no 
-                           description is found
+        (str): Wikidata short description of the entityID
+               descriptionNotFound' will be returned if no 
+               description is found
     """
     query = """
     PREFIX wd: <http://www.wikidata.org/entity/>
