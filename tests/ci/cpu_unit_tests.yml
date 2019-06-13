@@ -18,7 +18,7 @@ variables:
 - name  : 'branch'
   value : 'azure-pipelines-bz'
 - name  : 'clustername'
-  value : 'Reco-cpu-test'
+  value : 'reco-cpu-test2'
 - name  : 'vmsize'
   value : 'STANDARD_D3_V2'
 - name  : 'dockerproc'
