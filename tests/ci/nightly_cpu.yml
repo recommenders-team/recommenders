@@ -62,7 +62,7 @@ jobs:
 - job : Integration
   displayName : 'Integration: nightly_cpu_test'
   dependsOn : Smoke
-  timeoutInMinutes: 120
+  timeoutInMinutes: 150
   condition: succeeded('Smoke')
   
   pool:
