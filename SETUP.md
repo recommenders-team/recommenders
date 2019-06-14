@@ -272,13 +272,14 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
 
 ## Setup guide for Docker
 
-Docker images of the repo for different environment are provided. Dockerfiles can be found at `Recommenders/reco_utils/docker` if one would like to build Docker images on his/her own.
+Docker images of the repo for different environments are available. To build Docker images yourself use the Dockerfiles in `reco_utils/docker`.
 
 Assuming Docker is pre-installed and configured (**NOTE** `docker` command is already available in the Azure Data Science Virtual Machine. For installation of Docker in on a Linux machine, check instructions [here](https://docs.docker.com/install/)), for example, a PySpark Docker image can be built by the following command line
 >   ```{shell}
 >   cd Recommenders/reco_utils/docker/pyspark
 >   docker build -t <image_name>/<tag> .
 >   ```
+**NOTE** in case the build fails with returning a non-zero error (e.g., 137), it is likely it is owing to an out-of-memory issue. The problem may be solved by increasing the memory allocation to Docker engine.
 
 The Docker image is based on the [Jupyter Notebook Pyspark image](https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook), so it allows the user to run Jupyter notebooks in a browser when a container of the Docker image is turned on
 
