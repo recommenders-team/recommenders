@@ -58,5 +58,5 @@ def start_or_get_spark(
     if config is None or "spark.driver.memory" not in config:
         spark_opts.append('config("spark.driver.memory", "{}"'.format(memory))
 
-    spark_opts.append(".getOrCreate()")
+    spark_opts.append("getOrCreate()")
     return eval(".".join(spark_opts))
