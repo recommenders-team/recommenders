@@ -52,10 +52,10 @@ def start_or_get_spark(
 
     if config is not None:
         for key, value in config.items():
-            spark_opts.append('.config("{key}", {value})'.format(key=key, value=value))
+            spark_opts.append('config("{key}", {value})'.format(key=key, value=value))
 
     if config is None or "spark.driver.memory" not in config:
-        spark_opts.append('.config("spark.driver.memory", {}'.format(memory))
+        spark_opts.append('config("spark.driver.memory", {}'.format(memory))
 
     spark_opts.append(".getOrCreate()")
-    return eval("".join(spark_opts))
+    return eval(".".join(spark_opts))
