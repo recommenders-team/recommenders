@@ -15,7 +15,6 @@ try:
         SparkRankingEvaluation,
         SparkRatingEvaluation,
     )
-    from reco_utils.common.spark_utils import start_or_get_spark
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
