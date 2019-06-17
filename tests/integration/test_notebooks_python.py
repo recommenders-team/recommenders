@@ -5,7 +5,7 @@ import papermill as pm
 import pytest
 import sys
 
-from reco_utils.nni.nni_utils import check_experiment_status, NNI_STATUS_URL
+from reco_utils.tuning.nni.nni_utils import check_experiment_status, NNI_STATUS_URL
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 TOL = 0.05
@@ -115,6 +115,7 @@ def test_surprise_svd_integration(notebooks, size, expected_values):
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.vw
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",

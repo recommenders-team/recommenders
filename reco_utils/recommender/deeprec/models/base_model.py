@@ -500,4 +500,7 @@ class BaseModel(object):
                 step_pred = self.infer(load_sess, batch_data_input)
                 step_pred = np.reshape(step_pred, -1)
                 wt.write("\n".join(map(str, step_pred)))
+
+            # line break after each batch.
+            wt.write("\n")
         return self
