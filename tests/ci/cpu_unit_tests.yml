@@ -16,7 +16,7 @@ variables:
 - name  : 'reponame'
   value : 'Recommenders'
 - name  : 'branch'
-  value : 'azure-pipelines-bz'
+  value : 'TestJobs'
 - name  : 'clustername'
   value : 'reco-cpu-test2'
 - name  : 'vmsize'
