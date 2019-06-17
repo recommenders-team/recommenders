@@ -10,7 +10,7 @@ import pandas as pd
 import nni
 import surprise
 import sys
-sys.path.append("../../")
+sys.path.append("../../../")
 
 import reco_utils.evaluation.python_evaluation as evaluation
 from reco_utils.recommender.surprise.surprise_utils import (

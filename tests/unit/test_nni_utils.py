@@ -8,7 +8,7 @@ from tempfile import TemporaryDirectory
 from unittest.mock import patch
 import pytest
 
-from reco_utils.nni.nni_utils import (
+from reco_utils.tuning.nni.nni_utils import (
     get_experiment_status,
     check_experiment_status,
     check_stopped,
