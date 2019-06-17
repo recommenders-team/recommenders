@@ -14,7 +14,7 @@ except ImportError:
 def start_or_get_spark(
     app_name="Sample",
     url="local[*]",
-    memory="10G",
+    memory="10g",
     config=None,
     packages=None,
     jars=None,
@@ -56,7 +56,7 @@ def start_or_get_spark(
             spark_opts.append('config("{key}", {value})'.format(key=key, value=value))
 
     if config is None or "spark.driver.memory" not in config:
-        spark_opts.append('config("spark.driver.memory", "{}"'.format(memory))
+        spark_opts.append('config("spark.driver.memory", "{}")'.format(memory))
 
     spark_opts.append("getOrCreate()")
     return eval(".".join(spark_opts))
