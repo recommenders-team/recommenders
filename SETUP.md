@@ -284,7 +284,7 @@ Argument values can be specified for building an image with different running en
 
 Environment | Description | Argument value |
 ------------|------------|----------------|
-Python CPU|CPU version that allows runs of the non-Spark and non-GPU notebooks|'base'|
+Python CPU|CPU version that allows runs of the non-Spark and non-GPU notebooks|'datascience'|
 PySpark|PySpark environment that allows runs of PySpark notebooks|'pyspark'|
 Python GPU|GPU environment that allows runs of deep learning notebooks|'tensorflow'|
 
