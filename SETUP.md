@@ -279,9 +279,21 @@ Assuming Docker is pre-installed and configured (**NOTE** `docker` command is al
 >   cd Recommenders/reco_utils/docker/pyspark
 >   docker build -t <image_name>/<tag> .
 >   ```
-**NOTE** in case the build fails with returning a non-zero error (e.g., 137), it is likely it is owing to an out-of-memory issue. The problem may be solved by increasing the memory allocation to Docker engine.
 
-The Docker image is based on the [Jupyter Notebook Pyspark image](https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook), so it allows the user to run Jupyter notebooks in a browser when a container of the Docker image is turned on
+Argument values can be specified for building an image with different running environment. There are three different types of environment supported in the Dockerfile, corresponding to the environment of the repository. The following table summarizes the environment supported in the Dockerfile, and the argument value that specifies the environment in building the image.
+
+Enviroment | Description | Argument value |
+------------|------------|----------------|
+Python CPU|CPU version that allows runs of the non-Spark and non-GPU notebooks|'base'|
+PySpark|PySpark environment that allows runs of PySpark notebooks|'pyspark'|
+Python GPU|GPU environment that allows runs of deep learning notebooks|'tensorflow'|
+
+For example, the following command can be used to build a Docker image with PySpark environment, 
+>   ```{shell}
+>   docker build -t <image_name>/<tag> --build-args ENVIRONMENT='pyspark' .
+>   ```
+
+The Docker image is based on the [Jupyter Notebook image](https://github.com/jupyter/docker-stacks/tree/master), so it allows the user to run Jupyter notebooks in a browser when a container of the Docker image is turned on
 
 For example, to run the built image in an interactive manner, do the following 
 >   ```{shell}
@@ -289,10 +301,3 @@ For example, to run the built image in an interactive manner, do the following
 >   ```
 Then the message in the console will advise with a link to open (in the browser) to run the notebooks. Ideally, after opening the link, the notebook homepage should appear where one can find all the contents in the Recommender repository. There are other use case scenarios of running the built image, details can be found in [here](https://github.com/jupyter/docker-stacks).
 
-Currently, the following Docker images are supported for different use cases of the repository
-
-Enviroment | Description |
-------------|------------|
-~~Python CPU~~|CPU version that allows runs of the non-Spark and non-GPU notebooks 
-PySpark|PySpark environment that allows runs of PySpark notebooks
-~~Python GPU~~|GPU environment that allows runs of deep learning notebooks
