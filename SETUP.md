@@ -272,7 +272,7 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
 
 ## Setup guide for Docker
 
-Docker images of the repo for different environments are available. To build Docker images yourself use the Dockerfiles in `reco_utils/docker`.
+Docker images of the repository for different environments are available. To build Docker images yourself use the Dockerfiles in `reco_utils/docker`.
 
 Assuming Docker is pre-installed and configured (**NOTE** `docker` command is already available in the Azure Data Science Virtual Machine. For installation of Docker in on a Linux machine, check instructions [here](https://docs.docker.com/install/)), for example, a PySpark Docker image can be built by the following command line
 >   ```{shell}
@@ -282,22 +282,22 @@ Assuming Docker is pre-installed and configured (**NOTE** `docker` command is al
 
 Argument values can be specified for building an image with different running environment. There are three different types of environment supported in the Dockerfile, corresponding to the environment of the repository. The following table summarizes the environment supported in the Dockerfile, and the argument value that specifies the environment in building the image.
 
-Enviroment | Description | Argument value |
+Environment | Description | Argument value |
 ------------|------------|----------------|
 Python CPU|CPU version that allows runs of the non-Spark and non-GPU notebooks|'base'|
 PySpark|PySpark environment that allows runs of PySpark notebooks|'pyspark'|
 Python GPU|GPU environment that allows runs of deep learning notebooks|'tensorflow'|
 
-For example, the following command can be used to build a Docker image with PySpark environment, 
+For example, the following command builds a Docker image with PySpark environment and a user name of `reco_user`, 
 >   ```{shell}
->   docker build -t <image_name>/<tag> --build-args ENVIRONMENT='pyspark' .
+>   docker build -t <image_name>/<tag> --build-arg ENVIRONMENT='pyspark' --build-arg NB_USER='reco_user' .
 >   ```
 
-The Docker image is based on the [Jupyter Notebook image](https://github.com/jupyter/docker-stacks/tree/master), so it allows the user to run Jupyter notebooks in a browser when a container of the Docker image is turned on
+The Docker image is based on the [Jupyter Notebook image](https://github.com/jupyter/docker-stacks/tree/master). It allows the user to run Jupyter notebooks in a browser when a container of the Docker image is turned on
 
 For example, to run the built image in an interactive manner, do the following 
 >   ```{shell}
 >   docker run --rm -p 8888:8888 <image_name>/<tag>
 >   ```
-Then the message in the console will advise with a link to open (in the browser) to run the notebooks. Ideally, after opening the link, the notebook homepage should appear where one can find all the contents in the Recommender repository. There are other use case scenarios of running the built image, details can be found in [here](https://github.com/jupyter/docker-stacks).
+Then the message in the console will advise with a link to open (in the browser) to run the notebooks. Ideally, after opening the link, the notebook homepage should appear where one can find all the contents in the Recommender repository. 
 
