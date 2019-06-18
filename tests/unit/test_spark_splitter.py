@@ -74,14 +74,14 @@ def test_random_splitter(spark_dataset):
 
     splits = spark_random_split(spark_dataset, ratio=RATIOS[0], seed=SEED)
 
-    assert splits[0].count() / NUM_ROWS == pytest.approx(RATIOS[0], TOL)
-    assert splits[1].count() / NUM_ROWS == pytest.approx(1 - RATIOS[0], TOL)
+    assert splits[0].count() / NUM_ROWS == pytest.approx(RATIOS[0], abs=TOL)
+    assert splits[1].count() / NUM_ROWS == pytest.approx(1 - RATIOS[0], abs=TOL)
 
     splits = spark_random_split(spark_dataset, ratio=RATIOS, seed=SEED)
 
-    assert splits[0].count() / NUM_ROWS == pytest.approx(RATIOS[0], TOL)
-    assert splits[1].count() / NUM_ROWS == pytest.approx(RATIOS[1], TOL)
-    assert splits[2].count() / NUM_ROWS == pytest.approx(RATIOS[2], TOL)
+    assert splits[0].count() / NUM_ROWS == pytest.approx(RATIOS[0], abs=TOL)
+    assert splits[1].count() / NUM_ROWS == pytest.approx(RATIOS[1], abs=TOL)
+    assert splits[2].count() / NUM_ROWS == pytest.approx(RATIOS[2], abs=TOL)
 
 
 @pytest.mark.spark
@@ -187,7 +187,7 @@ def _if_later(data1, data2):
         F.min(DEFAULT_TIMESTAMP_COL).alias("min")
     )
     all_times = max_times.join(min_times, on=DEFAULT_USER_COL).select(
-        (F.col("max") < F.col("min"))
+        (F.col("max") <= F.col("min"))
     )
 
     return all([x[0] for x in all_times.collect()])
