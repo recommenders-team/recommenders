@@ -180,10 +180,10 @@ def _if_later(data1, data2):
         bool: True or False indicating if data1 is earlier than data2.
     """
 
-    max_times = data2.groupBy(DEFAULT_USER_COL).agg(
+    max_times = data1.groupBy(DEFAULT_USER_COL).agg(
         F.max(DEFAULT_TIMESTAMP_COL).alias("max")
     )
-    min_times = data1.groupBy(DEFAULT_USER_COL).agg(
+    min_times = data2.groupBy(DEFAULT_USER_COL).agg(
         F.min(DEFAULT_TIMESTAMP_COL).alias("min")
     )
     all_times = max_times.join(min_times, on=DEFAULT_USER_COL).select(
