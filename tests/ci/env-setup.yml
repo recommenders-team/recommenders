@@ -16,9 +16,9 @@ steps:
   displayName: Add Conda to PATH
 
 - script: 
+     pip install paramiko==2.4.2 &&
      pip install azureml-sdk &&
-     pip install azure-cli &&
-     pip install --upgrade azureml-sdk[cli]
+     pip install azure-cli 
   displayName: 'install azureml-sdk'
 
 
