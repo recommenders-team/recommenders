@@ -14,7 +14,7 @@ ENV PYSPARK_DRIVER_PYTHON /opt/conda/bin/python
 ENV SPARK_HOME /opt/spark
 
 RUN apt-get update && \
-    apt-get install -y curl git openjdk-8-jre
+    apt-get install -y curl git openjdk-8-jre libgomp1
 
 ARG SPARK="http://archive.apache.org/dist/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz"
 RUN mkdir /opt/spark && \
