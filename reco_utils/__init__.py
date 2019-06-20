@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 __title__ = "Microsoft Recommenders"
 __version__ = "2019.06"
 __author__ = "RecoDev Team at Microsoft"
