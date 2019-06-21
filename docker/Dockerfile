@@ -2,11 +2,20 @@
 # Licensed under the MIT License.
 
 # Base image is the one that is from Jupyter notebook Dockerhub
-# Default environment value is "base", and accepted values are "pyspark" and "tensorflow", for
+# Default environment value is "cpu", and accepted values are "pyspark" and "gpu", for
 # Spark and deep learning environment, respectively.
-ARG ENVIRONMENT='datascience'
+ARG ENVIRONMENT='cpu'
+ARG IMAGE='datascience'
+FROM jupyter/base-notebook
+RUN if [ "$ENVIRONMENT" = "pyspark" ]; then \
+        IMAGE="$ENVIRONMENT"; \
+    elif [ "$ENVIRONMENT" = "gpu" ]; then \
+        IMAGE="tensorflow"; \
+    elif [ "$ENVIRONMENT" = "cpu" ]; then \
+        IMAGE="datascience"; \
+    fi
+FROM jupyter/$IMAGE-notebook
 
-FROM jupyter/$ENVIRONMENT-notebook
 LABEL maintainer="Microsoft Recommender Project <RecoDevTeam@service.microsoft.com>"
 
 USER root
@@ -43,13 +52,13 @@ RUN pip install \
     "pydocumentdb>=2.3.3" \
     "tqdm==4.31.1"
 
-# Install conda & pip packages
-RUN if ["$ENVIRONMENT" = "pyspark"]; then \
+# Install conda & pip packages for different environment
+RUN if [ "$ENVIRONMENT" = "pyspark" ]; then \
         # Install the needed packages for pyspark environment
         conda install --quiet --yes \
         "pyarrow>=0.8.0" \
         "pyspark==2.3.1"; \
-    elif ["$ENVIRONMENT" = "tensorflow"]; then \
+    elif [ "$ENVIRONMENT" = "gpu" ]; then \
         # Install the needed packages for GPU environment
         conda install --quiet --yes \
         "numba>=0.38.1" \
