@@ -5,7 +5,6 @@ variables:
   test: 'tests/ci/run_pytest.py'
   maxnodes : 4
   reponame : 'Recommenders'
-  branch   : 'Testnb'
   rg       : 'recommender'
   wsname   : 'RecoWS'
 # CPU
