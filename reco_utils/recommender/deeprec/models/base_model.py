@@ -506,12 +506,10 @@ class BaseModel(object):
 
         label_df = user_data.copy()
         label_df['label'] = labels
-        #“test”
-        #prediction.to_csv("/home/adminye/notebooks/Recommenders/tests/resources/deeprec/movielens/prediction.csv",sep='\t')
+
         label_df=label_df.loc[label_df['label']>0]
-        #label_df.to_csv("/home/adminye/notebooks/Recommenders/tests/resources/deeprec/movielens/labels.csv",sep='\t')
-        
-        ##evaluation##
+
+        #evaluation##
         cols = {
             'col_user': 'userID',
             'col_item': 'itemID',
