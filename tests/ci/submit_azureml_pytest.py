@@ -71,10 +71,10 @@ def setup_workspace(workspace_name, subscription_id, resource_group, cli_auth,
     Returns:
         ws: workspace reference
     """
-    logger.debug('setup: workspace_name is {0}'.format(workspace_name))
-    logger.debug('setup: resource_group is {0}'.format(resource_group))
-    logger.debug('setup: subid is {0}'.format(subscription_id))
-    logger.debug('setup: location is {0}'.format(location))
+    logger.debug('setup: workspace_name is {}'.format(workspace_name))
+    logger.debug('setup: resource_group is {}'.format(resource_group))
+    logger.debug('setup: subid is {}'.format(subscription_id))
+    logger.debug('setup: location is {}'.format(location))
 
     try:
             # use existing workspace if there is one
@@ -122,7 +122,7 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size,
     # setting vmsize and num nodes creates a persistent AzureML
     # compute resource
 
-    logger.debug("setup: cluster_name", cluster_name)
+    logger.debug("setup: cluster_name {}".format(cluster_name))
     # https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-set-up-training-targets
 
     try:
@@ -190,7 +190,7 @@ def create_experiment(workspace, experiment_name):
         exp - AzureML experiment
     """
 
-    logger.debug('create: experiment_name {0}'.format(experiment_name))
+    logger.debug('create: experiment_name {}'.format(experiment_name))
     exp = Experiment(workspace=workspace, name=experiment_name)
     return(exp)
 
@@ -219,8 +219,8 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
           run : AzureML run or trial
     """
 
-    logger.debug('submit: testfolder {0}'.format(test_folder))
-    logger.debug('junitxml: {0}'.format(junitxml))
+    logger.debug('submit: testfolder {}'.format(test_folder))
+    logger.debug('junitxml: {}'.format(junitxml))
     project_folder = "."
 
     script_run_config = ScriptRunConfig(source_directory=project_folder,
@@ -240,7 +240,7 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
     # test logs can also be found on azure
     # go to azure portal to see log in azure ws and look for experiment name
     # and look for individual run
-    logger.debug('files {0}'.format(run.get_file_names))
+    logger.debug('files {}'.format(run.get_file_names))
 
     return run
 
@@ -374,7 +374,8 @@ if __name__ == "__main__":
                                    docker_proc_type=docker_proc_type,
                                    conda_env_file=args.condafile)
 
-    logger.info("exp: In Azure, look for experiment named {0}".format(args.expname))
+    logger.info('exp: In Azure, look for experiment named {}'.format(
+                args.expname))
 
     # create new or use existing experiment
     experiment = Experiment(workspace=workspace, name=args.expname)

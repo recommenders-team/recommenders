@@ -41,16 +41,13 @@ def create_arg_parser():
     return args
 
 
-test_logger = logging.getLogger(__name__)
-
-
 if __name__ == "__main__":
     logger = logging.getLogger('submit_azureml_pytest.py')
     args = create_arg_parser()
 
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-    logger.debug('junit_xml {0}'.format(args.xmlname))
+    logger.debug('junit_xml {}'.format(args.xmlname))
 
     # Run.get_context() is needed to save context as pytest causes corruption
     # of env vars
@@ -61,15 +58,12 @@ if __name__ == "__main__":
                     "-m", "not notebooks and not spark and not gpu",
                     "--junitxml=reports/test-unit.xml"])
     '''
-    logger.debug('args.junitxml {0}'.format(args.xmlname))
-    logger.info('pytest run:  [pytest, {0} "-m" {1} "--junitxml={2}" ]'.format(
-                 args.testfolder, args.testmarkers, args.xmlname))
-
-    subprocess.run(["pytest",
-                    args.testfolder,
-                    "-m",
-                    args.testmarkers,
-                    "--junitxml="+args.xmlname])
+    logger.debug('args.junitxml {}'.format(args.xmlname))
+    logger.debug('junit= --junitxml={}'.format(args.xmlname))
+    pytest_cmd = ['pytest', args.testfolder, '-m', args.testmarkers,
+                  '--junitxml={}'.format(args.xmlname)]
+    logger.info('pytest run:{}'.format(' '.join(pytest_cmd)))
+    subprocess.run(pytest_cmd)
 
     #
     # Leveraged code from this  notebook:
