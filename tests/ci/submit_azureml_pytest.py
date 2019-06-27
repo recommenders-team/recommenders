@@ -71,10 +71,10 @@ def setup_workspace(workspace_name, subscription_id, resource_group, cli_auth,
     Returns:
         ws: workspace reference
     """
-    logger.debug('setup: workspace_name is ', workspace_name)
-    logger.debug('setup: resource_group is ', resource_group)
-    logger.debug('setup: subid is ', subscription_id)
-    logger.debug('setup: location is ', location)
+    logger.debug('setup: workspace_name is {}'.format(workspace_name))
+    logger.debug('setup: resource_group is {}'.format(resource_group))
+    logger.debug('setup: subid is {}'.format(subscription_id))
+    logger.debug('setup: location is {}'.format(location))
 
     try:
             # use existing workspace if there is one
@@ -86,7 +86,7 @@ def setup_workspace(workspace_name, subscription_id, resource_group, cli_auth,
             )
     except WorkspaceException:
             # this call might take a minute or two.
-            logger.debug("Creating new workspace")
+            logger.debug('Creating new workspace')
             ws = Workspace.create(
                 name=workspace_name,
                 subscription_id=subscription_id,
@@ -122,14 +122,14 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size,
     # setting vmsize and num nodes creates a persistent AzureML
     # compute resource
 
-    logger.debug("setup: cluster_name", cluster_name)
+    logger.debug("setup: cluster_name {}".format(cluster_name))
     # https://docs.microsoft.com/en-us/azure/machine-learning/service/how-to-set-up-training-targets
 
     try:
         cpu_cluster = ComputeTarget(workspace=workspace, name=cluster_name)
         logger.debug('setup: Found existing cluster, use it.')
     except ComputeTargetException:
-        logger.debug("setup: create cluster")
+        logger.debug('setup: create cluster')
         compute_config = AmlCompute.provisioning_configuration(
                        vm_size=vm_size,
                        max_nodes=max_nodes)
@@ -190,7 +190,7 @@ def create_experiment(workspace, experiment_name):
         exp - AzureML experiment
     """
 
-    logger.debug("create: experiment_name ", experiment_name)
+    logger.debug('create: experiment_name {}'.format(experiment_name))
     exp = Experiment(workspace=workspace, name=experiment_name)
     return(exp)
 
@@ -219,8 +219,8 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
           run : AzureML run or trial
     """
 
-    logger.debug('submit: testfolder', test_folder)
-    logger.debug("junitxml:", junitxml)
+    logger.debug('submit: testfolder {}'.format(test_folder))
+    logger.debug('junitxml: {}'.format(junitxml))
     project_folder = "."
 
     script_run_config = ScriptRunConfig(source_directory=project_folder,
@@ -240,7 +240,7 @@ def submit_experiment_to_azureml(test, test_folder, test_markers, junitxml,
     # test logs can also be found on azure
     # go to azure portal to see log in azure ws and look for experiment name
     # and look for individual run
-    logger.debug('files', run.get_file_names())
+    logger.debug('files {}'.format(run.get_file_names))
 
     return run
 
@@ -344,7 +344,7 @@ def create_arg_parser():
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger("submit_azureml_pytest.py")
+    logger = logging.getLogger('submit_azureml_pytest.py')
     # logger.setLevel(logging.DEBUG)
     # logging.basicConfig(level=logging.DEBUG)
     args = create_arg_parser()
@@ -374,7 +374,8 @@ if __name__ == "__main__":
                                    docker_proc_type=docker_proc_type,
                                    conda_env_file=args.condafile)
 
-    print("exp: In Azure, look for experiment named ", args.expname)
+    logger.info('exp: In Azure, look for experiment named {}'.format(
+                args.expname))
 
     # create new or use existing experiment
     experiment = Experiment(workspace=workspace, name=args.expname)
