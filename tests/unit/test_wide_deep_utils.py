@@ -43,17 +43,19 @@ def pd_df():
 def test_build_feature_columns(pd_df):
     data, users, items = pd_df
 
-    # Test if wide column has one crossed column
-    wide_columns, _ = build_feature_columns(users, items, model_type='wide')
-    assert len(wide_columns) == 1
+    # Test if wide column has two original features and one crossed feature
+    wide_columns, _ = build_feature_columns(users, items, model_type='wide', crossed_feat_dim=10)
+    assert len(wide_columns) == 3
+    # Check crossed feature dimension
+    assert wide_columns[2].hash_bucket_size == 10
 
-    # Test if deep columns have user and item columns
+    # Test if deep columns have user and item features
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
     assert len(deep_columns) == 2
 
-    # Test if wide and deep columns have correct columns
+    # Test if wide and deep columns have correct features
     wide_columns, deep_columns = build_feature_columns(users, items, model_type='wide_deep')
-    assert len(wide_columns) == 1
+    assert len(wide_columns) == 3
     assert len(deep_columns) == 2
 
 

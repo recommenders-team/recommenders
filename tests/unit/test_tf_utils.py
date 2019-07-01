@@ -1,19 +1,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import itertools
+import os
 import pytest
-import shutil
 
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 
 from reco_utils.common.tf_utils import (
-    pandas_input_fn,
     build_optimizer,
     evaluation_log_hook,
+    export_model,
     MetricsLogger,
-    MODEL_DIR
+    pandas_input_fn,
+    pandas_input_fn_for_saved_model,
 )
 from reco_utils.recommender.wide_deep.wide_deep_utils import (
     build_model,
@@ -83,7 +85,6 @@ def test_pandas_input_fn(pd_df):
             elif len(v.shape) == 2:
                 assert v.shape[1] == len(df[k][0])
 
-    
     # check dataset w/ label
     dataset_with_label = pandas_input_fn(df, y_col=DEFAULT_RATING_COL)()
     batch = dataset_with_label.make_one_shot_iterator().get_next()
@@ -117,7 +118,7 @@ def test_build_optimizer():
 
 
 @pytest.mark.gpu
-def test_evaluation_log_hook(pd_df):
+def test_evaluation_log_hook(pd_df, tmp):
     data, users, items = pd_df
 
     # Run hook 10 times
@@ -127,11 +128,14 @@ def test_evaluation_log_hook(pd_df):
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
 
     model = build_model(
-        'deep_'+MODEL_DIR, deep_columns=deep_columns, save_checkpoints_steps=train_steps//hook_frequency
+        tmp,
+        deep_columns=deep_columns,
+        save_checkpoints_steps=train_steps//hook_frequency
     )
 
     evaluation_logger = MetricsLogger()
 
+    # Train a model w/ the hook
     hooks = [
         evaluation_log_hook(
             model,
@@ -140,17 +144,75 @@ def test_evaluation_log_hook(pd_df):
             y_col=DEFAULT_RATING_COL,
             eval_df=data.drop(DEFAULT_RATING_COL, axis=1),
             every_n_iter=train_steps//hook_frequency,
-            model_dir='deep_'+MODEL_DIR,
+            model_dir=tmp,
             eval_fns=[rmse],
         )
     ]
     model.train(
-        input_fn=pandas_input_fn(df=data, y_col=DEFAULT_RATING_COL, batch_size=1, num_epochs=None, shuffle=True),
+        input_fn=pandas_input_fn(
+            df=data,
+            y_col=DEFAULT_RATING_COL,
+            batch_size=1,
+            num_epochs=None,
+            shuffle=True
+        ),
         hooks=hooks,
         steps=train_steps
     )
-    shutil.rmtree('deep_' + MODEL_DIR, ignore_errors=True)
-
+    
     # Check if hook logged the given metric
     assert rmse.__name__ in evaluation_logger.get_log()
     assert len(evaluation_logger.get_log()[rmse.__name__]) == hook_frequency
+
+
+@pytest.mark.gpu
+def test_pandas_input_fn_for_saved_model(pd_df, tmp):
+    """Test `export_model` and `pandas_input_fn_for_saved_model`"""
+    data, users, items = pd_df
+    model_dir = os.path.join(tmp, "model")
+    export_dir = os.path.join(tmp, "export")
+    
+    _, deep_columns = build_feature_columns(users, items, model_type='deep')
+
+    # Train a model
+    model = build_model(
+        model_dir,
+        deep_columns=deep_columns,
+    )
+    train_fn = pandas_input_fn(
+        df=data,
+        y_col=DEFAULT_RATING_COL,
+        batch_size=1,
+        num_epochs=None,
+        shuffle=True
+    )
+    model.train(input_fn=train_fn, steps=1)
+    
+    # Test export_model function
+    exported_path = export_model(
+        model=model,
+        train_input_fn=train_fn,
+        eval_input_fn=pandas_input_fn(
+            df=data, y_col=DEFAULT_RATING_COL
+        ),
+        tf_feat_cols=deep_columns,
+        base_dir=export_dir
+    )
+    saved_model = tf.contrib.estimator.SavedModelEstimator(exported_path)
+
+    # Test pandas_input_fn_for_saved_model with the saved model
+    test = data.drop(DEFAULT_RATING_COL, axis=1)
+    test.reset_index(drop=True, inplace=True)
+    list(itertools.islice(
+        saved_model.predict(
+            pandas_input_fn_for_saved_model(
+                df=test,
+                feat_name_type={
+                    DEFAULT_USER_COL: int,
+                    DEFAULT_ITEM_COL: int,
+                    ITEM_FEAT_COL: list
+                }
+            )
+        ),
+        len(test)
+    ))
