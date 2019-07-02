@@ -145,6 +145,7 @@ def spark_stratified_split(
             with min_rating.
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
+        col_rating (str): column name of ratings.
 
     Returns:
         list: Splits of the input data as spark.DataFrame.
