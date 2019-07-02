@@ -51,8 +51,8 @@ COSMOSDB_JAR_FILE_OPTIONS = {
 
 MMLSPARK_INFO = {
     "maven": {
-        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.16.dev8+2.g6a5318b",
-        "repo": "https://mmlspark.azureedge.net/maven",
+        "coordinates": "Azure:mmlspark:0.17",
+        "repo": "https://mvnrepository.com/artifact"
     }
 }
 
@@ -64,7 +64,7 @@ DEFAULT_CLUSTER_CONFIG = {
     "spark_version": "5.2.x-scala2.11",
 }
 
-PENDING_SLEEP_INTERVAL = 60  ## seconds
+PENDING_SLEEP_INTERVAL = 60  # seconds
 PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
