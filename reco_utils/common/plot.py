@@ -14,7 +14,7 @@ def line_graph(
     plot_size=(5, 5),
 ):
     """Plot line graph(s).
-    TODO add test
+
     Args:
         values (list(list(float or tuple)) or list(float or tuple): List of graphs or a graph to plot
             E.g. a graph = list(y) or list((y,x))
