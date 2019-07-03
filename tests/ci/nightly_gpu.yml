@@ -13,7 +13,6 @@ variables:
   dockerproc : 'gpu'
 
 trigger: none
-
 pr: none
 
 jobs:
@@ -62,7 +61,7 @@ jobs:
 - job : Integration
   dependsOn: Smoke
   condition: succeeded('Smoke')
-  timeoutInMinutes: 90
+  timeoutInMinutes: 150
   displayName : 'Integration: Nightly_gpu_test'
   
   pool:
