@@ -258,7 +258,7 @@ class _TrainLogHook(tf.train.SessionRunHook):
         true_df,
         y_col,
         eval_df,
-        every_n_iter=1000,
+        every_n_iter=10000,
         model_dir=None,
         batch_size=256,
         eval_fns=None,
@@ -300,7 +300,7 @@ class _TrainLogHook(tf.train.SessionRunHook):
         else:
             self.step += 1
 
-        if self.step > 1 and self.step % self.every_n_iter == 0:
+        if self.step % self.every_n_iter == 0:
             _prev_log_level = tf.logging.get_verbosity()
             tf.logging.set_verbosity(tf.logging.ERROR)
 

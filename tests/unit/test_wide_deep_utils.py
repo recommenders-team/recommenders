@@ -44,7 +44,7 @@ def pd_df():
 
 
 @pytest.mark.gpu
-def test_wide_deep(pd_df, tmp):
+def test_wide_deep(pd_df, tmp_path):
     """Test `build_feature_columns` and `build_model`"""
     data, users, items = pd_df
 
@@ -58,7 +58,7 @@ def test_wide_deep(pd_df, tmp):
     assert wide_columns[2].hash_bucket_size == 10
     # Check model type
     model = build_model(
-        os.path.join(tmp, 'wide_' + MODEL_DIR), wide_columns=wide_columns
+        str(tmp_path / ('wide_' + MODEL_DIR)), wide_columns=wide_columns
     )
     assert isinstance(model, tf.estimator.LinearRegressor)
     # Test if model train works
@@ -79,7 +79,7 @@ def test_wide_deep(pd_df, tmp):
     assert len(deep_columns) == 2
     # Check model type
     model = build_model(
-        os.path.join(tmp, 'deep_' + MODEL_DIR), deep_columns=deep_columns
+        str(tmp_path / ('deep_' + MODEL_DIR)), deep_columns=deep_columns
     )
     assert isinstance(model, tf.estimator.DNNRegressor)
     # Test if model train works
@@ -98,7 +98,7 @@ def test_wide_deep(pd_df, tmp):
     assert len(deep_columns) == 2
     # Check model type
     model = build_model(
-        os.path.join(tmp, 'wide_deep_' + MODEL_DIR),
+        str(tmp_path / ('wide_deep_' + MODEL_DIR)),
         wide_columns=wide_columns,
         deep_columns=deep_columns,
     )

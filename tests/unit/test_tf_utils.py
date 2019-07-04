@@ -118,17 +118,17 @@ def test_build_optimizer():
 
 
 @pytest.mark.gpu
-def test_evaluation_log_hook(pd_df, tmp):
+def test_evaluation_log_hook(pd_df, tmp_path):
     data, users, items = pd_df
 
     # Run hook 10 times
     hook_frequency = 10
-    train_steps = 101
+    train_steps = 10
 
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
 
     model = build_model(
-        tmp,
+        str(tmp_path),
         deep_columns=deep_columns,
         save_checkpoints_steps=train_steps//hook_frequency
     )
@@ -144,7 +144,7 @@ def test_evaluation_log_hook(pd_df, tmp):
             y_col=DEFAULT_RATING_COL,
             eval_df=data.drop(DEFAULT_RATING_COL, axis=1),
             every_n_iter=train_steps//hook_frequency,
-            model_dir=tmp,
+            model_dir=str(tmp_path),
             eval_fns=[rmse],
         )
     ]
@@ -166,11 +166,11 @@ def test_evaluation_log_hook(pd_df, tmp):
 
 
 @pytest.mark.gpu
-def test_pandas_input_fn_for_saved_model(pd_df, tmp):
+def test_pandas_input_fn_for_saved_model(pd_df, tmp_path):
     """Test `export_model` and `pandas_input_fn_for_saved_model`"""
     data, users, items = pd_df
-    model_dir = os.path.join(tmp, "model")
-    export_dir = os.path.join(tmp, "export")
+    model_dir = str(tmp_path / "model")
+    export_dir = str(tmp_path / "export")
     
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
 
