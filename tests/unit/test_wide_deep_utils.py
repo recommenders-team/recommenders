@@ -44,7 +44,7 @@ def pd_df():
 
 
 @pytest.mark.gpu
-def test_wide_deep(pd_df, tmp_path):
+def test_wide_deep(pd_df, tmp):
     """Test `build_feature_columns` and `build_model`"""
     data, users, items = pd_df
 
@@ -58,7 +58,7 @@ def test_wide_deep(pd_df, tmp_path):
     assert wide_columns[2].hash_bucket_size == 10
     # Check model type
     model = build_model(
-        str(tmp_path / ('wide_' + MODEL_DIR)), wide_columns=wide_columns
+        os.path.join(tmp, 'wide_' + MODEL_DIR), wide_columns=wide_columns
     )
     assert isinstance(model, tf.estimator.LinearRegressor)
     # Test if model train works
@@ -73,13 +73,17 @@ def test_wide_deep(pd_df, tmp_path):
         steps=1,
     )
 
+    # Close the event file so that the model folder can be cleaned up.
+    summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
+    summary_writer.close()
+
     # Test deep model
     # Test if deep columns have user and item features
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
     assert len(deep_columns) == 2
     # Check model type
     model = build_model(
-        str(tmp_path / ('deep_' + MODEL_DIR)), deep_columns=deep_columns
+        os.path.join(tmp, 'deep_' + MODEL_DIR), deep_columns=deep_columns
     )
     assert isinstance(model, tf.estimator.DNNRegressor)
     # Test if model train works
@@ -88,6 +92,10 @@ def test_wide_deep(pd_df, tmp_path):
             df=data, y_col=DEFAULT_RATING_COL, batch_size=1, num_epochs=1, shuffle=False
         )
     )
+
+    # Close the event file so that the model folder can be cleaned up.
+    summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
+    summary_writer.close()
 
     # Test wide and deep model
     # Test if wide and deep columns have correct features
@@ -98,7 +106,7 @@ def test_wide_deep(pd_df, tmp_path):
     assert len(deep_columns) == 2
     # Check model type
     model = build_model(
-        str(tmp_path / ('wide_deep_' + MODEL_DIR)),
+        os.path.join(tmp, 'wide_deep_' + MODEL_DIR),
         wide_columns=wide_columns,
         deep_columns=deep_columns,
     )
@@ -114,3 +122,8 @@ def test_wide_deep(pd_df, tmp_path):
         ),
         steps=1,
     )
+
+    # Close the event file so that the model folder can be cleaned up.
+    summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
+    summary_writer.close()
+

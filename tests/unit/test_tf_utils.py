@@ -118,7 +118,7 @@ def test_build_optimizer():
 
 
 @pytest.mark.gpu
-def test_evaluation_log_hook(pd_df, tmp_path):
+def test_evaluation_log_hook(pd_df, tmp):
     data, users, items = pd_df
 
     # Run hook 10 times
@@ -128,7 +128,7 @@ def test_evaluation_log_hook(pd_df, tmp_path):
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
 
     model = build_model(
-        str(tmp_path),
+        tmp,
         deep_columns=deep_columns,
         save_checkpoints_steps=train_steps//hook_frequency
     )
@@ -144,7 +144,7 @@ def test_evaluation_log_hook(pd_df, tmp_path):
             y_col=DEFAULT_RATING_COL,
             eval_df=data.drop(DEFAULT_RATING_COL, axis=1),
             every_n_iter=train_steps//hook_frequency,
-            model_dir=str(tmp_path),
+            model_dir=tmp,
             eval_fns=[rmse],
         )
     ]
@@ -164,13 +164,17 @@ def test_evaluation_log_hook(pd_df, tmp_path):
     assert rmse.__name__ in evaluation_logger.get_log()
     assert len(evaluation_logger.get_log()[rmse.__name__]) == hook_frequency
 
+    # Close the event file so that the model folder can be cleaned up.
+    summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
+    summary_writer.close()
+
 
 @pytest.mark.gpu
-def test_pandas_input_fn_for_saved_model(pd_df, tmp_path):
+def test_pandas_input_fn_for_saved_model(pd_df, tmp):
     """Test `export_model` and `pandas_input_fn_for_saved_model`"""
     data, users, items = pd_df
-    model_dir = str(tmp_path / "model")
-    export_dir = str(tmp_path / "export")
+    model_dir = os.path.join(tmp, "model")
+    export_dir = os.path.join(tmp, "export")
     
     _, deep_columns = build_feature_columns(users, items, model_type='deep')
 
@@ -187,7 +191,7 @@ def test_pandas_input_fn_for_saved_model(pd_df, tmp_path):
         shuffle=True
     )
     model.train(input_fn=train_fn, steps=1)
-    
+
     # Test export_model function
     exported_path = export_model(
         model=model,
@@ -216,3 +220,8 @@ def test_pandas_input_fn_for_saved_model(pd_df, tmp_path):
         ),
         len(test)
     ))
+
+    # Close the event file so that the model folder can be cleaned up.
+    summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
+    summary_writer.close()
+
