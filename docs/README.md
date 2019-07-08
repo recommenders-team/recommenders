@@ -7,5 +7,6 @@ To setup the documentation
 
 To build the documentation as HTML:
 
+    cd docs
     make html
 
