@@ -5,7 +5,14 @@ import numpy as np
 
 try:
     from pyspark.sql import Window
-    from pyspark.sql.functions import col, row_number, broadcast, rand, collect_list, size
+    from pyspark.sql.functions import (
+        col,
+        row_number,
+        broadcast,
+        rand,
+        collect_list,
+        size,
+    )
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -99,7 +106,9 @@ def spark_chrono_split(
     window_count = Window.partitionBy(split_by_column)
     window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp))
 
-    rating_all = data.withColumn('count', size(collect_list(col_timestamp).over(window_count)))
+    rating_all = data.withColumn(
+        "count", size(collect_list(col_timestamp).over(window_count))
+    )
 
     rating_rank = rating_all.withColumn(
         "rank", row_number().over(window_spec) / col("count")
@@ -178,7 +187,9 @@ def spark_stratified_split(
     window_count = Window.partitionBy(split_by_column)
     window_spec = Window.partitionBy(split_by_column).orderBy(rand(seed=seed))
 
-    rating_all = data.withColumn('count', size(collect_list(col_rat over(window_count)))
+    rating_all = data.withColumn(
+        "count", size(collect_list(col_rating).over(window_count))
+    )
     rating_rank = rating_all.withColumn(
         "rank", row_number().over(window_spec) / col("count")
     )
@@ -205,10 +216,8 @@ def spark_timestamp_split(
     col_timestamp=DEFAULT_TIMESTAMP_COL,
 ):
     """Spark timestamp based splitter
-    The splitter splits the data into sets by timestamps without stratification on either
-    user or item.
-    The ratios are applied on the timestamp column which is divided accordingly into
-    several partitions.
+    The splitter splits the data into sets by timestamps without stratification on either user or item.
+    The ratios are applied on the timestamp column which is divided accordingly into several partitions.
 
     Args:
         data (spark.DataFrame): Spark DataFrame to be split.

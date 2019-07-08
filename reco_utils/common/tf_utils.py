@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import itertools
-
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -16,8 +15,10 @@ def pandas_input_fn(
     """Pandas input function for TensorFlow high-level API Estimator.
     This function returns tf.data.Dataset function.
 
-    Note. tf.estimator.inputs.pandas_input_fn cannot handle array/list column properly.
-    For more information, see (https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn)
+    .. note::
+    
+        tf.estimator.inputs.pandas_input_fn cannot handle array/list column properly.
+        For more information, see (https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn)
 
     Args:
         df (pd.DataFrame): Data containing features.

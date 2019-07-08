@@ -89,23 +89,27 @@ class LibffmConverter:
 
     .. note::
 
-        The input dataframe is expected to represent the feature data in the following schema
-        |field-1|field-2|...|field-n|rating|
-        |feature-1-1|feature-2-1|...|feature-n-1|1|
-        |feature-1-2|feature-2-2|...|feature-n-2|0|
-        ...
-        |feature-1-i|feature-2-j|...|feature-n-k|0|
+        The input dataframe is expected to represent the feature data in the following schema:
+
+        .. code-block:: python
+
+            |field-1|field-2|...|field-n|rating|
+            |feature-1-1|feature-2-1|...|feature-n-1|1|
+            |feature-1-2|feature-2-2|...|feature-n-2|0|
+            ...
+            |feature-1-i|feature-2-j|...|feature-n-k|0|
+
         Where
-        1. each "field-*" is the column name of the dataframe (column of lable/rating is excluded), and
-        2. "feature-*-*" can be either a string or a numerical value, representing the categorical variable or
+        1. each `field-*` is the column name of the dataframe (column of label/rating is excluded), and
+        2. `feature-*-*` can be either a string or a numerical value, representing the categorical variable or
         actual numerical variable of the feature value in the field, respectively.
         3. If there are ordinal variables represented in int types, users should make sure these columns
         are properly converted to string type.
 
         The above data will be converted to the libffm format by following the convention as explained in
-        https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf
+        `this paper <https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf>`_.
 
-        i.e., <field_index>:<field_feature_index>:1 or <field_index>:<field_index>:<field_feature_value>, depending on
+        i.e. `<field_index>:<field_feature_index>:1` or `<field_index>:<field_index>:<field_feature_value>`, depending on
         the data type of the features in the original dataframe.
 
     Examples:

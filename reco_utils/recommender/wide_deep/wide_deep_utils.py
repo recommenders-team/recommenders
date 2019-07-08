@@ -3,10 +3,7 @@
 
 import tensorflow as tf
 
-from reco_utils.common.constants import (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL
-)
+from reco_utils.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL
 from reco_utils.common.tf_utils import MODEL_DIR
 
 
@@ -19,7 +16,7 @@ def build_feature_columns(
     user_dim=8,
     item_dim=8,
     item_feat_shape=None,
-    model_type='wide_deep',
+    model_type="wide_deep",
 ):
     """Build wide and/or deep feature columns for TensorFlow high-level API Estimator.
 
@@ -41,16 +38,29 @@ def build_feature_columns(
         list of tf.feature_column: Wide feature columns. Empty list if 'deep' model.
         list of tf.feature_column: Deep feature columns. Empty list if 'wide' model.
     """
-    user_ids = tf.feature_column.categorical_column_with_vocabulary_list(user_col, users)
-    item_ids = tf.feature_column.categorical_column_with_vocabulary_list(item_col, items)
+    user_ids = tf.feature_column.categorical_column_with_vocabulary_list(
+        user_col, users
+    )
+    item_ids = tf.feature_column.categorical_column_with_vocabulary_list(
+        item_col, items
+    )
 
-    if model_type == 'wide':
+    if model_type == "wide":
         return _build_wide_columns(user_ids, item_ids), []
-    elif model_type == 'deep':
-        return [], _build_deep_columns(user_ids, item_ids, user_dim, item_dim, item_feat_col, item_feat_shape)
-    elif model_type == 'wide_deep':
-        return _build_wide_columns(user_ids, item_ids),\
-               _build_deep_columns(user_ids, item_ids, user_dim, item_dim, item_feat_col, item_feat_shape)
+    elif model_type == "deep":
+        return (
+            [],
+            _build_deep_columns(
+                user_ids, item_ids, user_dim, item_dim, item_feat_col, item_feat_shape
+            ),
+        )
+    elif model_type == "wide_deep":
+        return (
+            _build_wide_columns(user_ids, item_ids),
+            _build_deep_columns(
+                user_ids, item_ids, user_dim, item_dim, item_feat_col, item_feat_shape
+            ),
+        )
     else:
         raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
 
@@ -70,8 +80,9 @@ def _build_wide_columns(user_ids, item_ids):
     ]
 
 
-def _build_deep_columns(user_ids, item_ids, user_dim, item_dim,
-                        item_feat_col=None, item_feat_shape=1):
+def _build_deep_columns(
+    user_ids, item_ids, user_dim, item_dim, item_feat_col=None, item_feat_shape=1
+):
     """Build deep feature columns
 
     Args:
@@ -81,30 +92,25 @@ def _build_deep_columns(user_ids, item_ids, user_dim, item_dim,
         item_dim (int): Item embedding dimension.
         item_feat_col (str): Item feature column name.
         item_feat_shape (int or an iterable of integers): Item feature array shape.
+    
     Returns:
         list of tf.feature_column: Deep feature columns.
     """
     deep_columns = [
         # User embedding
         tf.feature_column.embedding_column(
-            categorical_column=user_ids,
-            dimension=user_dim,
-            max_norm=user_dim ** .5
+            categorical_column=user_ids, dimension=user_dim, max_norm=user_dim ** 0.5
         ),
         # Item embedding
         tf.feature_column.embedding_column(
-            categorical_column=item_ids,
-            dimension=item_dim,
-            max_norm=item_dim ** .5
-        )
+            categorical_column=item_ids, dimension=item_dim, max_norm=item_dim ** 0.5
+        ),
     ]
     # Item feature
     if item_feat_col is not None:
         deep_columns.append(
             tf.feature_column.numeric_column(
-                item_feat_col,
-                shape=item_feat_shape,
-                dtype=tf.float32
+                item_feat_col, shape=item_feat_shape, dtype=tf.float32
             )
         )
     return deep_columns
@@ -114,14 +120,14 @@ def build_model(
     model_dir=MODEL_DIR,
     wide_columns=(),
     deep_columns=(),
-    linear_optimizer='Ftrl',
-    dnn_optimizer='Adagrad',
+    linear_optimizer="Ftrl",
+    dnn_optimizer="Adagrad",
     dnn_hidden_units=(128, 128),
     dnn_dropout=0.0,
     dnn_batch_norm=True,
     log_every_n_iter=1000,
     save_checkpoints_steps=10000,
-    seed=None
+    seed=None,
 ):
     """Build wide-deep model.
     To generate wide model, pass wide_columns only.
@@ -156,7 +162,7 @@ def build_model(
             model_dir=model_dir,
             config=config,
             feature_columns=wide_columns,
-            optimizer=linear_optimizer
+            optimizer=linear_optimizer,
         )
     elif len(wide_columns) == 0 and len(deep_columns) > 0:
         model = tf.estimator.DNNRegressor(
@@ -166,7 +172,7 @@ def build_model(
             hidden_units=dnn_hidden_units,
             optimizer=dnn_optimizer,
             dropout=dnn_dropout,
-            batch_norm=dnn_batch_norm
+            batch_norm=dnn_batch_norm,
         )
     elif len(wide_columns) > 0 and len(deep_columns) > 0:
         model = tf.estimator.DNNLinearCombinedRegressor(
@@ -180,7 +186,7 @@ def build_model(
             dnn_hidden_units=dnn_hidden_units,
             dnn_optimizer=dnn_optimizer,
             dnn_dropout=dnn_dropout,
-            batch_norm=dnn_batch_norm
+            batch_norm=dnn_batch_norm,
         )
     else:
         raise ValueError(

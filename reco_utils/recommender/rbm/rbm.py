@@ -1,46 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""
-Implementation of a multinomial Restricted Boltzmann Machine for collaborative filtering
-in numpy/pandas/tensorflow
-
-Based on the article by Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton
-https://www.cs.toronto.edu/~rsalakhu/papers/rbmcf.pdf
-
-In this implementation we use multinomial units instead of the one-hot-encoded used in
-the paper.This means that the weights are rank 2 (matrices) instead of rank 3 tensors.
-
-Basic mechanics:
-
-1) A computational graph is created when the RBM class is instantiated;
-        For an item based recommender this consists of:
-        -- visible units: The number Nv of visible units equals the number of items
-        -- hidden units : hyperparameter to fix during training
-
-2) Gibbs Sampling:
-        2.1) for each training epoch, the visible units are first clamped on the data
-        2.2) The activation probability of the hidden units, given a linear combination of
-             the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
-             value of the hidden units.
-        2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
-             r=5 for the movielens dataset). In general, this is a multinomial distribution,
-             from which we sample the value of v.
-        2.4) This step is repeated k times, where k increases as optimization converges. It is
-             essential to fix to zero the original unrated items during the all learning process.
-
-3) Optimization:
-         The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
-         and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
-         minimizing the differene F_0 - F_k.
-
-4) Inference
-        Once the joint probability distribution P(v,h) is learned, this is used to generate ratings
-        for unrated items for all users
-
-"""
-
-# import libraries
 import numpy as np
 import pandas as pd
 
@@ -57,8 +17,6 @@ log = logging.getLogger(__name__)
 
 
 class RBM:
-
-    # initialize class parameters
     def __init__(
         self,
         hidden_units=500,
@@ -73,6 +31,42 @@ class RBM:
         with_metrics=False,
         seed=42
     ):
+    """Implementation of a multinomial Restricted Boltzmann Machine for collaborative filtering
+    in numpy/pandas/tensorflow
+
+    Based on the article by Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton
+    https://www.cs.toronto.edu/~rsalakhu/papers/rbmcf.pdf
+
+    In this implementation we use multinomial units instead of the one-hot-encoded used in
+    the paper.This means that the weights are rank 2 (matrices) instead of rank 3 tensors.
+
+    Basic mechanics:
+
+    1) A computational graph is created when the RBM class is instantiated;
+    For an item based recommender this consists of:
+    -- visible units: The number Nv of visible units equals the number of items
+    -- hidden units : hyperparameter to fix during training
+
+    2) Gibbs Sampling:
+        2.1) for each training epoch, the visible units are first clamped on the data
+        2.2) The activation probability of the hidden units, given a linear combination of
+            the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
+            value of the hidden units.
+        2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
+            r=5 for the movielens dataset). In general, this is a multinomial distribution,
+            from which we sample the value of v.
+        2.4) This step is repeated k times, where k increases as optimization converges. It is
+            essential to fix to zero the original unrated items during the all learning process.
+
+    3) Optimization:
+    The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
+    and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
+    minimizing the differene F_0 - F_k.
+
+    4) Inference
+    Once the joint probability distribution P(v,h) is learned, this is used to generate ratings
+    for unrated items for all users
+    """
 
         # RBM parameters
         self.Nhidden = hidden_units  # number of hidden units
@@ -209,9 +203,7 @@ class RBM:
         return v_samp
 
     def multinomial_distribution(self, phi):
-
-        """
-        Probability that unit v has value l given phi: P(v=l|phi)
+        """Probability that unit v has value l given phi: P(v=l|phi)
 
         Args:
             phi: linear combination of values of the previous layer
@@ -235,9 +227,7 @@ class RBM:
         return tf.transpose(prob, perm=[1, 2, 0])
 
     def free_energy(self, x):
-
-        """
-        Free energy of the visible units given the hidden units. Since the sum is over the hidden units'
+        """Free energy of the visible units given the hidden units. Since the sum is over the hidden units'
         states, the functional form of the visible units Free energy is the same as the one for the binary
         model.
 
@@ -267,12 +257,10 @@ class RBM:
 
     # initialize the parameters of the model.
     def init_parameters(self):
-
-        """
-        This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
+        """This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
         two bias vectors to initialize.
 
-        Arguments:
+        Args:
             Nv (int): number of visible units (input layer)
             Nh (int): number of hidden units (latent variables of the model)
 
@@ -308,22 +296,14 @@ class RBM:
                 dtype="float32",
             )
 
-    # ===================
-    # Sampling
-    # ===================
 
-    """
-    Sampling: In RBM we use Contrastive divergence to sample the parameter space. In order to do that we need
-    to initialize the two conditional probabilities:
-
-    P(h|phi_v) --> returns the probability that the i-th hidden unit is active
-    P(v|phi_h) --> returns the probability that the  i-th visible unit is active
-    """
-
-    # sample the hidden units given the visibles
     def sample_hidden_units(self, vv):
+        """Sampling: In RBM we use Contrastive divergence to sample the parameter space. In order to do that we need
+        to initialize the two conditional probabilities:
 
-        """
+        P(h|phi_v) --> returns the probability that the i-th hidden unit is active
+        P(v|phi_h) --> returns the probability that the  i-th visible unit is active
+
         Sample hidden units given the visibles. This can be thought of as a Forward pass step in a FFN
 
         Args:
@@ -348,11 +328,8 @@ class RBM:
 
         return phv, h_
 
-    # sample the visible units given the hidden
     def sample_visible_units(self, h):
-
-        """
-        Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN
+        """Sample the visible units given the hiddens. This can be thought of as a Backward pass in a FFN
         (negative phase). Each visible unit can take values in [1,rating], while the zero is reserved
         for missing data; as such the value of the hidden unit is sampled from a multinomial distribution.
 
