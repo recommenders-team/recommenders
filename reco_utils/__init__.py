@@ -1,8 +1,15 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 __title__ = "Microsoft Recommenders"
 __version__ = "2019.06"
 __author__ = "RecoDev Team at Microsoft"
 __license__ = "MIT"
 __copyright__ = "Copyright 2018-present Microsoft Corporation"
 
-# Version synonym
+# Synonyms
+TITLE = __title__
 VERSION = __version__
+AUTHOR = __author__
+LICENSE = __license__
+COPYRIGHT = __copyright__
