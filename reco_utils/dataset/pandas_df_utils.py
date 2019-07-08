@@ -83,11 +83,12 @@ def filter_by(df, filter_by_df, filter_by_cols):
     ]
 
 
-class LibffmConverter(object):
+class LibffmConverter:
     """Converts an input Dataframe (df) to another Dataframe (df) in libffm format. A text file of the converted
     Dataframe is optionally generated.
 
-    Note:
+    .. note::
+
         The input dataframe is expected to represent the feature data in the following schema
         |field-1|field-2|...|field-n|rating|
         |feature-1-1|feature-2-1|...|feature-n-1|1|
@@ -278,6 +279,20 @@ def negative_feedback_sampler(
     See for example the neural collaborative filtering paper 
     https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
     
+    Args:
+        df (pandas.DataFrame): input data that contains user-item tuples.
+        col_user (str): user id column name.
+        col_item (str): item id column name.
+        col_label (str): label column name. It is used for the generated columns where labels
+        of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
+        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user. 
+        If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
+        of all the possible samples.
+        seed (int): seed for the random state of the sampling function.
+
+    Returns:
+        pandas.DataFrame: data with negative feedback 
+
     Examples:
         >>> import pandas as pd
         >>> df = pd.DataFrame({
@@ -296,20 +311,6 @@ def negative_feedback_sampler(
         2   1   0
         3   3   1
         3   1   0
-
-    Args:
-        df (pandas.DataFrame): input data that contains user-item tuples.
-        col_user (str): user id column name.
-        col_item (str): item id column name.
-        col_label (str): label column name. It is used for the generated columns where labels
-        of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
-        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user. 
-        If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
-        of all the possible samples.
-        seed (int): seed for the random state of the sampling function.
-
-    Returns:
-        pandas.DataFrame: data with negative feedback 
     """
     # Get all of the users and items.
     users = df[col_user].unique()
@@ -422,6 +423,7 @@ class PandasHash:
 
     def __init__(self, pandas_object):
         """Initialize class
+        
         Args:
             pandas_object (pd.DataFrame|pd.Series): pandas object
         """
@@ -432,6 +434,7 @@ class PandasHash:
 
     def __eq__(self, other):
         """Overwrite equality comparison
+        
         Args:
             other (pd.DataFrame|pd.Series): pandas object to compare
 

@@ -3,8 +3,11 @@
 
 import numpy as np
 
-from pyspark.sql import Window
-from pyspark.sql.functions import col, row_number, broadcast, rand, collect_list, size
+try:
+    from pyspark.sql import Window
+    from pyspark.sql.functions import col, row_number, broadcast, rand, collect_list, size
+except ImportError:
+    pass  # skip this import if we are in pure python environment
 
 from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
@@ -175,7 +178,7 @@ def spark_stratified_split(
     window_count = Window.partitionBy(split_by_column)
     window_spec = Window.partitionBy(split_by_column).orderBy(rand(seed=seed))
 
-    rating_all = data.withColumn('count', size(collect_list(col_rating).over(window_count)))
+    rating_all = data.withColumn('count', size(collect_list(col_rat over(window_count)))
     rating_rank = rating_all.withColumn(
         "rank", row_number().over(window_spec) / col("count")
     )

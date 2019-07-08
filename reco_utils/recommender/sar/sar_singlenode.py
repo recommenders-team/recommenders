@@ -280,7 +280,7 @@ class SARSingleNode:
             test (pd.DataFrame): user to test
             remove_seen (bool): flag to remove items seen in training from recommendation
             normalize (bool): flag to normalize scores to be in the same scale as the original ratings
- 1
+ 
         Returns:
             np.ndarray
         """
@@ -450,6 +450,7 @@ class SARSingleNode:
 
     def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set
+        
         Args:
             test (pd.DataFrame): DataFrame that contains users and items to test
 
@@ -478,5 +479,4 @@ class SARSingleNode:
                 self.col_prediction: test_scores[user_ids, item_ids],
             }
         )
-
         return df

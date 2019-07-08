@@ -45,9 +45,9 @@ NCF
 .. automodule:: reco_utils.recommender.ncf.dataset
     :members:
 
-.. automodule:: reco_utils.recommender.ncf.ncf_single_node
+.. automodule:: reco_utils.recommender.ncf.ncf_singlenode
     :members:
-    
+
 
 RBM
 ===============================
