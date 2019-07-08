@@ -18,9 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 class RLRMCalgorithm(object):
-    """
-    RLRMC algorithm implementation.
-    """
+    """RLRMC algorithm implementation."""
 
     def __init__(
         self,

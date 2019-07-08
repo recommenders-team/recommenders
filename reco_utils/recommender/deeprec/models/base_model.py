@@ -5,7 +5,7 @@ import abc
 import time
 import numpy as np
 import tensorflow as tf
-from ..deeprec_utils import cal_metric
+from reco_utils.deeprec.deeprec_utils import cal_metric
 
 
 __all__ = ["BaseModel"]
