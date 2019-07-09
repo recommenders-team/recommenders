@@ -659,3 +659,18 @@ def get_top_k_items(
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
+
+
+"""Function name and function mapper.
+Useful when we have to serialize evaluation metric names
+and call the functions based on deserialized names"""
+metrics = {
+    rmse.__name__: rmse,
+    mae.__name__: mae,
+    rsquared.__name__: rsquared,
+    exp_var.__name__: exp_var,
+    precision_at_k.__name__: precision_at_k,
+    recall_at_k.__name__: recall_at_k,
+    ndcg_at_k.__name__: ndcg_at_k,
+    map_at_k.__name__: map_at_k,
+}

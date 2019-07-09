@@ -9,6 +9,52 @@ import tensorflow as tf
 MODEL_DIR = "model_checkpoints"
 
 
+OPTIMIZERS = dict(
+    adadelta=tf.train.AdadeltaOptimizer,
+    adagrad=tf.train.AdagradOptimizer,
+    adam=tf.train.AdamOptimizer,
+    ftrl=tf.train.FtrlOptimizer,
+    momentum=tf.train.MomentumOptimizer,
+    rmsprop=tf.train.RMSPropOptimizer,
+    sgd=tf.train.GradientDescentOptimizer,
+)
+
+
+def pandas_input_fn_for_saved_model(
+    df,
+    feat_name_type,
+):
+    """Pandas input function for TensorFlow SavedModel.
+    
+    Args:
+        df (pd.DataFrame): Data containing features.
+        feat_name_type (dict): Feature name and type spec. E.g.
+            `{'userID': int, 'itemID': int, 'rating': float}`
+        
+    Returns:
+        func: Input function 
+    
+    """
+    for feat_type in feat_name_type.values():
+        assert feat_type in (int, float, list)
+        
+    def input_fn():
+        examples = [None] * len(df)
+        for i, sample in df.iterrows():
+            ex = tf.train.Example()
+            for feat_name, feat_type in feat_name_type.items():
+                feat = ex.features.feature[feat_name]
+                if feat_type == int:
+                    feat.int64_list.value.extend([sample[feat_name]])
+                elif feat_type == float:
+                    feat.float_list.value.extend([sample[feat_name]])
+                elif feat_type == list:
+                    feat.float_list.value.extend(sample[feat_name])
+            examples[i] = ex.SerializeToString()
+        return {'inputs': tf.constant(examples)}
+    return input_fn
+
+
 def pandas_input_fn(
     df, y_col=None, batch_size=128, num_epochs=1, shuffle=False, seed=None
 ):
@@ -84,28 +130,60 @@ def build_optimizer(name, lr=0.001, **kwargs):
     Returns:
         tf.train.Optimizer
     """
-    optimizers = dict(
-        adadelta=tf.train.AdadeltaOptimizer,
-        adagrad=tf.train.AdagradOptimizer,
-        adam=tf.train.AdamOptimizer,
-        ftrl=tf.train.FtrlOptimizer,
-        momentum=tf.train.MomentumOptimizer,
-        rmsprop=tf.train.RMSPropOptimizer,
-        sgd=tf.train.GradientDescentOptimizer,
-    )
+    name = name.lower()
 
     try:
-        optimizer_class = optimizers[name.lower()]
+        optimizer_class = OPTIMIZERS[name]
     except KeyError:
         raise KeyError(
-            "Optimizer name should be one of: [{}]".format(", ".join(optimizers.keys()))
+            "Optimizer name should be one of: {}".format(list(OPTIMIZERS))
         )
 
-    # assign default values
-    if name.lower() == "momentum" and "momentum" not in kwargs:
-        kwargs["momentum"] = 0.9
+    # Set parameters
+    params = {}
+    if name == 'ftrl':
+        params['l1_regularization_strength'] = kwargs.get('l1_regularization_strength', 0.0)
+        params['l2_regularization_strength'] = kwargs.get('l2_regularization_strength', 0.0)
+    elif name == 'momentum' or name == 'rmsprop':
+        params['momentum'] = kwargs.get('momentum', 0.0)
 
-    return optimizer_class(learning_rate=lr, **kwargs)
+    return optimizer_class(learning_rate=lr, **params)
+
+
+def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
+    """Export TensorFlow estimator (model).
+    
+    Args:
+        model (tf.estimator.Estimator): Model to export.
+        train_input_fn (function): Training input function to create data receiver spec.
+        eval_input_fn (function): Evaluation input function to create data receiver spec. 
+        tf_feat_cols (list(tf.feature_column)): Feature columns.
+        base_dir (str): Base directory to export the model.
+    Returns:
+        str: Exported model path
+    """
+    tf.logging.set_verbosity(tf.logging.ERROR)
+    train_rcvr_fn = tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
+        train_input_fn
+    )
+    eval_rcvr_fn = tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
+        eval_input_fn
+    )
+    serve_rcvr_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(
+        tf.feature_column.make_parse_example_spec(tf_feat_cols)
+    )
+    rcvr_fn_map = {
+        tf.estimator.ModeKeys.TRAIN: train_rcvr_fn,
+        tf.estimator.ModeKeys.EVAL: eval_rcvr_fn,
+        tf.estimator.ModeKeys.PREDICT: serve_rcvr_fn
+    }
+    exported_path = tf.contrib.estimator.export_all_saved_models(
+        model,
+        export_dir_base=base_dir,
+        input_receiver_fn_map=rcvr_fn_map
+    )
+    
+    return exported_path.decode("utf-8")
 
 
 def evaluation_log_hook(
@@ -120,26 +198,26 @@ def evaluation_log_hook(
     eval_fns=None,
     **eval_kwargs
 ):
-    """Evaluation log hook for TensorFlow high-levmodel_direl API Estimator.
-    Note, to evaluate the model in the middle of training (by using this hook),
-    the model checkpointing steps should be equal or larger than the hook's since
-    TensorFlow Estimator uses the last checkpoint for evaluation or prediction.
-    Checkpoint frequency can be set via Estimator's run config.
+    """Evaluation log hook for TensorFlow high-level API Estimator.
+    Note, TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.
+    In order to get the most up-to-date evaluation results while training,
+    set model's `save_checkpoints_steps` to be equal or greater than hook's `every_n_iter`.
 
     Args:
         estimator (tf.estimator.Estimator): Model to evaluate.
-        logger (Logger): Custom logger to log the results. E.g., define a subclass of Logger for AzureML logging.
+        logger (Logger): Custom logger to log the results.
+            E.g., define a subclass of Logger for AzureML logging.
         true_df (pd.DataFrame): Ground-truth data.
         y_col (str): Label column name in true_df
-        eval_df (pd.DataFrame): Evaluation data. May not include the label column as
-            some evaluation functions do not allow.
-        every_n_iter (int): Evaluation frequency (steps). Should be equal or larger than checkpointing steps.
+        eval_df (pd.DataFrame): Evaluation data without label column.
+        every_n_iter (int): Evaluation frequency (steps).
         model_dir (str): Model directory to save the summaries to. If None, does not record.
         batch_size (int): Number of samples fed into the model at a time.
             Note, the batch size doesn't affect on evaluation results.
         eval_fns (iterable of functions): List of evaluation functions that have signature of
             (true_df, prediction_df, **eval_kwargs)->(float). If None, loss is calculated on true_df.
-        **eval_kwargs: Evaluation function's keyword arguments. Note, prediction column name should be 'prediction'
+        **eval_kwargs: Evaluation function's keyword arguments.
+            Note, prediction column name should be 'prediction'
 
     Returns:
         tf.train.SessionRunHook: Session run hook to evaluate the model while training.
@@ -181,7 +259,7 @@ class _TrainLogHook(tf.train.SessionRunHook):
         true_df,
         y_col,
         eval_df,
-        every_n_iter=1000,
+        every_n_iter=10000,
         model_dir=None,
         batch_size=256,
         eval_fns=None,
@@ -223,7 +301,7 @@ class _TrainLogHook(tf.train.SessionRunHook):
         else:
             self.step += 1
 
-        if self.step > 1 and self.step % self.every_n_iter == 0:
+        if self.step % self.every_n_iter == 0:
             _prev_log_level = tf.logging.get_verbosity()
             tf.logging.set_verbosity(tf.logging.ERROR)
 

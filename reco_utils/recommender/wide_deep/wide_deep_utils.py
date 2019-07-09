@@ -13,6 +13,7 @@ def build_feature_columns(
     user_col=DEFAULT_USER_COL,
     item_col=DEFAULT_ITEM_COL,
     item_feat_col=None,
+    crossed_feat_dim=1000,
     user_dim=8,
     item_dim=8,
     item_feat_shape=None,
@@ -25,18 +26,19 @@ def build_feature_columns(
         items (iterable): Distinct item ids.
         user_col (str): User column name.
         item_col (str): Item column name.
-        item_feat_col (str): Item feature column name. Only for 'deep' model.
-        user_dim (int): User embedding dimension. Only for 'deep' model.
-        item_dim (int): Item embedding dimension. Only for 'deep' model.
-        item_feat_shape (int or an iterable of integers): Item feature array shape. Only for 'deep' model.
+        item_feat_col (str): Item feature column name for 'deep' or 'wide_deep' model.
+        crossed_feat_dim (int): Crossed feature dimension for 'wide' or 'wide_deep' model.
+        user_dim (int): User embedding dimension for 'deep' or 'wide_deep' model.
+        item_dim (int): Item embedding dimension for 'deep' or 'wide_deep' model.
+        item_feat_shape (int or an iterable of integers): Item feature array shape for 'deep' or 'wide_deep' model.
         model_type (str): Model type, either
             'wide' for a linear model,
             'deep' for a deep neural networks, or
             'wide_deep' for a combination of linear model and neural networks.
 
     Returns:
-        list of tf.feature_column: Wide feature columns. Empty list if 'deep' model.
-        list of tf.feature_column: Deep feature columns. Empty list if 'wide' model.
+        list of tf.feature_column: Wide feature columns. Empty list if use 'deep' model.
+        list of tf.feature_column: Deep feature columns. Empty list if use 'wide' model.
     """
     user_ids = tf.feature_column.categorical_column_with_vocabulary_list(
         user_col, users
@@ -65,18 +67,22 @@ def build_feature_columns(
         raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
 
 
-def _build_wide_columns(user_ids, item_ids):
-    """Build wide feature columns
+def _build_wide_columns(user_ids, item_ids, hash_bucket_size=1000):
+    """Build wide feature (crossed) columns. `user_ids` * `item_ids` are hashed into `hash_bucket_size`
 
     Args:
         user_ids (tf.feature_column.categorical_column_with_vocabulary_list): User ids.
         item_ids (tf.feature_column.categorical_column_with_vocabulary_list): Item ids.
+        hash_bucket_size (int): Hash bucket size.
 
     Returns:
         list of tf.feature_column: Wide feature columns.
     """
+    # Including the original features in addition to the crossed one is recommended to address hash collision problem.
     return [
-        tf.feature_column.crossed_column([user_ids, item_ids], hash_bucket_size=1000)
+        user_ids,
+        item_ids,
+        tf.feature_column.crossed_column([user_ids, item_ids], hash_bucket_size=hash_bucket_size)
     ]
 
 
@@ -143,8 +149,8 @@ def build_model(
         dnn_hidden_units (list of int): Deep model hidden units. E.g., [10, 10, 10] is three layers of 10 nodes each.
         dnn_dropout (float): Deep model's dropout rate.
         dnn_batch_norm (bool): Deep model's batch normalization flag.
-        log_every_n_iter (int): Every log_every_n_iter steps, log the train loss.
-        save_checkpoints_steps (int): Model checkpointing frequency.
+        log_every_n_iter (int): Log the training loss for every n steps.
+        save_checkpoints_steps (int): Model checkpoint frequency.
         seed (int): Random seed.
 
     Returns:
@@ -190,11 +196,9 @@ def build_model(
         )
     else:
         raise ValueError(
-            """
-            To generate wide model, set wide_columns.
-            To generate deep model, set deep_columns.
-            To generate wide_deep model, set both wide_columns and deep_columns.
-            """
+            "To generate wide model, set wide_columns.\n"
+            "To generate deep model, set deep_columns.\n"
+            "To generate wide_deep model, set both wide_columns and deep_columns."
         )
 
     return model
