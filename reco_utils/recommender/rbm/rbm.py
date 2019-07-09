@@ -44,19 +44,19 @@ class RBM:
 
     1) A computational graph is created when the RBM class is instantiated;
     For an item based recommender this consists of:
-    -- visible units: The number Nv of visible units equals the number of items
-    -- hidden units : hyperparameter to fix during training
+    visible units: The number Nv of visible units equals the number of items
+    hidden units : hyperparameter to fix during training
 
     2) Gibbs Sampling:
-        2.1) for each training epoch, the visible units are first clamped on the data
-        2.2) The activation probability of the hidden units, given a linear combination of
-            the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
-            value of the hidden units.
-        2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
-            r=5 for the movielens dataset). In general, this is a multinomial distribution,
-            from which we sample the value of v.
-        2.4) This step is repeated k times, where k increases as optimization converges. It is
-            essential to fix to zero the original unrated items during the all learning process.
+    2.1) for each training epoch, the visible units are first clamped on the data
+    2.2) The activation probability of the hidden units, given a linear combination of
+        the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
+        value of the hidden units.
+    2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
+        r=5 for the movielens dataset). In general, this is a multinomial distribution,
+        from which we sample the value of v.
+    2.4) This step is repeated k times, where k increases as optimization converges. It is
+        essential to fix to zero the original unrated items during the all learning process.
 
     3) Optimization:
     The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
@@ -105,10 +105,6 @@ class RBM:
 
         log.info("TensorFlow version: {}".format(tf.__version__))
 
-    # =========================
-    # Helper functions
-    # ========================
-
     def time(self):
         """
         Time a particular section of the code - call this once to set the state somewhere
@@ -122,27 +118,21 @@ class RBM:
         if self.start_time is None:
             self.start_time = tm.time()
             return False
-
         else:
             answer = tm.time() - self.start_time
             # reset state
             self.start_time = None
             return answer
 
-        # else:
-        #    return None
-
     def binomial_sampling(self, pr):
-
-        """
-        Binomial sampling of hidden units activations using a rejection method.
+        """Binomial sampling of hidden units activations using a rejection method.
 
         Basic mechanics:
-            1) Extract a random number from a uniform distribution (g) and compare it with
-                the unit's probability (pr)
+        1) Extract a random number from a uniform distribution (g) and compare it with
+            the unit's probability (pr)
 
-            2) Choose 0 if pr<g, 1 otherwise. It is convenient to implement this condtion using
-               the relu function.
+        2) Choose 0 if pr<g, 1 otherwise. It is convenient to implement this condtion using
+            the relu function.
 
         Args:
             pr (tensor, float32): input conditional probability
@@ -163,21 +153,19 @@ class RBM:
         return h_sampled
 
     def multinomial_sampling(self, pr):
-
-        """
-        Multinomial Sampling of ratings
+        """Multinomial Sampling of ratings
 
         Basic mechanics:
-                For r classes, we sample r binomial distributions using the rejection method. This is possible
-                since each class is statistically independent from the other. Note that this is the same method
-                used in numpy's random.multinomial() function.
+        For r classes, we sample r binomial distributions using the rejection method. This is possible
+        since each class is statistically independent from the other. Note that this is the same method
+        used in numpy's random.multinomial() function.
 
-                1) extract a size r array of random numbers from a uniform distribution (g). As pr is normalized,
-                   we need to normalize g as well.
+        1) extract a size r array of random numbers from a uniform distribution (g). As pr is normalized,
+        we need to normalize g as well.
 
-                2) For each user and item, compare pr with the reference distribution. Note that the latter needs
-                   to be the same for ALL the user/item pairs in the dataset, as by assumptions they are sampled
-                   from a common distribution.
+        2) For each user and item, compare pr with the reference distribution. Note that the latter needs
+        to be the same for ALL the user/item pairs in the dataset, as by assumptions they are sampled
+        from a common distribution.
 
         Args:
             pr (tensor, float32): a distributions of shape (m, n, r), where m is the number of examples, n the number
@@ -247,17 +235,13 @@ class RBM:
 
         return F
 
-    # ==================================
-    # Define graph topology
-    # ==================================
-
-    # Initialize the placeholders for the visible units
     def placeholder(self):
+        """Initialize the placeholders for the visible units"""
         self.vu = tf.placeholder(shape=[None, self.Nvisible], dtype="float32")
 
-    # initialize the parameters of the model.
     def init_parameters(self):
-        """This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
+        """Initialize the parameters of the model.
+        This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
         two bias vectors to initialize.
 
         Args:
@@ -334,14 +318,14 @@ class RBM:
         for missing data; as such the value of the hidden unit is sampled from a multinomial distribution.
 
         Basic mechanics:
-           1) For every training example we first sample Nv Multinomial distributions. The result is of the
-              form [0,1,0,0,0,...,0] where the index of the 1 element corresponds to the rth rating. The index
-              is extracted using the argmax function and we need to add 1 at the end since array indeces starts
-              from 0.
+        1) For every training example we first sample Nv Multinomial distributions. The result is of the
+            form [0,1,0,0,0,...,0] where the index of the 1 element corresponds to the rth rating. The index
+            is extracted using the argmax function and we need to add 1 at the end since array indeces starts
+            from 0.
 
-           2) Selects only those units that have been sampled. During the training phase it is important to not
-              use the reconstructed inputs, so we beed to enforce a zero value in the reconstructed ratings in
-              the same position as the original input.
+        2) Selects only those units that have been sampled. During the training phase it is important to not
+            use the reconstructed inputs, so we beed to enforce a zero value in the reconstructed ratings in
+            the same position as the original input.
 
         Args:
             h (tensor, float32): visible units.
@@ -372,26 +356,11 @@ class RBM:
 
         return pvh, v_
 
-    # =======================
-    # Training ops
-    # =======================
-    """
-    Training in generative models takes place in two steps:
-
-    1) Gibbs sampling
-    2) Gradient evaluation and parameters update
-
-    This estimate is later used in the weight update step by minimizing the distance between the
-    model and the empirical free energy. Note that while the unit's configuration space is sampled,
-    the weights are determined via maximum likelihood (saddle point).
-    """
 
     def gibbs_sampling(self):
-
-        """
-        Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary
+        """Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary
         RBM we need to impose that unseen movies stay as such, i.e. the sampling phase should not modify
-        the elelments where v =0.
+        the elements where v =0.
 
         Args:
             k (scalar, integer): iterator. Number of sampling steps.
@@ -416,9 +385,7 @@ class RBM:
                 _, self.v_k = self.sample_visible_units(h_k)
 
     def losses(self, vv):
-
-        """
-        Loss functions
+        """Loss functions
 
         Args:
             v (tensor, float32): empirical input
@@ -436,19 +403,15 @@ class RBM:
         return obj
 
     def gibbs_protocol(self, i):
-
-        """
-        Gibbs protocol
+        """Gibbs protocol
 
         Basic mechanics:
-            If the current epoch i is in the interval specified in the training protocol cd_protocol_,
-            the number of steps in Gibbs sampling (k) is incremented by one and gibbs_sampling is updated
-            accordingly.
+        If the current epoch i is in the interval specified in the training protocol cd_protocol_,
+        the number of steps in Gibbs sampling (k) is incremented by one and gibbs_sampling is updated
+        accordingly.
 
         Args:
             i (scalar, integer): current epoch in the loop
-
-        Returns: gibbs_sampling --> v_k (tensor, float32) evaluated at k steps
 
         """
 
@@ -470,14 +433,9 @@ class RBM:
             if self.debug:
                 log.info("percentage of epochs covered so far %f2" % (epoch_percentage))
 
-    # ================================================
-    # model performance (online metrics)
-    # ================================================
 
     def accuracy(self, vp):
-
-        """
-        Train/Test Mean average precision
+        """Train/Test Mean average precision
 
         Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on
         the rated items only
@@ -512,9 +470,7 @@ class RBM:
         return ac_score
 
     def rmse(self, vp):
-
-        """
-        Root Mean Square Error
+        """Root Mean Square Error
 
         Note that this needs to be evaluated on the rated items only
 
@@ -545,15 +501,8 @@ class RBM:
 
         return err
 
-    # =========================
-    # Training ops
-    # =========================
-
     def data_pipeline(self):
-
-        """
-        Define the data pipeline
-        """
+        """Define the data pipeline"""
 
         # placeholder for the batch_size
         self.batch_size = tf.placeholder(tf.int64)
@@ -572,18 +521,14 @@ class RBM:
         self.v = self.iter.get_next()
 
     def init_metrics(self):
-
-        """
-        Initialize metrics
-        """
+        """Initialize metrics"""
 
         if self.with_metrics:  # if true (default) returns evaluation metrics
             self.Rmse = self.rmse(self.v_k)
             self.Clacc = self.accuracy(self.v_k)
 
     def train_test_precision(self, xtst):
-        """
-        Evaluates precision on the train and test set
+        """Evaluates precision on the train and test set
 
         Args:
             xtst (np.array, integer32): the user/affinity matrix for the test set
@@ -611,9 +556,7 @@ class RBM:
         return precision_train, precision_test
 
     def display_metrics(self, Rmse_train, precision_train, precision_test):
-
-        """
-        Display training/test metrics and plots the msre error as a function
+        """Display training/test metrics and plots the rmse error as a function
         of the training epochs
 
         Args:
@@ -635,10 +578,7 @@ class RBM:
             log.info("Test set accuracy %f2" % precision_test)
 
     def generate_graph(self):
-
-        """
-        Call the different RBM modules to generate the computational graph
-        """
+        """Call the different RBM modules to generate the computational graph"""
 
         log.info("Creating the computational graph")
 
@@ -664,9 +604,7 @@ class RBM:
         )  # Instantiate the optimizer
 
     def init_gpu(self):
-        """
-        Config GPU memory
-        """
+        """Config GPU memory"""
 
         self.config_gpu = tf.ConfigProto(
             log_device_placement=True, allow_soft_placement=True
@@ -674,8 +612,7 @@ class RBM:
         self.config_gpu.gpu_options.allow_growth = True  # dynamic memory allocation
 
     def init_training_session(self, xtr):
-        """
-        Initialize the TF session on training data
+        """Initialize the TF session on training data
 
         Args:
             xtr (np.array, int32): the user/affinity matrix for the train set
@@ -693,9 +630,7 @@ class RBM:
         )
 
     def batch_training(self, num_minibatches):
-
-        """
-        Perform training over input minibatches. If with_metrics is False,
+        """Perform training over input minibatches. If with_metrics is False,
         no online metrics are evaluated.
 
         Args:
@@ -722,8 +657,15 @@ class RBM:
         return epoch_tr_err
 
     def fit(self, xtr, xtst):
-        """
-        Fit method
+        """Fit method
+
+        Training in generative models takes place in two steps:
+        1) Gibbs sampling
+        2) Gradient evaluation and parameters update
+
+        This estimate is later used in the weight update step by minimizing the distance between the
+        model and the empirical free energy. Note that while the unit's configuration space is sampled,
+        the weights are determined via maximum likelihood (saddle point).
 
         Main component of the algo; once instantiated, it generates the computational graph and performs
         model training
@@ -775,16 +717,8 @@ class RBM:
 
         return elapsed
 
-    # =========================
-    # Inference modules
-    # =========================
-
     def eval_out(self):
-
-        """
-        Implement multinomial sampling from a trained model
-
-        """
+        """Implement multinomial sampling from a trained model"""
 
         # Sampling
         _, h = self.sample_hidden_units(self.vu)  # sample h
@@ -802,23 +736,23 @@ class RBM:
         return v, pvh
 
     def recommend_k_items(self, x, top_k=10, remove_seen=True):
-
-        """
-        Returns the top-k items ordered by a relevancy score.
+        """Returns the top-k items ordered by a relevancy score.
 
         Basic mechanics:
-            The method samples new ratings from the learned joint distribution, together with their
-            probabilities. The input x must have the same number of columns as the one used for training
-            the model (i.e. the same number of items) but it can have an arbitrary number of rows (users).
+        The method samples new ratings from the learned joint distribution, together with their
+        probabilities. The input x must have the same number of columns as the one used for training
+        the model (i.e. the same number of items) but it can have an arbitrary number of rows (users).
 
-            A recommendation score is evaluated by taking the element-wise product between the ratings and
-            the associated probabilities. For example, we could have the following situation:
+        A recommendation score is evaluated by taking the element-wise product between the ratings and
+        the associated probabilities. For example, we could have the following situation:
+
+        .. code-block:: python
 
                     rating     probability     score
             item1     5           0.5          2.5
             item2     4           0.8          3.2
 
-            then item2 will be recommended.
+        then item2 will be recommended.
 
         Args:
             x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
@@ -868,16 +802,14 @@ class RBM:
         return top_scores, elapsed
 
     def predict(self, x, maps):
-
-        """
-        Returns the inferred ratings. This method is similar to recommend_k_items() with the
+        """Returns the inferred ratings. This method is similar to recommend_k_items() with the
         exceptions that it returns all the inferred ratings
 
         Basic mechanics:
-            The method samples new ratings from the learned joint distribution, together with
-            their probabilities. The input x must have the same number of columns as the one used
-            for training the model, i.e. the same number of items, but it can have an arbitrary number
-            of rows (users).
+        The method samples new ratings from the learned joint distribution, together with
+        their probabilities. The input x must have the same number of columns as the one used
+        for training the model, i.e. the same number of items, but it can have an arbitrary number
+        of rows (users).
 
         Args:
             x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e.
