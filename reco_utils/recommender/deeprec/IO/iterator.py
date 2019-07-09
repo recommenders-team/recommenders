@@ -29,7 +29,6 @@ class FFMTextIterator(BaseIterator):
     Iterator will not load the whole data into memory. Instead, it loads data into memory
     per mini-batch, so that large files can be used as input data.
     """
-
     def __init__(self, hparams, graph, col_spliter=" ", ID_spliter="%"):
         """Initialize an iterator. Create necessary placeholders for the model.
         
