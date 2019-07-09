@@ -3,7 +3,6 @@
 
 import pytest
 import shutil
-
 import pandas as pd
 import tensorflow as tf
 
