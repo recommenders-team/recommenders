@@ -131,7 +131,7 @@ def test_wide_deep_smoke(notebooks, tmp):
 
     params = {
         "MOVIELENS_DATA_SIZE": "100k",
-        "EPOCHS": 1,
+        "STEPS": 1000,
         "EVALUATE_WHILE_TRAINING": False,
         "MODEL_DIR": tmp,
         "EXPORT_DIR_BASE": tmp,
@@ -143,8 +143,7 @@ def test_wide_deep_smoke(notebooks, tmp):
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-
-    assert results["rmse"] == pytest.approx(1.0394, rel=TOL, abs=ABS_TOL)
-    assert results["mae"] == pytest.approx(0.836116, rel=TOL, abs=ABS_TOL)
-    assert results["ndcg_at_k"] == pytest.approx(0.0954757, rel=TOL, abs=ABS_TOL)
-    assert results["precision_at_k"] == pytest.approx(0.080912, rel=TOL, abs=ABS_TOL)
+    assert results["rmse"] == pytest.approx(1.06034, rel=TOL, abs=ABS_TOL)
+    assert results["mae"] == pytest.approx(0.876228, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg_at_k"] == pytest.approx(0.181513, rel=TOL, abs=ABS_TOL)
+    assert results["precision_at_k"] == pytest.approx(0.158961, rel=TOL, abs=ABS_TOL)

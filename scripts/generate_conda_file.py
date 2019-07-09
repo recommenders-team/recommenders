@@ -90,10 +90,10 @@ PIP_GPU = {}
 PIP_PYSPARK = {}
 
 PIP_DARWIN = {
-    "nni": "nni==0.5.2.1",
+    "nni": "nni==0.5.2.1.1",
 }
 PIP_LINUX = {
-    "nni": "nni==0.5.2.1",
+    "nni": "nni==0.5.2.1.1",
 }
 PIP_WIN32 = {}
 
