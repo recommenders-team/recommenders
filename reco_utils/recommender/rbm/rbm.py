@@ -31,42 +31,42 @@ class RBM:
         with_metrics=False,
         seed=42
     ):
-    """Implementation of a multinomial Restricted Boltzmann Machine for collaborative filtering
-    in numpy/pandas/tensorflow
+        """Implementation of a multinomial Restricted Boltzmann Machine for collaborative filtering
+        in numpy/pandas/tensorflow
 
-    Based on the article by Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton
-    https://www.cs.toronto.edu/~rsalakhu/papers/rbmcf.pdf
+        Based on the article by Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton
+        https://www.cs.toronto.edu/~rsalakhu/papers/rbmcf.pdf
 
-    In this implementation we use multinomial units instead of the one-hot-encoded used in
-    the paper.This means that the weights are rank 2 (matrices) instead of rank 3 tensors.
+        In this implementation we use multinomial units instead of the one-hot-encoded used in
+        the paper.This means that the weights are rank 2 (matrices) instead of rank 3 tensors.
 
-    Basic mechanics:
+        Basic mechanics:
 
-    1) A computational graph is created when the RBM class is instantiated;
-    For an item based recommender this consists of:
-    visible units: The number Nv of visible units equals the number of items
-    hidden units : hyperparameter to fix during training
+        1) A computational graph is created when the RBM class is instantiated;
+        For an item based recommender this consists of:
+        visible units: The number Nv of visible units equals the number of items
+        hidden units : hyperparameter to fix during training
 
-    2) Gibbs Sampling:
-    2.1) for each training epoch, the visible units are first clamped on the data
-    2.2) The activation probability of the hidden units, given a linear combination of
-    the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
-    value of the hidden units.
-    2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
-    r=5 for the movielens dataset). In general, this is a multinomial distribution,
-    from which we sample the value of v.
-    2.4) This step is repeated k times, where k increases as optimization converges. It is
-    essential to fix to zero the original unrated items during the all learning process.
+        2) Gibbs Sampling:
+        2.1) for each training epoch, the visible units are first clamped on the data
+        2.2) The activation probability of the hidden units, given a linear combination of
+        the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
+        value of the hidden units.
+        2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
+        r=5 for the movielens dataset). In general, this is a multinomial distribution,
+        from which we sample the value of v.
+        2.4) This step is repeated k times, where k increases as optimization converges. It is
+        essential to fix to zero the original unrated items during the all learning process.
 
-    3) Optimization:
-    The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
-    and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
-    minimizing the differene F_0 - F_k.
+        3) Optimization:
+        The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
+        and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
+        minimizing the differene F_0 - F_k.
 
-    4) Inference
-    Once the joint probability distribution P(v,h) is learned, this is used to generate ratings
-    for unrated items for all users
-    """
+        4) Inference
+        Once the joint probability distribution P(v,h) is learned, this is used to generate ratings
+        for unrated items for all users
+        """
 
         # RBM parameters
         self.Nhidden = hidden_units  # number of hidden units
