@@ -50,13 +50,13 @@ class RBM:
     2) Gibbs Sampling:
     2.1) for each training epoch, the visible units are first clamped on the data
     2.2) The activation probability of the hidden units, given a linear combination of
-        the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
-        value of the hidden units.
+    the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
+    value of the hidden units.
     2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
-        r=5 for the movielens dataset). In general, this is a multinomial distribution,
-        from which we sample the value of v.
+    r=5 for the movielens dataset). In general, this is a multinomial distribution,
+    from which we sample the value of v.
     2.4) This step is repeated k times, where k increases as optimization converges. It is
-        essential to fix to zero the original unrated items during the all learning process.
+    essential to fix to zero the original unrated items during the all learning process.
 
     3) Optimization:
     The free energy of the visible units given the hidden is evaluated at the beginning (F_0)
@@ -106,8 +106,7 @@ class RBM:
         log.info("TensorFlow version: {}".format(tf.__version__))
 
     def time(self):
-        """
-        Time a particular section of the code - call this once to set the state somewhere
+        """Time a particular section of the code - call this once to set the state somewhere
         in the code, then call it again to return the elapsed time since last call.
         Call again to set the time and so on...
 
@@ -319,13 +318,13 @@ class RBM:
 
         Basic mechanics:
         1) For every training example we first sample Nv Multinomial distributions. The result is of the
-            form [0,1,0,0,0,...,0] where the index of the 1 element corresponds to the rth rating. The index
-            is extracted using the argmax function and we need to add 1 at the end since array indeces starts
-            from 0.
+        form [0,1,0,0,0,...,0] where the index of the 1 element corresponds to the rth rating. The index
+        is extracted using the argmax function and we need to add 1 at the end since array indeces starts
+        from 0.
 
         2) Selects only those units that have been sampled. During the training phase it is important to not
-            use the reconstructed inputs, so we beed to enforce a zero value in the reconstructed ratings in
-            the same position as the original input.
+        use the reconstructed inputs, so we beed to enforce a zero value in the reconstructed ratings in
+        the same position as the original input.
 
         Args:
             h (tensor, float32): visible units.
