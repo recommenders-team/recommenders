@@ -175,31 +175,31 @@ def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_valu
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
-    "size, epochs, expected_values, seed",
+    "size, steps, expected_values, seed",
     [
         (
             "1m",
-            10,
+            50000,
             {
-                "rmse": 0.908561,
-                "mae": 0.716604,
-                "rsquared": 0.340551,
-                "exp_var": 0.340557,
-                "ndcg_at_k": 0.0482291,
-                "map_at_k": 0.00553448,
-                "precision_at_k": 0.0434675,
-                "recall_at_k": 0.0139884,
+                "rmse": 0.924958,
+                "mae": 0.741425,
+                "rsquared": 0.316534,
+                "exp_var": 0.322202,
+                "ndcg_at_k": 0.118114,
+                "map_at_k": 0.0139213,
+                "precision_at_k": 0.107087,
+                "recall_at_k": 0.0328638,
             },
             42,
         )
     ],
 )
-def test_wide_deep_integration(notebooks, size, epochs, expected_values, seed, tmp):
+def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tmp):
     notebook_path = notebooks["wide_deep"]
 
     params = {
         "MOVIELENS_DATA_SIZE": size,
-        "EPOCHS": epochs,
+        "STEPS": steps,
         "EVALUATE_WHILE_TRAINING": False,
         "MODEL_DIR": tmp,
         "EXPORT_DIR_BASE": tmp,
@@ -211,6 +211,5 @@ def test_wide_deep_integration(notebooks, size, epochs, expected_values, seed, t
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)

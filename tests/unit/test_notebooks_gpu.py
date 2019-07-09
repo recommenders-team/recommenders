@@ -76,11 +76,12 @@ def test_xdeepfm(notebooks):
 def test_wide_deep(notebooks, tmp):
     notebook_path = notebooks["wide_deep"]
 
+    # Simple test (train only 1 batch == 1 step)
     model_dir = os.path.join(tmp, "wide_deep_0")
     os.mkdir(model_dir)
     params = {
         'MOVIELENS_DATA_SIZE': '100k',
-        'EPOCHS': 0,
+        'STEPS': 1,
         'EVALUATE_WHILE_TRAINING': False,
         'MODEL_DIR': model_dir,
         'EXPORT_DIR_BASE': model_dir,
@@ -94,12 +95,12 @@ def test_wide_deep(notebooks, tmp):
         parameters=params,
     )
 
-    # Test w/o item features
+    # Test with different parameters
     model_dir = os.path.join(tmp, "wide_deep_1")
     os.mkdir(model_dir)
     params = {
         'MOVIELENS_DATA_SIZE': '100k',
-        'EPOCHS': 0,
+        'STEPS': 1,
         'ITEM_FEAT_COL': None,
         'EVALUATE_WHILE_TRAINING': True,
         'MODEL_DIR': model_dir,

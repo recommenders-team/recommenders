@@ -16,6 +16,7 @@ They have admin access to the repo and provide support reviewing issues and pull
 * **[Jun Ki Min](https://github.com/loomlike)**
    * ALS notebook
    * Wide & Deep algorithm
+   * Hyperparameter tuning notebooks
 * **[Le Zhang](https://github.com/yueguoguo)**
    * Reco utils
    * Continuous integration build / test setup
