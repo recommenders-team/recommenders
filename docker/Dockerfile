@@ -1,71 +1,98 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# Base image is the one that is from Jupyter notebook Dockerhub
-# Default environment value is "cpu", and accepted values are "pyspark" and "gpu", for
-# Spark and deep learning environment, respectively.
-ARG ENVIRONMENT='cpu'
-ARG IMAGE='datascience'
-FROM jupyter/base-notebook
-RUN if [ "$ENVIRONMENT" = "pyspark" ]; then \
-        IMAGE="$ENVIRONMENT"; \
-    elif [ "$ENVIRONMENT" = "gpu" ]; then \
-        IMAGE="tensorflow"; \
-    elif [ "$ENVIRONMENT" = "cpu" ]; then \
-        IMAGE="datascience"; \
-    fi
-FROM jupyter/$IMAGE-notebook
+ARG ENV="cpu"
+ARG HOME="/root"
+
+FROM ubuntu:18.04 as base
 
 LABEL maintainer="Microsoft Recommender Project <RecoDevTeam@service.microsoft.com>"
 
-USER root
+ARG HOME
+ENV HOME="${HOME}"
+WORKDIR ${HOME}
 
-# Specify working directory
-ARG WORK_PATH=/home/$NB_USER/work
-ARG RECO_PATH=$WORK_PATH/recommenders
-WORKDIR $WORK_PATH
+# Install base dependencies
+RUN apt-get update && \
+    apt-get install -y curl git
 
-# Clone the repo
-RUN git clone https://github.com/microsoft/recommenders.git 
+# Install Anaconda
+ARG ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
+RUN curl ${ANACONDA} -o anaconda.sh && \
+    /bin/bash anaconda.sh -b -p conda && \
+    rm anaconda.sh && \
+    echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc
+ENV PATH="${HOME}/conda/bin:${PATH}"
 
-# Config conda channel
-RUN conda config --env --add channels conda-forge && \
-    conda config --env --add channels pytorch && \
-    conda config --env --add channels fastai 
+# Clone Recommenders repo
+ARG BRANCH="master"
+RUN git clone --depth 1 --single-branch -b ${BRANCH} https://github.com/microsoft/recommenders
 
-# Install the base packages
-RUN conda install --quiet --yes \
-    "mock==2.0.0" \
-    "fastparquet>=0.1.6" \
-    "gitpython>=2.1.8" \
-    "numpy>=1.13.3" \
-    "pymongo>=3.6.1" \
-    "pytest>=3.6.4" \
-    "scikit-surprise>=1.0.6" \
-    "lightgbm==2.2.1" 
+# Setup Jupyter notebook configuration
+ENV NOTEBOOK_CONFIG="${HOME}/.jupyter/jupyter_notebook_config.py"
+RUN mkdir ${HOME}/.jupyter && \
+    echo "c.NotebookApp.token = ''" >> ${NOTEBOOK_CONFIG} && \
+    echo "c.NotebookApp.ip = '0.0.0.0'" >> ${NOTEBOOK_CONFIG} && \
+    echo "c.NotebookApp.allow_root = True" >> ${NOTEBOOK_CONFIG} && \
+    echo "c.NotebookApp.open_browser = False" >> ${NOTEBOOK_CONFIG} && \
+    echo "c.MultiKernelManager.default_kernel_name = 'python3'" >> ${NOTEBOOK_CONFIG}
 
-RUN pip install \
-    "azureml-sdk[notebooks,contrib]==1.0.18" \
-    "idna==2.7" \
-    "memory-profiler>=0.54.0" \
-    "papermill>=0.15.0" \
-    "pydocumentdb>=2.3.3" \
-    "tqdm==4.31.1"
 
-# Install conda & pip packages for different environment
-RUN if [ "$ENVIRONMENT" = "pyspark" ]; then \
-        # Install the needed packages for pyspark environment
-        conda install --quiet --yes \
-        "pyarrow>=0.8.0" \
-        "pyspark==2.3.1"; \
-    elif [ "$ENVIRONMENT" = "gpu" ]; then \
-        # Install the needed packages for GPU environment
-        conda install --quiet --yes \
-        "numba>=0.38.1" \
-        "pytorch>=1.0.0" \
-        "tensorflow-gpu==1.12.0"; \
-    fi
+# CPU Stage
+FROM base as cpu
 
-RUN fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER && \
-    fix-permissions $RECO_PATH
+# Setup Conda environment
+RUN python recommenders/scripts/generate_conda_file.py --name base
+
+
+# PySpark Stage
+FROM base as pyspark
+
+# Install base dependencies
+RUN apt-get update && \
+    apt-get install -y libgomp1 openjdk-8-jre
+
+# Install Spark
+ARG SPARK="http://archive.apache.org/dist/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz"
+RUN mkdir spark && \
+    curl ${SPARK} -o spark.tgz && \
+    tar xzf spark.tgz --strip-components 1 -C spark && \
+    rm spark.tgz
+
+# Setup Conda environment
+RUN python recommenders/scripts/generate_conda_file.py --name base --pyspark
+
+ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
+    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
+    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python" \
+    SPARK_HOME="${HOME}/spark"
+
+
+# GPU Stage
+FROM nvidia/cuda:9.0-base as gpu
+
+ARG HOME
+WORKDIR ${HOME}
+
+COPY --from=base ${HOME} .
+
+# Setup Conda environment
+ENV PATH="${HOME}/conda/bin:${PATH}"
+RUN python recommenders/scripts/generate_conda_file.py --name base --gpu
+
+
+# Final Stage
+FROM $ENV AS final
+
+# Install Conda dependencies
+RUN conda env update -f base.yaml && \
+    conda clean -fay && \
+    python -m ipykernel install --user --name 'python3' --display-name 'python3'
+
+ARG HOME
+WORKDIR ${HOME}/recommenders
+
+EXPOSE 8888
+CMD ["jupyter", "notebook"]
+
