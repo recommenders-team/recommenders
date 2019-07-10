@@ -52,7 +52,7 @@ def test_dkn_component_definition(resource_path):
         yaml_file,
         wordEmb_file=wordEmb_file,
         entityEmb_file=entityEmb_file,
-        epochs=5,
+        epochs=1,
         learning_rate=0.0001,
     )
     assert hparams is not None
