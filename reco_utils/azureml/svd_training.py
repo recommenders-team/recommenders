@@ -53,7 +53,7 @@ def svd_training(args):
     ranking_metrics = args.ranking_metrics
     if len(ranking_metrics) > 0:
         all_predictions = compute_ranking_predictions(svd, train_data, usercol=args.usercol, itemcol=args.itemcol,
-                                                  recommend_seen=args.recommend_seen)
+                                                  remove_seen=args.remove_seen)
         k = args.k
         for metric in ranking_metrics:
             result = eval(metric)(validation_data, all_predictions, col_prediction='prediction', k=k)
@@ -81,7 +81,7 @@ def main():
     parser.add_argument('--rating-metrics', type=str, nargs='*', dest='rating_metrics', default=[])
     parser.add_argument('--ranking-metrics', type=str, nargs='*', dest='ranking_metrics', default=[])
     parser.add_argument('--k', type=int, dest='k', default=None)
-    parser.add_argument('--recommend-seen', dest='recommend_seen', action='store_true')
+    parser.add_argument('--remove-seen', dest='remove_seen', action='store_true')
     # Training parameters
     parser.add_argument('--random-state', type=int, dest='random_state', default=0)
     parser.add_argument('--verbose', dest='verbose', action='store_true')
