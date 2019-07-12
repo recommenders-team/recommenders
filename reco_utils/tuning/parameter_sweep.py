@@ -7,21 +7,25 @@ from itertools import product
 
 
 def generate_param_grid(params):
-    """Generator of parameter grids
-    Generate parameter lists from a parameter dictionary in the form of
-    {
-        "param1": [value1, value2],
-        "param2": [value1, value2]
-    }
+    """Generator of parameter grids.
 
-    to
+    Generate parameter lists from a parameter dictionary in the form of:
 
-    [
-        {"param1": value1, "param2": value1},
-        {"param1": value2, "param2": value1},
-        {"param1": value1, "param2": value2},
-        {"param1": value2, "param2": value2}
-    ]
+    .. code-block:: python
+        {
+            "param1": [value1, value2],
+            "param2": [value1, value2]
+        }
+
+    to:
+
+    .. code-block:: python
+        [
+            {"param1": value1, "param2": value1},
+            {"param1": value2, "param2": value1},
+            {"param1": value1, "param2": value2},
+            {"param1": value2, "param2": value2}
+        ]
 
     Args:
         param_dict (dict): dictionary of parameters and values (in a list).

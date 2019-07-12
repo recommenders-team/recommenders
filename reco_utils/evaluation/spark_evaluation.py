@@ -34,6 +34,7 @@ class SparkRatingEvaluation:
         col_prediction=DEFAULT_PREDICTION_COL,
     ):
         """Initializer.
+
         This is the Spark version of rating metrics evaluator.
         The methods of this class, calculate rating metrics such as root mean squared error, mean absolute error,
         R squared, and explained variance.
@@ -115,7 +116,7 @@ class SparkRatingEvaluation:
         )
 
     def rmse(self):
-        """Calculate Root Mean Squared Error
+        """Calculate Root Mean Squared Error.
         
         Returns:
             float: Root mean squared error.
@@ -123,7 +124,7 @@ class SparkRatingEvaluation:
         return self.metrics.rootMeanSquaredError
 
     def mae(self):
-        """Calculate Mean Absolute for data
+        """Calculate Mean Absolute Error.
         
         Returns:
             float: Mean Absolute Error.
@@ -140,8 +141,8 @@ class SparkRatingEvaluation:
     def exp_var(self):
         """Calculate explained variance.
 
-        NOTE: Spark MLLib's implementation is buggy (can lead to values > 1), hence we 
-        use var().
+        NOTE: 
+            Spark MLLib's implementation is buggy (can lead to values > 1), hence we use var().
 
         Returns:
             float: Explained variance (min=0, max=1).
@@ -166,12 +167,13 @@ class SparkRankingEvaluation:
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
         col_prediction=DEFAULT_PREDICTION_COL,
-        threshold=DEFAULT_THRESHOLD
+        threshold=DEFAULT_THRESHOLD,
     ):
         """Initialization.
         This is the Spark version of ranking metrics evaluator.
         The methods of this class, calculate ranking metrics such as precision@k, recall@k, ndcg@k, and mean average
         precision.
+
         The implementations of precision@k, ndcg@k, and mean average precision are referenced from Spark MLlib, which
         can be found at https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems.
 
@@ -257,7 +259,7 @@ class SparkRankingEvaluation:
                 col_user=self.col_user,
                 col_item=self.col_item,
                 col_rating=self.col_prediction,
-                threshold=self.threshold
+                threshold=self.threshold,
             )
             if relevancy_method == "by_threshold"
             else relevant_func[relevancy_method](
@@ -276,8 +278,7 @@ class SparkRankingEvaluation:
         self._items_for_user_pred = self.rating_pred
 
         self._items_for_user_true = (
-            self.rating_true
-            .groupBy(self.col_user)
+            self.rating_true.groupBy(self.col_user)
             .agg(expr("collect_list(" + self.col_item + ") as ground_truth"))
             .select(self.col_user, "ground_truth")
         )
@@ -291,7 +292,8 @@ class SparkRankingEvaluation:
     def precision_at_k(self):
         """Get precision@k.
 
-        NOTE: More details can be found at http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
+        NOTE:
+            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt>`_.
 
         Return:
             float: precision at k (min=0, max=1)
@@ -303,7 +305,8 @@ class SparkRankingEvaluation:
     def recall_at_k(self):
         """Get recall@K.
 
-        NOTE: More details can be found at http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision
+        NOTE: 
+            More details can be found `here http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
             float: recall at k (min=0, max=1).
@@ -317,7 +320,8 @@ class SparkRankingEvaluation:
     def ndcg_at_k(self):
         """Get Normalized Discounted Cumulative Gain (NDCG)
 
-        NOTE: More details can be found at http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt
+        NOTE: 
+            More details can be found `here http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
 
         Return:
             float: nDCG at k (min=0, max=1).
@@ -329,7 +333,8 @@ class SparkRankingEvaluation:
     def map_at_k(self):
         """Get mean average precision at k.
 
-        NOTE: More details can be found at http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision
+        NOTE: 
+            More details can be found `here http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
             float: MAP at k (min=0, max=1).
@@ -340,17 +345,19 @@ class SparkRankingEvaluation:
 
 
 def _get_top_k_items(
-        dataframe,
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        col_prediction=DEFAULT_PREDICTION_COL,
-        k=DEFAULT_K
+    dataframe,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
+    k=DEFAULT_K,
 ):
     """Get the input customer-item-rating tuple in the format of Spark
     DataFrame, output a Spark DataFrame in the dense format of top k items
     for each user.
-    NOTE: if it is implicit rating, just append a column of constants to be ratings.
+
+    NOTE: 
+        if it is implicit rating, just append a column of constants to be ratings.
 
     Args:
         dataframe (spark.DataFrame): DataFrame of rating data (in the format of
@@ -369,10 +376,7 @@ def _get_top_k_items(
     # this does not work for rating of the same value.
     items_for_user = (
         dataframe.select(
-            col_user,
-            col_item,
-            col_rating,
-            row_number().over(window_spec).alias("rank")
+            col_user, col_item, col_rating, row_number().over(window_spec).alias("rank")
         )
         .where(col("rank") <= k)
         .groupby(col_user)
@@ -383,12 +387,12 @@ def _get_top_k_items(
 
 
 def _get_relevant_items_by_threshold(
-        dataframe,
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        col_prediction=DEFAULT_PREDICTION_COL,
-        threshold=DEFAULT_THRESHOLD
+    dataframe,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
+    threshold=DEFAULT_THRESHOLD,
 ):
     """Get relevant items for each customer in the input rating data.
 
@@ -411,13 +415,12 @@ def _get_relevant_items_by_threshold(
             items.
     """
     items_for_user = (
-        dataframe
-        .orderBy(col_rating, ascending=False)
+        dataframe.orderBy(col_rating, ascending=False)
         .where(col_rating + " >= " + str(threshold))
-        .select(
-            col_user, col_item, col_rating
+        .select(col_user, col_item, col_rating)
+        .withColumn(
+            col_prediction, F.collect_list(col_item).over(Window.partitionBy(col_user))
         )
-        .withColumn(col_prediction, F.collect_list(col_item).over(Window.partitionBy(col_user)))
         .select(col_user, col_prediction)
         .dropDuplicates()
     )
@@ -426,13 +429,13 @@ def _get_relevant_items_by_threshold(
 
 
 def _get_relevant_items_by_timestamp(
-        dataframe,
-        col_user=DEFAULT_USER_COL,
-        col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
-        col_timestamp=DEFAULT_TIMESTAMP_COL,
-        col_prediction=DEFAULT_PREDICTION_COL,
-        k=DEFAULT_K
+    dataframe,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
+    col_timestamp=DEFAULT_TIMESTAMP_COL,
+    col_prediction=DEFAULT_PREDICTION_COL,
+    k=DEFAULT_K,
 ):
     """Get relevant items for each customer defined by timestamp.
 
@@ -459,7 +462,9 @@ def _get_relevant_items_by_timestamp(
             col_user, col_item, col_rating, row_number().over(window_spec).alias("rank")
         )
         .where(col("rank") <= k)
-        .withColumn(col_prediction, F.collect_list(col_item).over(Window.partitionBy(col_user)))
+        .withColumn(
+            col_prediction, F.collect_list(col_item).over(Window.partitionBy(col_user))
+        )
         .select(col_user, col_prediction)
         .dropDuplicates([col_user, col_prediction])
     )

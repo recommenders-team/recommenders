@@ -70,8 +70,8 @@ class DKNTextIterator(BaseIterator):
             line (str): a string indicating one instance
 
         Returns:
-            list: Parsed results,including label, candidate_news_index, candidate_news_val, click_news_index, click_news_val,
-                candidate_news_entity_index, click_news_entity_index, impression_id
+            list: Parsed results including label, candidate_news_index, candidate_news_val, click_news_index, click_news_val,
+            candidate_news_entity_index, click_news_entity_index, impression_id
 
         """
         impression_id = None

@@ -3,20 +3,18 @@
 
 import numpy as np
 import pandas as pd
-
 import math
 import matplotlib.pyplot as plt
-
 import tensorflow as tf
 import logging
-
 import time as tm
 
-# for logging
+
 log = logging.getLogger(__name__)
 
 
 class RBM:
+    """Restricted  Boltzmann Machine"""
     def __init__(
         self,
         hidden_units=500,
@@ -111,7 +109,7 @@ class RBM:
         Call again to set the time and so on...
 
         Returns:
-             if timer started time in seconds since the last time time function was called
+            float: if timer started time in seconds since the last time time function was called
         """
 
         if self.start_time is None:
@@ -128,10 +126,10 @@ class RBM:
 
         Basic mechanics:
         1) Extract a random number from a uniform distribution (g) and compare it with
-            the unit's probability (pr)
+        the unit's probability (pr)
 
         2) Choose 0 if pr<g, 1 otherwise. It is convenient to implement this condtion using
-            the relu function.
+        the relu function.
 
         Args:
             pr (tensor, float32): input conditional probability
@@ -215,8 +213,7 @@ class RBM:
 
     def free_energy(self, x):
         """Free energy of the visible units given the hidden units. Since the sum is over the hidden units'
-        states, the functional form of the visible units Free energy is the same as the one for the binary
-        model.
+        states, the functional form of the visible units Free energy is the same as the one for the binary model.
 
         Args:
             x: This can be either the sampled value of the visible units (v_k) or the input data
@@ -359,7 +356,7 @@ class RBM:
     def gibbs_sampling(self):
         """Gibbs sampling: Determines an estimate of the model configuration via sampling. In the binary
         RBM we need to impose that unseen movies stay as such, i.e. the sampling phase should not modify
-        the elements where v =0.
+        the elements where v=0.
 
         Args:
             k (scalar, integer): iterator. Number of sampling steps.
@@ -384,7 +381,7 @@ class RBM:
                 _, self.v_k = self.sample_visible_units(h_k)
 
     def losses(self, vv):
-        """Loss functions
+        """Loss functions.
 
         Args:
             v (tensor, float32): empirical input
@@ -402,7 +399,7 @@ class RBM:
         return obj
 
     def gibbs_protocol(self, i):
-        """Gibbs protocol
+        """Gibbs protocol.
 
         Basic mechanics:
         If the current epoch i is in the interval specified in the training protocol cd_protocol_,
@@ -637,7 +634,7 @@ class RBM:
 
         Returns:
             epoch_tr_err (scalar, float32): training error per single epoch
-                            Note, if with_metrics is False, this is zero.
+            Note, if with_metrics is False, this is zero.
         """
 
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
@@ -812,7 +809,7 @@ class RBM:
 
         Args:
             x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e.
-                        the ratings of a single user.
+            the ratings of a single user.
 
         Returns:
             vp (np.array, int32): a matrix with the inferred ratings.

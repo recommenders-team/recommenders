@@ -14,9 +14,7 @@ from reco_utils.common.constants import (
 
 
 class RLRMCdataset(object):
-    """
-    RLRMC dataset implementation. Creates sparse data structures for RLRMC algorithm
-    """
+    """RLRMC dataset implementation. Creates sparse data structures for RLRMC algorithm."""
 
     def __init__(
         self,
@@ -30,7 +28,7 @@ class RLRMCdataset(object):
         col_timestamp=DEFAULT_TIMESTAMP_COL,
         # seed=42,
     ):
-        """Initialize parameters
+        """Initialize parameters.
 
         Args:
             train (pd.DataFrame: training data with at least columns (col_user, col_item, col_rating)
@@ -57,7 +55,7 @@ class RLRMCdataset(object):
         self._data_processing(train, validation, test, mean_center)
 
     def _data_processing(self, train, validation=None, test=None, mean_center=True):
-        """ process the dataset to reindex userID and itemID 
+        """Process the dataset to reindex userID and itemID 
         
         Args:
             train (pd.DataFrame): training data with at least columns (col_user, col_item, col_rating) 
@@ -130,9 +128,11 @@ class RLRMCdataset(object):
             self.validation = None
 
     def _reindex(self, df):
-        """ process dataset to reindex userID and itemID
+        """Process dataset to reindex userID and itemID
+        
         Args:
             df (pd.DataFrame): dataframe with at least columns (col_user, col_item, col_rating) 
+        
         Returns:
             list: train and validation pd.DataFrame Dataset, which have been reindexed.
         
