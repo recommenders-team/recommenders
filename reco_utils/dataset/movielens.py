@@ -339,10 +339,11 @@ def load_spark_df(
     genres_col=None,
     year_col=None,
 ):
-    """Loads the MovieLens dataset as pyspark.DataFrame.
+    """Loads the MovieLens dataset as `pyspark.DataFrame`.
 
-    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
-    To load movie information only, you can use load_item_df function. 
+    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.DataFrame`.
+
+    To load movie information only, you can use `load_item_df` function. 
 
     Args:
         spark (pyspark.SparkSession): Spark session.

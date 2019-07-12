@@ -13,7 +13,7 @@ except ImportError:
 
 
 def process_split_ratio(ratio):
-    """Generate split ratio lists
+    """Generate split ratio lists.
 
     Args:
         ratio (float or list): a float number that indicates split ratio or a list of float
@@ -54,6 +54,7 @@ def min_rating_filter_pandas(
     col_item=DEFAULT_ITEM_COL,
 ):
     """Filter rating DataFrame for each user with minimum rating.
+
     Filter rating data frame with minimum number of ratings for user/item is usually useful to
     generate a new data frame with warm user/item. The warmth is defined by min_rating argument. For
     example, a user is called warm if he has rated at least 4 items.
@@ -89,6 +90,7 @@ def min_rating_filter_spark(
     col_item=DEFAULT_ITEM_COL,
 ):
     """Filter rating DataFrame for each user with minimum rating.
+
     Filter rating data frame with minimum number of ratings for user/item is usually useful to
     generate a new data frame with warm user/item. The warmth is defined by min_rating argument. For
     example, a user is called warm if he has rated at least 4 items.
@@ -138,9 +140,9 @@ def _check_min_rating_filter(filter_by, min_rating, col_user, col_item):
 def split_pandas_data_with_ratios(data, ratios, seed=42, shuffle=False):
     """Helper function to split pandas DataFrame with given ratios
 
-    Note:
-        Implementation referenced from
-        https://stackoverflow.com/questions/38250710/how-to-split-data-into-3-sets-train-validation-and-test
+    .. note::
+
+        Implementation referenced from `this source <https://stackoverflow.com/questions/38250710/how-to-split-data-into-3-sets-train-validation-and-test>`_.
 
     Args:
         data (pd.DataFrame): Pandas data frame to be split.
