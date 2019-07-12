@@ -31,9 +31,9 @@ from reco_utils.dataset.pandas_df_utils import (
 def check_column_dtypes(func):
     """Checks columns of DataFrame inputs
 
-    This includes the checks on 
-        1. whether the input columns exist in the input DataFrames
-        2. whether the data types of col_user as well as col_item are matched in the two input DataFrames.
+    This includes the checks on: 
+    1. whether the input columns exist in the input DataFrames
+    2. whether the data types of col_user as well as col_item are matched in the two input DataFrames.
 
     Args:
         func (function): function that will be wrapped
@@ -363,9 +363,8 @@ def merge_ranking_true_pred(
 
     Returns:
         pd.DataFrame, pd.DataFrame, int:
-            DataFrame of recommendation hits
-            DataFrmae of hit counts vs actual relevant items per user
-            number of unique user ids
+            DataFrame of recommendation hits. DataFrame of hit counts vs actual relevant items per user and
+            number of unique user ids.
     """
 
     # Make sure the prediction and true data frames have the same set of users
@@ -423,11 +422,11 @@ def precision_at_k(
     """Precision at K.
 
     Note:
-    We use the same formula to calculate precision@k as that in Spark.
-    More details can be found at
-    http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
-    In particular, the maximum achievable precision may be < 1, if the number of items for a
-    user in rating_pred is less than k.
+        We use the same formula to calculate precision@k as that in Spark.
+        More details can be found at
+        http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
+        In particular, the maximum achievable precision may be < 1, if the number of items for a
+        user in rating_pred is less than k.
 
     Args:
         rating_true (pd.DataFrame): True DataFrame
@@ -582,6 +581,7 @@ def map_at_k(
     threshold=DEFAULT_THRESHOLD,
 ):
     """Mean Average Precision at k
+    
     The implementation of MAP is referenced from Spark MLlib evaluation metrics.
     https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
 
@@ -591,6 +591,7 @@ def map_at_k(
     Note:
         1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
         the prediction items. The naming is different from Spark.
+        
         2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
         relevant items in the ground truth data, instead of k.
 
@@ -639,8 +640,9 @@ def get_top_k_items(
     """Get the input customer-item-rating tuple in the format of Pandas
     DataFrame, output a Pandas DataFrame in the dense format of top k items
     for each user.
+    
     Note:
-        if it is implicit rating, just append a column of constants to be
+        If it is implicit rating, just append a column of constants to be
         ratings.
 
     Args:

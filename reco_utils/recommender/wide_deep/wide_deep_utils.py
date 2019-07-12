@@ -40,6 +40,9 @@ def build_feature_columns(
         list of tf.feature_column: Wide feature columns. Empty list if use 'deep' model.
         list of tf.feature_column: Deep feature columns. Empty list if use 'wide' model.
     """
+    if model_type not in ["wide", "deep", "wide_deep"]:
+        raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
+
     user_ids = tf.feature_column.categorical_column_with_vocabulary_list(
         user_col, users
     )
@@ -63,8 +66,6 @@ def build_feature_columns(
                 user_ids, item_ids, user_dim, item_dim, item_feat_col, item_feat_shape
             ),
         )
-    else:
-        raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
 
 
 def _build_wide_columns(user_ids, item_ids, hash_bucket_size=1000):
@@ -82,7 +83,9 @@ def _build_wide_columns(user_ids, item_ids, hash_bucket_size=1000):
     return [
         user_ids,
         item_ids,
-        tf.feature_column.crossed_column([user_ids, item_ids], hash_bucket_size=hash_bucket_size)
+        tf.feature_column.crossed_column(
+            [user_ids, item_ids], hash_bucket_size=hash_bucket_size
+        ),
     ]
 
 
@@ -136,6 +139,7 @@ def build_model(
     seed=None,
 ):
     """Build wide-deep model.
+    
     To generate wide model, pass wide_columns only.
     To generate deep model, pass deep_columns only.
     To generate wide_deep model, pass both wide_columns and deep_columns.

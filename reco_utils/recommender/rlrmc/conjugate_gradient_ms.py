@@ -56,6 +56,7 @@ class ConjugateGradientMS(Solver):
     def solve(self, problem, x=None, reuselinesearch=False, compute_stats=None):
         """Perform optimization using nonlinear conjugate gradient method with
         linesearch.
+
         This method first computes the gradient of obj w.r.t. arg, and then
         optimizes by moving in a direction that is conjugate to all previous
         search directions.
@@ -69,6 +70,7 @@ class ConjugateGradientMS(Solver):
                 then a starting point will be randomly generated.
             reuselinesearch (bool): Whether to reuse the previous linesearch object. Allows to
                 use information from a previous solve run.
+        
         Returns:
             np.array: Local minimum of obj, or if algorithm terminated before
                 convergence x will be the point at which it terminated.

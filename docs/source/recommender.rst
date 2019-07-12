@@ -3,7 +3,7 @@
 Recommender algorithms module
 *******************************
 
-Recommender system algorithms from Recommenders utilities.
+Recommender system algorithms and utilities.
 
 
 DeepRec
