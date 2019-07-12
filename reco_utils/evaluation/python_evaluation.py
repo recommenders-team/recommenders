@@ -648,12 +648,16 @@ def get_top_k_items(
         k (int): number of items for each user
 
     Returns:
-        pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `"rank"`
+        pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`
     """
-
-    groups = dataframe.groupby(col_user, as_index=False)
-    top_k_items = groups.apply(lambda x: x.nlargest(k, col_rating)).reset_index(drop=True)
-    top_k_items["rank"] = groups.cumcount() + 1
+    # Sort dataframe by col_user and (top k) col_rating
+    top_k_items = (
+        dataframe.groupby(col_user, as_index=False)
+        .apply(lambda x: x.nlargest(k, col_rating))
+        .reset_index(drop=True)
+    )
+    # Add ranks
+    top_k_items["rank"] = top_k_items.groupby(col_user, sort=False).cumcount() + 1
     return top_k_items
 
 
