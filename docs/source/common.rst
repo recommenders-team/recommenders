@@ -3,12 +3,6 @@
 Common utilities module
 **************************
 
-Constants
-===============================
-
-.. automodule:: reco_utils.common.constants
-    :members:
-
 
 General utilities
 ===============================
@@ -59,4 +53,11 @@ Timer
 ===============================
 
 .. automodule:: reco_utils.common.timer
+    :members:
+
+
+Plot utilities
+===============================
+
+.. automodule:: reco_utils.common.plot
     :members:

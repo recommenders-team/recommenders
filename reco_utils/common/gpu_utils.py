@@ -27,28 +27,25 @@ def get_gpu_info():
     """Get information of GPUs.
 
     Returns:
-        list: List of gpu information dictionary
-              {device_name, total_memory (in Mb), free_memory (in Mb)}.
-              Returns an empty list if there is no cuda device available.
+        list: List of gpu information dictionary  as `{device_name, total_memory (in Mb), free_memory (in Mb)}`.
+        Returns an empty list if there is no cuda device available.
     """
     gpus = []
-
     try:
         for gpu in cuda.gpus:
             with gpu:
                 meminfo = cuda.current_context().get_memory_info()
-                
                 g = {
-                    "device_name": gpu.name.decode('ASCII'),
+                    "device_name": gpu.name.decode("ASCII"),
                     "total_memory": meminfo[1] / 1048576,  # Mb
-                    "free_memory": meminfo[0] / 1048576,   # Mb
+                    "free_memory": meminfo[0] / 1048576,  # Mb
                 }
                 gpus.append(g)
     except CudaSupportError:
         pass
-    
+
     return gpus
-    
+
 
 def clear_memory_all_gpus():
     """Clear memory of all GPUs."""
@@ -61,7 +58,7 @@ def clear_memory_all_gpus():
 
 
 def get_cuda_version(unix_path=DEFAULT_CUDA_PATH_LINUX):
-    """Get CUDA version
+    """Get CUDA version.
     
     Args:
         unix_path (str): Path to CUDA version file in Linux/Mac.
@@ -83,7 +80,7 @@ def get_cuda_version(unix_path=DEFAULT_CUDA_PATH_LINUX):
 
 
 def get_cudnn_version():
-    """Get the CuDNN version
+    """Get the CuDNN version.
     
     Returns:
         str: Version of the library.
@@ -113,8 +110,10 @@ def get_cudnn_version():
             return "No CUDNN in this machine"
 
     if sys.platform == "win32":
-        candidates = ["C:\\NVIDIA\\cuda\\include\\cudnn.h",
-                     "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v*\\include\\cudnn.h"]
+        candidates = [
+            "C:\\NVIDIA\\cuda\\include\\cudnn.h",
+            "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v*\\include\\cudnn.h",
+        ]
     elif sys.platform == "linux":
         candidates = [
             "/usr/include/x86_64-linux-gnu/cudnn_v*.h",
