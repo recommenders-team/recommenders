@@ -52,7 +52,9 @@ def start_or_get_spark(
 
     if config is not None:
         for key, raw_value in config.items():
-            value = '"{}"'.format(raw_value) if isinstance(raw_value, str) else raw_value
+            value = (
+                '"{}"'.format(raw_value) if isinstance(raw_value, str) else raw_value
+            )
             spark_opts.append('config("{key}", {value})'.format(key=key, value=value))
 
     if config is None or "spark.driver.memory" not in config:
