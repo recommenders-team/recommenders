@@ -17,7 +17,8 @@ from reco_utils.dataset.split_utils import (
 
 
 def python_random_split(data, ratio=0.75, seed=42):
-    """Pandas random splitter
+    """Pandas random splitter. 
+
     The splitter randomly splits the input data.
 
     Args:
@@ -36,7 +37,7 @@ def python_random_split(data, ratio=0.75, seed=42):
 
     if multi_split:
         splits = split_pandas_data_with_ratios(data, ratio, shuffle=True, seed=seed)
-        splits_new = [x.drop('split_index', axis=1) for x in splits]
+        splits_new = [x.drop("split_index", axis=1) for x in splits]
 
         return splits_new
     else:
@@ -127,7 +128,8 @@ def python_chrono_split(
     col_item=DEFAULT_ITEM_COL,
     col_timestamp=DEFAULT_TIMESTAMP_COL,
 ):
-    """Pandas chronological splitter
+    """Pandas chronological splitter.
+
     This function splits data in a chronological manner. That is, for each user / item, the
     split function takes proportions of ratings which is specified by the split ratio(s).
     The split is stratified.
@@ -158,7 +160,7 @@ def python_chrono_split(
         col_user=col_user,
         col_item=col_item,
         col_timestamp=col_timestamp,
-        is_random=False
+        is_random=False,
     )
 
 
@@ -171,7 +173,8 @@ def python_stratified_split(
     col_item=DEFAULT_ITEM_COL,
     seed=42,
 ):
-    """Pandas stratified splitter
+    """Pandas stratified splitter.
+    
     For each user / item, the split function takes proportions of ratings which is
     specified by the split ratio(s). The split is stratified.
 
@@ -200,15 +203,42 @@ def python_stratified_split(
         col_user=col_user,
         col_item=col_item,
         is_random=True,
-        seed=seed
+        seed=seed,
     )
 
-def numpy_stratified_split(X, ratio=0.75, seed=42):
 
-    """
-    Split the user/item affinity matrix (sparse matrix) into train and test set matrices while maintaining
+def numpy_stratified_split(X, ratio=0.75, seed=42):
+    """Split the user/item affinity matrix (sparse matrix) into train and test set matrices while maintaining
     local (i.e. per user) ratios.
 
+    Main points :
+
+    1. In a typical recommender problem, different users rate a different number of items,
+        and therefore the user/affinity matrix has a sparse structure with variable number
+        of zeroes (unrated items) per row (user). Cutting a total amount of ratings will
+        result in a non-homogeneous distribution between train and test set, i.e. some test
+        users may have many ratings while other very little if none.
+
+    2. In an unsupervised learning problem, no explicit answer is given. For this reason
+        the split needs to be implemented in a different way then in supervised learningself.
+        In the latter, one typically split the dataset by rows (by examples), ending up with
+        the same number of features but different number of examples in the train/test setself.
+        This scheme does not work in the unsupervised case, as part of the rated items needs to
+        be used as a test set for fixed number of users.
+
+    Solution:
+
+    1. Instead of cutting a total percentage, for each user we cut a relative ratio of the rated
+        items. For example, if user1 has rated 4 items and user2 10, cutting 25% will correspond to
+        1 and 2.6 ratings in the test set, approximated as 1 and 3 according to the round() function.
+        In this way, the 0.75 ratio is satisfied both locally and globally, preserving the original
+        distribution of ratings across the train and test set.
+
+    2. It is easy (and fast) to satisfy this requirements by creating the test via element subtraction
+        from the original dataset X. We first create two copies of X; for each user we select a random
+        sample of local size ratio (point 1) and erase the remaining ratings, obtaining in this way the
+        train set matrix Xtst. The train set matrix is obtained in the opposite way.
+    
     Args:
         X (np.array, int): a sparse matrix to be split
         ratio (float): fraction of the entire dataset to constitute the train set
@@ -218,34 +248,6 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
         Xtr (np.array, int): train set user/item affinity matrix
         Xtst (np.array, int): test set user/item affinity matrix
 
-    Basic mechanics:
-        Main points :
-
-        1. In a typical recommender problem, different users rate a different number of items,
-           and therefore the user/affinity matrix has a sparse structure with variable number
-           of zeroes (unrated items) per row (user). Cutting a total amount of ratings will
-           result in a non-homogeneous distribution between train and test set, i.e. some test
-           users may have many ratings while other very little if none.
-
-        2. In an unsupervised learning problem, no explicit answer is given. For this reason
-           the split needs to be implemented in a different way then in supervised learningself.
-           In the latter, one typically split the dataset by rows (by examples), ending up with
-           the same number of features but different number of examples in the train/test setself.
-           This scheme does not work in the unsupervised case, as part of the rated items needs to
-           be used as a test set for fixed number of users.
-
-        Solution:
-
-        1. Instead of cutting a total percentage, for each user we cut a relative ratio of the rated
-           items. For example, if user1 has rated 4 items and user2 10, cutting 25% will correspond to
-           1 and 2.6 ratings in the test set, approximated as 1 and 3 according to the round() function.
-           In this way, the 0.75 ratio is satisfied both locally and globally, preserving the original
-           distribution of ratings across the train and test set.
-
-        2. It is easy (and fast) to satisfy this requirements by creating the test via element subtraction
-           from the original dataset X. We first create two copies of X; for each user we select a random
-           sample of local size ratio (point 1) and erase the remaining ratings, obtaining in this way the
-           train set matrix Xtst. The train set matrix is obtained in the opposite way.
     """
 
     np.random.seed(seed)  # set the random seed

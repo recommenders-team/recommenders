@@ -84,7 +84,7 @@ def filter_by(df, filter_by_df, filter_by_cols):
 
 
 class LibffmConverter:
-    """Converts an input Dataframe (df) to another Dataframe (df) in libffm format. A text file of the converted
+    """Converts an input dataframe to another dataframe in libffm format. A text file of the converted
     Dataframe is optionally generated.
 
     .. note::
@@ -112,6 +112,14 @@ class LibffmConverter:
         i.e. `<field_index>:<field_feature_index>:1` or `<field_index>:<field_index>:<field_feature_value>`, depending on
         the data type of the features in the original dataframe.
 
+    Args:
+        filepath (str): path to save the converted data.
+
+    Attributes:
+        field_count (int): count of field in the libffm format data
+        feature_count (int): count of feature in the libffm format data
+        filepath (str or None): file path where the output is stored - it can be None or a string
+
     Examples:
         >>> import pandas as pd
         >>> df_feature = pd.DataFrame({
@@ -130,14 +138,6 @@ class LibffmConverter:
         2       0  1:3:1  2:4:5  3:5:3.0  4:6:1
         3       1  1:3:1  2:4:6  3:5:4.0  4:7:1
         4       1  1:3:1  2:4:7  3:5:5.0  4:8:1
-
-    Args:
-        filepath (str): path to save the converted data.
-
-    Attributes:
-        field_count (int): count of field in the libffm format data
-        feature_count (int): count of feature in the libffm format data
-        filepath (str or None): file path where the output is stored - it can be None or a string
     """
 
     def __init__(self, filepath=None):
@@ -280,8 +280,8 @@ def negative_feedback_sampler(
 
     Negative sampling is used in the literature frequently to generate negative samples 
     from a user-item interaction data.
-    See for example the neural collaborative filtering paper 
-    https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
+
+    See for example the `neural collaborative filtering paper <https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf>`_.
     
     Args:
         df (pandas.DataFrame): input data that contains user-item tuples.
@@ -464,7 +464,12 @@ class PandasHash:
 
 
 def lru_cache_df(maxsize, typed=False):
-    """Least-recently-used cache decorator
+    """Least-recently-used cache decorator for pandas Dataframes. 
+    
+    Decorator to wrap a function with a memoizing callable that saves up to the maxsize most recent calls. It can 
+    save time when an expensive or I/O bound function is periodically called with the same arguments.
+
+    Inspired in the `lru_cache function <https://docs.python.org/3/library/functools.html#functools.lru_cache>`_.
 
     Args:
         maxsize (int|None): max size of cache, if set to None cache is boundless
