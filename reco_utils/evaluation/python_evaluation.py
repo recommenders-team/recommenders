@@ -363,7 +363,7 @@ def merge_ranking_true_pred(
 
     Returns:
         pd.DataFrame, pd.DataFrame, int:
-            DataFrame of recommendation hits, sorted by `col_user` and `"rank"`
+            DataFrame of recommendation hits, sorted by `col_user` and `rank`
             DataFrmae of hit counts vs actual relevant items per user
             number of unique user ids
     """
@@ -651,12 +651,9 @@ def get_top_k_items(
         pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `"rank"`
     """
 
-    top_k_items = (
-        dataframe.groupby(col_user, as_index=False)
-        .apply(lambda x: x.nlargest(k, col_rating))
-        .reset_index(drop=True)
-    )
-    top_k_items["rank"] = top_k_items.groupby(col_user).cumcount() + 1
+    groups = dataframe.groupby(col_user, as_index=False)
+    top_k_items = groups.apply(lambda x: x.nlargest(k, col_rating)).reset_index(drop=True)
+    top_k_items["rank"] = groups.cumcount() + 1
     return top_k_items
 
 
