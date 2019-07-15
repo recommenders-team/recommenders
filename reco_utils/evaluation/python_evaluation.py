@@ -363,7 +363,7 @@ def merge_ranking_true_pred(
 
     Returns:
         pd.DataFrame, pd.DataFrame, int:
-            DataFrame of recommendation hits
+            DataFrame of recommendation hits, sorted by `col_user` and `rank`
             DataFrmae of hit counts vs actual relevant items per user
             number of unique user ids
     """
@@ -389,9 +389,6 @@ def merge_ranking_true_pred(
         col_user=col_user,
         col_rating=col_prediction,
         k=top_k,
-    )
-    df_hit["rank"] = df_hit.groupby(col_user)[col_prediction].rank(
-        method="first", ascending=False
     )
     df_hit = pd.merge(df_hit, rating_true_common, on=[col_user, col_item])[
         [col_user, col_item, "rank"]
@@ -559,7 +556,7 @@ def ndcg_at_k(
     # relevance in this case is always 1
     df_dcg["dcg"] = 1 / np.log1p(df_dcg["rank"])
     # sum up discount gained to get discount cumulative gain
-    df_dcg = df_dcg.groupby(col_user, as_index=False).agg({"dcg": "sum"})
+    df_dcg = df_dcg.groupby(col_user, as_index=False, sort=False).agg({"dcg": "sum"})
     # calculate ideal discounted cumulative gain
     df_ndcg = pd.merge(df_dcg, df_hit_count, on=[col_user])
     df_ndcg["idcg"] = df_ndcg["actual"].apply(
@@ -625,8 +622,8 @@ def map_at_k(
         return 0.0
 
     # calculate reciprocal rank of items for each user and sum them up
-    df_hit_sorted = df_hit.sort_values([col_user, "rank"])
-    df_hit_sorted["rr"] = (df_hit.groupby(col_user).cumcount() + 1) / df_hit["rank"]
+    df_hit_sorted = df_hit.copy()
+    df_hit_sorted["rr"] = (df_hit_sorted.groupby(col_user).cumcount() + 1) / df_hit_sorted["rank"]
     df_hit_sorted = df_hit_sorted.groupby(col_user).agg({"rr": "sum"}).reset_index()
 
     df_merge = pd.merge(df_hit_sorted, df_hit_count, on=col_user)
@@ -651,14 +648,17 @@ def get_top_k_items(
         k (int): number of items for each user
 
     Returns:
-        pd.DataFrame: DataFrame of top k items for each user
+        pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`
     """
-
-    return (
+    # Sort dataframe by col_user and (top k) col_rating
+    top_k_items = (
         dataframe.groupby(col_user, as_index=False)
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
+    # Add ranks
+    top_k_items["rank"] = top_k_items.groupby(col_user, sort=False).cumcount() + 1
+    return top_k_items
 
 
 """Function name and function mapper.
