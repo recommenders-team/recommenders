@@ -4,7 +4,7 @@
 ARG ENV="cpu"
 ARG HOME="/root"
 
-FROM ubuntu:18.04 as base
+FROM ubuntu:18.04 AS base
 
 LABEL maintainer="Microsoft Recommender Project <RecoDevTeam@service.microsoft.com>"
 
@@ -40,14 +40,14 @@ RUN mkdir ${HOME}/.jupyter && \
 
 
 # CPU Stage
-FROM base as cpu
+FROM base AS cpu
 
 # Setup Conda environment
 RUN python recommenders/scripts/generate_conda_file.py --name base
 
 
 # PySpark Stage
-FROM base as pyspark
+FROM base AS pyspark
 
 # Install base dependencies
 RUN apt-get update && \
@@ -70,7 +70,7 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
 
 
 # GPU Stage
-FROM nvidia/cuda:9.0-base as gpu
+FROM nvidia/cuda:9.0-base AS gpu
 
 ARG HOME
 WORKDIR ${HOME}
@@ -80,6 +80,23 @@ COPY --from=base ${HOME} .
 # Setup Conda environment
 ENV PATH="${HOME}/conda/bin:${PATH}"
 RUN python recommenders/scripts/generate_conda_file.py --name base --gpu
+
+
+# Full Stage
+FROM gpu AS full
+
+ARG HOME
+WORKDIR ${HOME}
+
+COPY --from=pyspark spark spark
+
+# Setup Conda environment
+RUN python recommenders/scripts/generate_conda_file.py --name base --gpu --pyspark
+
+ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
+    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
+    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python" \
+    SPARK_HOME="${HOME}/spark"
 
 
 # Final Stage
