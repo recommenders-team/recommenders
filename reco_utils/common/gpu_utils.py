@@ -27,7 +27,7 @@ def get_gpu_info():
     """Get information of GPUs.
 
     Returns:
-        list: List of gpu information dictionary  as `{device_name, total_memory (in Mb), free_memory (in Mb)}`.
+        list: List of gpu information dictionary  as with device_name, total_memory (in Mb) and free_memory (in Mb).
         Returns an empty list if there is no cuda device available.
     """
     gpus = []

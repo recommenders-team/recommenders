@@ -483,7 +483,7 @@ def recall_at_k(
 
     Returns:
         float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than 
-            k items exist for a user in rating_true.
+        k items exist for a user in rating_true.
     """
 
     df_hit, df_hit_count, n_users = merge_ranking_true_pred(

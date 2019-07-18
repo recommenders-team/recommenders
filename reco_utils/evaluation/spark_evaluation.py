@@ -175,7 +175,7 @@ class SparkRankingEvaluation:
         precision.
 
         The implementations of precision@k, ndcg@k, and mean average precision are referenced from Spark MLlib, which
-        can be found at https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems.
+        can be found at `here <https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems>`_.
 
         Args:
             rating_true (spark.DataFrame): DataFrame of true rating data (in the
@@ -306,7 +306,7 @@ class SparkRankingEvaluation:
         """Get recall@K.
 
         NOTE: 
-            More details can be found `here http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
+            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
             float: recall at k (min=0, max=1).
@@ -321,7 +321,7 @@ class SparkRankingEvaluation:
         """Get Normalized Discounted Cumulative Gain (NDCG)
 
         NOTE: 
-            More details can be found `here http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
+            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
 
         Return:
             float: nDCG at k (min=0, max=1).
@@ -334,7 +334,7 @@ class SparkRankingEvaluation:
         """Get mean average precision at k.
 
         NOTE: 
-            More details can be found `here http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
+            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
             float: MAP at k (min=0, max=1).
@@ -412,7 +412,7 @@ def _get_relevant_items_by_threshold(
 
     Return:
         spark.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant
-            items.
+        items.
     """
     items_for_user = (
         dataframe.orderBy(col_rating, ascending=False)

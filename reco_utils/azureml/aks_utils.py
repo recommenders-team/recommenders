@@ -15,12 +15,10 @@ def qps_to_replicas(
         processing_time (float): the estimated amount of time (in seconds)
             your service call takes
         max_qp_replica (int): maximum number of concurrent queries per replica
-        target_utilization (float): proportion of CPU utilization you think is
-            ideal
+        target_utilization (float): proportion of CPU utilization you think is ideal
 
     Returns:
-        int: Number of estimated replicas required to support a target
-            number of queries per second
+        int: Number of estimated replicas required to support a target number of queries per second.
     """
     concurrent_queries = target_qps * processing_time / target_utilization
     replicas = ceil(concurrent_queries / max_qp_replica)
