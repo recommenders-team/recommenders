@@ -46,13 +46,17 @@ class RBM:
         hidden units : hyperparameter to fix during training
 
         2) Gibbs Sampling:
+
         2.1) for each training epoch, the visible units are first clamped on the data
+
         2.2) The activation probability of the hidden units, given a linear combination of
         the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
         value of the hidden units.
+
         2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
         r=5 for the movielens dataset). In general, this is a multinomial distribution,
         from which we sample the value of v.
+
         2.4) This step is repeated k times, where k increases as optimization converges. It is
         essential to fix to zero the original unrated items during the all learning process.
 
@@ -61,7 +65,7 @@ class RBM:
         and after k steps of Bernoulli sampling (F_k). The weights and biases are updated by
         minimizing the differene F_0 - F_k.
 
-        4) Inference
+        4) Inference:
         Once the joint probability distribution P(v,h) is learned, this is used to generate ratings
         for unrated items for all users
         """
@@ -401,7 +405,7 @@ class RBM:
 
         Basic mechanics:
 
-        If the current epoch i is in the interval specified in the training protocol cd_protocol_,
+        If the current epoch i is in the interval specified in the training protocol,
         the number of steps in Gibbs sampling (k) is incremented by one and gibbs_sampling is updated
         accordingly.
 
@@ -434,9 +438,9 @@ class RBM:
         Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on
         the rated items only.
 
-        $acc = 1/m Sum_{mu=1}^{m} Sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i}$
+        :math:`acc = 1/m \sum_{mu=1}^{m} \sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i}`
 
-        where m = Nusers, Nv = number of items = number of visible units and s(i) is the number of non-zero elements 
+        where `m = Nusers`, `Nv = number of items = number of visible units` and `s(i)` is the number of non-zero elements 
         per row.
 
         Args:
