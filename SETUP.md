@@ -109,25 +109,21 @@ To install the environment:
 > Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`,
 > create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
 >
->     ```bash
 >     #!/bin/sh
 >     export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
 >     export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
 >     export SPARK_HOME_BACKUP=$SPARK_HOME
 >     unset SPARK_HOME
->     ```
 >
 > This will export the variables every time we do `conda activate reco_pyspark`.
 > To unset these variables when we deactivate the environment,
 > create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
 >
->     ```bash
 >     #!/bin/sh
 >     unset PYSPARK_PYTHON
 >     unset PYSPARK_DRIVER_PYTHON
 >     export SPARK_HOME=$SPARK_HOME_BACKUP
 >     unset SPARK_HOME_BACKUP
->     ```
 > 
 > </details>
 >
