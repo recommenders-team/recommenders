@@ -38,6 +38,7 @@ def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
     onto 32 bits for anonymization purposes.
 
     The schema is:
+
     .. code-block:: python
         
         <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
@@ -79,6 +80,7 @@ def load_spark_df(
     onto 32 bits for anonymization purposes.
 
     The schema is:
+    
     .. code-block:: python
         
         <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>

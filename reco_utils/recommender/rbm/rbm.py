@@ -100,6 +100,8 @@ class RBM:
 
         # Seed
         self.seed = seed
+        np.random.seed(self.seed)
+        tf.set_random_seed(self.seed)
 
         log.info("TensorFlow version: {}".format(tf.__version__))
 
@@ -125,6 +127,7 @@ class RBM:
         """Binomial sampling of hidden units activations using a rejection method.
 
         Basic mechanics:
+
         1) Extract a random number from a uniform distribution (g) and compare it with
         the unit's probability (pr)
 
@@ -132,14 +135,14 @@ class RBM:
         the relu function.
 
         Args:
-            pr (tensor, float32): input conditional probability
+            pr (tf.Tensor, float32): input conditional probability
             g  (np.array, float32):  uniform probability used for comparison
 
         Returns:
-            h_sampled (tensor, float32): sampled units. The value is 1 if pr>g and 0 otherwise.
+            tf.Tensor: Float32 tensor of sampled units. The value is 1 if pr>g and 0 otherwise.
         """
 
-        np.random.seed(self.seed)
+        
 
         # sample from a Bernoulli distribution with same dimensions as input distribution
         g = tf.convert_to_tensor(np.random.uniform(size=pr.shape[1]), dtype=tf.float32)
@@ -165,16 +168,13 @@ class RBM:
         from a common distribution.
 
         Args:
-            pr (tensor, float32): a distributions of shape (m, n, r), where m is the number of examples, n the number
+            pr (tf.Tensor, float32): a distributions of shape (m, n, r), where m is the number of examples, n the number
                  of features and r the number of classes. pr needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
-            f (tensor, float32): normalized, uniform probability used for comparison.
+            f (tf.Tensor, float32): normalized, uniform probability used for comparison.
 
         Returns:
-            v_samp (tensor, float32): an (m,n) tensor of sampled rankings from 1 to r .
+            tf.Tensor: An (m,n) float32 tensor of sampled rankings from 1 to r.
         """
-
-        np.random.seed(self.seed)
-
         g = np.random.uniform(size=pr.shape[2])  # sample from a uniform distribution
         f = tf.convert_to_tensor(
             g / g.sum(), dtype=tf.float32
@@ -191,12 +191,12 @@ class RBM:
         """Probability that unit v has value l given phi: P(v=l|phi)
 
         Args:
-            phi: linear combination of values of the previous layer
-            r  : rating scale, corresponding to the number of classes
+            phi (tf.Tensor): linear combination of values of the previous layer
+            r (float): rating scale, corresponding to the number of classes
 
         Returns:
-            pr: a tensor of shape (r, m, Nv) . This needs to be reshaped as (m, Nv, r) in the last step
-                to allow for faster sampling when used in the Multinomial function.
+            tf.Tensor: a tensor of shape (r, m, Nv). This needs to be reshaped as (m, Nv, r) in the last step
+            to allow for faster sampling when used in the multinomial function.
 
         """
 
@@ -216,10 +216,10 @@ class RBM:
         states, the functional form of the visible units Free energy is the same as the one for the binary model.
 
         Args:
-            x: This can be either the sampled value of the visible units (v_k) or the input data
+            x (tf.Tensor): This can be either the sampled value of the visible units (v_k) or the input data
 
         Returns:
-            F: Free energy of the model
+            tf.Tensor: Free energy of the model
         """
 
         bias = -tf.reduce_sum(tf.matmul(x, tf.transpose(self.bv)))
@@ -237,6 +237,7 @@ class RBM:
 
     def init_parameters(self):
         """Initialize the parameters of the model.
+
         This is a single layer model with two biases. So we have a rectangular matrix w_{ij} and
         two bias vectors to initialize.
 
@@ -245,14 +246,11 @@ class RBM:
             Nh (int): number of hidden units (latent variables of the model)
 
         Returns:
-            w (tensor, float32): (Nv, Nh) correlation matrix initialized by sampling from a normal
-                        distribution with zero mean and given variance init_stdv.
-           bv (tensor, float32): (1, Nvisible) visible units' bias, initialized to zero.
-           bh (tensor, float32): (1, Nhidden) hidden units' bias, initiliazed to zero.
+            tf.Tensor, tf.Tensor, tf.Tensor: It returns 3 tensors. `w` of size (Nv, Nh): correlation matrix initialized 
+            by sampling from a normal distribution with zero mean and given variance init_stdv. `bv` of size 
+            (1, Nvisible): visible units' bias, initialized to zero. `bh` of size (1, Nhidden)L hidden units' bias, 
+            initiliazed to zero.
         """
-
-        tf.set_random_seed(self.seed)  # set the seed for the random number generator
-
         with tf.variable_scope("Network_parameters"):
 
             self.w = tf.get_variable(
@@ -282,17 +280,17 @@ class RBM:
         to initialize the two conditional probabilities:
 
         P(h|phi_v) --> returns the probability that the i-th hidden unit is active
+
         P(v|phi_h) --> returns the probability that the  i-th visible unit is active
 
         Sample hidden units given the visibles. This can be thought of as a Forward pass step in a FFN
 
         Args:
-            vv (tensor, float32): visible units
+            vv (tf.Tensor, float32): visible units
 
         Returns:
-            phv (tensor, float32): activation probability of the hidden unit
-            h_ (tensor, float32): sampled value of the hidden unit from a Bernoulli distributions having
-                        success probability phv
+            tf.Tensor, tf.Tensor: Two tensors. `phv` is the activation probability of the hidden unit. `h_` is the
+            sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
         """
 
         with tf.name_scope("sample_hidden_units"):
@@ -314,6 +312,7 @@ class RBM:
         for missing data; as such the value of the hidden unit is sampled from a multinomial distribution.
 
         Basic mechanics:
+
         1) For every training example we first sample Nv Multinomial distributions. The result is of the
         form [0,1,0,0,0,...,0] where the index of the 1 element corresponds to the rth rating. The index
         is extracted using the argmax function and we need to add 1 at the end since array indeces starts
@@ -324,11 +323,11 @@ class RBM:
         the same position as the original input.
 
         Args:
-            h (tensor, float32): visible units.
+            h (tf.Tensor, float32): visible units.
 
         Returns:
-            pvh (tensor, float32): activation probability of the visible unit given the hidden
-            v_ (tensor, float32): sampled value of the visible unit from a Multinomial distributions having success
+            pvh (tf.Tensor, float32): activation probability of the visible unit given the hidden
+            v_ (tf.Tensor, float32): sampled value of the visible unit from a Multinomial distributions having success
                         probability pvh.
         """
 
@@ -360,11 +359,11 @@ class RBM:
 
         Args:
             k (scalar, integer): iterator. Number of sampling steps.
-            v (tensor, float32): visible units.
+            v (tf.Tensor, float32): visible units.
 
         Returns:
-            h_k (tensor, float32): sampled value of the hidden unit at step k.
-            v_k (tensor, float32): sampled value of the visible unit at step k.
+            h_k (tf.Tensor, float32): sampled value of the hidden unit at step k.
+            v_k (tf.Tensor, float32): sampled value of the visible unit at step k.
         """
 
         with tf.name_scope("gibbs_sampling"):
@@ -384,11 +383,11 @@ class RBM:
         """Loss functions.
 
         Args:
-            v (tensor, float32): empirical input
-            v_k (tensor, float32): sampled visible units at step k
+            v (tf.Tensor, float32): empirical input
+            v_k (tf.Tensor, float32): sampled visible units at step k
 
         Returns:
-            obj (tensor, float32): objective function of Contrastive divergence, that is the difference
+            obj (tf.Tensor, float32): objective function of Contrastive divergence, that is the difference
                         between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
@@ -437,10 +436,10 @@ class RBM:
         the rated items only
 
         Args:
-            vp (tensor, float32): inferred output (Network prediction)
+            vp (tf.Tensor, float32): inferred output (Network prediction)
 
         Returns:
-            ac_score (tensor, float32)=  1/m Sum_{mu=1}^{m} Sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i},
+            ac_score (tf.Tensor, float32)=  1/m Sum_{mu=1}^{m} Sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i},
             where m = Nusers, Nv = number of items = number of visible units and s(i) is the number of
             non-zero elements per row.
         """
@@ -471,10 +470,10 @@ class RBM:
         Note that this needs to be evaluated on the rated items only
 
         Args:
-            vp (tensor, float32): inferred output (Network prediction)
+            vp (tf.Tensor, float32): inferred output (Network prediction)
 
         Returns:
-            err (tensor, float32): root mean square error
+            err (tf.Tensor, float32): root mean square error
 
         """
 

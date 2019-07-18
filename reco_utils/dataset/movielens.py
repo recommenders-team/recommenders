@@ -350,13 +350,7 @@ def load_spark_df(
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
         header (list or tuple): Rating dataset header.
             If schema is provided, this argument is ignored.
-        schema (pyspark.StructType): Dataset schema. By default:
-            StructType([
-            StructField(DEFAULT_USER_COL, IntegerType()),
-            StructField(DEFAULT_ITEM_COL, IntegerType()),
-            StructField(DEFAULT_RATING_COL, FloatType()),
-            StructField(DEFAULT_TIMESTAMP_COL, LongType()),
-            ])
+        schema (pyspark.StructType): Dataset schema. 
         local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
         dbutils (Databricks.dbutils): Databricks utility object
@@ -372,13 +366,22 @@ def load_spark_df(
 
     .. code-block:: python
     
-        # To load just user-id, item-id, and ratings from MovieLens-1M dataset,
+        # To load just user-id, item-id, and ratings from MovieLens-1M dataset:
         spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'))
 
-        # To load rating's timestamp together,
+        # The schema can be defined as well:
+        schema = StructType([
+            StructField(DEFAULT_USER_COL, IntegerType()),
+            StructField(DEFAULT_ITEM_COL, IntegerType()),
+            StructField(DEFAULT_RATING_COL, FloatType()),
+            StructField(DEFAULT_TIMESTAMP_COL, LongType()),
+            ])
+        spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'), schema=schema)
+
+        # To load rating's timestamp together:
         spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
 
-        # To load movie's title, genres, and released year info along with the ratings data,
+        # To load movie's title, genres, and released year info along with the ratings data:
         spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
             title_col='Title',
             genres_col='Genres',
