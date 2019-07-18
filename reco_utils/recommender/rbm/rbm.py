@@ -219,7 +219,7 @@ class RBM:
             x (tf.Tensor): This can be either the sampled value of the visible units (v_k) or the input data
 
         Returns:
-            tf.Tensor: Free energy of the model
+            tf.Tensor: Free energy of the model.
         """
 
         bias = -tf.reduce_sum(tf.matmul(x, tf.transpose(self.bv)))
@@ -326,9 +326,9 @@ class RBM:
             h (tf.Tensor, float32): visible units.
 
         Returns:
-            pvh (tf.Tensor, float32): activation probability of the visible unit given the hidden
-            v_ (tf.Tensor, float32): sampled value of the visible unit from a Multinomial distributions having success
-                        probability pvh.
+            tf.Tensor, tf.Tensor: Two tensors. `pvh` is the activation probability of the visible unit given the hidden.
+            `v_` is the sampled value of the visible unit from a Multinomial distributions having success probability 
+            `pvh`.
         """
 
         with tf.name_scope("sample_visible_units"):
@@ -362,8 +362,8 @@ class RBM:
             v (tf.Tensor, float32): visible units.
 
         Returns:
-            h_k (tf.Tensor, float32): sampled value of the hidden unit at step k.
-            v_k (tf.Tensor, float32): sampled value of the visible unit at step k.
+            tf.Tensor, tf.Tensor: Two tensors of float32. `h_k` is the sampled value of the hidden unit at step k. `v_k`
+            is the sampled value of the visible unit at step k.
         """
 
         with tf.name_scope("gibbs_sampling"):
@@ -387,12 +387,11 @@ class RBM:
             v_k (tf.Tensor, float32): sampled visible units at step k
 
         Returns:
-            obj (tf.Tensor, float32): objective function of Contrastive divergence, that is the difference
-                        between the free energy clamped on the data (v) and the model Free energy (v_k).
+            obj: objective function of Contrastive divergence, that is the difference
+            between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
         with tf.variable_scope("losses"):
-
             obj = self.free_energy(vv) - self.free_energy(self.v_k)
 
         return obj
@@ -401,13 +400,13 @@ class RBM:
         """Gibbs protocol.
 
         Basic mechanics:
+
         If the current epoch i is in the interval specified in the training protocol cd_protocol_,
         the number of steps in Gibbs sampling (k) is incremented by one and gibbs_sampling is updated
         accordingly.
 
         Args:
             i (scalar, integer): current epoch in the loop
-
         """
 
         with tf.name_scope("gibbs_protocol"):
@@ -433,15 +432,19 @@ class RBM:
         """Train/Test Mean average precision
 
         Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on
-        the rated items only
+        the rated items only.
+
+        $acc = 1/m Sum_{mu=1}^{m} Sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i}$
+
+        where m = Nusers, Nv = number of items = number of visible units and s(i) is the number of non-zero elements 
+        per row.
 
         Args:
             vp (tf.Tensor, float32): inferred output (Network prediction)
 
         Returns:
-            ac_score (tf.Tensor, float32)=  1/m Sum_{mu=1}^{m} Sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i},
-            where m = Nusers, Nv = number of items = number of visible units and s(i) is the number of
-            non-zero elements per row.
+            tf.Tensor: accuracy.
+            
         """
 
         with tf.name_scope("accuracy"):
@@ -473,7 +476,7 @@ class RBM:
             vp (tf.Tensor, float32): inferred output (Network prediction)
 
         Returns:
-            err (tf.Tensor, float32): root mean square error
+            tf.Tensor: root mean square error.
 
         """
 
