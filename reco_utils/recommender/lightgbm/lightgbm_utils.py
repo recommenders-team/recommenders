@@ -29,7 +29,7 @@ class NumEncoder(object):
     """
 
     def __init__(self, cate_cols, nume_cols, label_col, threshold=10, thresrate=0.99):
-        """Constructuor.
+        """Constructor.
         
         Args:
             cate_cols (list): The columns of categorical features.

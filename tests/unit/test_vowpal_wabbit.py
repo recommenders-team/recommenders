@@ -4,8 +4,6 @@
 import os
 import pytest
 from unittest import mock
-
-
 import pandas as pd
 
 from reco_utils.recommender.vowpal_wabbit.vw import VW

@@ -23,7 +23,7 @@ def get_or_create_workspace(
         workspace_region (str): region
 
     Returns:
-        Workspace
+        obj: Workspace
     """
 
     # use environment variables if needed

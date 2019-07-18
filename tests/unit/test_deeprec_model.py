@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pytest
 import os
 from reco_utils.recommender.deeprec.deeprec_utils import prepare_hparams, download_deeprec_resources

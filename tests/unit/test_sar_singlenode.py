@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import itertools
-
 import pytest
 import numpy as np
 import pandas as pd

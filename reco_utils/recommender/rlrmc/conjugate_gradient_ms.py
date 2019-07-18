@@ -34,18 +34,13 @@ class ConjugateGradientMS(Solver):
         *args,
         **kwargs
     ):
-        """
-        Instantiate gradient solver class.
-        Variable attributes (defaults in brackets):
-            - beta_type (BetaTypes.HestenesStiefel)
-                Conjugate gradient beta rule used to construct the new search
-                direction
-            - orth_value (numpy.inf)
-                Parameter for Powell's restart strategy. An infinite
-                value disables this strategy. See in code formula for
-                the specific criterion used.
-            - linesearch (LineSearchAdaptive)
-                The linesearch method to used.
+        """Instantiate gradient solver class.
+        
+        Args:
+            beta_type (obj): Conjugate gradient beta rule used to construct the new search direction.
+            orth_value (float): Parameter for Powell's restart strategy. An infinite value disables this strategy. 
+                See in code formula for the specific criterion used.
+            - linesearch (obj): The linesearch method to used.
         """
         super(ConjugateGradientMS, self).__init__(*args, **kwargs)
 
@@ -59,27 +54,25 @@ class ConjugateGradientMS(Solver):
         self.linesearch = None
 
     def solve(self, problem, x=None, reuselinesearch=False, compute_stats=None):
-        """
-        Perform optimization using nonlinear conjugate gradient method with
+        """Perform optimization using nonlinear conjugate gradient method with
         linesearch.
+
         This method first computes the gradient of obj w.r.t. arg, and then
         optimizes by moving in a direction that is conjugate to all previous
         search directions.
-        Arguments:
-            - problem
-                Pymanopt problem setup using the Problem class, this must
+        
+        Args:
+            problem (obj): Pymanopt problem setup using the Problem class, this must
                 have a .manifold attribute specifying the manifold to optimize
                 over, as well as a cost and enough information to compute
                 the gradient of that cost.
-            - x=None
-                Optional parameter. Starting point on the manifold. If none
+            x (np.array): Optional parameter. Starting point on the manifold. If none
                 then a starting point will be randomly generated.
-            - reuselinesearch=False
-                Whether to reuse the previous linesearch object. Allows to
+            reuselinesearch (bool): Whether to reuse the previous linesearch object. Allows to
                 use information from a previous solve run.
+        
         Returns:
-            - x
-                Local minimum of obj, or if algorithm terminated before
+            np.array: Local minimum of obj, or if algorithm terminated before
                 convergence x will be the point at which it terminated.
         """
         man = problem.manifold

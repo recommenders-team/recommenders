@@ -83,29 +83,42 @@ def filter_by(df, filter_by_df, filter_by_cols):
     ]
 
 
-class LibffmConverter(object):
-    """Converts an input Dataframe (df) to another Dataframe (df) in libffm format. A text file of the converted
+class LibffmConverter:
+    """Converts an input dataframe to another dataframe in libffm format. A text file of the converted
     Dataframe is optionally generated.
 
-    Note:
-        The input dataframe is expected to represent the feature data in the following schema
-        |field-1|field-2|...|field-n|rating|
-        |feature-1-1|feature-2-1|...|feature-n-1|1|
-        |feature-1-2|feature-2-2|...|feature-n-2|0|
-        ...
-        |feature-1-i|feature-2-j|...|feature-n-k|0|
+    .. note::
+
+        The input dataframe is expected to represent the feature data in the following schema:
+
+        .. code-block:: python
+
+            |field-1|field-2|...|field-n|rating|
+            |feature-1-1|feature-2-1|...|feature-n-1|1|
+            |feature-1-2|feature-2-2|...|feature-n-2|0|
+            ...
+            |feature-1-i|feature-2-j|...|feature-n-k|0|
+
         Where
-        1. each "field-*" is the column name of the dataframe (column of lable/rating is excluded), and
-        2. "feature-*-*" can be either a string or a numerical value, representing the categorical variable or
+        1. each `field-*` is the column name of the dataframe (column of label/rating is excluded), and
+        2. `feature-*-*` can be either a string or a numerical value, representing the categorical variable or
         actual numerical variable of the feature value in the field, respectively.
         3. If there are ordinal variables represented in int types, users should make sure these columns
         are properly converted to string type.
 
         The above data will be converted to the libffm format by following the convention as explained in
-        https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf
+        `this paper <https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf>`_.
 
-        i.e., <field_index>:<field_feature_index>:1 or <field_index>:<field_index>:<field_feature_value>, depending on
+        i.e. `<field_index>:<field_feature_index>:1` or `<field_index>:<field_index>:<field_feature_value>`, depending on
         the data type of the features in the original dataframe.
+
+    Args:
+        filepath (str): path to save the converted data.
+
+    Attributes:
+        field_count (int): count of field in the libffm format data
+        feature_count (int): count of feature in the libffm format data
+        filepath (str or None): file path where the output is stored - it can be None or a string
 
     Examples:
         >>> import pandas as pd
@@ -125,14 +138,6 @@ class LibffmConverter(object):
         2       0  1:3:1  2:4:5  3:5:3.0  4:6:1
         3       1  1:3:1  2:4:6  3:5:4.0  4:7:1
         4       1  1:3:1  2:4:7  3:5:5.0  4:8:1
-
-    Args:
-        filepath (str): path to save the converted data.
-
-    Attributes:
-        field_count (int): count of field in the libffm format data
-        feature_count (int): count of feature in the libffm format data
-        filepath (str or None): file path where the output is stored - it can be None or a string
     """
 
     def __init__(self, filepath=None):
@@ -275,9 +280,23 @@ def negative_feedback_sampler(
 
     Negative sampling is used in the literature frequently to generate negative samples 
     from a user-item interaction data.
-    See for example the neural collaborative filtering paper 
-    https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
+
+    See for example the `neural collaborative filtering paper <https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf>`_.
     
+    Args:
+        df (pandas.DataFrame): input data that contains user-item tuples.
+        col_user (str): user id column name.
+        col_item (str): item id column name.
+        col_label (str): label column name. It is used for the generated columns where labels
+        of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
+        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user. 
+        If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
+        of all the possible samples.
+        seed (int): seed for the random state of the sampling function.
+
+    Returns:
+        pandas.DataFrame: data with negative feedback 
+
     Examples:
         >>> import pandas as pd
         >>> df = pd.DataFrame({
@@ -296,20 +315,6 @@ def negative_feedback_sampler(
         2   1   0
         3   3   1
         3   1   0
-
-    Args:
-        df (pandas.DataFrame): input data that contains user-item tuples.
-        col_user (str): user id column name.
-        col_item (str): item id column name.
-        col_label (str): label column name. It is used for the generated columns where labels
-        of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
-        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user. 
-        If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
-        of all the possible samples.
-        seed (int): seed for the random state of the sampling function.
-
-    Returns:
-        pandas.DataFrame: data with negative feedback 
     """
     # Get all of the users and items.
     users = df[col_user].unique()
@@ -422,6 +427,7 @@ class PandasHash:
 
     def __init__(self, pandas_object):
         """Initialize class
+        
         Args:
             pandas_object (pd.DataFrame|pd.Series): pandas object
         """
@@ -432,6 +438,7 @@ class PandasHash:
 
     def __eq__(self, other):
         """Overwrite equality comparison
+        
         Args:
             other (pd.DataFrame|pd.Series): pandas object to compare
 
@@ -457,7 +464,12 @@ class PandasHash:
 
 
 def lru_cache_df(maxsize, typed=False):
-    """Least-recently-used cache decorator
+    """Least-recently-used cache decorator for pandas Dataframes. 
+    
+    Decorator to wrap a function with a memoizing callable that saves up to the maxsize most recent calls. It can 
+    save time when an expensive or I/O bound function is periodically called with the same arguments.
+
+    Inspired in the `lru_cache function <https://docs.python.org/3/library/functools.html#functools.lru_cache>`_.
 
     Args:
         maxsize (int|None): max size of cache, if set to None cache is boundless

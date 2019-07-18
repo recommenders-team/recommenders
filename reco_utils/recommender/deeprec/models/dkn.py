@@ -3,7 +3,8 @@
 
 import numpy as np
 import tensorflow as tf
-from .base_model import BaseModel
+
+from reco_utils.recommender.deeprec.models.base_model import BaseModel
 
 __all__ = ["DKN"]
 

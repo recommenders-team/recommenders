@@ -8,19 +8,17 @@ def qps_to_replicas(
     target_qps, processing_time, max_qp_replica=1, target_utilization=0.7
 ):
     """Provide a rough estimate of the number of replicas to support a given
-        load (queries per second)
+    load (queries per second)
 
     Args:
         target_qps (int): target queries per second that you want to support
         processing_time (float): the estimated amount of time (in seconds)
             your service call takes
         max_qp_replica (int): maximum number of concurrent queries per replica
-        target_utilization (float): proportion of CPU utilization you think is
-            ideal
+        target_utilization (float): proportion of CPU utilization you think is ideal
 
     Returns:
-        int: Number of estimated replicas required to support a target
-            number of queries per second
+        int: Number of estimated replicas required to support a target number of queries per second.
     """
     concurrent_queries = target_qps * processing_time / target_utilization
     replicas = ceil(concurrent_queries / max_qp_replica)
@@ -57,7 +55,7 @@ def replicas_to_qps(
 
 def nodes_to_replicas(n_cores_per_node, n_nodes=3, cpu_cores_per_replica=0.1):
     """Provide a rough estimate of the number of replicas supported by a
-        given number of nodes with n_cores_per_node cores each
+    given number of nodes with n_cores_per_node cores each
 
     Args:
         n_cores_per_node (int): Total number of cores per node within an AKS
