@@ -19,27 +19,37 @@ def find_wikidataID(name):
     url_opts = "&".join([
         "action=query",
         "list=search",
-        "srsearch={}".format(urllib.parse.quote(name)),
+        "srsearch={}".format(urllib.parse.quote(bytes(name, encoding='utf8'))),
         "format=json",
         "prop=pageprops",
         "ppprop=wikibase_item",
     ])
-    r = requests.get("{url}?{opts}".format(url=API_URL_WIKIPEDIA, opts=url_opts))
     try:
-        pageID = r.json()["query"]["search"][0]["pageid"]
-        url_opts = "&".join([
-            "action=query",
-            "prop=pageprops",
-            "format=json",
-            "pageids={}".format(urllib.parse.quote(pageID)),
-        ])
         r = requests.get("{url}?{opts}".format(url=API_URL_WIKIPEDIA, opts=url_opts))
-        try:
-            entity_id = r.json()["query"]["pages"][str(pageID)]["pageprops"]["wikibase_item"]
-        except:
-            entity_id = "entityNotFound"
-    except:
-            entity_id = "entityNotFound"
+    except requests.exceptions.RequestException as err:
+        print(err)
+        entity_id = "entityNotFound"
+        return entity_id
+    
+    pageID = r.json().get("query", {}).get("search", [{}])[0].get("pageid", "entityNotFound")
+    
+    if pageID == "entityNotFound":
+        return "entityNotFound"
+
+    url_opts = "&".join([
+        "action=query",
+        "prop=pageprops",
+        "format=json",
+        "pageids={}".format(pageID),
+    ])
+    try:
+        r = requests.get("{url}?{opts}".format(url=API_URL_WIKIPEDIA, opts=url_opts))
+    except requests.exceptions.RequestException as err:
+        print(err)
+        entity_id = "entityNotFound"
+        return entity_id
+    
+    entity_id = r.json().get("query", {}).get("pages", {}).get(str(pageID), {}).get("pageprops", {}).get("wikibase_item", "entityNotFound")
     return entity_id
 
 def query_entity_links(entityID):
@@ -78,7 +88,11 @@ def query_entity_links(entityID):
     ORDER BY ?propUrl ?valUrl
     LIMIT 500
     """
-    r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
+    try:
+        r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
+    except requests.exceptions.RequestException as err:
+        print(err)
+        return {}
     data = r.json()
     return data
 
@@ -93,16 +107,18 @@ def read_linked_entities(data):
     """
     related_entities = []
     related_names = []
-    for c in data["results"]["bindings"]:
-        related_entities.append(c["valUrl"]["value"].replace("http://www.wikidata.org/entity/", ""))
-        related_names.append(c["valLabel"]["value"])
+    for c in data.get("results").get("bindings"):
+        url = c.get("valUrl").get("value")
+        related_entities.append(url.replace("http://www.wikidata.org/entity/", ""))
+        name = c.get("valLabel").get("value")
+        related_names.append(name)
     return related_entities, related_names
 
 def query_entity_description(entityID):
     """Query entity wikidata description from entityID
     Args:
         entityID (str): A wikidata page ID.
-        
+
     Returns:
         (str): Wikidata short description of the entityID
                descriptionNotFound' will be returned if no 
@@ -119,9 +135,11 @@ def query_entity_description(entityID):
       FILTER ( lang(?o) = "en" )
     }
     """
-    r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
     try:
-        description = r.json()["results"]["bindings"][0]["o"]["value"]
-    except:
+        r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
+    except requests.exceptions.RequestException as err:
+        print(err)
         description = "descriptionNotFound"
+    
+    description = r.json().get("results", {}).get("bindings", [{}])[0].get("o",{}).get("value", "descriptionNotFound")
     return description
