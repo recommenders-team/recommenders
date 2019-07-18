@@ -37,8 +37,8 @@ def build_feature_columns(
             'wide_deep' for a combination of linear model and neural networks.
 
     Returns:
-        list of tf.feature_column: Wide feature columns. Empty list if use 'deep' model.
-        list of tf.feature_column: Deep feature columns. Empty list if use 'wide' model.
+        list of tf.feature_column, list of tf.feature_column: Two lists. One with the wide feature columns and a second
+        with the deep feature columns. If only the wide model is selected, the deep column list is empty and viceversa. 
     """
     if model_type not in ["wide", "deep", "wide_deep"]:
         raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
@@ -51,7 +51,7 @@ def build_feature_columns(
     )
 
     if model_type == "wide":
-        return _build_wide_columns(user_ids, item_ids), []
+        return _build_wide_columns(user_ids, item_ids, crossed_feat_dim), []
     elif model_type == "deep":
         return (
             [],
@@ -61,7 +61,7 @@ def build_feature_columns(
         )
     elif model_type == "wide_deep":
         return (
-            _build_wide_columns(user_ids, item_ids),
+            _build_wide_columns(user_ids, item_ids, crossed_feat_dim),
             _build_deep_columns(
                 user_ids, item_ids, user_dim, item_dim, item_feat_col, item_feat_shape
             ),
