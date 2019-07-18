@@ -3,7 +3,6 @@
 
 import os
 import pytest
-import shutil
 import pandas as pd
 import tensorflow as tf
 
@@ -18,10 +17,10 @@ from reco_utils.common.constants import (
     DEFAULT_RATING_COL,
 )
 
-ITEM_FEAT_COL = 'itemFeat'
+ITEM_FEAT_COL = "itemFeat"
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def pd_df():
     df = pd.DataFrame(
         {
@@ -44,21 +43,20 @@ def pd_df():
 
 
 @pytest.mark.gpu
-def test_wide_deep(pd_df, tmp):
-    """Test `build_feature_columns` and `build_model`"""
+def test_wide_model(pd_df, tmp):
     data, users, items = pd_df
 
     # Test wide model
     # Test if wide column has two original features and one crossed feature
     wide_columns, _ = build_feature_columns(
-        users, items, model_type='wide', crossed_feat_dim=10
+        users, items, model_type="wide", crossed_feat_dim=10
     )
     assert len(wide_columns) == 3
     # Check crossed feature dimension
     assert wide_columns[2].hash_bucket_size == 10
     # Check model type
     model = build_model(
-        os.path.join(tmp, 'wide_' + MODEL_DIR), wide_columns=wide_columns
+        os.path.join(tmp, "wide_" + MODEL_DIR), wide_columns=wide_columns
     )
     assert isinstance(model, tf.estimator.LinearRegressor)
     # Test if model train works
@@ -77,13 +75,17 @@ def test_wide_deep(pd_df, tmp):
     summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
     summary_writer.close()
 
-    # Test deep model
+
+@pytest.mark.gpu
+def test_deep_model(pd_df, tmp):
+    data, users, items = pd_df
+
     # Test if deep columns have user and item features
-    _, deep_columns = build_feature_columns(users, items, model_type='deep')
+    _, deep_columns = build_feature_columns(users, items, model_type="deep")
     assert len(deep_columns) == 2
     # Check model type
     model = build_model(
-        os.path.join(tmp, 'deep_' + MODEL_DIR), deep_columns=deep_columns
+        os.path.join(tmp, "deep_" + MODEL_DIR), deep_columns=deep_columns
     )
     assert isinstance(model, tf.estimator.DNNRegressor)
     # Test if model train works
@@ -97,16 +99,20 @@ def test_wide_deep(pd_df, tmp):
     summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
     summary_writer.close()
 
-    # Test wide and deep model
+
+@pytest.mark.gpu
+def test_wide_deep_model(pd_df, tmp):
+    data, users, items = pd_df
+
     # Test if wide and deep columns have correct features
     wide_columns, deep_columns = build_feature_columns(
-        users, items, model_type='wide_deep'
+        users, items, model_type="wide_deep"
     )
     assert len(wide_columns) == 3
     assert len(deep_columns) == 2
     # Check model type
     model = build_model(
-        os.path.join(tmp, 'wide_deep_' + MODEL_DIR),
+        os.path.join(tmp, "wide_deep_" + MODEL_DIR),
         wide_columns=wide_columns,
         deep_columns=deep_columns,
     )

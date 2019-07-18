@@ -35,8 +35,10 @@ class RLRMCalgorithm(object):
         Args:
             rank (int): rank of the final model. Should be a positive integer.
             C (float): regularization parameter. Should be a positive real number.
-            model_param (dict): contains model parameters such as number of rows & columns of the matrix as well as the mean rating in the training dataset.
-            initialize_flag (str): flag to set the initialization step of the algorithm. Current options are 'random' (which is random initilization) and 'svd' (which is a singular value decomposition based initilization).
+            model_param (dict): contains model parameters such as number of rows & columns of the matrix as well as 
+                the mean rating in the training dataset.
+            initialize_flag (str): flag to set the initialization step of the algorithm. Current options are 'random'
+                (which is random initilization) and 'svd' (which is a singular value decomposition based initilization).
             max_time (int): maximum time (in seconds), for which the algorithm is allowed to execute.
             maxiter (int): maximum number of iterations, for which the algorithm is allowed to execute.
         """
