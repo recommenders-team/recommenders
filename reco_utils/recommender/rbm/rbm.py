@@ -406,7 +406,7 @@ class RBM:
         accordingly.
 
         Args:
-            i (scalar, integer): current epoch in the loop
+            i (int): current epoch in the loop
         """
 
         with tf.name_scope("gibbs_protocol"):
@@ -532,8 +532,7 @@ class RBM:
             xtst (np.array, integer32): the user/affinity matrix for the test set
 
         Returns:
-            precision_train (scalar, float32): precision on the train set
-            precision_test  (scalar, float32): precision on the test set
+            float, float: precision on the train and test sets.
         """
 
         if self.with_metrics:
@@ -559,8 +558,8 @@ class RBM:
 
         Args:
             Rmse_train (list, float32): per epoch rmse on the train set
-            precision_train (scalar, float32): precision on the train set
-            precision_test  (scalar, float32): precision on the test set
+            precision_train (float): precision on the train set
+            precision_test  (float): precision on the test set
         """
 
         if self.with_metrics:
@@ -628,15 +627,14 @@ class RBM:
         )
 
     def batch_training(self, num_minibatches):
-        """Perform training over input minibatches. If with_metrics is False,
+        """Perform training over input minibatches. If `self.with_metrics` is False,
         no online metrics are evaluated.
 
         Args:
             num_minibatches (scalar, int32): number of training minibatches
 
         Returns:
-            epoch_tr_err (scalar, float32): training error per single epoch
-            Note, if with_metrics is False, this is zero.
+            float: training error per single epoch. If `self.with_metrics` is False, this is zero.
         """
 
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
@@ -658,6 +656,7 @@ class RBM:
         """Fit method
 
         Training in generative models takes place in two steps:
+
         1) Gibbs sampling
         2) Gradient evaluation and parameters update
 
@@ -673,7 +672,7 @@ class RBM:
             xtst (np.array, integers): the user/affinity matrix for the test set
 
         Returns:
-            elapsed (scalar, float32): elapsed time during training
+            float: elapsed time during training
         """
 
         # keep the position of the items in the train set so that they can be optionally exluded from recommendation
@@ -737,6 +736,7 @@ class RBM:
         """Returns the top-k items ordered by a relevancy score.
 
         Basic mechanics:
+
         The method samples new ratings from the learned joint distribution, together with their
         probabilities. The input x must have the same number of columns as the one used for training
         the model (i.e. the same number of items) but it can have an arbitrary number of rows (users).
@@ -758,8 +758,8 @@ class RBM:
             top_k (scalar, int32): the number of items to recommend.
 
         Returns:
-            top_scores (np.array, float32): a sparse matrix containing the top_k elements ordered by their score.
-            elapsed (scalar, float32): time taken to recommend k items
+            np.array, float: A sparse matrix containing the top_k elements ordered by their score and the time taken 
+            to recommend k items.
         """
 
         self.time()
@@ -804,6 +804,7 @@ class RBM:
         exceptions that it returns all the inferred ratings
 
         Basic mechanics:
+
         The method samples new ratings from the learned joint distribution, together with
         their probabilities. The input x must have the same number of columns as the one used
         for training the model, i.e. the same number of items, but it can have an arbitrary number
@@ -814,8 +815,7 @@ class RBM:
             the ratings of a single user.
 
         Returns:
-            vp (np.array, int32): a matrix with the inferred ratings.
-            elapsed (scalar, float32): elapsed time for predediction.
+            np.array, float: A matrix with the inferred ratings and the elapsed time for predediction.
         """
 
         self.time()
