@@ -1,20 +1,39 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import requests
+import urllib
+
+API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
+API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
 
 def find_wikidataID(name):
     """Find the entity ID in wikidata from a title string.
 
     Args:
         name (str): A string with search terms (eg. "Batman (1989) film")
+
     Returns:
         (str): wikidata entityID corresponding to the title string. 
                   'entityNotFound' will be returned if no page is found
     """
-    r = requests.get("https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch="+name+"&format=json&prop=pageprops&ppprop=wikibase_item")
+    url_opts = "&".join([
+        "action=query",
+        "list=search",
+        "srsearch={}".format(urllib.parse.quote(name)),
+        "format=json",
+        "prop=pageprops",
+        "ppprop=wikibase_item",
+    ])
+    r = requests.get("{url}?{opts}".format(url=API_URL_WIKIPEDIA, opts=url_opts))
     try:
         pageID = r.json()["query"]["search"][0]["pageid"]
-        r = requests.get("https://en.wikipedia.org/w/api.php?action=query&prop=pageprops&format=json&pageids="+str(pageID))
+        url_opts = "&".join([
+            "action=query",
+            "prop=pageprops",
+            "format=json",
+            "pageids={}".format(urllib.parse.quote(pageID)),
+        ])
+        r = requests.get("{url}?{opts}".format(url=API_URL_WIKIPEDIA, opts=url_opts))
         try:
             entity_id = r.json()["query"]["pages"][str(pageID)]["pageprops"]["wikibase_item"]
         except:
@@ -28,6 +47,7 @@ def query_entity_links(entityID):
 
     Args:
         entityID (str): A wikidata page ID.
+
     Returns:
         (json): dictionary with linked pages.
     """
@@ -58,8 +78,7 @@ def query_entity_links(entityID):
     ORDER BY ?propUrl ?valUrl
     LIMIT 500
     """
-    url = 'https://query.wikidata.org/sparql'
-    r = requests.get(url, params = {'format': 'json', 'query': query})
+    r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
     data = r.json()
     return data
 
@@ -67,6 +86,7 @@ def read_linked_entities(data):
     """Obtain lists of liken entities (IDs and names) from dictionary
     Args:
         data (json): dictionary with linked pages.
+
     Returns:
         (list): List of liked entityIDs
         (list): List of liked entity names
@@ -82,6 +102,7 @@ def query_entity_description(entityID):
     """Query entity wikidata description from entityID
     Args:
         entityID (str): A wikidata page ID.
+        
     Returns:
         (str): Wikidata short description of the entityID
                descriptionNotFound' will be returned if no 
@@ -98,8 +119,7 @@ def query_entity_description(entityID):
       FILTER ( lang(?o) = "en" )
     }
     """
-    url = 'https://query.wikidata.org/sparql'
-    r = requests.get(url, params = {'format': 'json', 'query': query})
+    r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
     try:
         description = r.json()["results"]["bindings"][0]["o"]["value"]
     except:
