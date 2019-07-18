@@ -17,7 +17,7 @@ MAX_RETRIES = 10
 
 
 def get_experiment_status(status_url=NNI_STATUS_URL):
-    """Helper method. Gets the experiment status from the REST endpoint
+    """Helper method. Gets the experiment status from the REST endpoint. 
 
     Args:
         status_url (str): URL for the REST endpoint
@@ -29,8 +29,9 @@ def get_experiment_status(status_url=NNI_STATUS_URL):
 
 
 def check_experiment_status(wait=WAITING_TIME, max_retries=MAX_RETRIES):
-    """Checks the status of the current experiment on the NNI REST endpoint
-    Waits until the tuning has completed
+    """Checks the status of the current experiment on the NNI REST endpoint.
+
+    Waits until the tuning has completed.
 
     Args:
         wait (numeric) : time to wait in seconds
@@ -54,8 +55,8 @@ def check_experiment_status(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 
 def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
-    """Checks that there is no NNI experiment active (the URL is not accessible)
-    This method should be called after "nnictl stop" for verification
+    """Checks that there is no NNI experiment active (the URL is not accessible). 
+    This method should be called after `nnictl stop` for verification.
 
     Args:
         wait (numeric) : time to wait in seconds
@@ -74,7 +75,7 @@ def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 
 def check_metrics_written(wait=WAITING_TIME, max_retries=MAX_RETRIES):
-    """Waits until the metrics have been written to the trial logs
+    """Waits until the metrics have been written to the trial logs.
     
     Args:
         wait (numeric) : time to wait in seconds
@@ -92,7 +93,7 @@ def check_metrics_written(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 
 def get_trials(optimize_mode):
-    """Obtain information about the trials of the current experiment via the REST endpoint
+    """Obtain information about the trials of the current experiment via the REST endpoint.
 
     Args:
         optimize_mode (str): One of "minimize", "maximize". Determines how to obtain the best default metric.
@@ -132,7 +133,7 @@ def stop_nni():
 
 
 def start_nni(config_path, wait=WAITING_TIME, max_retries=MAX_RETRIES):
-    """Start nni experiment given a configuration yaml file
+    """Start nni experiment given a configuration yaml file.
 
     Args:
         config_path (str): Configuration yaml file.

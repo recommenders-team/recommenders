@@ -3,19 +3,20 @@
 
 import tensorflow as tf
 import numpy as np
-from .iterator import BaseIterator
+
+from reco_utils.recommender.deeprec.IO.iterator import BaseIterator
 
 __all__ = ["DKNTextIterator"]
 
 
 class DKNTextIterator(BaseIterator):
     """Data loader for the DKN model.
-      DKN requires a special type of data format, where each instance contains a label, the candidate news article,
-      and user's clicked news article. Articles are represented by title words and title entities. Words and entities
-      are aligned.
+    DKN requires a special type of data format, where each instance contains a label, the candidate news article,
+    and user's clicked news article. Articles are represented by title words and title entities. Words and entities
+    are aligned.
 
-      Iterator will not load the whole data into memory. Instead, it loads data into memory
-      per mini-batch, so that large files can be used as input data.
+    Iterator will not load the whole data into memory. Instead, it loads data into memory
+    per mini-batch, so that large files can be used as input data.
     """
 
     def __init__(self, hparams, graph, col_spliter=" ", ID_spliter="%"):
@@ -69,8 +70,8 @@ class DKNTextIterator(BaseIterator):
             line (str): a string indicating one instance
 
         Returns:
-            list: Parsed results,including label, candidate_news_index, candidate_news_val, click_news_index, click_news_val,
-                candidate_news_entity_index, click_news_entity_index, impression_id
+            list: Parsed results including label, candidate_news_index, candidate_news_val, click_news_index, click_news_val,
+            candidate_news_entity_index, click_news_entity_index, impression_id
 
         """
         impression_id = None

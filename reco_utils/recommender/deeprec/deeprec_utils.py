@@ -20,6 +20,7 @@ from reco_utils.dataset.download_utils import maybe_download
 
 def flat_config(config):
     """Flat config loaded from a yaml file to a flat dict.
+    
     Args:
         config (dict): Configuration loaded from a yaml file.
 
@@ -36,6 +37,7 @@ def flat_config(config):
 
 def check_type(config):
     """Check that the config parameters are the correct type
+    
     Args:
         config (dict): Configuration dictionary.
 
@@ -361,8 +363,10 @@ def download_deeprec_resources(azure_container_url, data_path, remote_resource_n
 
 
 def cal_metric(labels, preds, metrics):
-    """Calculate metrics,such as auc, logloss
-    FIXME: refactor this with the reco metrics
+    """Calculate metrics,such as auc, logloss.
+    
+    FIXME: 
+        refactor this with the reco metrics and make it explicit.
     """
     res = {}
     for metric in metrics:

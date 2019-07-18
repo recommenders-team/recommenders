@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import itertools
-
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -21,10 +20,7 @@ OPTIMIZERS = dict(
 )
 
 
-def pandas_input_fn_for_saved_model(
-    df,
-    feat_name_type,
-):
+def pandas_input_fn_for_saved_model(df, feat_name_type):
     """Pandas input function for TensorFlow SavedModel.
     
     Args:
@@ -38,7 +34,7 @@ def pandas_input_fn_for_saved_model(
     """
     for feat_type in feat_name_type.values():
         assert feat_type in (int, float, list)
-        
+
     def input_fn():
         examples = [None] * len(df)
         for i, sample in df.iterrows():
@@ -52,7 +48,8 @@ def pandas_input_fn_for_saved_model(
                 elif feat_type == list:
                     feat.float_list.value.extend(sample[feat_name])
             examples[i] = ex.SerializeToString()
-        return {'inputs': tf.constant(examples)}
+        return {"inputs": tf.constant(examples)}
+
     return input_fn
 
 
@@ -60,10 +57,12 @@ def pandas_input_fn(
     df, y_col=None, batch_size=128, num_epochs=1, shuffle=False, seed=None
 ):
     """Pandas input function for TensorFlow high-level API Estimator.
-    This function returns tf.data.Dataset function.
+    This function returns a `tf.data.Dataset` function.
 
-    Note. tf.estimator.inputs.pandas_input_fn cannot handle array/list column properly.
-    For more information, see (https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn)
+    .. note::
+    
+        `tf.estimator.inputs.pandas_input_fn` cannot handle array/list column properly.
+        For more information, see https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn
 
     Args:
         df (pd.DataFrame): Data containing features.
@@ -134,17 +133,19 @@ def build_optimizer(name, lr=0.001, **kwargs):
     try:
         optimizer_class = OPTIMIZERS[name]
     except KeyError:
-        raise KeyError(
-            "Optimizer name should be one of: {}".format(list(OPTIMIZERS))
-        )
+        raise KeyError("Optimizer name should be one of: {}".format(list(OPTIMIZERS)))
 
     # Set parameters
     params = {}
-    if name == 'ftrl':
-        params['l1_regularization_strength'] = kwargs.get('l1_regularization_strength', 0.0)
-        params['l2_regularization_strength'] = kwargs.get('l2_regularization_strength', 0.0)
-    elif name == 'momentum' or name == 'rmsprop':
-        params['momentum'] = kwargs.get('momentum', 0.0)
+    if name == "ftrl":
+        params["l1_regularization_strength"] = kwargs.get(
+            "l1_regularization_strength", 0.0
+        )
+        params["l2_regularization_strength"] = kwargs.get(
+            "l2_regularization_strength", 0.0
+        )
+    elif name == "momentum" or name == "rmsprop":
+        params["momentum"] = kwargs.get("momentum", 0.0)
 
     return optimizer_class(learning_rate=lr, **params)
 
@@ -158,6 +159,7 @@ def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
         eval_input_fn (function): Evaluation input function to create data receiver spec. 
         tf_feat_cols (list(tf.feature_column)): Feature columns.
         base_dir (str): Base directory to export the model.
+    
     Returns:
         str: Exported model path
     """
@@ -174,14 +176,12 @@ def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
     rcvr_fn_map = {
         tf.estimator.ModeKeys.TRAIN: train_rcvr_fn,
         tf.estimator.ModeKeys.EVAL: eval_rcvr_fn,
-        tf.estimator.ModeKeys.PREDICT: serve_rcvr_fn
+        tf.estimator.ModeKeys.PREDICT: serve_rcvr_fn,
     }
     exported_path = tf.contrib.estimator.export_all_saved_models(
-        model,
-        export_dir_base=base_dir,
-        input_receiver_fn_map=rcvr_fn_map
+        model, export_dir_base=base_dir, input_receiver_fn_map=rcvr_fn_map
     )
-    
+
     return exported_path.decode("utf-8")
 
 
@@ -198,9 +198,12 @@ def evaluation_log_hook(
     **eval_kwargs
 ):
     """Evaluation log hook for TensorFlow high-level API Estimator.
-    Note, TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.
-    In order to get the most up-to-date evaluation results while training,
-    set model's `save_checkpoints_steps` to be equal or greater than hook's `every_n_iter`.
+    
+    .. note::
+
+        Note, TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.
+        In order to get the most up-to-date evaluation results while training,
+        set model's `save_checkpoints_steps` to be equal or greater than hook's `every_n_iter`.
 
     Args:
         estimator (tf.estimator.Estimator): Model to evaluate.
@@ -234,20 +237,6 @@ def evaluation_log_hook(
         eval_fns,
         **eval_kwargs
     )
-
-
-class MetricsLogger:
-    def __init__(self):
-        """Log metrics. Each metric's log will be stored in the corresponding list."""
-        self._log = {}
-
-    def log(self, metric, value):
-        if metric not in self._log:
-            self._log[metric] = []
-        self._log[metric].append(value)
-
-    def get_log(self):
-        return self._log
 
 
 class _TrainLogHook(tf.train.SessionRunHook):
@@ -339,3 +328,30 @@ class _TrainLogHook(tf.train.SessionRunHook):
         if self.summary_writer is not None:
             summary = tf.Summary(value=[tf.Summary.Value(tag=tag, simple_value=value)])
             self.summary_writer.add_summary(summary, self.step)
+
+
+class MetricsLogger:
+    """Metrics logger"""
+
+    def __init__(self):
+        """Initializer"""
+        self._log = {}
+
+    def log(self, metric, value):
+        """Log metrics. Each metric's log will be stored in the corresponding list.
+
+        Args:
+            metric (str): Metric name.
+            value (float): Value.
+        """
+        if metric not in self._log:
+            self._log[metric] = []
+        self._log[metric].append(value)
+
+    def get_log(self):
+        """Getter
+        
+        Returns:
+            dict: Log metrics.
+        """
+        return self._log
