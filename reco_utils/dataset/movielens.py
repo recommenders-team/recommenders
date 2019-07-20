@@ -137,12 +137,12 @@ WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
 WARNING_HAVE_SCHEMA_AND_HEADER = """Both schema and header are provided.
     The header argument will be ignored."""
 ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m}"
-ERROR_NO_HEADER = "No header (schema) information. At least user and movie column names should be provided"
+ERROR_HEADER = "Header error. At least user and movie column names should be provided"
 
 
 def load_pandas_df(
     size="100k",
-    header=DEFAULT_HEADER,
+    header=None,
     local_cache_path=None,
     title_col=None,
     genres_col=None,
@@ -188,8 +188,10 @@ def load_pandas_df(
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
-    if header is None or len(header) < 2:
-        raise ValueError(ERROR_NO_HEADER)
+    if header is None:
+        header = DEFAULT_HEADER
+    elif len(header) < 2:
+        raise ValueError(ERROR_HEADER)
     elif len(header) > 4:
         warnings.warn(WARNING_MOVIE_LENS_HEADER)
         header = header[:4]
@@ -331,7 +333,7 @@ def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_co
 def load_spark_df(
     spark,
     size="100k",
-    header=DEFAULT_HEADER,
+    header=None,
     schema=None,
     local_cache_path=None,
     dbutils=None,
@@ -396,8 +398,8 @@ def load_spark_df(
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     schema = _get_schema(header, schema)
-    if schema is None or len(schema) < 2:
-        raise ValueError(ERROR_NO_HEADER)
+    if len(schema) < 2:
+        raise ValueError(ERROR_HEADER)
 
     movie_col = schema[1].name
 
@@ -457,17 +459,19 @@ def _get_schema(header, schema):
     if schema is None or len(schema) == 0:
         # Use header to generate schema
         if header is None or len(header) == 0:
-            return None
+            return DEFAULT_HEADER
         elif len(header) > 4:
             warnings.warn(WARNING_MOVIE_LENS_HEADER)
             header = header[:4]
 
         schema = StructType()
         try:
-            schema.add(StructField(header[0], IntegerType())).add(
-                StructField(header[1], IntegerType())
-            ).add(StructField(header[2], FloatType())).add(
-                StructField(header[3], LongType())
+            (
+                schema
+                .add(StructField(header[0], IntegerType()))
+                .add(StructField(header[1], IntegerType()))
+                .add(StructField(header[2], FloatType()))
+                .add(StructField(header[3], LongType()))
             )
         except IndexError:
             pass
