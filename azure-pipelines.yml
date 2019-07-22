@@ -10,8 +10,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: PythonScript@1
+- task: PythonScript@0
   inputs:
-    script: '/tests/harness/standard_deployment.py'
-    arguments: 
-    dependencies: 'pyspark azureml-sdk azure-mgmt-cosmosdb'
+    scriptSource: 'filePath'
+    scriptPath: 'tests/harness/standard_deployment.py'
