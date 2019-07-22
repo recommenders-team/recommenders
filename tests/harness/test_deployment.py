@@ -37,7 +37,7 @@ def test_harness():
   # #################################################
   # End User Configurations
   # #################################################
-  spark = SparkSession.builder.master("local[4]").appName("Reco Test Harness").getOrCreate()
+  spark = SparkSession.builder.master("local").appName("Reco Test Harness").getOrCreate()
 
   secrets_path = ws_config_path + '/dbsecrets.json'
 
