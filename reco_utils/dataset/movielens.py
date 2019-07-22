@@ -459,7 +459,7 @@ def _get_schema(header, schema):
     if schema is None or len(schema) == 0:
         # Use header to generate schema
         if header is None or len(header) == 0:
-            return DEFAULT_HEADER
+            header = DEFAULT_HEADER
         elif len(header) > 4:
             warnings.warn(WARNING_MOVIE_LENS_HEADER)
             header = header[:4]
