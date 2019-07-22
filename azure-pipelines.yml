@@ -10,7 +10,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: PythonScript@0
+- task: PythonScript@1
   inputs:
-    scriptSource: 'filePath'
-    scriptPath: 'tests/harness/standard_deployment.py'
+    script: 'tests/harness/standard_deployment.py'
+    dependencies: 'azure-mgmt-cosmosdb'
