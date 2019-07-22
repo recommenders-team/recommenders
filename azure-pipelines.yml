@@ -13,4 +13,5 @@ steps:
 - task: PythonScript@1
   inputs:
     script: 'tests/harness/standard_deployment.py'
+    arguments: 
     dependencies: 'azure-mgmt-cosmosdb'
