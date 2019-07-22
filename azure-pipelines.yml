@@ -4,7 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 trigger:
-- dciborow/test_harness
+- 'dciborow/test_harness'
 
 pool:
   vmImage: 'ubuntu-latest'
