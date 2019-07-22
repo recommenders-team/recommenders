@@ -1,0 +1,17 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+trigger:
+- dciborow/test_harness
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: PythonScript@1
+  inputs:
+    script: '/tests/harness/standard_deployment.py'
+    arguments: 
+    dependencies: 'pyspark azureml-sdk azure-mgmt-cosmosdb'
