@@ -10,9 +10,15 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+    architecture: 'x64'
+
 - task: CmdLine@2
   inputs:
-    script: 'pip install azureml-sdk azure-mgmt-cosmosdb pyspark'
+    script: 'pip3 install azureml-sdk azure-mgmt-cosmosdb pyspark'
     
 - task: PythonScript@0
   inputs:
