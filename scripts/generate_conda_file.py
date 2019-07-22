@@ -83,6 +83,7 @@ PIP_BASE = {
     "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb",
+    "azure-cli-core": "azure-cli-core",
     "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
 }
