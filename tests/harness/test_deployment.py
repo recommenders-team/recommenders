@@ -37,7 +37,7 @@ def test_harness():
   # #################################################
   # End User Configurations
   # #################################################
-  spark = SparkSession.builder.master("local").appName("Reco Test Harness").getOrCreate()
+  spark = SparkSession.builder.master("local").appName("Reco Test Harness").config("spark.jars.packages", "com.microsoft.azure:azure-cosmosdb-spark_2.3.0_2.11_1.3.3").getOrCreate()
 
   secrets_path = ws_config_path + '/dbsecrets.json'
 
