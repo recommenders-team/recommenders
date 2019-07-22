@@ -1,6 +1,7 @@
 import json
 import time
 import urllib
+import pytest
 
 import azure.mgmt.cosmosdb
 import pydocumentdb.document_client as document_client
@@ -19,6 +20,7 @@ from reco_utils.dataset import movielens
 from reco_utils.dataset.cosmos_cli import find_collection, read_collection, read_database, find_database
 
 @pytest.mark.harness
+@pytest.mark.spark
 def test_harness():
   # #################################################
   # Start User Configurations
