@@ -18,7 +18,7 @@ steps:
 
 - task: CmdLine@2
   inputs:
-    script: 'pip3 install azureml-sdk azure-mgmt-cosmosdb pyspark'
+    script: 'pip3 install azureml-sdk azure-mgmt-cosmosdb pyspark pydocumentdb'
     
 - task: PythonScript@0
   inputs:
