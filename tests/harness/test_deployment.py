@@ -29,7 +29,7 @@ def test_harness():
   # List of workspaces to deploy services too
   workspace_regions = ["westus2"]
   # location to store the secrets file for cosmosdb
-  ws_config_path = '/dbfs/FileStore'
+  ws_config_path = '.'
 
   # Select MovieLens data size: 100k, 1m, 10m, or 20m
   MOVIELENS_DATA_SIZE = '100k'
