@@ -3,6 +3,7 @@
 
 import pandas as pd
 import numpy as np
+import math
 
 from reco_utils.common.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
@@ -36,8 +37,8 @@ def process_split_ratio(ratio):
             )
 
         # normalize split ratios if they are not summed to 1
-        if sum(ratio) != 1.0:
-            ratio = [x / sum(ratio) for x in ratio]
+        if math.fsum(ratio) != 1.0:
+            ratio = [x / math.fsum(ratio) for x in ratio]
 
         multi = True
     else:
@@ -153,7 +154,7 @@ def split_pandas_data_with_ratios(data, ratios, seed=42, shuffle=False):
     Returns:
         list: List of pd.DataFrame split by the given specifications.
     """
-    if sum(ratios) != 1.0:
+    if math.fsum(ratios) != 1.0:
         raise ValueError("The ratios have to sum to 1")
 
     split_index = np.cumsum(ratios).tolist()[:-1]
