@@ -63,8 +63,6 @@ class _DataFormat:
         self._item_path = item_path
         self._item_has_header = item_has_header
 
-    """ Rating file """
-
     @property
     def separator(self):
         return self._sep
@@ -76,8 +74,6 @@ class _DataFormat:
     @property
     def has_header(self):
         return self._has_header
-
-    """ Item (Movie) file """
 
     @property
     def item_separator(self):
@@ -141,12 +137,12 @@ WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
 WARNING_HAVE_SCHEMA_AND_HEADER = """Both schema and header are provided.
     The header argument will be ignored."""
 ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m}"
-ERROR_NO_HEADER = "No header (schema) information. At least user and movie column names should be provided"
+ERROR_HEADER = "Header error. At least user and movie column names should be provided"
 
 
 def load_pandas_df(
     size="100k",
-    header=DEFAULT_HEADER,
+    header=None,
     local_cache_path=None,
     title_col=None,
     genres_col=None,
@@ -170,26 +166,32 @@ def load_pandas_df(
     Returns:
         pd.DataFrame: Movie rating dataset.
         
-    Examples:
-        To load just user-id, item-id, and ratings from MovieLens-1M dataset,
-        >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating'))
 
-        To load rating's timestamp together,
-        >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+    **Examples**
 
-        To load movie's title, genres, and released year info along with the ratings data,
-        >>> df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
-        ...     title_col='Title',
-        ...     genres_col='Genres',
-        ...     year_col='Year'
-        ... )
+    .. code-block:: python
+    
+        # To load just user-id, item-id, and ratings from MovieLens-1M dataset,
+        df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating'))
+
+        # To load rating's timestamp together,
+        df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+
+        # To load movie's title, genres, and released year info along with the ratings data,
+        df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
+            title_col='Title',
+            genres_col='Genres',
+            year_col='Year'
+        )
     """
     size = size.lower()
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
-    if header is None or len(header) < 2:
-        raise ValueError(ERROR_NO_HEADER)
+    if header is None:
+        header = DEFAULT_HEADER
+    elif len(header) < 2:
+        raise ValueError(ERROR_HEADER)
     elif len(header) > 4:
         warnings.warn(WARNING_MOVIE_LENS_HEADER)
         header = header[:4]
@@ -331,7 +333,7 @@ def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_co
 def load_spark_df(
     spark,
     size="100k",
-    header=DEFAULT_HEADER,
+    header=None,
     schema=None,
     local_cache_path=None,
     dbutils=None,
@@ -339,25 +341,18 @@ def load_spark_df(
     genres_col=None,
     year_col=None,
 ):
-    """Loads the MovieLens dataset as pySpark.DataFrame.
+    """Loads the MovieLens dataset as `pyspark.DataFrame`.
 
-    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load
-    To load movie information only, you can use load_item_df function. 
+    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.DataFrame`.
+
+    To load movie information only, you can use `load_item_df` function. 
 
     Args:
-        spark (pySpark.SparkSession)
+        spark (pyspark.SparkSession): Spark session.
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
         header (list or tuple): Rating dataset header.
             If schema is provided, this argument is ignored.
-        schema (pySpark.StructType): Dataset schema. By default,
-            StructType(
-                [
-                    StructField(DEFAULT_USER_COL, IntegerType()),
-                    StructField(DEFAULT_ITEM_COL, IntegerType()),
-                    StructField(DEFAULT_RATING_COL, FloatType()),
-                    StructField(DEFAULT_TIMESTAMP_COL, LongType()),
-                ]
-            )
+        schema (pyspark.StructType): Dataset schema. 
         local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
         dbutils (Databricks.dbutils): Databricks utility object
@@ -367,32 +362,44 @@ def load_spark_df(
         year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
-        pySpark.DataFrame: Movie rating dataset.
+        pyspark.DataFrame: Movie rating dataset.
         
-    Examples:
-        To load just user-id, item-id, and ratings from MovieLens-1M dataset,
-        >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'))
+    **Examples**
 
-        To load rating's timestamp together,
-        >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+    .. code-block:: python
+    
+        # To load just user-id, item-id, and ratings from MovieLens-1M dataset:
+        spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'))
 
-        To load movie's title, genres, and released year info along with the ratings data,
-        >>> spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
-        ...     title_col='Title',
-        ...     genres_col='Genres',
-        ...     year_col='Year'
-        ... )
+        # The schema can be defined as well:
+        schema = StructType([
+            StructField(DEFAULT_USER_COL, IntegerType()),
+            StructField(DEFAULT_ITEM_COL, IntegerType()),
+            StructField(DEFAULT_RATING_COL, FloatType()),
+            StructField(DEFAULT_TIMESTAMP_COL, LongType()),
+            ])
+        spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'), schema=schema)
 
-        On DataBricks, pass the dbutils argument as follows:
-        >>> spark_df = load_spark_df(spark, dbutils=dbutils)
+        # To load rating's timestamp together:
+        spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'))
+
+        # To load movie's title, genres, and released year info along with the ratings data:
+        spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating', 'Timestamp'),
+            title_col='Title',
+            genres_col='Genres',
+            year_col='Year'
+        )
+
+        # On DataBricks, pass the dbutils argument as follows:
+        spark_df = load_spark_df(spark, dbutils=dbutils)
     """
     size = size.lower()
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     schema = _get_schema(header, schema)
-    if schema is None or len(schema) < 2:
-        raise ValueError(ERROR_NO_HEADER)
+    if len(schema) < 2:
+        raise ValueError(ERROR_HEADER)
 
     movie_col = schema[1].name
 
@@ -421,7 +428,7 @@ def load_spark_df(
             dbutils.fs.mv(spark_datapath, dbfs_datapath)
             spark_datapath = dbfs_datapath
 
-        # pySpark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
+        # pyspark's read csv currently doesn't support multi-character delimiter, thus we manually handle that
         separator = DATA_FORMAT[size].separator
         if len(separator) > 1:
             raw_data = spark.sparkContext.textFile(spark_datapath)
@@ -452,17 +459,19 @@ def _get_schema(header, schema):
     if schema is None or len(schema) == 0:
         # Use header to generate schema
         if header is None or len(header) == 0:
-            return None
+            header = DEFAULT_HEADER
         elif len(header) > 4:
             warnings.warn(WARNING_MOVIE_LENS_HEADER)
             header = header[:4]
 
         schema = StructType()
         try:
-            schema.add(StructField(header[0], IntegerType())).add(
-                StructField(header[1], IntegerType())
-            ).add(StructField(header[2], FloatType())).add(
-                StructField(header[3], LongType())
+            (
+                schema
+                .add(StructField(header[0], IntegerType()))
+                .add(StructField(header[1], IntegerType()))
+                .add(StructField(header[2], FloatType()))
+                .add(StructField(header[3], LongType()))
             )
         except IndexError:
             pass

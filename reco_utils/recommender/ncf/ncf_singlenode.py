@@ -18,12 +18,11 @@ MODEL_CHECKPOINT = "model.ckpt"
 class NCF:
     """Neural Collaborative Filtering (NCF) implementation
     
-    Reference:
-    He, Xiangnan, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua. "Neural collaborative filtering." 
-    In Proceedings of the 26th International Conference on World Wide Web, pp. 173-182. International World Wide Web 
-    Conferences Steering Committee, 2017.
+    Note:
 
-    Link: https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
+        He, Xiangnan, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua. "Neural collaborative filtering." 
+        In Proceedings of the 26th International Conference on World Wide Web, pp. 173-182. International World Wide Web 
+        Conferences Steering Committee, 2017. Link: https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
     """
 
     def __init__(
@@ -245,8 +244,11 @@ class NCF:
 
     def load(self, gmf_dir=None, mlp_dir=None, neumf_dir=None, alpha=0.5):
         """Load model parameters for further use.
+        
         GMF model --> load parameters in `gmf_dir`
+        
         MLP model --> load parameters in `mlp_dir`
+        
         NeuMF model --> load parameters in `neumf_dir` or in `gmf_dir` and `mlp_dir`
         
         Args:

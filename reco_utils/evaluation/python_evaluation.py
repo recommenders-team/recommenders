@@ -31,9 +31,9 @@ from reco_utils.dataset.pandas_df_utils import (
 def check_column_dtypes(func):
     """Checks columns of DataFrame inputs
 
-    This includes the checks on 
-        1. whether the input columns exist in the input DataFrames
-        2. whether the data types of col_user as well as col_item are matched in the two input DataFrames.
+    This includes the checks on: 
+    1. whether the input columns exist in the input DataFrames
+    2. whether the data types of col_user as well as col_item are matched in the two input DataFrames.
 
     Args:
         func (function): function that will be wrapped
@@ -362,10 +362,8 @@ def merge_ranking_true_pred(
         threshold (float): threshold of top items per user (optional)
 
     Returns:
-        pd.DataFrame, pd.DataFrame, int:
-            DataFrame of recommendation hits
-            DataFrmae of hit counts vs actual relevant items per user
-            number of unique user ids
+        pd.DataFrame, pd.DataFrame, int: DataFrame of recommendation hits, sorted by `col_user` and `rank`
+        DataFrmae of hit counts vs actual relevant items per user number of unique user ids
     """
 
     # Make sure the prediction and true data frames have the same set of users
@@ -389,9 +387,6 @@ def merge_ranking_true_pred(
         col_user=col_user,
         col_rating=col_prediction,
         k=top_k,
-    )
-    df_hit["rank"] = df_hit.groupby(col_user)[col_prediction].rank(
-        method="first", ascending=False
     )
     df_hit = pd.merge(df_hit, rating_true_common, on=[col_user, col_item])[
         [col_user, col_item, "rank"]
@@ -423,11 +418,11 @@ def precision_at_k(
     """Precision at K.
 
     Note:
-    We use the same formula to calculate precision@k as that in Spark.
-    More details can be found at
-    http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
-    In particular, the maximum achievable precision may be < 1, if the number of items for a
-    user in rating_pred is less than k.
+        We use the same formula to calculate precision@k as that in Spark.
+        More details can be found at
+        http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt
+        In particular, the maximum achievable precision may be < 1, if the number of items for a
+        user in rating_pred is less than k.
 
     Args:
         rating_true (pd.DataFrame): True DataFrame
@@ -488,7 +483,7 @@ def recall_at_k(
 
     Returns:
         float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than 
-            k items exist for a user in rating_true.
+        k items exist for a user in rating_true.
     """
 
     df_hit, df_hit_count, n_users = merge_ranking_true_pred(
@@ -559,7 +554,7 @@ def ndcg_at_k(
     # relevance in this case is always 1
     df_dcg["dcg"] = 1 / np.log1p(df_dcg["rank"])
     # sum up discount gained to get discount cumulative gain
-    df_dcg = df_dcg.groupby(col_user, as_index=False).agg({"dcg": "sum"})
+    df_dcg = df_dcg.groupby(col_user, as_index=False, sort=False).agg({"dcg": "sum"})
     # calculate ideal discounted cumulative gain
     df_ndcg = pd.merge(df_dcg, df_hit_count, on=[col_user])
     df_ndcg["idcg"] = df_ndcg["actual"].apply(
@@ -582,6 +577,7 @@ def map_at_k(
     threshold=DEFAULT_THRESHOLD,
 ):
     """Mean Average Precision at k
+    
     The implementation of MAP is referenced from Spark MLlib evaluation metrics.
     https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
 
@@ -591,6 +587,7 @@ def map_at_k(
     Note:
         1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
         the prediction items. The naming is different from Spark.
+        
         2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
         relevant items in the ground truth data, instead of k.
 
@@ -625,8 +622,8 @@ def map_at_k(
         return 0.0
 
     # calculate reciprocal rank of items for each user and sum them up
-    df_hit_sorted = df_hit.sort_values([col_user, "rank"])
-    df_hit_sorted["rr"] = (df_hit.groupby(col_user).cumcount() + 1) / df_hit["rank"]
+    df_hit_sorted = df_hit.copy()
+    df_hit_sorted["rr"] = (df_hit_sorted.groupby(col_user).cumcount() + 1) / df_hit_sorted["rank"]
     df_hit_sorted = df_hit_sorted.groupby(col_user).agg({"rr": "sum"}).reset_index()
 
     df_merge = pd.merge(df_hit_sorted, df_hit_count, on=col_user)
@@ -639,8 +636,9 @@ def get_top_k_items(
     """Get the input customer-item-rating tuple in the format of Pandas
     DataFrame, output a Pandas DataFrame in the dense format of top k items
     for each user.
+    
     Note:
-        if it is implicit rating, just append a column of constants to be
+        If it is implicit rating, just append a column of constants to be
         ratings.
 
     Args:
@@ -651,14 +649,17 @@ def get_top_k_items(
         k (int): number of items for each user
 
     Returns:
-        pd.DataFrame: DataFrame of top k items for each user
+        pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`
     """
-
-    return (
+    # Sort dataframe by col_user and (top k) col_rating
+    top_k_items = (
         dataframe.groupby(col_user, as_index=False)
         .apply(lambda x: x.nlargest(k, col_rating))
         .reset_index(drop=True)
     )
+    # Add ranks
+    top_k_items["rank"] = top_k_items.groupby(col_user, sort=False).cumcount() + 1
+    return top_k_items
 
 
 """Function name and function mapper.
