@@ -159,7 +159,7 @@ def test_harness():
           recs.withColumn("id", recs[userCol].cast("string")).select("id", "recommendations." + itemCol) \
               .write.format("com.microsoft.azure.cosmosdb.spark").mode('overwrite').options(**writeConfig).save()
 
-    score_sparkml = """
+      score_sparkml = """
 
 import json
 def init(local=False):
