@@ -152,7 +152,7 @@ def test_harness():
       with open(secrets_path, "w") as file:
           json.dump(secrets, file)
 
-      model.write().overwrite().save(model_name)
+#       model.write().overwrite().save(model_name)
 
 #       with open(secrets_path) as json_data:
 #           writeConfig = json.load(json_data)
@@ -209,7 +209,7 @@ def run(input_json):
           with open("score_sparkml.py", "w") as file:
               file.write(score_sparkml)
 
-      mymodel = Model.register(model_path=model_name,  # this points to a local file
+      mymodel = Model.register(model_path="score_sparkml.py", #model_name,  # this points to a local file
                                model_name=model_name,
                                # this is the name the model is registered as, am using same name for both path and name.
                                description="ADB trained model",
