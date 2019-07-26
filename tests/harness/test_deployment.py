@@ -56,7 +56,7 @@ def test_harness():
                        StructField(ratingCol, FloatType()),
                        StructField("Timestamp", LongType())))
 
-  data = movielens.load_spark_df(spark, size=MOVIELENS_DATA_SIZE, schema=schema)
+#   data = movielens.load_spark_df(spark, size=MOVIELENS_DATA_SIZE, schema=schema)
 
   header = {
       "userCol": userCol,
@@ -64,11 +64,11 @@ def test_harness():
       "ratingCol": ratingCol,
   }
 
-  als = ALS(rank=1, maxIter=1, implicitPrefs=False, alpha=0.1, regParam=0.5, coldStartStrategy='drop',
-            nonnegative=True, **header)
+#   als = ALS(rank=1, maxIter=1, implicitPrefs=False, alpha=0.1, regParam=0.5, coldStartStrategy='drop',
+#             nonnegative=True, **header)
 
-  model = als.fit(data)
-  recs = model.recommendForAllUsers(2)
+#   model = als.fit(data)
+#   recs = model.recommendForAllUsers(2)
 
   for workspace_region in workspace_regions:
       prefix = "ai_reco" + workspace_region
@@ -154,10 +154,10 @@ def test_harness():
 
       model.write().overwrite().save(model_name)
 
-      with open(secrets_path) as json_data:
-          writeConfig = json.load(json_data)
-          recs.withColumn("id", recs[userCol].cast("string")).select("id", "recommendations." + itemCol) \
-              .write.format("com.microsoft.azure.cosmosdb.spark").mode('overwrite').options(**writeConfig).save()
+#       with open(secrets_path) as json_data:
+#           writeConfig = json.load(json_data)
+#           recs.withColumn("id", recs[userCol].cast("string")).select("id", "recommendations." + itemCol) \
+#               .write.format("com.microsoft.azure.cosmosdb.spark").mode('overwrite').options(**writeConfig).save()
 
       score_sparkml = """
 
