@@ -30,9 +30,12 @@ def find_wikidataID(name):
         print(err)
         entity_id = "entityNotFound"
         return entity_id
-    
-    pageID = r.json().get("query", {}).get("search", [{}])[0].get("pageid", "entityNotFound")
-    
+    try:
+        pageID = r.json().get("query", {}).get("search", [{}])[0].get("pageid", "entityNotFound")
+    except IndexError as e:
+        print("Page Name not found in Wikipedia")
+        return "entityNotFound"
+
     if pageID == "entityNotFound":
         return "entityNotFound"
 
@@ -93,7 +96,12 @@ def query_entity_links(entityID):
     except requests.exceptions.RequestException as err:
         print(err)
         return {}
-    data = r.json()
+    try:
+        data = r.json()
+    except:
+        print(e)
+        print("Entity ID not Found in Wikidata")
+        return {}
     return data
 
 def read_linked_entities(data):
@@ -107,6 +115,8 @@ def read_linked_entities(data):
     """
     related_entities = []
     related_names = []
+    if data == {}:
+        return related_entities, related_names
     for c in data.get("results").get("bindings"):
         url = c.get("valUrl").get("value")
         related_entities.append(url.replace("http://www.wikidata.org/entity/", ""))
