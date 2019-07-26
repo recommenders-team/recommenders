@@ -25,7 +25,7 @@ def test_harness():
   # #################################################
   # Start User Configurations
   # #################################################
-  subscription_id = "3bcfa59c-82a0-44f9-ac08-b3479370bace"
+  subscription_id = "989b90f7-da4f-41f9-84c9-44848802052d"
   # List of workspaces to deploy services too
   workspace_regions = ["westus2"]
   # location to store the secrets file for cosmosdb
