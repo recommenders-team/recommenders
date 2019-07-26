@@ -71,7 +71,7 @@ def test_harness():
   recs = model.recommendForAllUsers(10)
 
   for workspace_region in workspace_regions:
-      prefix = "reco" + workspace_region
+      prefix = "ai_reco" + workspace_region
       resource_group = prefix + "_" + dataset
       workspace_name = prefix + "_" + dataset + "_aml"
       print("Resource group:", resource_group)
