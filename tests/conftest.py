@@ -229,6 +229,9 @@ def notebooks():
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
+        "wikidata_KG": os.path.join(
+            folder_notebooks, "01_prepare_data", "wikidata_KG.ipynb"
+        ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_model", "als_deep_dive.ipynb"
         ),
