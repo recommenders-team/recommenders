@@ -63,3 +63,12 @@ def test_lightgbm(notebooks):
                                         TREE_LEARNING_RATE=0.15,
                                         EARLY_STOPPING_ROUNDS=20,
                                         METRIC="auc"), )
+
+@pytest.mark.notebooks
+def test_wikidata_runs(notebooks, tmp):
+    notebook_path = notebooks["wikidata_KG"]
+    MOVIELENS_SAMPLE_SIZE = 5
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
+                        parameters=dict(MOVIELENS_DATA_SIZE='100k',
+                                        MOVIELENS_SAMPLE=True,
+                                        MOVIELENS_SAMPLE_SIZE=MOVIELENS_SAMPLE_SIZE))
