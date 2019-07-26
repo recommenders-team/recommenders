@@ -55,15 +55,17 @@ Smoke tests make sure that the system works and are executed just before the int
 
 For executing the Python smoke tests:
 
-    pytest tests/smoke -m "smoke and not spark and not gpu"
+    pytest --durations=0 tests/smoke -m "smoke and not spark and not gpu"
 
 For executing the Python GPU smoke tests:
 
-    pytest tests/smoke -m "smoke and not spark and gpu"
+    pytest --durations=0 tests/smoke -m "smoke and not spark and gpu"
 
 For executing the PySpark smoke tests:
 
-    pytest tests/smoke -m "smoke and spark and not gpu"
+    pytest --durations=0 tests/smoke -m "smoke and spark and not gpu"
+
+*NOTE: Adding `--durations=0` shows the computation time of all tests.* 
 
 </details>
 
@@ -76,15 +78,17 @@ Integration tests make sure that the program results are acceptable.
 
 For executing the Python integration tests:
 
-    pytest tests/integration -m "integration and not spark and not gpu"
+    pytest --durations=0 tests/integration -m "integration and not spark and not gpu"
 
 For executing the Python GPU integration tests:
 
-    pytest tests/integration -m "integration and not spark and gpu"
+    pytest --durations=0 tests/integration -m "integration and not spark and gpu"
 
 For executing the PySpark integration tests:
 
-    pytest tests/integration -m "integration and spark and not gpu"
+    pytest --durations=0 tests/integration -m "integration and spark and not gpu"
+
+*NOTE: Adding `--durations=0` shows the computation time of all tests.* 
 
 </details>
 
