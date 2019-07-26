@@ -49,7 +49,7 @@ def test_harness():
   dataset = "mvl"
   algo = "als"
 
-  TOP_K = 10
+  TOP_K = 2
 
   schema = StructType((StructField(userCol, IntegerType()),
                        StructField(itemCol, IntegerType()),
@@ -64,11 +64,11 @@ def test_harness():
       "ratingCol": ratingCol,
   }
 
-  als = ALS(rank=10, maxIter=15, implicitPrefs=False, alpha=0.1, regParam=0.05, coldStartStrategy='drop',
+  als = ALS(rank=1, maxIter=1, implicitPrefs=False, alpha=0.1, regParam=0.5, coldStartStrategy='drop',
             nonnegative=True, **header)
 
   model = als.fit(data)
-  recs = model.recommendForAllUsers(10)
+  recs = model.recommendForAllUsers(2)
 
   for workspace_region in workspace_regions:
       prefix = "ai_reco" + workspace_region
