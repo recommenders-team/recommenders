@@ -98,7 +98,7 @@ def query_entity_links(entityID):
         return {}
     try:
         data = r.json()
-    except:
+    except Exception as e:
         print(e)
         print("Entity ID not Found in Wikidata")
         return {}
