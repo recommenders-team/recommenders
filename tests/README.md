@@ -55,15 +55,17 @@ Smoke tests make sure that the system works and are executed just before the int
 
 For executing the Python smoke tests:
 
-    pytest tests/smoke -m "smoke and not spark and not gpu"
+    pytest --durations=0 tests/smoke -m "smoke and not spark and not gpu"
 
 For executing the Python GPU smoke tests:
 
-    pytest tests/smoke -m "smoke and not spark and gpu"
+    pytest --durations=0 tests/smoke -m "smoke and not spark and gpu"
 
 For executing the PySpark smoke tests:
 
-    pytest tests/smoke -m "smoke and spark and not gpu"
+    pytest --durations=0 tests/smoke -m "smoke and spark and not gpu"
+
+*NOTE: Adding `--durations=0` shows the computation time of all tests.* 
 
 </details>
 
@@ -76,15 +78,61 @@ Integration tests make sure that the program results are acceptable.
 
 For executing the Python integration tests:
 
-    pytest tests/integration -m "integration and not spark and not gpu"
+    pytest --durations=0 tests/integration -m "integration and not spark and not gpu"
 
 For executing the Python GPU integration tests:
 
-    pytest tests/integration -m "integration and not spark and gpu"
+    pytest --durations=0 tests/integration -m "integration and not spark and gpu"
 
 For executing the PySpark integration tests:
 
-    pytest tests/integration -m "integration and spark and not gpu"
+    pytest --durations=0 tests/integration -m "integration and spark and not gpu"
+
+*NOTE: Adding `--durations=0` shows the computation time of all tests.* 
+
+</details>
+
+<details>
+<summary><strong><em>Current Skipped Tests</em></strong></summary>
+
+Several of the tests are skipped for various reasons which are noted below.
+
+<table><tr>
+<td>Test Module</td>
+<td>Test</td>
+<td>OS</td>
+<td>Reason</td>
+</tr><tr>
+<td>unit/test_nni</td>
+<td>*</td>
+<td>Windows</td>
+<td>NNI is not currently supported on Windows</td>
+</tr><tr>
+<td>integration/test_notebooks_python</td>
+<td>test_nni_tuning_svd</td>
+<td>Windows</td>
+<td>NNI is not currently supported on Windows</td>
+</tr><tr>
+<td>*/test_notebook_pyspark</td>
+<td>test_mmlspark_lightgbm_criteo_runs</td>
+<td>Windows</td>
+<td>MML Spark and LightGBM issue: https://github.com/Azure/mmlspark/issues/483</td>
+</tr><tr>
+<td>unit/test_gpu_utils</td>
+<td>test_get_cuda_version</td>
+<td>Windows</td>
+<td>Current method for retrieval of CUDA info on Windows is install specific</td>
+</tr></table>
+
+In order to skip a test because there is an OS or upstream issue which cannot be resolved you can use pytest [annotations](https://docs.pytest.org/en/latest/skipping.html).
+ 
+Example:
+
+    @pytest.mark.skip(reason="<INSERT VALID REASON>")
+    @pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
+    def test_to_skip():
+        assert False
+
 
 </details>
 

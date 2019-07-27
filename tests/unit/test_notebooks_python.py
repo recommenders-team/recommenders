@@ -47,6 +47,7 @@ def test_surprise_deep_dive_runs(notebooks):
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
 
 
+@pytest.mark.vw
 @pytest.mark.notebooks
 def test_vw_deep_dive_runs(notebooks):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
@@ -62,7 +63,8 @@ def test_lightgbm(notebooks):
                                         NUM_OF_TREES=10,
                                         TREE_LEARNING_RATE=0.15,
                                         EARLY_STOPPING_ROUNDS=20,
-                                        METRIC="auc"), )
+                                        METRIC="auc"))
+
 
 @pytest.mark.notebooks
 def test_wikidata_runs(notebooks, tmp):
@@ -72,3 +74,9 @@ def test_wikidata_runs(notebooks, tmp):
                         parameters=dict(MOVIELENS_DATA_SIZE='100k',
                                         MOVIELENS_SAMPLE=True,
                                         MOVIELENS_SAMPLE_SIZE=MOVIELENS_SAMPLE_SIZE))
+                                        
+
+@pytest.mark.notebooks
+def test_rlrmc_quickstart_runs(notebooks):
+    notebook_path = notebooks["rlrmc_quickstart"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)

@@ -12,4 +12,4 @@ def test_invert_dictionary():
 
 
 def test_get_number_processors():
-    assert get_number_processors() >= 4
+    assert get_number_processors() >= 1

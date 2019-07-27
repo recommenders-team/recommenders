@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import itertools
-
 import pytest
 import numpy as np
 import pandas as pd
@@ -10,7 +9,6 @@ from pandas.util.testing import assert_frame_equal
 
 from reco_utils.common.constants import DEFAULT_PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
-from reco_utils.recommender.sar import TIME_NOW
 from tests.sar_common import read_matrix, load_userpred, load_affinity
 
 
@@ -26,12 +24,18 @@ def _rearrange_to_test(array, row_ids, col_ids, row_map, col_map):
 
 
 def test_init(header):
-    model = SARSingleNode(remove_seen=True, similarity_type="jaccard", **header)
+    model = SARSingleNode(similarity_type="jaccard", **header)
 
     assert model.col_user == "UserId"
     assert model.col_item == "MovieId"
     assert model.col_rating == "Rating"
-    # TODO: add more parameters
+    assert model.col_timestamp == "Timestamp"
+    assert model.col_prediction == "prediction"
+    assert model.similarity_type == "jaccard"
+    assert model.time_decay_half_life == 2592000
+    assert model.time_decay_flag == False
+    assert model.time_now == None
+    assert model.threshold == 1
 
 
 @pytest.mark.parametrize(
@@ -102,7 +106,6 @@ def test_sar_item_similarity(
         similarity_type=similarity_type,
         timedecay_formula=False,
         time_decay_coefficient=30,
-        time_now=TIME_NOW,
         threshold=threshold,
         **header
     )
@@ -240,7 +243,7 @@ def test_get_item_based_topk(header, pandas_dummy):
             MovieId=[2, 4, 3, 4, 3, 10],
             prediction=[5.0, 5.0, 5.0, 8.0, 8.0, 4.0],
         )
-    ).set_index(['UserId', 'MovieId'])
+    ).set_index(["UserId", "MovieId"])
     items = pd.DataFrame(
         {
             header["col_user"]: [100, 100, 1, 100, 1, 1],
@@ -248,7 +251,7 @@ def test_get_item_based_topk(header, pandas_dummy):
             header["col_rating"]: [5, 1, 3, 1, 5, 4],
         }
     )
-    actual = sar.get_item_based_topk(items, top_k=3).set_index(['UserId', 'MovieId'])
+    actual = sar.get_item_based_topk(items, top_k=3).set_index(["UserId", "MovieId"])
     assert_frame_equal(expected, actual, check_like=True)
 
 
@@ -258,15 +261,44 @@ def test_get_popularity_based_topk(header):
         {
             header["col_user"]: [1, 1, 1, 2, 2, 2, 3, 3, 3],
             header["col_item"]: [1, 2, 3, 1, 3, 4, 5, 6, 1],
-            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3]
+            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3],
         }
     )
 
     sar = SARSingleNode(**header)
     sar.fit(train_df)
 
-    expected = pd.DataFrame(
-        dict(MovieId=[1, 3, 4], prediction=[3, 2, 1])
-    )
+    expected = pd.DataFrame(dict(MovieId=[1, 3, 4], prediction=[3, 2, 1]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
     assert_frame_equal(expected, actual)
+
+
+def test_get_normalized_scores(header):
+    train = pd.DataFrame({header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2],
+                          header["col_item"]: [1, 2, 3, 4, 1, 5, 6, 7],
+                          header["col_rating"]: [3., 4., 5., 4., 3., 2., 1., 5.],
+                          header["col_timestamp"]: [1, 20, 30, 400, 50, 60, 70, 800]})
+    test = pd.DataFrame({header["col_user"]: [1, 1, 1, 2, 2, 2],
+                         header["col_item"]: [5, 6, 7, 2, 3, 4],
+                         header["col_rating"]: [2., 1., 5., 3., 4., 5.]})
+
+    model = SARSingleNode(**header, timedecay_formula=True, normalize=True)
+    model.fit(train)
+    actual = model.score(test, remove_seen=True, normalize=True)
+    expected = np.array([
+            [-np.inf, -np.inf, -np.inf, -np.inf, 3., 3., 3.],
+            [-np.inf, 3., 3., 3., -np.inf, -np.inf, -np.inf],
+    ])
+    assert actual.shape == (2, 7)
+    assert isinstance(actual, np.ndarray)
+    assert np.isclose(expected, actual).all()
+
+    actual = model.score(test, normalize=True)
+    expected = np.array([
+        [3.80000633, 4.14285448, 4.14285448, 4.14285448, 3., 3., 3.],
+        [2.8000859, 3., 3., 3., 2.71441353, 2.71441353, 2.71441353]
+    ])
+
+    assert actual.shape == (2, 7)
+    assert isinstance(actual, np.ndarray)
+    assert np.isclose(expected, actual).all()

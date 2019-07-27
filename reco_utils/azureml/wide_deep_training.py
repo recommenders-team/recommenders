@@ -69,11 +69,13 @@ parser.add_argument('--model-type', type=str, dest='MODEL_TYPE', default='wide_d
 parser.add_argument('--linear-optimizer', type=str, dest='LINEAR_OPTIMIZER', default='Ftrl')
 parser.add_argument('--linear-optimizer-lr', type=float, dest='LINEAR_OPTIMIZER_LR', default=0.01)
 parser.add_argument('--linear-l1-reg', type=float, dest='LINEAR_L1_REG', default=0.0)
+parser.add_argument('--linear-l2-reg', type=float, dest='LINEAR_L2_REG', default=0.0)
 parser.add_argument('--linear-momentum', type=float, dest='LINEAR_MOMENTUM', default=0.9)
 # Deep model params
 parser.add_argument('--dnn-optimizer', type=str, dest='DNN_OPTIMIZER', default='Adagrad')
 parser.add_argument('--dnn-optimizer-lr', type=float, dest='DNN_OPTIMIZER_LR', default=0.01)
 parser.add_argument('--dnn-l1-reg', type=float, dest='DNN_L1_REG', default=0.0)
+parser.add_argument('--dnn-l2-reg', type=float, dest='DNN_L2_REG', default=0.0)
 parser.add_argument('--dnn-momentum', type=float, dest='DNN_MOMENTUM', default=0.9)
 parser.add_argument('--dnn-hidden-layer-1', type=int, dest='DNN_HIDDEN_LAYER_1', default=0)
 parser.add_argument('--dnn-hidden-layer-2', type=int, dest='DNN_HIDDEN_LAYER_2', default=0)
@@ -84,7 +86,7 @@ parser.add_argument('--dnn-item-embedding-dim', type=int, dest='DNN_ITEM_DIM', d
 parser.add_argument('--dnn-batch-norm', type=int, dest='DNN_BATCH_NORM', default=1)
 parser.add_argument('--dnn-dropout', type=float, dest='DNN_DROPOUT', default=0.0)
 # Training parameters
-parser.add_argument('--epochs', type=int, dest='EPOCHS', default=50)
+parser.add_argument('--steps', type=int, dest='STEPS', default=10000)
 parser.add_argument('--batch-size', type=int, dest='BATCH_SIZE', default=128)
 parser.add_argument('--evaluate-while-training', dest='EVALUATE_WHILE_TRAINING', action='store_true')
 
@@ -105,7 +107,6 @@ if params['DATA_DIR'] is None:
 print("Args:")
 for k, v in params.items():
     _log(k, v)
-
 
 print("Run", NOTEBOOK_NAME)
 
