@@ -17,6 +17,7 @@
 
 import argparse
 import textwrap
+from sys import platform
 
 
 HELP_MSG = """
@@ -34,13 +35,14 @@ $ python -m ipykernel install --user --name {conda_env} --display-name "Python (
 CHANNELS = ["defaults", "conda-forge", "pytorch", "fastai"]
 
 CONDA_BASE = {
-    "mock": "mock==2.0.0",
+    "bottleneck": "bottleneck==1.2.1",
     "dask": "dask>=0.17.1",
     "fastparquet": "fastparquet>=0.1.6",
     "gitpython": "gitpython>=2.1.8",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
     "matplotlib": "matplotlib>=2.2.2",
+    "mock": "mock==2.0.0",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4",
     "pip": "pip>=19.0.3",
@@ -75,16 +77,25 @@ PIP_BASE = {
     "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
+    "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nni": "nni==0.5.2.1",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
     "pydocumentdb": "pydocumentdb>=2.3.3",
+    "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
 }
 
-PIP_PYSPARK = {}
 PIP_GPU = {}
+PIP_PYSPARK = {}
+
+PIP_DARWIN = {
+    "nni": "nni==0.5.2.1.1",
+}
+PIP_LINUX = {
+    "nni": "nni==0.5.2.1.1",
+}
+PIP_WIN32 = {}
 
 
 if __name__ == "__main__":
@@ -145,6 +156,16 @@ if __name__ == "__main__":
     if args.gpu:
         conda_packages.update(CONDA_GPU)
         pip_packages.update(PIP_GPU)
+
+    # check for os platform support
+    if platform == 'darwin':
+        pip_packages.update(PIP_DARWIN)
+    elif platform.startswith('linux'):
+        pip_packages.update(PIP_LINUX)
+    elif platform == 'win32':
+        pip_packages.update(PIP_WIN32)
+    else:
+        raise Exception('Unsupported platform, must be Windows, Linux, or macOS')
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)

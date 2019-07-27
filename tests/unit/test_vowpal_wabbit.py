@@ -4,8 +4,6 @@
 import os
 import pytest
 from unittest import mock
-
-
 import pandas as pd
 
 from reco_utils.recommender.vowpal_wabbit.vw import VW
@@ -25,6 +23,7 @@ def model():
     del model
 
 
+@pytest.mark.vw
 def test_vw_init_del():
     model = VW()
     tempdir = model.tempdir.name
@@ -34,6 +33,7 @@ def test_vw_init_del():
     assert not os.path.exists(tempdir)
 
 
+@pytest.mark.vw
 def test_to_vw_cmd():
     expected = [
         "vw",
@@ -60,6 +60,7 @@ def test_to_vw_cmd():
     assert VW.to_vw_cmd(params=params) == expected
 
 
+@pytest.mark.vw
 def test_parse_train_cmd(model):
     expected = [
         "vw",
@@ -76,6 +77,7 @@ def test_parse_train_cmd(model):
     assert model.parse_train_params(params=params) == expected
 
 
+@pytest.mark.vw
 def test_parse_test_cmd(model):
     expected = [
         "vw",
@@ -96,6 +98,7 @@ def test_parse_test_cmd(model):
     assert model.parse_test_params(params=params) == expected
 
 
+@pytest.mark.vw
 def test_to_vw_file(model, df):
     expected = ["1 0|user 1 |item 8", "5 1|user 3 |item 7", "3 2|user 2 |item 7"]
     model.to_vw_file(df, train=True)
@@ -104,6 +107,7 @@ def test_to_vw_file(model, df):
     del model
 
 
+@pytest.mark.vw
 def test_fit_and_predict(model, df):
     # generate fake predictions
     with open(model.prediction_file, "w") as f:

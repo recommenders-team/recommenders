@@ -2,6 +2,11 @@
 
 This folder contains examples and best practices, written in Jupyter notebooks, for building recommendation systems.
 
+The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
+
+![workflow](https://recodatasets.blob.core.windows.net/images/reco_workflow.png)
+
+
 ## Summary
 
 The following summarizes each directory of the best practice notebooks.
@@ -51,7 +56,7 @@ those will be provided in the notebooks.
 
 ### Submit an existing notebook to Azure Machine Learning
 
- The [run_notebook_on_azureml](/run_notebook_on_azureml.ipynb) notebook provides a scaffold to directly submit an existing notebook to AzureML compute targets. After setting up a compute target and creating a run configuration, simply replace the notebook file name and submit the notebook directly. 
+ The [run_notebook_on_azureml](./run_notebook_on_azureml.ipynb) notebook provides a scaffold to directly submit an existing notebook to AzureML compute targets. After setting up a compute target and creating a run configuration, simply replace the notebook file name and submit the notebook directly. 
 ```python
 cfg = NotebookRunConfig(source_directory='../',
                             notebook='notebooks/00_quick_start/' + NOTEBOOK_NAME,

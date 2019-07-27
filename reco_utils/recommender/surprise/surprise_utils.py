@@ -5,14 +5,19 @@ import pandas as pd
 import numpy as np
 import pandas as pd
 
-from reco_utils.common.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_PREDICTION_COL
+from reco_utils.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_PREDICTION_COL,
+)
 from reco_utils.common.general_utils import invert_dictionary
 
 
 def surprise_trainset_to_df(
     trainset, col_user="uid", col_item="iid", col_rating="rating"
 ):
-    """Converts a surprise.Trainset object to pd.DataFrame
+    """Converts a `surprise.Trainset` object to `pd.DataFrame`
+
     More info: https://surprise.readthedocs.io/en/stable/trainset.html
 
     Args:
@@ -40,7 +45,13 @@ def surprise_trainset_to_df(
     return df
 
 
-def compute_rating_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL, predcol=DEFAULT_PREDICTION_COL):
+def compute_rating_predictions(
+    algo,
+    data,
+    usercol=DEFAULT_USER_COL,
+    itemcol=DEFAULT_ITEM_COL,
+    predcol=DEFAULT_PREDICTION_COL,
+):
     """Computes predictions of an algorithm from Surprise on the data. Can be used for computing rating metrics like RMSE.
     
     Args:
@@ -52,15 +63,26 @@ def compute_rating_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEF
     Returns:
         pd.DataFrame: dataframe with usercol, itemcol, predcol
     """
-    predictions = [algo.predict(getattr(row, usercol), getattr(row, itemcol)) for row in data.itertuples()]
+    predictions = [
+        algo.predict(getattr(row, usercol), getattr(row, itemcol))
+        for row in data.itertuples()
+    ]
     predictions = pd.DataFrame(predictions)
-    predictions = predictions.rename(index=str, columns={'uid': usercol, 'iid': itemcol, 'est': predcol})
-    return predictions.drop(['details', 'r_ui'], axis='columns')
+    predictions = predictions.rename(
+        index=str, columns={"uid": usercol, "iid": itemcol, "est": predcol}
+    )
+    return predictions.drop(["details", "r_ui"], axis="columns")
 
 
-def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DEFAULT_ITEM_COL,
-                            predcol=DEFAULT_PREDICTION_COL, recommend_seen=False):
-    """Computes predictions of an algorithm from Surprise on all users and items in data. can be used for computing
+def compute_ranking_predictions(
+    algo,
+    data,
+    usercol=DEFAULT_USER_COL,
+    itemcol=DEFAULT_ITEM_COL,
+    predcol=DEFAULT_PREDICTION_COL,
+    remove_seen=False,
+):
+    """Computes predictions of an algorithm from Surprise on all users and items in data. It can be used for computing
     ranking metrics like NDCG.
     
     Args:
@@ -68,7 +90,7 @@ def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DE
         data (pd.DataFrame): the data from which to get the users and items
         usercol (str): name of the user column
         itemcol (str): name of the item column
-        recommend_seen (bool): flag to include (user, item) pairs that appear in data
+        remove_seen (bool): flag to remove (user, item) pairs seen in the training data
     
     Returns:
         pd.DataFrame: dataframe with usercol, itemcol, predcol
@@ -80,12 +102,17 @@ def compute_ranking_predictions(algo, data, usercol=DEFAULT_USER_COL, itemcol=DE
 
     all_predictions = pd.DataFrame(data=preds_lst, columns=[usercol, itemcol, predcol])
 
-    if recommend_seen:
-        return all_predictions
-    else:
-        tempdf = pd.concat([data[[usercol, itemcol]],
-                            pd.DataFrame(data=np.ones(data.shape[0]), columns=['dummycol'], index=data.index)],
-                            axis=1)
+    if remove_seen:
+        tempdf = pd.concat(
+            [
+                data[[usercol, itemcol]],
+                pd.DataFrame(
+                    data=np.ones(data.shape[0]), columns=["dummycol"], index=data.index
+                ),
+            ],
+            axis=1,
+        )
         merged = pd.merge(tempdf, all_predictions, on=[usercol, itemcol], how="outer")
-        return merged[merged['dummycol'].isnull()].drop('dummycol', axis=1)
-
+        return merged[merged["dummycol"].isnull()].drop("dummycol", axis=1)
+    else:
+        return all_predictions

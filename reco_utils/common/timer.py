@@ -7,7 +7,8 @@ from datetime import timedelta
 
 class Timer(object):
     """Timer class.
-    Original code: https://github.com/miguelgfierro/codebase
+
+    `Original code <https://github.com/miguelgfierro/pybase/blob/2298172a13fb4a243754acbc6029a4a2dcf72c20/log_base/timer.py>`_.
     
     Examples:
         >>> import time
@@ -58,6 +59,11 @@ class Timer(object):
 
     @property
     def interval(self):
+        """Get time interval in seconds.
+
+        Returns:
+            float: Seconds.
+        """
         if self.running:
             raise ValueError("Timer has not been stopped, please use stop().")
         else:

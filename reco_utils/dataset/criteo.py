@@ -16,8 +16,8 @@ from reco_utils.common.notebook_utils import is_databricks
 
 
 CRITEO_URL = {
-    "full": "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz", 
-    "sample": "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz"
+    "full": "https://s3-eu-west-1.amazonaws.com/kaggle-display-advertising-challenge-dataset/dac.tar.gz",
+    "sample": "http://labs.criteo.com/wp-content/uploads/2015/04/dac_sample.tar.gz",
 }
 DEFAULT_HEADER = (
     ["label"]
@@ -27,7 +27,7 @@ DEFAULT_HEADER = (
 
 
 def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
-    """Loads the Criteo DAC dataset as pandas.DataFrame. This function download, untar, and load the dataset.
+    """Loads the Criteo DAC dataset as `pandas.DataFrame. This function download, untar, and load the dataset.
 
     The dataset consists of a portion of Criteo’s traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
@@ -38,7 +38,10 @@ def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
     onto 32 bits for anonymization purposes.
 
     The schema is:
-    <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
+
+    .. code-block:: python
+        
+        <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
 
     More details (need to accept user terms to see the information): 
     http://labs.criteo.com/2013/12/download-terabyte-click-logs/ 
@@ -66,7 +69,7 @@ def load_spark_df(
     dbfs_datapath="dbfs:/FileStore/dac",
     dbutils=None,
 ):
-    """Loads the Criteo DAC dataset as pySpark.DataFrame.
+    """Loads the Criteo DAC dataset as `pySpark.DataFrame`.
 
     The dataset consists of a portion of Criteo’s traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
@@ -77,7 +80,10 @@ def load_spark_df(
     onto 32 bits for anonymization purposes.
 
     The schema is:
-    <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
+    
+    .. code-block:: python
+        
+        <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
 
     More details (need to accept user terms to see the information): 
     http://labs.criteo.com/2013/12/download-terabyte-click-logs/ 
@@ -113,7 +119,7 @@ def load_spark_df(
 
         schema = get_spark_schema(header)
         df = spark.read.csv(path, schema=schema, sep="\t", header=False)
-        df.cache().count() # trigger execution to overcome spark's lazy evaluation
+        df.cache().count()  # trigger execution to overcome spark's lazy evaluation
     return df
 
 
@@ -153,10 +159,7 @@ def extract_criteo(size, compressed_file, path=None):
     with tarfile.open(compressed_file) as tar:
         tar.extractall(extracted_dir)
 
-    filename_selector = {
-        "sample": "dac_sample.txt",
-        "full": "train.txt"
-    }
+    filename_selector = {"sample": "dac_sample.txt", "full": "train.txt"}
     return os.path.join(extracted_dir, filename_selector[size])
 
 
@@ -171,6 +174,4 @@ def get_spark_schema(header=DEFAULT_HEADER):
     for i in range(26):
         schema.add(StructField(header[i + n_ints], StringType()))
     return schema
-
-
 

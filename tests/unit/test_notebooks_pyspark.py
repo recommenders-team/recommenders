@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import sys
 import pytest
 import papermill as pm
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
@@ -45,6 +46,7 @@ def test_spark_tuning(notebooks):
         parameters=dict(
             NUMBER_CORES="*",
             NUMBER_ITERATIONS=3,
+            SUBSET_RATIO=0.5,
             RANK=[5, 5],
             REG=[0.1, 0.01]
         )
@@ -53,6 +55,7 @@ def test_spark_tuning(notebooks):
 
 @pytest.mark.notebooks
 @pytest.mark.spark
+@pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
 def test_mmlspark_lightgbm_criteo_runs(notebooks):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
     pm.execute_notebook(

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -8,7 +11,6 @@ from reco_utils.common.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-
 from reco_utils.dataset.python_splitters import (
     python_chrono_split,
 )
@@ -21,7 +23,6 @@ def test_specs_ncf():
         "user_ids": [1, 2, 3, 4, 5],
         "seed": 123,
         "ratio": 0.6,
-        "ratios": [0.2, 0.3, 0.5],
         "split_numbers": [2, 3, 5],
         "tolerance": 0.01,
     }
@@ -64,6 +65,6 @@ def python_dataset_ncf(test_specs_ncf):
         }
     )
 
-    train, test = python_chrono_split(rating, ratio=np.random.choice(test_specs_ncf["ratios"]))
+    train, test = python_chrono_split(rating, ratio=test_specs_ncf["ratio"])
 
     return train, test
