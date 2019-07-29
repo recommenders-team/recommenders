@@ -52,3 +52,10 @@ Sparse utilities
 
 .. automodule:: reco_utils.dataset.sparse
     :members:
+  
+
+Knowledge graph utilities
+===============================
+
+.. automodule:: reco_utils.dataset.wikidata
+    :members:
