@@ -9,7 +9,7 @@ Building and Running with Docker
 --------------------------------
 
 <details>
-<summary><strong><em>Docker CPU environment</em></strong></summary>
+<summary><strong><em>CPU environment</em></strong></summary>
 
 ```
 DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
@@ -19,7 +19,7 @@ docker run -p 8888:8888 -d recommenders:cpu
 </details>
 
 <details>
-<summary><strong><em>Docker PySpark environment</em></strong></summary>
+<summary><strong><em>PySpark environment</em></strong></summary>
 
 ```
 DOCKER_BUILDKIT=1 docker build -t recommenders:pyspark --build-arg ENV="pyspark" .
@@ -29,10 +29,20 @@ docker run -p 8888:8888 -d recommenders:pyspark
 </details>
 
 <details>
-<summary><strong><em>Docker GPU environment</em></strong></summary>
+<summary><strong><em>GPU environment</em></strong></summary>
 
 ```
 DOCKER_BUILDKIT=1 docker build -t recommenders:gpu --build-arg ENV="gpu" .
+docker run --runtime=nvidia -p 8888:8888 -d recommenders:cpu
+```
+
+</details>
+
+<details>
+<summary><strong><em>GPU + PySpark environment</em></strong></summary>
+
+```
+DOCKER_BUILDKIT=1 docker build -t recommenders:gpu --build-arg ENV="full" .
 docker run --runtime=nvidia -p 8888:8888 -d recommenders:cpu
 ```
 
@@ -45,6 +55,7 @@ There are several build arguments which can change how the image is built. Simil
 
 Build Arg|Description|
 ---------|-----------|
+ENV|Environment to use, options: cpu, psypark, gpu, full|
 BRANCH|Git branch of the repo to use (defaults to `master`)
 ANACONDA|Anaconda installation script (defaults to miniconda3 4.6.14)|
 SPARK|Spark installation tarball (defaults to Spark 2.3.1)|
