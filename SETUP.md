@@ -4,6 +4,7 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 * Linux Machine: Local or [Azure Data Science Virtual Machine (DSVM)](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/)
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
+* Docker container
 
 ## Table of Contents
 
@@ -18,6 +19,7 @@ This document describes how to setup all the dependencies to run the notebooks i
   * [Repository installation](#repository-installation)
   * [Troubleshooting Installation on Azure Databricks](#Troubleshooting-Installation-on-Azure-Databricks)
 * [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
+* [Setup guide for Docker](#setup-guide-for-docker)
 
 ## Compute environments
 
@@ -272,32 +274,16 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
 
 ## Setup guide for Docker
 
-Docker images of the repository for different environments are available. To build Docker images yourself use the Dockerfiles in `reco_utils/docker`.
+A [Dockerfile](docker/Dockerfile) is provided to build images of the repository to simplify setup for different environments. You will need [Docker Engine](https://docs.docker.com/install/) installed on your system.
 
-Assuming Docker is pre-installed and configured (**NOTE** `docker` command is already available in the Azure Data Science Virtual Machine. For installation of Docker in on a Linux machine, check instructions [here](https://docs.docker.com/install/)), for example, a PySpark Docker image can be built by the following command line
->   ```{shell}
->   cd Recommenders/reco_utils/docker/pyspark
->   docker build -t <image_name>/<tag> .
->   ```
+*Note: `docker` is already available on Azure Data Science Virtual Machine*
 
-Argument values can be specified for building an image with different running environment. There are three different types of environment supported in the Dockerfile, corresponding to the environment of the repository. The following table summarizes the environment supported in the Dockerfile, and the argument value that specifies the environment in building the image.
+See guidelines in the Docker [README](docker/README.md) for detailed instructions of how to build and run images for different environments.
 
-Environment | Description | Argument value |
-------------|------------|----------------|
-Python CPU|CPU version that allows runs of the non-Spark and non-GPU notebooks|'cpu'|
-PySpark|PySpark environment that allows runs of PySpark notebooks|'pyspark'|
-Python GPU|GPU environment that allows runs of deep learning notebooks|'gpu'|
+Example command to build and run Docker image with base CPU environment.
+```{shell}
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
+docker run -p 8888:8888 -d recommenders:cpu
+```
 
-For example, the following command builds a Docker image with PySpark environment and a user name of `reco_user`, 
->   ```{shell}
->   docker build -t <image_name>/<tag> --build-arg ENVIRONMENT='pyspark' --build-arg NB_USER='reco_user' .
->   ```
-
-The Docker image is based on the [Jupyter Notebook image](https://github.com/jupyter/docker-stacks/tree/master). It allows the user to run Jupyter notebooks in a browser when a container of the Docker image is turned on
-
-For example, to run the built image in an interactive manner, do the following 
->   ```{shell}
->   docker run --rm -p 8888:8888 <image_name>/<tag>
->   ```
-Then the message in the console will advise with a link to open (in the browser) to run the notebooks. Ideally, after opening the link, the notebook homepage should appear where one can find all the contents in the Recommender repository. 
-
+You can then open the Jupyter notebook server at http://localhost:8888

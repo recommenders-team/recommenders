@@ -36,7 +36,20 @@ DOCKER_BUILDKIT=1 docker build -t recommenders:gpu --build-arg ENV="gpu" .
 docker run --runtime=nvidia -p 8888:8888 -d recommenders:cpu
 ```
 
-By default the master branch of the repository is used, in order to change that you can provide a BRANCH build argument as shown below.
+</details>
+
+Build Arguments
+---------------
+
+There are several build arguments which can change how the image is built. Similar to the `ENV` build argument these are specified during the docker build command.
+
+Build Arg|Description|
+---------|-----------|
+BRANCH|Git branch of the repo to use (defaults to `master`)
+ANACONDA|Anaconda installation script (defaults to miniconda3 4.6.14)|
+SPARK|Spark installation tarball (defaults to Spark 2.3.1)|
+
+Example using the staging branch:
 
 ```
 DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" --build-arg BRANCH="staging" .
