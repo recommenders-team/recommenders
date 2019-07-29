@@ -161,3 +161,17 @@ def test_nni_tuning_svd(notebooks, tmp):
                                         NUM_EPOCHS=1,
                                         WAITING_TIME=20,
                                         MAX_RETRIES=50))
+
+
+@pytest.mark.integration
+def test_wikidata_integration(notebooks, tmp):
+    notebook_path = notebooks["wikidata_KG"]
+    MOVIELENS_SAMPLE_SIZE = 5
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
+                        parameters=dict(MOVIELENS_DATA_SIZE='100k',
+                                        MOVIELENS_SAMPLE=True,
+                                        MOVIELENS_SAMPLE_SIZE=MOVIELENS_SAMPLE_SIZE))
+    
+    result = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe["lenght_result"]
+    assert result == MOVIELENS_SAMPLE_SIZE
+
