@@ -38,7 +38,7 @@ docker run -p 8888:8888 -d recommenders:pyspark
 
 ```
 DOCKER_BUILDKIT=1 docker build -t recommenders:gpu --build-arg ENV="gpu" .
-docker run --runtime=nvidia -p 8888:8888 -d recommenders:cpu
+docker run --runtime=nvidia -p 8888:8888 -d recommenders:gpu
 ```
 
 </details>
@@ -47,8 +47,8 @@ docker run --runtime=nvidia -p 8888:8888 -d recommenders:cpu
 <summary><strong><em>GPU + PySpark environment</em></strong></summary>
 
 ```
-DOCKER_BUILDKIT=1 docker build -t recommenders:gpu --build-arg ENV="full" .
-docker run --runtime=nvidia -p 8888:8888 -d recommenders:cpu
+DOCKER_BUILDKIT=1 docker build -t recommenders:full --build-arg ENV="full" .
+docker run --runtime=nvidia -p 8888:8888 -d recommenders:full
 ```
 
 </details>
