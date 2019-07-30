@@ -4,6 +4,7 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 * Local (Linux, MacOS or Windows) or [DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (Linux or Windows)
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
+* Docker container
 
 
 ## Table of Contents
@@ -19,6 +20,7 @@ This document describes how to setup all the dependencies to run the notebooks i
   * [Repository installation](#repository-installation)
   * [Troubleshooting Installation on Azure Databricks](#Troubleshooting-Installation-on-Azure-Databricks)
 * [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
+* [Setup guide for Docker](#setup-guide-for-docker)
 
 ## Compute environments
 
@@ -310,3 +312,19 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
    7. Restart the cluster.
 
 </details>
+
+## Setup guide for Docker
+
+A [Dockerfile](docker/Dockerfile) is provided to build images of the repository to simplify setup for different environments. You will need [Docker Engine](https://docs.docker.com/install/) installed on your system.
+
+*Note: `docker` is already available on Azure Data Science Virtual Machine*
+
+See guidelines in the Docker [README](docker/README.md) for detailed instructions of how to build and run images for different environments.
+
+Example command to build and run Docker image with base CPU environment.
+```{shell}
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
+docker run -p 8888:8888 -d recommenders:cpu
+```
+
+You can then open the Jupyter notebook server at http://localhost:8888
