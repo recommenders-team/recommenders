@@ -3,7 +3,12 @@ Docker Support
 The Dockerfile in this directory will build Docker images with all the dependencies and code needed to run example notebooks or unit tests included in this repository.
 
 Multiple environments are supported by using [multistage builds](https://docs.docker.com/develop/develop-images/multistage-build/). In order to efficiently build the Docker images in this way, [Docker BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) is necessary.
-The following examples show how to build and run the Docker image for CPU, PySpark, and GPU environments. Note on some platforms (e.g., Windows), one needs to manually specify the environment variable for `DOCKER_BUILDKIT` to make sure the build runs well. Once the container is running you can access Jupyter notebooks at http://localhost:8888.
+The following examples show how to build and run the Docker image for CPU, PySpark, and GPU environments. Note on some platforms, one needs to manually specify the environment variable for `DOCKER_BUILDKIT`to make sure the build runs well. For example, on a Windows machine, this can be done by the powershell command as below, before building the image
+```
+$env:DOCKER_BUILDKIT=1
+```
+
+Once the container is running you can access Jupyter notebooks at http://localhost:8888.
 
 Building and Running with Docker
 --------------------------------
