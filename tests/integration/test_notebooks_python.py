@@ -172,6 +172,6 @@ def test_wikidata_integration(notebooks, tmp):
                                         MOVIELENS_SAMPLE=True,
                                         MOVIELENS_SAMPLE_SIZE=MOVIELENS_SAMPLE_SIZE))
     
-    result = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe["lenght_result"]
-    assert result == MOVIELENS_SAMPLE_SIZE
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    assert results["lenght_result"] == MOVIELENS_SAMPLE_SIZE
 
