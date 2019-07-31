@@ -32,7 +32,7 @@ def find_wikidataID(name):
         return entity_id
     try:
         pageID = r.json().get("query", {}).get("search", [{}])[0].get("pageid", "entityNotFound")
-    except IndexError as e:
+    except Exception as e:
         print("Page Name not found in Wikipedia")
         return "entityNotFound"
 
