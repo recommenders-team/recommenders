@@ -196,6 +196,12 @@ def test_random_splitter(test_specs, python_dataset):
     for split in splits:
         assert set(split.columns) == set(python_dataset.columns)
 
+    # check values sum to 1
+    splits = python_random_split(
+        python_dataset, ratio=[.7, .2, .1], seed=test_specs["seed"]
+    )
+
+    assert(len(splits)) == 3
 
 def test_chrono_splitter(test_specs, python_dataset):
     splits = python_chrono_split(
