@@ -1,0 +1,21 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# no PR builds
+pr: none
+
+# no CI trigger
+trigger: none
+
+jobs:
+- job: Component governance
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  pool:
+    vmImage: 'ubuntu-16.04'
+
+  steps:
+  - task: ComponentGovernanceComponentDetection@0
+    inputs:
+      scanType: 'Register'
+      verbosity: 'Verbose'
+      alertWarningLevel: 'High'  
