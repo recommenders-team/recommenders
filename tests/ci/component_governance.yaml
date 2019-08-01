@@ -1,0 +1,30 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Pull request against these branches will trigger this build
+pr: 
+  - master
+
+# no CI trigger
+trigger: none
+
+jobs:
+- job: Component_governance
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  pool:
+    vmImage: 'ubuntu-16.04'
+
+  steps:
+  - bash: |
+      python scripts/generate_conda_file.py --gpu --pyspark
+    displayName: 'Creating conda file'
+
+  - bash: |
+      python scripts/conda2requirements.py -i reco_full.yaml -o requirements.txt
+    displayName: 'Generate requirements.txt file from conda file'
+
+  - task: ComponentGovernanceComponentDetection@0
+    inputs:
+      scanType: 'Register'
+      verbosity: 'Verbose'
+      alertWarningLevel: 'High'  
