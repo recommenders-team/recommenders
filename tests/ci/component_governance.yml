@@ -8,7 +8,7 @@ pr: none
 trigger: none
 
 jobs:
-- job: Component governance
+- job: Component_governance
   timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
     vmImage: 'ubuntu-16.04'
