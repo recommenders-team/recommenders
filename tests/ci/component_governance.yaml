@@ -16,12 +16,8 @@ jobs:
 
   steps:
   - bash: |
-      python scripts/generate_conda_file.py --gpu --pyspark
-    displayName: 'Creating conda file'
-
-  - bash: |
-      python scripts/conda2requirements.py -i reco_full.yaml -o requirements.txt
-    displayName: 'Generate requirements.txt file from conda file'
+      python scripts/generate_requirements_txt.py
+    displayName: 'Generate requirements.txt file from generate_conda_file.py'
 
   - task: ComponentGovernanceComponentDetection@0
     inputs:
