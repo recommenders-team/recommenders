@@ -147,3 +147,4 @@ ml-20m/
 *.jar
 *.item
 *.pkl
+requirements.txt
