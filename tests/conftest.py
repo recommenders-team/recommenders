@@ -16,12 +16,7 @@ import pytest
 from sklearn.model_selection import train_test_split
 from tempfile import TemporaryDirectory
 from tests.notebooks_common import path_notebooks
-from reco_utils.common.general_utils import get_number_processors, get_physical_memory
-
-try:
-    from pyspark.sql import SparkSession
-except ImportError:
-    pass  # so the environment without spark doesn't break
+from reco_utils.common.spark_utils import start_or_get_spark
 
 
 @pytest.fixture
@@ -50,21 +45,12 @@ def spark(app_name="Sample", url="local[*]"):
     Returns:
         SparkSession: new Spark session
     """
-    n_cores = get_number_processors()
-    physical_mem = get_physical_memory()
-    return (
-        SparkSession.builder.appName(app_name)
-        .master(url)
-        .config("spark.driver.cores", 1)
-        .config("spark.driver.maxResultSize", "1g")
-        .config("spark.driver.memory", "{:d}g".format(int(physical_mem * 0.2)))
-        .config("spark.executor.cores", n_cores - 1)
-        .config("spark.executor.instances", 1)
-        .config("spark.executor.memory", "{:d}g".format(int(physical_mem * 0.6)))
-        .config("spark.local.dir", "/mnt")
-        .config("spark.sql.shuffle.partitions", 1)
-        .getOrCreate()
-    )
+
+    config = {"spark.local.dir": "/mnt",
+              "spark.sql.shuffle.partitions": 1}
+    spark = start_or_get_spark(app_name=app_name, url=url, config=config)
+    yield spark
+    spark.stop()
 
 
 @pytest.fixture(scope="module")
@@ -228,6 +214,9 @@ def notebooks():
         ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
+        ),
+        "wikidata_KG": os.path.join(
+            folder_notebooks, "01_prepare_data", "wikidata_KG.ipynb"
         ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_model", "als_deep_dive.ipynb"

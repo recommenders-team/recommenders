@@ -46,6 +46,7 @@ def test_spark_tuning(notebooks):
         parameters=dict(
             NUMBER_CORES="*",
             NUMBER_ITERATIONS=3,
+            SUBSET_RATIO=0.5,
             RANK=[5, 5],
             REG=[0.1, 0.01]
         )

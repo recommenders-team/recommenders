@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pytest
 import os
 from reco_utils.recommender.deeprec.deeprec_utils import prepare_hparams, download_deeprec_resources
@@ -52,7 +55,7 @@ def test_dkn_component_definition(resource_path):
         yaml_file,
         wordEmb_file=wordEmb_file,
         entityEmb_file=entityEmb_file,
-        epochs=5,
+        epochs=1,
         learning_rate=0.0001,
     )
     assert hparams is not None

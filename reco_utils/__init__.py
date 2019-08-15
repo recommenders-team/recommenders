@@ -7,5 +7,9 @@ __author__ = "RecoDev Team at Microsoft"
 __license__ = "MIT"
 __copyright__ = "Copyright 2018-present Microsoft Corporation"
 
-# Version synonym
+# Synonyms
+TITLE = __title__
 VERSION = __version__
+AUTHOR = __author__
+LICENSE = __license__
+COPYRIGHT = __copyright__

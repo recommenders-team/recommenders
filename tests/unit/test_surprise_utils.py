@@ -1,12 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-"""
-Test utils for Surprise algos
-"""
+
 import pandas as pd
 import pytest
-
 import surprise
 
 from reco_utils.common.constants import (

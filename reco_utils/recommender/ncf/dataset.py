@@ -168,7 +168,7 @@ class Dataset(object):
 
     def _init_test_data(self):
         """Initialize self.test using 'leave-one-out' evaluation protocol in
-            paper https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
+        paper https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
         """
         if self.test is not None:
             # get test positive set for every user
@@ -276,7 +276,7 @@ class Dataset(object):
         self.ratings = np.array(self.ratings)
 
     def train_loader(self, batch_size, shuffle=True):
-        """Feed train data every batch
+        """Feed train data every batch.
         
         Args:
             batch_size (int): Batch size.
@@ -284,10 +284,9 @@ class Dataset(object):
         
         Returns:
             list: userID list, itemID list, rating list.
-                public data loader return the userID, itemID consistent with raw data
+            public data loader return the userID, itemID consistent with raw data
 
         """
-
         # yield batch of training data with `shuffle`
         indices = np.arange(len(self.users))
         if shuffle:
@@ -300,7 +299,6 @@ class Dataset(object):
             # train_loader() could be called and used by our users in other situations,
             # who expect the not re-indexed data. So we convert id --> original user and item
             # when returning batch
-
             yield [
                 [self.id2user[x] for x in self.users[batch_indices]],
                 [self.id2item[x] for x in self.items[batch_indices]],
@@ -318,8 +316,8 @@ class Dataset(object):
 
         Returns:
             list: userID list, itemID list, rating list.
-                public data loader return the userID, itemID consistent with raw data
-                the first (userID, itemID, rating) is the positive one
+            public data loader return the userID, itemID consistent with raw data
+            the first (userID, itemID, rating) is the positive one
         """
         for test in self.test_data:
             yield test

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -8,7 +11,6 @@ from reco_utils.common.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-
 from reco_utils.dataset.python_splitters import (
     python_chrono_split,
 )
