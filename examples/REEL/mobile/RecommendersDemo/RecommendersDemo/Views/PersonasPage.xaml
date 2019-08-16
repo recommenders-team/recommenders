@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="RecommendersDemo.Views.PersonasPage">
+
+    <StackLayout VerticalOptions="Start" HorizontalOptions="Center">
+        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+            <Image Grid.Row="0" Grid.Column="0" Source="nav_background.png" Aspect="AspectFill"></Image>
+            <Label Text="Choose a Persona" FontFamily="{StaticResource AkagiProExtraBold}"
+                   FontSize="Large" Margin="20" TextColor="White" Grid.Row="0" Grid.Column="0" VerticalOptions="Center"></Label>
+        </Grid>
+    <StackLayout 
+            x:Name="PersonasStackLayout"
+            HorizontalOptions="Center"
+            VerticalOptions="CenterAndExpand"
+            BindableLayout.ItemsSource="{Binding Path=PairedPersonas}">
+        <BindableLayout.ItemTemplate>
+            <DataTemplate>
+                <!-- Create the row -->
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
+                        <Frame AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="First Row of Personas Frame" HasShadow="False" BackgroundColor="{StaticResource BackgroundColor}">
+                        <!-- Create the first element in that row -->
+                        <StackLayout Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="{StaticResource BackgroundColor}">
+                                <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="50" />
+                                </Grid.ColumnDefinitions>
+ 
+                                    <ImageButton AutomationProperties.IsInAccessibleTree="true"
+                                                 AutomationProperties.Name="{Binding FirstPersona.Name}" Source="{Binding FirstPersona.IconSource}" BackgroundColor="Transparent"  Clicked="SetChosenPersona" 
+                                                 Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                                                 CommandParameter="{Binding FirstPersona.Name}"  />
+
+                                    <ImageButton
+                                        AutomationProperties.IsInAccessibleTree="true"
+                                        AutomationProperties.Name="Check Mark"
+                                        Grid.Row="0" 
+                                        Grid.Column="1" 
+                                        Source="check.png" HorizontalOptions="Start" 
+                                        BackgroundColor="Transparent" VerticalOptions="Start"
+                                        IsVisible="{Binding FirstPersonaWrapper.ShowCheckmark}" />
+
+                                </Grid>
+                            <StackLayout HorizontalOptions="Center">
+                                <Label Text="{Binding FirstPersona.Name}" Style="{StaticResource MovieCardTitle}" />
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+                    <Frame AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Second Row of Personas Frame" HasShadow="False" BackgroundColor="{StaticResource BackgroundColor}">
+                        <!-- Create the second element in that row -->
+                        <StackLayout Orientation="Vertical" HorizontalOptions="Center" BackgroundColor="{StaticResource BackgroundColor}">
+                            <Grid >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="50" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="50" />
+                                </Grid.ColumnDefinitions>
+                                    <ImageButton AutomationProperties.IsInAccessibleTree="true"
+                                                 AutomationProperties.Name="{Binding SecondPersona.Name}" Source="{Binding SecondPersona.IconSource}" BackgroundColor="Transparent" Clicked="SetChosenPersona"
+                                                 Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2"
+                                                 CommandParameter="{Binding SecondPersona.Name}" />
+
+                                <ImageButton
+                                AutomationProperties.IsInAccessibleTree="true"
+                                AutomationProperties.Name="Check Mark"
+                                Grid.Row="0" 
+                                Grid.Column="1" 
+                                Source="check.png" HorizontalOptions="Start" 
+                                BackgroundColor="Transparent" VerticalOptions="Start"
+                                IsVisible="{Binding SecondPersonaWrapper.ShowCheckmark}" />  
+                                
+                            </Grid>
+                            <StackLayout HorizontalOptions="Center">
+                                <Label Text="{Binding SecondPersona.Name}" Style="{StaticResource MovieCardTitle}" />
+                            </StackLayout>
+                        </StackLayout>
+                    </Frame>
+                </StackLayout>
+            </DataTemplate>
+        </BindableLayout.ItemTemplate>
+        <!-- Create your own persona & next button -->
+    </StackLayout>
+
+        <StackLayout Orientation="Vertical">
+            <StackLayout Orientation="Horizontal" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" Margin="20">        
+                <ImageButton BackgroundColor="Transparent"                             
+                             AutomationProperties.IsInAccessibleTree="true"
+                             AutomationProperties.Name="Create Your Own Persona" Source="create_your_own.png" HeightRequest="40" Margin="0,3,5,0" Clicked="RedirectToCustomPage" />
+            </StackLayout>
+            <Button
+                x:Name="NextButton"
+                Margin="30,0,30,30"       
+                AutomationProperties.IsInAccessibleTree="true"
+                AutomationProperties.Name="Proceed with Selected Persona"
+                Style="{StaticResource Accent2ColorButtonStyle}" 
+                BackgroundColor="{Binding NextButtonBackgroundColor}"
+                BorderColor="{Binding ButtonBorder}"
+                BorderWidth="3"
+                Text="next" 
+                FontAttributes="Bold"
+                Clicked="RedirectToMainPage" />
+        </StackLayout>
+    </StackLayout>
+</ContentPage>

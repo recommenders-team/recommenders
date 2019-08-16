@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage xmlns="http://xamarin.com/schemas/2014/forms"
+            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            mc:Ignorable="d"
+            xmlns:views="clr-namespace:RecommendersDemo.Views"
+            xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+            x:Class="RecommendersDemo.Views.MainPage"
+            BarTextColor="White"
+            BarBackgroundColor="{StaticResource TabBarColor}"
+            SelectedTabColor="{StaticResource SelectedTabBarcolor}"
+            UnselectedTabColor="White"
+            Style="{StaticResource AppBackgroundColor}"
+            android:TabbedPage.OffscreenPageLimit="1"
+            android:TabbedPage.ToolbarPlacement="Bottom">
+
+    <TabbedPage.Children>
+        <NavigationPage Title="Browse">
+            <NavigationPage.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource">
+                    <On Platform="iOS" Value="home.png"/>
+                    <On Platform="Android" Value="home.png"/>
+                    <On Platform="UWP" Value="home.png"/>
+                </OnPlatform>
+            </NavigationPage.Icon>
+            <x:Arguments>
+                <views:BrowsePage />
+            </x:Arguments>
+        </NavigationPage>
+
+        <NavigationPage Title="Search">
+            <NavigationPage.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource">
+                    <On Platform="iOS" Value="search.png"/>
+                    <On Platform="Android" Value="search.png"/>
+                    <On Platform="UWP" Value="search.png"/>
+                </OnPlatform>
+            </NavigationPage.Icon>
+            <x:Arguments>
+                <views:SearchPage />
+            </x:Arguments>
+        </NavigationPage>
+        
+        <NavigationPage Title="Favorites">
+            <NavigationPage.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource">
+                    <On Platform="iOS" Value="favorites.png"/>
+                    <On Platform="Android" Value="favorites.png"/>
+                    <On Platform="UWP" Value="favorites.png"/>
+                </OnPlatform>
+            </NavigationPage.Icon>
+            <x:Arguments>
+                <views:UserMoviePreferencesPage />
+            </x:Arguments>
+        </NavigationPage>
+
+    </TabbedPage.Children>
+
+</TabbedPage>

@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="RecommendersDemo.Views.SelectGenresPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                     <ColumnDefinition Width="25"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                
+                <Image Source="nav_background.png" Grid.Row="0" Grid.ColumnSpan="4" Aspect="AspectFill"></Image>
+                <Label Text="Select Genres" FontFamily="{StaticResource AkagiProExtraBold}"
+                       FontSize="Large" Margin="20" TextColor="White" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="4" VerticalOptions="Center"></Label>
+
+                <ImageButton AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Action" HeightRequest="30" Grid.Row="1" Grid.Column="1" Aspect="Fill" Source="rectangle.png" BackgroundColor="Transparent"  Command="{Binding ClickGenre}" CommandParameter="Action"></ImageButton>
+                <Label Grid.Row="1" Grid.Column="1" Text="Action" TextColor="White" VerticalOptions="End" Margin="30,0,0,40" HorizontalOptions="Start"
+                               FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium"></Label>
+                <ImageButton
+                       Grid.Row="1" 
+                       Grid.Column="1" 
+                       Source="check.png" HorizontalOptions="End"
+                       BackgroundColor="Transparent" VerticalOptions="Start"
+                       IsVisible="{Binding ActionVisibility}">
+                </ImageButton>
+
+                <ImageButton AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Animation" Grid.Row="1" Grid.Column="2" Source="rectangle.png" Aspect="Fill" BackgroundColor="Transparent"  Command="{Binding ClickGenre}" CommandParameter="Animation"></ImageButton>
+                <Label Grid.Row="1" Grid.Column="2" Text="Animation" TextColor="White" VerticalOptions="End" Margin="30,0,0,40" HorizontalOptions="Start"
+                               FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium"></Label>              
+                <ImageButton
+                       Grid.Row="1" 
+                       Grid.Column="2" 
+                       Source="check.png" HorizontalOptions="End"
+                       BackgroundColor="Transparent" VerticalOptions="Start"
+                       IsVisible="{Binding AnimatedVisibility}">                
+                </ImageButton>
+
+                <ImageButton AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Comedy" Grid.Row="2" Grid.Column="1" Source="rectangle.png" Aspect="Fill" BackgroundColor="Transparent" Command="{Binding ClickGenre}" CommandParameter="Comedy"></ImageButton>
+                <Label Grid.Row="2" Grid.Column="1" Text="Comedy" TextColor="White" VerticalOptions="End" Margin="30,0,0,40" HorizontalOptions="Start"
+                               FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium"></Label>
+                <ImageButton
+                       Grid.Row="2" 
+                       Grid.Column="1" 
+                       Source="check.png" HorizontalOptions="End" 
+                       BackgroundColor="Transparent" VerticalOptions="Start"
+                       IsVisible="{Binding ComedyVisibility}">
+                </ImageButton>
+
+                <ImageButton AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Drama" Grid.Row="2" Grid.Column="2" Source="rectangle.png" Aspect="Fill" BackgroundColor="Transparent" Command="{Binding ClickGenre}" CommandParameter="Drama"></ImageButton>
+                <Label Grid.Row="2" Grid.Column="2" Text="Drama" TextColor="White" VerticalOptions="End" Margin="30,0,0,40" HorizontalOptions="Start"
+                               FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium"></Label>                
+                <ImageButton
+                       Grid.Row="2" 
+                       Grid.Column="2" 
+                       Source="check.png" HorizontalOptions="End"
+                       BackgroundColor="Transparent" VerticalOptions="Start"
+                       IsVisible="{Binding DramaVisibility}">
+                </ImageButton>
+
+                <ImageButton AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Horror" Grid.Row="3" Grid.Column="1" Source="rectangle.png" Aspect="Fill" BackgroundColor="Transparent"  Command="{Binding ClickGenre}" CommandParameter="Horror"></ImageButton>
+                <Label Grid.Row="3" Grid.Column="1" Text="Horror" TextColor="White" VerticalOptions="End" Margin="30,0,0,40" HorizontalOptions="Start"
+                               FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium"></Label>
+                <ImageButton
+                       Grid.Row="3" 
+                       Grid.Column="1" 
+                       Source="check.png" HorizontalOptions="End"
+                       BackgroundColor="Transparent" VerticalOptions="Start"
+                       IsVisible="{Binding HorrorVisibility}">
+                </ImageButton>
+
+                <ImageButton AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Romance" Grid.Row="3" Grid.Column="2" Source="rectangle.png" Aspect="Fill" BackgroundColor="Transparent" Command="{Binding ClickGenre}" CommandParameter="Romance"></ImageButton>
+               <Label Grid.Row="3" Grid.Column="2" Text="Romance" TextColor="White" VerticalOptions="End" Margin="30,0,0,40" HorizontalOptions="Start"
+                               FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium"></Label>
+                <ImageButton
+                       Grid.Row="3" 
+                       Grid.Column="2" 
+                       Source="check.png" HorizontalOptions="End"
+                       BackgroundColor="Transparent" VerticalOptions="Start"
+                       IsVisible="{Binding RomanceVisibility}">
+                </ImageButton>
+
+            </Grid>
+            <Button
+                x:Name="NextButton"
+                Margin="30,0,30,30"       
+                AutomationProperties.IsInAccessibleTree="true"
+                AutomationProperties.Name="Proceed with Selected Genres"
+                Style="{StaticResource Accent2ColorButtonStyle}" 
+                BackgroundColor="{Binding NextButtonBackgroundColor}"
+                BorderColor="{Binding ButtonBorder}"
+                BorderWidth="3"
+                FontAttributes="Bold"
+                Text="next" Clicked="RedirectToMovieCarousel" />
+
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

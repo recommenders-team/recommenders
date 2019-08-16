@@ -1,0 +1,254 @@
+{
+  "Action": [
+    {
+      "Genre": ["Action", "Sci-Fi", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/hEpWvX6Bp79eLxY1kX5ZZJcme5U.jpg",
+      "ItemID": 2571,
+      "Overview": "Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.",
+      "Title": "Matrix, The",
+      "Year": "1999"
+    },
+    {
+      "Genre": ["Action", "Adventure", "Comedy", "Sci-Fi"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/f24UVKq3UiQWLqGWdqjwkzgB8j8.jpg",
+      "ItemID": 1580,
+      "Overview": "After a police chase with an otherworldly being, a New York City cop is recruited as an agent in a top-secret organization established to monitor and police alien activity on Earth: the Men in Black. Agent Kay and new recruit Agent Jay find themselves in the middle of a deadly plot by an intergalactic terrorist who has arrived on Earth to assassinate two ambassadors from opposing galaxies.",
+      "Title": "Men in Black",
+      "Year": "1997"
+    },
+    {
+      "Genre": ["Action", "Sci-Fi", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/2y4dmgWYRMYXdD1UyJVcn2HSd1D.jpg",
+      "ItemID": 589,
+      "Overview": "Nearly 10 years have passed since Sarah Connor was targeted for termination by a cyborg from the future. Now her son, John, the future leader of the resistance, is the target for a newer, more deadly terminator. Once again, the resistance has managed to send a protector back to attempt to save John and his mother Sarah.",
+      "Title": "Terminator 2: Judgment Day",
+      "Year": "1991"
+    },
+    {
+      "Genre": ["Action", "Adventure", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/5c0ovjT41KnYIHYuF4AWsTe3sKh.jpg",
+      "ItemID": 10,
+      "Overview": "James Bond must unmask the mysterious head of the Janus Syndicate and prevent the leader from utilizing the GoldenEye weapons system to inflict devastating revenge on Britain.",
+      "Title": "GoldenEye",
+      "Year": "1995"
+    },
+    {
+      "Genre": ["Action", "Adventure"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/44sKJOGP3fTm4QXBcIuqu0RkdP7.jpg",
+      "ItemID": 1198,
+      "Overview": "When Dr. Indiana Jones \u00e2\u20ac\u201c the tweed-suited professor who just happens to be a celebrated archaeologist \u00e2\u20ac\u201c is hired by the government to locate the legendary Ark of the Covenant, he finds himself up against the entire Nazi regime.",
+      "Title": "Raiders of the Lost Ark",
+      "Year": "1981"
+    }
+  ],
+  "Animation": [
+    {
+      "Genre": ["Animation", "Children's", "Comedy"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/rhIRbceoE9lR4veEXuwCC2wARtG.jpg",
+      "ItemID": 1,
+      "Overview": "Led by Woody, Andy's toys live happily in his room until Andy's birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy's heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.",
+      "Title": "Toy Story",
+      "Year": "1995"
+    },
+    {
+      "Genre": ["Animation", "Children's", "Comedy"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/3CmK3XurcLeUyMifCR28ibzupbB.jpg",
+      "ItemID": 3114,
+      "Overview": "Andy heads off to Cowboy Camp, leaving his toys to their own devices. Things shift into high gear when an obsessive toy collector named Al McWhiggen, owner of Al's Toy Barn kidnaps Woody. Andy's toys mount a daring rescue mission, Buzz Lightyear meets his match and Woody has to decide where he and his heart truly belong.",
+      "Title": "Toy Story 2",
+      "Year": "1999"
+    },
+    {
+      "Genre": ["Animation", "Children's", "Comedy", "Musical"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/7f53XAE4nPiGe9XprpGAeWHuKPw.jpg",
+      "ItemID": 588,
+      "Overview": "Princess Jasmine grows tired of being forced to remain in the palace, so she sneaks out into the marketplace, in disguise, where she meets street-urchin Aladdin.  The couple falls in love, although Jasmine may only marry a prince.  After being thrown in jail, Aladdin becomes embroiled in a plot to find a mysterious lamp, with which the evil Jafar hopes to rule the land.",
+      "Title": "Aladdin",
+      "Year": "1992"
+    },
+    {
+      "Genre": ["Action", "Adventure", "Animation"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/mNqZOtJIQfFQPjo3hmYLIn8Qqhf.jpg",
+      "ItemID": 3000,
+      "Overview": "Ashitaka, a prince of the disappearing Ainu tribe, is cursed by a demonized boar god and must journey to the west to find a cure. Along the way, he encounters San, a young human woman fighting to protect the forest, and Lady Eboshi, who is trying to destroy it. Ashitaka must find a way to bring balance to this conflict.",
+      "Title": "Princess Mononoke, The (Mononoke Hime)",
+      "Year": "1997"
+    },
+    {
+      "Genre": ["Animation", "Children's", "Comedy"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/u9qGMRwcPwP0WETxulS5hKUsEum.jpg",
+      "ItemID": 2355,
+      "Overview": "On behalf of \"oppressed bugs everywhere,\" an inventive ant named Flik hires a troupe of warrior bugs to defend his bustling colony from a horde of freeloading grasshoppers led by the evil-minded Hopper.",
+      "Title": "Bug's Life, A",
+      "Year": "1998"
+    }
+  ],
+  "Comedy": [
+    {
+      "Genre": ["Comedy", "Romance"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/paS5plbzKz3PYddxky6svYYz3hS.jpg",
+      "ItemID": 2572,
+      "Overview": "On the first day at his new school, Cameron instantly falls for Bianca, the gorgeous girl of his dreams. The only problem is that Bianca is forbidden to date until her ill-tempered, completely un-dateable older sister Kat goes out, too. In an attempt to solve his problem, Cameron singles out the only guy who could possibly be a match for Kat: a mysterious bad boy with a nasty reputation of his own.",
+      "Title": "10 Things I Hate About You",
+      "Year": "1999"
+    },
+    {
+      "Genre": ["Comedy"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/k40WFAXMRekWEqsjURO3jiWob67.jpg",
+      "ItemID": 2706,
+      "Overview": "At a high-school party, four friends find that losing their collective virginity isn't as easy as they had thought. But they still believe that they need to do so before college. To motivate themselves, they enter a pact to all \"score.\" by their senior prom.",
+      "Title": "American Pie (1999)",
+      "Year": "1999"
+    },
+    {
+      "Genre": ["Comedy", "Romance"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/iO9aZzrfmMvm3IqkFiQyuuUMLh2.jpg",
+      "ItemID": 2502,
+      "Overview": "Three office workers strike back at their evil employers by hatching a hapless attempt to embezzle money.",
+      "Title": "Office Space (1999)",
+      "Year": "1999"
+    },
+    {
+      "Genre": ["Animation", "Children's", "Comedy"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/u9qGMRwcPwP0WETxulS5hKUsEum.jpg",
+      "ItemID": 2355,
+      "Overview": "On behalf of \"oppressed bugs everywhere,\" an inventive ant named Flik hires a troupe of warrior bugs to defend his bustling colony from a horde of freeloading grasshoppers led by the evil-minded Hopper.",
+      "Title": "Bug's Life, A",
+      "Year": "1998"
+    },
+    {
+      "Genre": ["Comedy"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/8dPucB4Dp7gdbozmuV2dxMOHy7i.jpg",
+      "ItemID": 2770,
+      "Overview": "On the verge of bankruptcy and desperate for his big break, aspiring filmmaker Bobby Bowfinger concocts a crazy plan to make his ultimate dream movie. Rallying a ragtag team that includes a starry-eyed ingenue, a has-been diva and a film studio gofer, he sets out to shoot a blockbuster featuring the biggest star in Hollywood, Kit Ramsey -- only without letting Ramsey know he's in the picture.",
+      "Title": "Bowfinger (1999)",
+      "Year": "1999"
+    }
+  ],
+  "Drama": [
+    {
+      "Genre": ["Crime", "Drama", "Romance", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/gE8S02QUOhVnAmYu4tcrBlMTujz.jpg",
+      "ItemID": 293,
+      "Overview": "L\u00c3\u00a9on, the top hit man in New York, has earned a rep as an effective \"cleaner\". But when his next-door neighbors are wiped out by a loose-cannon DEA agent, he becomes the unwilling custodian of 12-year-old Mathilda. Before long, Mathilda's thoughts turn to revenge, and she considers following in L\u00c3\u00a9on's footsteps.",
+      "Title": "Professional, The (a.k.a. Leon: The Professional)",
+      "Year": "1994"
+    },
+    {
+      "Genre": ["Crime", "Drama"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/dM2w364MScsjFf8pfMbaWUcWrR.jpg",
+      "ItemID": 296,
+      "Overview": "A burger-loving hit man, his philosophical partner, a drug-addled gangster's moll and a washed-up boxer converge in this sprawling, comedic crime caper. Their adventures unfurl in three stories that ingeniously trip back and forth in time.",
+      "Title": "Pulp Fiction",
+      "Year": "1994"
+    },
+    {
+      "Genre": ["Drama", "Mystery", "Sci-Fi", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/90T7b2LIrL07ndYQBmSm09yqVEH.jpg",
+      "ItemID": 924,
+      "Overview": "Humanity finds a mysterious object buried beneath the lunar surface and sets off to find its origins with the help of HAL 9000, the world's most advanced super computer.",
+      "Title": "2001: A Space Odyssey",
+      "Year": "1968"
+    },
+    {
+      "Genre": ["Action", "Drama"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/6WBIzCgmDCYrqh64yDREGeDk9d3.jpg",
+      "ItemID": 3578,
+      "Overview": "In the year 180, the death of emperor Marcus Aurelius throws the Roman Empire into chaos.  Maximus is one of the Roman army's most capable and trusted generals and a key advisor to the emperor.  As Marcus' devious son Commodus ascends to the throne, Maximus is set to be executed.  He escapes, but is captured by slave traders.  Renamed Spaniard and forced to become a gladiator, Maximus must battle to the death with other men for the amusement of paying audiences.",
+      "Title": "Gladiator",
+      "Year": "2000"
+    },
+    {
+      "Genre": ["Drama", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/aNV789h3oHm2pTHK5Bdq5RuiumZ.jpg",
+      "ItemID": 908,
+      "Overview": "Advertising man Roger Thornhill is mistaken for a spy, triggering a deadly cross-country chase.",
+      "Title": "North by Northwest",
+      "Year": "1959"
+    }
+  ],
+  "Horror": [
+    {
+      "Genre": ["Action", "Horror", "Sci-Fi", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/2h00HrZs89SL3tXB4nbkiM7BKHs.jpg",
+      "ItemID": 1214,
+      "Overview": "During its return to the earth, commercial spaceship Nostromo intercepts a distress signal from a distant planet. When a three-member team of the crew discovers a chamber containing thousands of eggs on the planet, a creature inside one of the eggs attacks an explorer. The entire crew is unaware of the impending nightmare set to descend upon them when the alien parasite planted inside its unfortunate host is birthed.",
+      "Title": "Alien",
+      "Year": "1979"
+    },
+    {
+      "Genre": ["Action", "Horror"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/l1yltvzILaZcx2jYvc5sEMkM7Eh.jpg",
+      "ItemID": 1387,
+      "Overview": "An insatiable great white shark terrorizes the townspeople of Amity Island, The police chief, an oceanographer and a grizzled shark hunter seek to destroy the bloodthirsty beast.",
+      "Title": "Jaws",
+      "Year": "1975"
+    },
+    {
+      "Genre": ["Action", "Horror", "Sci-Fi", "Thriller"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/tzGY49kseSE9QAKk47uuDGwnSCu.jpg",
+      "ItemID": 2288,
+      "Overview": "Scientists in the Antarctic are confronted by a shape-shifting alien that assumes the appearance of the people it kills.",
+      "Title": "Thing, The",
+      "Year": "1982"
+    },
+    {
+      "Genre": ["Horror"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/4nbUlVEg31I8lchI3bu3Oq3Ks4t.jpg",
+      "ItemID": 1974,
+      "Overview": "Camp counselors are stalked and murdered by an unknown assailant while trying to reopen a summer camp that was the site of a child's drowning.",
+      "Title": "Friday the 13th",
+      "Year": "1980"
+    },
+    {
+      "Genre": ["Horror"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/sXFlyjfWv544uKOJmPd2vVsaFm9.jpg",
+      "ItemID": 1347,
+      "Overview": "Teenagers in a small town are dropping like flies, apparently in the grip of mass hysteria causing their suicides. A cop's daughter, Nancy Thompson (Heather Langenkamp) traces the cause to child molester Fred Krueger (Robert Englund), who was burned alive by angry parents many years before. Krueger has now come back in the dreams of his killers' children, claiming their lives as his revenge. Nancy and her boyfriend, Glen (Johnny Depp), must devise a plan to lure the monster out of the realm of nightmares and into the real world...",
+      "Title": "Nightmare on Elm Street, A (1984)",
+      "Year": "1984"
+    }
+  ],
+  "Romance": [
+    {
+      "Genre": ["Comedy", "Musical", "Romance"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/iMHdFTrCYhue74sBnXkdO39AJ3R.jpg",
+      "ItemID": 1380,
+      "Overview": "Australian good girl Sandy and greaser Danny fell in love over the summer. But when they unexpectedly discover they're now in the same high school, will they be able to rekindle their romance despite their eccentric friends?",
+      "Title": "Grease",
+      "Year": "1978"
+    },
+    {
+      "Genre": ["Musical", "Romance"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/jFoktPxTtabZfh9JeDy3F78g9w7.jpg",
+      "ItemID": 1088,
+      "Overview": "Expecting the usual tedium that accompanies a summer in the Catskills with her family, 17-year-old Frances 'Baby' Houseman is surprised to find herself stepping into the shoes of a professional hoofer—and unexpectedly falling in love.",
+      "Title": "Dirty Dancing (1987)",
+      "Year": "1987"
+    },
+    {
+      "Genre": ["Musical", "Romance"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/zRQhCSREdR9h4OzEVvwhdlZNZ6m.jpg",
+      "ItemID": 1947,
+      "Overview": "In the slums of the upper West Side of Manhattan, New York, a gang of Polish-American teenagers called the Jets compete with a rival gang of recently immigrated Puerto Ricans, the Sharks, to \"own\" the neighborhood streets. Tensions are high between the gangs but two kids, one from each rival gang, fall in love leading to tragedy.",
+      "Title": "West Side Story (1961)",
+      "Year": "1961"
+    },
+    {
+      "Genre": ["Drama", "Romance"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/kHXEpyfl6zqn8a6YuozZUujufXf.jpg",
+      "ItemID": 1721,
+      "Overview": "101-year-old Rose DeWitt Bukater tells the story of her life aboard the Titanic, 84 years later. A young Rose boards the ship with her mother and fiancé. Meanwhile, Jack Dawson and Fabrizio De Rossi win third-class tickets aboard the ship. Rose tells the whole story from Titanic's departure through to its death—on its first and last voyage—on April 15, 1912.",
+      "Title": "Titanic",
+      "Year": "1997"
+    },
+    {
+      "Genre": ["Comedy", "Romance"],
+      "Imageurl": "https://image.tmdb.org/t/p/w500/fgmdaCMxXClZm2ePteLzCPySB1n.jpg",
+      "ItemID": 597,
+      "Overview": "When a millionaire wheeler-dealer enters a business contract with a Hollywood hooker Vivian Ward, he loses his heart in the bargain.",
+      "Title": "Pretty Woman (1990)",
+      "Year": "1990"
+    }
+  ]
+}

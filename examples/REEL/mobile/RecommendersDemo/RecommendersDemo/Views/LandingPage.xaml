@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms" 
+             mc:Ignorable="d"
+             x:Class="RecommendersDemo.Views.LandingPage">
+
+    <ContentPage.Content>
+        <ScrollView VerticalScrollBarVisibility="Never">
+
+            <Grid>
+                <Grid.Padding>
+                    <Thickness
+                        Left="{StaticResource Default2Margin}"
+                        Right="{StaticResource Default2Margin}" />
+                </Grid.Padding>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="6*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackLayout Grid.Row="1" Grid.Column="1" VerticalOptions="End">
+                    <Image Source="ReelCAT.png" Margin="0,0,0,100"></Image>
+                </StackLayout>
+                <StackLayout HorizontalOptions="CenterAndExpand" Grid.Row="2" Grid.Column="1">
+                    <Label Text="Welcome to Reel"
+                       TextColor="White"
+                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium" HorizontalTextAlignment="Center" Margin="10"></Label>
+                    <Label Text="Click begin to start a new session" TextColor="White"
+                       FontFamily="{StaticResource AkagiProMedium}"  HorizontalTextAlignment="Center" FontSize="Small" Margin="10"></Label>
+                    <Button
+                    Style="{StaticResource Accent2ColorButtonStyle}"
+                        FontAttributes="Bold"
+                    Text="begin" Clicked="Redirect" Margin="0,30,0,0"/>
+
+                </StackLayout>
+
+            </Grid>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>

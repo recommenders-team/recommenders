@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             mc:Ignorable="d"
+             x:Class="RecommendersDemo.App">
+
+    <Application.Resources>
+        <ResourceDictionary>S
+            <!-- Fonts -->
+            <!--<OnPlatform x:Key="AkagiProMedium"
+                x:TypeArguments="x:String"
+                Android="AkagiPro-Md.otf#AkagiPro-Md"
+                iOS="AkagiPro-Md"  Default="AkagiPro-Md"/>
+            <OnPlatform x:Key="AkagiProSemiBold"
+                x:TypeArguments="x:String"
+                Android="AkagiPro-Sm.otf#AkagiPro-Sm"
+                iOS="AkagiPro-Sm"
+                Default="AkagiPro-Sm"/>-->
+            <OnPlatform x:Key="AkagiProSemiBold" x:TypeArguments="x:String">
+                <On Platform="Android">AkagiPro-Sm.otf#AkagiPro-Sm</On>
+                <On Platform="iOS">AkagiPro-Sm</On>
+                <On Platform="UWP">Assets/Fonts/AkagiPro-Sm.otf#AkagiPro-Sm</On>
+            </OnPlatform>
+
+
+            <OnPlatform x:Key="AkagiProMedium" x:TypeArguments="x:String">
+                <On Platform="Android">AkagiPro-Md.otf#AkagiPro-Md</On>
+                <On Platform="iOS">AkagiPro-Md</On>
+                <On Platform="UWP">Assets/Fonts/AkagiPro-Md.otf#AkagiPro-Md</On>
+            </OnPlatform>
+
+            <OnPlatform x:Key="AkagiProExtraBold" x:TypeArguments="x:String">
+                    <On Platform="Android">AkagiPro-Eb.otf#AkagiPro-Eb</On>
+                    <On Platform="iOS">AkagiPro-Eb</On>
+                    <On Platform="UWP">Assets/Fonts/AkagiPro-Eb.otf#AkagiPro-Eb</On>
+             </OnPlatform>
+
+            <!-- Font Style -->
+            <Style x:Key="AkagiProLightMediumFontStyle"
+                TargetType="Label">
+                <Setter Property="FontFamily" Value="{StaticResource AkagiProMedium}" />
+                <Setter Property="FontSize" Value="Medium" />
+            </Style>
+            <Style x:Key="AkagiProLightSmallFontStyle"
+                 BasedOn="{StaticResource AkagiProLightMediumFontStyle}"
+                    TargetType="Label">
+                <Setter Property="FontSize" Value="Small" />
+            </Style>
+
+            <!-- Tab bar color -->
+            <Color x:Key="TabBarColor">#273B51</Color>
+            <Color x:Key="SelectedTabBarcolor">#36C4C4</Color>
+            
+            <!-- Onboarding enabled button color -->
+            <Color x:Key="AccentColor">#149898</Color>
+            
+            <!-- Light Blue color on Nav --> 
+            <Color x:Key="NavigationPrimary">#5DA1F7</Color>
+
+            <!-- Dark Blue/Purple Background Color -->
+            <Color x:Key="BackgroundColor">#0F243C</Color>
+
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarTextColor" Value="White" />
+                <Setter Property="BarBackgroundColor" Value="{StaticResource NavigationPrimary}" />
+            </Style>
+
+            <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+                <Setter Property="BackgroundColor" Value="{StaticResource BackgroundColor}" />
+            </Style>
+
+            <!-- This is for the side panels of the background that are not in the scope of the content page background -->
+            <Style TargetType="TabbedPage" x:Key="AppBackgroundColor">
+                <Setter Property="BackgroundColor" Value="#0F243C" />
+            </Style>
+
+            <Style x:Key="ItemPageLabel" TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="20" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="FontFamily" Value="{StaticResource AkagiProSemiBold}" />
+            </Style>
+
+            <!-- Movie Card Styles-->
+            <Style x:Key="MovieCardTitle" TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="FontFamily" Value="{StaticResource AkagiProSemiBold}" />
+            </Style>
+
+            <Style x:Key="MovieCardYear" TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Margin" Value="0" />
+                <Setter Property="FontFamily" Value="{StaticResource AkagiProMedium}" />
+            </Style>
+
+            <Style x:Key="MovieCardFrame" TargetType="Frame">
+                <Setter Property="CornerRadius" Value="5" />
+                <Setter Property="IsClippedToBounds" Value="True" />
+                <Setter Property="HasShadow" Value="True" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="BackgroundColor" Value="Transparent" />
+            </Style>
+
+            <Style x:Key="MovieCardBackgroundColor" TargetType="StackLayout">
+                <Setter Property="BackgroundColor" Value="{StaticResource NavigationPrimary}" />
+            </Style>
+               
+            <!-- Styles used in Onboarding Pages -->
+            <Color x:Key="ButtonAccentColor">#36C4C4</Color>
+            <x:Double x:Key="2xDefaultMargin">32</x:Double>
+            <x:Double x:Key="4xDefaultMargin">64</x:Double>
+            <x:Double x:Key="Default2Margin">24</x:Double>
+            <x:Double x:Key="DefaultMargin">16</x:Double>
+
+            <Style x:Key="DefaultButtonStyle" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="FontFamily" Value="{StaticResource AkagiProMedium}" />
+                <Setter Property="FontSize" Value="Medium" />
+                <Setter Property="Padding">
+                    <Thickness Left="{StaticResource Default2Margin}" Right="{StaticResource Default2Margin}" />
+                </Setter>
+                <Setter Property="TextColor" Value="{StaticResource ButtonAccentColor}" />
+            </Style>
+            <Style x:Key="AccentColorButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource ButtonAccentColor}" />
+                <Setter Property="TextColor">White</Setter>
+            </Style>
+            <Style x:Key="Accent2ColorButtonStyle"
+                BasedOn="{StaticResource AccentColorButtonStyle}"
+                TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource AccentColor}" />
+                <Setter Property="CornerRadius">28</Setter>
+                <Setter Property="HeightRequest">56</Setter>
+            </Style>
+
+            <!-- Fast Image Styling-->
+            <Style x:Key="FastImageStyle" TargetType="ffimageloading:CachedImage">
+                <Setter Property="Aspect">AspectFill</Setter>
+                <Setter Property="HeightRequest">180</Setter>
+                <Setter Property="ErrorPlaceholder">default_image.png</Setter>
+                <Setter Property="LoadingPlaceholder">default_image.png</Setter>
+                <Setter Property="DownsampleToViewSize">True</Setter>
+            </Style>
+                      
+            <Style x:Key="BackButton" TargetType="ImageButton">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="HeightRequest" Value="40" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="VerticalOptions" Value="Start" /> 
+            </Style>
+
+            <Style x:Key="FilterText" TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="VerticalOptions" Value="End" />
+                <Setter Property="HorizontalOptions" Value="Start" />
+                <Setter Property="Margin" Value="35,0,20,40" />
+                <Setter Property="FontSize" Value="Medium" />
+                <Setter Property="FontFamily" Value="{StaticResource AkagiProMedium}" />
+            </Style>
+            
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

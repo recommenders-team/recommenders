@@ -1,0 +1,345 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms" 
+             mc:Ignorable="d"
+             x:Class="RecommendersDemo.Views.BrowsePage" 
+             xmlns:controls="clr-namespace:Refractored.XamForms.PullToRefresh;assembly=Refractored.XamForms.PullToRefresh"
+             Title="Browse Movies"
+             x:Name="BrowseItemsPage">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="settings.png" Text="Settings" Clicked="ViewSettingsButtonClicked"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+
+    <controls:PullToRefreshLayout
+                IsPullToRefreshEnabled="True"
+                RefreshCommand="{Binding OnPullDownRefresh}"
+                IsRefreshing="{Binding IsRefreshing}"
+                RefreshColor="Blue">
+        <ScrollView BackgroundColor="Transparent">
+            <StackLayout Padding="20,35,20,20" Spacing="10">
+                <Label IsVisible="{x:OnPlatform iOS=true, Android=true, UWP=false}" TextColor="White" FontFamily="{StaticResource AkagiProLightMediumFontStyle}" HorizontalOptions="Center" Text="pull down to refresh" FontSize="Small"></Label>
+                <forms:AnimationView
+                    IsVisible="{x:OnPlatform iOS=true, Android=true, UWP=false}"
+                    HeightRequest="30"
+                    x:Name="LottieAnimation" 
+                    Animation="arrow.json" 
+                    AutoPlay="True" Loop="true"
+                    VerticalOptions="FillAndExpand"
+                    HorizontalOptions="FillAndExpand"/>
+                <Button AutomationProperties.IsInAccessibleTree="true"
+                        AutomationProperties.Name="Request Recommendations" Text="Request Recommendations" VerticalOptions="Start" Command="{Binding OnPullDownRefresh}" Style="{StaticResource MovieCardBackgroundColor}" TextColor="White" IsVisible="{x:OnPlatform iOS=false, Android=false, UWP=true}"/>
+                <Label x:Name="RecommendationsLabel" IsVisible="{Binding ShowRecommendationsLabel}" Style="{StaticResource ItemPageLabel}">RECOMMENDED FOR YOU</Label>
+                <ScrollView HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                    <StackLayout
+                x:Name="RecommendationStackLayout"    
+                BindableLayout.ItemsSource="{Binding Path=RecommendedMovies}"
+                HorizontalOptions="FillAndExpand"
+                Orientation="Horizontal"
+                Margin="0,0,0,25">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                    <Grid Padding="0" Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Movie Tile Card" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnItemSelected"/>
+                                                </StackLayout.GestureRecognizers>
+                                                <ffimageloading:CachedImage 
+			                                        Style="{StaticResource FastImageStyle}"
+			                                        Source ="{Binding Movie.Imageurl}" />
+
+                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Like A Movie" x:Name="LikeButton" x:Uid="LikeMovieButton" Grid.Row="0" Grid.Column="1" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}" WidthRequest="50" BackgroundColor="Transparent"/>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Horizontal scrolling list of Action movies -->
+                <Label Style="{StaticResource ItemPageLabel}">ACTION</Label>
+                <ScrollView HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                    <StackLayout
+                    x:Name="PopularActionMoviesStackLayout"
+                    BindableLayout.ItemsSource="{Binding Path=PopularActionMovies}"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,25">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                    <Grid Padding="0" Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnItemSelected" />
+                                                </StackLayout.GestureRecognizers>
+                                                <ffimageloading:CachedImage 
+                                                    Style="{StaticResource FastImageStyle}"
+			                                        Source ="{Binding Movie.Imageurl}" />
+                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Like A Movie" x:Name="LikeButton" x:Uid="LikeMovieButton" Grid.Row="0" Grid.Column="1" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}"  WidthRequest="50" BackgroundColor="Transparent"/>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+                
+                <!-- Horizontal scrolling list of Comedy movies -->
+                <Label Style="{StaticResource ItemPageLabel}">COMEDY</Label>
+                <ScrollView HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                    <StackLayout
+                    x:Name="PopularComedyMoviesStackLayout"
+                    BindableLayout.ItemsSource="{Binding Path=PopularComedyMovies}"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,25">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                    <Grid Padding="0" Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnItemSelected" />
+                                                </StackLayout.GestureRecognizers>
+                                                <ffimageloading:CachedImage 
+                                                    Style="{StaticResource FastImageStyle}"
+			                                        Source ="{Binding Movie.Imageurl}" />
+                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Like A Movie" x:Name="LikeButton" x:Uid="LikeMovieButton" Grid.Row="0" Grid.Column="1" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}"  WidthRequest="50" BackgroundColor="Transparent"/>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Horizontal scrolling list of Animation movies -->
+                <Label Style="{StaticResource ItemPageLabel}">ANIMATION</Label>
+                <ScrollView HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                    <StackLayout
+                    x:Name="PopularAnimationMoviesStackLayout"
+                    BindableLayout.ItemsSource="{Binding Path=PopularAnimationMovies}"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,25">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                    <Grid Padding="0" Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnItemSelected" />
+                                                </StackLayout.GestureRecognizers>
+                                                <ffimageloading:CachedImage 
+			                                        Style="{StaticResource FastImageStyle}"
+			                                        Source ="{Binding Movie.Imageurl}">
+                                                </ffimageloading:CachedImage>
+                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Like A Movie" x:Name="LikeButton" x:Uid="LikeMovieButton" Grid.Row="0" Grid.Column="1" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}"  WidthRequest="50" BackgroundColor="Transparent"/>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Horizontal scrolling list of Drama movies -->
+                <Label Style="{StaticResource ItemPageLabel}">DRAMA</Label>
+                <ScrollView HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                    <StackLayout
+                    x:Name="PopularDramaMoviesStackLayout"
+                    BindableLayout.ItemsSource="{Binding Path=PopularDramaMovies}"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,25">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                    <Grid Padding="0" Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnItemSelected" />
+                                                </StackLayout.GestureRecognizers>
+                                                <ffimageloading:CachedImage 
+			                                        Style="{StaticResource FastImageStyle}"
+			                                        Source ="{Binding Movie.Imageurl}">
+                                                </ffimageloading:CachedImage>
+                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Like A Movie" x:Name="LikeButton" x:Uid="LikeMovieButton" Grid.Row="0" Grid.Column="1" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}"  WidthRequest="50" BackgroundColor="Transparent"/>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Horizontal scrolling list of Horror movies -->
+                <Label Style="{StaticResource ItemPageLabel}">HORROR</Label>
+                <ScrollView HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                    <StackLayout
+                    x:Name="PopularHorrorMoviesStackLayout"
+                    BindableLayout.ItemsSource="{Binding Path=PopularHorrorMovies}"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,25">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                    <Grid Padding="0" Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnItemSelected" />
+                                                </StackLayout.GestureRecognizers>
+                                                <ffimageloading:CachedImage 
+			                                        Style="{StaticResource FastImageStyle}"
+			                                        Source ="{Binding Movie.Imageurl}">
+                                                </ffimageloading:CachedImage>
+                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Like A Movie" x:Name="LikeButton" x:Uid="LikeMovieButton" Grid.Row="0" Grid.Column="1" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}"  WidthRequest="50" BackgroundColor="Transparent"/>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+                <!-- Horizontal scrolling list of Romance movies -->
+                <Label Style="{StaticResource ItemPageLabel}">ROMANCE</Label>
+                <ScrollView HorizontalOptions="FillAndExpand" Orientation="Horizontal">
+                    <StackLayout
+                    x:Name="PopularRomanceMoviesStackLayout"
+                    BindableLayout.ItemsSource="{Binding Path=PopularRomanceMovies}"
+                    HorizontalOptions="FillAndExpand"
+                    Orientation="Horizontal"
+                    Margin="0,0,0,25">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate>
+                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                    <Grid Padding="0" Margin="0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="50" />
+                                            <RowDefinition Height="*" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="50" />
+                                        </Grid.ColumnDefinitions>
+                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                                <StackLayout.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnItemSelected" />
+                                                </StackLayout.GestureRecognizers>
+                                                <ffimageloading:CachedImage 
+			                                        Style="{StaticResource FastImageStyle}"
+			                                        Source ="{Binding Movie.Imageurl}" />
+                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                </StackLayout>
+                                            </StackLayout>
+                                        </Frame>
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Like A Movie" x:Name="LikeButton" x:Uid="LikeMovieButton" Grid.Row="0" Grid.Column="1" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}"  WidthRequest="50" BackgroundColor="Transparent"/>
+                                    </Grid>
+                                </StackLayout>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </StackLayout>
+                </ScrollView>
+
+
+            </StackLayout>
+        </ScrollView>
+    </controls:PullToRefreshLayout>
+</ContentPage>

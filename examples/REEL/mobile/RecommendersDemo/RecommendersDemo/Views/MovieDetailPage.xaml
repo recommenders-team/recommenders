@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             mc:Ignorable="d"
+             x:Class="RecommendersDemo.Views.MovieDetailPage">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="5*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        
+        <Image Source="nav_background.png" Grid.Row="0" Grid.RowSpan="2" Aspect="AspectFill"></Image>
+
+        <ImageButton Source="back.png" Grid.Row="0" Grid.RowSpan="2" Margin="20,30,0,0"
+                     Clicked="OnExitClick" 
+                     Style="{StaticResource BackButton}"></ImageButton>
+
+        <ImageButton Source="settings.png" Grid.Row="0" Grid.RowSpan="2" Margin="0,30,20,0"
+                     HorizontalOptions="End" VerticalOptions="Start" Clicked="ViewSettingsButtonClicked"
+                     HeightRequest="40" BackgroundColor="Transparent"></ImageButton>
+
+        <ScrollView Grid.Row="1" Grid.RowSpan="2" HorizontalOptions="Center" Orientation="Vertical">
+            <StackLayout Padding="10">
+                <Frame 
+                    VerticalOptions="Center"
+                    HorizontalOptions="Center"
+                    HeightRequest="{x:OnIdiom Desktop=500, Phone=325}"
+                    Padding="0" 
+                    HasShadow="true"
+                    IsClippedToBounds="true"
+                    CornerRadius="10"
+                    BackgroundColor="Transparent">
+                    <Grid Padding="0" Margin="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="8*" />
+                            <RowDefinition Height="8*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  Style="{StaticResource MovieCardFrame}">
+                            <StackLayout  Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
+                                <ffimageloading:CachedImage                                              
+                                        DownsampleToViewSize="True"
+                                        ErrorPlaceholder="default_image.png"
+                                        LoadingPlaceholder="default_image.png"
+                                        Source ="{Binding Movie.Imageurl}"
+                                        Aspect="AspectFill"
+                                        HeightRequest="{x:OnIdiom Desktop=350, Phone=200}"/>
+                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="{x:OnIdiom Desktop=175, Phone=100}">
+                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                </StackLayout>
+                            </StackLayout>
+                        </Frame>
+                        <ImageButton Grid.Row="2" Grid.RowSpan="2" x:Name="LikeButton" Source="{Binding MovieLikeButtonImageSource}" CommandParameter="{Binding Movie}" Command="{Binding LikeClicked}" WidthRequest="50" MinimumHeightRequest="50" BackgroundColor="Transparent" />
+                    </Grid>
+                </Frame>
+
+                <StackLayout HorizontalOptions="CenterAndExpand" Spacing="0">
+
+                    <Label TextColor="White" Text="Movie Summary" FontAttributes="Bold" HorizontalOptions="Center" FontSize="20" Margin="0, 20, 0, 20" />
+
+                    <Grid HorizontalOptions="Center" Margin="20, 0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="11*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Label Grid.Row="0" Grid.Column="1" TextColor="White" Text="{Binding Movie.Overview}" HorizontalOptions="Fill" LineBreakMode="WordWrap" >
+
+                        </Label>
+                    </Grid>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

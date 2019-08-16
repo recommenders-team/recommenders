@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             x:Class="RecommendersDemo.Views.UserMoviePreferencesPage"
+             Title="Favorite Movies"
+             x:Name="LikedMoviesPage">
+
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Icon="settings.png" Text="Settings" Clicked="ViewSettingsButtonClicked"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <!--   Property of ListView to show card icon     ItemSelected="OnItemSelected"-->
+    <ScrollView>
+        <StackLayout Padding="20,35,20,20">
+
+            <ScrollView Orientation="Horizontal">
+                <StackLayout Orientation="Horizontal" HeightRequest="110">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="40" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="40" />
+                        </Grid.ColumnDefinitions>
+
+                        <ImageButton ClassId="Comedy" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Source="rectangle.png" Clicked="genreButtonClicked" BackgroundColor="Transparent"></ImageButton>
+                        <Label Grid.Row="1" Grid.Column="0" Text="Comedy" Style="{StaticResource FilterText}"></Label>
+                        <Image x:Name="comedyCheck" Grid.Row="0" Grid.Column="1" Source="check.png" BackgroundColor="Transparent" IsVisible="True" />
+
+                        <ImageButton  ClassId="Adventure" Grid.Row="0" Grid.Column="2" Grid.RowSpan="2" Grid.ColumnSpan="2" Source="rectangle.png" Clicked="genreButtonClicked" BackgroundColor="Transparent"></ImageButton>
+                        <Label Grid.Row="1" Grid.Column="2" Text="Adventure" Style="{StaticResource FilterText}"></Label>
+                        <Image x:Name="adventureCheck" Grid.Row="0" Grid.Column="3" Source="check.png" BackgroundColor="Transparent" IsVisible="True"/>
+
+                        <ImageButton ClassId="Action" Grid.Row="0" Grid.Column="4" Grid.RowSpan="2" Grid.ColumnSpan="2" Source="rectangle.png" Clicked="genreButtonClicked" BackgroundColor="Transparent"></ImageButton>
+                        <Label Grid.Row="1" Grid.Column="4" Text="Action" Style="{StaticResource FilterText}"></Label>
+                        <Image x:Name="actionCheck" Grid.Row="0" Grid.Column="5" Source="check.png" BackgroundColor="Transparent" IsVisible="True"/>
+
+                        <ImageButton ClassId="Drama" Grid.Row="0" Grid.Column="6" Grid.RowSpan="2" Grid.ColumnSpan="2" Source="rectangle.png" Clicked="genreButtonClicked" BackgroundColor="Transparent"></ImageButton>
+                        <Label Grid.Row="1" Grid.Column="6" Text="Drama" Style="{StaticResource FilterText}"></Label>
+                        <Image x:Name="dramaCheck" Grid.Row="0" Grid.Column="7" Source="check.png" BackgroundColor="Transparent" IsVisible="True"/>
+
+                        <ImageButton ClassId="Horror" Grid.Row="0" Grid.Column="8" Grid.RowSpan="2" Grid.ColumnSpan="2" Source="rectangle.png" Clicked="genreButtonClicked" BackgroundColor="Transparent"></ImageButton>
+                        <Label Grid.Row="1" Grid.Column="8" Text="Horror" Style="{StaticResource FilterText}"></Label>
+                        <Image x:Name="horrorCheck" Grid.Row="0" Grid.Column="9" Source="check.png" BackgroundColor="Transparent" IsVisible="True"/>
+
+                        <ImageButton ClassId="Romance" Grid.Row="0" Grid.Column="10" Grid.RowSpan="2" Grid.ColumnSpan="2" Source="rectangle.png" Clicked="genreButtonClicked" BackgroundColor="Transparent"></ImageButton>
+                        <Label Grid.Row="1" Grid.Column="10" Text="Romance" Style="{StaticResource FilterText}"></Label>
+                        <Image x:Name="romanceCheck" Grid.Row="0" Grid.Column="11" Source="check.png" BackgroundColor="Transparent" IsVisible="True"/>
+                    </Grid>
+                </StackLayout>
+            </ScrollView>
+
+
+            <ScrollView>
+                <StackLayout BindableLayout.ItemsSource="{Binding Path=PairedMovieList}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate>
+                            <StackLayout Padding="5" Orientation="Vertical" VerticalOptions="Center">
+                                <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="0" Padding="0">
+                                    <Frame IsVisible="{Binding DisplayFirstMovie}" Margin="0" BackgroundColor="Transparent" Padding="0">
+                                        <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                            <Frame Style="{StaticResource MovieCardFrame}">
+                                                <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                                    <Grid Padding="0" Margin="0">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="50" />
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                                            <StackLayout BindingContext="{Binding Path=FirstMovie}" Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}" ClassId="{Binding FirstMovie.ItemID}">
+                                                                <StackLayout.GestureRecognizers>
+                                                                    <TapGestureRecognizer Tapped="OnItemSelected"/>
+                                                                </StackLayout.GestureRecognizers>
+                                                                <ffimageloading:CachedImage 
+			                                                        Style="{StaticResource FastImageStyle}"
+			                                                        Source ="{Binding Movie.Imageurl}">
+                                                                </ffimageloading:CachedImage>
+                                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                                </StackLayout>
+                                                            </StackLayout>
+                                                        
+                                                        </Frame>
+                                                    <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Remove a Movie from your liked movies collection" x:Uid="RemoveMovieButton" Grid.Row="0" Grid.Column="1" Source="dislike.png" WidthRequest="50" BackgroundColor="Transparent" CommandParameter="{Binding FirstMovie}" IsVisible="{Binding DisplayFirstMovie}"  Clicked="RemovePreference"/>
+                                                </Grid>
+                                            </StackLayout>
+                                        </Frame>
+                                    </StackLayout>
+                                </Frame>
+
+                                    <Frame IsVisible="{Binding DisplaySecondMovie}" Margin="0" BackgroundColor="Transparent" Padding="0">
+                                        <StackLayout Orientation="Vertical" Padding="0" Margin="0">
+                                            <Frame Style="{StaticResource MovieCardFrame}">
+                                                <StackLayout x:Name="StackLayout2" Orientation="Vertical" Padding="0" Margin="0">
+                                                    <Grid Padding="0" Margin="0">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="50" />
+                                                            <RowDefinition Height="*" />
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="*" />
+                                                            <ColumnDefinition Width="50" />
+                                                        </Grid.ColumnDefinitions>
+                                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" Style="{StaticResource MovieCardFrame}">
+                                                            <StackLayout BindingContext="{Binding Path=SecondMovie}" Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}" ClassId="{Binding SecondMovie.ItemID}">
+                                                                <StackLayout.GestureRecognizers>
+                                                                    <TapGestureRecognizer Tapped="OnItemSelected"/>
+                                                                </StackLayout.GestureRecognizers>
+                                                                <ffimageloading:CachedImage 
+			                                                    Style="{StaticResource FastImageStyle}"
+			                                                    Source ="{Binding Movie.Imageurl}">
+                                                                </ffimageloading:CachedImage>
+                                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="75">
+                                                                    <Label Text="{Binding Movie.Title}" Style="{StaticResource MovieCardTitle}" />
+                                                                    <Label Text="{Binding Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                                </StackLayout>
+                                                            </StackLayout>
+                                                        </Frame>
+                                                        <ImageButton AutomationProperties.IsInAccessibleTree="true" AutomationProperties.Name="Remove a Movie from your liked movies collection" x:Uid="RemoveMovieButton" Grid.Row="0" Grid.Column="1" Source="dislike.png" WidthRequest="50" BackgroundColor="Transparent" CommandParameter="{Binding SecondMovie}" IsVisible="{Binding DisplaySecondMovie}" Clicked="RemovePreference" />
+                                                    </Grid>
+                                                </StackLayout>
+                                            </Frame>
+                                        </StackLayout>
+                                    </Frame>
+                                </StackLayout>
+                            </StackLayout>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </StackLayout>
+            </ScrollView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
