@@ -7,9 +7,6 @@ import sys
 """
 Adds a column to the MOVIES table called tmdbID and populates it with every movies' correct tmdbID
 Command to add the new column: ALTER TABLE MOVIES ADD tmdbID int;
-
-@author: Blake Wesel
-@version: 8/20/19
 """
 def populateTMBDID():
 

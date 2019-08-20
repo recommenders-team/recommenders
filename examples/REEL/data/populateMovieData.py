@@ -10,9 +10,6 @@ Reads this information through a dataset downloaded from MovieLens
 Data Format:
     1) COUNT,MOVIE_ID,MOVIE_TITLE MOVIE_YEAR,GENRE|GENRE|GENRE
     2) COUNT,MOVIE_ID,"MOVIE_TITLE MOVIE_YEAR",GENRE|GENRE|GENRE - there is a comma and/or parenthesis
-
-@author: Blake Wesel
-@version: 8/20/19
 """
 def populateMovieData():
 

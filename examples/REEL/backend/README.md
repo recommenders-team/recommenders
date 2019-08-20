@@ -48,17 +48,17 @@ Note: It's recommended to create all the following Azure services under the same
 - ML model endpoint
 - [tmdb API key](https://developers.themoviedb.org/3)
   
-  ![alt text](assets/tmdb.png =100x)
+  <img src="../assets/tmdb.png" width="150px">
 
   You can obain a tmdb API key for free as an open source developer using the above link.
 
 - [Azure SQL Database](https://azure.microsoft.com/en-us/pricing/details/sql-database/single/)
 
-  ![alt text](assets/sql.png =100x)
+  <img src="../assets/sql.png" width="150px">
 
 - [Azure Search](https://azure.microsoft.com/en-us/services/search/)
 
-  ![alt text](assets/search.png =100x)
+  <img src="../assets/search.png" width="150px">
 
 ## Install
 
@@ -68,7 +68,7 @@ pip install -r requirements.txt
 
 ## Setting up ML model endpoint
 
-Run the desired jupyter notebook (either SAR or Light GBM) and write down the REST url endpoint and the Bearer token returned at the end of the notebook by the following cell:
+Run the desired jupyter notebook (either [SAR](../../../notebooks/05_operationalize/sar_webservice_poc.ipynb) or [Light GBM](../../../notebooks/05_operationalize/lgbm_webservice_poc.ipynb)) and write down the REST url endpoint and the Bearer token returned at the end of the notebook by the following cell:
 
 ```python
 if service.compute_type == 'AKS':
@@ -151,17 +151,17 @@ Note: Use the same Azure resource group as the previous Azure services.
 
 - Install [Docker](https://docs.docker.com/install/)
 
-  ![alt text](assets/docker.png =100x)
+  <img src="../assets/docker.png" width="150px">
 
 - Install [Azure CLI](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
   
 - [Azure Kubernetes Services](https://azure.microsoft.com/en-us/services/kubernetes-service/)
 
-  ![alt text](assets/aks.png =100x)
+  <img src="../assets/aks.png" width="150px">
 
 - [Azure Container Registry](https://azure.microsoft.com/en-us/services/container-registry/)
 
-  ![alt text](assets/acr.png =100x)
+  <img src="../assets/acr.png" width="150px">
 
 ## Setting up Azure Container Registry
 
