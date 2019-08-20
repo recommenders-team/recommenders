@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="RecommendersDemo.Views.AlgorithmPage">
 
@@ -11,8 +11,8 @@
             <Grid>
                 <Grid.Padding>
                     <Thickness
-                      Left="{StaticResource Default2Margin}"
-                      Right="{StaticResource Default2Margin}" />
+                        Left="{StaticResource Default2Margin}"
+                        Right="{StaticResource Default2Margin}" />
                 </Grid.Padding>
 
                 <Grid.RowDefinitions>
@@ -20,29 +20,39 @@
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="18*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="18*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
-                <StackLayout Grid.Row="0" Grid.Column="1" VerticalOptions="End">
-                    <Label FontFamily="{StaticResource AkagiProExtraBold}" 
+                <StackLayout Grid.Row="0"
+                             Grid.Column="1"
+                             VerticalOptions="End">
+                    <Label FontFamily="{StaticResource AkagiProExtraBold}"
                            FontSize="Large"
                            Text="Algorithm: SAR"
                            FontAttributes="Bold"
                            TextColor="{StaticResource NavigationPrimary}">
                     </Label>
                 </StackLayout>
-                <StackLayout Grid.Row="1" Grid.Column="1">
+                <StackLayout Grid.Row="1"
+                             Grid.Column="1">
                     <Label Text="What is SAR?"
-                       TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Small" Margin="15"></Label>
-                    <Label Text="The Simple Algorithm for Recommendation (SAR) uses collaborative filtering to provide recommendations. It generates recommendations based only on prior interactions between users and items. " TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium" FontAttributes="Bold" Margin="15"></Label>
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Small"
+                           Margin="15"></Label>
+                    <Label Text="The Simple Algorithm for Recommendation (SAR) uses collaborative filtering to provide recommendations. It generates recommendations based only on prior interactions between users and items. "
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Medium"
+                           FontAttributes="Bold"
+                           Margin="15"></Label>
                     <Button
-                    FontAttributes="Bold"
-                    Style="{StaticResource Accent2ColorButtonStyle}"
-                    Text="see results" Clicked="Redirect"/>
+                        FontAttributes="Bold"
+                        Style="{StaticResource Accent2ColorButtonStyle}"
+                        Text="see results"
+                        Clicked="Redirect" />
 
                 </StackLayout>
 

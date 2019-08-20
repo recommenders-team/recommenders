@@ -80,15 +80,8 @@
     <BundleResource Include="Resources\home.png" />
     <BundleResource Include="Resources\search.png" />
     <BundleResource Include="Resources\favorites.png" />
-    <BundleResource Include="Resources\Montserrat-Bold.ttf" />
-    <BundleResource Include="Resources\Montserrat-ExtraBold.ttf" />
     <BundleResource Include="Resources\AkagiPro-Sm.otf" />
     <BundleResource Include="Resources\AkagiPro-Md.otf" />
-    <BundleResource Include="Resources\Montserrat-Regular.ttf" />
-    <BundleResource Include="Resources\Montserrat-Thin.ttf" />
-    <BundleResource Include="Resources\Montserrat-SemiBold.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </BundleResource>
     <BundleResource Include="Resources\GenreSelect.json" />
     <BundleResource Include="Resources\PersonaSelect.json" />
     <BundleResource Include="Resources\MovieSelect.json" />

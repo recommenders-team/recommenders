@@ -8,118 +8,193 @@
              x:Class="RecommendersDemo.Views.SettingsPage">
 
     <ContentPage.Content>
-        <ScrollView Orientation="Vertical">
-            <StackLayout>
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="3*"></RowDefinition>
-                        <RowDefinition Height="*"></RowDefinition>
-                        <RowDefinition Height="8.5*"></RowDefinition>
-                    </Grid.RowDefinitions>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"></ColumnDefinition>
-                    </Grid.ColumnDefinitions>
-                    <Image Source="nav_background.png" Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"  HeightRequest="150" Aspect="AspectFill"></Image>
+        <StackLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="8.5*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Image Source="nav_background.png"
+                       Grid.Row="0"
+                       Grid.Column="0"
+                       Grid.RowSpan="2"
+                       Aspect="AspectFill"></Image>
 
-                    <ImageButton Grid.Row="0" Grid.Column="0" Margin="30" Source="back.png" Clicked="OnExitClick" Style="{StaticResource BackButton}"></ImageButton>
-                    <Label Text="Settings" FontFamily="{StaticResource AkagiProExtraBold}" FontSize="Large" Margin="30" TextColor="White" Grid.Row="0" Grid.Column="0" VerticalOptions="End"></Label>
-                    <StackLayout Grid.Row="1" Grid.Column="0" Grid.RowSpan="2">
-                        <ScrollView HorizontalOptions="CenterAndExpand" Orientation="Horizontal">
-                            <StackLayout x:Name="PersonaStackLayout" BindableLayout.ItemsSource="{Binding Path=Personas}" Orientation="Horizontal" HorizontalOptions="CenterAndExpand" Padding="0" Margin="0">
-                                <BindableLayout.ItemTemplate>
-                                    <DataTemplate>
-                                        <StackLayout>
-                                            <Grid Padding="0" Margin="10,0,10,0">
-                                                <Grid.RowDefinitions>
-                                                    <RowDefinition Height="50" />
-                                                    <RowDefinition Height="*" />
-                                                </Grid.RowDefinitions>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="50" />
-                                                </Grid.ColumnDefinitions>
-                                                <ImageButton Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="2" ClassId="{Binding persona.Name}" Clicked="PersonaButtonClicked" BackgroundColor="Transparent" HorizontalOptions="CenterAndExpand" HeightRequest="150" Source = "{Binding persona.IconSource}"/>
-                                                <Image x:Name="CheckButton" Grid.Row="0" Grid.Column="1" Source="check.png" IsVisible="{Binding ShowCheckmark}" BackgroundColor="Transparent"/>
-                                            </Grid>
-                                            <Label Text="{Binding persona.Name}" HorizontalTextAlignment="Center" TextColor="White" FontFamily="{StaticResource AkagiProLightMediumFontStyle}" FontAttributes="Bold"/>
-                                        </StackLayout>
-                                    </DataTemplate>
-                                </BindableLayout.ItemTemplate>
-                            </StackLayout>
-                        </ScrollView>
-                        <ImageButton Source="create_persona.png" Clicked="OnCreatePersona" HeightRequest="40" BackgroundColor="Transparent" Margin="0,20,0,0"></ImageButton>
-                        <BoxView HeightRequest="2" WidthRequest="1" BackgroundColor="White" Margin="0,20,0,20"/>
+                <ImageButton Grid.Row="0"
+                             Grid.Column="0"
+                             Margin="30"
+                             Source="back.png"
+                             Clicked="OnExitClick"
+                             Style="{StaticResource BackButton}"></ImageButton>
+                <Label Text="Settings"
+                       FontFamily="{StaticResource AkagiProExtraBold}"
+                       FontSize="Large"
+                       Margin="30"
+                       TextColor="White"
+                       Grid.Row="0"
+                       Grid.Column="0"
+                       VerticalOptions="End"></Label>
+                <StackLayout Grid.Row="1"
+                             Grid.Column="0"
+                             Grid.RowSpan="2">
+                    <ScrollView HorizontalOptions="CenterAndExpand"
+                                Orientation="Horizontal">
+                        <StackLayout x:Name="PersonaStackLayout"
+                                     BindableLayout.ItemsSource="{Binding Path=Personas}"
+                                     Orientation="Horizontal"
+                                     HorizontalOptions="CenterAndExpand"
+                                     Padding="0"
+                                     Margin="0">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <StackLayout>
+                                        <Grid Padding="0"
+                                              Margin="10,0,10,0">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="50" />
+                                                <RowDefinition Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="50" />
+                                            </Grid.ColumnDefinitions>
+                                            <ImageButton Grid.Row="0"
+                                                         Grid.Column="0"
+                                                         Grid.RowSpan="2"
+                                                         Grid.ColumnSpan="2"
+                                                         ClassId="{Binding persona.Name}"
+                                                         Clicked="PersonaButtonClicked"
+                                                         BackgroundColor="Transparent"
+                                                         HorizontalOptions="CenterAndExpand"
+                                                         HeightRequest="150"
+                                                         Source="{Binding persona.IconSource}" />
+                                            <Image x:Name="CheckButton"
+                                                   Grid.Row="0"
+                                                   Grid.Column="1"
+                                                   Source="check.png"
+                                                   IsVisible="{Binding ShowCheckmark}"
+                                                   BackgroundColor="Transparent" />
+                                        </Grid>
+                                        <Label Text="{Binding persona.Name}"
+                                               HorizontalTextAlignment="Center"
+                                               TextColor="White"
+                                               FontFamily="{StaticResource AkagiProLightMediumFontStyle}"
+                                               FontAttributes="Bold" />
+                                    </StackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </StackLayout>
+                    </ScrollView>
+                    <ImageButton Source="create_persona.png"
+                                 Clicked="OnCreatePersona"
+                                 HeightRequest="40"
+                                 BackgroundColor="Transparent"
+                                 Margin="0,20,0,0"></ImageButton>
+                    <BoxView HeightRequest="2"
+                             WidthRequest="1"
+                             BackgroundColor="White"
+                             Margin="0,20,0,20" />
 
-                        <ScrollView Orientation="Vertical">
-                            <StackLayout Padding="20" Orientation="Vertical" HorizontalOptions="CenterAndExpand">
-                                <Label TextColor="White" FontAttributes="Bold" FontFamily="{StaticResource AkagiProSemiBold}">Select Algorithm</Label>
-                                <Grid ColumnSpacing="20">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="30" />
-                                        <RowDefinition Height="*" />
-                                    </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="50" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="50" />
-                                    </Grid.ColumnDefinitions>
-                                    <Button ClassId="sarButton" FontFamily="{StaticResource AkagiProMedium}"
-                                        BackgroundColor="#5DA1F7" 
-                                        CornerRadius="10" 
+                    <ScrollView Orientation="Vertical">
+                        <StackLayout Padding="20"
+                                     Orientation="Vertical"
+                                     HorizontalOptions="CenterAndExpand">
+                            <Label TextColor="White"
+                                   FontAttributes="Bold"
+                                   FontFamily="{StaticResource AkagiProSemiBold}">Select Algorithm</Label>
+                            <Grid ColumnSpacing="20">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="50" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="50" />
+                                </Grid.ColumnDefinitions>
+                                <Button ClassId="sarButton"
+                                        FontFamily="{StaticResource AkagiProMedium}"
+                                        BackgroundColor="#5DA1F7"
+                                        CornerRadius="10"
                                         TextColor="White"
-                                        Text="SAR" 
+                                        Text="SAR"
                                         Grid.Row="0"
-                                        Grid.Column="0" 
+                                        Grid.Column="0"
                                         Grid.RowSpan="2"
                                         Grid.ColumnSpan="2"
                                         Margin="0, 10, 10, 0"
-                                        Clicked="AlgorithmButtonClicked"/>
-                                    <Button ClassId="lightButton" FontFamily="{StaticResource AkagiProMedium}"
-                                        BackgroundColor="#5DA1F7" 
-                                        CornerRadius="10" 
+                                        Clicked="AlgorithmButtonClicked" />
+                                <Button ClassId="lightButton"
+                                        FontFamily="{StaticResource AkagiProMedium}"
+                                        BackgroundColor="#5DA1F7"
+                                        CornerRadius="10"
                                         TextColor="White"
-                                        Text="Light GBM" 
-                                        Grid.Row="0" 
+                                        Text="Light GBM"
+                                        Grid.Row="0"
                                         Grid.Column="2"
                                         Grid.RowSpan="2"
                                         Grid.ColumnSpan="2"
                                         Margin="0, 10, 10, 0"
                                         Clicked="AlgorithmButtonClicked" />
-                                    <Image x:Name="sarCheck" 
-                                        Grid.Row="0" 
-                                        Grid.Column="1" 
-                                        Source="check.png" 
-                                        BackgroundColor="Transparent" 
-                                        IsVisible="{Binding SarCheck}"/>
-                                    <Image x:Name="lgbmCheck" 
-                                        Grid.Row="0" 
-                                        Grid.Column="3"
-                                        Source="check.png" 
-                                        BackgroundColor="Transparent" 
-                                        IsVisible="{Binding LgbmCheck}"/>
-                                </Grid>
-                                <Label TextColor="White" FontAttributes="Bold" Margin="0,30,0,30" FontFamily="{StaticResource AkagiProSemiBold}">Summary</Label>
-                                <Label x:Name="description" FontFamily="{StaticResource AkagiProLightMediumFontStyle}" TextColor="White"/>
+                                <Image x:Name="sarCheck"
+                                       Grid.Row="0"
+                                       Grid.Column="1"
+                                       Source="check.png"
+                                       BackgroundColor="Transparent"
+                                       IsVisible="{Binding SarCheck}" />
+                                <Image x:Name="lgbmCheck"
+                                       Grid.Row="0"
+                                       Grid.Column="3"
+                                       Source="check.png"
+                                       BackgroundColor="Transparent"
+                                       IsVisible="{Binding LgbmCheck}" />
+                            </Grid>
+                            <Label TextColor="White"
+                                   FontAttributes="Bold"
+                                   Margin="0,30,0,30"
+                                   FontFamily="{StaticResource AkagiProSemiBold}">Summary</Label>
+                            <Label x:Name="description"
+                                   FontFamily="{StaticResource AkagiProMedium}"
+                                   TextColor="White" />
 
-                                <StackLayout Orientation="Horizontal" Margin="20" HeightRequest="35">
-                                    <StackLayout.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding OpenGitHubLink}"/>
-                                    </StackLayout.GestureRecognizers>
-                                    <Image Source="info_button.png" Margin="5"></Image>
-                                    <Label FontFamily="{StaticResource AkagiProMedium}" Text="GitHub Repository" FontSize="Small" VerticalOptions="Center" TextColor="White"></Label>
-                                    <Image BackgroundColor="Transparent" Source="pull_down.png" Rotation="-90" HorizontalOptions="End" ></Image>
-                                </StackLayout>
-
+                            <StackLayout Orientation="Horizontal"
+                                         Margin="20"
+                                         HeightRequest="35">
+                                <StackLayout.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenGitHubLink}" />
+                                </StackLayout.GestureRecognizers>
+                                <Image Source="info_button.png"
+                                       Margin="5"></Image>
+                                <Label FontFamily="{StaticResource AkagiProMedium}"
+                                       Text="GitHub Repository"
+                                       FontSize="Small"
+                                       VerticalOptions="Center"
+                                       TextColor="White"></Label>
+                                <Image BackgroundColor="Transparent"
+                                       Source="pull_down.png"
+                                       Rotation="-90"
+                                       HorizontalOptions="End"></Image>
                             </StackLayout>
-                        </ScrollView>
-                    </StackLayout>
-                </Grid>
-                <StackLayout Orientation="Horizontal" Margin="20" HeightRequest="35">
-                    <Label TextColor="White" Text="This product uses the TMDb API but is not endorsed or certified by TMDb." VerticalOptions="Center"></Label>
-                    <Image Source="tmdb.png" Margin="5"></Image>
+
+                        </StackLayout>
+                    </ScrollView>
                 </StackLayout>
+            </Grid>
+            <StackLayout Orientation="Horizontal"
+                         Margin="20"
+                         HeightRequest="35">
+                <Label TextColor="White"
+                       Text="This product uses the TMDb API but is not endorsed or certified by TMDb."
+                       VerticalOptions="Center"
+                       FontSize="Micro"></Label>
+                <Image Source="tmdb.png"
+                       Margin="5"></Image>
             </StackLayout>
-        </ScrollView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

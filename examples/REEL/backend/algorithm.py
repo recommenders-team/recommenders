@@ -59,7 +59,7 @@ class Algorithm:
 			raise RecommendationError('ID required')
 
 		payload = {"UserID": 0, "key": 0}
-		with open('genre_list.txt') as file:
+		with open('data/genre_list.txt') as file:
 			for line in file:
 				payload[line.rstrip()] = 0
 

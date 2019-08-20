@@ -8,33 +8,24 @@
              x:Class="RecommendersDemo.App">
 
     <Application.Resources>
-        <ResourceDictionary>S
+        <ResourceDictionary>
             <!-- Fonts -->
-            <!--<OnPlatform x:Key="AkagiProMedium"
-                x:TypeArguments="x:String"
-                Android="AkagiPro-Md.otf#AkagiPro-Md"
-                iOS="AkagiPro-Md"  Default="AkagiPro-Md"/>
-            <OnPlatform x:Key="AkagiProSemiBold"
-                x:TypeArguments="x:String"
-                Android="AkagiPro-Sm.otf#AkagiPro-Sm"
-                iOS="AkagiPro-Sm"
-                Default="AkagiPro-Sm"/>-->
             <OnPlatform x:Key="AkagiProSemiBold" x:TypeArguments="x:String">
                 <On Platform="Android">AkagiPro-Sm.otf#AkagiPro-Sm</On>
-                <On Platform="iOS">AkagiPro-Sm</On>
+                <On Platform="iOS">AkagiPro-SemiBold</On>
                 <On Platform="UWP">Assets/Fonts/AkagiPro-Sm.otf#AkagiPro-Sm</On>
             </OnPlatform>
 
 
             <OnPlatform x:Key="AkagiProMedium" x:TypeArguments="x:String">
                 <On Platform="Android">AkagiPro-Md.otf#AkagiPro-Md</On>
-                <On Platform="iOS">AkagiPro-Md</On>
+                <On Platform="iOS">AkagiPro-Medium</On>
                 <On Platform="UWP">Assets/Fonts/AkagiPro-Md.otf#AkagiPro-Md</On>
             </OnPlatform>
 
             <OnPlatform x:Key="AkagiProExtraBold" x:TypeArguments="x:String">
                     <On Platform="Android">AkagiPro-Eb.otf#AkagiPro-Eb</On>
-                    <On Platform="iOS">AkagiPro-Eb</On>
+                    <On Platform="iOS">AkagiPro-ExtraBold</On>
                     <On Platform="UWP">Assets/Fonts/AkagiPro-Eb.otf#AkagiPro-Eb</On>
              </OnPlatform>
 

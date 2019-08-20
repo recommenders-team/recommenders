@@ -69,7 +69,7 @@
 
                 <StackLayout HorizontalOptions="CenterAndExpand" Spacing="0">
 
-                    <Label TextColor="White" Text="Movie Summary" FontAttributes="Bold" HorizontalOptions="Center" FontSize="20" Margin="0, 20, 0, 20" />
+                    <Label TextColor="White" Text="Movie Summary" FontAttributes="Bold" HorizontalOptions="Center" FontSize="20" Margin="0, 20, 0, 20" FontFamily="{StaticResource AkagiProSemiBold}"/>
 
                     <Grid HorizontalOptions="Center" Margin="20, 0">
                         <Grid.RowDefinitions>
@@ -81,7 +81,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Row="0" Grid.Column="1" TextColor="White" Text="{Binding Movie.Overview}" HorizontalOptions="Fill" LineBreakMode="WordWrap" >
+                        <Label Grid.Row="0" Grid.Column="1" TextColor="White" Text="{Binding Movie.Overview}" HorizontalOptions="Fill" LineBreakMode="WordWrap" FontFamily="{StaticResource AkagiProMedium}" >
 
                         </Label>
                     </Grid>

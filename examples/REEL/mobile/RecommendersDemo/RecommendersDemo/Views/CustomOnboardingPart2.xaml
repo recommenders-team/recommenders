@@ -3,62 +3,79 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms" 
+             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
              mc:Ignorable="d"
              x:Class="RecommendersDemo.Views.CustomOnboardingPart2">
     <ContentPage.Content>
         <ScrollView>
-        <Grid>
-            <Grid.Padding>
-                <Thickness
-          Left="{StaticResource Default2Margin}"
-          Right="{StaticResource Default2Margin}" />
-            </Grid.Padding>
+            <Grid>
+                <Grid.Padding>
+                    <Thickness
+                        Left="{StaticResource Default2Margin}"
+                        Right="{StaticResource Default2Margin}" />
+                </Grid.Padding>
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="2*" />
-                <RowDefinition Height="3*" />
-                <RowDefinition Height="6*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="12*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-                <forms:AnimationView 
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="3*" />
+                    <RowDefinition Height="6*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <forms:AnimationView
                     AutomationProperties.IsInAccessibleTree="True"
                     AutomationProperties.Name="Selecting Movie Animation"
-                    Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
-                    x:Name="LottieAnimation" 
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Grid.RowSpan="2"
+                    x:Name="LottieAnimation"
                     x:Uid="Movie Animation"
-                    Animation="MovieSelect.json" 
-                    AutoPlay="True" Loop="true"
+                    Animation="MovieSelect.json"
+                    AutoPlay="True"
+                    Loop="true"
                     VerticalOptions="FillAndExpand"
                     HorizontalOptions="FillAndExpand"
-                    HeightRequest="50" Margin="0,0,0,70"/>
-                <StackLayout Grid.Row="1" Grid.Column="1" VerticalOptions="End">
-                    <Image Source="on3.png" HeightRequest="60" HorizontalOptions="Start" Margin="0,0,0,25"/>
-                    <Label FontFamily="{StaticResource AkagiProExtraBold}" 
+                    HeightRequest="50"
+                    Margin="0,0,0,70" />
+                <StackLayout Grid.Row="1"
+                             Grid.Column="1"
+                             VerticalOptions="End">
+                    <Image Source="on3.png"
+                           HeightRequest="60"
+                           HorizontalOptions="Start"
+                           Margin="0,0,0,25" />
+                    <Label FontFamily="{StaticResource AkagiProExtraBold}"
                            FontSize="Large"
                            Text="Select Movies"
                            FontAttributes="Bold"
                            TextColor="{StaticResource NavigationPrimary}">
                     </Label>
-            </StackLayout>
-            <StackLayout Grid.Row="2" Grid.Column="1">
+                </StackLayout>
+                <StackLayout Grid.Row="2"
+                             Grid.Column="1">
                     <Label Text="Now that you have selected your favorite genres let's move onto movies"
-                       TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Small" Margin="15"></Label>
-                    <Label Text="On the next screen we will show you various movies, you decide if you like or dislike them" TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium" FontAttributes="Bold" Margin="15"></Label>
-                <Button
-                 Style="{StaticResource Accent2ColorButtonStyle}"
-                 FontAttributes="Bold"
-                 Text="next" Clicked="Redirect"/>
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Small"
+                           Margin="15"></Label>
+                    <Label Text="On the next screen we will show you various movies, you decide if you like or dislike them"
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Medium"
+                           FontAttributes="Bold"
+                           Margin="15"></Label>
+                    <Button
+                        Style="{StaticResource Accent2ColorButtonStyle}"
+                        FontAttributes="Bold"
+                        Text="next"
+                        Clicked="Redirect" />
 
-            </StackLayout>
+                </StackLayout>
 
-        </Grid>
+            </Grid>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>

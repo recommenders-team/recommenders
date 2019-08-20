@@ -102,7 +102,7 @@ def create_app(
     """
     @app.route('/popular-movies')
     def popular():
-        with open('starter_movies.json') as f:
+        with open('data/starter_movies.json') as f:
             data = json.load(f)
         params = request.args.get("genres")
 
@@ -122,7 +122,7 @@ def create_app(
     @app.route('/personas')
     def persona():
         data = None
-        with open('personas.json') as f:
+        with open('data/personas.json') as f:
             data = json.load(f)
 
         return json.dumps(data)
@@ -135,7 +135,7 @@ def create_app(
         genres = request.args.get("genres").split('|')
         num_per_category = 10 // len(genres)
         data = None 
-        with open('movies_by_genre.json') as f:
+        with open('data/movies_by_genre.json') as f:
             data = json.load(f)
 
         json_object = {"Movies": []}

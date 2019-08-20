@@ -1,6 +1,7 @@
 ﻿using RecommendersDemo.Models;
 using RecommendersDemo.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using Xamarin.Forms;
 
@@ -11,6 +12,7 @@ namespace RecommendersDemo.Views
     {
         UserMoviePreferencesViewModel viewModel;
         UserMoviePreferences preferences = UserMoviePreferences.getInstance();
+        private List<string> otherGenres = new List<string>(new string[] { "Animation", "Children's", "Crime", "Documentary", "Fantasy", "Film-Noir", "Musical", "Mystery", "Sci-Fi", "Thriller", "War", "Western" });
 
         public UserMoviePreferencesPage()
         {
@@ -82,6 +84,14 @@ namespace RecommendersDemo.Views
             {
                 romanceCheck.IsVisible = !romanceCheck.IsVisible;
                 updateFilter(romanceCheck, classId);
+            }
+            else if (classId == "Other")
+            {
+                otherCheck.IsVisible = !otherCheck.IsVisible;
+                foreach (string genre in otherGenres)
+                {
+                    updateFilter(otherCheck, genre);
+                }
             }
             viewModel.UpdatePairedListForGenre(preferences.GetFilters());
         }

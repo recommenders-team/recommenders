@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms" 
+             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
              mc:Ignorable="d"
              x:Class="RecommendersDemo.Views.CustomOnboardInfo">
 
@@ -12,8 +12,8 @@
             <Grid>
                 <Grid.Padding>
                     <Thickness
-          Left="{StaticResource Default2Margin}"
-          Right="{StaticResource Default2Margin}" />
+                        Left="{StaticResource Default2Margin}"
+                        Right="{StaticResource Default2Margin}" />
                 </Grid.Padding>
 
                 <Grid.RowDefinitions>
@@ -22,39 +22,56 @@
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="12*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <forms:AnimationView 
+                <forms:AnimationView
                     AutomationProperties.IsInAccessibleTree="True"
                     AutomationProperties.Name="Selecting Genre Animation"
-                    Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Grid.RowSpan="2"
                     x:Uid="Genre Animation"
-                    Animation="GenreSelect.json" 
-                    AutoPlay="True" Loop="true"
+                    Animation="GenreSelect.json"
+                    AutoPlay="True"
+                    Loop="true"
                     VerticalOptions="FillAndExpand"
                     HorizontalOptions="FillAndExpand"
-                    HeightRequest="50" Margin="0,0,0,70"/>
-                <StackLayout Grid.Row="1" Grid.Column="1" VerticalOptions="End">
-                    <Image Source="on2.png" HeightRequest="60" HorizontalOptions="Start" Margin="0,0,0,25"/>
-                    <Label FontFamily="{StaticResource AkagiProExtraBold}" 
+                    HeightRequest="50"
+                    Margin="0,0,0,70" />
+                <StackLayout Grid.Row="1"
+                             Grid.Column="1"
+                             VerticalOptions="End">
+                    <Image Source="on2.png"
+                           HeightRequest="60"
+                           HorizontalOptions="Start"
+                           Margin="0,0,0,25" />
+                    <Label FontFamily="{StaticResource AkagiProExtraBold}"
                            FontSize="Large"
                            Text="Start with Genres"
                            FontAttributes="Bold"
                            TextColor="{StaticResource NavigationPrimary}">
                     </Label>
                 </StackLayout>
-                <StackLayout Grid.Row="2" Grid.Column="1">
+                <StackLayout Grid.Row="2"
+                             Grid.Column="1">
                     <Label Text="In order to provide the best results for you, we need to get to know you better"
-                       TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Small" Margin="15"></Label>
-                    <Label Text="let's start by selecting 2-3 genres you're interested in" TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium" FontAttributes="Bold" Margin="15"></Label>
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Small"
+                           Margin="15"></Label>
+                    <Label Text="let's start by selecting 2-3 genres you're interested in"
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Medium"
+                           FontAttributes="Bold"
+                           Margin="15"></Label>
                     <Button
-                    FontAttributes="Bold"
-                    Style="{StaticResource Accent2ColorButtonStyle}"
-                    Text="next" Clicked="Redirect"/>
+                        FontAttributes="Bold"
+                        Style="{StaticResource Accent2ColorButtonStyle}"
+                        Text="next"
+                        Clicked="Redirect" />
 
                 </StackLayout>
 

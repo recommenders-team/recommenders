@@ -48,6 +48,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Views\MobileBrowsePage.xaml.cs">
+      <DependentUpon>MobileBrowsePage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\BrowsePage.xaml.cs">
       <DependentUpon>BrowsePage.xaml</DependentUpon>
     </Compile>
@@ -80,7 +83,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\CustomOnboardingPart2.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\MovieDetailPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>

@@ -21,34 +21,44 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
-                <Image Source="nav_background.png" Grid.Row="0" Grid.RowSpan="2" Aspect="AspectFill"></Image>
-                
-                <Label Text="Rate Movies" FontFamily="{StaticResource AkagiProExtraBold}" Margin="20, 0, 0, 0"
-                       FontSize="Large" TextColor="White" Grid.Row="0" Grid.Column="0" VerticalOptions="End"></Label>
+                <Image Source="nav_background.png"
+                       Grid.Row="0"
+                       Grid.RowSpan="2"
+                       Aspect="AspectFill"></Image>
 
-                <cards:CoverFlowView 
-                Grid.Row="1"
-                Grid.RowSpan="2"
-                BackViewsDepth="4"
-                PositionShiftValue="{x:OnIdiom Desktop=700, Phone=170}"
-                IsCyclical="false"
-                IsAutoInteractionRunning="{Binding IsAutoAnimationRunning}"
-                IsUserInteractionRunning="{Binding IsUserInteractionRunning}"
-                SelectedIndex="{Binding CurrentIndex}"
-                ItemsSource="{Binding Items}">
-                <cards:CoverFlowView.ItemTemplate>
+                <Label Text="Rate Movies"
+                       FontFamily="{StaticResource AkagiProExtraBold}"
+                       Margin="20, 0, 0, 0"
+                       FontSize="Large"
+                       TextColor="White"
+                       Grid.Row="0"
+                       Grid.Column="0"
+                       VerticalOptions="End"></Label>
+
+                <cards:CoverFlowView
+                    Grid.Row="1"
+                    Grid.RowSpan="2"
+                    BackViewsDepth="4"
+                    PositionShiftValue="{x:OnIdiom Desktop=200, Phone=170}"
+                    IsCyclical="false"
+                    IsAutoInteractionRunning="{Binding IsAutoAnimationRunning}"
+                    IsUserInteractionRunning="{Binding IsUserInteractionRunning}"
+                    SelectedIndex="{Binding CurrentIndex}"
+                    ItemsSource="{Binding Items}">
+                    <cards:CoverFlowView.ItemTemplate>
                         <DataTemplate>
                             <ContentView Padding="40">
-                                <Frame 
-                                VerticalOptions="Center"
-                                HorizontalOptions="Center"
-                                HeightRequest="{x:OnIdiom Desktop=500, Phone=325}"
-                                Padding="0" 
-                                HasShadow="true"
-                                IsClippedToBounds="true"
-                                CornerRadius="10"
-                                BackgroundColor="Transparent">
-                                    <Grid Padding="0" Margin="0">
+                                <Frame
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Center"
+                                    HeightRequest="{x:OnIdiom Desktop=500, Phone=325}"
+                                    Padding="0"
+                                    HasShadow="true"
+                                    IsClippedToBounds="true"
+                                    CornerRadius="10"
+                                    BackgroundColor="Transparent">
+                                    <Grid Padding="0"
+                                          Margin="0">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="8*" />
                                             <RowDefinition Height="8*" />
@@ -58,43 +68,67 @@
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
-                                        <Frame Grid.Row="0" Grid.Column="0" Grid.RowSpan="3"  Style="{StaticResource MovieCardFrame}">
-                                            <StackLayout  Orientation="Vertical" Padding="0" Margin="0" Style="{StaticResource MovieCardBackgroundColor}">
-                                                <ffimageloading:CachedImage                                              
-			                                        DownsampleToViewSize="True"
+                                        <Frame Grid.Row="0"
+                                               Grid.Column="0"
+                                               Grid.RowSpan="3"
+                                               Style="{StaticResource MovieCardFrame}">
+                                            <StackLayout  Orientation="Vertical"
+                                                          Padding="0"
+                                                          Margin="0"
+                                                          Style="{StaticResource MovieCardBackgroundColor}">
+                                                <ffimageloading:CachedImage
+                                                    DownsampleToViewSize="True"
                                                     ErrorPlaceholder="default_image.png"
                                                     LoadingPlaceholder="default_image.png"
-			                                        Source ="{Binding movie.Movie.Imageurl}"
+                                                    Source="{Binding movie.Movie.Imageurl}"
                                                     Aspect="AspectFill"
-                                                    HeightRequest="{x:OnIdiom Desktop=350, Phone=200}"/>
-                                                <StackLayout Orientation="Vertical" Style="{StaticResource MovieCardBackgroundColor}" Margin="5,0,0,0" Padding="0, 0, 0, 0" WidthRequest="100" HeightRequest="{x:OnIdiom Desktop=175, Phone=100}">
-                                                    <Label Text="{Binding movie.Movie.Title}" Style="{StaticResource MovieCardTitle}" />
-                                                    <Label Text="{Binding movie.Movie.Year}" Style="{StaticResource MovieCardYear}" />
+                                                    HeightRequest="{x:OnIdiom Desktop=350, Phone=200}" />
+                                                <StackLayout Orientation="Vertical"
+                                                             Style="{StaticResource MovieCardBackgroundColor}"
+                                                             Margin="5,0,0,0"
+                                                             Padding="0, 0, 0, 0"
+                                                             WidthRequest="100"
+                                                             HeightRequest="{x:OnIdiom Desktop=175, Phone=100}">
+                                                    <Label Text="{Binding movie.Movie.Title}"
+                                                           Style="{StaticResource MovieCardTitle}" />
+                                                    <Label Text="{Binding movie.Movie.Year}"
+                                                           Style="{StaticResource MovieCardYear}" />
                                                 </StackLayout>
                                             </StackLayout>
                                         </Frame>
-                                        <ImageButton AutomationProperties.IsInAccessibleTree="True" AutomationProperties.Name="Like The Movie" Grid.Row="2" Grid.RowSpan="2" x:Name="LikeButton" Source="{Binding movie.MovieLikeButtonImageSource}" CommandParameter="{Binding movie.Movie}" Command="{Binding movie.LikeClicked}" Clicked="checkValid" WidthRequest="50" MinimumHeightRequest="50" BackgroundColor="Transparent" />
+                                        <ImageButton AutomationProperties.IsInAccessibleTree="True"
+                                                     AutomationProperties.Name="Like The Movie"
+                                                     Grid.Row="2"
+                                                     Grid.RowSpan="2"
+                                                     x:Name="LikeButton"
+                                                     Source="{Binding movie.MovieLikeButtonImageSource}"
+                                                     CommandParameter="{Binding movie.Movie}"
+                                                     Command="{Binding movie.LikeClicked}"
+                                                     Clicked="checkValid"
+                                                     WidthRequest="50"
+                                                     MinimumHeightRequest="50"
+                                                     BackgroundColor="Transparent" />
                                     </Grid>
                                 </Frame>
                             </ContentView>
                         </DataTemplate>
                     </cards:CoverFlowView.ItemTemplate>
-                <controls:IndicatorsControl ToFadeDuration="1500"/>
-               </cards:CoverFlowView>
+                    <controls:IndicatorsControl ToFadeDuration="1500" />
+                </cards:CoverFlowView>
             </Grid>
             <Button
-              Margin="30,0,30,30"       
-              FontAttributes="Bold"
-              AutomationProperties.IsInAccessibleTree="true"
-              AutomationProperties.Name="Proceed with Selected Movies"
-              Style="{StaticResource Accent2ColorButtonStyle}" 
-              BackgroundColor="{Binding NextButtonBackgroundColor}"
-              BorderColor="{Binding ButtonBorder}"
-              BorderWidth="3"
-              Text="finish" Clicked="Redirect"
-                />
-           
+                Margin="30,0,30,30"
+                FontAttributes="Bold"
+                AutomationProperties.IsInAccessibleTree="true"
+                AutomationProperties.Name="Proceed with Selected Movies"
+                Style="{StaticResource Accent2ColorButtonStyle}"
+                BackgroundColor="{Binding NextButtonBackgroundColor}"
+                BorderColor="{Binding ButtonBorder}"
+                BorderWidth="3"
+                Text="finish"
+                Clicked="Redirect" />
+
         </StackLayout>
     </ContentPage.Content>
-    
+
 </ContentPage>

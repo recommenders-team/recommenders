@@ -14,47 +14,4 @@
             Style="{StaticResource AppBackgroundColor}"
             android:TabbedPage.OffscreenPageLimit="1"
             android:TabbedPage.ToolbarPlacement="Bottom">
-
-    <TabbedPage.Children>
-        <NavigationPage Title="Browse">
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="iOS" Value="home.png"/>
-                    <On Platform="Android" Value="home.png"/>
-                    <On Platform="UWP" Value="home.png"/>
-                </OnPlatform>
-            </NavigationPage.Icon>
-            <x:Arguments>
-                <views:BrowsePage />
-            </x:Arguments>
-        </NavigationPage>
-
-        <NavigationPage Title="Search">
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="iOS" Value="search.png"/>
-                    <On Platform="Android" Value="search.png"/>
-                    <On Platform="UWP" Value="search.png"/>
-                </OnPlatform>
-            </NavigationPage.Icon>
-            <x:Arguments>
-                <views:SearchPage />
-            </x:Arguments>
-        </NavigationPage>
-        
-        <NavigationPage Title="Favorites">
-            <NavigationPage.Icon>
-                <OnPlatform x:TypeArguments="FileImageSource">
-                    <On Platform="iOS" Value="favorites.png"/>
-                    <On Platform="Android" Value="favorites.png"/>
-                    <On Platform="UWP" Value="favorites.png"/>
-                </OnPlatform>
-            </NavigationPage.Icon>
-            <x:Arguments>
-                <views:UserMoviePreferencesPage />
-            </x:Arguments>
-        </NavigationPage>
-
-    </TabbedPage.Children>
-
 </TabbedPage>

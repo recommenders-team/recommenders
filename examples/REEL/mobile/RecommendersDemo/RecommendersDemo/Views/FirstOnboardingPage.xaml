@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms" 
+             xmlns:forms="clr-namespace:Lottie.Forms;assembly=Lottie.Forms"
              mc:Ignorable="d"
              x:Class="RecommendersDemo.Views.FirstOnboardingPage">
 
@@ -12,7 +12,8 @@
 
             <Grid>
                 <Grid.Padding>
-                    <Thickness Left="{StaticResource Default2Margin}" Right="{StaticResource Default2Margin}" />
+                    <Thickness Left="{StaticResource Default2Margin}"
+                               Right="{StaticResource Default2Margin}" />
                 </Grid.Padding>
 
                 <Grid.RowDefinitions>
@@ -21,40 +22,57 @@
                     <RowDefinition Height="6*" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="12*"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <forms:AnimationView
                     AutomationProperties.IsInAccessibleTree="True"
                     AutomationProperties.Name="Clicking Persona animation"
                     x:Uid="Personas Animation"
-                    Grid.Row="0" Grid.Column="1" Grid.RowSpan="2"
-                    Animation="PersonaSelect.json" 
-                    AutoPlay="True" Loop="true"
+                    Grid.Row="0"
+                    Grid.Column="1"
+                    Grid.RowSpan="2"
+                    Animation="PersonaSelect.json"
+                    AutoPlay="True"
+                    Loop="true"
                     VerticalOptions="FillAndExpand"
                     HorizontalOptions="FillAndExpand"
-                    HeightRequest="50" Margin="0,0,0,70"/>
-                <StackLayout Grid.Row="1" Grid.Column="1" VerticalOptions="End">
-                    <Image Source="on1.png" HeightRequest="60" HorizontalOptions="Start" Margin="0,0,0,25"/>
+                    HeightRequest="50"
+                    Margin="0,0,0,70" />
+                <StackLayout Grid.Row="1"
+                             Grid.Column="1"
+                             VerticalOptions="End">
+                    <Image Source="on1.png"
+                           HeightRequest="60"
+                           HorizontalOptions="Start"
+                           Margin="0,0,0,25" />
 
-                    <Label FontFamily="{StaticResource AkagiProExtraBold}" 
+                    <Label FontFamily="{StaticResource AkagiProExtraBold}"
                            FontSize="Large"
                            Text="Let's Select a Persona"
                            FontAttributes="Bold"
                            TextColor="{StaticResource NavigationPrimary}">
                     </Label>
                 </StackLayout>
-                <StackLayout Grid.Row="2" Grid.Column="1">
+                <StackLayout Grid.Row="2"
+                             Grid.Column="1">
                     <Label Text="In order to best display the algorithms there are some existing personas to choose from"
-                       TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Small" Margin="15"></Label>
-                    <Label Text="First select an existing persona or choose to create your own" TextColor="White"
-                       FontFamily="{StaticResource AkagiProMedium}" FontSize="Medium" FontAttributes="Bold" Margin="15"></Label>
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Small"
+                           Margin="15"></Label>
+                    <Label Text="First select an existing persona or choose to create your own"
+                           TextColor="White"
+                           FontFamily="{StaticResource AkagiProMedium}"
+                           FontSize="Medium"
+                           FontAttributes="Bold"
+                           Margin="15"></Label>
                     <Button
                         FontAttributes="Bold"
                         Style="{StaticResource Accent2ColorButtonStyle}"
-                        Text="next" Clicked="Redirect"/>
+                        Text="next"
+                        Clicked="Redirect" />
 
                 </StackLayout>
 

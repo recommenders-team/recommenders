@@ -28,6 +28,7 @@ namespace RecommendersDemo.Models
             filters.Add("Drama");
             filters.Add("Horror");
             filters.Add("Romance");
+            filters.Add("Other");
         }
 
         public static UserMoviePreferences getInstance()
@@ -92,9 +93,9 @@ namespace RecommendersDemo.Models
         /// Returns the user's liked movies as a list of just the movie ids 
         /// </summary>
         /// <returns>The list of ids of the liked movies</returns>
-        public List<String> GetListOfMovieIDs()
+        public List<string> GetListOfMovieIDs()
         {
-            List<String> movieIDs = new List<String>();
+            List<string> movieIDs = new List<string>();
             foreach(Movie movie in movies)
             {
                 movieIDs.Add(movie.ItemID);

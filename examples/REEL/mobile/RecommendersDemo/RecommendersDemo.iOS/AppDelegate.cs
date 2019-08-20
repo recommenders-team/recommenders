@@ -27,6 +27,7 @@ namespace RecommendersDemo.iOS
         {
 
             CachedImageRenderer.Init();
+            Forms.SetFlags("CollectionView_Experimental");
             global::Xamarin.Forms.Forms.Init();
             CachedImageRenderer.InitImageSourceHandler();
             UINavigationBar.Appearance.SetBackgroundImage(UIImage.FromFile("nav_background.png"), UIBarMetrics.Default);

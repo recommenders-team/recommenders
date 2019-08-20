@@ -34,11 +34,9 @@
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>UIAppFonts</key>
 	<array>
-		<string>Montserrat-SemiBold.ttf</string>
 		<string>AkagiPro-Md.otf</string>
 		<string>AkagiPro-Sm.otf</string>
-		<string>Montserrat-Bold.ttf</string>
-		<string>Montserrat-ExtraBold.ttf</string>
+		<string>AkagiPro-Eb.otf</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>REEL</string>

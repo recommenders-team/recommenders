@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Xamarin.Forms;
 
 namespace RecommendersDemo.ViewModels
 {
@@ -50,7 +51,17 @@ namespace RecommendersDemo.ViewModels
                 } else
                 {
                     NoResultsMessage = false;
+
+                    for (int i = 0; i < searchedMovies.Count; i++)
+                    {
+                        if (searchedMovies[i].Imageurl == null)
+                        {
+                            searchedMovies[i].Imageurl = "default_image.png";
+                        }
+                    }
+
                     for (int i = 0; i < searchedMovies.Count; i += 2) {
+
                         MovieContainer container = null;
                     
                         if (i + 1 < searchedMovies.Count())
@@ -61,7 +72,7 @@ namespace RecommendersDemo.ViewModels
                             container = new MovieContainer(new MovieDetailViewModel(searchedMovies[i], preferences));
                         }
                         pairedMovieList.Add(container);
-                    }
+                    }                 
                 }
 
 

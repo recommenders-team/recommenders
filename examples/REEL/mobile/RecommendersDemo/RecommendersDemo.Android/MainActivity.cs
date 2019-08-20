@@ -24,7 +24,7 @@ namespace RecommendersDemo.Droid
             base.OnCreate(savedInstanceState);
 
             CachedImageRenderer.Init(enableFastRenderer:true);
-
+            Xamarin.Forms.Forms.SetFlags("CollectionView_Experimental");
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             PullToRefreshLayoutRenderer.Init();

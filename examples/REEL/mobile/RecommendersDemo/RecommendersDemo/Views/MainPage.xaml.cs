@@ -17,6 +17,28 @@ namespace RecommendersDemo.Views
         public MainPage()
         {
             InitializeComponent();
+            NavigationPage browseNavigationPage;           
+            if(Device.RuntimePlatform == Device.UWP || Device.RuntimePlatform == Device.iOS)
+            {
+                browseNavigationPage = new NavigationPage(new BrowsePage());
+            }
+            else
+            {
+                browseNavigationPage = new NavigationPage(new MobileBrowsePage());
+            }
+            browseNavigationPage.IconImageSource = "home.png";
+            browseNavigationPage.Title = "Browse";
+            Children.Add(browseNavigationPage);
+
+            var searchNavigationPage = new NavigationPage(new SearchPage());
+            searchNavigationPage.IconImageSource = "search.png";
+            searchNavigationPage.Title = "Search";
+            Children.Add(searchNavigationPage);
+
+            var favoritesNavigationPage = new NavigationPage(new UserMoviePreferencesPage());
+            favoritesNavigationPage.IconImageSource = "favorites.png";
+            favoritesNavigationPage.Title = "Favorites";
+            Children.Add(favoritesNavigationPage);
         }
     }
 }
