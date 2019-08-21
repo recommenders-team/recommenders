@@ -83,4 +83,17 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Zhenhui Xu](https://github.com/motefly)**
    * Reco utils of LightGBM
    * LightGBM notebook quickstart
+* **[Austin Hwang](https://github.com/austin-hwang)
+   * examples/REEL backend, data, mobile and README
+* **[Blake Wesel](https://github.com/Balake-weasel)
+   * examples/REEL data, mobile and README
+* **[Bruce Gatete](https://github.com/Brucegatete)
+   * examples/REEL README
+* **[Christine Hsieh](https://github.com/ChristineHsieh)
+   * examples/REEL mobile, data, README
+* **[Daran Zhao](https://github.com/daranzhao)
+   * examples/REEL backend, mobile, data
+* **[Sarah Vu](https://github.com/satvu)
+   * examples/REEL mobile
+
     
