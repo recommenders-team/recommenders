@@ -40,13 +40,16 @@ To setup on your local machine:
 **NOTE** - The [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment.
 
 ## Install this repository via PIP
-A [setup.py](reco_utils/setup.py) file is provied in order to simplify the installation of this utilities in this repo from the main directory. 
+A [setup.py](reco_utils/setup.py) file is provided in order to simplify the installation of this utilities in this repo from the main directory. 
+This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed you can use the following command to install reco_utils as it's own python package.
 
     pip install -e reco_utils
 
-It is also possible to install directly from Github.
+It is also possible to install directly from Github. Or from a specific branch as well.
 
-    pip install git+http://github.com/microsoft/recommenders/#egg=pkg&subdirectory=reco_utils
+    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg\&subdirectory=reco_utils
+    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg\&subdirectory=reco_utils
+    
 
 **NOTE** - The pip installation does not install any of the necessary package dependencies, it is expected that conda will be used as shown above to setup the environment for the utilities being used.
 
