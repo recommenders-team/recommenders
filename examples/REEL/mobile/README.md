@@ -4,7 +4,7 @@ This mobile application was built using Xamarin.Forms which is an open source fr
 # Installation Guide
 Pre-requisite: the backend web service is either running locally on your computer, or is deployed to AKS
 
-1. Ensure your version of Visual Studio has workspace for developing Xamarin.Forms applications. If it does not, launch the Visual Studio Installer and install the Mobile development with .NET workload (https://docs.microsoft.com/en-us/xamarin/get-started/installation) 
+1. Ensure your version of Visual Studio has a workspace for developing Xamarin.Forms applications. If it does not, launch the Visual Studio Installer and install the Mobile development with .NET workload (https://docs.microsoft.com/en-us/xamarin/get-started/installation) 
 2. Launch Visual Studio and open the solution (.sln) file within the mobile folder
 3. Update the Resources.resx file to contain the proper URLs of the relevant endpoints.
     * Note: These URLs can be pointing at the backend service running locally on the computer, but you will only be able to run the application in debug mode. You will not be able to successfully package and distribute a fully-functional application without deploying the backend to AKS

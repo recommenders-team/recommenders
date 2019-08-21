@@ -1,4 +1,5 @@
-![alt text](backend/assets/reel_mock.png =500x)
+<img src="assets/reel_mock.png">
+
 ## Introduction 
 
 Recommenders Engine Example Layout (REEL) is a cross-platform movie recommendation application that demonstrates the integration of example recommendation algorithms from Microsoft/Recommenders into an application workflow. The following sections will demonstrate how to locally build REEL. These sections will guide the reader into:
@@ -17,7 +18,7 @@ Currently, REEL runs *Simple Algorithm for Recommendation (SAR)* and *LightGBM a
 
 ## System Architecture
  
- ![alt text](backend/assets/system_arch_diagram.png =500x)
+ <img src="assets/system_arch_diagram.png">
 
 
 # Getting Started
@@ -34,6 +35,29 @@ To get started running the mobile application, a few steps must be followed:
 2. Deploy a LightGBM model by running the LightGBM notebook
 3. Set up and deploy the backend to AKS
 4. Set up and run the Xamarin.Forms application on your choice of Android, iOS, or UWP
+
+# Demos
+
+## Onboarding
+
+<img src="assets/Onboarding1.gif" width="300px"> 
+<img src="assets/Onboarding2.gif" width="300px">
+
+## Browse
+
+<img src="assets/Browse.gif" width="300px">
+
+## Favorites
+
+<img src="assets/Favorites.gif" width="300px">
+
+## Settings
+
+<img src="assets/Settings.gif" width="300px">
+
+## Search
+
+<img src="assets/Search.gif" width="300px">
 
 # 🤝 Contributing
 
