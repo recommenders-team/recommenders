@@ -1,8 +1,7 @@
 ![alt text](backend/assets/reel_mock.png =500x)
 ## Introduction 
 
-Recommenders Engine Example Layout (REEL) is a movie recommendation cross-platform mobile application that demonstrates the integration of some of recommendation algorithms on Microsoft/Recommenders into a mobile application workflow.
-The following sections will demonstrate how to locally build REEL. These sections will guide the reader into:
+Recommenders Engine Example Layout (REEL) is a cross-platform movie recommendation application that demonstrates the integration of example recommendation algorithms from Microsoft/Recommenders into an application workflow. The following sections will demonstrate how to locally build REEL. These sections will guide the reader into:
 	
 * Creating an ML model endpoint
 * Setting up and populating [Azure SQL Database](https://docs.microsoft.com/en-us/azure/sql-database/)
@@ -11,7 +10,7 @@ The following sections will demonstrate how to locally build REEL. These section
 * Installing the [Xamarin.Forms](https://docs.microsoft.com/en-us/xamarin/xamarin-forms/) app for the mobile client
 	
 Currently, REEL runs *Simple Algorithm for Recommendation (SAR)* and *LightGBM algorithms*. The application is built using [Xamarin.Forms](https://docs.microsoft.com/en-us/xamarin/xamarin-forms/),
- so it is supported on **iOS**, **Android** and **UWP**. The algorithms are trained on the [MovieLens dataset](https://grouplens.org/datasets/movielens/).
+ so it is supported on **iOS**, **Android** and **[Windows Desktop](https://docs.microsoft.com/en-us/windows/uwp/get-started/universal-application-platform-guide)**. The algorithms are trained on the [MovieLens dataset](https://grouplens.org/datasets/movielens/).
 
 
 

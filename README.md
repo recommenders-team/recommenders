@@ -9,6 +9,8 @@ This repository contains examples and best practices for building recommendation
 
 Several utilities are provided in [reco_utils](reco_utils) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications.
 
+Also, in [examples](examples/REEL), there is a guide into locally building a movie recommendation application that demonstrates the integration of example recommendation algorithms. This application is fully functional on iOS, Android and Windows Desktop.
+
 ## Getting Started
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on Spark, or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks). 
 
