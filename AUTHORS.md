@@ -46,24 +46,24 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
-* **[Austin Hwang](https://github.com/austin-hwang)
+* **[Austin Hwang](https://github.com/austin-hwang)**
    * examples/REEL backend, data, mobile and README
 * **[Bamdev Mishra](https://github.com/bamdevm)**
    * RLRMC algorithm
 * **[Beth Zeranski](https://github.com/bethz)**
    * AzureML tests
-* **[Blake Wesel](https://github.com/Balake-weasel)
+* **[Blake Wesel](https://github.com/Balake-weasel)**
    * examples/REEL data, mobile and README
-* **[Bruce Gatete](https://github.com/Brucegatete)
+* **[Bruce Gatete](https://github.com/Brucegatete)**
    * examples/REEL README
-* **[Christine Hsieh](https://github.com/ChristineHsieh)
+* **[Christine Hsieh](https://github.com/ChristineHsieh)**
    * examples/REEL data, mobile, README
 * **[Dan Ciborowski](https://github.com/dciborow)**
    * ALS operationalization notebook
    * SAR PySpark improvement
 * **[Daniel Schneider](https://github.com/danielsc)**
    * FastAI notebook
-* **[Daran Zhao](https://github.com/daranzhao)
+* **[Daran Zhao](https://github.com/daranzhao)**
    * examples/REEL backend, data, mobile
 * **[Gianluca Campanella](https://github.com/gcampanella)**
    * Spark optimization and support
@@ -88,7 +88,7 @@ To contributors: please add your name to the list when you submit a patch to the
    * RLRMC algorithm
 * **[Robert Alexander](https://github.com/roalexan)**
    * Windows test pipelines
-* **[Sarah Vu](https://github.com/satvu)
+* **[Sarah Vu](https://github.com/satvu)**
    * examples/REEL mobile
 * **[Yassine Khelifi](https://github.com/datashinobi)**
    * SAR notebook quickstart
