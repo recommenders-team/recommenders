@@ -62,6 +62,8 @@ Note: It's recommended to create all the following Azure services under the same
 
 ## Install
 
+Run the following command in the root directory of the backend folder:
+
 ```sh
 pip install -r requirements.txt
 ```
@@ -149,6 +151,7 @@ Note: Use the same Azure resource group as the previous Azure services.
 
 ## Prerequisites
 
+- All the dependencies and steps from [Running the Backend Locally](#running-the-backend-locally)
 - Install [Docker](https://docs.docker.com/install/)
 
   <img src="../assets/docker.png" width="150px">
