@@ -33,7 +33,14 @@ namespace RecommendersDemo.Views
             if (viewModel.chosenPersona != null)
             {
                 preferences.AddMultiplePreferences((List<Movie>)viewModel.chosenPersona.getLikedMovies());
-                await Navigation.PushModalAsync(new AlgorithmPage()).ConfigureAwait(false);
+                if (App.algorithm == "sar")
+                {
+                    await Navigation.PushModalAsync(new SarAlgorithmPage()).ConfigureAwait(false);
+                }
+                else
+                {
+                    await Navigation.PushModalAsync(new LgbmAlgorithmPage()).ConfigureAwait(false);
+                }
             }
         }
 

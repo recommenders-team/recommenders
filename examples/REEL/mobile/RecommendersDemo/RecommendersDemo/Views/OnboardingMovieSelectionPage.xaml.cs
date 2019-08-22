@@ -43,7 +43,16 @@ namespace RecommendersDemo.Views
         private async void Redirect(object sender, EventArgs e)
         {
             if (ViewModel.ChangeButtonColor())
-            await Navigation.PushModalAsync(new AlgorithmPage()).ConfigureAwait(false);
+            {
+                if (App.algorithm == "sar")
+                {
+                    await Navigation.PushModalAsync(new SarAlgorithmPage()).ConfigureAwait(false);
+                }
+                else
+                {
+                    await Navigation.PushModalAsync(new LgbmAlgorithmPage()).ConfigureAwait(false);
+                }
+            }      
         }
     }
 }

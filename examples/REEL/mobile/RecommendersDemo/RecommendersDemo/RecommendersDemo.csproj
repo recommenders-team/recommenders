@@ -48,6 +48,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Update="Views\SarAlgorithmPage.xaml.cs">
+      <DependentUpon>SarAlgorithmPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\LgbmAlgorithmPage.xaml.cs">
+      <DependentUpon>LgbmAlgorithmPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Views\MobileBrowsePage.xaml.cs">
       <DependentUpon>MobileBrowsePage.xaml</DependentUpon>
     </Compile>

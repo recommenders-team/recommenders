@@ -8,9 +8,9 @@ using Xamarin.Forms;
 namespace RecommendersDemo.Views
 {
     [DesignTimeVisible(false)]
-    public partial class AlgorithmPage : ContentPage
+    public partial class LgbmAlgorithmPage : ContentPage
     {
-        public AlgorithmPage()
+        public LgbmAlgorithmPage()
         {
             InitializeComponent();
         }
