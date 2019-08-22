@@ -46,15 +46,25 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
+* **[Austin Hwang](https://github.com/austin-hwang)
+   * examples/REEL backend, data, mobile and README
 * **[Bamdev Mishra](https://github.com/bamdevm)**
    * RLRMC algorithm
 * **[Beth Zeranski](https://github.com/bethz)**
    * AzureML tests
+* **[Blake Wesel](https://github.com/Balake-weasel)
+   * examples/REEL data, mobile and README
+* **[Bruce Gatete](https://github.com/Brucegatete)
+   * examples/REEL README
+* **[Christine Hsieh](https://github.com/ChristineHsieh)
+   * examples/REEL data, mobile, README
 * **[Dan Ciborowski](https://github.com/dciborow)**
    * ALS operationalization notebook
    * SAR PySpark improvement
 * **[Daniel Schneider](https://github.com/danielsc)**
    * FastAI notebook
+* **[Daran Zhao](https://github.com/daranzhao)
+   * examples/REEL backend, data, mobile
 * **[Gianluca Campanella](https://github.com/gcampanella)**
    * Spark optimization and support
 * **[Heather Spetalnick (Shapiro)](https://github.com/heatherbshapiro)**
@@ -78,22 +88,11 @@ To contributors: please add your name to the list when you submit a patch to the
    * RLRMC algorithm
 * **[Robert Alexander](https://github.com/roalexan)**
    * Windows test pipelines
+* **[Sarah Vu](https://github.com/satvu)
+   * examples/REEL mobile
 * **[Yassine Khelifi](https://github.com/datashinobi)**
    * SAR notebook quickstart
 * **[Zhenhui Xu](https://github.com/motefly)**
    * Reco utils of LightGBM
    * LightGBM notebook quickstart
-* **[Austin Hwang](https://github.com/austin-hwang)
-   * examples/REEL backend, data, mobile and README
-* **[Blake Wesel](https://github.com/Balake-weasel)
-   * examples/REEL data, mobile and README
-* **[Bruce Gatete](https://github.com/Brucegatete)
-   * examples/REEL README
-* **[Christine Hsieh](https://github.com/ChristineHsieh)
-   * examples/REEL mobile, data, README
-* **[Daran Zhao](https://github.com/daranzhao)
-   * examples/REEL backend, mobile, data
-* **[Sarah Vu](https://github.com/satvu)
-   * examples/REEL mobile
-
     
