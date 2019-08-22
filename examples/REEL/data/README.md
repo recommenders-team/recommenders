@@ -7,7 +7,7 @@ Creating the Database and SQL Server
 3) Provide your subscription, resource group, and database name.
 4) One of the properties is creating an SQL Server. Click "Create SQL Server". Choose a location of your server that encompasses your location. 
 5) Create an admin username and password. Be sure to save the login credientals for the SQL server as they are important for future steps.
-6) After creating a SQL Server, config the database by clicking "Configure Database". For the most cost-effective settings, use "General Purpose", "Serverless" for the Compute Tier, "Gen5" for the Computer Generation, 1 vCore for Max Cores, 0.5 vCores for Min Cores, and 10GB Data max size. Feel free to use Provisioned for the Computer Tier, as it's faster, however, the cost will be higher.
+6) After creating a SQL Server, properties the database by clicking "Configure Database". For the most cost-effective settings, use "General Purpose", "Serverless" for the Compute Tier, "Gen5" for the Computer Generation, 1 vCore for Max Cores, 0.5 vCores for Min Cores, and 10GB Data max size. Feel free to use Provisioned for the Computer Tier, as it's faster, however, the cost will be higher.
 
 
 Setting up the Database
@@ -19,8 +19,8 @@ Setting up the Database
 
 Connecting to the Database
 =
-Here, you will set up the connection information for config.py file that will allow local scripts to run and populate the database. 
-1) In any file editor, open up config.py and fill in the neccessary infomation to the correct varaibles inside the double quotes:
+Here, you will set up the connection information for properties.py file that will allow local scripts to run and populate the database. 
+1) In any file editor, open up properties.py and fill in the neccessary infomation to the correct varaibles inside the double quotes:
 	1. The "server" variable is the server URL can be accessed through going to the SQL Server Overview page and coping the text where it says "Server name".
 	2. The "database" parameter is the name of the database.
 	3. The "username" parameter is the admin username of your SQL Server.
