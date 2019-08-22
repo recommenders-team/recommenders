@@ -1,6 +1,6 @@
 # Recommender Utilities
 
-This module (reco_utils) contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the sub-modules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code.
+This package (reco_utils) contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the sub-modules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code.
 
 ## Sub-Modules
 
