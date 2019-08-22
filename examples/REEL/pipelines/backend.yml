@@ -1,0 +1,68 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- dev
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.7'
+
+- script: |
+    sudo python -m pip uninstall pip && sudo apt install python-pip --reinstall
+    pip install pytest pytest-azurepipelines pytest-cov wheel setuptools injector
+    pip install -r ./backend/requirements.txt
+  displayName: 'Install dependencies'
+
+- task: DownloadSecureFile@1
+  inputs:
+    secureFile: 'config.py'
+
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(Agent.TempDirectory)'
+    Contents: '**'
+    TargetFolder: 'backend'
+
+- script: |
+    find -type d -name 'backend'
+    cd ./backend
+    python -m pytest --cov=backend_tests ./backend_tests --cov-report html
+  displayName: 'pytest'
+
+- task: Docker@0
+  displayName: 'Build an image'
+  inputs:
+    azureSubscription: 'AG-AzureCAT-AITao-Test-COGSNonProd-IO1685734 (03909a66-bef8-4d52-8e9a-a346604e0902)'
+    azureContainerRegistry: '{"loginServer":"flaskwebapp.azurecr.io", "id" : "/subscriptions/03909a66-bef8-4d52-8e9a-a346604e0902/resourceGroups/reco-garage-demo/providers/Microsoft.ContainerRegistry/registries/flaskwebapp"}'
+    includeLatestTag: true
+
+- task: Docker@0
+  displayName: 'Push an image'
+  inputs:
+    azureSubscription: 'AG-AzureCAT-AITao-Test-COGSNonProd-IO1685734 (03909a66-bef8-4d52-8e9a-a346604e0902)'
+    azureContainerRegistry: '{"loginServer":"flaskwebapp.azurecr.io", "id" : "/subscriptions/03909a66-bef8-4d52-8e9a-a346604e0902/resourceGroups/reco-garage-demo/providers/Microsoft.ContainerRegistry/registries/flaskwebapp"}'
+    action: 'Push an image'
+    includeLatestTag: true
+
+- task: Kubernetes@1
+  displayName: 'kubectl apply'
+  inputs:
+    kubernetesServiceEndpoint: 'AI CAT AKS'
+    command: apply
+    arguments: '-f ./backend/app.yaml'
+    azureSubscriptionEndpointForSecrets: 'AG-AzureCAT-AITao-Test-COGSNonProd-IO1685734 (03909a66-bef8-4d52-8e9a-a346604e0902)'
+    azureContainerRegistry: flaskwebapp.azurecr.io
+    forceUpdate: false
+
+- task: PublishPipelineArtifact@0
+  displayName: 'Publish Pipeline Artifact'
+  inputs:
+    artifactName: Config
+    targetPath: backend/app.yaml
