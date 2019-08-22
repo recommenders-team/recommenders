@@ -95,3 +95,17 @@ Contributions, issues and feature requests are welcome!<br />Feel free to check 
 ## Show your support
 
 Give a ⭐️ if this project helped you!
+
+# Limitations
+* The dataset is taken from the MovieLens 1 million dataset.
+* The movies in the dataset are only movies made before 2000.
+* Application is only in English.
+* Below are screenshots of the loading limitation for the SAR and LightGBM algorithms, respectifully:
+
+SAR:
+<img src="assets/SAR_Load_Test_3.jpg">
+
+LightGBM:
+<img src="assets/LGBM_Load_Test_2.jpg">
+
+If you wish to test loading yourself, use the algorithms that are located [here](https://github.com/microsoft/recommenders/tree/master/notebooks/05_operationalize).
