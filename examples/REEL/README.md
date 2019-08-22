@@ -56,8 +56,7 @@ To get started running the mobile application, a few steps must be followed:
 
 ## Onboarding
 
-<img src="assets/Onboarding1.gif" width="300px"> 
-<img src="assets/Onboarding2.gif" width="300px">
+<img src="assets/Onboarding1.gif" width="300px"> <img src="assets/Onboarding2.gif" width="300px">
 
 ## Browse
 
