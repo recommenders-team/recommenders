@@ -1,0 +1,6 @@
+flask
+requests
+pandas
+pyodbc
+mock
+flask_injector
