@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flaskwebapp
+  name: APP_NAME
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: flaskwebapp
+      app: APP_NAME
   template:
     metadata:
       labels:
-        app: flaskwebapp
+        app: APP_NAME
     spec:
       containers:
-      - name: flaskwebapp
-        image: flaskwebapp.azurecr.io/catalist.gic.s19:{{Build.BuildId}}
+      - name: APP_NAME
+        image: REGISTRY_NAME.azurecr.io/IMAGE_NAME:v1
         ports:
         - containerPort: 5000
         volumeMounts:
@@ -24,7 +24,7 @@ spec:
       volumes:
         - name: configfile
           secret:
-            secretName: configsecret
+            secretName: SECRET_NAME
             items:
               - key: config
                 path: config.py
@@ -32,12 +32,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: flaskwebapp
+  name: APP_NAME
 spec:
-  loadBalancerIP: 52.184.159.77
+  loadBalancerIP: IP_ADDRESS
   type: LoadBalancer
   ports:
   - port: 5000
   selector:
-    app: flaskwebapp
+    app: APP_NAME
 

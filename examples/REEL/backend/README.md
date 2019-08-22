@@ -94,7 +94,7 @@ Set up a single SQL database through the Azure Portal. The database will be stor
 Driver={ODBC Driver 17 for SQL Server};Server=tcp:DATABASE_SERVER.database.windows.net,1433;Database=DATABASE_NAME;Uid=ADMIN_USERNAME@DATABASE_SERVER;Pwd=ADMIN_PASSWORD;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;
 ```
 
-See [DATABASE_README.md](./../../data/DATABASE_README.md) for more details.
+See [database documentation](./../data/README.md) for more details.
 
 ## Setting up Azure Search
 
@@ -108,16 +108,16 @@ Once your SQL database is set up, it should be connected with Azure Search to su
 6. **Customize Target Indexer**: make sure all field names are checked for retrievable and searchable and choose genre and year for filterable and sortable.
 7. **Create an Indexer**: choose how often you want to indexer to run (i.e. how often the database will update). Once will suffice unless you plan on updating the movielens dataset in the database.
 
-Once Azure Search is set up, obtain the search url and place it in config.py.
+Once Azure Search is set up, obtain the [SEARCH_URL](#set-up-configpy) and place it in config.py.
 
 ## Set up config.py
 
 ```python
 # Obtain these from the sar_webservice_poc and lgbm_webservice_pos notebook linked in the recommenders repository
 sar_url = SAR_MODEL_ENDPOINT
-sar_token = SAR_BEARER_TOKEN
+sar_token = "Bearer" + SAR_BEARER_TOKEN
 lgbm_url = LGBM_MODEL_ENDPOINT
-lgbm_token = LGBM_BEARER_TOKEN
+lgbm_token = "Bearer" + LGBM_BEARER_TOKEN
 
 # Obtain these from the "Setting up Azure SQL Database" step
 server = DATABASE_SERVER
@@ -141,7 +141,7 @@ Place the config.py file in the root backend directory. The backend set up is no
 python3 -m flask run
 ```
 
-The backend API service should now be running on <http://localhost:5000>. See API.md for detailed documentation on available endpoints.
+The backend API service should now be running on <http://localhost:5000>. See [API Documentation](#api-documentation) for detailed documentation on available endpoints.
 
 # Running the Backend on Azure
 
@@ -237,13 +237,59 @@ It should then be running on <http://localhost:5000.>
 
 ## Setting up app.yaml file
 
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: APP_NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: APP_NAME
+  template:
+    metadata:
+      labels:
+        app: APP_NAME
+    spec:
+      containers:
+      - name: APP_NAME
+        image: REGISTRY_NAME.azurecr.io/IMAGE_NAME:v1
+        ports:
+        - containerPort: 5000
+        volumeMounts:
+          - name: configfile
+            mountPath: /code/config.py
+            subPath: config.py
+      volumes:
+        - name: configfile
+          secret:
+            secretName: SECRET_NAME
+            items:
+              - key: config
+                path: config.py
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: APP_NAME
+spec:
+  loadBalancerIP: IP_ADDRESS
+  type: LoadBalancer
+  ports:
+  - port: 5000
+  selector:
+    app: APP_NAME
+```
+
+
 ### Naming
 
-Replace all the `name` and `app` fields with the name of your app.
+Replace all the `APP_NAME` fields with the name of your app.
 
 ### Secrets
 
-First, inject the config.py file to AKS as a secret file so that the contents remain encrypted. Run the following command in the root directory of the backend folder:
+Inject the config.py file to AKS as a secret file so that the contents remain encrypted. Run the following command in the root directory of the backend folder where the config.py file is located:
 
 ```sh
 kubectl create secret generic SECRET_NAME --from-file=config=PATH_TO_FILE
