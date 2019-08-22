@@ -25,7 +25,7 @@ Currently, REEL runs *Simple Algorithm for Recommendation (SAR)* and *LightGBM a
 
 At a high level, this project is composed of 3 main folders
 * [backend](backend/README.md): where the Flask web service logic / deployment files are kept. This folder's README also contains instructions for setting up the backend and the database
-* [data](data/DATABASE_README.md): where scripts for setting up the SQL database with the movielens dataset are kept
+* [data](data/README.md): where scripts for setting up the SQL database with the movielens dataset are kept
 * [mobile](mobile/README.md): where the Xamarin.Forms cross platform application sits. This folder's README contains a high level tour of how the application is structured, as well as information about how to run the application
 
 ## Installation process
@@ -35,6 +35,35 @@ To get started running the mobile application, a few steps must be followed:
 2. Deploy a LightGBM model by running the LightGBM notebook
 3. Set up and deploy the backend to AKS
 4. Set up and run the Xamarin.Forms application on your choice of Android, iOS, or UWP
+
+# Screenshots
+
+## iOS
+
+<img src="assets/iOS/Browse-iOS.png" width="200px"> 
+<img src="assets/iOS/Onboarding-iOS.png" width="200px">
+<img src="assets/iOS/MovieDetails-iOS.png" width="200px">  
+<img src="assets/iOS/Personas-iOS.png" width="200px">
+<img src="assets/iOS/Settings-iOS.png" width="200px"> 
+<img src="assets/iOS/Favorites-iOS.png" width="200px">
+
+
+## Android
+
+<img src="assets/Android/Browse-Android.png" width="200px"> 
+<img src="assets/Android/Onboarding-Android.png" width="200px">
+<img src="assets/Android/MovieDetails-Android.png" width="200px">  
+<img src="assets/Android/Personas-Android.png" width="200px">
+<img src="assets/Android/Settings-Android.png" width="200px"> 
+<img src="assets/Android/Favorites-Android.png" width="200px">
+
+## UWP
+
+<img src="assets/UWP/Browse-UWP.png" width="200px"> 
+<img src="assets/UWP/Onboarding-UWP.png" width="200px">
+<img src="assets/UWP/MovieDetails-UWP.png" width="200px">  
+<img src="assets/UWP/Personas-UWP.png" width="200px">
+<img src="assets/UWP/Settings-UWP.png" width="200px"> 
 
 # Demos
 
