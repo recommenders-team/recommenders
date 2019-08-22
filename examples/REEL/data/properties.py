@@ -1,0 +1,5 @@
+server   = ''
+database = ''
+username = ''
+password = ''
+driver   = '{SQL Server}'

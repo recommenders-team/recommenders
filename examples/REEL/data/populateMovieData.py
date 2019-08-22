@@ -1,6 +1,6 @@
 import pyodbc
 import os
-import config
+import properties
 import time
 import sys
 
@@ -10,6 +10,9 @@ Reads this information through a dataset downloaded from MovieLens
 Data Format:
     1) COUNT,MOVIE_ID,MOVIE_TITLE MOVIE_YEAR,GENRE|GENRE|GENRE
     2) COUNT,MOVIE_ID,"MOVIE_TITLE MOVIE_YEAR",GENRE|GENRE|GENRE - there is a comma and/or parenthesis
+
+@author: Blake Wesel
+@version: 8/20/19
 """
 def populateMovieData():
 
@@ -21,7 +24,7 @@ def populateMovieData():
         movieFile = open("new_movies.csv", mode="r", encoding="utf-8")
     except:
         print("Couldn't find the new_movies.csv file, now shutting down...")
-        time.sleep(5)
+        time.sleep(3)
         sys.exit(0)
     print("Parsing info...\n")
 
@@ -91,7 +94,7 @@ def populateMovieData():
     # Setting up info for program to connect to the database
     # Connecting to the database with the information provided above
     cnxn = pyodbc.connect(
-        'DRIVER=' + config.driver + ';SERVER=' + config.server + ';PORT=1433;DATABASE=' + config.database + ';UID=' + config.username + ';PWD=' + config.password)
+        'DRIVER=' + properties.driver + ';SERVER=' + properties.server + ';PORT=1433;DATABASE=' + properties.database + ';UID=' + properties.username + ';PWD=' + properties.password)
     cursor = cnxn.cursor()
 
     # Drop if the table exists, then create a table for movies - CURRENTLY DONT HAVE PERMISSIONS TO DO SO

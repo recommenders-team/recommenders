@@ -1,4 +1,4 @@
-import config
+import properties
 import pyodbc
 import os
 import time
@@ -7,6 +7,9 @@ import sys
 """
 Adds a column to the MOVIES table called tmdbID and populates it with every movies' correct tmdbID
 Command to add the new column: ALTER TABLE MOVIES ADD tmdbID int;
+
+@author: Blake Wesel
+@version: 8/20/19
 """
 def populateTMBDID():
 
@@ -23,7 +26,7 @@ def populateTMBDID():
 
     # connect to database
     cnxn = pyodbc.connect(
-        'DRIVER=' + config.driver + ';SERVER=' + config.server + ';PORT=1433;DATABASE=' + config.database + ';UID=' + config.username + ';PWD=' + config.password)
+        'DRIVER=' + properties.driver + ';SERVER=' + properties.server + ';PORT=1433;DATABASE=' + properties.database + ';UID=' + properties.username + ';PWD=' + properties.password)
     cursor = cnxn.cursor()
 
     # while there is data to read, grab the next line, split the data by commas, and set variables
