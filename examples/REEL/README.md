@@ -52,6 +52,10 @@ To get started running the mobile application, a few steps must be followed:
 
 <img src="assets/UWP/Browse-UWP.png" width="200px"> <img src="assets/UWP/Onboarding-UWP.png" width="200px"> <img src="assets/UWP/MovieDetails-UWP.png" width="200px"> <img src="assets/UWP/Personas-UWP.png" width="200px"> <img src="assets/UWP/Settings-UWP.png" width="200px"> 
 
+## HoloLens
+
+<img src="assets/HoloLens.gif" width="800px">
+
 # Demos
 
 ## Onboarding
