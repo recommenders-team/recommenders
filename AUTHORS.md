@@ -69,6 +69,8 @@ To contributors: please add your name to the list when you submit a patch to the
    * Spark optimization and support
 * **[Heather Spetalnick (Shapiro)](https://github.com/heatherbshapiro)**
    * AzureML documentation and support
+*  **[Kaitlin Plane](https://kplane.myportfolio.com/)
+   * Design for examples/REEL mobile
 * **[Jianxun Lian](https://github.com/Leavingseason)**
    * xDeepFM algorithm
    * DKN algorithm
