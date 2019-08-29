@@ -8,6 +8,12 @@ This project uses unit, smoke and integration tests with Python files and notebo
 
 For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**. 
 
+AzureML is also used to run the existing unit, smoke and integration tests as-is. AzureML benefits include managing the compute environment by automatically turning it on/off, scaling, automatic logging of artifacts from test runs and more. Azure DevOps is used as a control plane to provide information to scripts to configure and run the tests as-is on AzureML.  A separate set of pipelines was created to run the tests on AzureML and parameters to configure AzureML are defined in the pipeline yml files. There are two scripts used with each pipeline:
+* submit_azureml_pytest.py - this script uses parameters in the pipeline yml to set up the AzureML environment for testing using the AzureML SDK .
+* run_pytest.py - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above. The same tests and testmarkers are used as described below.
+
+Note: Spark tests are not currently run on AzureML and may be set up in the future.
+
 ## Test execution
 
 **Click on the following menus** to see more details on how to execute the unit, smoke and integration tests:
@@ -100,7 +106,7 @@ Several of the tests are skipped for various reasons which are noted below.
 <table><tr>
 <td>Test Module</td>
 <td>Test</td>
-<td>OS</td>
+<td>Test Environment</td>
 <td>Reason</td>
 </tr><tr>
 <td>unit/test_nni</td>
@@ -122,6 +128,11 @@ Several of the tests are skipped for various reasons which are noted below.
 <td>test_get_cuda_version</td>
 <td>Windows</td>
 <td>Current method for retrieval of CUDA info on Windows is install specific</td>
+</tr><tr>
+<td>nightly*, *notebooks*</td>
+<td>vowpalwabbit: test_surprise_svd_integration  test_vw_deep_dive_integration test_vw_deep_dive_smoke test_vw_deep_dive_runs/vowpal_wabbit_deep_dive test_vowpal_wabbit.py</td>
+<td>AzureML</td>
+<td>To optimize our efforts, we decided to wait until a pip installable version of vowpalwabbit is again available and then it can be added back into the AzureML test suite.</td>
 </tr></table>
 
 In order to skip a test because there is an OS or upstream issue which cannot be resolved you can use pytest [annotations](https://docs.pytest.org/en/latest/skipping.html).
