@@ -25,6 +25,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
     """
     if filename is None:
         filename = url.split("/")[-1]
+    os.makedirs(work_directory, exist_ok=True)
     filepath = os.path.join(work_directory, filename)
     if not os.path.exists(filepath):
 
