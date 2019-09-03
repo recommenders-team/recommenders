@@ -20,6 +20,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         work_directory (str): Working directory.
         url (str): URL of the file to download.
         expected_bytes (int): Expected file size in bytes.
+        
     Returns:
         str: File path of the file downloaded.
     """
