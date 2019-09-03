@@ -11,6 +11,7 @@ They have admin access to the repo and provide support reviewing issues and pull
    * SAR single node improvements
    * Reco utils metrics computations
    * Tests for Surprise
+   * Model selection notebooks (AzureML for SVD, NNI) 
 * **[Jeremy Reynolds](https://github.com/jreynolds01)**
    * Reference architecture
 * **[Jun Ki Min](https://github.com/loomlike)**
