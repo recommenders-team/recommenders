@@ -106,9 +106,6 @@ class SARSingleNode:
         # the opposite of the above map - map array index to actual string ID
         self.index2item = None
 
-        # track user-item pairs seen during training
-        self.seen_items = None
-
     def compute_affinity_matrix(self, df, rating_col):
         """ Affinity matrix.
 
@@ -244,9 +241,6 @@ class SARSingleNode:
                 temp_df = self.compute_time_decay(df=temp_df, decay_column=self.col_unity_rating)
             self.unity_user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_unity_rating)
 
-        # retain seen items for removal at prediction time
-        self.seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
-
         # affinity matrix
         logger.info("Building user affinity sparse matrix")
         self.user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_rating)
@@ -301,19 +295,16 @@ class SARSingleNode:
 
         # calculate raw scores with a matrix multiplication
         logger.info("Calculating recommendation scores")
-        # TODO: only compute scores for users in test
-        test_scores = self.user_affinity.dot(self.item_similarity)
-
-        # remove items in the train set so recommended items are always novel
-        if remove_seen:
-            logger.info("Removing seen items")
-            test_scores[self.seen_items[:, 0], self.seen_items[:, 1]] = -np.inf
-
-        test_scores = test_scores[user_ids, :]
+        test_scores = self.user_affinity[user_ids, :].dot(self.item_similarity)
 
         # ensure we're working with a dense ndarray
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.toarray()
+
+        # remove items in the train set so recommended items are always novel
+        if remove_seen:
+            logger.info("Removing seen items")
+            test_scores += self.user_affinity[user_ids, :] * -np.inf
 
         if normalize:
             if self.unity_user_affinity is None:
