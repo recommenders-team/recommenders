@@ -106,9 +106,6 @@ class SARSingleNode:
         # the opposite of the above map - map array index to actual string ID
         self.index2item = None
 
-        # track user-item pairs seen during training
-        self.seen_items = None
-
     def compute_affinity_matrix(self, df, rating_col):
         """ Affinity matrix.
 
@@ -248,17 +245,11 @@ class SARSingleNode:
         logger.info("Building user affinity sparse matrix")
         self.user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_rating)
 
-        # retain seen items for removal at prediction time
-        seen = temp_df[[self.col_user_id, self.col_item_id]].values
-        self.seen_items = np.ones(self.user_affinity.shape)
-        self.seen_items[seen[:, 0], seen[:, 1]] = -np.inf
-
         # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
         item_cooccurrence = self.compute_coocurrence_matrix(df=temp_df)
 
         # free up some space
-        del seen
         del temp_df
 
         self.item_frequencies = item_cooccurrence.diagonal()
@@ -313,7 +304,7 @@ class SARSingleNode:
         # remove items in the train set so recommended items are always novel
         if remove_seen:
             logger.info("Removing seen items")
-            test_scores = test_scores * self.seen_items[user_ids, :]
+            test_scores += self.user_affinity[user_ids, :] * -np.inf
 
         if normalize:
             if self.unity_user_affinity is None:
