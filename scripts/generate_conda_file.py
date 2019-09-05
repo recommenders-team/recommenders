@@ -84,7 +84,7 @@ PIP_BASE = {
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
-    "cmake": "3.14.4",
+    "cmake": "cmake==3.14.4",
     "xlearn": "xlearn==0.40a1"
 }
 
