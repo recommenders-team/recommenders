@@ -52,6 +52,10 @@ if __name__ == "__main__":
     # Run.get_context() is needed to save context as pytest causes corruption
     # of env vars
     run = Run.get_context()
+
+    # Make sure that cmake which is used by xlearn is available in the testing environment
+    subprocess.run("sudo apt-get install cmake")
+
     '''
     This is an example of a working subprocess.run for a unit test run:
     subprocess.run(["pytest", "tests/unit",
