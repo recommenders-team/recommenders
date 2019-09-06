@@ -57,6 +57,7 @@ CONDA_BASE = {
     "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
+    "cmake": "cmake==3.14.0"
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
@@ -84,7 +85,6 @@ PIP_BASE = {
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
-    "cmake": "cmake==3.14.4",
     "xlearn": "xlearn==0.40a1"
 }
 
