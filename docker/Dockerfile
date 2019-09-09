@@ -14,8 +14,7 @@ WORKDIR ${HOME}
 
 # Install base dependencies
 RUN apt-get update && \
-    apt-get install -y curl git \
-    apt-get install cmake
+    apt-get install -y curl git cmake
 
 # Install Anaconda
 ARG ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
