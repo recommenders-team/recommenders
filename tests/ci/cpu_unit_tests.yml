@@ -53,25 +53,6 @@ steps:
      python scripts/generate_conda_file.py --name reco 
   displayName: ' generate_conda_file.py'
 
-    parser.add_argument("--dockercustom",
-                        action="store_true",
-                        help="Whether to use a custom Docker image")
-    # ACR repository
-    parser.add_argument("--acrrepo",
-                        action="store",
-                        default="None",
-                        help="ACR repository name")
-    # ACR user name
-    parser.add_argument("--acrusername",
-                        action="store",
-                        default="None",
-                        help="ACR user name")
-    # ACR password
-    parser.add_argument("--acrpassword",
-                        action="store",
-                        default="None",
-                        help="ACR password")
-
 - script: 
     python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testfolder $(testfolder) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --dockercustom --acrrepo $(acrrepo) --acrusername $(acrusername) --acrpassword $(acrpassword) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
   displayName: 'submit_azureml_pytest'
