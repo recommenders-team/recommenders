@@ -1,75 +1,99 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+import pandas as pd
 import requests
-import urllib
+
 
 API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
 API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
+SESSION = None
 
-def find_wikidataID(name):
+
+def get_session(session=None):
+    """Get session object
+
+    Args:
+        session (requests.Session): request session object
+
+    Returns:
+        requests.Session: request session object
+    """
+
+    if session is None:
+        global SESSION
+        if SESSION is None:
+            SESSION = requests.Session()
+        session = SESSION
+
+    return session
+
+
+def find_wikidata_id(name, limit=1, session=None):
     """Find the entity ID in wikidata from a title string.
 
     Args:
         name (str): A string with search terms (eg. "Batman (1989) film")
+        limit (int): Number of results to return
+        session (requests.Session): requests session to reuse connections
 
     Returns:
         (str): wikidata entityID corresponding to the title string. 
                   'entityNotFound' will be returned if no page is found
     """
-    url_opts = "&".join([
-        "action=query",
-        "list=search",
-        "srsearch={}".format(urllib.parse.quote(bytes(name, encoding='utf8'))),
-        "format=json",
-        "prop=pageprops",
-        "ppprop=wikibase_item",
-    ])
+
+    session = get_session(session=session)
+
+    params = dict(
+        action="query",
+        list="search",
+        srsearch=bytes(name, encoding="utf8"),
+        srlimit=limit,
+        srprop="",
+        format="json",
+    )
+
     try:
-        r = requests.get("{url}?{opts}".format(url=API_URL_WIKIPEDIA, opts=url_opts))
-    except requests.exceptions.RequestException as err:
-        print(err)
-        entity_id = "entityNotFound"
-        return entity_id
-    try:
-        pageID = r.json().get("query", {}).get("search", [{}])[0].get("pageid", "entityNotFound")
+        response = session.get(API_URL_WIKIPEDIA, params=params)
+        page_id = response.json()["query"]["search"][0]["pageid"]
     except Exception as e:
-        print("Page Name not found in Wikipedia")
+        # TODO: log exception
+        # print(e)
         return "entityNotFound"
 
-    if pageID == "entityNotFound":
+    params = dict(
+        action="query",
+        prop="pageprops",
+        ppprop="wikibase_item",
+        pageids=[page_id],
+        format="json",
+    )
+
+    try:
+        response = session.get(API_URL_WIKIPEDIA, params=params)
+        entity_id = response.json()["query"]["pages"][str(page_id)]["pageprops"][
+            "wikibase_item"
+        ]
+    except Exception as e:
+        # TODO: log exception
+        # print(e)
         return "entityNotFound"
 
-    url_opts = "&".join([
-        "action=query",
-        "prop=pageprops",
-        "format=json",
-        "pageids={}".format(pageID),
-    ])
-    try:
-        r = requests.get("{url}?{opts}".format(url=API_URL_WIKIPEDIA, opts=url_opts))
-    except requests.exceptions.RequestException as err:
-        print(err)
-        entity_id = "entityNotFound"
-        return entity_id
-    
-    try:
-        entity_id = r.json().get("query", {}).get("pages", {}).get(str(pageID), {}).get("pageprops", {}).get("wikibase_item", "entityNotFound")
-    except Exception as e:
-        print(e)
-        entity_id = "entityNotFound"
-        return entity_id
     return entity_id
 
-def query_entity_links(entityID):
+
+def query_entity_links(entity_id, session=None):
     """Query all linked pages from a wikidata entityID
 
     Args:
-        entityID (str): A wikidata page ID.
+        entity_id (str): A wikidata entity ID
+        session (requests.Session): requests session to reuse connections
 
     Returns:
         (json): dictionary with linked pages.
     """
-    query = """
+    query = (
+        """
     PREFIX entity: <http://www.wikidata.org/entity/>
     #partial results
 
@@ -77,12 +101,16 @@ def query_entity_links(entityID):
     WHERE
     {
         hint:Query hint:optimizer 'None' .
-        {	BIND(entity:"""+entityID+""" AS ?valUrl) .
+        {	BIND(entity:"""
+        + entity_id
+        + """ AS ?valUrl) .
             BIND("N/A" AS ?propUrl ) .
             BIND("identity"@en AS ?propLabel ) .
         }
         UNION
-        {	entity:"""+entityID+""" ?propUrl ?valUrl .
+        {	entity:"""
+        + entity_id
+        + """ ?propUrl ?valUrl .
             ?property ?ref ?propUrl .
             ?property rdf:type wikibase:Property .
             ?property rdfs:label ?propLabel
@@ -96,72 +124,124 @@ def query_entity_links(entityID):
     ORDER BY ?propUrl ?valUrl
     LIMIT 500
     """
+    )
+
+    session = get_session(session=session)
+
     try:
-        r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
-    except requests.exceptions.RequestException as err:
-        print(err)
-        return {}
-    try:
-        data = r.json()
+        data = session.get(
+            API_URL_WIKIDATA, params=dict(query=query, format="json")
+        ).json()
     except Exception as e:
-        print(e)
-        print("Entity ID not Found in Wikidata")
+        # TODO log exception
+        # print(e)
+        # print("Entity ID not Found in Wikidata")
         return {}
+
     return data
+
 
 def read_linked_entities(data):
     """Obtain lists of liken entities (IDs and names) from dictionary
+
     Args:
-        data (json): dictionary with linked pages.
+        data (json): dictionary with linked pages
 
     Returns:
         (list): List of liked entityIDs
         (list): List of liked entity names
     """
-    related_entities = []
-    related_names = []
-    if data == {}:
-        return related_entities, related_names
-    for c in data.get("results").get("bindings"):
-        url = c.get("valUrl").get("value")
-        related_entities.append(url.replace("http://www.wikidata.org/entity/", ""))
-        name = c.get("valLabel").get("value")
-        related_names.append(name)
-    return related_entities, related_names
 
-def query_entity_description(entityID):
+    return [
+        (
+            c.get("valUrl").get("value").replace("http://www.wikidata.org/entity/", ""),
+            c.get("valLabel").get("value"),
+        )
+        for c in data.get("results", {}).get("bindings", [])
+    ]
+
+
+def query_entity_description(entity_id, session=None):
     """Query entity wikidata description from entityID
+
     Args:
-        entityID (str): A wikidata page ID.
+        entity_id (str): A wikidata page ID.
+        session (requests.Session): requests session to reuse connections
 
     Returns:
         (str): Wikidata short description of the entityID
                descriptionNotFound' will be returned if no 
                description is found
     """
-    query = """
+    query = (
+        """
     PREFIX wd: <http://www.wikidata.org/entity/>
     PREFIX schema: <http://schema.org/>
 
     SELECT ?o
     WHERE 
     {
-      wd:"""+entityID+""" schema:description ?o.
+      wd:"""
+        + entity_id
+        + """ schema:description ?o.
       FILTER ( lang(?o) = "en" )
     }
     """
+    )
+
+    session = get_session(session=session)
+
     try:
-        r = requests.get(API_URL_WIKIDATA, params = {'format': 'json', 'query': query})
-    except requests.exceptions.RequestException as err:
-        print(err)
-        description = "descriptionNotFound"
-        return description
-    
-    try:
-        description = r.json().get("results", {}).get("bindings", [{}])[0].get("o",{}).get("value", "descriptionNotFound")
+        r = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
+        description = r.json()["results"]["bindings"][0]["o"]["value"]
     except Exception as e:
-        print(e)
-        print("Description not found")
-        description = "descriptionNotFound"
-        return description
+        # TODO: log exception
+        # print(e)
+        # print("Description not found")
+        return "descriptionNotFound"
+
     return description
+
+
+def search_wikidata(names, extras=None, describe=True, verbose=False):
+    """Create DataFrame of Wikidata search results
+
+    Args:
+        names (list[str]): list of names to search for
+        extras (dict(str: list)): optional extra items to assign to results for corresponding name
+        describe (bool): optional flag to include description of entity
+        verbose (bool): optional flag to print out intermediate data
+
+    Returns:
+        pd.DataFrame: wikipedia results for all names with found entities
+
+    """
+
+    results = []
+    for idx, name in enumerate(names):
+        entity_id = find_wikidata_id(name)
+        if verbose:
+            print("name: {name}, entity_id: {id}".format(name=name, id=entity_id))
+
+        if entity_id == "entityNotFound":
+            continue
+
+        json_links = query_entity_links(entity_id)
+        related_links = read_linked_entities(json_links)
+        description = query_entity_description(entity_id) if describe else ""
+
+        for related_entity, related_name in related_links:
+            result = dict(
+                name=name,
+                original_entity=entity_id,
+                linked_entities=related_entity,
+                name_linked_entities=related_name,
+            )
+            if describe:
+                result["description"] = description
+            if extras is not None:
+                for field, lst in extras.items():
+                    result[field] = lst[idx]
+            results.append(result)
+
+    return pd.DataFrame(results)
