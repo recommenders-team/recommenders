@@ -154,6 +154,10 @@ def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
                                  - Reco_cpu_test
                                  - Reco_gpu_test
         docker_proc_type (str) : processor type, cpu or gpu
+        docker_custom   (bool) : true if using a customized docker image, and false if not 
+        acr_repo  (str) : acr repository of the customer Docker image
+        acr_username (str) : acr repository user name
+        acr_password (str) : acr repository password
         conda_env_file   (str) : filename which contains info to
                                  set up conda env
     Return:
@@ -165,7 +169,13 @@ def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
     run_amlcompute = RunConfiguration()
     run_amlcompute.target = cpu_cluster
     run_amlcompute.environment.docker.enabled = True
-    run_amlcompute.environment.docker.base_image = docker_proc_type
+
+    if docker_custom:
+        run_amlcompute.environment.docker.base_image_repository.address = acr_repo
+        run_amlcompute.environment.docker.base_image_repository.username = acr_username 
+        run_amlcompute.environment.docker.base_image_repository.password = acr_password
+    else:
+        run_amlcompute.environment.docker.base_image = docker_proc_type
 
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
@@ -302,6 +312,25 @@ def create_arg_parser():
                         action="store",
                         default="cpu",
                         help="Base image used in docker container")
+    # Base or custom Docker image
+    parser.add_argument("--dockercustom",
+                        action="store_true",
+                        help="Whether to use a custom Docker image")
+    # ACR repository
+    parser.add_argument("--acrrepo",
+                        action="store",
+                        default="None",
+                        help="ACR repository name")
+    # ACR user name
+    parser.add_argument("--acrusername",
+                        action="store",
+                        default="None",
+                        help="ACR user name")
+    # ACR password
+    parser.add_argument("--acrpassword",
+                        action="store",
+                        default="None",
+                        help="ACR password")
     # Azure subscription id, when used in a pipeline, it is stored in keyvault
     parser.add_argument("--subid",
                         action="store",
