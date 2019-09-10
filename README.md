@@ -10,6 +10,8 @@ This repository contains examples and best practices for building recommendation
 Several utilities are provided in [reco_utils](reco_utils) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications. See the [reco_utils documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
 
+For a more detailed overview of the repository, please see the documents at the [wiki page](https://github.com/microsoft/recommenders/wiki/Documents-and-Presentations).      
+
 ## Getting Started
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on Spark, or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks). 
 
