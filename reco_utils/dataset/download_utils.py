@@ -20,11 +20,13 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         work_directory (str): Working directory.
         url (str): URL of the file to download.
         expected_bytes (int): Expected file size in bytes.
+        
     Returns:
         str: File path of the file downloaded.
     """
     if filename is None:
         filename = url.split("/")[-1]
+    os.makedirs(work_directory, exist_ok=True)
     filepath = os.path.join(work_directory, filename)
     if not os.path.exists(filepath):
 

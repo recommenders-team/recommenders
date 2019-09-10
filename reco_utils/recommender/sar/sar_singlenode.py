@@ -106,9 +106,6 @@ class SARSingleNode:
         # the opposite of the above map - map array index to actual string ID
         self.index2item = None
 
-        # track user-item pairs seen during training
-        self.seen_items = None
-
     def compute_affinity_matrix(self, df, rating_col):
         """ Affinity matrix.
 
@@ -244,9 +241,6 @@ class SARSingleNode:
                 temp_df = self.compute_time_decay(df=temp_df, decay_column=self.col_unity_rating)
             self.unity_user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_unity_rating)
 
-        # retain seen items for removal at prediction time
-        self.seen_items = temp_df[[self.col_user_id, self.col_item_id]].values
-
         # affinity matrix
         logger.info("Building user affinity sparse matrix")
         self.user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_rating)
@@ -301,19 +295,16 @@ class SARSingleNode:
 
         # calculate raw scores with a matrix multiplication
         logger.info("Calculating recommendation scores")
-        # TODO: only compute scores for users in test
-        test_scores = self.user_affinity.dot(self.item_similarity)
-
-        # remove items in the train set so recommended items are always novel
-        if remove_seen:
-            logger.info("Removing seen items")
-            test_scores[self.seen_items[:, 0], self.seen_items[:, 1]] = -np.inf
-
-        test_scores = test_scores[user_ids, :]
+        test_scores = self.user_affinity[user_ids, :].dot(self.item_similarity)
 
         # ensure we're working with a dense ndarray
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.toarray()
+
+        # remove items in the train set so recommended items are always novel
+        if remove_seen:
+            logger.info("Removing seen items")
+            test_scores += self.user_affinity[user_ids, :] * -np.inf
 
         if normalize:
             if self.unity_user_affinity is None:
@@ -322,7 +313,7 @@ class SARSingleNode:
                 test_scores = np.array(
                     np.divide(
                         test_scores,
-                        self.unity_user_affinity.dot(self.item_similarity)[user_ids, :]
+                        self.unity_user_affinity[user_ids, :].dot(self.item_similarity)
                     )
                 )
                 test_scores = np.where(np.isnan(test_scores), -np.inf, test_scores)
@@ -424,7 +415,7 @@ class SARSingleNode:
         return df.replace(-np.inf, np.nan).dropna()
 
     def recommend_k_items(
-        self, test, top_k=10, sort_top_k=True, remove_seen=False
+        self, test, top_k=10, sort_top_k=True, remove_seen=False, normalize=False
     ):
         """Recommend top K items for all users which are in the test set
 
@@ -438,7 +429,7 @@ class SARSingleNode:
             pd.DataFrame: top k recommendation items for each user
         """
 
-        test_scores = self.score(test, remove_seen=remove_seen)
+        test_scores = self.score(test, remove_seen=remove_seen, normalize=normalize)
 
         top_items, top_scores = get_top_k_scored_items(
             scores=test_scores, top_k=top_k, sort_top_k=sort_top_k

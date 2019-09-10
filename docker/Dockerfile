@@ -88,7 +88,7 @@ FROM gpu AS full
 ARG HOME
 WORKDIR ${HOME}
 
-COPY --from=pyspark spark spark
+COPY --from=pyspark ${HOME}/spark spark
 
 # Setup Conda environment
 RUN python recommenders/scripts/generate_conda_file.py --name base --gpu --pyspark
