@@ -3,11 +3,11 @@
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
 This repository contains examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on five key tasks: 
-- [Prepare Data](notebooks/01_prepare_data/README.md): Preparing and loading data for each recommender algorithm
-- [Model](notebooks/02_model/README.md): Building models using various classical and deep learning recommender algorithms such as Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)) or eXtreme Deep Factorization Machines ([xDeepFM](https://arxiv.org/abs/1803.05170)).
-- [Evaluate](notebooks/03_evaluate/README.md): Evaluating algorithms with offline metrics
+- [Prepare Data](notebooks/01_prepare_data): Preparing and loading data for each recommender algorithm
+- [Model](notebooks/02_model): Building models using various classical and deep learning recommender algorithms such as Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)) or eXtreme Deep Factorization Machines ([xDeepFM](https://arxiv.org/abs/1803.05170)).
+- [Evaluate](notebooks/03_evaluate): Evaluating algorithms with offline metrics
 - [Model Select and Optimize](notebooks/04_model_select_and_optimize): Tuning and optimizing hyperparameters for recommender models
-- [Operationalize](notebooks/05_operationalize/README.md): Operationalizing models in a production environment on Azure
+- [Operationalize](notebooks/05_operationalize): Operationalizing models in a production environment on Azure
 
 Several utilities are provided in [reco_utils](reco_utils) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications. See the [reco_utils documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
@@ -15,7 +15,7 @@ Several utilities are provided in [reco_utils](reco_utils) to support common tas
 For a more detailed overview of the repository, please see the documents at the [wiki page](https://github.com/microsoft/recommenders/wiki/Documents-and-Presentations).      
 
 ## Getting Started
-Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on Spark, or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks). 
+Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks). 
 
 To setup on your local machine:
 1. Install Anaconda with Python >= 3.6. [Miniconda](https://conda.io/miniconda.html) is a quick way to get started.
@@ -37,27 +37,11 @@ To setup on your local machine:
     ```
 5. Start the Jupyter notebook server
     ```
-    cd notebooks
     jupyter notebook
     ```
-6. Run the [SAR Python CPU MovieLens](notebooks/00_quick_start/sar_movielens.ipynb) notebook under the 00_quick_start folder. Make sure to change the kernel to "Python (reco)".
+6. Run the [SAR Python CPU MovieLens](notebooks/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
 
-**NOTE** - The [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment.
-
-## Install this repository via PIP
-A [setup.py](reco_utils/setup.py) file is provided in order to simplify the installation of this utilities in this repo from the main directory. 
-This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed you can use the following command to install reco_utils as it's own python package.
-
-    pip install -e reco_utils
-
-It is also possible to install directly from Github. Or from a specific branch as well.
-
-    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg\&subdirectory=reco_utils
-    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg\&subdirectory=reco_utils
-    
-
-**NOTE** - The pip installation does not install any of the necessary package dependencies, it is expected that conda will be used as shown above to setup the environment for the utilities being used.
-
+**NOTE** - The [Alternating Least Squares (ALS)](notebooks/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine.
 
 ## Algorithms
 
