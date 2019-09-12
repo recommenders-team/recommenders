@@ -200,7 +200,6 @@ TOL = 0.05
 @pytest.mark.smoke
 def test_sar_single_node_smoke(notebooks):
     notebook_path = notebooks["sar_single_node"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
