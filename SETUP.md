@@ -33,8 +33,8 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 
 ### Requirements
 
-* A machine running Linux, MacOS or Windows.
-* Anaconda with Python version >= 3.6.
+* A machine running Linux, MacOS or Windows
+* Anaconda with Python version >= 3.6
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine,
   [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
