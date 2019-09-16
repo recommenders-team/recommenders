@@ -165,7 +165,7 @@ def test_nni_tuning_svd(notebooks, tmp):
 
 @pytest.mark.integration
 def test_wikidata_integration(notebooks, tmp):
-    notebook_path = notebooks["wikidata_KG"]
+    notebook_path = notebooks["wikidata_knowledge_graph"]
     sample_size = 5
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
                         parameters=dict(MOVIELENS_DATA_SIZE='100k',
