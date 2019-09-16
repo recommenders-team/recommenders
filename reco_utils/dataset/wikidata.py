@@ -57,16 +57,11 @@ def find_wikidata_id(name, limit=1, session=None):
 
     try:
         response = session.get(API_URL_WIKIPEDIA, params=params)
-    except Exception as e:
-        logger.error("CONNECTION ERROR")
-        logger.error(e)
-        return "badRequest"
-
-    n_results = response.json()["query"]["searchinfo"]["totalhits"]
-    if n_results == 0:
-        return "entityNotFound"
-    else:
         page_id = response.json()["query"]["search"][0]["pageid"]
+    except Exception as e:
+        # TODO: distinguish between connection error and entity not found
+        logger.error("ENTITY NOT FOUND")
+        return "entityNotFound"
 
     params = dict(
         action="query",
