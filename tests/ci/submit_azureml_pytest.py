@@ -351,7 +351,9 @@ if __name__ == "__main__":
 
     if args.dockerproc == "cpu":
         from azureml.core.runconfig import DEFAULT_CPU_IMAGE
-        docker_proc_type = DEFAULT_CPU_IMAGE
+        # testing Le Zhang's cpu docker container
+        # docker_proc_type = DEFAULT_CPU_IMAGE
+        docker_proc_type = bpacr.azurecr.io/recommenders:cpu
     else:
         from azureml.core.runconfig import DEFAULT_GPU_IMAGE
         docker_proc_type = DEFAULT_GPU_IMAGE
