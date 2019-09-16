@@ -13,3 +13,8 @@ def test_invert_dictionary():
 
 def test_get_number_processors():
     assert get_number_processors() >= 1
+
+
+def test_import_xlearn():
+    with pytest.raises(Exception) as exp_info:
+        import xlearn
