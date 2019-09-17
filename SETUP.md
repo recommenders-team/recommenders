@@ -19,7 +19,8 @@ This document describes how to setup all the dependencies to run the notebooks i
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
   * [Repository installation](#repository-installation)
   * [Troubleshooting Installation on Azure Databricks](#Troubleshooting-Installation-on-Azure-Databricks)
-* [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
+  * [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
+* [Install the utilities via PIP](#install-the-utilities-via-pip)
 * [Setup guide for Docker](#setup-guide-for-docker)
 
 ## Compute environments
@@ -270,7 +271,7 @@ import reco_utils
 
 * For the [reco_utils](reco_utils) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
 
-## Prepare Azure Databricks for Operationalization
+### Prepare Azure Databricks for Operationalization
 
 This repository includes an end-to-end example notebook that uses Azure Databricks to estimate a recommendation model using matrix factorization with Alternating Least Squares, writes pre-computed recommendations to Azure Cosmos DB, and then creates a real-time scoring service that retrieves the recommendations from Cosmos DB. In order to execute that [notebook](notebooks/05_operationalize/als_movie_o16n.ipynb), you must install the Recommenders repository as a library (as described above), **AND** you must also install some additional dependencies. With the *Quick install* method, you just need to pass an additional option to the [installation script](scripts/databricks_install.py).
 
@@ -312,6 +313,21 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
    7. Restart the cluster.
 
 </details>
+
+## Install the utilities via PIP
+
+A [setup.py](reco_utils/setup.py) file is provided in order to simplify the installation of the utilities in this repo from the main directory. 
+
+This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed, you can use the following command to install `reco_utils` as a python package.
+
+    pip install -e reco_utils
+
+It is also possible to install directly from Github. Or from a specific branch as well.
+
+    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg\&subdirectory=reco_utils
+    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg\&subdirectory=reco_utils
+
+**NOTE** - The pip installation does not install any of the necessary package dependencies, it is expected that conda will be used as shown above to setup the environment for the utilities being used.
 
 ## Setup guide for Docker
 

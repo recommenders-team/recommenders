@@ -8,7 +8,7 @@ data preparation tasks witnessed in recommendation system development.
 | --- | --- | 
 | [data_split](data_split.ipynb) | Details on splitting data (randomly, chronologically, etc). |
 | [data_transform](data_transform.ipynb) | Guidance on how to transform (implicit / explicit) data for building collaborative filtering typed recommender. |
-| [wikidata knowledge graph](wikidata_KG.ipynb) | Details on how to create a knowledge graph using Wikidata |
+| [wikidata knowledge graph](wikidata_knowledge_graph.ipynb) | Details on how to create a knowledge graph using Wikidata |
 
 ### Data split
 

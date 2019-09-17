@@ -3,7 +3,9 @@
 
 import pandas as pd
 import requests
+import logging
 
+logger = logging.getLogger(__name__)
 
 API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
 API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
@@ -57,8 +59,8 @@ def find_wikidata_id(name, limit=1, session=None):
         response = session.get(API_URL_WIKIPEDIA, params=params)
         page_id = response.json()["query"]["search"][0]["pageid"]
     except Exception as e:
-        # TODO: log exception
-        # print(e)
+        # TODO: distinguish between connection error and entity not found
+        logger.error("ENTITY NOT FOUND")
         return "entityNotFound"
 
     params = dict(
@@ -75,8 +77,8 @@ def find_wikidata_id(name, limit=1, session=None):
             "wikibase_item"
         ]
     except Exception as e:
-        # TODO: log exception
-        # print(e)
+        # TODO: distinguish between connection error and entity not found
+        logger.error("ENTITY NOT FOUND")
         return "entityNotFound"
 
     return entity_id
@@ -133,9 +135,7 @@ def query_entity_links(entity_id, session=None):
             API_URL_WIKIDATA, params=dict(query=query, format="json")
         ).json()
     except Exception as e:
-        # TODO log exception
-        # print(e)
-        # print("Entity ID not Found in Wikidata")
+        logger.error("ENTITY NOT FOUND")
         return {}
 
     return data
@@ -195,9 +195,7 @@ def query_entity_description(entity_id, session=None):
         r = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
         description = r.json()["results"]["bindings"][0]["o"]["value"]
     except Exception as e:
-        # TODO: log exception
-        # print(e)
-        # print("Description not found")
+        logger.error("DESCRIPTION NOT FOUND")
         return "descriptionNotFound"
 
     return description
