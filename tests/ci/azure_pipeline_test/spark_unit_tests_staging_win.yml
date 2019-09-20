@@ -1,5 +1,5 @@
 pool:
-  name: RecoDevTeamWindows
+  name: RecommendersAgentPoolWin
   timeoutInMinutes: 20
 
 steps:
