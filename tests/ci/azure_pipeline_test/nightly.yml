@@ -1,5 +1,5 @@
 pool:
-  name: RecoDevTeam
+  name: recolinuxpool
   timeoutInMinutes: 120
 
 steps:
