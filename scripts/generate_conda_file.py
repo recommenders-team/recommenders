@@ -57,6 +57,7 @@ CONDA_BASE = {
     "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
+    "cornac": "cornac>=1.1.2",
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
