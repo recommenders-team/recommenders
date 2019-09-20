@@ -1,6 +1,7 @@
 pool:
   name: recolinuxpool
   timeoutInMinutes: 120
+  cancelTimeoutInMinutes: 120
 
 steps:
 - script: |
