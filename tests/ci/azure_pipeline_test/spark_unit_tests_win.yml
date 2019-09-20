@@ -1,0 +1,29 @@
+pool:
+  name: RecoDevTeamWindows
+  timeoutInMinutes: 20
+
+steps:
+- script: |
+   call conda activate reco_pyspark
+   pytest tests/unit -m "not notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
+   call conda deactivate
+  displayName: 'Run Tests'
+  timeoutInMinutes: 20
+  env:
+    PYSPARK_PYTHON: /anaconda/envs/reco_pyspark/bin/python
+    PYSPARK_DRIVER_PYTHON: /anaconda/envs/reco_pyspark/bin/python
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results'
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
+
+- script: |
+   del /q /S %LOCALAPPDATA%\Temp\*
+   for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
+  displayName: 'Remove Temp Files'
+  enabled: false
+  condition: succeededOrFailed()
+
