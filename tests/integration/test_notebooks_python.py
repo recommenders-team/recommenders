@@ -185,3 +185,32 @@ def test_wikidata_integration(notebooks, tmp):
     # FIXME: The return number should be always 5, but sometimes we get 4, find out why
     assert results["length_result"] >= 4
 
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
+        (
+            "1m",
+            dict(
+                map=0.081390,
+                ndcg=0.406627,
+                precision=0.373228,
+                recall=0.132444,
+            ),
+        ),
+        # 10m works but takes too long
+    ],
+)
+def test_surprise_svd_integration(notebooks, size, expected_values):
+    notebook_path = notebooks["cornac_bpr_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(MOVIELENS_DATA_SIZE=size),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
