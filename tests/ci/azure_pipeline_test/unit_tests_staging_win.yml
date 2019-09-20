@@ -1,3 +1,8 @@
+pr:
+  branches:
+    include:
+      - staging
+
 pool:
   name: RecommendersAgentPoolWin
   timeoutInMinutes: 20
