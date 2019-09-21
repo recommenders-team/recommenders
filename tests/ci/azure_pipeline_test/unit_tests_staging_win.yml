@@ -12,10 +12,12 @@ trigger:
     include:
     - staging
 
+workspace:
+  clean: all
+
 steps:
--auto: false
-  auto:
-    branch: staging
+
+- checkout: none
 
 - script: |
    call conda activate reco_base
