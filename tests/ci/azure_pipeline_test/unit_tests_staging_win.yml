@@ -7,6 +7,11 @@ pool:
   name: RecommendersAgentPoolWin
   timeoutInMinutes: 20
 
+trigger:
+  branches:
+    include:
+    - staging
+
 steps:
 - script: |
    call conda activate reco_base
