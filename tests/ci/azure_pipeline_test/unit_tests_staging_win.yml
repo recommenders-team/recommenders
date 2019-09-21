@@ -17,7 +17,8 @@ workspace:
 
 steps:
 
-- checkout: none
+- checkout: self
+  clean: true
 
 - script: |
    call conda activate reco_base
