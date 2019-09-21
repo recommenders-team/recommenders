@@ -13,6 +13,10 @@ trigger:
     - staging
 
 steps:
+-auto: false
+  auto:
+    branch: staging
+
 - script: |
    call conda activate reco_base
    pytest tests/unit -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
