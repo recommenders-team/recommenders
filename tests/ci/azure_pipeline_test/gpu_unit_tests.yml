@@ -30,12 +30,12 @@ steps:
 # Conda creation can take around 10min
 - bash: |
     python scripts/generate_conda_file.py
-    conda env create -n reco_base -f reco_base.yaml
+    conda env update -n reco_gpu -f reco_gpu.yaml
   displayName: 'Creating Conda Environment with dependencies'
 
 - script: |
    . /anaconda/etc/profile.d/conda.sh && \
-   conda activate reco_base && \
+   conda activate reco_gpu && \
    pytest tests/unit -m "not notebooks and not spark and gpu" --junitxml=reports/test-unit.xml && \
    conda deactivate
   displayName: 'Run Tests'
