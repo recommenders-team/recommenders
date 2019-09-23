@@ -6,11 +6,8 @@ pr:
 - staging
 - master
 
-#Any commit to this branch will trigger the build.
-trigger:
-- le_test_new
-#trigger: none
-#- staging
+# Any commit to this branch will trigger the build.
+trigger: none
 
 pool:
   name: RecommendersAgentPoolWin
@@ -40,4 +37,3 @@ steps:
   displayName: 'Remove Temp Files'
   enabled: false
   condition: succeededOrFailed()
-
