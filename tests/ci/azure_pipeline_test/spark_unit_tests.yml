@@ -40,6 +40,9 @@ steps:
    conda deactivate
   displayName: 'Run Tests'
   timeoutInMinutes: 20
+  env:
+    PYSPARK_PYTHON: /anaconda/envs/reco_pyspark/bin/python
+    PYSPARK_DRIVER_PYTHON: /anaconda/envs/reco_pyspark/bin/python
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results **/test-*.xml'
