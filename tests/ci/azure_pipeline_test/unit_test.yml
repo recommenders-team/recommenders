@@ -15,11 +15,11 @@ pool:
   name: recolinuxpool
   timeoutInMinutes: 20
 
-resources:
-  repositories:
-  - repository: common
-    type: github
-    name: microsoft/recommenders
+# resources:
+#   repositories:
+#   - repository: common
+#     type: github
+#     name: microsoft/recommenders
 
 steps:
 - bash: |
