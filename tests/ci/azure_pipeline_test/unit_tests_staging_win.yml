@@ -7,7 +7,9 @@ pr:
 - master
 
 #Any commit to this branch will trigger the build.
-trigger: none
+trigger:
+- le_test_new
+#trigger: none
 #- staging
 
 pool:
