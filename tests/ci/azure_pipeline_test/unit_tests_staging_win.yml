@@ -4,10 +4,11 @@
 # Pull request against these branches will trigger this build
 pr:
 - staging
+- master
 
 #Any commit to this branch will trigger the build.
-trigger:
-- staging
+trigger: none
+#- staging
 
 pool:
   name: RecommendersAgentPoolWin
