@@ -3,7 +3,7 @@
 
 schedules:
 - cron: "0 18 * * *"
-  displayName: Daily master build
+  displayName: Daily master cpu testing pipeline
   branches:
     include:
     - master
