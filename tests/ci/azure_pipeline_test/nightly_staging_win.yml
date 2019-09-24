@@ -3,7 +3,7 @@
 
 schedules:
 - cron: "0 21 * * *"
-  displayName: Daily staging build
+  displayName: Daily staging cpu testing pipeline
   branches:
     include:
     - staging
