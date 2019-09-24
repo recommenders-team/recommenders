@@ -1,6 +1,21 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+schedules:
+- cron: "0 03 * * *"
+  displayName: Daily staging gpu testing pipeline
+  branches:
+    include:
+    - staging
+
+trigger: none
+
+pr: none
+
 pool:
-  name: RecoDevTeamWindows
+  name: RecommendersAgentPoolWin
   timeoutInMinutes: 180
+  cancelTimeoutInMinutes: 180
 
 steps:
 - script: |
