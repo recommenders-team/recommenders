@@ -119,7 +119,7 @@ def test_lightgbm_quickstart_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_surprise_svd_smoke(notebooks):
+def test_cornac_bpr_smoke(notebooks):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(

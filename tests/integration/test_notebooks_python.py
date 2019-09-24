@@ -202,7 +202,7 @@ def test_wikidata_integration(notebooks, tmp):
         # 10m works but takes too long
     ],
 )
-def test_surprise_svd_integration(notebooks, size, expected_values):
+def test_cornac_bpr_integration(notebooks, size, expected_values):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
     pm.execute_notebook(
         notebook_path,
