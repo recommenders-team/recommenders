@@ -1,6 +1,21 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+schedules:
+- cron: "0 0 * * *"
+  displayName: Daily master gpu test pipeline
+  branches:
+    include:
+    - master
+
+trigger: none
+
+pr: none
+
 pool:
   name: RecommendersAgentPoolWin
   timeoutInMinutes: 180
+  cancelTimeoutInMinutes: 180
 
 steps:
 - script: |
@@ -38,4 +53,3 @@ steps:
   displayName: 'Conda remove'
   continueOnError: true
   timeoutInMinutes: 10
-
