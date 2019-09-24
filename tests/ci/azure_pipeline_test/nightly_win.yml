@@ -3,10 +3,10 @@
 
 schedules:
 - cron: "0 18 * * *"
-  displayName: Daily staging build
+  displayName: Daily master build
   branches:
     include:
-    - staging
+    - master
 
 trigger: none
 
