@@ -1,6 +1,21 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+schedules:
+- cron: "0 21 * * *"
+  displayName: Daily staging build
+  branches:
+    include:
+    - staging
+
+trigger: none
+
+pr: none
+
 pool:
   name: RecommendersAgentPoolWin
   timeoutInMinutes: 180
+  cancelTimeoutInMinutes: 180
 
 steps:
 - script: |
