@@ -1,12 +1,41 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Pull request against these branches will trigger this build
+pr:
+- master
+- staging
+
+#Any commit to this branch will trigger the build.
+trigger:
+- staging
+- master
+
 pool:
-  name: RecoDevTeam
+  name: recolinuxpool
   timeoutInMinutes: 20
 
+# resources:
+#   repositories:
+#   - repository: common
+#     type: github
+#     name: microsoft/recommenders
+
 steps:
+- bash: |
+    echo "##vso[task.prependpath]/data/anaconda/bin"
+    conda env list
+  displayName: Add Conda to PATH
+# Uncomment if needed
+# Conda creation can take around 10min
+# - bash: |
+#     python scripts/generate_conda_file.py  --pyspark
+#     conda env create -n reco_pyspark -f reco_pyspark.yaml
+#   displayName: 'Creating Conda Environment with dependencies'
+
 - script: |
    . /anaconda/etc/profile.d/conda.sh && \
    conda activate reco_pyspark && \
-   unset SPARK_HOME && \
    pytest tests/unit -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml && \
    conda deactivate
   displayName: 'Run Tests'
@@ -21,4 +50,7 @@ steps:
     testResultsFiles: '**/test-*.xml'
     failTaskOnFailedTests: true
   condition: succeededOrFailed()
+
+
+
 

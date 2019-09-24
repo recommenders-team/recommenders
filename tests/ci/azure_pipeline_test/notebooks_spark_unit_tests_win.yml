@@ -1,5 +1,21 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Pull request against these branches will trigger this build
+pr:
+- staging
+- master
+
+# Any commit to this branch will trigger the build.
+trigger: none
+
 pool:
-  name: RecoDevTeamWindows
+  name: RecommendersAgentPoolWin
+  timeoutInMinutes: 20
+
+workspace:
+  clean: all
+
 steps:
 - script: |
    call conda activate reco_pyspark
@@ -23,4 +39,3 @@ steps:
   displayName: 'Remove Temp Files'
   enabled: false
   condition: succeededOrFailed()
-

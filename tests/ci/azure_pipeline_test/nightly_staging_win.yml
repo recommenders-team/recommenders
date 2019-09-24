@@ -23,7 +23,7 @@ steps:
   timeoutInMinutes: 180
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results '
+  displayName: 'Publish Test Results'
   inputs:
     testResultsFiles: '**/test-*.xml'
     failTaskOnFailedTests: true
@@ -33,15 +33,8 @@ steps:
    call conda env remove -n nightly_reco_base -y
    rmdir /s /q C:\Anaconda\envs\nightly_reco_base
    
-  workingDirectory: tests
-  displayName: 'Conda remove'
+  displayName: 'Remove Conda Env'
   continueOnError: true
   condition: succeededOrFailed()
   timeoutInMinutes: 10
-
-- script: |
-   del /q /S %LOCALAPPDATA%\Temp\*
-   for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
-  displayName: 'Remove Temp Files'
-  condition: succeededOrFailed()
 
