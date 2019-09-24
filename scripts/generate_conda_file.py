@@ -81,6 +81,7 @@ PIP_BASE = {
     "memory-profiler": "memory-profiler>=0.54.0",
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
+    "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
