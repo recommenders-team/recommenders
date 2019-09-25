@@ -22,7 +22,7 @@ Args:
     Optional but suggested, this info will be stored on Azure as
     text information as part of the experiment:
     --pr          (str): the Github PR number
-    --reponame    (str): the Github repository name
+    --reponame    (str): the Github registry name
     --branch      (str): the branch being run
                     It is also possible to put any text string in these.
 Example:
@@ -37,7 +37,7 @@ Example:
 import argparse
 import logging
 
-from azureml.core.authentication import AzureCliAuthentication
+from azureml.core.authentication import AzureCliAuthentication, ServicePrincipalAuthentication
 from azureml.core import Workspace
 from azureml.core import Experiment
 from azureml.core.runconfig import RunConfiguration
@@ -46,6 +46,8 @@ from azureml.core.script_run_config import ScriptRunConfig
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.compute_target import ComputeTargetException
 from azureml.core.workspace import WorkspaceException
+
+import os
 
 
 def setup_workspace(workspace_name, subscription_id, resource_group, cli_auth,
@@ -140,7 +142,16 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size,
     return cpu_cluster
 
 
-def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
+def create_run_config(
+    cpu_cluster, 
+    conda_env_file,
+    docker_proc_type="cpu", 
+    use_custom_docker=False,
+    custom_docker_image="",
+    custom_docker_image_repo="",
+    custom_docker_image_repo_username="",
+    custom_docker_image_repo_password="",
+    ):
     """
     AzureML requires the run environment to be setup prior to submission.
     This configures a docker persistent compute.  Even though
@@ -154,6 +165,11 @@ def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
                                  - Reco_cpu_test
                                  - Reco_gpu_test
         docker_proc_type (str) : processor type, cpu or gpu
+        use_custom_docker (bool): whether to use customer Docker image or not
+        custom_docker_image (str): full name of Docker image
+        custom_docker_image_repo (str): Repository address of custom Docker image
+        custom_docker_image_repo_username (str): username for the registry if it is on Azure Container Registry 
+        custom_docker_image_repo_password (str): password for the registry if it is on Azure Container Registry
         conda_env_file   (str) : filename which contains info to
                                  set up conda env
     Return:
@@ -165,7 +181,15 @@ def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
     run_amlcompute = RunConfiguration()
     run_amlcompute.target = cpu_cluster
     run_amlcompute.environment.docker.enabled = True
-    run_amlcompute.environment.docker.base_image = docker_proc_type
+
+    # Allow use of a custom Docker image
+    if use_custom_docker:
+        run_amlcompute.environment.docker.base_image = custom_docker_image
+        run_amlcompute.environment.docker.base_image_registry.address = custom_docker_image_repo
+        run_amlcompute.environment.docker.base_image_registry.username = custom_docker_image_repo_username
+        run_amlcompute.environment.docker.base_image_registry.password = custom_docker_image_repo_password
+    else:
+        run_amlcompute.environment.docker.base_image = docker_proc_type
 
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
@@ -351,19 +375,27 @@ if __name__ == "__main__":
 
     if args.dockerproc == "cpu":
         from azureml.core.runconfig import DEFAULT_CPU_IMAGE
-        # testing Le Zhang's cpu docker container
-        # docker_proc_type = DEFAULT_CPU_IMAGE
-        docker_proc_type = bpacr.azurecr.io/recommenders:cpu
+        docker_proc_type = DEFAULT_CPU_IMAGE
     else:
         from azureml.core.runconfig import DEFAULT_GPU_IMAGE
         docker_proc_type = DEFAULT_GPU_IMAGE
 
-    cli_auth = AzureCliAuthentication()
+    svc_pr_password = os.environ.get("SECRET")
+    svc_tenant_id = os.environ.get("TENANT_ID")
+    svc_application_id = os.environ.get("CLIENT_ID")
+
+    svc_pr = ServicePrincipalAuthentication(
+        tenant_id=svc_tenant_id,
+        service_principal_id=svc_application_id,
+        service_principal_password=svc_pr_password
+    )
+
+    # cli_auth = AzureCliAuthentication()
 
     workspace = setup_workspace(workspace_name=args.wsname,
                                 subscription_id=args.subid,
                                 resource_group=args.rg,
-                                cli_auth=cli_auth,
+                                cli_auth=svc_pr,
                                 location=args.location)
 
     cpu_cluster = setup_persistent_compute_target(
@@ -372,8 +404,16 @@ if __name__ == "__main__":
                       vm_size=args.vmsize,
                       max_nodes=args.maxnodes)
 
+    # For testing purpose
+    import os
+
     run_config = create_run_config(cpu_cluster=cpu_cluster,
                                    docker_proc_type=docker_proc_type,
+                                   use_custom_docker=True,
+                                   custom_docker_image=os.environ['ACR_IMAGE'],
+                                   custom_docker_image_repo=os.environ['ACR_REPO'],
+                                   custom_docker_image_repo_username=os.environ['ACR_USERNAME'],
+                                   custom_docker_image_repo_password=os.environ['ACR_PASSWORD'],
                                    conda_env_file=args.condafile)
 
     logger.info('exp: In Azure, look for experiment named {}'.format(
