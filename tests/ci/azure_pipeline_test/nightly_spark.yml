@@ -1,11 +1,26 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+schedules:
+- cron: "0 0 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - staging
+
+trigger: none
+
+pr: none
+
 pool:
-  name: RecoDevTeam
+  name: recolinuxpool
   timeoutInMinutes: 120
+  cancelTimeoutInMinutes: 120
 
 steps:
 - script: |
    conda env remove -n nightly_reco_pyspark && \
-   python ./scripts/generate_conda_file.py --pyspark --name nightly_reco_pyspark && \
+   python ./scripts/generate_conda_file.py --name nightly_reco_pyspark && \
    conda env create --quiet -f nightly_reco_pyspark.yaml 2> log
   displayName: 'Setup Conda Env'
   timeoutInMinutes: 10
@@ -13,17 +28,14 @@ steps:
 - script: |
    . /anaconda/etc/profile.d/conda.sh && \
    conda activate nightly_reco_pyspark && \
-   unset SPARK_HOME && \
    echo "Smoke tests" && \
    pytest tests/smoke -m "smoke and spark and not gpu" --junitxml=reports/test-smoke.xml && \
    echo "Integration tests" && \
    pytest tests/integration -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml && \
    conda deactivate
-  displayName: 'Run pyspark smoke and integration tests'
-  timeoutInMinutes: 40
-  env:
-    PYSPARK_PYTHON: /anaconda/envs/nightly_reco_pyspark/bin/python
-    PYSPARK_DRIVER_PYTHON: /anaconda/envs/nightly_reco_pyspark/bin/python
+   
+  displayName: 'Run Tests'
+  timeoutInMinutes: 180
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results '

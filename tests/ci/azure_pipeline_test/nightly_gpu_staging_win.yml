@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 schedules:
-- cron: "0 0 * * *"
-  displayName: Daily master gpu test pipeline
+- cron: "0 03 * * *"
+  displayName: Daily staging gpu testing pipeline
   branches:
     include:
-    - master
+    - staging
 
 trigger: none
 
@@ -35,11 +35,11 @@ steps:
    pytest tests/integration -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml
    call conda deactivate
    
-  displayName: 'Run python smoke and integration tests'
+  displayName: 'Run Tests'
   timeoutInMinutes: 180
 
 - task: PublishTestResults@2
-  displayName: 'Publish Test Results **/test-*.xml'
+  displayName: 'Publish Test Results'
   inputs:
     testResultsFiles: '**/test-*.xml'
     failTaskOnFailedTests: true
@@ -49,7 +49,7 @@ steps:
    call conda env remove -n nightly_reco_gpu -y
    rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
    
-  workingDirectory: tests
-  displayName: 'Conda remove'
+  displayName: 'Remove Conda Env'
   continueOnError: true
+  condition: succeededOrFailed()
   timeoutInMinutes: 10
