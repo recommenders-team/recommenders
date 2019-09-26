@@ -1,16 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# schedules:
-# - cron: "0 0 * * *"
-#   displayName: Daily midnight build
-#   branches:
-#     include:
-#     - master
+schedules:
+- cron: "0 0 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - master
 
-# trigger: none
+trigger: none
 
-# pr: none
+pr: none
 
 jobs:
 - job: nightly
