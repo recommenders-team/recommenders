@@ -1,0 +1,55 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+schedules:
+- cron: "0 0 * * *"
+  displayName: Daily midnight build
+  branches:
+    include:
+    - master
+
+trigger: none
+
+pr: none
+
+pool:
+  name: recolinuxpool
+  timeoutInMinutes: 120
+  cancelTimeoutInMinutes: 120
+
+steps:
+- script: |
+   conda env remove -n nightly_reco_gpu && \
+   python ./scripts/generate_conda_file.py --name nightly_reco_gpu && \
+   conda env create --quiet -f nightly_reco_gpu.yaml 2> log
+  displayName: 'Setup Conda Env'
+  timeoutInMinutes: 10
+
+- script: |
+   . /anaconda/etc/profile.d/conda.sh && \
+   conda activate nightly_reco_gpu && \
+   echo "Smoke tests" && \
+   pytest tests/smoke -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml && \
+   echo "Integration tests" && \
+   pytest tests/integration -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml && \
+   conda deactivate
+   
+  displayName: 'Run Tests'
+  timeoutInMinutes: 180
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results '
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
+
+- script: |
+   conda env remove -n nightly_reco_gpu -y
+   
+  workingDirectory: tests
+  displayName: 'Conda remove'
+  continueOnError: true
+  condition: succeededOrFailed()
+  timeoutInMinutes: 10
+
