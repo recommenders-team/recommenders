@@ -8,6 +8,7 @@ from pyspark.sql.types import StructType, StructField
 from pyspark.sql.types import StringType, FloatType, IntegerType, LongType
 from fastai.collab import collab_learner, CollabDataBunch
 import surprise
+import cornac
 
 from reco_utils.common.constants import (
     COL_DICT,
@@ -29,6 +30,7 @@ from reco_utils.recommender.surprise.surprise_utils import (
     compute_ranking_predictions,
 )
 from reco_utils.recommender.fastai.fastai_utils import cartesian_product, score
+from reco_utils.recommender.cornac.cornac_utils import predict_ranking
 from reco_utils.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
     SparkRankingEvaluation,
@@ -257,6 +259,33 @@ def recommend_k_ncf(model, test, train):
         )
         topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(
             DEFAULT_RATING_COL, axis=1
+        )
+    return topk_scores, t
+
+
+def prepare_training_bpr(train):
+    return cornac.data.Dataset.from_uir(
+        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
+        seed=SEED
+    )
+
+
+def train_bpr(params, data):
+    model = cornac.models.BPR(**params)
+    with Timer() as t:
+        model.fit(data)
+    return model, t
+
+
+def recommend_k_bpr(model, test, train):
+    with Timer() as t:
+        topk_scores = predict_ranking(
+            model,
+            train,
+            usercol=DEFAULT_USER_COL,
+            itemcol=DEFAULT_ITEM_COL,
+            predcol=DEFAULT_PREDICTION_COL,
+            remove_seen=True,
         )
     return topk_scores, t
 
