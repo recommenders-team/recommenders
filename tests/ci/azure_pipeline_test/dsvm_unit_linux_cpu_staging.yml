@@ -7,6 +7,7 @@ pr:
 - staging
 
 #Any commit to this branch will trigger the build.
+# Except for markdown files
 trigger:
 - staging
 - master
