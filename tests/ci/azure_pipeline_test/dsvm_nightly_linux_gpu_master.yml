@@ -33,7 +33,6 @@ steps:
    echo "Integration tests" && \
    pytest tests/integration -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml && \
    conda deactivate
-   
   displayName: 'Run Tests'
   timeoutInMinutes: 180
 
