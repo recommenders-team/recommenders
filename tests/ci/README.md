@@ -12,3 +12,5 @@ For example, if a unit test for Spark utility functions of master branch is run 
 ```
 dsvm_unit_linux_pyspark_master.yml
 ```
+
+## Testing pipelines
