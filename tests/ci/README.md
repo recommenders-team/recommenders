@@ -13,4 +13,6 @@ For example, if a unit test for Spark utility functions of master branch is run 
 dsvm_unit_linux_pyspark_master.yml
 ```
 
+If a test runs on both master and staging branches, its last field will be left empty.
+
 ## Testing pipelines
