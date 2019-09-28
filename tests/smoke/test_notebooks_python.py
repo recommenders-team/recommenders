@@ -116,3 +116,21 @@ def test_lightgbm_quickstart_smoke(notebooks):
     assert results["res_basic"]["logloss"] == pytest.approx(0.4669, rel=TOL, abs=ABS_TOL)
     assert results["res_optim"]["auc"] == pytest.approx(0.7757, rel=TOL, abs=ABS_TOL)
     assert results["res_optim"]["logloss"] == pytest.approx(0.4607, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.smoke
+def test_cornac_bpr_smoke(notebooks):
+    notebook_path = notebooks["cornac_bpr_deep_dive"]
+    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(MOVIELENS_DATA_SIZE="100k"),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["map"] == pytest.approx(0.1091, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.4034, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.3550, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.1802, rel=TOL, abs=ABS_TOL)
