@@ -28,10 +28,10 @@ steps:
   displayName: Add Conda to PATH
 # Uncomment if needed
 # Conda creation can take around 10min
-# - bash: |
-#     python scripts/generate_conda_file.py  --gpu
-#     conda env create -n reco_gpu -f reco_gpu.yaml
-#   displayName: 'Creating Conda Environment with dependencies'
+- bash: |
+    python scripts/generate_conda_file.py  --gpu
+    conda env create -n reco_gpu -f reco_gpu.yaml
+  displayName: 'Creating Conda Environment with dependencies'
 
 - script: |
    . /anaconda/etc/profile.d/conda.sh && \
