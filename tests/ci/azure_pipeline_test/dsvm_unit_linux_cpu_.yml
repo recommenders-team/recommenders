@@ -31,7 +31,7 @@ steps:
 # # Conda creation can take around 10min
 - bash: |
     python scripts/generate_conda_file.py
-    conda env update --freeze-installed -n reco_base -f reco_base.yaml
+    conda env update --no-update-deps -n reco_base -f reco_base.yaml
   displayName: 'Creating Conda Environment with dependencies'
 
 - script: |
