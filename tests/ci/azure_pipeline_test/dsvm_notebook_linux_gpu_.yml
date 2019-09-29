@@ -48,4 +48,10 @@ steps:
     failTaskOnFailedTests: true
   condition: succeededOrFailed()
 
-
+- script: |
+    conda env remove -n reco_gpu -y   
+  workingDirectory: tests
+  displayName: 'Conda remove'
+  continueOnError: true
+  condition: succeededOrFailed()
+  timeoutInMinutes: 10
