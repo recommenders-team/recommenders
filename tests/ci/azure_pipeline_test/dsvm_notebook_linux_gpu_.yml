@@ -30,7 +30,7 @@ steps:
 # Conda creation can take around 10min
 - bash: |
     python scripts/generate_conda_file.py  --gpu
-    conda env create -n reco_gpu -f reco_gpu.yaml
+    conda env update -n reco_gpu -f reco_gpu.yaml
   displayName: 'Creating Conda Environment with dependencies'
 
 - script: |
@@ -48,10 +48,10 @@ steps:
     failTaskOnFailedTests: true
   condition: succeededOrFailed()
 
-- script: |
-    conda env remove -n reco_gpu -y   
-  workingDirectory: tests
-  displayName: 'Conda remove'
-  continueOnError: true
-  condition: succeededOrFailed()
-  timeoutInMinutes: 10
+# - script: |
+#     conda env remove -n reco_gpu -y   
+#   workingDirectory: tests
+#   displayName: 'Conda remove'
+#   continueOnError: true
+#   condition: succeededOrFailed()
+#   timeoutInMinutes: 10
