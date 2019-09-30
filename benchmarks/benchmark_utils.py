@@ -29,7 +29,8 @@ from reco_utils.recommender.surprise.surprise_utils import (
     compute_rating_predictions,
     compute_ranking_predictions,
 )
-from reco_utils.recommender.fastai.fastai_utils import cartesian_product, score
+from reco_utils.recommender.fastai.fastai_utils import (cartesian_product, score,
+                                                        hide_fastai_progress_bar)
 from reco_utils.recommender.cornac.cornac_utils import predict_ranking
 from reco_utils.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
