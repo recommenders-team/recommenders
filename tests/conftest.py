@@ -244,5 +244,10 @@ def notebooks():
         "nni_tuning_svd": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"
         ),
+        "cornac_bpr_deep_dive": os.path.join(
+            folder_notebooks, 
+            "02_model",
+            "cornac_bpr_deep_dive.ipynb"
+        )
     }
     return paths
