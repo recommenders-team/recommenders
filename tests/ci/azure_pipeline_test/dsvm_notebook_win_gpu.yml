@@ -18,6 +18,8 @@ workspace:
 
 steps:
 - script: |
+   python scripts/generate_conda_file.py --gpu
+   conda env create -f reco_gpu.yaml
    call conda activate reco_gpu
    pytest tests/unit -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
    call conda deactivate
