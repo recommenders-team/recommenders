@@ -18,6 +18,8 @@ workspace:
 
 steps:
 - script: |
+   python scripts/generate_conda_file.py --pyspark
+   call conda env update -n reco_pyspark -f reco_pyspark.yaml 
    call conda activate reco_pyspark
    pytest tests/unit -m "not notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
    call conda deactivate
