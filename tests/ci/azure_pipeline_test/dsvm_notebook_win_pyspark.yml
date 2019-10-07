@@ -27,6 +27,7 @@ steps:
   env:
     PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
     PYSPARK_DRIVER_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
+  timeoutInMinutes: 120
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results **/test-*.xml'
