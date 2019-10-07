@@ -18,4 +18,9 @@ If a test runs on both master and staging branches, its last field will be left 
 ## Testing pipelines
 
 * DSVM testing pipelines
+
+Testing pipelines that run on DSVM agent machines. 
+
 * Azure Machine Learning service testing pipeline
+
+Testing pipelines that run within an Azure Machine Learning service workspace.
