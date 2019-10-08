@@ -21,8 +21,11 @@ steps:
 - script: |
    call conda env remove -n nightly_reco_base
    rmdir /s /q C:\Anaconda\envs\nightly_reco_base
+  displayName: 'Remove Conda Env if it exists'
+
+- script: |
    python ./scripts/generate_conda_file.py --name nightly_reco_base
-   call conda env create --quiet -f nightly_reco_base.yaml --verbose
+   call conda env create -f nightly_reco_base.yaml
   displayName: 'Setup Conda Env'
   timeoutInMinutes: 10
 
@@ -33,9 +36,7 @@ steps:
    echo "Integration tests"
    pytest tests/integration -m "integration and not spark and not gpu" --junitxml=reports/test-integration.xml
    conda deactivate
-   
   displayName: 'Run Tests'
-  timeoutInMinutes: 180
 
 - task: PublishTestResults@2
   displayName: 'Publish Test Results '
