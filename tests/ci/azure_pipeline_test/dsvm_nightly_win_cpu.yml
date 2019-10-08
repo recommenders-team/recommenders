@@ -19,11 +19,11 @@ pool:
   cancelTimeoutInMinutes: 180
 
 steps:
-- script: |
-   call conda env remove -n nightly_reco_base
-   SET F="C:\Anaconda\envs\nightly_reco_base"
-   IF EXIST %F% RMDIR /S /Q %F%
-  displayName: 'Remove Conda Env if it exists'
+# - script: |
+#    call conda env remove -n nightly_reco_base
+#    SET F="C:\Anaconda\envs\nightly_reco_base"
+#    IF EXIST %F% RMDIR /S /Q %F%
+#   displayName: 'Remove Conda Env if it exists'
 
 - script: |
    python ./scripts/generate_conda_file.py --name nightly_reco_base
@@ -48,14 +48,14 @@ steps:
     failTaskOnFailedTests: true
   condition: succeededOrFailed()
 
-- script: |
-   call conda env remove -n nightly_reco_base -y
-   SET F="C:\Anaconda\envs\nightly_reco_base"
-   IF EXIST %F% RMDIR /S /Q %F%
-  workingDirectory: tests
-  displayName: 'Conda remove'
-  continueOnError: true
-  condition: succeededOrFailed()
+# - script: |
+#    call conda env remove -n nightly_reco_base -y
+#    SET F="C:\Anaconda\envs\nightly_reco_base"
+#    IF EXIST %F% RMDIR /S /Q %F%
+#   workingDirectory: tests
+#   displayName: 'Conda remove'
+#   continueOnError: true
+#   condition: succeededOrFailed()
 
 - script: |
    del /q /S %LOCALAPPDATA%\Temp\*
