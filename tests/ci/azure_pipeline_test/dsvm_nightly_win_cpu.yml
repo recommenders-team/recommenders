@@ -28,17 +28,17 @@ steps:
 - script: |
    python ./scripts/generate_conda_file.py --name nightly_reco_base
    call conda env create -f nightly_reco_base.yaml
-   pip list
   displayName: 'Setup Conda Env'
   timeoutInMinutes: 10
 
 - script: |
-   call conda activate nightly_reco_base
+   call source activate nightly_reco_base
+   echo "Show libraries"
+   pip list
    echo "Smoke tests"
    pytest tests/smoke --durations 0 -m "smoke and not spark and not gpu" --junitxml=reports/test-smoke.xml
    echo "Integration tests"
    pytest tests/integration --durations 0 -m "integration and not spark and not gpu" --junitxml=reports/test-integration.xml
-   conda deactivate
   displayName: 'Run Tests'
 
 - task: PublishTestResults@2
@@ -50,13 +50,12 @@ steps:
 
 - script: |
    call conda env remove -n nightly_reco_base -y
-   rmdir /s /q C:\Anaconda\envs\nightly_reco_base
-   
+   SET F="C:\Anaconda\envs\nightly_reco_base"
+   IF EXIST %F% RMDIR /S /Q %F%
   workingDirectory: tests
   displayName: 'Conda remove'
   continueOnError: true
   condition: succeededOrFailed()
-  timeoutInMinutes: 10
 
 - script: |
    del /q /S %LOCALAPPDATA%\Temp\*
