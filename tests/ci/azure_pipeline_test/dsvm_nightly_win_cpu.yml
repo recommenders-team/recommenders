@@ -32,7 +32,7 @@ steps:
   timeoutInMinutes: 10
 
 - script: |
-   call source activate nightly_reco_base
+   conda activate nightly_reco_base
    echo "Show libraries"
    pip list
    echo "Smoke tests"
