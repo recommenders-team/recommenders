@@ -21,7 +21,7 @@ steps:
    python scripts/generate_conda_file.py
    call conda env update -n reco_base -f reco_base.yaml 
    call conda activate reco_base
-   pytest tests/unit -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
+   pytest tests/unit --durations 0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
    call conda deactivate
   displayName: 'Run Tests'
   timeoutInMinutes: 20
