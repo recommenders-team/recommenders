@@ -78,7 +78,6 @@ PIP_BASE = {
     "idna": "idna==2.7",
     "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "papermill": "papermill==0.18.2",
     "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
@@ -86,7 +85,7 @@ PIP_BASE = {
     "tqdm": "tqdm==4.31.1",
 }
 
-PIP_GPU = {}
+PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
 PIP_PYSPARK = {}
 
 PIP_DARWIN = {
