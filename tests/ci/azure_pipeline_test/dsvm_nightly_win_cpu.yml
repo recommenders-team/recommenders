@@ -21,7 +21,7 @@ pool:
 steps:
 - script: |
    call conda env remove -n nightly_reco_base
-   rmdir /s /q C:\Anaconda\envs\nightly_reco_base
+   rmdir /s /q C:\Anaconda\envs\nightly_reco_base 2>nul
   displayName: 'Remove Conda Env if it exists'
 
 - script: |
