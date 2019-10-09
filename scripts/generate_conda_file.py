@@ -56,6 +56,8 @@ CONDA_BASE = {
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
     "cornac": "cornac>=1.1.2",
+    "fastai": "fastai==1.0.46",
+    "papermill": "papermill==0.19.1",
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
@@ -71,14 +73,11 @@ PIP_BASE = {
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
-    "databricks-cli": "databricks-cli==0.8.6",
     "dataclasses": "dataclasses>=0.6",
-    "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "papermill": "papermill==0.18.2",
     "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
@@ -86,7 +85,7 @@ PIP_BASE = {
 }
 
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
-PIP_PYSPARK = {}
+PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
 PIP_DARWIN = {
     "nni": "nni==0.5.2.1.1",
