@@ -64,7 +64,7 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Jianxun Lian](https://github.com/Leavingseason)**
    * xDeepFM algorithm
    * DKN algorithm
-* **[Markus Cosowicz](https://github.com/eisber)**
+* **[Markus Cozowicz](https://github.com/eisber)**
    * SAR improvements on Spark
 * **[Max Kaznady](https://github.com/maxkazmsft)**
    * Early SAR single node code and port from another internal codebase
