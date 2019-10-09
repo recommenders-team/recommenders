@@ -11,6 +11,7 @@ They have admin access to the repo and provide support reviewing issues and pull
    * SAR single node improvements
    * Reco utils metrics computations
    * Tests for Surprise
+   * Model selection notebooks (AzureML for SVD, NNI) 
 * **[Jeremy Reynolds](https://github.com/jreynolds01)**
    * Reference architecture
 * **[Jun Ki Min](https://github.com/loomlike)**
@@ -77,6 +78,8 @@ To contributors: please add your name to the list when you submit a patch to the
    * Jupyter notebook demonstrating the use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
+* **[Quoc-Tuan Truong](https://github.com/tqtg)**
+   * BPR notebook using [Cornac](https://github.com/PreferredAI/cornac) framework
 * **[Robert Alexander](https://github.com/roalexan)**
    * Windows test pipelines
 * **[Yassine Khelifi](https://github.com/datashinobi)**

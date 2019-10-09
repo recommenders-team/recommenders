@@ -53,6 +53,7 @@ Currently available metrics include:
 
 The recommender submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). Next a list of the algorithm utilities:
 
+* Cornac
 * DeepRec (includes xDeepFM and DKN)
 * FastAI
 * LightGBM

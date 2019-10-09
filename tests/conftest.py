@@ -46,8 +46,7 @@ def spark(app_name="Sample", url="local[*]"):
         SparkSession: new Spark session
     """
 
-    config = {"spark.local.dir": "/mnt",
-              "spark.sql.shuffle.partitions": 1}
+    config = {"spark.local.dir": "/mnt", "spark.sql.shuffle.partitions": 1}
     spark = start_or_get_spark(app_name=app_name, url=url, config=config)
     yield spark
     spark.stop()
@@ -185,15 +184,11 @@ def notebooks():
 
     # Path for the notebooks
     paths = {
-        "template": os.path.join(
-            folder_notebooks, "template.ipynb"
-        ),
+        "template": os.path.join(folder_notebooks, "template.ipynb"),
         "sar_single_node": os.path.join(
             folder_notebooks, "00_quick_start", "sar_movielens.ipynb"
         ),
-        "ncf": os.path.join(
-            folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"
-        ),
+        "ncf": os.path.join(folder_notebooks, "00_quick_start", "ncf_movielens.ipynb"),
         "als_pyspark": os.path.join(
             folder_notebooks, "00_quick_start", "als_movielens.ipynb"
         ),
@@ -215,8 +210,8 @@ def notebooks():
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
-        "wikidata_KG": os.path.join(
-            folder_notebooks, "01_prepare_data", "wikidata_KG.ipynb"
+        "wikidata_knowledge_graph": os.path.join(
+            folder_notebooks, "01_prepare_data", "wikidata_knowledge_graph.ipynb"
         ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_model", "als_deep_dive.ipynb"
@@ -239,9 +234,7 @@ def notebooks():
         "mmlspark_lightgbm_criteo": os.path.join(
             folder_notebooks, "02_model", "mmlspark_lightgbm_criteo.ipynb"
         ),
-        "evaluation": os.path.join(
-            folder_notebooks, "03_evaluate", "evaluation.ipynb"
-        ),
+        "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "spark_tuning": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "tuning_spark_als.ipynb"
         ),
@@ -250,6 +243,11 @@ def notebooks():
         ),
         "nni_tuning_svd": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"
+        ),
+        "cornac_bpr_deep_dive": os.path.join(
+            folder_notebooks, 
+            "02_model",
+            "cornac_bpr_deep_dive.ipynb"
         )
     }
     return paths
