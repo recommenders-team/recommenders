@@ -1,7 +1,7 @@
 # sarplus (preview)
 pronounced sUrplus as it's simply better if not best!
 
-[![Build Status](https://dev.azure.com/marcozo-sarplus/sarplus/_apis/build/status/microsoft.sarplus)](https://dev.azure.com/marcozo-sarplus/sarplus/_build/latest?definitionId=1)
+[![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/contrib%20sarplus?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=107&branchName=master)
 [![PyPI version](https://badge.fury.io/py/pysarplus.svg)](https://badge.fury.io/py/pysarplus)
 
 Features
