@@ -22,6 +22,12 @@ jobs:
       Python36-Spark2.4.1:
         python.version: '3.6'
         spark.version: '2.4.1'
+      Python36-Spark2.4.3:
+        python.version: '3.6'
+        spark.version: '2.4.3'
+      Python37-Spark2.4.3:
+        python.version: '3.7'
+        spark.version: '2.4.3'
     maxParallel: 4
 
   steps:
