@@ -36,6 +36,7 @@ jobs:
       scanType: 'Register'
       verbosity: 'Verbose'
       alertWarningLevel: 'High'
+      sourceScanPath: contrib/sarplus
 
   - task: UsePythonVersion@0
     inputs:
