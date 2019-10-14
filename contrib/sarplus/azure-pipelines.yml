@@ -3,8 +3,19 @@
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
-jobs:
+pr:
+  branches:
+    include:
+      - staging
+      - master
+  paths:
+    include:
+      - contrib/sarplus/*
 
+# no CI trigger
+trigger: none
+
+jobs:
 - job: 'Test'
   pool:
     vmImage: 'Ubuntu 16.04'
