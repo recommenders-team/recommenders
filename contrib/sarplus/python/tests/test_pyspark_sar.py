@@ -234,7 +234,8 @@ def sar_settings():
     "similarity_type, timedecay_formula", [("jaccard", False), ("lift", True)]
 )
 def test_fit(spark, similarity_type, timedecay_formula, train_test_dummy_timestamp, header):
-    model = SARPlus(spark, **header)
+    model = SARPlus(spark, **header, timedecay_formula=timedecay_formula,
+       similarity_type=similarity_type)
     
     trainset, testset = train_test_dummy_timestamp
 
@@ -243,9 +244,7 @@ def test_fit(spark, similarity_type, timedecay_formula, train_test_dummy_timesta
 
     df = spark.table("trainset")
 
-    model.fit(df, 
-       timedecay_formula=timedecay_formula,
-       similarity_type=similarity_type)
+    model.fit(df) 
 
 
 """
@@ -268,15 +267,16 @@ def test_sar_item_similarity(
     spark, threshold, similarity_type, file, demo_usage_data, sar_settings, header
 ):
 
-    model = SARPlus(spark, **header)
-
-    df = spark.createDataFrame(demo_usage_data)
-    model.fit(df, 
+    model = SARPlus(spark,
+       **header,
        timedecay_formula=False,
        time_decay_coefficient=30,
        time_now=None,
        threshold=threshold,
        similarity_type=similarity_type)
+
+    df = spark.createDataFrame(demo_usage_data)
+    model.fit(df)
 
     # reference
     item_similarity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv")
@@ -312,14 +312,15 @@ def test_sar_item_similarity(
 def test_user_affinity(spark, demo_usage_data, sar_settings, header):
     time_now = demo_usage_data[header["col_timestamp"]].max()
 
-    model = SARPlus(spark, **header)
-
-    df = spark.createDataFrame(demo_usage_data)
-    model.fit(df, 
+    model = SARPlus(spark,
+       **header, 
        timedecay_formula=True,
        time_decay_coefficient=30,
        time_now=time_now,
        similarity_type="cooccurrence")
+
+    df = spark.createDataFrame(demo_usage_data)
+    model.fit(df)
 
     user_affinity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "user_aff.csv")
     user_affinity_ref = pd.melt(user_affinity_ref, user_affinity_ref.columns[0], user_affinity_ref.columns[1:], 'ItemId', 'Rating')
@@ -352,15 +353,17 @@ def test_userpred(
 
     test_id = '{0}_{1}_{2}'.format(threshold, similarity_type, file)
 
-    model = SARPlus(spark, **header, table_prefix=test_id)
-
-    df = spark.createDataFrame(demo_usage_data)
-    model.fit(df, 
+    model = SARPlus(spark,
+       **header,
+       table_prefix=test_id, 
        timedecay_formula=True,
        time_decay_coefficient=30,
        time_now=time_now,
        threshold=threshold,
        similarity_type=similarity_type)
+
+    df = spark.createDataFrame(demo_usage_data)
+    model.fit(df)
 
     url = (sar_settings["FILE_DIR"]
         + "userpred_"

@@ -1,4 +1,4 @@
-# sarplus (preview)
+# SARplus (preview)
 pronounced sUrplus as it's simply better if not best!
 
 [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/contrib%20sarplus?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=107&branchName=master)
@@ -30,32 +30,30 @@ There are a couple of key optimizations:
 ** make sure to always just keep top-k items in-memory
 ** use standard join using binary search between users past seen items and the related items
 
-![Image of sarplus top-k recommendation optimization](images/sarplus_udf.svg) 
+![Image of sarplus top-k recommendation optimization](https://recodatasets.blob.core.windows.net/images/sarplus_udf.svg) 
 
 # Usage
 
 ```python
-import pandas as pd
 from pysarplus import SARPlus
 
 # spark dataframe with user/item/rating/optional timestamp tuples
-train_df = spark.createDataFrame(
-      pd.DataFrame({
-        'user_id': [1, 1, 2, 3, 3],
-        'item_id': [1, 2, 1, 1, 3],
-        'rating':  [1, 1, 1, 1, 1],
-    }))
-   
+train_df = spark.createDataFrame([
+    (1, 1, 1), 
+    (1, 2, 1), 
+    (2, 1, 1), 
+    (3, 1, 1), 
+    (3, 3, 1)], 
+    ['user_id', 'item_id', 'rating'])
+
 # spark dataframe with user/item tuples
-test_df = spark.createDataFrame(
-      pd.DataFrame({
-        'user_id': [1, 3],
-        'item_id': [1, 3],
-        'rating':  [1, 1],
-    }))
-    
-model = SARPlus(spark, col_user='user_id', col_item='item_id', col_rating='rating', col_timestamp='timestamp')
-model.fit(train_df, similarity_type='jaccard')
+test_df = spark.createDataFrame([
+    (1, 1, 1), 
+    (3, 3, 1)], 
+    ['user_id', 'item_id', 'rating'])
+
+model = SARPlus(spark, col_user='user_id', col_item='item_id', col_rating='rating', col_timestamp='timestamp', similarity_type='jaccard')
+model.fit(train_df)
 
 
 model.recommend_k_items(test_df, 'sarplus_cache', top_k=3).show()
@@ -146,46 +144,6 @@ import logging
 logging.getLogger("py4j").setLevel(logging.ERROR)
 ```
 
+# Development
 
-# Packaging
-
-For [databricks](https://databricks.com/) to properly install a [C++ extension](https://docs.python.org/3/extending/building.html), one must take a detour through [pypi](https://pypi.org/).
-Use [twine](https://github.com/pypa/twine) to upload the package to [pypi](https://pypi.org/).
-
-```bash
-cd python
-
-python setup.py sdist
-
-twine upload dist/pysarplus-*.tar.gz
-```
-
-On [Spark](https://spark.apache.org/) one can install all 3 components (C++, Python, Scala) in one pass by creating a [Spark Package](https://spark-packages.org/). Documentation is rather sparse. Steps to install
-
-1. Package and publish the [pip package](python/setup.py) (see above)
-2. Package the [Spark package](scala/build.sbt), which includes the [Scala formatter](scala/src/main/scala/microsoft/sarplus) and references the [pip package](scala/python/requirements.txt) (see below)
-3. Upload the zipped Scala package to [Spark Package](https://spark-packages.org/) through a browser. [sbt spPublish](https://github.com/databricks/sbt-spark-package) has a few [issues](https://github.com/databricks/sbt-spark-package/issues/31) so it always fails for me. Don't use spPublishLocal as the packages are not created properly (names don't match up, [issue](https://github.com/databricks/sbt-spark-package/issues/17)) and furthermore fail to install if published to [Spark-Packages.org](https://spark-packages.org/).  
-
-```bash
-cd scala
-sbt spPublish
-```
-
-# Testing
-
-To test the python UDF + C++ backend
-
-```bash
-cd python 
-python setup.py install && pytest -s tests/
-```
-
-To test the Scala formatter
-
-```bash
-cd scala
-sbt test
-```
-
-(use ~test and it will automatically check for changes in source files, but not build.sbt)
-
+See [DEVELOPMENT.md]

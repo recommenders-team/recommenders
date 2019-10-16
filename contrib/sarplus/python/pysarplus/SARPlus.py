@@ -27,7 +27,13 @@ class SARPlus:
         col_rating="rating",
         col_timestamp="timestamp",
         table_prefix="",
+        similarity_type="jaccard",
+        time_decay_coefficient=30,
+        time_now=None,
+        timedecay_formula=False,
+        threshold=1
     ):
+        assert threshold > 0
 
         self.spark = spark
         self.header = {
@@ -36,7 +42,13 @@ class SARPlus:
             "col_rating": col_rating,
             "col_timestamp": col_timestamp,
             "prefix": table_prefix,
+            "time_now": time_now,
+            "time_decay_coefficient": time_decay_coefficient,
+            "threshold": threshold
         }
+
+        self.similarity_type = similarity_type
+        self.timedecay_formula = timedecay_formula
 
     def f(self, str, **kwargs):
         return str.format(**self.header, **kwargs)
@@ -45,15 +57,7 @@ class SARPlus:
     # toggle the computation of time decay group by formula
     # current time for time decay calculation
     # cooccurrence matrix threshold
-    def fit(
-        self,
-        df,
-        similarity_type="jaccard",
-        time_decay_coefficient=30,
-        time_now=None,
-        timedecay_formula=False,
-        threshold=1,
-    ):
+    def fit(self, df):
         """Main fit method for SAR. Expects the dataframes to have row_id, col_id columns which are indexes,
         i.e. contain the sequential integer index of the original alphanumeric user and item IDs.
         Dataframe also contains rating and timestamp as floats; timestamp is in seconds since Epoch by default.
@@ -62,11 +66,10 @@ class SARPlus:
             df (pySpark.DataFrame): input dataframe which contains the index of users and items. """
 
         # threshold - items below this number get set to zero in coocurrence counts
-        assert threshold > 0
 
-        df.createOrReplaceTempView("{prefix}df_train_input".format(**self.header))
+        df.createOrReplaceTempView(self.f("{prefix}df_train_input"))
 
-        if timedecay_formula:
+        if self.timedecay_formula:
             # WARNING: previously we would take the last value in training dataframe and set it
             # as a matrix U element
             # for each user-item pair. Now with time decay, we compute a sum over ratings given
@@ -88,10 +91,7 @@ class SARPlus:
                  (SELECT CAST(MAX({col_timestamp}) AS long) latest_timestamp FROM {prefix}df_train_input)
             GROUP BY {col_user}, {col_item} 
             CLUSTER BY {col_user} 
-            """,
-                time_now=time_now,
-                time_decay_coefficient=time_decay_coefficient,
-            )
+            """)
 
             # replace with timedecayed version
             df = self.spark.sql(query)
@@ -128,9 +128,7 @@ class SARPlus:
         GROUP  BY A.{col_item}, B.{col_item}
         HAVING COUNT(*) >= {threshold}
         CLUSTER BY i1, i2
-        """,
-            threshold=threshold,
-        )
+        """)
 
         item_cooccurrence = self.spark.sql(query)
         item_cooccurrence.write.mode("overwrite").saveAsTable(
@@ -138,7 +136,7 @@ class SARPlus:
         )
 
         # compute the diagonal used later for Jaccard and Lift
-        if similarity_type == SIM_LIFT or similarity_type == SIM_JACCARD:
+        if self.similarity_type == SIM_LIFT or self.similarity_type == SIM_JACCARD:
             item_marginal = self.spark.sql(
                 self.f(
                     "SELECT i1 i, value AS margin FROM {prefix}item_cooccurrence WHERE i1 = i2"
@@ -146,9 +144,9 @@ class SARPlus:
             )
             item_marginal.createOrReplaceTempView(self.f("{prefix}item_marginal"))
 
-        if similarity_type == SIM_COOCCUR:
+        if self.similarity_type == SIM_COOCCUR:
             self.item_similarity = item_cooccurrence
-        elif similarity_type == SIM_JACCARD:
+        elif self.similarity_type == SIM_JACCARD:
             query = self.f(
             """
             SELECT i1, i2, value / (M1.margin + M2.margin - value) AS value
@@ -159,7 +157,7 @@ class SARPlus:
             """
             )
             self.item_similarity = self.spark.sql(query)
-        elif similarity_type == SIM_LIFT:
+        elif self.similarity_type == SIM_LIFT:
             query = self.f(
             """
             SELECT i1, i2, value / (M1.margin * M2.margin) AS value
@@ -171,11 +169,11 @@ class SARPlus:
             )
             self.item_similarity = self.spark.sql(query)
         else:
-            raise ValueError("Unknown similarity type: {0}".format(similarity_type))
+            raise ValueError("Unknown similarity type: {0}".format(self.similarity_type))
 
 
         # store upper triangular
-        log.info("sarplus.fit 2/2: compute similiarity metric %s..." % similarity_type)
+        log.info("sarplus.fit 2/2: compute similiarity metric %s..." % self.similarity_type)
         self.item_similarity.write.mode("overwrite").saveAsTable(
             self.f("{prefix}item_similarity_upper")
         )
