@@ -9,36 +9,39 @@ pr:
 # Any commit to this branch will trigger the build.
 trigger: none
 
-pool:
-  name: RecommendersAgentPoolWin
-  timeoutInMinutes: 120
+jobs:
+- job: notebook
+  displayName : "Notebook tests windows pyspark"
+  timeoutInMinutes: 180
 
-workspace:
-  clean: all
+  pool:
+    name: RecommendersAgentPoolWin
 
-steps:
-- script: |
-   python scripts/generate_conda_file.py --pyspark
-   call conda env create -f reco_pyspark.yaml
-   call conda activate reco_pyspark
-   pytest tests/unit -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
-   call conda deactivate
-  displayName: 'Run Tests'
-  env:
-    PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
-    PYSPARK_DRIVER_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
-  timeoutInMinutes: 120
+  workspace:
+    clean: all
 
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results **/test-*.xml'
-  inputs:
-    testResultsFiles: '**/test-*.xml'
-    failTaskOnFailedTests: true
-  condition: succeededOrFailed()
+  steps:
+  - script: |
+      python scripts/generate_conda_file.py --pyspark
+      call conda env create -f reco_pyspark.yaml
+      call conda activate reco_pyspark
+      pytest tests/unit -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
+      call conda deactivate
+      displayName: 'Run Tests'
+      env:
+        PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
+        PYSPARK_DRIVER_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
 
-- script: |
-   del /q /S %LOCALAPPDATA%\Temp\*
-   for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
-  displayName: 'Remove Temp Files'
-  enabled: false
-  condition: succeededOrFailed()
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/test-*.xml'
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
+
+  - script: |
+      del /q /S %LOCALAPPDATA%\Temp\*
+      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
+      displayName: 'Remove Temp Files'
+    enabled: false
+    condition: succeededOrFailed()
