@@ -4,16 +4,13 @@
 from setuptools import setup, find_packages
 from os import chdir, path
 
-
+chdir(path.abspath(path.dirname(__file__)))
 VERSION = __import__("__init__").VERSION
 
-here = path.abspath(path.dirname(__file__))
-
 # Get the long description from the README file
-with open(path.join(here, "README.md"), encoding="utf-8") as f:
+with open("README.md", encoding="utf-8") as f:
     long_description = f.read()
 
-chdir(here)
 setup(
     name="reco_utils",
     version=VERSION,
