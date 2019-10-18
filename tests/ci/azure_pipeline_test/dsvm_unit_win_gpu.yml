@@ -1,0 +1,42 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Pull request against these branches will trigger this build
+pr:
+- staging
+- master
+
+# Any commit to this branch will trigger the build.
+trigger: none
+
+pool:
+  name: RecommendersAgentPoolWin
+  timeoutInMinutes: 20
+
+workspace:
+  clean: all
+
+steps:
+- script: |
+   python scripts/generate_conda_file.py --gpu
+   call conda env update -n reco_gpu -f reco_gpu.yaml 
+   call conda activate reco_gpu
+   pytest tests/unit -m "not notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
+   call conda deactivate
+  displayName: 'Run Tests'
+  timeoutInMinutes: 20
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **/test-*.xml'
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
+
+- script: |
+   del /q /S %LOCALAPPDATA%\Temp\*
+   for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
+  displayName: 'Remove Temp Files'
+  enabled: false
+  condition: succeededOrFailed()
+
