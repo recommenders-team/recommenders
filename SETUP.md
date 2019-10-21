@@ -320,12 +320,12 @@ A [setup.py](reco_utils/setup.py) file is provided in order to simplify the inst
 
 This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed, you can use the following command to install `reco_utils` as a python package.
 
-    pip install -e reco_utils
+    pip install -e .
 
-It is also possible to install directly from Github. Or from a specific branch as well.
+It is also possible to install directly from GitHub. Or from a specific branch as well.
 
-    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg\&subdirectory=reco_utils
-    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg\&subdirectory=reco_utils
+    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg
+    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg
 
 **NOTE** - The pip installation does not install any of the necessary package dependencies, it is expected that conda will be used as shown above to setup the environment for the utilities being used.
 
