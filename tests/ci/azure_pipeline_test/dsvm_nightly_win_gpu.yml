@@ -7,57 +7,49 @@ schedules:
   branches:
     include:
     - master
-    - staging
 
-# no PR builds
-pr: none
-
-# no CI trigger
 trigger: none
 
-jobs:
-- job: nightly
-  displayName : "Nightly tests windows GPU"
+pr: none
+
+pool:
+  name: RecommendersAgentPoolWin
+  timeoutInMinutes: 180
+  cancelTimeoutInMinutes: 180
+
+steps:
+- script: |
+   call conda env remove -n nightly_reco_gpu
+   rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
+   python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu
+   conda env create --quiet -f nightly_reco_gpu.yaml --verbose
+   
+  displayName: 'Setup Conda Env'
+  timeoutInMinutes: 10
+
+- script: |
+   call conda activate nightly_reco_gpu
+   echo "Smoke tests"
+   pytest tests/smoke -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml
+   echo "Integration tests"
+   pytest tests/integration -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml
+   call conda deactivate
+   
+  displayName: 'Run python smoke and integration tests'
   timeoutInMinutes: 180
 
-  pool:
-    name: RecommendersAgentPoolWin
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **/test-*.xml'
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
 
-  steps:
-  - script: |
-      call conda env remove -n nightly_reco_gpu
-      SET F="C:\Anaconda\envs\nightly_reco_gpu"
-      IF EXIST %F% RMDIR /S /Q %F%
-    displayName: 'Remove Conda Env if it exists'
-
-  - script: |
-      python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu
-      conda env create --quiet -f nightly_reco_gpu.yaml --verbose
-    displayName: 'Setup Conda Env'
-
-  - script: |
-      call conda activate nightly_reco_gpu
-      echo "Show libraries"
-      pip list
-      echo "Smoke tests"
-      pytest tests/smoke --durations 0 -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml
-      echo "Integration tests"
-      pytest tests/integration --durations 0 -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml
-      call conda deactivate
-    displayName: 'Run Tests'
-    
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results **/test-*.xml'
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
-
-  - script: |
-      call conda env remove -n nightly_reco_gpu -y
-      SET F="C:\Anaconda\envs\nightly_reco_gpu"
-      IF EXIST %F% RMDIR /S /Q %F%
-    workingDirectory: tests
-    displayName: 'Conda remove'
-    continueOnError: true
-    condition: succeededOrFailed()
+- script: |
+   call conda env remove -n nightly_reco_gpu -y
+   rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
+   
+  workingDirectory: tests
+  displayName: 'Conda remove'
+  continueOnError: true
+  timeoutInMinutes: 10

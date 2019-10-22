@@ -7,6 +7,7 @@ schedules:
   branches:
     include:
     - master
+    - staging
 
 trigger: none
 
@@ -14,7 +15,7 @@ pr: none
 
 jobs:
 - job: nightly
-  displayName : 'Nightly tests'
+  displayName : 'Nightly tests Linux CPU'
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
     name: recolinuxpool
@@ -58,10 +59,3 @@ jobs:
     condition: succeededOrFailed()
     timeoutInMinutes: 10
 
-
-# pool:
-#   name: recolinuxpool
-#   timeoutInMinutes: 120
-#   cancelTimeoutInMinutes: 120
-
-# steps:
