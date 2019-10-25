@@ -109,7 +109,16 @@ The following tests run on an AzureML [compute target](https://docs.microsoft.co
 | **nightly_gpu_tests** | master | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/bp-nightly_gpu_tests?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=5&branchName=master) |   | Staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/bp-nightly_gpu_tests?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=5&branchName=staging) |
 
 
-### Contribution Build status
+### Contrib
+ 
+ Independent or incubating algorithms and utilities are candidates for the [contrib](contrib) folder. This will house contributions which may not easily fit into the core repository or need time to refactor or mature the code and add necessary tests.
+
+| Algorithm | Environment | Type | Description | 
+| --- | --- | --- | --- |
+| [SARplus](contrib/sarplus/README.md) | PySpark | Collaborative Filtering | Optimized implementation of SAR for Spark | 
+
+ 
+### Contrib Build status
 
 | Build Type | Branch | Status |
 | --- | --- | --- |
