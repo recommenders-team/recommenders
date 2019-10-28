@@ -69,7 +69,7 @@ Independent or incubating algorithms and utilities are candidates for the [contr
 
 | Algorithm | Environment | Type | Description |
 | --- | --- | --- | --- |
-| [SARplus](contrib/sarplus/README.md) | PySpark | Collaborative Filtering | Optimized implementation of SAR for Spark |
+| SARplus <sup>*</sup> | [PySpark](contrib/sarplus/README.md) | Collaborative Filtering | Optimized implementation of SAR for Spark |
 
 ### Preliminary Comparison
 
