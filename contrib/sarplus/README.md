@@ -5,18 +5,23 @@ Pronounced surplus as it's simply better if not best!
 [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/contrib%20sarplus?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=107&branchName=master)
 [![PyPI version](https://badge.fury.io/py/pysarplus.svg)](https://badge.fury.io/py/pysarplus)
 
-Features
+Simple Algorithm for Recommendation (SAR) is a neighborhood based algorithm for personalized recommendations based on user transaction history. SAR recommends items that are most **similar** to the ones that the user already has an existing **affinity** for. Two items are **similar** if the users that interacted with one item are also likely to have interacted with the other. A user has an **affinity** to an item if they have interacted with it in the past.
+
+SARplus is an efficient implementation of this algorithm for Spark.
+
+Features:
+
 * Scalable PySpark based [implementation](python/pysarplus/SARPlus.py)
 * Fast C++ based [predictions](python/src/pysarplus.cpp)
 * Reduced memory consumption: similarity matrix cached in-memory once per worker, shared accross python executors 
 
-# Benchmarks
+## Benchmarks
 
 | # Users | # Items | # Ratings | Runtime | Environment | Dataset | 
 |---------|---------|-----------|---------|-------------|---------|
 | 2.5mio  | 35k     | 100mio    | 1.3h    | Databricks, 8 workers, [Azure Standard DS3 v2](https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/) (4 core machines) | |
 
-# Top-K Recommendation Optimization
+## Top-K Recommendation Optimization
 
 There are a couple of key optimizations:
 
@@ -32,7 +37,9 @@ There are a couple of key optimizations:
 
 ![Image of sarplus top-k recommendation optimization](https://recodatasets.blob.core.windows.net/images/sarplus_udf.svg)
 
-# Usage
+## Usage
+
+### Python
 
 ```python
 from pysarplus import SARPlus
@@ -62,7 +69,7 @@ model.recommend_k_items(test_df, 'sarplus_cache', top_k=3).show()
 # model.recommend_k_items(test_df, 'dbfs:/mnt/sarpluscache', top_k=3).show()
 ```
 
-## Jupyter Notebook
+### Jupyter Notebook
 
 Insert this cell prior to the code above.
 
@@ -85,14 +92,14 @@ spark = (
 )
 ```
 
-## PySpark Shell
+### PySpark Shell
 
 ```bash
 pip install pysarplus
 pyspark --packages microsoft:sarplus:0.2.6 --conf spark.sql.crossJoin.enabled=true
 ```
 
-## Databricks
+### Databricks
 
 One must set the crossJoin property to enable calculation of the similarity matrix (Clusters / &lt; Cluster &gt; / Configuration / Spark Config)
 
@@ -144,6 +151,6 @@ import logging
 logging.getLogger("py4j").setLevel(logging.ERROR)
 ```
 
-# Development
+## Development
 
-See [DEVELOPMENT.md](DEVELOPMENT.md)
+See [DEVELOPMENT.md](DEVELOPMENT.md) for implementation details and development information.
