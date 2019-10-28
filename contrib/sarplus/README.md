@@ -1,5 +1,6 @@
 # SARplus
-pronounced sUrplus as it's simply better if not best!
+
+Pronounced surplus as it's simply better if not best!
 
 [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/contrib%20sarplus?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=107&branchName=master)
 [![PyPI version](https://badge.fury.io/py/pysarplus.svg)](https://badge.fury.io/py/pysarplus)
@@ -29,7 +30,7 @@ There are a couple of key optimizations:
 ** make sure to always just keep top-k items in-memory
 ** use standard join using binary search between users past seen items and the related items
 
-![Image of sarplus top-k recommendation optimization](https://recodatasets.blob.core.windows.net/images/sarplus_udf.svg) 
+![Image of sarplus top-k recommendation optimization](https://recodatasets.blob.core.windows.net/images/sarplus_udf.svg)
 
 # Usage
 
