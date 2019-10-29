@@ -186,9 +186,10 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 * Databricks Runtime version 4.3 (Apache Spark 2.3.1, Scala 2.11) or greater
 * Python 3
 
-An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).   
+An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
 
 ### Repository installation
+
 You can setup the repository as a library on Databricks either manually or by running an [installation script](scripts/databricks_install.py). Both options assume you have access to a provisioned Databricks workspace and cluster and that you have appropriate permissions to install libraries.
 
 <details>
@@ -200,7 +201,7 @@ This option utilizes an installation script to do the setup, and it requires add
 > * Setup CLI authentication for [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli). Please find details about how to create a token and set authentication [here](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication). Very briefly, you can install and configure your environment with the following commands.
 >
 >     ```{shell}
->     conda activate reco-pyspark
+>     conda activate reco_pyspark
 >     databricks configure --token
 >     ```
 >
@@ -249,6 +250,7 @@ To install the repo manually onto Databricks, follow the steps:
     cd Recommenders
     zip -r Recommenders.egg .
     ```
+
 3. Once your cluster has started, go to the Databricks workspace, and select the `Home` button.
 4. Your `Home` directory should appear in a panel. Right click within your directory, and select `Import`.
 5. In the pop-up window, there is an option to import a library, where it says: `(To import a library, such as a jar or egg, click here)`. Select `click here`.
@@ -320,12 +322,12 @@ A [setup.py](reco_utils/setup.py) file is provided in order to simplify the inst
 
 This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed, you can use the following command to install `reco_utils` as a python package.
 
-    pip install -e reco_utils
+    pip install -e .
 
-It is also possible to install directly from Github. Or from a specific branch as well.
+It is also possible to install directly from GitHub. Or from a specific branch as well.
 
-    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg\&subdirectory=reco_utils
-    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg\&subdirectory=reco_utils
+    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg
+    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg
 
 **NOTE** - The pip installation does not install any of the necessary package dependencies, it is expected that conda will be used as shown above to setup the environment for the utilities being used.
 

@@ -38,7 +38,6 @@ CONDA_BASE = {
     "bottleneck": "bottleneck==1.2.1",
     "dask": "dask>=0.17.1",
     "fastparquet": "fastparquet>=0.1.6",
-    "gitpython": "gitpython>=2.1.8",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
     "matplotlib": "matplotlib>=2.2.2",
@@ -46,7 +45,6 @@ CONDA_BASE = {
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4",
     "pip": "pip>=19.0.3",
-    "pymongo": "pymongo>=3.6.1",
     "python": "python==3.6.8",
     "pytest": "pytest>=3.6.4",
     "pytorch": "pytorch-cpu>=1.0.0",
@@ -57,6 +55,9 @@ CONDA_BASE = {
     "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
+    "cornac": "cornac>=1.1.2",
+    "fastai": "fastai==1.0.46",
+    "papermill": "papermill==0.19.1",
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
@@ -72,22 +73,19 @@ PIP_BASE = {
     "azure-storage": "azure-storage>=0.36.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
-    "databricks-cli": "databricks-cli==0.8.6",
     "dataclasses": "dataclasses>=0.6",
-    "fastai": "fastai==1.0.46",
     "hyperopt": "hyperopt==0.1.1",
     "idna": "idna==2.7",
     "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
-    "papermill": "papermill==0.18.2",
+    "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
 }
 
-PIP_GPU = {}
-PIP_PYSPARK = {}
+PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
+PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
 PIP_DARWIN = {
     "nni": "nni==0.5.2.1.1",

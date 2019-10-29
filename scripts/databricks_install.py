@@ -52,7 +52,7 @@ COSMOSDB_JAR_FILE_OPTIONS = {
 MMLSPARK_INFO = {
     "maven": {
         "coordinates": "Azure:mmlspark:0.17",
-        "repo": "https://mvnrepository.com/artifact"
+        "repo": "https://mvnrepository.com/artifact",
     }
 }
 
@@ -70,6 +70,7 @@ PENDING_SLEEP_ATTEMPTS = int(
 )  # wait a maximum of 5 minutes...
 
 ## Additional dependencies met below.
+
 
 def create_egg(
     path_to_recommenders_repo_root=os.getcwd(),
@@ -227,10 +228,10 @@ if __name__ == "__main__":
 
     # make sure path_to_recommenders is on sys.path to allow for import
     sys.path.append(args.path_to_recommenders)
-    from scripts.generate_conda_file import PIP_BASE
+    from scripts.generate_conda_file import PIP_BASE, CONDA_BASE
 
     ## depend on PIP_BASE:
-    PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], PIP_BASE["papermill"]]
+    PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], CONDA_BASE["papermill"]]
 
     PYPI_O16N_LIBS = [
         "azure-cli==2.0.56",

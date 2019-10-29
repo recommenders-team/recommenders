@@ -135,7 +135,6 @@ reco_*.yaml
 *.csv
 *.zip
 .vscode/
-scripts/repo_metrics/config.py
 u.item
 ml-100k/
 ml-10M100K/
@@ -153,3 +152,5 @@ ml-20m/
 *.jpg
 *.gif
 *.jpeg
+*.model
+*.mml

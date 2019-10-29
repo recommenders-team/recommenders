@@ -1,0 +1,57 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Pull request against these branches will trigger this build
+pr:
+- master
+- staging
+
+#Any commit to this branch will trigger the build.
+trigger:
+- staging
+- master
+
+pool:
+  name: recolinuxpool
+  timeoutInMinutes: 20
+
+# resources:
+#   repositories:
+#   - repository: common
+#     type: github
+#     name: microsoft/recommenders
+
+steps:
+- bash: |
+    echo "##vso[task.prependpath]/data/anaconda/bin"
+    conda env list
+  displayName: Add Conda to PATH
+# Uncomment if needed
+# Conda creation can take around 10min
+- bash: |
+    python scripts/generate_conda_file.py  --gpu
+    conda env update -n reco_gpu -f reco_gpu.yaml
+  displayName: 'Creating Conda Environment with dependencies'
+
+- script: |
+   . /anaconda/etc/profile.d/conda.sh && \
+   conda activate reco_gpu && \
+   pytest tests/unit -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml && \
+   conda deactivate
+  displayName: 'Run Tests'
+  timeoutInMinutes: 20
+
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **/test-*.xml'
+  inputs:
+    testResultsFiles: '**/test-*.xml'
+    failTaskOnFailedTests: true
+  condition: succeededOrFailed()
+
+# - script: |
+#     conda env remove -n reco_gpu -y   
+#   workingDirectory: tests
+#   displayName: 'Conda remove'
+#   continueOnError: true
+#   condition: succeededOrFailed()
+#   timeoutInMinutes: 10
