@@ -22,7 +22,7 @@ cd scala
 sbt spPublish
 ```
 
-# Testing
+## Testing
 
 To test the python UDF + C++ backend
 
@@ -39,4 +39,3 @@ sbt test
 ```
 
 (use ~test and it will automatically check for changes in source files, but not build.sbt)
-
