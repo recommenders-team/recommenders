@@ -55,7 +55,7 @@ CONDA_BASE = {
     "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
-    "cmake": "cmake==3.14.0"
+    "cmake": "cmake==3.14.0",
     "cornac": "cornac>=1.1.2",
     "fastai": "fastai==1.0.46",
     "papermill": "papermill==0.19.1",
