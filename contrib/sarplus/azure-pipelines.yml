@@ -1,0 +1,93 @@
+# Python package
+# Create and test a Python package on multiple Python versions.
+# Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/python
+
+pr:
+  branches:
+    include:
+      - staging
+      - master
+  paths:
+    include:
+      - contrib/sarplus/*
+
+# no CI trigger
+trigger: none
+
+jobs:
+- job: 'Test'
+  pool:
+    vmImage: 'Ubuntu 16.04'
+  strategy:
+    matrix:
+      Python35-Spark2.3:
+        python.version: '3.5'
+        spark.version: '2.3.0'
+      Python36-Spark2.3:
+        python.version: '3.6'
+        spark.version: '2.3.0'
+      Python35-Spark2.4.1:
+        python.version: '3.5'
+        spark.version: '2.4.1'
+      Python36-Spark2.4.1:
+        python.version: '3.6'
+        spark.version: '2.4.1'
+      Python36-Spark2.4.3:
+        python.version: '3.6'
+        spark.version: '2.4.3'
+      Python37-Spark2.4.3:
+        python.version: '3.7'
+        spark.version: '2.4.3'
+    maxParallel: 4
+
+  steps:
+  - task: ComponentGovernanceComponentDetection@0
+    inputs:
+      scanType: 'Register'
+      verbosity: 'Verbose'
+      alertWarningLevel: 'High'
+      sourceScanPath: contrib/sarplus
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(python.version)'
+      architecture: 'x64'
+
+  # pyarrow version: https://issues.apache.org/jira/projects/SPARK/issues/SPARK-29367
+  - script: python -m pip install --upgrade pip && pip install pyspark==$(spark.version) pytest pandas pybind11 pyarrow==0.14.1 sklearn
+    displayName: 'Install dependencies'
+
+  - script: |
+      cd contrib/sarplus/scala 
+      sparkversion=$(spark.version) sbt package
+      cd ../python 
+      python setup.py install
+      pytest tests --doctest-modules --junitxml=junit/test-results.xml
+    displayName: 'pytest'
+
+  - script: |
+      cd contrib/sarplus/scala
+      sparkversion=$(spark.version) sbt test
+    displayName: 'scala test'
+
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFiles: '**/test-results.xml'
+      testRunTitle: 'Python $(python.version)'
+    condition: succeededOrFailed()
+
+- job: 'Publish'
+  dependsOn: 'Test'
+  pool:
+    vmImage: 'Ubuntu 16.04'
+
+  steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.x'
+      architecture: 'x64'
+
+  - script: cd contrib/sarplus/python && python setup.py sdist
+    displayName: 'Build sdist'
