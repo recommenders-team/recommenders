@@ -55,6 +55,7 @@ CONDA_BASE = {
     "swig": "swig==3.0.12",
     "tensorflow": "tensorflow==1.12.0",
     "lightgbm": "lightgbm==2.2.1",
+    "cmake": "cmake==3.14.0",
     "cornac": "cornac>=1.1.2",
     "fastai": "fastai==1.0.46",
     "papermill": "papermill==0.19.1",
@@ -82,6 +83,7 @@ PIP_BASE = {
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
     "tqdm": "tqdm==4.31.1",
+    "xlearn": "xlearn==0.40a1"
 }
 
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
