@@ -116,4 +116,5 @@ The following tests run on an AzureML [compute target](https://docs.microsoft.co
 
 ### Similiar Projects by Microsoft
 
-https://github.com/microsoft/AI
+aka.ms/ai-labs
+
