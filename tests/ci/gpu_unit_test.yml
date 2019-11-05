@@ -64,7 +64,7 @@ steps:
   displayName: ' generate_conda_file.py'
 
 - script: 
-    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testfolder $(testfolder) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --dockercustom --acrrepo $(acrrepo) --acrusername $(acrusername) --acrpassword $(acrpassword) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
+    python tests/ci/submit_azureml_pytest.py --subid $(SubscriptionID) --testfolder $(testfolder) --testmarkers $(testmarkers) --clustername $(clustername) --expname $(expname) --dockerproc $(dockerproc) --junitxml $(junitxml) --reponame $(reponame) --branch $(branch)
   displayName: 'submit_azureml_pytest'
 
 - task: PublishTestResults@2
