@@ -248,7 +248,7 @@ To install the repo manually onto Databricks, follow the steps:
 
     ```{shell}
     cd Recommenders
-    zip -r Recommenders.egg .
+    zip -r Recommenders.egg ./reco_utils
     ```
 
 3. Once your cluster has started, go to the Databricks workspace, and select the `Home` button.
@@ -258,6 +258,12 @@ To install the repo manually onto Databricks, follow the steps:
 7. Next, click on the box that contains the text `Drop library egg here to upload` and use the file selector to choose the `Recommenders.egg` file you just created, and select `Open`.
 8. Click on the `Create library`. This will upload the egg and make it available in your workspace.
 9. Finally, in the next menu, attach the library to your cluster.
+
+In addition to the repo, you must install the following package as a library from PyPI:
+
+* `tqdm==4.31.1`
+
+You can follow instructions [here](https://docs.azuredatabricks.net/user-guide/libraries.html#install-a-library-on-a-cluster) for details on how to install packages from PyPI.
 
 </details>
 
