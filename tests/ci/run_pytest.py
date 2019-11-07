@@ -52,7 +52,6 @@ if __name__ == "__main__":
     # Run.get_context() is needed to save context as pytest causes corruption
     # of env vars
     run = Run.get_context()
-
     '''
     This is an example of a working subprocess.run for a unit test run:
     subprocess.run(["pytest", "tests/unit",
