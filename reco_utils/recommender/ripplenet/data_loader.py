@@ -3,28 +3,11 @@ import os
 import numpy as np
 
 
-def load_data(path_data, args):
-    train_data, eval_data, test_data, user_history_dict = load_rating(path_data, args)
-    n_entity, n_relation, kg = load_kg(path_data, args)
+def load_data(ratings_final, kg_final, args):
+    train_data, eval_data, test_data, user_history_dict = dataset_split(ratings_final)
+    n_entity, n_relation, kg = load_kg(kg_final)
     ripple_set = get_ripple_set(args, kg, user_history_dict)
     return train_data, eval_data, test_data, n_entity, n_relation, ripple_set
-
-
-def load_rating(path_data, args):
-    print('reading rating file ...')
-
-    # reading rating file
-    rating_file = path_data + '/ratings_final'
-    if os.path.exists(rating_file + '.npy'):
-        rating_np = np.load(rating_file + '.npy')
-    else:
-        rating_np = np.loadtxt(rating_file + '.txt', dtype=np.int32)
-        np.save(rating_file + '.npy', rating_np)
-
-    # n_user = len(set(rating_np[:, 0]))
-    # n_item = len(set(rating_np[:, 1]))
-    return dataset_split(rating_np)
-
 
 def dataset_split(rating_np):
     print('splitting dataset ...')
@@ -43,41 +26,33 @@ def dataset_split(rating_np):
     # traverse training data, only keeping the users with positive ratings
     user_history_dict = dict()
     for i in train_indices:
-        user = rating_np[i][0]
-        item = rating_np[i][1]
-        rating = rating_np[i][2]
+        user = rating_np.iloc[i][0]
+        item = rating_np.iloc[i][1]
+        rating = rating_np.iloc[i][2]
         if rating == 1:
             if user not in user_history_dict:
                 user_history_dict[user] = []
             user_history_dict[user].append(item)
 
-    train_indices = [i for i in train_indices if rating_np[i][0] in user_history_dict]
-    eval_indices = [i for i in eval_indices if rating_np[i][0] in user_history_dict]
-    test_indices = [i for i in test_indices if rating_np[i][0] in user_history_dict]
+    train_indices = [i for i in train_indices if rating_np.iloc[i][0] in user_history_dict]
+    eval_indices = [i for i in eval_indices if rating_np.iloc[i][0] in user_history_dict]
+    test_indices = [i for i in test_indices if rating_np.iloc[i][0] in user_history_dict]
     # print(len(train_indices), len(eval_indices), len(test_indices))
 
-    train_data = rating_np[train_indices]
-    eval_data = rating_np[eval_indices]
-    test_data = rating_np[test_indices]
+    train_data = rating_np.iloc[train_indices]
+    eval_data = rating_np.iloc[eval_indices]
+    test_data = rating_np.iloc[test_indices]
 
     return train_data, eval_data, test_data, user_history_dict
 
 
-def load_kg(path_data, args):
+def load_kg(kg_final):
     print('reading KG file ...')
 
-    # reading kg file
-    kg_file = path_data + '/kg_final'
-    if os.path.exists(kg_file + '.npy'):
-        kg_np = np.load(kg_file + '.npy')
-    else:
-        kg_np = np.loadtxt(kg_file + '.txt', dtype=np.int32)
-        np.save(kg_file + '.npy', kg_np)
+    n_entity = len(set(kg_final.iloc[:, 0]) | set(kg_final.iloc[:, 2]))
+    n_relation = len(set(kg_final.iloc[:, 1]))
 
-    n_entity = len(set(kg_np[:, 0]) | set(kg_np[:, 2]))
-    n_relation = len(set(kg_np[:, 1]))
-
-    kg = construct_kg(kg_np)
+    kg = construct_kg(kg_final)
 
     return n_entity, n_relation, kg
 
@@ -85,8 +60,8 @@ def load_kg(path_data, args):
 def construct_kg(kg_np):
     print('constructing knowledge graph ...')
     kg = collections.defaultdict(list)
-    for head, relation, tail in kg_np:
-        kg[head].append((tail, relation))
+    for index, row in kg_np.iterrows():
+        kg[row["head"]].append((row["tail"], row["relation"]))
     return kg
 
 
