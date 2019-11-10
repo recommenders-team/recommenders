@@ -1,7 +1,9 @@
+# This code is modified from RippleNet
+# Online code of RippleNet: https://github.com/hwwang55/RippleNet
+
 import tensorflow as tf
 import numpy as np
 from reco_utils.recommender.ripplenet.model import RippleNet
-
 
 def train(args, data_info, show_loss):
     train_data = data_info[0]

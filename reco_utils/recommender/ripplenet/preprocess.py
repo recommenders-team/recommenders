@@ -1,3 +1,6 @@
+# This code is modified from RippleNet
+# Online code of RippleNet: https://github.com/hwwang55/RippleNet
+
 import argparse
 import numpy as np
 import pandas as pd

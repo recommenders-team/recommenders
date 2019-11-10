@@ -1,3 +1,6 @@
+# This code is modified from RippleNet
+# Online code of RippleNet: https://github.com/hwwang55/RippleNet
+
 import collections
 import os
 import numpy as np

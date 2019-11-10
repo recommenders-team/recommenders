@@ -1,7 +1,9 @@
+# This code is modified from RippleNet
+# Online code of RippleNet: https://github.com/hwwang55/RippleNet
+
 import tensorflow as tf
 import numpy as np
 from sklearn.metrics import roc_auc_score
-
 
 class RippleNet(object):
     def __init__(self, args, n_entity, n_relation):
