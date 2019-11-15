@@ -23,6 +23,9 @@ jobs:
   - script: |
     call conda env remove -n nightly_reco_gpu
     rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
+    displayName: 'Remove Conda Env if it exists'
+
+  - script: |
     python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu
     conda env create --quiet -f nightly_reco_gpu.yaml --verbose
     displayName: 'Setup Conda Env'

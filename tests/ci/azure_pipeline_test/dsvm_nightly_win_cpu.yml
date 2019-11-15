@@ -18,7 +18,6 @@ jobs:
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
     name: RecommendersAgentPoolWin
-    timeoutInMinutes: 180
 
   steps:
   - script: |

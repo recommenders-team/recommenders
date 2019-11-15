@@ -18,12 +18,14 @@ jobs:
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
     name: RecommendersAgentPoolWin
-    timeoutInMinutes: 180
 
   steps:
   - script: |
     call conda env remove -n nightly_reco_pyspark
     rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
+    displayName: 'Remove Conda Env if it exists'
+
+  - script: |
     python ./scripts/generate_conda_file.py --pyspark --name nightly_reco_pyspark
     conda env create --quiet -f nightly_reco_pyspark.yaml --verbose
     displayName: 'Setup Conda Env'
