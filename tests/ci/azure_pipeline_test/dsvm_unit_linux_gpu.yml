@@ -36,7 +36,6 @@ jobs:
     conda activate reco_gpu && \
     pytest tests/unit --durations 0 -m "not notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'
-    timeoutInMinutes: 20
 
   - task: PublishTestResults@2
     displayName: 'Publish Test Results **/test-*.xml'

@@ -37,7 +37,6 @@ jobs:
     pytest tests/smoke --durations 0 -m "smoke and spark and not gpu" --junitxml=reports/test-smoke.xml
     echo "Integration tests"
     pytest tests/integration --durations 0 -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml
-    conda deactivate
     displayName: 'Run pyspark smoke and integration tests'
     env:
       PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe

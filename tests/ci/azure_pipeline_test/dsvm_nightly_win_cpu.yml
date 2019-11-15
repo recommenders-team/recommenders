@@ -36,7 +36,6 @@ jobs:
     pytest tests/smoke --durations 0 -m "smoke and not spark and not gpu" --junitxml=reports/test-smoke.xml
     echo "Integration tests"
     pytest tests/integration --durations 0 -m "integration and not spark and not gpu" --junitxml=reports/test-integration.xml
-    conda deactivate
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2
