@@ -21,21 +21,21 @@ jobs:
 
   steps:
   - script: |
-    call conda env remove -n nightly_reco_gpu -y
-    rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
+      call conda env remove -n nightly_reco_gpu -y
+      rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
     displayName: 'Remove Conda Env if it exists'
 
   - script: |
-    python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu
-    conda env create --quiet -f nightly_reco_gpu.yaml --verbose
+      python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu
+      conda env create --quiet -f nightly_reco_gpu.yaml --verbose
     displayName: 'Setup Conda Env'
 
   - script: |
-    call conda activate nightly_reco_gpu
-    echo "Smoke tests"
-    pytest tests/smoke --durations 0 -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml
-    echo "Integration tests"
-    pytest tests/integration --durations 0 -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml
+      call conda activate nightly_reco_gpu
+      echo "Smoke tests"
+      pytest tests/smoke --durations 0 -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml
+      echo "Integration tests"
+      pytest tests/integration --durations 0 -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml
     displayName: 'Run python smoke and integration tests'
 
   - task: PublishTestResults@2
@@ -46,8 +46,8 @@ jobs:
     condition: succeededOrFailed()
 
   - script: |
-    call conda env remove -n nightly_reco_gpu -y
-    rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
+      call conda env remove -n nightly_reco_gpu -y
+      rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
     workingDirectory: tests
     displayName: 'Conda remove'
     continueOnError: true

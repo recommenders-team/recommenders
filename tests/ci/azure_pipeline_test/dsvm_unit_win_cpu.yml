@@ -23,8 +23,8 @@ jobs:
 
   steps:
   - script: |
-    call conda activate reco_base
-    pytest tests/unit --durations 0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
+      call conda activate reco_base
+      pytest tests/unit --durations 0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2
@@ -35,8 +35,8 @@ jobs:
     condition: succeededOrFailed()
 
   - script: |
-    del /q /S %LOCALAPPDATA%\Temp\*
-    for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
+      del /q /S %LOCALAPPDATA%\Temp\*
+      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
     displayName: 'Remove Temp Files'
     enabled: false
     condition: succeededOrFailed()

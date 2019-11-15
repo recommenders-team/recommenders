@@ -32,9 +32,9 @@ jobs:
   #   displayName: 'Creating Conda Environment with dependencies'
 
   - script: |
-    . /anaconda/etc/profile.d/conda.sh && \
-    conda activate reco_pyspark && \
-    pytest tests/unit --durations 0 -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate reco_pyspark && \
+      pytest tests/unit --durations 0 -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'
     env:
       PYSPARK_PYTHON: /anaconda/envs/reco_pyspark/bin/python
