@@ -32,9 +32,9 @@ jobs:
   #   displayName: 'Creating Conda Environment with dependencies'
 
   - script: |
-    . /anaconda/etc/profile.d/conda.sh && \
-    conda activate reco_base && \
-    pytest tests/unit --durations=0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate reco_base && \
+      pytest tests/unit --durations 0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2
