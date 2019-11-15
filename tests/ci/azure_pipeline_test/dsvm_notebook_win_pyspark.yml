@@ -24,7 +24,7 @@ jobs:
   steps:
   - script: |
       call conda activate reco_pyspark
-      pytest tests/unit -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
+      pytest tests/unit --durations 0 -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
       displayName: 'Run Tests'
       env:
         PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe

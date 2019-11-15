@@ -34,7 +34,7 @@ jobs:
   - script: |
     . /anaconda/etc/profile.d/conda.sh && \
     conda activate reco_gpu && \
-    pytest tests/unit -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml 
+    pytest tests/unit --durations 0 -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml 
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2

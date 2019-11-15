@@ -32,9 +32,9 @@ jobs:
     call conda activate nightly_reco_pyspark
     set SPARK_HOME=
     echo "Smoke tests"
-    pytest tests/smoke -m "smoke and spark and not gpu" --junitxml=reports/test-smoke.xml
+    pytest tests/smoke --durations 0 -m "smoke and spark and not gpu" --junitxml=reports/test-smoke.xml
     echo "Integration tests"
-    pytest tests/integration -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml
+    pytest tests/integration --durations 0 -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml
     conda deactivate
     displayName: 'Run pyspark smoke and integration tests'
     env:

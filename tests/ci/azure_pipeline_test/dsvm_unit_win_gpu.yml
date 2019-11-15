@@ -24,7 +24,7 @@ jobs:
   steps:
   - script: |
     call conda activate reco_gpu
-    pytest tests/unit -m "not notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
+    pytest tests/unit --durations 0 -m "not notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2
