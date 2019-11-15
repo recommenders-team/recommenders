@@ -12,48 +12,47 @@ trigger: none
 
 pr: none
 
-pool:
-  name: RecommendersAgentPoolWin
-  timeoutInMinutes: 180
-  cancelTimeoutInMinutes: 180
+jobs:
+- job: nightly
+  displayName : 'Nightly tests Windows Pyspark'
+  timeoutInMinutes: 180 # how long to run the job before automatically cancelling
+  pool:
+    name: RecommendersAgentPoolWin
+    timeoutInMinutes: 180
 
-steps:
-- script: |
-   call conda env remove -n nightly_reco_pyspark
-   rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
-   python ./scripts/generate_conda_file.py --pyspark --name nightly_reco_pyspark
-   conda env create --quiet -f nightly_reco_pyspark.yaml --verbose
-  displayName: 'Setup Conda Env'
-  timeoutInMinutes: 10
+  steps:
+  - script: |
+    call conda env remove -n nightly_reco_pyspark
+    rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
+    python ./scripts/generate_conda_file.py --pyspark --name nightly_reco_pyspark
+    conda env create --quiet -f nightly_reco_pyspark.yaml --verbose
+    displayName: 'Setup Conda Env'
 
-- script: |
-   call conda activate nightly_reco_pyspark
-   set SPARK_HOME=
-   echo "Smoke tests"
-   pytest tests/smoke -m "smoke and spark and not gpu" --junitxml=reports/test-smoke.xml
-   echo "Integration tests"
-   pytest tests/integration -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml
-   conda deactivate
-  displayName: 'Run pyspark smoke and integration tests'
-  timeoutInMinutes: 180
-  env:
-    PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
-    PYSPARK_DRIVER_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
+  - script: |
+    call conda activate nightly_reco_pyspark
+    set SPARK_HOME=
+    echo "Smoke tests"
+    pytest tests/smoke -m "smoke and spark and not gpu" --junitxml=reports/test-smoke.xml
+    echo "Integration tests"
+    pytest tests/integration -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml
+    conda deactivate
+    displayName: 'Run pyspark smoke and integration tests'
+    env:
+      PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
+      PYSPARK_DRIVER_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
 
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results '
-  inputs:
-    testResultsFiles: '**/test-*.xml'
-    failTaskOnFailedTests: true
-  condition: succeededOrFailed()
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results '
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
 
-- script: |
-   call conda env remove -n nightly_reco_pyspark -y
-   rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
-   
-  workingDirectory: tests
-  displayName: 'Conda remove'
-  continueOnError: true
-  condition: succeededOrFailed()
-  timeoutInMinutes: 10
+  - script: |
+    call conda env remove -n nightly_reco_pyspark -y
+    rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
+    workingDirectory: tests
+    displayName: 'Conda remove'
+    continueOnError: true
+    condition: succeededOrFailed()
 
