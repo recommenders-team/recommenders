@@ -21,7 +21,7 @@ jobs:
 
   steps:
   - script: |
-    call conda env remove -n nightly_reco_base
+    call conda env remove -n nightly_reco_base -y
     rmdir /s /q C:\Anaconda\envs\nightly_reco_base
     displayName: 'Remove Conda Env if it exists'
 
