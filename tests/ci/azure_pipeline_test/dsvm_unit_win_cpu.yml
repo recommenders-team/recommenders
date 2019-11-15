@@ -13,7 +13,7 @@ trigger:
 
 jobs:
 - job: unit
-  displayName : 'Unit tests Windows CPU'
+  displayName: 'Unit tests Windows CPU'
   timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
     name: RecommendersAgentPoolWin

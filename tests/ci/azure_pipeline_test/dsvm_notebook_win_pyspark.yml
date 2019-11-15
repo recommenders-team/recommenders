@@ -13,7 +13,7 @@ trigger:
 
 jobs:
 - job: notebook
-  displayName : "Notebook tests windows pyspark"
+  displayName: "Notebook tests windows pyspark"
   timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
     name: RecommendersAgentPoolWin

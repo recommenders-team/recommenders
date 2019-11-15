@@ -14,7 +14,7 @@ pr: none
 
 jobs:
 - job: nightly
-  displayName : 'Nightly tests Windows GPU'
+  displayName: 'Nightly tests Windows GPU'
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
     name: RecommendersAgentPoolWin

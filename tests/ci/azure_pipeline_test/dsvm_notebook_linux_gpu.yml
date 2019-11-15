@@ -13,7 +13,7 @@ trigger:
 
 jobs:
 - job: unit
-  displayName : 'Unit tests Linux GPU on notebooks'
+  displayName: 'Unit tests Linux GPU on notebooks'
   timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
     name: recolinuxpool

@@ -15,7 +15,7 @@ pr: none
 
 jobs:
 - job: nightly
-  displayName : 'Nightly tests Linux GPU'
+  displayName: 'Nightly tests Linux GPU'
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
     name: recolinuxpool
