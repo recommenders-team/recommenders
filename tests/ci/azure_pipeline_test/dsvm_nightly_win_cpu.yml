@@ -54,7 +54,7 @@ jobs:
     condition: succeededOrFailed()
 
   - script: |
-    del /q /S %LOCALAPPDATA%\Temp\*
-    for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
+      del /q /S %LOCALAPPDATA%\Temp\*
+      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
     displayName: 'Remove Temp Files'
     condition: succeededOrFailed()
