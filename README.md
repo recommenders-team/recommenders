@@ -115,7 +115,8 @@ The following tests run on an AzureML [compute target](https://docs.microsoft.co
 | **nightly_gpu_tests** | master | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/bp-nightly_gpu_tests?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=5&branchName=master) |   | Staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/bp-nightly_gpu_tests?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=5&branchName=staging) |
 
 ### Related projects
-Find other Best Practice projects, and Azure AI Designed patterns in our central repository. 
 
-[Microsoft AI Labs Github](https://aka.ms/ai-labs)
+
+#### [Microsoft AI Labs Github](https://aka.ms/ai-labs)
+Find other Best Practice projects, and Azure AI Designed patterns in our central repository. 
 
