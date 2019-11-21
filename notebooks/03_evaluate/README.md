@@ -17,6 +17,7 @@ Two approaches for evaluating model performance are demonstrated along with thei
     * Recall - this measures the proportion of relevant items that are recommended
     * Normalized Discounted Cumulative Gain (NDCG) - evaluates how well the predicted items for a user are ranked based on relevance
     * Mean Average Precision (MAP) - average precision for each user normalized over all users
+3. Classification metrics: These are used to evaluate binary labels
     * Arear Under Curver (AUC) - integral area under the receiver operating characteristic curve
     * Logistic loss (Logloss) - the negative log-likelihood of the true labels given the predictions of a classifier
     
