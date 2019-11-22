@@ -6,46 +6,48 @@ pr:
 - master
 - staging
 
-#Any commit to this branch will trigger the build.
-# Except for markdown files
+# Any commit to this branch will trigger the build.
 trigger:
 - staging
 - master
 
-pool:
-  name: recolinuxpool
-  timeoutInMinutes: 20
+jobs:
+- job: unit
+  displayName: "Unit tests Linux CPU"
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  pool:
+    name: recolinuxpool
 
-# resources:
-#   repositories:
-#   - repository: common
-#     type: github
-#     name: microsoft/recommenders
+  steps:
+  - bash: |
+      echo "##vso[task.prependpath]/data/anaconda/bin"
+      conda env list
+    displayName: Add Conda to PATH
+  
+  # Uncomment if needed
+  # Conda creation can take around 10min
+  # - bash: |
+  #     python scripts/generate_conda_file.py
+  #     conda env update -n reco_base -f reco_base.yaml
+  #   displayName: 'Creating Conda Environment with dependencies'
 
-steps:
-- bash: |
-    echo "##vso[task.prependpath]/data/anaconda/bin"
-    conda env list
-  displayName: Add Conda to PATH
-# Uncomment if needed
-# # Conda creation can take around 10min
-- bash: |
-    python scripts/generate_conda_file.py
-    conda env update -n reco_base -f reco_base.yaml
-  displayName: 'Creating Conda Environment with dependencies'
+  - script: |
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate reco_base && \
+      pytest tests/unit --durations 0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
+    displayName: 'Run Tests'
 
-- script: |
-   . /anaconda/etc/profile.d/conda.sh && \
-   conda activate reco_base && \
-   pytest tests/unit -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml && \
-   conda deactivate
-  displayName: 'Run Tests'
-  timeoutInMinutes: 20
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/test-*.xml'
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
 
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results **/test-*.xml'
-  inputs:
-    testResultsFiles: '**/test-*.xml'
-    failTaskOnFailedTests: true
-  condition: succeededOrFailed()
-
+  # Uncomment if needed
+  # - script: |
+  #     conda env remove -n reco_cpu -y   
+  #   workingDirectory: tests
+  #   displayName: 'Conda remove'
+  #   continueOnError: true
+  #   condition: succeededOrFailed()

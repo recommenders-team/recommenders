@@ -7,26 +7,24 @@ pr:
 - master
 
 # Any commit to this branch will trigger the build.
-trigger: none
+trigger:
+- staging
+- master
 
 jobs:
 - job: notebook
-  displayName : "Notebook tests windows pyspark"
-  timeoutInMinutes: 180
-
+  displayName: "Notebook tests windows pyspark"
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
     name: RecommendersAgentPoolWin
 
-  workspace:
-    clean: all
+  # workspace:
+  #   clean: all
 
   steps:
   - script: |
-      python scripts/generate_conda_file.py --pyspark
-      call conda env create -f reco_pyspark.yaml
-      call conda activate reco_pyspark
-      pytest tests/unit -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
-      call conda deactivate
+        call conda activate reco_pyspark
+        pytest tests/unit --durations 0 -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
       displayName: 'Run Tests'
       env:
         PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
@@ -41,8 +39,8 @@ jobs:
     condition: succeededOrFailed()
 
   - script: |
-      del /q /S %LOCALAPPDATA%\Temp\*
-      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
+        del /q /S %LOCALAPPDATA%\Temp\*
+        for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
       displayName: 'Remove Temp Files'
     enabled: false
     condition: succeededOrFailed()
