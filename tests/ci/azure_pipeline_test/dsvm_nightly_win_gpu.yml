@@ -22,7 +22,7 @@ jobs:
   steps:
   - script: |
       call conda env remove -n nightly_reco_gpu -y
-      rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
+      if exist C:\Anaconda\envs\nightly_reco_gpu rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
     displayName: 'Remove Conda Env if it exists'
 
   - script: |

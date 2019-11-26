@@ -22,7 +22,7 @@ jobs:
   steps:
   - script: |
       call conda env remove -n nightly_reco_pyspark -y
-      rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
+      if exist C:\Anaconda\envs\nightly_reco_pyspark rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
     displayName: 'Remove Conda Env if it exists'
 
   - script: |
