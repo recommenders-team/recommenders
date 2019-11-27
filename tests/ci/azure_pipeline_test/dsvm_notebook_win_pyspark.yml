@@ -23,13 +23,12 @@ jobs:
 
   steps:
   - script: |
-        call conda activate reco_pyspark
-        pytest tests/unit --durations 0 -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
-      displayName: 'Run Tests'
-      env:
-        PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
-        PYSPARK_DRIVER_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
-      enabled: false
+      call conda activate reco_pyspark
+      pytest tests/unit --durations 0 -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
+    displayName: 'Run Tests'
+    env:
+      PYSPARK_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
+      PYSPARK_DRIVER_PYTHON: c:\anaconda\envs\reco_pyspark\python.exe
 
   - task: PublishTestResults@2
     displayName: 'Publish Test Results **/test-*.xml'
