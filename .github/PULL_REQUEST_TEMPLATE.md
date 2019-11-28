@@ -14,4 +14,3 @@
 - [ ] I have added tests covering my contributions.
 - [ ] I have updated the documentation accordingly.
 - [ ] This PR is being made to `staging` and not `master`.
-
