@@ -87,5 +87,4 @@ def predict(sess, args, model, data, ripple_set):
         labels_list.append(labels)
         scores_list.append(scores)
         start += batch_size
-    predictions_list = [1 if i >= 0.5 else 0 for i in scores_list]
-    return labels_list, scores_list, predictions_list
+    return labels_list, scores_list
