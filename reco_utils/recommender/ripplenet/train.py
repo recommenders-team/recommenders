@@ -87,4 +87,5 @@ def predict(sess, args, model, data, ripple_set):
         labels_list.append(labels)
         scores_list.append(scores)
         start += batch_size
-    return labels_list, scores_list
+    
+    return list(np.concatenate(labels_list)), list(np.concatenate(scores_list))
