@@ -77,7 +77,8 @@ def evaluation(sess, args, model, data, ripple_set, batch_size):
         start += batch_size
     return float(np.mean(auc_list)), float(np.mean(acc_list))
 
-def predict(sess, args, model, data, ripple_set, batch_size):
+def predict(sess, args, model, data, ripple_set):
+    batch_size = args.batch_size
     start = 0
     labels_list = []
     scores_list = []
@@ -85,5 +86,6 @@ def predict(sess, args, model, data, ripple_set, batch_size):
         labels, scores = model.return_scores(sess, get_feed_dict(args, model, data, ripple_set, start, start + batch_size))
         labels_list.append(labels)
         scores_list.append(scores)
+        start += batch_size
     predictions_list = [1 if i >= 0.5 else 0 for i in scores_list]
     return labels_list, scores_list, predictions_list
