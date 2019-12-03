@@ -36,6 +36,25 @@ def train(args, data_info, show_loss):
             print('epoch %d    train auc: %.4f  acc: %.4f    eval auc: %.4f  acc: %.4f    test auc: %.4f  acc: %.4f'
                   % (step, train_auc, train_acc, eval_auc, eval_acc, test_auc, test_acc))
 
+def fit(args, model, train_data, ripple_set, show_loss):
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for step in range(args.n_epoch):
+            # training
+            np.random.shuffle(train_data)
+            start = 0
+            while start < train_data.shape[0]:
+                _, loss = model.train(
+                    sess, get_feed_dict(args, model, train_data, ripple_set, start, start + args.batch_size))
+                start += args.batch_size
+                if show_loss:
+                    print('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
+
+            train_auc, train_acc = evaluation(sess, args, model, train_data, ripple_set, args.batch_size)
+
+            print('epoch %d  train auc: %.4f  acc: %.4f'
+                  % (step, train_auc, train_acc))
+    return model, sess
 
 def get_feed_dict(args, model, data, ripple_set, start, end):
     feed_dict = dict()
@@ -58,3 +77,14 @@ def evaluation(sess, args, model, data, ripple_set, batch_size):
         acc_list.append(acc)
         start += batch_size
     return float(np.mean(auc_list)), float(np.mean(acc_list))
+
+def predict(sess, args, model, data, ripple_set, batch_size):
+    start = 0
+    labels_list = []
+    scores_list = []
+    while start < data.shape[0]:
+        labels, scores = model.return_scores(sess, get_feed_dict(args, model, data, ripple_set, start, start + batch_size))
+        labels_list.append(labels)
+        scores_list.append(scores)
+    predictions_list = [1 if i >= 0.5 else 0 for i in scores_list]
+    return labels_list, scores_list, predictions_list
