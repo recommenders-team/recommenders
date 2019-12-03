@@ -47,11 +47,11 @@ jobs:
 
   - script: |
       call conda env remove -n nightly_reco_base -y
-      rmdir /s /q C:\Anaconda\envs\nightly_reco_base
+      if exist C:\Anaconda\envs\nightly_reco_base rmdir /s /q C:\Anaconda\envs\nightly_reco_base
     workingDirectory: tests
     displayName: 'Conda remove'
     continueOnError: true
-    condition: succeededOrFailed()
+    condition: always() # this step will always run, even if the pipeline is canceled
 
   - script: |
       del /q /S %LOCALAPPDATA%\Temp\*

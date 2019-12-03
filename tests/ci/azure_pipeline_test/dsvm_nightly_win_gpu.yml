@@ -47,7 +47,8 @@ jobs:
 
   - script: |
       call conda env remove -n nightly_reco_gpu -y
-      rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
+      if exist C:\Anaconda\envs\nightly_reco_gpu rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
     workingDirectory: tests
     displayName: 'Conda remove'
     continueOnError: true
+    condition: always() # this step will always run, even if the pipeline is canceled
