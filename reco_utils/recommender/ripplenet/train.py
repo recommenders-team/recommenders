@@ -36,25 +36,24 @@ def train(args, data_info, show_loss):
             print('epoch %d    train auc: %.4f  acc: %.4f    eval auc: %.4f  acc: %.4f    test auc: %.4f  acc: %.4f'
                   % (step, train_auc, train_acc, eval_auc, eval_acc, test_auc, test_acc))
 
-def fit(args, model, train_data, ripple_set, show_loss):
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-        for step in range(args.n_epoch):
-            # training
-            np.random.shuffle(train_data)
-            start = 0
-            while start < train_data.shape[0]:
-                _, loss = model.train(
-                    sess, get_feed_dict(args, model, train_data, ripple_set, start, start + args.batch_size))
-                start += args.batch_size
-                if show_loss:
-                    print('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
+def fit(sess, args, model, train_data, ripple_set, show_loss):
+    sess.run(tf.global_variables_initializer())
+    for step in range(args.n_epoch):
+        # training
+        np.random.shuffle(train_data)
+        start = 0
+        while start < train_data.shape[0]:
+            _, loss = model.train(
+                sess, get_feed_dict(args, model, train_data, ripple_set, start, start + args.batch_size))
+            start += args.batch_size
+            if show_loss:
+                print('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
 
-            train_auc, train_acc = evaluation(sess, args, model, train_data, ripple_set, args.batch_size)
+        train_auc, train_acc = evaluation(sess, args, model, train_data, ripple_set, args.batch_size)
 
-            print('epoch %d  train auc: %.4f  acc: %.4f'
-                  % (step, train_auc, train_acc))
-    return model, sess
+        print('epoch %d  train auc: %.4f  acc: %.4f'
+                % (step, train_auc, train_acc))
+    return model
 
 def get_feed_dict(args, model, data, ripple_set, start, end):
     feed_dict = dict()
