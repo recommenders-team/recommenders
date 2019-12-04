@@ -11,12 +11,15 @@ trigger:
 - staging
 - master
 
+variables:
+- group: WindwsAgentPool
+
 jobs:
 - job: unit
   displayName: 'Unit tests Windows GPU'
   timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
-    name: RecommendersAgentPoolWin
+    name: $(Agent_Pool)
 
   # workspace:
   #   clean: all

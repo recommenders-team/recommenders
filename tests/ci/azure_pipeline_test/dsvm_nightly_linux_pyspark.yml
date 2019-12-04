@@ -13,12 +13,15 @@ trigger: none
 
 pr: none
 
+variables:
+- group: LinuxAgentPool
+
 jobs:
 - job: nightly
   displayName: 'Nightly tests Linux Spark'
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
-    name: recolinuxpool
+    name: $(Agent_Pool)
 
   steps:
   - bash: |

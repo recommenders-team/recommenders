@@ -12,12 +12,15 @@ trigger: none
 
 pr: none
 
+variables:
+- group: WindwsAgentPool
+
 jobs:
 - job: nightly
   displayName: 'Nightly tests Windows CPU'
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
-    name: RecommendersAgentPoolWin
+    name: $(Agent_Pool)
 
   steps:
   - script: |
