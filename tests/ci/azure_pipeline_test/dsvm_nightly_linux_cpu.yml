@@ -13,6 +13,9 @@ trigger: none
 
 pr: none
 
+variables:
+- group: LinuxAgentPool
+
 jobs:
 - job: nightly
   displayName: 'Nightly tests Linux CPU'
