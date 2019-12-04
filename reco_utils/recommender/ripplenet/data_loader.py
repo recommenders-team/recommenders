@@ -6,10 +6,10 @@ import os
 import numpy as np
 
 
-def load_data(ratings_final, kg_final, args):
+def load_data(ratings_final, kg_final, n_hop, n_memory):
     train_data, eval_data, test_data, user_history_dict = dataset_split(ratings_final)
     n_entity, n_relation, kg = load_kg(kg_final)
-    ripple_set = get_ripple_set(args, kg, user_history_dict)
+    ripple_set = get_ripple_set(kg, user_history_dict, n_hop, n_memory)
     return train_data, eval_data, test_data, n_entity, n_relation, ripple_set
 
 def dataset_split(rating_np):
@@ -68,14 +68,14 @@ def construct_kg(kg_np):
     return kg
 
 
-def get_ripple_set(args, kg, user_history_dict):
+def get_ripple_set(kg, user_history_dict, n_hop, n_memory):
     print('constructing ripple set ...')
 
     # user -> [(hop_0_heads, hop_0_relations, hop_0_tails), (hop_1_heads, hop_1_relations, hop_1_tails), ...]
     ripple_set = collections.defaultdict(list)
 
     for user in user_history_dict:
-        for h in range(args.n_hop):
+        for h in range(n_hop):
             memories_h = []
             memories_r = []
             memories_t = []
@@ -98,8 +98,8 @@ def get_ripple_set(args, kg, user_history_dict):
                 ripple_set[user].append(ripple_set[user][-1])
             else:
                 # sample a fixed-size 1-hop memory for each user
-                replace = len(memories_h) < args.n_memory
-                indices = np.random.choice(len(memories_h), size=args.n_memory, replace=replace)
+                replace = len(memories_h) < n_memory
+                indices = np.random.choice(len(memories_h), size=n_memory, replace=replace)
                 memories_h = [memories_h[i] for i in indices]
                 memories_r = [memories_r[i] for i in indices]
                 memories_t = [memories_t[i] for i in indices]
