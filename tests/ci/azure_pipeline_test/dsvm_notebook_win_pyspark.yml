@@ -12,7 +12,7 @@ trigger:
 - master
 
 variables:
-- group: WindwsAgentPool
+- group: WindowsAgentPool
 
 jobs:
 - job: notebook

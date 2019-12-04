@@ -13,7 +13,7 @@ trigger: none
 pr: none
 
 variables:
-- group: WindwsAgentPool
+- group: WindowsAgentPool
 
 jobs:
 - job: nightly
