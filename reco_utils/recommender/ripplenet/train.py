@@ -67,12 +67,9 @@ def get_feed_dict(n_hop, model, data, ripple_set, start, end):
     feed_dict[model.items] = data[start:end, 1]
     feed_dict[model.labels] = data[start:end, 2]
     for i in range(n_hop):
-        try:
-            feed_dict[model.memories_h[i]] = [ripple_set[user][i][0] for user in data[start:end, 0]]
-            feed_dict[model.memories_r[i]] = [ripple_set[user][i][1] for user in data[start:end, 0]]
-            feed_dict[model.memories_t[i]] = [ripple_set[user][i][2] for user in data[start:end, 0]]
-        except:
-            print("Skipping user for lack of data")
+        feed_dict[model.memories_h[i]] = [ripple_set[user][i][0] for user in data[start:end, 0]]
+        feed_dict[model.memories_r[i]] = [ripple_set[user][i][1] for user in data[start:end, 0]]
+        feed_dict[model.memories_t[i]] = [ripple_set[user][i][2] for user in data[start:end, 0]]
     return feed_dict
 
 
