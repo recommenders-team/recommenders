@@ -6,25 +6,29 @@ import numpy as np
 from sklearn.metrics import roc_auc_score
 
 class RippleNet(object):
-    def __init__(self, args, n_entity, n_relation):
-        self._parse_args(args, n_entity, n_relation)
+    def __init__(self, dim, n_hop, kge_weight, l2_weight, lr,
+     n_memory, item_update_mode, using_all_hops, n_entity, n_relation):
+        self._parse_args(dim, n_hop, kge_weight, l2_weight, lr,
+     n_memory, item_update_mode, using_all_hops, n_entity, n_relation)
         self._build_inputs()
         self._build_embeddings()
         self._build_model()
         self._build_loss()
         self._build_train()
 
-    def _parse_args(self, args, n_entity, n_relation):
+    def _parse_args(self, dim, n_hop, kge_weight, l2_weight, lr,
+     n_memory, item_update_mode, using_all_hops,
+     n_entity, n_relation):
         self.n_entity = n_entity
         self.n_relation = n_relation
-        self.dim = args.dim
-        self.n_hop = args.n_hop
-        self.kge_weight = args.kge_weight
-        self.l2_weight = args.l2_weight
-        self.lr = args.lr
-        self.n_memory = args.n_memory
-        self.item_update_mode = args.item_update_mode
-        self.using_all_hops = args.using_all_hops
+        self.dim = dim
+        self.n_hop = n_hop
+        self.kge_weight = kge_weight
+        self.l2_weight = l2_weight
+        self.lr = lr
+        self.n_memory = n_memory
+        self.item_update_mode = item_update_mode
+        self.using_all_hops = using_all_hops
 
     def _build_inputs(self):
         self.items = tf.placeholder(dtype=tf.int32, shape=[None], name="items")
