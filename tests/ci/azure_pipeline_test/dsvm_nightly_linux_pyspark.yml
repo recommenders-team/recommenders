@@ -54,4 +54,4 @@ jobs:
     workingDirectory: tests
     displayName: 'Conda remove'
     continueOnError: true
-    condition: succeededOrFailed()
+    condition: always() # this step will always run, even if the pipeline is canceled
