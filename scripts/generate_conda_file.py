@@ -49,7 +49,7 @@ CONDA_BASE = {
     "pytest": "pytest>=3.6.4",
     "pytorch": "pytorch-cpu>=1.0.0",
     "seaborn": "seaborn>=0.8.1",
-    "scikit-learn": "scikit-learn==0.19.1",
+    "scikit-learn": "scikit-learn>=0.19.1",
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
     "swig": "swig==3.0.12",
@@ -58,6 +58,7 @@ CONDA_BASE = {
     "cmake": "cmake==3.14.0",
     "cornac": "cornac>=1.1.2",
     "papermill": "papermill==0.19.1",
+    "tqdm": "tqdm>=4.31.1",
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.3.1"}
@@ -79,10 +80,8 @@ PIP_BASE = {
     "idna": "idna==2.7",
     "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
-    "tqdm": "tqdm==4.31.1",
     "xlearn": "xlearn==0.40a1"
 }
 
