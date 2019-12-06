@@ -4,6 +4,13 @@
 # A Github Service Connection must also be created with the name "AI-GitHub"
 # https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml
 
+resources:
+  repositories:
+    - repository: aitemplates
+      type: github
+      name: microsoft/AI
+      endpoint: AI-GitHub
+
 schedules:
 - cron: "0 0 * * *"
   displayName: Daily master gpu test pipeline
