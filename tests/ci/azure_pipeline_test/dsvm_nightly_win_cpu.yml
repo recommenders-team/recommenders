@@ -1,5 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+#
+# A Github Service Connection must also be created with the name "AI-GitHub"
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml
 
 schedules:
 - cron: "0 18 * * *"
@@ -23,15 +26,9 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
-  - script: |
-      call conda env remove -n nightly_reco_base -y
-      if exist C:\Anaconda\envs\nightly_reco_base rmdir /s /q C:\Anaconda\envs\nightly_reco_base
-    displayName: 'Remove Conda Env if it exists'
-
-  - script: |
-      python ./scripts/generate_conda_file.py --name nightly_reco_base
-      call conda env create -f nightly_reco_base.yaml
-    displayName: 'Setup Conda Env'
+  - template: .ci/steps/reco_config_conda_win.yml@aitemplates
+    parameters:
+      conda_env: nightly_reco_base
 
   - script: |
       call conda activate nightly_reco_base
