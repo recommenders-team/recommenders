@@ -26,19 +26,9 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
-    - template: .ci/steps/reco_config_conda_win.yml@aitemplates
-      parameters:
-        conda_env: nightly_reco_base
-
-    - script: |
-      call conda env remove -n nightly_reco_gpu -y
-      if exist C:\Anaconda\envs\nightly_reco_gpu rmdir /s /q C:\Anaconda\envs\nightly_reco_gpu
-    displayName: 'Remove Conda Env if it exists'
-
-  - script: |
-      python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu
-      conda env create --quiet -f nightly_reco_gpu.yaml --verbose
-    displayName: 'Setup Conda Env'
+  - template: .ci/steps/reco_config_conda_win.yml@aitemplates
+    parameters:
+      conda_env: nightly_reco_base
 
   - script: |
       call conda activate nightly_reco_gpu

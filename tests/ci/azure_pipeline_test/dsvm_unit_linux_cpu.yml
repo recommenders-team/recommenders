@@ -32,10 +32,10 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
-    - template: .ci/steps/reco_config_conda_linux.yml@aitemplates
-      parameters:
-        conda_env: reco_base
-        install_conda: false
+  - template: .ci/steps/reco_config_conda_linux.yml@aitemplates
+    parameters:
+      conda_env: reco_base
+      install_conda: false
 
   - script: |
       . /anaconda/etc/profile.d/conda.sh && \
