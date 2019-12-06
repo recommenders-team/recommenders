@@ -40,9 +40,6 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  - script: |
-      del /q /S %LOCALAPPDATA%\Temp\*
-      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
-    displayName: 'Remove Temp Files'
-    enabled: false
-    condition: succeededOrFailed()
+  - template: .ci/steps/reco_conda_clean_win.yml@aitemplates
+    parameters:
+      clean_conda: false

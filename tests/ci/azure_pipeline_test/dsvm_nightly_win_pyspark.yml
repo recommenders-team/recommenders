@@ -56,11 +56,6 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  - script: |
-      call conda env remove -n nightly_reco_pyspark -y
-      if exist C:\Anaconda\envs\nightly_reco_pyspark rmdir /s /q C:\Anaconda\envs\nightly_reco_pyspark
-    workingDirectory: tests
-    displayName: 'Conda remove'
-    continueOnError: true
-    condition: always() # this step will always run, even if the pipeline is canceled
-
+  - template: .ci/steps/reco_conda_clean_win.yml@aitemplates
+    parameters:
+      conda_env: nightly_reco_pyspark
