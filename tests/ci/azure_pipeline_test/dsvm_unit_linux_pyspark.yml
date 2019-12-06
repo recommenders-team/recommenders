@@ -53,10 +53,7 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  # Uncomment if needed
-  # - script: |
-  #     conda env remove -n reco_pyspark -y   
-  #   workingDirectory: tests
-  #   displayName: 'Conda remove'
-  #   continueOnError: true
-  #   condition: succeededOrFailed()
+  - template: .ci/steps/reco_conda_clean_linux.yml@aitemplates
+    parameters:
+      conda_env: reco_pyspark
+      clean_conda: false

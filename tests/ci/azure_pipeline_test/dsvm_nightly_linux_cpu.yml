@@ -55,9 +55,6 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  - script: |
-      conda env remove -n nightly_reco_base -y   
-    workingDirectory: tests
-    displayName: 'Conda remove'
-    continueOnError: true
-    condition: always() # this step will always run, even if the pipeline is canceled
+  - template: .ci/steps/reco_conda_clean_linux.yml@aitemplates
+    parameters:
+      conda_env: nightly_reco_base
