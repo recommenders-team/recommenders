@@ -81,9 +81,73 @@ To install the PySpark environment:
     python scripts/generate_conda_file.py --pyspark
     conda env create -f reco_pyspark.yaml
 
-Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
+> Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
+>
+>     python scripts/generate_conda_file.py --pyspark-version 2.4.0
 
-    python scripts/generate_conda_file.py --pyspark-version 2.4.0
+Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
+
+Click on the following menus to see details:
+<details>
+<summary><strong><em>Linux or MacOS</em></strong></summary>
+
+To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
+First, get the path of the environment `reco_pyspark` is installed:
+
+    RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
+
+Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
+
+    #!/bin/sh
+    RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
+    export PYSPARK_PYTHON=$RECO_ENV/bin/python
+    export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
+    export SPARK_HOME_BACKUP=$SPARK_HOME
+    unset SPARK_HOME
+
+This will export the variables every time we do `conda activate reco_pyspark`.
+To unset these variables when we deactivate the environment,
+create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
+
+    #!/bin/sh
+    unset PYSPARK_PYTHON
+    unset PYSPARK_DRIVER_PYTHON
+    export SPARK_HOME=$SPARK_HOME_BACKUP
+    unset SPARK_HOME_BACKUP
+
+</details>
+
+<details><summary><strong><em>Windows</em></strong></summary>
+
+To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
+First, get the path of the environment `reco_pyspark` is installed:
+
+    for /f "delims=" %A in ('conda env list ^| grep reco_pyspark ^| awk "{print $NF}"') do set "RECO_ENV=%A"
+
+Then, create the file `%RECO_ENV%\etc\conda\activate.d\env_vars.bat` and add:
+ 
+    @echo off
+    for /f "delims=" %%A in ('conda env list ^| grep reco_pyspark ^| awk "{print $NF}"') do set "RECO_ENV=%%A"
+    set PYSPARK_PYTHON=%RECO_ENV%\python.exe
+    set PYSPARK_DRIVER_PYTHON=%RECO_ENV%\python.exe
+    set SPARK_HOME_BACKUP=%SPARK_HOME%
+    set SPARK_HOME=
+    set PYTHONPATH_BACKUP=%PYTHONPATH%
+    set PYTHONPATH=
+
+This will export the variables every time we do `conda activate reco_pyspark`.
+To unset these variables when we deactivate the environment,
+create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
+
+    @echo off
+    set PYSPARK_PYTHON=
+    set PYSPARK_DRIVER_PYTHON=
+    set SPARK_HOME=%SPARK_HOME_BACKUP%
+    set SPARK_HOME_BACKUP=
+    set PYTHONPATH=%PYTHONPATH_BACKUP%
+    set PYTHONPATH_BACKUP=
+ 
+</details>
 
 </details>
 
@@ -97,66 +161,10 @@ To install the environment:
     python scripts/generate_conda_file.py --gpu --pyspark
     conda env create -f reco_full.yaml
 
+Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
+See **PySpark environment** setup section for the details about how to setup those variables.
+where you will need to change `reco_pyspark` string in the commands to `reco_full`.
 </details>
-
-
-> **NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables
-> `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
->
-> Click on the following menus to see details:
->
-> <details>
-> <summary><strong><em>Linux or MacOS</em></strong></summary>
->
-> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
-> Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`,
-> create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
->
->     #!/bin/sh
->     export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
->     export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
->     export SPARK_HOME_BACKUP=$SPARK_HOME
->     unset SPARK_HOME
->
-> This will export the variables every time we do `conda activate reco_pyspark`.
-> To unset these variables when we deactivate the environment,
-> create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
->
->     #!/bin/sh
->     unset PYSPARK_PYTHON
->     unset PYSPARK_DRIVER_PYTHON
->     export SPARK_HOME=$SPARK_HOME_BACKUP
->     unset SPARK_HOME_BACKUP
-> 
-> </details>
->
-> <details><summary><strong><em>Windows</em></strong></summary>
-> 
-> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
-> Assuming that we have installed the environment in `c:\anaconda\envs\reco_pyspark`,
-> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\activate.d\env_vars.bat` and add:
-> 
->     @echo off
->     set PYSPARK_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
->     set PYSPARK_DRIVER_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
->     set SPARK_HOME_BACKUP=%SPARK_HOME%
->     set SPARK_HOME=
->     set PYTHONPATH_BACKUP=%PYTHONPATH%
->     set PYTHONPATH=
-> 
-> This will export the variables every time we do `conda activate reco_pyspark`.
-> To unset these variables when we deactivate the environment,
-> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\deactivate.d\env_vars.bat` and add:
-> 
->     @echo off
->     set PYSPARK_PYTHON=
->     set PYSPARK_DRIVER_PYTHON=
->     set SPARK_HOME=%SPARK_HOME_BACKUP%
->     set SPARK_HOME_BACKUP=
->     set PYTHONPATH=%PYTHONPATH_BACKUP%
->     set PYTHONPATH_BACKUP=
-> 
-> </details>
 
 
 ### Register the conda environment as a kernel in Jupyter
