@@ -12,11 +12,18 @@ resources:
       endpoint: AI-GitHub
 
 schedules:
-- cron: "0 18 * * *"
-  displayName: Daily master cpu testing pipeline
+- cron: "7 0 * * *"
+  displayName: Nightly build master
   branches:
     include:
     - master
+  always: true
+- cron: "7 12 * * *"
+  displayName: Nightly build staging
+  branches:
+    include:
+    - staging
+  always: true
 
 trigger: none
 
@@ -55,3 +62,4 @@ jobs:
   - template: .ci/steps/reco_conda_clean_win.yml@aitemplates
     parameters:
       conda_env: nightly_reco_base
+

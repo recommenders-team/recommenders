@@ -71,8 +71,10 @@ CONDA_GPU = {
 }
 
 PIP_BASE = {
-    "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.18",
+    "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.69",
     "azure-storage": "azure-storage>=0.36.0",
+    "azure-cli-core": "azure-cli-core>=2.0.75",
+    "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb>=0.8.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
     "dataclasses": "dataclasses>=0.6",
@@ -89,12 +91,8 @@ PIP_BASE = {
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
-PIP_DARWIN = {
-    "nni": "nni==0.5.2.1.1",
-}
-PIP_LINUX = {
-    "nni": "nni==0.5.2.1.1",
-}
+PIP_DARWIN = {"nni": "nni==0.5.2.1.1"}
+PIP_LINUX = {"nni": "nni==0.5.2.1.1"}
 PIP_WIN32 = {}
 
 
@@ -158,14 +156,14 @@ if __name__ == "__main__":
         pip_packages.update(PIP_GPU)
 
     # check for os platform support
-    if platform == 'darwin':
+    if platform == "darwin":
         pip_packages.update(PIP_DARWIN)
-    elif platform.startswith('linux'):
+    elif platform.startswith("linux"):
         pip_packages.update(PIP_LINUX)
-    elif platform == 'win32':
+    elif platform == "win32":
         pip_packages.update(PIP_WIN32)
     else:
-        raise Exception('Unsupported platform, must be Windows, Linux, or macOS')
+        raise Exception("Unsupported platform, must be Windows, Linux, or macOS")
 
     # write out yaml file
     conda_file = "{}.yaml".format(conda_env)
