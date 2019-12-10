@@ -42,10 +42,6 @@ RUN mkdir ${HOME}/.jupyter && \
 # CPU Stage
 FROM base AS cpu
 
-# Setup Conda environment
-RUN apt-get update && \
-    apt-get install -y python-pip && \
-    pip install cmake
 RUN python recommenders/scripts/generate_conda_file.py --name base
 
 
