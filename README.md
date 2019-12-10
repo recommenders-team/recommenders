@@ -118,5 +118,5 @@ The following tests run on an AzureML [compute target](https://docs.microsoft.co
 
 ### Related projects
 
-[Microsoft AI Github](https://github.com/microsoft/ai) Find other Best Practice projects, and Azure AI design patterns in our central repository. 
+[Microsoft AI Github](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository. 
 
