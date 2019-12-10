@@ -24,3 +24,22 @@ Testing pipelines that run on either a Linux or Windows DSVM agent machine.
 * Azure Machine Learning service testing pipeline
 
 Testing pipelines that run within an Azure Machine Learning service workspace.
+
+## Azure DevOps Templates 
+Azure DevOps Templates have been used to reduce our duplicated code between repositories
+For more information see [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/templates?view=azure-devops).
+
+A Github Service Connection must also be created with the name "AI-GitHub" to use these templates, within each pipeline.
+For more information see [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml)
+
+### [reco_config_conda_linux.yml@aitemplates](https://github.com/microsoft/AI/blob/master/.ci/steps/reco_config_conda_linux.yml)
+This template is used to install a new conda env on a Linux Virtual Machine. The name of the conda env must be provided.
+
+### [reco_conda_clean_linux.yml@aitemplates](https://github.com/microsoft/AI/blob/master/.ci/steps/reco_conda_clean_linux.yml)
+This template is used to clean a Linux Virtual Machine after being used by a conda process. This should be used for a self-hosted linux agent.
+
+### [reco_config_conda_win.yml@aitemplates](https://github.com/microsoft/AI/blob/master/.ci/steps/reco_conda_config_win.yml)
+This template is used to install a new conda env on a Windows Virtual Machine. The name of the conda env must be provided.
+
+### [reco_conda_clean_win.yml@aitemplates](https://github.com/microsoft/AI/blob/master/.ci/steps/reco_conda_clean_win.yml)
+This template is used to clean a Windows Virtual Machine after being used by a conda process. This should be used for a self-hosted windows agent.

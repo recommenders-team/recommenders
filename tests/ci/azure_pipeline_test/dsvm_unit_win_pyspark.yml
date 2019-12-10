@@ -1,5 +1,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+#
+# A Github Service Connection must also be created with the name "AI-GitHub"
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml
+
+resources:
+  repositories:
+    - repository: aitemplates
+      type: github
+      name: microsoft/AI
+      endpoint: AI-GitHub
 
 # Pull request against these branches will trigger this build
 pr:
@@ -40,9 +50,6 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  - script: |
-      del /q /S %LOCALAPPDATA%\Temp\*
-      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"
-    displayName: 'Remove Temp Files'
-    enabled: false
-    condition: succeededOrFailed()
+  - template: .ci/steps/reco_conda_clean_win.yml@aitemplates
+    parameters:
+      clean_conda: false
