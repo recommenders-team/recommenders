@@ -26,17 +26,17 @@ variables:
 
 stages:
   - template: stages/linux_test_stages.yml
-      parameters:
-        stage_name: "Unit"
-        job_name: unit
-        conda_env_root: reco
-        Agent_Pool: $(Agent_Pool)
-        notebook_tests: true
+    parameters:
+      stage_name: "Unit"
+      job_name: unit
+      conda_env_root: reco
+      Agent_Pool: $(Agent_Pool)
+      notebook_tests: true
 
   - template: stages/linux_test_stages.yml
-      parameters:
-        stage_name: "Notebook"
-        job_name: notebook
-        conda_env_root: reco
-        Agent_Pool: $(Agent_Pool)
-        notebook_tests: true
+    parameters:
+      stage_name: "Notebook"
+      job_name: notebook
+      conda_env_root: reco
+      Agent_Pool: $(Agent_Pool)
+      notebook_tests: true
