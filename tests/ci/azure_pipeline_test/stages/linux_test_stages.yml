@@ -26,7 +26,7 @@ stages:
   - template: ../stage/linux_test_stage.yml
     parameters:
       stage_name: ${{parameters.job_name}}_GPU_Tests
-      job_name: ${{parameters.job_name}} gpu
+      job_name: ${{parameters.job_name}}_gpu
       unit_tests: ${{parameters.unit_tests}}
       conda_env: ${{parameters.conda_env_root}}_gpu
       smoke_tests: ${{parameters.integration_tests}}
@@ -38,7 +38,7 @@ stages:
   - template: ../stage/linux_test_stage.yml
     parameters:
       stage_name: ${{parameters.job_name}}_Spark_Tests
-      job_name: ${{parameters.job_name}} spark
+      job_name: ${{parameters.job_name}}_spark
       conda_env: ${{parameters.conda_env_root}}_pyspark
       unit_tests: ${{parameters.unit_tests}}
       smoke_tests: ${{parameters.smoke_tests}}
