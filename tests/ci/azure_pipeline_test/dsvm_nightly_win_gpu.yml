@@ -12,11 +12,18 @@ resources:
       endpoint: AI-GitHub
 
 schedules:
-- cron: "0 0 * * *"
-  displayName: Daily master gpu test pipeline
+- cron: "7 4 * * *"
+  displayName: Nightly build master
   branches:
     include:
     - master
+  always: true
+- cron: "7 16 * * *"
+  displayName: Nightly build staging
+  branches:
+    include:
+    - staging
+  always: true
 
 trigger: none
 
