@@ -12,7 +12,7 @@ steps:
       . /anaconda/etc/profile.d/conda.sh
       conda activate ${{parameters.conda_env}}
 
-      echo "Notebook tests"
+      echo "Unit tests"
       pytest tests/unit \
         --durations 0 \
         -m "not notebooks and ${{parameters.spark}} and  ${{parameters.gpu}}" \
