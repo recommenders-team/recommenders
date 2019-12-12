@@ -23,10 +23,3 @@ steps:
       env:
         PYSPARK_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
         PYSPARK_DRIVER_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results '
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()

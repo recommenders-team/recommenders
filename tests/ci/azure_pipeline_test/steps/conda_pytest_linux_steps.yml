@@ -42,3 +42,10 @@ steps:
         conda_env: ${{parameters.conda_env}}
         spark: ${{parameters.spark}}
         gpu: ${{parameters.gpu}}
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results '
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
