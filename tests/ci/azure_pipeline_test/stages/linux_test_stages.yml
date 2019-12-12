@@ -1,0 +1,48 @@
+parameters:
+  Agent_Pool: #
+  conda_env_root: #
+  stage_name: #
+  job_name: #
+  unit_tests: false
+  smoke_tests: false
+  integration_tests: false
+  notebook_tests: false
+  cpu_conda: # nightly_reco_base
+  gpu_conda: # nightly_reco_gpu
+  spark_conda: # nightly_reco_pyspark
+
+stages:
+  - template: ../stage/linux_test_stage.yml
+    parameters:
+      stage_name: ${{parameters.job_name}} CPU Tests
+      job_name: ${{parameters.job_name}}
+      conda_env: ${{parameters.conda_env_root}}_base
+      unit_tests: ${{parameters.unit_tests}}
+      smoke_tests: ${{parameters.smoke_tests}}
+      integration_tests: ${{parameters.integration_tests}}
+      notebook_tests: ${{parameters.notebook_tests}}
+      Agent_Pool: ${{parameters.Agent_Pool}}
+
+  - template: ../stage/linux_test_stage.yml
+    parameters:
+      stage_name: ${{parameters.job_name}} GPU Tests
+      job_name: ${{parameters.job_name}} gpu
+      unit_tests: ${{parameters.unit_tests}}
+      conda_env: ${{parameters.conda_env_root}}_gpu
+      smoke_tests: ${{parameters.integration_tests}}
+      integration_tests: ${{parameters.conda_env}}
+      notebook_tests: ${{parameters.notebook_tests}}
+      gpu: gpu
+      Agent_Pool: $(Agent_Pool)
+
+  - template: ../stage/linux_test_stage.yml
+    parameters:
+      stage_name: ${{parameters.job_name}} Spark Tests
+      job_name: ${{parameters.job_name}} spark
+      conda_env: ${{parameters.conda_env_root}}_pyspark
+      unit_tests: ${{parameters.unit_tests}}
+      smoke_tests: ${{parameters.smoke_tests}}
+      integration_tests: ${{parameters.integration_tests}}
+      notebook_tests: ${{parameters.notebook_tests}}
+      spark: spark
+      Agent_Pool: $(Agent_Pool)

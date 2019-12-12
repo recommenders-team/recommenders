@@ -10,7 +10,6 @@ parameters:
   integration_tests: false
   notebook_tests: false
 
-
 stages:
   - stage: ${{parameters.stage_name}}
     dependsOn: []
@@ -20,7 +19,7 @@ stages:
       displayName: 'Nightly tests Linux CPU'
       timeoutInMinutes: 180 # how long to run the job before automatically cancelling
       pool:
-        name: $(Agent_Pool)
+        name: ${{parameters.Agent_Pool}}
 
       steps:
       - template: .ci/steps/reco_config_conda_linux.yml@aitemplates
