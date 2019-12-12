@@ -38,22 +38,12 @@ jobs:
     parameters:
       conda_env: nightly_reco_pyspark
 
-  - script: |
-      . /anaconda/etc/profile.d/conda.sh && \
-      conda activate nightly_reco_pyspark && \
-      echo "Smoke tests" && \
-      pytest tests/smoke --durations 0 -m "smoke and spark and not gpu" --junitxml=reports/test-smoke.xml && \
-      echo "Integration tests" && \
-      pytest tests/integration --durations 0 -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml && \
-      conda deactivate    
-    displayName: 'Run Tests'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results '
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
+  - template: steps/conda_pytest_linux.yml
+    parameters:
+      conda_env: nightly_reco_pyspark
+      spark: spark
+      smoke_tests: true
+      integration_tests: true
 
   - template: .ci/steps/reco_conda_clean_linux.yml@aitemplates
     parameters:

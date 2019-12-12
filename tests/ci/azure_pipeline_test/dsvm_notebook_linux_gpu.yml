@@ -37,18 +37,11 @@ jobs:
       conda_env: reco_gpu
       install_conda: false
 
-  - script: |
-      . /anaconda/etc/profile.d/conda.sh && \
-      conda activate reco_gpu && \
-      pytest tests/unit --durations 0 -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml 
-    displayName: 'Run Tests'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results **/test-*.xml'
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
+  - template: steps/conda_pytest_linux.yml
+    parameters:
+      conda_env: reco_gpu
+      gpu: gpu
+      notebook_tests: true
 
   - template: .ci/steps/reco_conda_clean_linux.yml@aitemplates
     parameters:
