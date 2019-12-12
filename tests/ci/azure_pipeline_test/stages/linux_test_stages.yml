@@ -14,7 +14,7 @@ parameters:
 stages:
   - template: ../stage/linux_test_stage.yml
     parameters:
-      stage_name: ${{parameters.job_name}} CPU Tests
+      stage_name: ${{parameters.job_name}}_CPU_Tests
       job_name: ${{parameters.job_name}}
       conda_env: ${{parameters.conda_env_root}}_base
       unit_tests: ${{parameters.unit_tests}}
@@ -25,7 +25,7 @@ stages:
 
   - template: ../stage/linux_test_stage.yml
     parameters:
-      stage_name: ${{parameters.job_name}} GPU Tests
+      stage_name: ${{parameters.job_name}}_GPU_Tests
       job_name: ${{parameters.job_name}} gpu
       unit_tests: ${{parameters.unit_tests}}
       conda_env: ${{parameters.conda_env_root}}_gpu
@@ -37,7 +37,7 @@ stages:
 
   - template: ../stage/linux_test_stage.yml
     parameters:
-      stage_name: ${{parameters.job_name}} Spark Tests
+      stage_name: ${{parameters.job_name}}_Spark_Tests
       job_name: ${{parameters.job_name}} spark
       conda_env: ${{parameters.conda_env_root}}_pyspark
       unit_tests: ${{parameters.unit_tests}}
