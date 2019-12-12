@@ -1,0 +1,44 @@
+parameters:
+  conda_env: #
+  spark: not spark # | spark
+  gpu: not gpu # | gpu
+  unit_tests: false
+  smoke_tests: false
+  integration_tests: false
+  notebook_tests: false
+
+steps:
+  - ${{ if eq(parameters.unit_tests, 'true') }}:
+    - template: steps/conda_pytest_linux.yml
+      parameters:
+        test_type: unit
+        test_string: not notebooks
+        conda_env: ${{parameters.conda_env}}
+        spark: ${{parameters.spark}}
+        gpu: ${{parameters.gpu}}
+
+  - ${{ if eq(parameters.smoke_tests, 'true') }}:
+    - template: steps/conda_pytest_linux.yml
+      parameters:
+        test_type: smoke
+        conda_env: ${{parameters.conda_env}}
+        spark: ${{parameters.spark}}
+        gpu: ${{parameters.gpu}}
+
+  - ${{ if eq(parameters.integration_tests, 'true') }}:
+    - template: steps/conda_pytest_linux.yml
+      parameters:
+        test_type: integration
+        conda_env: ${{parameters.conda_env}}
+        spark: ${{parameters.spark}}
+        gpu: ${{parameters.gpu}}
+
+  - ${{ if eq(parameters.notebook_tests, 'true') }}:
+    - template: steps/conda_pytest_linux.yml
+      parameters:
+        test_type: unit
+        test_string: notebooks
+        name: Notebooks
+        conda_env: ${{parameters.conda_env}}
+        spark: ${{parameters.spark}}
+        gpu: ${{parameters.gpu}}
