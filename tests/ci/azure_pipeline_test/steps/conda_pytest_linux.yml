@@ -1,8 +1,8 @@
 parameters:
   conda_env: #
   test_type: unit # | smoke | integration | notebooks
-  test_string: ${{paramaters.test_type}}
-  name: ${{paramaters.test_type}}
+  test_string: #
+  name: #
   spark: not spark # | spark
   gpu: not gpu # | gpu
 
@@ -14,11 +14,11 @@ steps:
       echo "${{parameters.name}} tests"
       pytest tests/${{parameters.test_type}} \
         --durations 0 \
-        -m "${{parameters.test_string}} and ${{parameters.spark}} and  ${{parameters.gpu}}" \
+        -m "${{coalesce (parameters.test_string, parameters.test_type)}} and ${{parameters.spark}} and  ${{parameters.gpu}}" \
         --junitxml=reports/test-unit.xml
 
       conda deactivate
-    displayName: 'Run ${{parameters.name}} Tests'
+    displayName: 'Run ${{coalesce (parameters.name, parameters.test_type)}} Tests'
     env:
       PYSPARK_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
       PYSPARK_DRIVER_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
