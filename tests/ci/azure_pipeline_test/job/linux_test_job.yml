@@ -1,0 +1,36 @@
+parameters:
+  Agent_Pool: #
+  job_name: #
+  conda_env: #
+  spark: not spark # | spark
+  gpu: not gpu # | gpu
+  unit_tests: false
+  smoke_tests: false
+  integration_tests: false
+  notebook_tests: false
+
+jobs:
+- job: nightly
+  displayName: 'Nightly tests Linux CPU'
+  timeoutInMinutes: 180 # how long to run the job before automatically cancelling
+  pool:
+    name: $(Agent_Pool)
+
+  steps:
+  - template: .ci/steps/reco_config_conda_linux.yml@aitemplates
+    parameters:
+      conda_env: ${{parameters.conda_env}}
+
+  - template: steps/conda_pytest_linux.yml
+    parameters:
+      conda_env: ${{parameters.conda_env}}
+      spark: ${{parameters.spark}}
+      gpu: ${{parameters.gpu}}
+      unit_tests: ${{parameters.unit_tests}}
+      smoke_tests: ${{parameters.smoke_tests}}
+      integration_tests: ${{parameters.integration_tests}}
+      notebook_tests: ${{parameters.notebook_tests}}
+
+  - template: .ci/steps/reco_conda_clean_linux.yml@aitemplates
+    parameters:
+      conda_env: ${{parameters.conda_env}}
