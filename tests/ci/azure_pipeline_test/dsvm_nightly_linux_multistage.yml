@@ -33,40 +33,31 @@ variables:
 - group: LinuxAgentPool
 
 stages:
-  - stage: "Nightly CPU Test"
-    dependsOn: []
+  - template: stage/linux_test_stage.yml
+    parameters:
+      stage_name: "Nightly CPU Test"
+      job_name: nightly
+      conda_env: nightly_reco_base
+      smoke_tests: true
+      integration_tests: true
+      Agent_Pool: $(Agent_Pool)
 
-    jobs:
-    - template: job/linux_test_job.yml
-      parameters:
-        Agent_Pool: $(Agent_Pool)
-        name: nightly
-        conda_env: nightly_reco_base
-        smoke_tests: true
-        integration_tests: true
+  - template: stage/linux_test_stage.yml
+    parameters:
+      stage_name: "Nightly GPU Test"
+      job_name: nightly gpu
+      conda_env: nightly_reco_gpu
+      smoke_tests: true
+      integration_tests: true
+      gpu: gpu
+      Agent_Pool: $(Agent_Pool)
 
-  - stage: "Nightly GPU Test"
-    dependsOn: []
-
-    jobs:
-    - template: job/linux_test_job.yml
-      parameters:
-        Agent_Pool: $(Agent_Pool)
-        name: nightly gpu
-        conda_env: nightly_reco_gpu
-        smoke_tests: true
-        integration_tests: true
-        gpu: gpu
-
-  - stage: "Nightly Spark Test"
-    dependsOn: []
-
-    jobs:
-    - template: job/linux_test_job.yml
-      parameters:
-        Agent_Pool: $(Agent_Pool)
-        name: nightly spark
-        conda_env: nightly_reco_pyspark
-        smoke_tests: true
-        integration_tests: true
-        spark: spark
+  - template: stage/linux_test_stage.yml
+    parameters:
+      stage_name: "Nightly Spark Test"
+      job_name: nightly spark
+      conda_env: nightly_reco_pyspark
+      smoke_tests: true
+      integration_tests: true
+      spark: spark
+      Agent_Pool: $(Agent_Pool)
