@@ -406,9 +406,10 @@ class BaseModel:
 
             if self.hparams.save_model:
                 if epoch % self.hparams.save_epoch == 0:
+                    save_path_str = self.hparams.MODEL_DIR + "/" + "epoch_" + str(epoch)
                     checkpoint_path = self.saver.save(
                         sess=train_sess,
-                        save_path=self.hparams.MODEL_DIR + "epoch_" + str(epoch),
+                        save_path = save_path_str,
                     )
 
             eval_start = time.time()
