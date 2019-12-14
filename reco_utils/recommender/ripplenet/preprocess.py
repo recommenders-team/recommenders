@@ -6,7 +6,15 @@ import numpy as np
 import pandas as pd
 
 def read_item_index_to_entity_id_file(item_to_entity):
-    # file = '../data/' + DATASET + '/item_index2entity_id_rehashed.txt'
+    """Standarize indexes for items and entities
+
+    Args:
+        item_to_entity: KG dataframe with original item and entity IDs
+
+    Returns:
+        item_index_old2new: dictionary, conversion from original item ID to internal item ID 
+        entity_id2index: dictionary, conversion from original entity ID to internal entity ID 
+    """
     item_index_old2new = dict()
     entity_id2index = dict()
     i = 0
@@ -20,7 +28,18 @@ def read_item_index_to_entity_id_file(item_to_entity):
 
 
 def convert_rating(ratings, item_index_old2new, threshold):
+    """Apply item standarization to ratings dataset. 
+    Use rating threshold to determite positive ratings
 
+    Args:
+        ratings: dataframe, ratings with columns ["UserId", "ItemId", "Rating"]
+        item_index_old2new: dictionary, conversion from original item ID to internal item ID
+        threshold: minimum valur for the rating to be considered positive
+
+    Returns:
+        ratings_final: dataframe, ratings converted with columns userID,
+         internal item ID and binary rating (1, 0)
+    """
     item_set = set(item_index_old2new.values())
     user_pos_ratings = dict()
     user_neg_ratings = dict()
@@ -71,6 +90,15 @@ def convert_rating(ratings, item_index_old2new, threshold):
 
 
 def convert_kg(kg, entity_id2index):
+    """Apply entity standarization to KG dataset
+    Args:
+        kg: dataframe, knowledge graph with columns ["original_entity_id", "relation", "linked_entities_id"]
+        entity_id2index: dictionary, conversion from original entity ID to internal entity ID
+
+    Returns:
+        kg_final: dataframe, knowledge graph converted with columns head,
+         relation and tail, with internal entity IDs
+    """
     print('converting kg file ...')
     entity_cnt = len(entity_id2index)
     relation_cnt = 0
