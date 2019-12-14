@@ -170,7 +170,7 @@ class RippleNet(object):
         return labels, scores
 
     def eval(self, sess, feed_dict):
-        labels, scores = return_scores(self, sess, feed_dict)
+        labels, scores = sess.run([self.labels, self.scores_normalized], feed_dict)
         auc = roc_auc_score(y_true=labels, y_score=scores)
         predictions = [1 if i >= 0.5 else 0 for i in scores]
         acc = np.mean(np.equal(predictions, labels))
