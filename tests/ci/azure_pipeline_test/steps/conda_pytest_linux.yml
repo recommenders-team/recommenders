@@ -20,5 +20,6 @@ steps:
       conda deactivate
     displayName: 'Run ${{coalesce (parameters.name, parameters.test_type)}} Tests'
     env:
-      PYSPARK_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
-      PYSPARK_DRIVER_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
+      ${{ if eq(spark, 'spark') }}:
+        PYSPARK_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
+        PYSPARK_DRIVER_PYTHON: /anaconda/envs/${{parameters.conda_env}}/bin/python
