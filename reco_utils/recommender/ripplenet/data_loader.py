@@ -10,13 +10,13 @@ def load_kg(kg_final):
     """Standarize indexes for items and entities
 
     Args:
-        kg_final: dataframe, knowledge graph converted with columns head,
+        kg_final (pd.DataFrame): knowledge graph converted with columns head,
          relation and tail, with internal entity IDs
 
     Returns:
-        n_entity: int, number of entities in KG
-        n_relation: int, number of relations in KG
-        kg: KG in dictionary shape
+        n_entity (int): number of entities in KG
+        n_relation (int): number of relations in KG
+        kg (dictionary): KG in dictionary shape
     """
     print('reading KG file ...')
 
@@ -35,13 +35,13 @@ def get_ripple_set(kg, user_history_dict, n_hop, n_memory):
      given the paths of users, number of hops and memory
 
     Args:
-        kg: KG in dictionary shape
-        user_history_dict: dataframe, train rating data with positive ratings
-        n_hop: int, maximum hops in the KG
-        n_memory: int, size of ripple set for each hop
+        kg (dictionary): KG in dictionary shape
+        user_history_dict (dictionary): train rating data with positive ratings
+        n_hop (int): int, maximum hops in the KG
+        n_memory (int): int, size of ripple set for each hop
 
     Returns:
-        ripple_set: set of knowledge triples per user positive rating, from 0 until n_hop
+        ripple_set (dictionary): set of knowledge triples per user positive rating, from 0 until n_hop
     """
     print('constructing ripple set ...')
 
