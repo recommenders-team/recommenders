@@ -56,11 +56,11 @@ def convert_rating(ratings, item_index_old2new, threshold):
         if rating >= threshold:
             if user_index_old not in user_pos_ratings:
                 user_pos_ratings[user_index_old] = set()
-            user_pos_ratings[user_index_old].add(item_index)
+            user_pos_ratings[user_index_old].add((item_index, rating))
         else:
             if user_index_old not in user_neg_ratings:
                 user_neg_ratings[user_index_old] = set()
-            user_neg_ratings[user_index_old].add(item_index)
+            user_neg_ratings[user_index_old].add((item_index, rating))
 
     print('converting rating file ...')
     writer = []
@@ -71,18 +71,19 @@ def convert_rating(ratings, item_index_old2new, threshold):
             user_index_old2new[user_index_old] = user_cnt
             user_cnt += 1
         user_index = user_index_old2new[user_index_old]
-
-        for item in pos_item_set:
+        for item, original_rating in pos_item_set:
             writer.append({"user_index": user_index,
             "item": item,
-            "rating": 1})
+            "rating": 1,
+            "original_rating": original_rating})
         unwatched_set = item_set - pos_item_set
         if user_index_old in user_neg_ratings:
             unwatched_set -= user_neg_ratings[user_index_old]
         for item in np.random.choice(list(unwatched_set), size=len(pos_item_set), replace=False):
             writer.append({"user_index": user_index,
                 "item": item,
-                "rating": 0})
+                "rating": 0,
+                "original_rating": 0})
     ratings_final = pd.DataFrame(writer)
     print('number of users: %d' % user_cnt)
     print('number of items: %d' % len(item_set))
