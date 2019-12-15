@@ -27,7 +27,7 @@ def read_item_index_to_entity_id_file(item_to_entity):
     return item_index_old2new, entity_id2index
 
 
-def convert_rating(ratings, item_index_old2new, threshold):
+def convert_rating(ratings, item_index_old2new, threshold, seed):
     """Apply item standarization to ratings dataset. 
     Use rating threshold to determite positive ratings
 
@@ -80,11 +80,12 @@ def convert_rating(ratings, item_index_old2new, threshold):
         unwatched_set = item_set - pos_item_set
         if user_index_old in user_neg_ratings:
             unwatched_set -= user_neg_ratings[user_index_old]
+        np.random.seed(seed)
         for item in np.random.choice(list(unwatched_set), size=len(pos_item_set), replace=False):
             writer.append({"user_index": user_index,
                 "item": item,
                 "rating": 0,
-                 "original_rating": 0})
+                "original_rating": 0})
     ratings_final = pd.DataFrame(writer)
     print('number of users: %d' % user_cnt)
     print('number of items: %d' % len(item_set))
