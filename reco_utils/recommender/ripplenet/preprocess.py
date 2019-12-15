@@ -60,7 +60,7 @@ def convert_rating(ratings, item_index_old2new, threshold, seed):
         else:
             if user_index_old not in user_neg_ratings:
                 user_neg_ratings[user_index_old] = set()
-            user_neg_ratings[user_index_old].add((item_index, rating))
+            user_neg_ratings[user_index_old].add(item_index)
 
     print('converting rating file ...')
     writer = []
