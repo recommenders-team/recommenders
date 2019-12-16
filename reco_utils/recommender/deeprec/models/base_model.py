@@ -419,7 +419,7 @@ class BaseModel:
             train_start = time.time()
             for batch_data_input in self.iterator.load_data_from_file(train_file):
                 step_result = self.train(train_sess, batch_data_input)
-                (_, step_loss, step_data_loss, summary) = step_result
+                (_, _, step_loss, step_data_loss, summary) = step_result
                 if self.hparams.write_tfevents:
                     self.writer.add_summary(summary, step)
                 epoch_loss += step_loss

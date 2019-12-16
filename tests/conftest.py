@@ -207,6 +207,9 @@ def notebooks():
         "wide_deep": os.path.join(
             folder_notebooks, "00_quick_start", "wide_deep_movielens.ipynb"
         ),
+        "slirec_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "sequential_recsys_amazondataset.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),

@@ -460,11 +460,11 @@ def mrr_score(y_true, y_score):
     """Computing mrr score metric.
 
     Args:
-        y_true (obj): ground-truth labels.
-        y_score (obj): predicted labels.
+        y_true (numpy.ndarray): ground-truth labels.
+        y_score (numpy.ndarray): predicted labels.
     
     Returns:
-        obj: mrr scores.
+        numpy.ndarray: mrr scores.
     """
     order = np.argsort(y_score, axis=1)[:, ::-1]
     y_true = np.take(y_true, order)
@@ -476,11 +476,11 @@ def ndcg_score(y_true, y_score, k=10):
     """Computing ndcg score metric at k.
 
     Args:
-        y_true (obj): ground-truth labels.
-        y_score (obj): predicted labels.
+        y_true (numpy.ndarray): ground-truth labels.
+        y_score (numpy.ndarray): predicted labels.
 
     Returns:
-        obj: ndcg scores.
+        numpy.ndarray: ndcg scores.
     """
     best = dcg_score(y_true, y_true, k)
     actual = dcg_score(y_true, y_score, k)
@@ -491,11 +491,11 @@ def dcg_score(y_true, y_score, k=10):
     """Computing dcg score metric at k.
 
     Args:
-        y_true (obj): ground-truth labels.
-        y_score (obj): predicted labels.
+        y_true (numpy.ndarray): ground-truth labels.
+        y_score (numpy.ndarray): predicted labels.
 
     Returns:
-        obj: dcg scores.
+        numpy.ndarray: dcg scores.
     """
     k = min(np.shape(y_true)[1], k)
     order = np.argsort(y_score, axis=1)[:, ::-1]
