@@ -26,7 +26,7 @@ stages:
         parameters:
           conda_env: ${{parameters.conda_env}}
 
-      - template: ../steps/conda_pytest_linux.yml
+      - template: ../steps/conda_pytest_linux_steps.yml
         parameters:
           conda_env: ${{parameters.conda_env}}
           spark: ${{parameters.spark}}
