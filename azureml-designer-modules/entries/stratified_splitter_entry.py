@@ -10,7 +10,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        '--input_path',
+        '--input-path',
         help='The input directory.',
     )
 
@@ -20,12 +20,12 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '--col_user', type=str,
+        '--col-user', type=str,
         help='A string parameter.',
     )
 
     parser.add_argument(
-        '--col_item', type=str,
+        '--col-item', type=str,
         help='A string parameter.',
     )
 
@@ -35,11 +35,11 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '--output_train',
+        '--output-train',
         help='The output training data directory.',
     )
     parser.add_argument(
-        '--output_test',
+        '--output-test',
         help='The output test data directory.',
     )
 

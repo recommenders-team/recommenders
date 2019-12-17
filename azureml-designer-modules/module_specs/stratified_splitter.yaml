@@ -1,6 +1,6 @@
 name: Stratified Splitter
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 0.0.9
+version: 0.0.22
 category: Experimentation
 description: "Python stratified splitter from CAT Recommender repo: https://github.com/Microsoft/Recommenders/tree/master/."
 inputs:
@@ -48,21 +48,22 @@ implementation:
       - python=3.7
       - pip:
         - azureml-designer-core==0.0.26.*
+        - azureml-designer-classic-modules==0.0.105
     command:
     - python
     - azureml-designer-modules/entries/stratified_splitter_entry.py
     args:
-    - --input_path
+    - --input-path
     - inputPath: Input path
     - --ratio
     - inputValue: Ratio
-    - --col_user
+    - --col-user
     - inputValue: User column
-    - --col_item
+    - --col-item
     - inputValue: Item column
     - --seed
     - inputValue: Seed
-    - --output_train
+    - --output-train
     - outputPath: Output train data
-    - --output_test
+    - --output-test
     - outputPath: Output test data
