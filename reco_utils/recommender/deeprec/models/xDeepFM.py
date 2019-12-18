@@ -11,6 +11,10 @@ __all__ = ["XDeepFMModel"]
 
 
 class XDeepFMModel(BaseModel):
+    """xDeepFM model
+
+
+    """
     def _build_graph(self):
         """The main function to create xdeepfm's logic.
         
