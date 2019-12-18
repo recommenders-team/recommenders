@@ -5,6 +5,7 @@ import papermill as pm
 import pytest
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
+import os
 
 TOL = 0.5
 ABS_TOL = 0.05
@@ -213,3 +214,42 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+@pytest.mark.sequential
+@pytest.mark.integration
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "yaml_file, data_path, epochs, batch_size, expected_values, seed",
+    [
+        (
+            "reco_utils/recommender/deeprec/config/sli_rec.yaml",
+            os.path.join("tests", "resources", "deeprec", "slirec"),
+            10,
+            400,
+            {
+                "res_syn": {
+                    "auc": 0.7183,
+                    "logloss": 0.6045,
+                },
+            },
+            2019,
+        )
+    ],
+)
+def test_slirec_quickstart_integration(notebooks, yaml_file, data_path, epochs, batch_size, expected_values, seed):
+    notebook_path = notebooks["slirec_quickstart"]
+
+    params = {
+        "yaml_file": yaml_file,
+        "data_path": data_path,
+        "EPOCHS": epochs,
+        "BATCH_SIZE": batch_size,
+        "RANDOM_SEED": seed,
+    }
+    pm.execute_notebook(
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    for key, value in expected_values.items():
+        assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
+        assert results[key]["logloss"] == pytest.approx(value["logloss"], rel=TOL, abs=ABS_TOL)
