@@ -207,6 +207,9 @@ def notebooks():
         "wide_deep": os.path.join(
             folder_notebooks, "00_quick_start", "wide_deep_movielens.ipynb"
         ),
+        "slirec_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "sequential_recsys_amazondataset.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
@@ -233,6 +236,12 @@ def notebooks():
         ),
         "mmlspark_lightgbm_criteo": os.path.join(
             folder_notebooks, "02_model", "mmlspark_lightgbm_criteo.ipynb"
+        ),
+        "cornac_bpr_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "cornac_bpr_deep_dive.ipynb"
+        ),
+        "xlearn_fm_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "fm_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "spark_tuning": os.path.join(

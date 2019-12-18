@@ -1,0 +1,65 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# A Github Service Connection must also be created with the name "AI-GitHub"
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml
+
+resources:
+  repositories:
+    - repository: aitemplates
+      type: github
+      name: microsoft/AI
+      endpoint: AI-GitHub
+
+schedules:
+- cron: "7 0 * * *"
+  displayName: Nightly build master
+  branches:
+    include:
+    - master
+  always: true
+- cron: "7 12 * * *"
+  displayName: Nightly build staging
+  branches:
+    include:
+    - staging
+  always: true
+
+trigger: none
+
+pr: none
+
+variables:
+- group: WindowsAgentPool
+
+jobs:
+- job: nightly
+  displayName: 'Nightly tests Windows CPU'
+  timeoutInMinutes: 180 # how long to run the job before automatically cancelling
+  pool:
+    name: $(Agent_Pool)
+
+  steps:
+  - template: .ci/steps/reco_config_conda_win.yml@aitemplates
+    parameters:
+      conda_env: nightly_reco_base
+
+  - script: |
+      call conda activate nightly_reco_base
+      echo "Smoke tests"
+      pytest tests/smoke --durations 0 -m "smoke and not spark and not gpu" --junitxml=reports/test-smoke.xml
+      echo "Integration tests"
+      pytest tests/integration --durations 0 -m "integration and not spark and not gpu" --junitxml=reports/test-integration.xml
+    displayName: 'Run Tests'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results '
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
+
+  - template: .ci/steps/reco_conda_clean_win.yml@aitemplates
+    parameters:
+      conda_env: nightly_reco_base
+

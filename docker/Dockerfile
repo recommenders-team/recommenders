@@ -14,7 +14,7 @@ WORKDIR ${HOME}
 
 # Install base dependencies
 RUN apt-get update && \
-    apt-get install -y curl git
+    apt-get install -y curl git 
 
 # Install Anaconda
 ARG ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh"
@@ -42,7 +42,6 @@ RUN mkdir ${HOME}/.jupyter && \
 # CPU Stage
 FROM base AS cpu
 
-# Setup Conda environment
 RUN python recommenders/scripts/generate_conda_file.py --name base
 
 
