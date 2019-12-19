@@ -31,7 +31,7 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
-    - bash: |
+  - bash: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
       conda env list
     displayName: 'Add Conda to PATH'
