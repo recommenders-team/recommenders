@@ -201,7 +201,7 @@ def check_nn_config(f_config):
             "n_h",
             "min_seq_length",
         ]
-    elif f_config["model_type"] in ["din", "DIN"]:
+    elif f_config["model_type"] in ["asvd", "ASVD"]:
         required_parameters = [
             "item_embedding_dim",
             "cate_embedding_dim",

@@ -45,8 +45,8 @@ info:
     save_epoch : 1    #is save_model is set to True, save the model every save_epoch.
     metrics : ['auc','logloss']  #metrics for evaluation.
     pairwise_metrics : ['mean_mrr', 'ndcg', "group_auc"]
-    MODEL_DIR : ./tests/resources/deeprec/asvd/model/din_model/
-    SUMMARIES_DIR : ./tests/resources/deeprec/asvd/summary/din_summary/
+    MODEL_DIR : ./tests/resources/deeprec/asvd/model/asvd_model/
+    SUMMARIES_DIR : ./tests/resources/deeprec/asvd/summary/asvd_summary/
     write_tfevents : True
 
     
