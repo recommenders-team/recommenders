@@ -14,6 +14,13 @@ __all__ = ["SLI_RECModel"]
 
 
 class SLI_RECModel(SequentialBaseModel):
+    """SLI Rec model
+
+    Z. Yu, J. Lian, A. Mahmoody, G. Liu and X. Xie, "Adaptive User Modeling with
+    Long and Short-Term Preferences for Personailzed Recommendation", in Proceedings of 
+    the 28th International Joint Conferences on Artificial Intelligence, IJCAI’19, 
+    Pages 4213-4219, AAAI Press, 2019.
+    """
     def _build_seq_graph(self):
         """The main function to create sli_rec model.
         
