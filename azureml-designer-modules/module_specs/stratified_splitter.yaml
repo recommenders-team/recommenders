@@ -1,0 +1,69 @@
+name: Stratified Splitter
+id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
+version: 0.0.22
+category: Experimentation
+description: "Python stratified splitter from CAT Recommender repo: https://github.com/Microsoft/Recommenders/tree/master/."
+inputs:
+- name: Input path
+  type: DataFrameDirectory
+  description: The directory contains dataframe.
+  port: true
+- name: Ratio
+  type: Float
+  optional: True
+  description: > 
+            Ratio for splitting data. If it is a single float number,
+            it splits data into two halves and the ratio argument indicates the ratio of 
+            training data set; if it is a list of float numbers, the splitter splits 
+            data into several portions corresponding to the split ratios. If a list is 
+            provided and the ratios are not summed to 1, they will be normalized.
+- name: User column
+  type: String
+  description: Column name of user IDs.
+- name: Item column
+  type: String
+  description: Column name of item IDs.
+- name: Seed
+  type: Int
+  min: 1
+  max: 100
+  default: 42
+  description: Seed.
+outputs:
+- name: Output train data
+  type: DataFrameDirectory
+  description: The output directory contains a training dataframe.
+  port: true
+- name: Output test data
+  type: DataFrameDirectory
+  description: The output directory contains a test dataframe.
+  port: true
+implementation:
+  container:
+    conda:
+      name: CAT_module_environment
+      channels:
+      - defaults
+      dependencies:
+      - python=3.7
+      - pip:
+        - azureml-designer-core==0.0.26.*
+        - azureml-designer-classic-modules==0.0.105
+    command:
+    - python
+    - azureml-designer-modules/entries/stratified_splitter_entry.py
+    args:
+    - --input-path
+    - inputPath: Input path
+    - --ratio
+    - inputValue: Ratio
+    - --col-user
+    - inputValue: User column
+    - --col-item
+    - inputValue: Item column
+    - --seed
+    - inputValue: Seed
+    - --output-train
+    - outputPath: Output train data
+    - --output-test
+    - outputPath: Output test data
