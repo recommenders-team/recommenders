@@ -7,37 +7,41 @@ pr:
 - master
 
 # Any commit to this branch will trigger the build.
-trigger: none
+trigger:
+- staging
+- master
 
-pool:
-  name: RecommendersAgentPoolWin
-  timeoutInMinutes: 20
+variables:
+- group: WindowsAgentPool
 
-workspace:
-  clean: all
+jobs:
+- job: unit
+  displayName: 'Unit tests Windows GPU on notebooks'
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  pool:
+    name: $(Agent_Pool)
 
-steps:
-- script: |
-   python scripts/generate_conda_file.py --gpu
-   call conda env create -f reco_gpu.yaml
-   call conda activate reco_gpu
-   pytest tests/unit -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
-   call conda deactivate
-  displayName: 'Run Tests'
-  continueOnError: true
-  timeoutInMinutes: 20
+  # workspace:
+  #   clean: all
 
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results **/test-*.xml'
-  inputs:
-    testResultsFiles: '**/test-*.xml'
-    failTaskOnFailedTests: true
-  condition: succeededOrFailed()
+  steps:
+  - script: |
+      call conda activate reco_gpu
+      pytest tests/unit --durations 0 -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
+    displayName: 'Run Tests'
+    continueOnError: true
 
-- script: |
-   del /q /S %LOCALAPPDATA%\Temp\*
-   for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"s to this script
-  displayName: 'Remove Temp Files'
-  enabled: false
-  condition: succeededOrFailed()
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/test-*.xml'
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
 
+  - script: |
+      del /q /S %LOCALAPPDATA%\Temp\*
+      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"s to this script
+    displayName: 'Remove Temp Files'
+    enabled: false
+    condition: succeededOrFailed()
+  

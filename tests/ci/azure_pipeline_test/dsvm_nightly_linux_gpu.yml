@@ -2,23 +2,30 @@
 # Licensed under the MIT License.
 
 schedules:
-- cron: "0 0 * * *"
-  displayName: Daily midnight build
+- cron: "7 4 * * *"
+  displayName: Nightly build master
   branches:
     include:
     - master
+- cron: "7 16 * * *"
+  displayName: Nightly build staging
+  branches:
+    include:
     - staging
 
 trigger: none
 
 pr: none
 
+variables:
+- group: LinuxAgentPool
+
 jobs:
 - job: nightly
-  displayName : 'Nightly tests Linux GPU'
+  displayName: 'Nightly tests Linux GPU'
   timeoutInMinutes: 180 # how long to run the job before automatically cancelling
   pool:
-    name: recolinuxpool
+    name: $(Agent_Pool)
 
   steps:
   - bash: |
@@ -31,18 +38,16 @@ jobs:
       python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu && \
       conda env create --quiet -f nightly_reco_gpu.yaml 2> log
     displayName: 'Setup Conda Env'
-    timeoutInMinutes: 10
 
   - script: |
       . /anaconda/etc/profile.d/conda.sh && \
       conda activate nightly_reco_gpu && \
       echo "Smoke tests" && \
-      pytest tests/smoke -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml && \
+      pytest tests/smoke --durations 0 -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml && \
       echo "Integration tests" && \
-      pytest tests/integration -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml && \
+      pytest tests/integration --durations 0 -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml && \
       conda deactivate    
     displayName: 'Run Tests'
-    timeoutInMinutes: 180
 
   - task: PublishTestResults@2
     displayName: 'Publish Test Results '
@@ -56,6 +61,4 @@ jobs:
     workingDirectory: tests
     displayName: 'Conda remove'
     continueOnError: true
-    condition: succeededOrFailed()
-    timeoutInMinutes: 10
-
+    condition: always() # this step will always run, even if the pipeline is canceled

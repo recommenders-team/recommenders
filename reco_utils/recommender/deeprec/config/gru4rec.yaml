@@ -1,0 +1,54 @@
+#data
+#data format:sequential model
+data: 
+    user_vocab : ./tests/resources/deeprec/slirec/user_vocab.pkl # the map file of user to id
+    item_vocab : ./tests/resources/deeprec/slirec/item_vocab.pkl # the map file of item to id
+    cate_vocab : ./tests/resources/deeprec/slirec/category_vocab.pkl # the map file of category to id
+
+#model
+model:
+    method : classification # classification or regression
+    model_type : GRU4Rec
+    layer_sizes : [100, 64]  # layers' size of DNN. In this example, DNN has two layers, and each layer has 100 hidden nodes.
+    activation : [relu, relu] # activation function for DNN
+    user_dropout: True 
+    dropout : [0.3, 0.3]  #drop out values for DNN layer
+    item_embedding_dim : 32
+    cate_embedding_dim : 8
+    user_embedding_dim : 16
+
+#train
+#init_method: normal,tnormal,uniform,he_normal,he_uniform,xavier_normal,xavier_uniform
+train:
+    init_method: tnormal  # method for initializing model parameters
+    init_value : 0.01 # stddev values for initializing model parameters
+    embed_l2 : 0.0001 # l2 regularization for embedding parameters
+    embed_l1 : 0.0000 # l1 regularization for embedding parameters
+    layer_l2 : 0.0001 # l2 regularization for hidden layer parameters
+    layer_l1 : 0.0000 # l1 regularization for hidden layer parameters
+    cross_l2 : 0.0000  # l2 regularization for cross layer parameters
+    cross_l1 : 0.000   # l1 regularization for cross layer parameters
+    learning_rate : 0.001
+    loss : softmax    #log_loss, cross_entropy_loss, or square_loss
+    optimizer : lazyadam  # adam, adadelta, sgd, ftrl, gd, padagrad, pgd, rmsprop, lazyadam
+    epochs : 50  #   number of epoch for training
+    batch_size : 400  # batch size 
+    enable_BN : True  # whether to use batch normalization in hidden layers
+    EARLY_STOP : 10 # the number of epoch that controls EARLY STOPPING
+    max_seq_length : 50 # the maximum number of records in the history sequence
+    hidden_size : 40 # the shape of hidden size used in RNN 
+
+#show info
+#metric :'auc','logloss', 'group_auc'
+info:
+    show_step : 100   #print training information after a certain number of mini-batch 
+    save_model: True   #whether to save models
+    save_epoch : 1    #is save_model is set to True, save the model every save_epoch.
+    metrics : ['auc','logloss']  #metrics for evaluation.
+    pairwise_metrics : ['mean_mrr', 'ndcg', "group_auc"]
+    MODEL_DIR : ./tests/resources/deeprec/gru4rec/model/gru4rec_model/
+    SUMMARIES_DIR : ./tests/resources/deeprec/gru4rec/summary/gru4rec_summary/
+    write_tfevents : True
+
+    
+

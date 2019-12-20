@@ -11,44 +11,49 @@ trigger:
 - staging
 - master
 
-pool:
-  name: recolinuxpool
-  timeoutInMinutes: 20
+variables:
+- group: LinuxAgentPool
 
-# resources:
-#   repositories:
-#   - repository: common
-#     type: github
-#     name: microsoft/recommenders
+jobs:
+- job: unit
+  displayName: "Unit tests Linux PySpark"
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  pool:
+    name: $(Agent_Pool)
 
-steps:
-- bash: |
-    echo "##vso[task.prependpath]/data/anaconda/bin"
-    conda env list
-  displayName: Add Conda to PATH
-# Uncomment if needed
-# Conda creation can take around 10min
-- bash: |
-    python scripts/generate_conda_file.py  --pyspark
-    conda env update -n reco_pyspark -f reco_pyspark.yaml
-  displayName: 'Creating Conda Environment with dependencies'
+  steps:
+  - bash: |
+      echo "##vso[task.prependpath]/data/anaconda/bin"
+      conda env list
+    displayName: Add Conda to PATH
 
-- script: |
-   . /anaconda/etc/profile.d/conda.sh && \
-   conda activate reco_pyspark && \
-   pytest tests/unit -m "not notebooks and spark and not gpu" --junitxml=reports/test-unit.xml && \
-   conda deactivate
-  displayName: 'Run Tests'
-  timeoutInMinutes: 20
-  env:
-    PYSPARK_PYTHON: /anaconda/envs/reco_pyspark/bin/python
-    PYSPARK_DRIVER_PYTHON: /anaconda/envs/reco_pyspark/bin/python
+  # Uncomment if needed
+  # Conda creation can take around 10min
+  # - bash: |
+  #     python scripts/generate_conda_file.py  --pyspark
+  #     conda env update -n reco_pyspark -f reco_pyspark.yaml
+  #   displayName: 'Creating Conda Environment with dependencies'
 
-- task: PublishTestResults@2
-  displayName: 'Publish Test Results **/test-*.xml'
-  inputs:
-    testResultsFiles: '**/test-*.xml'
-    failTaskOnFailedTests: true
-  condition: succeededOrFailed()
+  - script: |
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate reco_pyspark && \
+      pytest tests/unit --durations 0 -m "not notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
+    displayName: 'Run Tests'
+    env:
+      PYSPARK_PYTHON: /anaconda/envs/reco_pyspark/bin/python
+      PYSPARK_DRIVER_PYTHON: /anaconda/envs/reco_pyspark/bin/python
 
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/test-*.xml'
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
 
+  # Uncomment if needed
+  # - script: |
+  #     conda env remove -n reco_pyspark -y   
+  #   workingDirectory: tests
+  #   displayName: 'Conda remove'
+  #   continueOnError: true
+  #   condition: succeededOrFailed()
