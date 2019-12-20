@@ -6,10 +6,10 @@ from reco_utils.recommender.deeprec.models.sequential.sequential_base_model impo
     SequentialBaseModel,
 )
 
-__all__ = ["ASVDModel"]
+__all__ = ["A2SVDModel"]
 
 
-class ASVDModel(SequentialBaseModel):
+class A2SVDModel(SequentialBaseModel):
     """A2SVD Model
 
     It extends ASVD with an attention module.
@@ -24,10 +24,10 @@ class ASVDModel(SequentialBaseModel):
     Pages 4213-4219, AAAI Press, 2019.
     """
     def _build_seq_graph(self):
-        """The main function to create ASVD model.
+        """The main function to create A2SVD model.
         
         Returns:
-            obj:the output of ASVD section.
+            obj:the output of A2SVD section.
         """
         hparams = self.hparams
         with tf.variable_scope("asvd"):

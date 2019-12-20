@@ -8,7 +8,7 @@ data:
 #model
 model:
     method : classification # classification or regression
-    model_type : ASVD
+    model_type : A2SVD
     layer_sizes : [100, 64]  # layers' size of DNN. In this example, DNN has two layers, and each layer has 100 hidden nodes.
     activation : [relu, relu] # activation function for DNN
     user_dropout: True 
