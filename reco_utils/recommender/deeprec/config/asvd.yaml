@@ -1,9 +1,9 @@
 #data
 #data format:sequential model
 data: 
-    user_vocab : ./tests/resources/deeprec/asvd/user_vocab.pkl # the map file of user to id
-    item_vocab : ./tests/resources/deeprec/asvd/item_vocab.pkl # the map file of item to id
-    cate_vocab : ./tests/resources/deeprec/asvd/category_vocab.pkl # the map file of category to id
+    user_vocab : ./tests/resources/deeprec/slirec/user_vocab.pkl # the map file of user to id
+    item_vocab : ./tests/resources/deeprec/slirec/item_vocab.pkl # the map file of item to id
+    cate_vocab : ./tests/resources/deeprec/slirec/category_vocab.pkl # the map file of category to id
 
 #model
 model:
@@ -41,12 +41,12 @@ train:
 #metric :'auc','logloss', 'group_auc'
 info:
     show_step : 100   #print training information after a certain number of mini-batch 
-    save_model: True   #whether to save modl
+    save_model: True   #whether to save models
     save_epoch : 1    #is save_model is set to True, save the model every save_epoch.
     metrics : ['auc','logloss']  #metrics for evaluation.
     pairwise_metrics : ['mean_mrr', 'ndcg', "group_auc"]
-    MODEL_DIR : ./tests/resources/deeprec/asvd/model/din_model/
-    SUMMARIES_DIR : ./tests/resources/deeprec/asvd/summary/din_summary/
+    MODEL_DIR : ./tests/resources/deeprec/asvd/model/asvd_model/
+    SUMMARIES_DIR : ./tests/resources/deeprec/asvd/summary/asvd_summary/
     write_tfevents : True
 
     

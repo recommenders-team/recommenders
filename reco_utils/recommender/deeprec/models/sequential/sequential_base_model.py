@@ -78,7 +78,6 @@ class SequentialBaseModel(BaseModel):
         Args:
             train_file (str): training data set.
             valid_file (str): validation set.
-            need_sample (boolean): If negative sampling is applied while training in mini batch.
             valid_num_ngs (int): the number of negative instances with one positive instance in validation data.
             eval_metric (str): the metric that control early stopping. e.g. "auc", "group_auc", etc.
 

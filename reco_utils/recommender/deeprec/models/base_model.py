@@ -257,10 +257,6 @@ class BaseModel:
             train_step = tf.train.RMSPropOptimizer(lr)
         elif optimizer == "lazyadam":
             train_step = tf.contrib.opt.LazyAdamOptimizer(lr)
-        elif optimizer == "ftrl":
-            train_step = tf.train.FtrlOptimizer(
-                lr, initial_accumulator_value=0.0, l1_regularization_strength=0.001
-            )
         else:
             train_step = tf.train.GradientDescentOptimizer(lr)
         return train_step
@@ -440,7 +436,7 @@ class BaseModel:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
                     checkpoint_path = self.saver.save(
                         sess=train_sess,
-                        save_path = save_path_str,
+                        save_path=save_path_str,
                     )
 
             eval_start = time.time()

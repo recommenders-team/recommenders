@@ -42,7 +42,7 @@ train:
 #metric :'auc','logloss', 'group_auc'
 info:
     show_step : 100   #print training information after a certain number of mini-batch 
-    save_model: True   #whether to save modl
+    save_model: True   #whether to save models
     save_epoch : 1    #is save_model is set to True, save the model every save_epoch.
     metrics : ['auc','logloss']  #metrics for evaluation.
     pairwise_metrics : ['mean_mrr', 'ndcg', "group_auc"]
