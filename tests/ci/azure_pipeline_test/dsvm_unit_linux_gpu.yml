@@ -1,15 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-#
-# A Github Service Connection must also be created with the name "AI-GitHub"
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml
-
-resources:
-  repositories:
-    - repository: aitemplates
-      type: github
-      name: microsoft/AI
-      endpoint: AI-GitHub
 
 # Pull request against these branches will trigger this build
 pr:
@@ -32,10 +22,17 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
-  - template: .ci/steps/reco_config_conda_linux.yml@aitemplates
-    parameters:
-      conda_env: reco_gpu
-      install_conda: false
+  - bash: |
+      echo "##vso[task.prependpath]/data/anaconda/bin"
+      conda env list
+    displayName: Add Conda to PATH
+  
+  # Uncomment if needed
+  # Conda creation can take around 10min
+  # - bash: |
+  #     python scripts/generate_conda_file.py  --gpu
+  #     conda env update -n reco_gpu -f reco_gpu.yaml
+  #   displayName: 'Creating Conda Environment with dependencies'
 
   - script: |
       . /anaconda/etc/profile.d/conda.sh && \
@@ -50,7 +47,10 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  - template: .ci/steps/reco_conda_clean_linux.yml@aitemplates
-    parameters:
-      conda_env: reco_gpu
-      clean_conda: false
+  # Uncomment if needed
+  # - script: |
+  #     conda env remove -n reco_gpu -y   
+  #   workingDirectory: tests
+  #   displayName: 'Conda remove'
+  #   continueOnError: true
+  #   condition: succeededOrFailed()
