@@ -8,7 +8,7 @@ data:
 #model
 model:
     method : classification # classification or regression
-    model_type : ASVD
+    model_type : A2SVD
     layer_sizes : [100, 64]  # layers' size of DNN. In this example, DNN has two layers, and each layer has 100 hidden nodes.
     activation : [relu, relu] # activation function for DNN
     user_dropout: True 
@@ -45,8 +45,8 @@ info:
     save_epoch : 1    #is save_model is set to True, save the model every save_epoch.
     metrics : ['auc','logloss']  #metrics for evaluation.
     pairwise_metrics : ['mean_mrr', 'ndcg', "group_auc"]
-    MODEL_DIR : ./tests/resources/deeprec/asvd/model/asvd_model/
-    SUMMARIES_DIR : ./tests/resources/deeprec/asvd/summary/asvd_summary/
+    MODEL_DIR : ./tests/resources/deeprec/a2svd/model/a2svd_model/
+    SUMMARIES_DIR : ./tests/resources/deeprec/a2svd/summary/a2svd_summary/
     write_tfevents : True
 
     
