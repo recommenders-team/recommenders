@@ -64,7 +64,7 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Jianxun Lian](https://github.com/Leavingseason)**
    * xDeepFM algorithm
    * DKN algorithm
-* **[Markus Cosowicz](https://github.com/eisber)**
+* **[Markus Cozowicz](https://github.com/eisber)**
    * SAR improvements on Spark
 * **[Max Kaznady](https://github.com/maxkazmsft)**
    * Early SAR single node code and port from another internal codebase
@@ -78,6 +78,8 @@ To contributors: please add your name to the list when you submit a patch to the
    * Jupyter notebook demonstrating the use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
+* **[Quoc-Tuan Truong](https://github.com/tqtg)**
+   * BPR notebook using [Cornac](https://github.com/PreferredAI/cornac) framework
 * **[Robert Alexander](https://github.com/roalexan)**
    * Windows test pipelines
 * **[Yassine Khelifi](https://github.com/datashinobi)**

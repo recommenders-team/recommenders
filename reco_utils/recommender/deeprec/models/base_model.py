@@ -1,11 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from os.path import join
 import abc
 import time
 import numpy as np
 import tensorflow as tf
-
+from tensorflow import keras
 from reco_utils.recommender.deeprec.deeprec_utils import cal_metric
 
 
@@ -29,6 +30,9 @@ class BaseModel:
 
         self.graph = graph if graph is not None else tf.Graph()
         self.iterator = iterator_creator(hparams, self.graph)
+        self.train_num_ngs = (
+            hparams.train_num_ngs if "train_num_ngs" in hparams else None
+        )
 
         with self.graph.as_default():
             self.hparams = hparams
@@ -40,6 +44,7 @@ class BaseModel:
             self.keep_prob_train = None
             self.keep_prob_test = None
             self.is_train_stage = tf.placeholder(tf.bool, shape=(), name="is_training")
+            self.group = tf.placeholder(tf.int32, shape=(), name="group")
 
             self.initializer = self._get_initializer()
 
@@ -49,6 +54,7 @@ class BaseModel:
             self.loss = self._get_loss()
             self.saver = tf.train.Saver(max_to_keep=self.hparams.epochs)
             self.update = self._build_train_opt()
+            self.extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
             self.init_op = tf.global_variables_initializer()
             self.merged = self._add_summaries()
 
@@ -149,13 +155,17 @@ class BaseModel:
 
     def _get_initializer(self):
         if self.hparams.init_method == "tnormal":
-            return tf.truncated_normal_initializer(stddev=self.hparams.init_value, seed=self.seed)
+            return tf.truncated_normal_initializer(
+                stddev=self.hparams.init_value, seed=self.seed
+            )
         elif self.hparams.init_method == "uniform":
             return tf.random_uniform_initializer(
                 -self.hparams.init_value, self.hparams.init_value, seed=self.seed
             )
         elif self.hparams.init_method == "normal":
-            return tf.random_normal_initializer(stddev=self.hparams.init_value, seed=self.seed)
+            return tf.random_normal_initializer(
+                stddev=self.hparams.init_value, seed=self.seed
+            )
         elif self.hparams.init_method == "xavier_normal":
             return tf.contrib.layers.xavier_initializer(uniform=False, seed=self.seed)
         elif self.hparams.init_method == "xavier_uniform":
@@ -169,7 +179,9 @@ class BaseModel:
                 factor=2.0, mode="FAN_IN", uniform=True, seed=self.seed
             )
         else:
-            return tf.truncated_normal_initializer(stddev=self.hparams.init_value, seed=self.seed)
+            return tf.truncated_normal_initializer(
+                stddev=self.hparams.init_value, seed=self.seed
+            )
 
     def _compute_data_loss(self):
         if self.hparams.loss == "cross_entropy_loss":
@@ -195,6 +207,15 @@ class BaseModel:
                     labels=tf.reshape(self.iterator.labels, [-1]),
                 )
             )
+        elif self.hparams.loss == "softmax":
+            group = self.train_num_ngs + 1
+            logits = tf.reshape(self.logit, (-1, group))
+            labels = tf.reshape(self.iterator.labels, (-1, group))
+            softmax_pred = tf.nn.softmax(logits, axis=-1)
+            boolean_mask = tf.equal(labels, tf.ones_like(labels))
+            mask_paddings = tf.ones_like(softmax_pred)
+            pos_softmax = tf.where(boolean_mask, softmax_pred, mask_paddings)
+            data_loss = -group * tf.reduce_mean(tf.math.log(pos_softmax))
         else:
             raise ValueError("this loss not defined {0}".format(self.hparams.loss))
         return data_loss
@@ -229,11 +250,17 @@ class BaseModel:
         elif optimizer == "gd":
             train_step = tf.train.GradientDescentOptimizer(lr)
         elif optimizer == "padagrad":
-            train_step = tf.train.ProximalAdagradOptimizer(lr)  # .minimize(self.loss)
+            train_step = tf.train.ProximalAdagradOptimizer(lr)
         elif optimizer == "pgd":
             train_step = tf.train.ProximalGradientDescentOptimizer(lr)
         elif optimizer == "rmsprop":
             train_step = tf.train.RMSPropOptimizer(lr)
+        elif optimizer == "lazyadam":
+            train_step = tf.contrib.opt.LazyAdamOptimizer(lr)
+        elif optimizer == "ftrl":
+            train_step = tf.train.FtrlOptimizer(
+                lr, initial_accumulator_value=0.0, l1_regularization_strength=0.001
+            )
         else:
             train_step = tf.train.GradientDescentOptimizer(lr)
         return train_step
@@ -311,7 +338,14 @@ class BaseModel:
         feed_dict[self.layer_keeps] = self.keep_prob_train
         feed_dict[self.is_train_stage] = True
         return sess.run(
-            [self.update, self.loss, self.data_loss, self.merged], feed_dict=feed_dict
+            [
+                self.update,
+                self.extra_update_ops,
+                self.loss,
+                self.data_loss,
+                self.merged,
+            ],
+            feed_dict=feed_dict,
         )
 
     def eval(self, sess, feed_dict):
@@ -327,10 +361,7 @@ class BaseModel:
         """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False
-        return sess.run(
-            [self.loss, self.data_loss, self.pred, self.iterator.labels],
-            feed_dict=feed_dict,
-        )
+        return sess.run([self.pred, self.iterator.labels], feed_dict=feed_dict,)
 
     def infer(self, sess, feed_dict):
         """Given feature data (in feed_dict), get predicted scores with current model.
@@ -389,7 +420,7 @@ class BaseModel:
             train_start = time.time()
             for batch_data_input in self.iterator.load_data_from_file(train_file):
                 step_result = self.train(train_sess, batch_data_input)
-                (_, step_loss, step_data_loss, summary) = step_result
+                (_, _, step_loss, step_data_loss, summary) = step_result
                 if self.hparams.write_tfevents:
                     self.writer.add_summary(summary, step)
                 epoch_loss += step_loss
@@ -406,9 +437,10 @@ class BaseModel:
 
             if self.hparams.save_model:
                 if epoch % self.hparams.save_epoch == 0:
+                    save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
                     checkpoint_path = self.saver.save(
                         sess=train_sess,
-                        save_path=self.hparams.MODEL_DIR + "epoch_" + str(epoch),
+                        save_path = save_path_str,
                     )
 
             eval_start = time.time()
@@ -479,7 +511,7 @@ class BaseModel:
         preds = []
         labels = []
         for batch_data_input in self.iterator.load_data_from_file(filename):
-            _, _, step_pred, step_labels = self.eval(load_sess, batch_data_input)
+            step_pred, step_labels = self.eval(load_sess, batch_data_input)
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
         res = cal_metric(labels, preds, self.hparams.metrics)
@@ -501,7 +533,117 @@ class BaseModel:
                 step_pred = self.infer(load_sess, batch_data_input)
                 step_pred = np.reshape(step_pred, -1)
                 wt.write("\n".join(map(str, step_pred)))
-
-            # line break after each batch.
-            wt.write("\n")
+                # line break after each batch.
+                wt.write("\n")
         return self
+
+    def _attention(self, inputs, attention_size):
+        """Soft alignment attention implement.
+        
+        Args:
+            inputs (obj): Sequences ready to apply attention.
+            attention_size (int): The dimension of attention operation.
+
+        Returns:
+            obj: Weighted sum after attention.
+        """
+        hidden_size = inputs.shape[2].value
+        if not attention_size:
+            attention_size = hidden_size
+
+        attention_mat = tf.get_variable(
+            name="attention_mat",
+            shape=[inputs.shape[-1].value, hidden_size],
+            initializer=self.initializer,
+        )
+        att_inputs = tf.tensordot(inputs, attention_mat, [[2],[0]])
+
+        query = tf.get_variable(
+            name="query",
+            shape=[attention_size],
+            dtype=tf.float32,
+            initializer=self.initializer,
+        )
+        att_logits = tf.tensordot(att_inputs, query, axes=1, name="att_logits")
+        att_weights = tf.nn.softmax(att_logits, name="att_weights")
+        output = inputs * tf.expand_dims(att_weights, -1)
+        return output
+
+    def _fcn_net(self, model_output, layer_sizes, scope):
+        """Construct the MLP part for the model.
+
+        Args:
+            model_output (obj): The output of upper layers, input of MLP part
+            layer_sizes (list): The shape of each layer of MLP part
+            scope (obj): The scope of MLP part
+
+        Returns:s
+            obj: prediction logit after fully connected layer
+        """
+        hparams = self.hparams
+        with tf.variable_scope(scope):
+            last_layer_size = model_output.shape[-1]
+            layer_idx = 0
+            hidden_nn_layers = []
+            hidden_nn_layers.append(model_output)
+            with tf.variable_scope("nn_part", initializer=self.initializer) as scope:
+                for idx, layer_size in enumerate(layer_sizes):
+                    curr_w_nn_layer = tf.get_variable(
+                        name="w_nn_layer" + str(layer_idx),
+                        shape=[last_layer_size, layer_size],
+                        dtype=tf.float32,
+                    )
+                    curr_b_nn_layer = tf.get_variable(
+                        name="b_nn_layer" + str(layer_idx),
+                        shape=[layer_size],
+                        dtype=tf.float32,
+                        initializer=tf.zeros_initializer(),
+                    )
+                    tf.summary.histogram(
+                        "nn_part/" + "w_nn_layer" + str(layer_idx), curr_w_nn_layer
+                    )
+                    tf.summary.histogram(
+                        "nn_part/" + "b_nn_layer" + str(layer_idx), curr_b_nn_layer
+                    )
+                    curr_hidden_nn_layer = tf.tensordot(
+                        hidden_nn_layers[layer_idx], curr_w_nn_layer, axes=1
+                    ) + curr_b_nn_layer
+
+                    scope = "nn_part" + str(idx)
+                    activation = hparams.activation[idx]
+
+                    if hparams.enable_BN is True:
+                        curr_hidden_nn_layer = tf.layers.batch_normalization(
+                            curr_hidden_nn_layer,
+                            momentum=0.95,
+                            epsilon=0.0001,
+                            training=self.is_train_stage,
+                        )
+
+                    curr_hidden_nn_layer = self._active_layer(
+                        logit=curr_hidden_nn_layer, activation=activation, layer_idx=idx
+                    )
+                    hidden_nn_layers.append(curr_hidden_nn_layer)
+                    layer_idx += 1
+                    last_layer_size = layer_size
+
+                w_nn_output = tf.get_variable(
+                    name="w_nn_output", shape=[last_layer_size, 1], dtype=tf.float32
+                )
+                b_nn_output = tf.get_variable(
+                    name="b_nn_output",
+                    shape=[1],
+                    dtype=tf.float32,
+                    initializer=tf.zeros_initializer(),
+                )
+                tf.summary.histogram(
+                    "nn_part/" + "w_nn_output" + str(layer_idx), w_nn_output
+                )
+                tf.summary.histogram(
+                    "nn_part/" + "b_nn_output" + str(layer_idx), b_nn_output
+                )
+                nn_output = tf.tensordot(
+                    hidden_nn_layers[-1], w_nn_output, axes=1
+                ) + b_nn_output
+                self.logit = nn_output
+                return nn_output

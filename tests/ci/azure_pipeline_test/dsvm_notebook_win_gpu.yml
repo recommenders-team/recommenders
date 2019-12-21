@@ -1,0 +1,53 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# A Github Service Connection must also be created with the name "AI-GitHub"
+# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml
+
+resources:
+  repositories:
+    - repository: aitemplates
+      type: github
+      name: microsoft/AI
+      endpoint: AI-GitHub
+
+# Pull request against these branches will trigger this build
+pr:
+- staging
+- master
+
+# Any commit to this branch will trigger the build.
+trigger:
+- staging
+- master
+
+variables:
+- group: WindowsAgentPool
+
+jobs:
+- job: unit
+  displayName: 'Unit tests Windows GPU on notebooks'
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  pool:
+    name: $(Agent_Pool)
+
+  # workspace:
+  #   clean: all
+
+  steps:
+  - script: |
+      call conda activate reco_gpu
+      pytest tests/unit --durations 0 -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
+    displayName: 'Run Tests'
+    continueOnError: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/test-*.xml'
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
+
+  - template: .ci/steps/reco_conda_clean_win.yml@aitemplates
+    parameters:
+      clean_conda: false

@@ -11,6 +11,7 @@ In this directory, notebooks are provided to give a deep dive into training mode
 | [baseline_deep_dive](baseline_deep_dive.ipynb) | --- | Deep dive on baseline performance estimation.
 | [ncf_deep_dive](ncf_deep_dive.ipynb) | Python CPU, GPU | Deep dive on a NCF algorithm and implementation.
 | [rbm_deep_dive](rbm_deep_dive.ipynb)| Python CPU, GPU | Deep dive on the rbm algorithm and its implementation.
+| [cornac_bpr_deep_dive](cornac_bpr_deep_dive.ipynb) | Python CPU | Deep dive on the BPR algorithm and implementation.
 | [sar_deep_dive](sar_deep_dive.ipynb) | Python CPU | Deep dive on the SAR algorithm and implementation.
 | [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Python CPU | Deep dive on a SVD algorithm and implementation.
 | [vowpal_wabbit_deep_dive](vowpal_wabbit_deep_dive.ipynb) | Python CPU | Deep dive into using Vowpal Wabbit for regression and matrix factorization.
