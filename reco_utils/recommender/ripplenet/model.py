@@ -12,7 +12,7 @@ class RippleNet(object):
      n_memory, item_update_mode, using_all_hops, n_entity, n_relation)
         self._build_inputs()
         self._build_embeddings()
-        self._build_model()
+        self._build_self()
         self._build_loss()
         self._build_train()
 
@@ -53,7 +53,7 @@ class RippleNet(object):
                                                    shape=[self.n_relation, self.dim, self.dim],
                                                    initializer=tf.contrib.layers.xavier_initializer())
 
-    def _build_model(self):
+    def _build_self(self):
         # transformation matrix for updating item embeddings at the end of each hop
         self.transform_matrix = tf.get_variable(name="transform_matrix", shape=[self.dim, self.dim], dtype=tf.float64,
                                                 initializer=tf.contrib.layers.xavier_initializer())
@@ -76,7 +76,7 @@ class RippleNet(object):
 
         o_list = self._key_addressing()
 
-        self.scores = tf.squeeze(self.predict(self.item_embeddings, o_list))
+        self.scores = tf.squeeze(self.predict_scores(self.item_embeddings, o_list))
         self.scores_normalized = tf.sigmoid(self.scores)
 
     def _key_addressing(self):
@@ -120,7 +120,7 @@ class RippleNet(object):
             raise Exception("Unknown item updating mode: " + self.item_update_mode)
         return item_embeddings
 
-    def predict(self, item_embeddings, o_list):
+    def predict_scores(self, item_embeddings, o_list):
         y = o_list[-1]
         if self.using_all_hops:
             for i in range(self.n_hop - 1):
@@ -175,3 +175,67 @@ class RippleNet(object):
         predictions = [1 if i >= 0.5 else 0 for i in scores]
         acc = np.mean(np.equal(predictions, labels))
         return auc, acc
+    
+    def get_feed_dict(self, n_hop, data, ripple_set, start, end):
+        feed_dict = dict()
+        feed_dict[self.items] = data[start:end, 1]
+        feed_dict[self.labels] = data[start:end, 2]
+        for i in range(n_hop):
+            feed_dict[self.memories_h[i]] = [ripple_set[user][i][0] for user in data[start:end, 0]]
+            feed_dict[self.memories_r[i]] = [ripple_set[user][i][1] for user in data[start:end, 0]]
+            feed_dict[self.memories_t[i]] = [ripple_set[user][i][2] for user in data[start:end, 0]]
+        return feed_dict
+
+    def print_metrics_evaluation(self, sess, n_hop, data, ripple_set, batch_size):
+        start = 0
+        auc_list = []
+        acc_list = []
+        while start < data.shape[0]:
+            auc, acc = self.eval(sess, self.get_feed_dict(n_hop, 
+                                                         data, ripple_set,
+                                                          start, start + batch_size))
+            auc_list.append(auc)
+            acc_list.append(acc)
+            start += batch_size
+        return float(np.mean(auc_list)), float(np.mean(acc_list))
+
+    def fit(self,
+            sess, 
+            n_epoch, batch_size, n_hop,
+            train_data, ripple_set, show_loss):
+        sess.run(tf.global_variables_initializer())
+        for step in range(n_epoch):
+            # training
+            np.random.shuffle(train_data)
+            start = 0
+            while start < train_data.shape[0]:
+                _, loss = self.train(sess, 
+                                     self.get_feed_dict(n_hop, 
+                                     train_data, ripple_set, 
+                                     start, start + batch_size))
+                start += batch_size
+                if show_loss:
+                    print('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
+
+            train_auc, train_acc = self.print_metrics_evaluation(sess, n_hop,
+                                                                 train_data, ripple_set,
+                                                                 batch_size)
+
+            print('epoch %d  train auc: %.4f  acc: %.4f'
+                    % (step, train_auc, train_acc))
+
+    def predict(self, sess, 
+    batch_size, n_hop, data, ripple_set):
+        start = 0
+        labels_list = []
+        scores_list = []
+        while start < data.shape[0]:
+            labels, scores = self.return_scores(sess, 
+                                                self.get_feed_dict(n_hop, 
+                                                data, ripple_set, 
+                                                start, start + batch_size))
+            labels_list.append(labels)
+            scores_list.append(scores)
+            start += batch_size
+        
+        return list(np.concatenate(labels_list)), list(np.concatenate(scores_list))
