@@ -12,7 +12,7 @@ class RippleNet(object):
      n_memory, item_update_mode, using_all_hops, n_entity, n_relation)
         self._build_inputs()
         self._build_embeddings()
-        self._build_self()
+        self._build_model()
         self._build_loss()
         self._build_train()
 
@@ -53,7 +53,7 @@ class RippleNet(object):
                                                    shape=[self.n_relation, self.dim, self.dim],
                                                    initializer=tf.contrib.layers.xavier_initializer())
 
-    def _build_self(self):
+    def _build_model(self):
         # transformation matrix for updating item embeddings at the end of each hop
         self.transform_matrix = tf.get_variable(name="transform_matrix", shape=[self.dim, self.dim], dtype=tf.float64,
                                                 initializer=tf.contrib.layers.xavier_initializer())
