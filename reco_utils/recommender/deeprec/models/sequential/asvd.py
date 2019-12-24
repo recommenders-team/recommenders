@@ -10,7 +10,7 @@ __all__ = ["A2SVDModel"]
 
 
 class A2SVDModel(SequentialBaseModel):
-    """A2SVD Model (Attentive  Asynchronous Singular Value Decomposition)
+    """A2SVD Model (Attentive Asynchronous Singular Value Decomposition)
 
     It extends ASVD with an attention module.
     
