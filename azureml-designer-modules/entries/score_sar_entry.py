@@ -22,7 +22,7 @@ class RankingMetric(Enum):
 
 
 class ItemSet(Enum):
-    ALL = 'All items'
+    ALL_ITEMS = 'All items'
     SCORE_ONLY = 'User-item pairs in score dataset'
 
 

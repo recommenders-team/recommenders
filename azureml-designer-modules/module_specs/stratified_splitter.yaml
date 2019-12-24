@@ -1,6 +1,6 @@
 name: Stratified Splitter
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 0.0.22
+version: 0.0.23
 category: Experimentation
 description: "Python stratified splitter from CAT Recommender repo: https://github.com/Microsoft/Recommenders/tree/master/."
 inputs:
@@ -18,11 +18,15 @@ inputs:
             data into several portions corresponding to the split ratios. If a list is 
             provided and the ratios are not summed to 1, they will be normalized.
 - name: User column
-  type: String
-  description: Column name of user IDs.
+  type: ColumnPicker
+  description: Column of user IDs.
+  columnPickerFor: Input path
+  singleColumnSelection: true
 - name: Item column
-  type: String
-  description: Column name of item IDs.
+  type: ColumnPicker
+  description: Column of item IDs.
+  columnPickerFor: Input path
+  singleColumnSelection: true
 - name: Seed
   type: Int
   min: 1
@@ -40,18 +44,8 @@ outputs:
   port: true
 implementation:
   container:
-    conda:
-      name: CAT_module_environment
-      channels:
-      - defaults
-      dependencies:
-      - python=3.7
-      - pip:
-        - azureml-designer-core==0.0.26.*
-        - azureml-designer-classic-modules==0.0.105
-    command:
-    - python
-    - azureml-designer-modules/entries/stratified_splitter_entry.py
+    conda: sar_conda.yaml
+    entry: azureml-designer-modules/entries/stratified_splitter_entry.py
     args:
     - --input-path
     - inputPath: Input path
