@@ -1,6 +1,6 @@
 name: Stratified Splitter
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 0.0.23
+version: 0.0.24
 category: Experimentation
 description: "Python stratified splitter from CAT Recommender repo: https://github.com/Microsoft/Recommenders/tree/master/."
 inputs:
@@ -10,7 +10,6 @@ inputs:
   port: true
 - name: Ratio
   type: Float
-  optional: True
   description: > 
             Ratio for splitting data. If it is a single float number,
             it splits data into two halves and the ratio argument indicates the ratio of 
@@ -18,15 +17,11 @@ inputs:
             data into several portions corresponding to the split ratios. If a list is 
             provided and the ratios are not summed to 1, they will be normalized.
 - name: User column
-  type: ColumnPicker
-  description: Column of user IDs.
-  columnPickerFor: Input path
-  singleColumnSelection: true
+  type: String
+  description: Column name of user IDs.
 - name: Item column
-  type: ColumnPicker
-  description: Column of item IDs.
-  columnPickerFor: Input path
-  singleColumnSelection: true
+  type: String
+  description: Column name of item IDs.
 - name: Seed
   type: Int
   min: 1
