@@ -1,5 +1,5 @@
 name: SAR Score
-version: 0.0.20
+version: 0.0.21
 category: Experimentation
 description: |
     Python SAR Recommender
@@ -32,7 +32,11 @@ inputs:
       default: Rating
       description: The metric of ranking used in item recommendation
       options:
-      - Rating
+      - Rating:
+        - name: Remove seen items
+          type: Boolean
+          description: Flag to remove items seen in training from recommendation
+          default: false
       - Similarity
       - Popularity
     - name: Top k
@@ -44,10 +48,6 @@ inputs:
       type: Boolean
       description: Flag to sort top k results.
       default: true
-    - name: Remove seen items
-      type: Boolean
-      description: Flag to remove items seen in training from recommendation
-      default: false
 - name: Normalize
   type: Boolean
   default: false
