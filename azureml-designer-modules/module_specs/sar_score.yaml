@@ -1,5 +1,5 @@
 name: SAR Score
-version: 0.0.16
+version: 0.0.19
 category: Experimentation
 description: |
     Python SAR Recommender
@@ -21,11 +21,11 @@ inputs:
   - Rating prediction:
     - name: Items to predict
       type: Mode
-      default: Items in training dataset
+      default: Items in score set
       description: The set of items to predict for test users
       options:
-      - Items in training dataset
-      - Items in score dataset
+      - Items in training set
+      - Items in score set
   - Item recommendation:
     - name: Ranking metric
       type: Mode
@@ -44,10 +44,10 @@ inputs:
       type: Boolean
       description: Flag to sort top k results.
       default: true
-- name: Remove seen items
-  type: Boolean
-  description: Flag to remove items seen in training from recommendation
-  default: false
+    - name: Remove seen items
+      type: Boolean
+      description: Flag to remove items seen in training from recommendation
+      default: false
 - name: Normalize
   type: Boolean
   default: false

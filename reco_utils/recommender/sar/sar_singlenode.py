@@ -448,23 +448,49 @@ class SARSingleNode:
         # drop invalid items
         return df.replace(-np.inf, np.nan).dropna()
 
-    def predict(self, test):
+    def predict_training_items(self, test, normalize=False):
+        """Output SAR scores for items in training set
+
+        Args:
+            test (pd.DataFrame): DataFrame that contains users and items to test
+            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
+
+        Returns:
+            pd.DataFrame: DataFrame contains the prediction results
+        """
+        test_scores = self.score(test, normalize=normalize)
+
+        user_col = np.repeat(test[self.col_user].drop_duplicates().values, test_scores.shape[1])
+        items = np.array([self.index2item[item] for item in range(test_scores.shape[1])]).reshape(1, -1)
+        item_col = np.repeat(items, test_scores.shape[0], axis=0).flatten()
+
+        df = pd.DataFrame(
+            {
+                self.col_user: user_col,
+                self.col_item: item_col,
+                self.col_prediction: test_scores.flatten()
+            }
+        )
+        return df
+
+    def predict(self, test, normalize=False):
         """Output SAR scores for only the users-items pairs which are in the test set
         
         Args:
             test (pd.DataFrame): DataFrame that contains users and items to test
+            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
 
         Returns:
             pd.DataFrame: DataFrame contains the prediction results
         """
 
-        test_scores = self.score(test)
-        user_ids = test[self.col_user].map(self.user2index).values
+        test_scores = self.score(test, normalize=normalize)
 
-        # Create mapping from original index of user id to test index of user id
+        # Build mapping from test set index to user id
+        user_ids = test[self.col_user].map(self.user2index).values
         unique_user_ids = np.unique(user_ids)
         ii_unique_user_id = dict(zip(unique_user_ids, range(unique_user_ids.shape[0])))
-        user_ids_mapped = np.vectorize(ii_unique_user_id.get)(user_ids)
+        user_score_indexes = np.vectorize(ii_unique_user_id.get)(user_ids)
 
         # create mapping of new items to zeros
         item_ids = test[self.col_item].map(self.item2index).values
@@ -481,7 +507,7 @@ class SARSingleNode:
             {
                 self.col_user: test[self.col_user].values,
                 self.col_item: test[self.col_item].values,
-                self.col_prediction: test_scores[user_ids_mapped, item_ids],
+                self.col_prediction: test_scores[user_score_indexes, item_ids],
             }
         )
         return df

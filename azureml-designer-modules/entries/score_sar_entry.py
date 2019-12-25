@@ -22,8 +22,8 @@ class RankingMetric(Enum):
 
 
 class ItemSet(Enum):
-    TRAIN_ONLY = 'Items in training dataset'
-    SCORE_ONLY = 'Items in score dataset'
+    TRAIN_ONLY = 'Items in training set'
+    SCORE_ONLY = 'Items in score set'
 
 
 MODEL_NAME = 'sar_model'
@@ -42,9 +42,9 @@ def recommend_items(model, data, ranking_metric, top_k, sort_top_k, remove_seen,
 
 def predict_ratings(model, data, items_to_predict, remove_seen, normalize):
     if items_to_predict == ItemSet.TRAIN_ONLY:
-        return model.score(test=data, remove_seen=remove_seen, normalize=normalize)
+        return model.predict_training_items(test=data, normalize=normalize)
     if items_to_predict == ItemSet.SCORE_ONLY:
-        return model.predict(test=data)
+        return model.predict(test=data, normalize=normalize)
     raise ValueError(f"Got unexpected 'items to predict': {items_to_predict}.")
 
 
