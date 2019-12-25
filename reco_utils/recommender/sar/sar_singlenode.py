@@ -461,6 +461,11 @@ class SARSingleNode:
         test_scores = self.score(test)
         user_ids = test[self.col_user].map(self.user2index).values
 
+        # Create mapping from original index of user id to test index of user id
+        unique_user_ids = np.unique(user_ids)
+        ii_unique_user_id = dict(zip(unique_user_ids, range(unique_user_ids.shape[0])))
+        user_ids_mapped = np.vectorize(ii_unique_user_id.get)(user_ids)
+
         # create mapping of new items to zeros
         item_ids = test[self.col_item].map(self.item2index).values
         nans = np.isnan(item_ids)
@@ -468,7 +473,7 @@ class SARSingleNode:
             logger.warning(
                 "Items found in test not seen during training, new items will have score of 0"
             )
-            test_scores = np.append(test_scores, np.zeros((self.n_users, 1)), axis=1)
+            test_scores = np.append(test_scores, np.zeros((test_scores.shape[0], 1)), axis=1)
             item_ids[nans] = self.n_items
             item_ids = item_ids.astype("int64")
 
@@ -476,7 +481,7 @@ class SARSingleNode:
             {
                 self.col_user: test[self.col_user].values,
                 self.col_item: test[self.col_item].values,
-                self.col_prediction: test_scores[user_ids, item_ids],
+                self.col_prediction: test_scores[user_ids_mapped, item_ids],
             }
         )
         return df

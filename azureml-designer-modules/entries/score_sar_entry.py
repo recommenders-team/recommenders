@@ -22,8 +22,8 @@ class RankingMetric(Enum):
 
 
 class ItemSet(Enum):
-    ALL_ITEMS = 'All items'
-    SCORE_ONLY = 'User-item pairs in score dataset'
+    TRAIN_ONLY = 'Items in training dataset'
+    SCORE_ONLY = 'Items in score dataset'
 
 
 MODEL_NAME = 'sar_model'
@@ -41,7 +41,7 @@ def recommend_items(model, data, ranking_metric, top_k, sort_top_k, remove_seen,
 
 
 def predict_ratings(model, data, items_to_predict, remove_seen, normalize):
-    if items_to_predict == ItemSet.ALL_ITEMS:
+    if items_to_predict == ItemSet.TRAIN_ONLY:
         return model.score(test=data, remove_seen=remove_seen, normalize=normalize)
     if items_to_predict == ItemSet.SCORE_ONLY:
         return model.predict(test=data)
@@ -73,6 +73,8 @@ if __name__ == '__main__':
         '--score-result', help='Ratings or items to output')
 
     args, _ = parser.parse_known_args()
+
+    logger.info(f"Arguments: {args}")
 
     with open(Path(args.trained_model) / MODEL_NAME, 'rb') as f:
         sar_model = joblib.load(f)

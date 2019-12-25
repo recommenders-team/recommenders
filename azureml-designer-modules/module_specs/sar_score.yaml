@@ -1,5 +1,5 @@
 name: SAR Score
-version: 0.0.15
+version: 0.0.16
 category: Experimentation
 description: |
     Python SAR Recommender
@@ -21,11 +21,11 @@ inputs:
   - Rating prediction:
     - name: Items to predict
       type: Mode
-      default: All items
+      default: Items in training dataset
       description: The set of items to predict for test users
       options:
-      - All items
-      - User-item pairs in score dataset
+      - Items in training dataset
+      - Items in score dataset
   - Item recommendation:
     - name: Ranking metric
       type: Mode
