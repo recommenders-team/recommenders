@@ -40,7 +40,7 @@ def recommend_items(model, data, ranking_metric, top_k, sort_top_k, remove_seen,
     raise ValueError(f"Got unexpected ranking metric: {ranking_metric}.")
 
 
-def predict_ratings(model, data, items_to_predict, remove_seen, normalize):
+def predict_ratings(model, data, items_to_predict, normalize):
     if items_to_predict == ItemSet.TRAIN_ONLY:
         return model.predict_training_items(test=data, normalize=normalize)
     if items_to_predict == ItemSet.SCORE_ONLY:
@@ -101,7 +101,6 @@ if __name__ == '__main__':
         score_result = predict_ratings(model=sar_model,
                                        data=dataset_to_score,
                                        items_to_predict=ItemSet(args.items_to_predict),
-                                       remove_seen=remove_seen_items,
                                        normalize=normalize)
     else:
         raise ValueError(f"Got unexpected score type: {score_type}.")

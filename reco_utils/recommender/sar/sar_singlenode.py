@@ -367,7 +367,13 @@ class SARSingleNode:
         """
 
         # convert item ids to indices
-        item_ids = items[self.col_item].map(self.item2index)
+        items[self.col_item] = items[self.col_item].map(self.item2index)
+        if any(items.isna()):
+            logger.warning("Items found in test not seen during training, new items won't be considered as "
+                           "seed item of recommendations.")
+            items = items.dropna()
+
+        item_ids = items[self.col_item].astype(int)
 
         # if no ratings were provided assume they are all 1
         if self.col_rating in items.columns:
