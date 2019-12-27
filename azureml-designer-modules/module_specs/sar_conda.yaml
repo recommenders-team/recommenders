@@ -1,0 +1,8 @@
+name: CAT_module_environment
+channels:
+- defaults
+dependencies:
+- python=3.7
+- pip:
+  - azureml-designer-core==0.0.26.*
+  - joblib==0.14.0

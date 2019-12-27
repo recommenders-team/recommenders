@@ -1,6 +1,6 @@
 name: Stratified Splitter
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 0.0.22
+version: 0.0.25
 category: Experimentation
 description: "Python stratified splitter from CAT Recommender repo: https://github.com/Microsoft/Recommenders/tree/master/."
 inputs:
@@ -10,7 +10,6 @@ inputs:
   port: true
 - name: Ratio
   type: Float
-  optional: True
   description: > 
             Ratio for splitting data. If it is a single float number,
             it splits data into two halves and the ratio argument indicates the ratio of 
@@ -40,18 +39,8 @@ outputs:
   port: true
 implementation:
   container:
-    conda:
-      name: CAT_module_environment
-      channels:
-      - defaults
-      dependencies:
-      - python=3.7
-      - pip:
-        - azureml-designer-core==0.0.26.*
-        - azureml-designer-classic-modules==0.0.105
-    command:
-    - python
-    - azureml-designer-modules/entries/stratified_splitter_entry.py
+    conda: sar_conda.yaml
+    entry: azureml-designer-modules/entries/stratified_splitter_entry.py
     args:
     - --input-path
     - inputPath: Input path

@@ -1,0 +1,74 @@
+name: SAR Score
+version: 0.0.24
+category: Experimentation
+description: |
+    Python SAR Recommender
+    repo: https://github.com/Microsoft/Recommenders/tree/master/
+inputs:
+- name: Trained model
+  type: ModelDirectory
+  description: The directory contains SAR model.
+  port: true
+- name: Dataset to score
+  type: DataFrameDirectory
+  port: true
+  description: Dataset to score
+- name: Score type
+  type: Mode
+  default: Item recommendation
+  description: The type of score which the recommender should output
+  options:
+  - Rating prediction:
+    - name: Items to predict
+      type: Mode
+      default: Items in score set
+      description: The set of items to predict for test users
+      options:
+      - Items in training set
+      - Items in score set
+  - Item recommendation:
+    - name: Ranking metric
+      type: Mode
+      default: Rating
+      description: The metric of ranking used in item recommendation
+      options:
+      - Rating:
+        - name: Remove seen items
+          type: Boolean
+          description: Flag to remove items seen in training from recommendation
+          default: false
+      - Similarity
+      - Popularity
+    - name: Top k
+      type: Int
+      default: 10
+      description: The number of top items to recommend.
+      min: 1
+    - name: Sort top k
+      type: Boolean
+      description: Flag to sort top k results.
+      default: true
+- name: Normalize
+  type: Boolean
+  default: false
+  description: Flag to normalize predictions to scale of original ratings
+outputs:
+- name: Score result
+  type: DataFrameDirectory
+  description: Ratings or items to output
+implementation:
+  container:
+    conda: sar_conda.yaml
+    entry: azureml-designer-modules/entries/score_sar_entry.py
+    args: [
+      --trained-model, {inputPath: Trained model},
+      --dataset-to-score, {inputPath: Dataset to score},
+      --score-type, {inputValue: Score type},
+      --items-to-predict, {inputValue: Items to predict},
+      --normalize, {inputValue: Normalize},
+      --ranking-metric, {inputValue: Ranking metric},
+      --top-k, {inputValue: Top k},
+      --sort-top-k, {inputValue: Sort top k},
+      --remove-seen-items, {inputValue: Remove seen items},
+      --score-result, {outputPath: Score result},
+    ]
