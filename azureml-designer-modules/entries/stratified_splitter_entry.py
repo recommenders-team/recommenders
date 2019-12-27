@@ -47,8 +47,6 @@ if __name__ == '__main__':
 
     input_df = load_data_frame_from_directory(args.input_path).data
 
-    #logger.info(f"Hello world from {PACKAGE_NAME} {VERSION}")
-
     ratio = args.ratio
     col_user = args.col_user
     col_item = args.col_item
@@ -64,7 +62,8 @@ if __name__ == '__main__':
     logger.debug(f"Shape of loaded DataFrame: {input_df.shape}")
     logger.debug(f"Cols of DataFrame: {input_df.columns}")
 
-    output_train, output_test = python_stratified_split(input_df, ratio=args.ratio, col_user=args.col_user, col_item=args.col_item, seed=args.seed)
+    output_train, output_test = python_stratified_split(input_df, ratio=args.ratio, col_user=args.col_user,
+                                                        col_item=args.col_item, seed=args.seed)
 
     logger.debug(f"Output path: {args.output_train}")
     logger.debug(f"Output path: {args.output_test}")
