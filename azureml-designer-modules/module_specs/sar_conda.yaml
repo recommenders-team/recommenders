@@ -5,5 +5,4 @@ dependencies:
 - python=3.7
 - pip:
   - azureml-designer-core==0.0.26.*
-  - azureml-designer-classic-modules==0.0.105
   - joblib==0.14.0
