@@ -6,3 +6,4 @@ dependencies:
 - pip:
   - azureml-designer-core==0.0.26.*
   - joblib==0.14.0
+  - scikit-learn==0.20.3
