@@ -1,6 +1,6 @@
 name: Stratified Splitter
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 0.0.25
+version: 0.0.1
 category: Experimentation
 description: "Python stratified splitter from CAT Recommender repo: https://github.com/Microsoft/Recommenders/tree/master/."
 inputs:
