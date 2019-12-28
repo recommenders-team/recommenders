@@ -30,13 +30,13 @@ def load_kg(kg_final):
     return n_entity, n_relation, kg
 
 
-def get_ripple_set(kg, user_history_dict, n_hop, n_memory):
+def get_ripple_set(kg, user_history_dict, n_hop=2, n_memory=36):
     """Build Ripple Set, dictionary for the related entities in the KG
      given the paths of users, number of hops and memory
 
     Args:
         kg (dictionary): KG in dictionary shape
-        user_history_dict (dictionary): train rating data with positive ratings
+        user_history_dict (dictionary): positive ratings from train data, to build ripple structure
         n_hop (int): int, maximum hops in the KG
         n_memory (int): int, size of ripple set for each hop
 
