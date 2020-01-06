@@ -13,9 +13,9 @@ model:
     activation : [relu, relu] # activation function for DNN
     user_dropout: True 
     dropout : [0.3, 0.3]  #drop out values for DNN layer
-    item_embedding_dim : 32 
-    cate_embedding_dim : 8
-    user_embedding_dim : 16
+    item_embedding_dim : 32 # the embedding dimension of items
+    cate_embedding_dim : 8  # the embedding dimension of categories
+    user_embedding_dim : 16 # the embedding dimension of users
 
 #train
 #init_method: normal,tnormal,uniform,he_normal,he_uniform,xavier_normal,xavier_uniform
@@ -29,25 +29,27 @@ train:
     cross_l2 : 0.0000  # l2 regularization for cross layer parameters
     cross_l1 : 0.000   # l1 regularization for cross layer parameters
     learning_rate : 0.001
-    loss : softmax    #log_loss, cross_entropy_loss, or square_loss
+    loss : softmax    # pointwise: log_loss, cross_entropy_loss, square_loss  pairwise: softmax
     optimizer : lazyadam  # adam, adadelta, sgd, ftrl, gd, padagrad, pgd, rmsprop, lazyadam
     epochs : 50  #   number of epoch for training
-    batch_size : 400  # batch size 
+    batch_size : 400  # batch size, should be constrained as an integer multiple of the number of (1 + train_num_ngs) when need_sample is True
     enable_BN : True  # whether to use batch normalization in hidden layers
     EARLY_STOP : 10 # the number of epoch that controls EARLY STOPPING
-    max_seq_length : 50 # the maximum number of records in the history sequence
+    max_seq_length : 50 # the maximum number of records in the history 
+    need_sample: True # whether to perform dynamic negative sampling in mini-batch
+    train_num_ngs: 4 # indicates how many negative instances followed by one positive instances if need_sample is True
 
 #show info
-#metric :'auc','logloss', 'group_auc'
+#metric :'auc', 'logloss', 'group_auc'
 info:
-    show_step : 100   #print training information after a certain number of mini-batch 
-    save_model: True   #whether to save models
-    save_epoch : 1    #is save_model is set to True, save the model every save_epoch.
-    metrics : ['auc','logloss']  #metrics for evaluation.
-    pairwise_metrics : ['mean_mrr', 'ndcg', "group_auc"]
-    MODEL_DIR : ./tests/resources/deeprec/a2svd/model/a2svd_model/
-    SUMMARIES_DIR : ./tests/resources/deeprec/a2svd/summary/a2svd_summary/
-    write_tfevents : True
+    show_step : 100   # print training information after a certain number of mini-batch 
+    save_model: True   # whether to save models
+    save_epoch : 1    # if save_model is set to True, save the model every save_epoch.
+    metrics : ['auc','logloss']  # metrics for evaluation.
+    pairwise_metrics : ['mean_mrr', 'ndcg@2;4;6', "group_auc"]  # pairwise metrics for evaluation, available when pairwise comparisons are needed
+    MODEL_DIR : ./tests/resources/deeprec/a2svd/model/a2svd_model/   # directory of saved models.
+    SUMMARIES_DIR : ./tests/resources/deeprec/a2svd/summary/a2svd_summary/   # directory of saved summaries.
+    write_tfevents : True  # whether to save summaries.
 
     
 
