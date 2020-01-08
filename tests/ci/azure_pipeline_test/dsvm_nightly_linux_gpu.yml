@@ -15,9 +15,7 @@ schedules:
 
 trigger: none
 
-pr:
-  - master
-  - staging
+pr: none
 
 variables:
 - group: LinuxAgentPool
