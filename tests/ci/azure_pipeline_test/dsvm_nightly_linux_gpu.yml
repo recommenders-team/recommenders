@@ -1,15 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-#
-# A Github Service Connection must also be created with the name "AI-GitHub"
-# https://docs.microsoft.com/en-us/azure/devops/pipelines/process/demands?view=azure-devops&tabs=yaml
-
-resources:
-  repositories:
-    - repository: aitemplates
-      type: github
-      name: microsoft/AI
-      endpoint: AI-GitHub
 
 schedules:
 - cron: "7 4 * * *"
@@ -17,13 +7,11 @@ schedules:
   branches:
     include:
     - master
-  always: true
 - cron: "7 16 * * *"
   displayName: Nightly build staging
   branches:
     include:
     - staging
-  always: true
 
 trigger: none
 
@@ -40,9 +28,16 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
-  - template: .ci/steps/reco_config_conda_linux.yml@aitemplates
-    parameters:
-      conda_env: nightly_reco_gpu
+  - bash: |
+      echo "##vso[task.prependpath]/data/anaconda/bin"
+      conda env list
+    displayName: 'Add Conda to PATH'
+
+  - script: |
+      conda env remove -n nightly_reco_gpu && \
+      python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu && \
+      conda env create --quiet -f nightly_reco_gpu.yaml 2> log
+    displayName: 'Setup Conda Env'
 
   - script: |
       . /anaconda/etc/profile.d/conda.sh && \
@@ -61,6 +56,9 @@ jobs:
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  - template: .ci/steps/reco_conda_clean_linux.yml@aitemplates
-    parameters:
-      conda_env: nightly_reco_gpu
+  - script: |
+      conda env remove -n nightly_reco_gpu -y   
+    workingDirectory: tests
+    displayName: 'Conda remove'
+    continueOnError: true
+    condition: always() # this step will always run, even if the pipeline is canceled

@@ -78,7 +78,6 @@ class SequentialBaseModel(BaseModel):
         Args:
             train_file (str): training data set.
             valid_file (str): validation set.
-            need_sample (boolean): If negative sampling is applied while training in mini batch.
             valid_num_ngs (int): the number of negative instances with one positive instance in validation data.
             eval_metric (str): the metric that control early stopping. e.g. "auc", "group_auc", etc.
 
@@ -110,7 +109,6 @@ class SequentialBaseModel(BaseModel):
         train_sess = self.sess
         eval_info = list()
 
-        no_progress_round = 0
         best_metric, self.best_epoch = 0, 0
 
         for epoch in range(1, self.hparams.epochs + 1):
@@ -152,23 +150,25 @@ class SequentialBaseModel(BaseModel):
             )
             eval_info.append((epoch, valid_res))
 
+            progress = False
+            early_stop = self.hparams.EARLY_STOP
+            if valid_res[eval_metric] > best_metric:
+                best_metric = valid_res[eval_metric]
+                self.best_epoch = epoch
+                progress = True
+            else:
+                if early_stop > 0 and epoch - self.best_epoch >= early_stop:
+                    print("early stop at epoch {0}!".format(epoch))
+                    break
+
             if self.hparams.save_model and self.hparams.MODEL_DIR:
                 if not os.path.exists(self.hparams.MODEL_DIR):
                     os.makedirs(self.hparams.MODEL_DIR)
-
-                if valid_res[eval_metric] > best_metric:
+                if progress:
                     checkpoint_path = self.saver.save(
                         sess=train_sess,
                         save_path=self.hparams.MODEL_DIR + "epoch_" + str(epoch),
                     )
-                    best_metric = valid_res[eval_metric]
-                    self.best_epoch = epoch
-                    no_progress_round = 0
-                else:
-                    if no_progress_round >= self.hparams.EARLY_STOP:
-                        break
-                    else:
-                        no_progress_round += 1
 
         if self.hparams.write_tfevents:
             self.writer.close()

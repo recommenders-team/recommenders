@@ -20,7 +20,7 @@ class SequentialIterator(BaseIterator):
         """Initialize an iterator. Create necessary placeholders for the model.
         
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
+            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
             graph (obj): the running graph. All created placeholder will be added to this graph.
             col_spliter (str): column spliter in one line.
         """
@@ -173,7 +173,7 @@ class SequentialIterator(BaseIterator):
             infile (str): Text input file. Each line in this file is an instance.
             batch_num_ngs (int): The number of negative sampling here in batch. 
                 0 represents that there is no need to do negative sampling here.
-            min_seq_length (int): The number of the sequence lower limit. 
+            min_seq_length (int): The minimum number of a sequence length. 
                 Sequences with length lower than min_seq_length will be ignored.
 
         Returns:

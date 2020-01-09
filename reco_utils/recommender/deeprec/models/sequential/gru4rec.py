@@ -12,6 +12,11 @@ __all__ = ["GRU4RecModel"]
 
 
 class GRU4RecModel(SequentialBaseModel):
+    """GRU4Rec Model
+
+    B. Hidasi, A. Karatzoglou, L. Baltrunas, D. Tikk, "Session-based Recommendations 
+    with Recurrent Neural Networks", ICLR (Poster), 2016.
+    """
     def _build_seq_graph(self):
         """The main function to create GRU4Rec model.
         
