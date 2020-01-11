@@ -176,15 +176,15 @@ class RippleNet(object):
         }
         self.optimizer = optimizers[self.optimizer_method]
 
-    def train(self, sess, feed_dict):
-        return sess.run([self.optimizer, self.loss], feed_dict)
+    def train(self, feed_dict):
+        return self.sess.run([self.optimizer, self.loss], feed_dict)
     
-    def return_scores(self, sess, feed_dict):
-        labels, scores = sess.run([self.labels, self.scores_normalized], feed_dict)
+    def return_scores(self, feed_dict):
+        labels, scores = self.sess.run([self.labels, self.scores_normalized], feed_dict)
         return labels, scores
 
-    def eval(self, sess, feed_dict):
-        labels, scores = sess.run([self.labels, self.scores_normalized], feed_dict)
+    def eval(self, feed_dict):
+        labels, scores = self.sess.run([self.labels, self.scores_normalized], feed_dict)
         auc = roc_auc_score(y_true=labels, y_score=scores)
         predictions = [1 if i >= 0.5 else 0 for i in scores]
         acc = np.mean(np.equal(predictions, labels))
@@ -200,54 +200,51 @@ class RippleNet(object):
             feed_dict[self.memories_t[i]] = [ripple_set[user][i][2] for user in data[start:end, 0]]
         return feed_dict
 
-    def print_metrics_evaluation(self, sess, n_hop, data, ripple_set, batch_size):
+    def print_metrics_evaluation(self, n_hop, data, ripple_set, batch_size):
         start = 0
         auc_list = []
         acc_list = []
         while start < data.shape[0]:
-            auc, acc = self.eval(sess, self.get_feed_dict(n_hop, 
-                                                         data, ripple_set,
-                                                          start, start + batch_size))
+            auc, acc = self.eval(self.get_feed_dict(n_hop, 
+                                                    data, ripple_set,
+                                                    start, start + batch_size))
             auc_list.append(auc)
             acc_list.append(acc)
             start += batch_size
         return float(np.mean(auc_list)), float(np.mean(acc_list))
 
     def fit(self,
-            sess, 
             n_epoch, batch_size, n_hop,
             train_data, ripple_set, show_loss):
-        sess.run(tf.global_variables_initializer())
         for step in range(n_epoch):
             # training
             np.random.shuffle(train_data)
             start = 0
             while start < train_data.shape[0]:
-                _, loss = self.train(sess, 
-                                     self.get_feed_dict(n_hop, 
+                _, loss = self.train(self.get_feed_dict(n_hop, 
                                      train_data, ripple_set, 
                                      start, start + batch_size))
                 start += batch_size
                 if show_loss:
                     log.info('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
 
-            train_auc, train_acc = self.print_metrics_evaluation(sess, n_hop,
+            train_auc, train_acc = self.print_metrics_evaluation(n_hop,
                                                                  train_data, ripple_set,
                                                                  batch_size)
 
             log.info('epoch %d  train auc: %.4f  acc: %.4f'
                     % (step, train_auc, train_acc))
 
-    def predict(self, sess, 
+    def predict(self,
     batch_size, n_hop, data, ripple_set):
         start = 0
         labels = [0] * data.shape[0]
         scores = [0] * data.shape[0]
         while start < data.shape[0]:
-            labels[start:start + batch_size], scores[start:start + batch_size] = self.return_scores(sess, 
+            labels[start:start + batch_size], scores[start:start + batch_size] = self.return_scores(
                                                 self.get_feed_dict(n_hop, 
                                                 data, ripple_set, 
                                                 start, start + batch_size))
             start += batch_size
         
-        return list(np.concatenate(labels_list)), list(np.concatenate(scores_list))
+        return labels, scores
