@@ -25,11 +25,11 @@ logger = logging.getLogger()
 
 class SARSingleNode:
     """Simple Algorithm for Recommendations (SAR) implementation
-    
-    SAR is a fast scalable adaptive algorithm for personalized recommendations based on user transaction history 
-    and items description. The core idea behind SAR is to recommend items like those that a user already has 
-    demonstrated an affinity to. It does this by 1) estimating the affinity of users for items, 2) estimating 
-    similarity across items, and then 3) combining the estimates to generate a set of recommendations for a given user. 
+
+    SAR is a fast scalable adaptive algorithm for personalized recommendations based on user transaction history
+    and items description. The core idea behind SAR is to recommend items like those that a user already has
+    demonstrated an affinity to. It does this by 1) estimating the affinity of users for items, 2) estimating
+    similarity across items, and then 3) combining the estimates to generate a set of recommendations for a given user.
     """
 
     def __init__(
@@ -113,7 +113,7 @@ class SARSingleNode:
         indices in a sparse matrix, and the events as the data. Here, we're treating
         the ratings as the event weights.  We convert between different sparse-matrix
         formats to de-duplicate user-item pairs, otherwise they will get added up.
-        
+
         Args:
             df (pd.DataFrame): Indexed df of users and items
             rating_col (str): Name of column to use for ratings
@@ -155,8 +155,8 @@ class SARSingleNode:
     def compute_coocurrence_matrix(self, df):
         """ Co-occurrence matrix.
 
-        The co-occurrence matrix is defined as :math:`C = U^T * U`  
-        
+        The co-occurrence matrix is defined as :math:`C = U^T * U`
+
         where U is the user_affinity matrix with 1's as values (instead of ratings).
 
         Args:
@@ -231,8 +231,12 @@ class SARSingleNode:
 
         logger.info("Creating index columns")
         # add mapping of user and item ids to indices
-        temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].map(self.item2index)
-        temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].map(self.user2index)
+        temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].apply(
+            lambda item: self.item2index.get(item, np.NaN)
+        )
+        temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].apply(
+            lambda user: self.user2index.get(user, np.NaN)
+        )
 
         if self.normalize:
             logger.info("Calculating normalization factors")
@@ -283,13 +287,18 @@ class SARSingleNode:
             test (pd.DataFrame): user to test
             remove_seen (bool): flag to remove items seen in training from recommendation
             normalize (bool): flag to normalize scores to be in the same scale as the original ratings
- 
+
         Returns:
             np.ndarray: Value of interest of all items for the users.
         """
 
         # get user / item indices from test set
-        user_ids = test[self.col_user].drop_duplicates().map(self.user2index).values
+        user_ids = list(
+            map(
+                lambda user: self.user2index.get(user, np.NaN),
+                test[self.col_user].unique()
+            )
+        )
         if any(np.isnan(user_ids)):
             raise ValueError("SAR cannot score users that are not in the training set")
 
@@ -367,7 +376,14 @@ class SARSingleNode:
         """
 
         # convert item ids to indices
-        item_ids = items[self.col_item].map(self.item2index)
+        item_ids = np.asarray(
+            list(
+                map(
+                    lambda item: self.item2index.get(item, np.NaN),
+                    items[self.col_item].values
+                )
+            )
+        )
 
         # if no ratings were provided assume they are all 1
         if self.col_rating in items.columns:
@@ -450,7 +466,7 @@ class SARSingleNode:
 
     def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set
-        
+
         Args:
             test (pd.DataFrame): DataFrame that contains users and items to test
 
@@ -459,10 +475,24 @@ class SARSingleNode:
         """
 
         test_scores = self.score(test)
-        user_ids = test[self.col_user].map(self.user2index).values
+        user_ids = np.asarray(
+            list(
+                map(
+                    lambda user: self.user2index.get(user, np.NaN),
+                    test[self.col_user].values
+                )
+            )
+        )
 
         # create mapping of new items to zeros
-        item_ids = test[self.col_item].map(self.item2index).values
+        item_ids = np.asarray(
+            list(
+                map(
+                    lambda item: self.item2index.get(item, np.NaN),
+                    test[self.col_item].values
+                )
+            )
+        )
         nans = np.isnan(item_ids)
         if any(nans):
             logger.warning(

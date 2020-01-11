@@ -201,7 +201,7 @@ def check_nn_config(f_config):
             "n_h",
             "min_seq_length",
         ]
-    elif f_config["model_type"] in ["din", "DIN"]:
+    elif f_config["model_type"] in ["asvd", "ASVD", "a2svd", "A2SVD"]:
         required_parameters = [
             "item_embedding_dim",
             "cate_embedding_dim",
@@ -486,6 +486,22 @@ def ndcg_score(y_true, y_score, k=10):
     actual = dcg_score(y_true, y_score, k)
     return actual / best
 
+def hit_score(y_true, y_score, k=10):
+    """Computing hit score metric at k.
+
+    Args:
+        y_true (numpy.ndarray): ground-truth labels.
+        y_score (numpy.ndarray): predicted labels.
+
+    Returns:
+        numpy.ndarray: hit score.
+    """
+    ground_truth = np.where(y_true == 1)[0]
+    argsort = np.argsort(y_score)[::-1][:k]
+    for idx in argsort:
+        if idx in ground_truth:
+            return 1
+    return 0
 
 def dcg_score(y_true, y_score, k=10):
     """Computing dcg score metric at k.
@@ -539,11 +555,27 @@ def cal_metric(labels, preds, metrics):
         elif metric == "mean_mrr":
             mean_mrr = np.mean(mrr_score(labels, preds))
             res["mean_mrr"] = round(mean_mrr, 4)
-        elif metric == "ndcg":
-            ndcg_list = [2, 4, 6, 8, 10]
-            for r in ndcg_list:
-                ndcg_temp = np.mean(ndcg_score(labels, preds))
-                res["ndcg{0}".format(r)] = round(ndcg_temp, 4)
+        elif metric.startswith("ndcg"):  # format like:  ndcg@2;4;6;8
+            ndcg_list = [1, 2]
+            ks = metric.split('@')
+            if len(ks) > 1:
+                ndcg_list = [int(token) for token in ks[1].split(';')]
+            for k in ndcg_list:
+                ndcg_temp = np.mean(ndcg_score(labels, preds, k))
+                res["ndcg@{0}".format(k)] = round(ndcg_temp, 4)
+        elif metric.startswith("hit"):  # format like:  hit@2;4;6;8
+            hit_list = [1, 2]
+            ks = metric.split('@')
+            if len(ks) > 1:
+                hit_list = [int(token) for token in ks[1].split(';')]
+            for k in hit_list:
+                hit_temp = np.mean(
+                    [
+                        hit_score(each_labels, each_preds, k) 
+                        for each_labels, each_preds in zip(labels, preds)
+                    ]
+                )
+                res["hit@{0}".format(k)] = round(hit_temp, 4)
         elif metric == "group_auc":
             group_auc = np.mean(
                 [
