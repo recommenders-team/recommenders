@@ -4,6 +4,10 @@
 import argparse
 import numpy as np
 import pandas as pd
+import logging
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 def read_item_index_to_entity_id_file(item_to_entity):
     """Standarize indexes for items and entities
@@ -62,7 +66,7 @@ def convert_rating(ratings, item_index_old2new, threshold, seed):
                 user_neg_ratings[user_index_old] = set()
             user_neg_ratings[user_index_old].add(item_index)
 
-    print('converting rating file ...')
+    log.info('converting rating file ...')
     writer = []
     user_cnt = 0
     user_index_old2new = dict()
@@ -87,8 +91,8 @@ def convert_rating(ratings, item_index_old2new, threshold, seed):
                 "rating": 0,
                 "original_rating": 0})
     ratings_final = pd.DataFrame(writer)
-    print('number of users: %d' % user_cnt)
-    print('number of items: %d' % len(item_set))
+    log.info('number of users: %d' % user_cnt)
+    log.info('number of items: %d' % len(item_set))
     return ratings_final
 
 
@@ -102,7 +106,7 @@ def convert_kg(kg, entity_id2index):
         kg_final (pd.DataFrame): knowledge graph converted with columns head,
          relation and tail, with internal entity IDs
     """
-    print('converting kg file ...')
+    log.info('converting kg file ...')
     entity_cnt = len(entity_id2index)
     relation_cnt = 0
     relation_id2index = dict()
@@ -134,6 +138,6 @@ def convert_kg(kg, entity_id2index):
                         "tail": tail})
 
     kg_final = pd.DataFrame(writer)
-    print('number of entities (containing items): %d' % entity_cnt)
-    print('number of relations: %d' % relation_cnt)
+    log.info('number of entities (containing items): %d' % entity_cnt)
+    log.info('number of relations: %d' % relation_cnt)
     return kg_final

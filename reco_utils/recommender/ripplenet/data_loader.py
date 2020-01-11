@@ -4,7 +4,10 @@
 import collections
 import os
 import numpy as np
+import logging
 
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 def load_kg(kg_final):
     """Standarize indexes for items and entities
@@ -18,7 +21,7 @@ def load_kg(kg_final):
         n_relation (int): number of relations in KG
         kg (dictionary): KG in dictionary shape
     """
-    print('reading KG file ...')
+    log.info('reading KG file ...')
 
     n_entity = len(set(kg_final.iloc[:, 0]) | set(kg_final.iloc[:, 2]))
     n_relation = len(set(kg_final.iloc[:, 1]))
@@ -43,7 +46,7 @@ def get_ripple_set(kg, user_history_dict, n_hop=2, n_memory=36):
     Returns:
         ripple_set (dictionary): set of knowledge triples per user positive rating, from 0 until n_hop
     """
-    print('constructing ripple set ...')
+    log.info('constructing ripple set ...')
 
     # user -> [(hop_0_heads, hop_0_relations, hop_0_tails), (hop_1_heads, hop_1_relations, hop_1_tails), ...]
     ripple_set = collections.defaultdict(list)
