@@ -3,22 +3,21 @@
 
 import tensorflow as tf
 import numpy as np
+import logging
 from sklearn.metrics import roc_auc_score
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 class RippleNet(object):
     def __init__(self, dim, n_hop, kge_weight, l2_weight, lr,
-     n_memory, item_update_mode, using_all_hops, n_entity, n_relation):
-        self._parse_args(dim, n_hop, kge_weight, l2_weight, lr,
-     n_memory, item_update_mode, using_all_hops, n_entity, n_relation)
-        self._build_inputs()
-        self._build_embeddings()
-        self._build_model()
-        self._build_loss()
-        self._build_train()
+     n_memory, item_update_mode, using_all_hops, n_entity, n_relation,
+     optimizer_method="adam",
+      seed=None):
+        self.seed = seed
+        tf.set_random_seed(seed)
+        np.random.seed(seed)
 
-    def _parse_args(self, dim, n_hop, kge_weight, l2_weight, lr,
-     n_memory, item_update_mode, using_all_hops,
-     n_entity, n_relation):
         self.n_entity = n_entity
         self.n_relation = n_relation
         self.dim = dim
@@ -29,6 +28,19 @@ class RippleNet(object):
         self.n_memory = n_memory
         self.item_update_mode = item_update_mode
         self.using_all_hops = using_all_hops
+        self.optimizer_method = optimizer_method
+
+        self._build_inputs()
+        self._build_embeddings()
+        self._build_model()
+        self._build_loss()
+        self._build_optimizer()
+
+        self.init_op = tf.global_variables_initializer()
+        # set GPU use with demand growth
+        gpu_options = tf.GPUOptions(allow_growth=True)
+        self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+        self.sess.run(self.init_op)
 
     def _build_inputs(self):
         self.items = tf.placeholder(dtype=tf.int32, shape=[None], name="items")
@@ -152,15 +164,17 @@ class RippleNet(object):
 
         self.loss = self.base_loss + self.kge_loss + self.l2_loss
 
-    def _build_train(self):
-        self.optimizer = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
-        '''
-        optimizer = tf.train.AdamOptimizer(self.lr)
-        gradients, variables = zip(*optimizer.compute_gradients(self.loss))
-        gradients = [None if gradient is None else tf.clip_by_norm(gradient, clip_norm=5)
-                     for gradient in gradients]
-        self.optimizer = optimizer.apply_gradients(zip(gradients, variables))
-        '''
+    def _build_optimizer(self):
+
+        optimizers = {
+            "adam": tf.train.AdamOptimizer(self.lr).minimize(self.loss),
+            "adadelta": tf.train.AdadeltaOptimizer(self.lr).minimize(self.loss),
+            "adagrad": tf.train.AdagradOptimizer(self.lr).minimize(self.loss), 
+            "ftrl": tf.train.FtrlOptimizer(self.lr).minimize(self.loss),
+            "gd": tf.train.GradientDescentOptimizer(self.lr).minimize(self.loss),
+            "rmsprop": tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
+        }
+        self.optimizer = optimizers[self.optimizer_method]
 
     def train(self, sess, feed_dict):
         return sess.run([self.optimizer, self.loss], feed_dict)
@@ -215,27 +229,25 @@ class RippleNet(object):
                                      start, start + batch_size))
                 start += batch_size
                 if show_loss:
-                    print('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
+                    log.info('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
 
             train_auc, train_acc = self.print_metrics_evaluation(sess, n_hop,
                                                                  train_data, ripple_set,
                                                                  batch_size)
 
-            print('epoch %d  train auc: %.4f  acc: %.4f'
+            log.info('epoch %d  train auc: %.4f  acc: %.4f'
                     % (step, train_auc, train_acc))
 
     def predict(self, sess, 
     batch_size, n_hop, data, ripple_set):
         start = 0
-        labels_list = []
-        scores_list = []
+        labels = [0] * data.shape[0]
+        scores = [0] * data.shape[0]
         while start < data.shape[0]:
-            labels, scores = self.return_scores(sess, 
+            labels[start:start + batch_size], scores[start:start + batch_size] = self.return_scores(sess, 
                                                 self.get_feed_dict(n_hop, 
                                                 data, ripple_set, 
                                                 start, start + batch_size))
-            labels_list.append(labels)
-            scores_list.append(scores)
             start += batch_size
         
         return list(np.concatenate(labels_list)), list(np.concatenate(scores_list))
