@@ -37,6 +37,7 @@ class RippleNet(object):
         self._build_optimizer()
 
         self.init_op = tf.global_variables_initializer()
+
         # set GPU use with demand growth
         gpu_options = tf.GPUOptions(allow_growth=True)
         self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
@@ -166,15 +167,18 @@ class RippleNet(object):
 
     def _build_optimizer(self):
 
-        optimizers = {
-            "adam": tf.train.AdamOptimizer(self.lr).minimize(self.loss),
-            "adadelta": tf.train.AdadeltaOptimizer(self.lr).minimize(self.loss),
-            "adagrad": tf.train.AdagradOptimizer(self.lr).minimize(self.loss), 
-            "ftrl": tf.train.FtrlOptimizer(self.lr).minimize(self.loss),
-            "gd": tf.train.GradientDescentOptimizer(self.lr).minimize(self.loss),
-            "rmsprop": tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
-        }
-        self.optimizer = optimizers[self.optimizer_method]
+        if self.optimizer_method == 'adam':
+            self.optimizer = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
+        elif self.optimizer_method == 'adadelta':
+            self.optimizer = tf.train.AdadeltaOptimizer(self.lr).minimize(self.loss)
+        elif self.optimizer_method == "adagrad": 
+            self.optimizer = tf.train.AdagradOptimizer(self.lr).minimize(self.loss)
+        elif self.optimizer_method == "ftrl": 
+            self.optimizer = tf.train.FtrlOptimizer(self.lr).minimize(self.loss)
+        elif self.optimizer_method == "gd": 
+            self.optimizer = tf.train.GradientDescentOptimizer(self.lr).minimize(self.loss)
+        elif self.optimizer_method == "rmsprop": 
+            self.optimizer = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
 
     def train(self, feed_dict):
         return self.sess.run([self.optimizer, self.loss], feed_dict)
