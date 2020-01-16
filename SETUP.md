@@ -51,7 +51,7 @@ conda update anaconda        # use 'conda install anaconda' if the package is no
 We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda-environment yaml file
 which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
 
-**NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. Detailed instructions for installing `cmake` can be found [here](https://vitux.com/how-to-install-cmake-on-ubuntu-18-04/).
+**NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. Detailed instructions for installing `cmake` can be found [here](https://vitux.com/how-to-install-cmake-on-ubuntu-18-04/). The default version of `cmake` is 3.15.2. One can specify a different version by configuring the argument of `CMAKE` in building the Docker image. 
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
