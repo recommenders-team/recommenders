@@ -10,8 +10,6 @@ inputs:
   port: true
 - name: Ratio
   type: Float
-  min: 0
-  max: 1
   default: 0.75
   description: > 
             Ratio for splitting data. If it is a single float number,
