@@ -1,0 +1,60 @@
+name: SAR Training
+id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
+version: 0.0.1
+category: Experimentation
+description: "SAR Train from CAT Recommender repo: https://github.com/Microsoft/Recommenders/tree/master/."
+inputs:
+- name: Input path
+  type: DataFrameDirectory
+  description: The directory contains dataframe.
+  port: true
+- name: User column
+  type: String
+  default: UserId
+  description: Column name of user IDs.
+- name: Item column
+  type: String
+  default: MovieId
+  description: Column name of item IDs.
+- name: Rating column
+  type: String
+  default: Rating
+  description: Column name of rating.
+- name: Timestamp column
+  type: String
+  default: Timestamp
+  description: Column name of timestamp.
+- name: Normalize
+  type: Boolean
+  default: false
+  description: Flag to normalize predictions to scale of original ratings
+- name: Time decay
+  type: Boolean
+  default: false
+  description: Flag to apply time decay
+outputs:
+- name: Output model
+  type: ModelDirectory
+  description: The output directory contains a trained model
+  port: true
+implementation:
+  container:
+    conda: sar_conda.yaml
+    entry: azureml-designer-modules/entries/train_sar_entry.py
+    args:
+    - --input-path
+    - inputPath: Input path
+    - --col-user
+    - inputValue: User column
+    - --col-item
+    - inputValue: Item column
+    - --col-rating
+    - inputValue: Rating column
+    - --col-timestamp
+    - inputValue: Timestamp column
+    - --normalize
+    - inputValue: Normalize
+    - --time-decay
+    - inputValue: Time decay
+    - --output-model
+    - outputPath: Output model

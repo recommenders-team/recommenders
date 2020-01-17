@@ -10,6 +10,9 @@ inputs:
   port: true
 - name: Ratio
   type: Float
+  min: 0
+  max: 1
+  default: 0.75
   description: > 
             Ratio for splitting data. If it is a single float number,
             it splits data into two halves and the ratio argument indicates the ratio of 
@@ -18,14 +21,14 @@ inputs:
             provided and the ratios are not summed to 1, they will be normalized.
 - name: User column
   type: String
+  default: UserId
   description: Column name of user IDs.
 - name: Item column
   type: String
+  default: MovieId
   description: Column name of item IDs.
 - name: Seed
   type: Int
-  min: 1
-  max: 100
   default: 42
   description: Seed.
 outputs:
