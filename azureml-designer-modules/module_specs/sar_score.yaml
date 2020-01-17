@@ -1,6 +1,6 @@
 name: SAR Score
 version: 0.0.1
-category: Experimentation
+category: Recommenders
 description: |
     Python SAR Recommender
     repo: https://github.com/Microsoft/Recommenders/tree/master/
