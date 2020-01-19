@@ -9,6 +9,7 @@ from sklearn.metrics import roc_auc_score
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
+
 class RippleNet(object):
     """RippleNet Implementation. RippleNet is an end-to-end framework that naturally
     incorporates the knowledge graphs into recommender systems.
@@ -17,11 +18,22 @@ class RippleNet(object):
     extending a user’s potential interests along links in the knowledge graph.
     """
 
-    def __init__(self, dim, n_hop, kge_weight, l2_weight, lr,
-     n_memory, item_update_mode, using_all_hops, n_entity, n_relation,
-     optimizer_method="adam",
-      seed=None):
-    
+    def __init__(
+        self,
+        dim,
+        n_hop,
+        kge_weight,
+        l2_weight,
+        lr,
+        n_memory,
+        item_update_mode,
+        using_all_hops,
+        n_entity,
+        n_relation,
+        optimizer_method="adam",
+        seed=None,
+    ):
+
         """Initialize model parameters
 
         Args:
@@ -79,40 +91,73 @@ class RippleNet(object):
 
         for hop in range(self.n_hop):
             self.memories_h.append(
-                tf.placeholder(dtype=tf.int32, shape=[None, self.n_memory], name="memories_h_" + str(hop)))
+                tf.placeholder(
+                    dtype=tf.int32,
+                    shape=[None, self.n_memory],
+                    name="memories_h_" + str(hop),
+                )
+            )
             self.memories_r.append(
-                tf.placeholder(dtype=tf.int32, shape=[None, self.n_memory], name="memories_r_" + str(hop)))
+                tf.placeholder(
+                    dtype=tf.int32,
+                    shape=[None, self.n_memory],
+                    name="memories_r_" + str(hop),
+                )
+            )
             self.memories_t.append(
-                tf.placeholder(dtype=tf.int32, shape=[None, self.n_memory], name="memories_t_" + str(hop)))
+                tf.placeholder(
+                    dtype=tf.int32,
+                    shape=[None, self.n_memory],
+                    name="memories_t_" + str(hop),
+                )
+            )
 
     def _build_embeddings(self):
-        self.entity_emb_matrix = tf.get_variable(name="entity_emb_matrix", dtype=tf.float64,
-                                                 shape=[self.n_entity, self.dim],
-                                                 initializer=tf.contrib.layers.xavier_initializer())
-        self.relation_emb_matrix = tf.get_variable(name="relation_emb_matrix", dtype=tf.float64,
-                                                   shape=[self.n_relation, self.dim, self.dim],
-                                                   initializer=tf.contrib.layers.xavier_initializer())
+        self.entity_emb_matrix = tf.get_variable(
+            name="entity_emb_matrix",
+            dtype=tf.float64,
+            shape=[self.n_entity, self.dim],
+            initializer=tf.contrib.layers.xavier_initializer(),
+        )
+        self.relation_emb_matrix = tf.get_variable(
+            name="relation_emb_matrix",
+            dtype=tf.float64,
+            shape=[self.n_relation, self.dim, self.dim],
+            initializer=tf.contrib.layers.xavier_initializer(),
+        )
 
     def _build_model(self):
         # transformation matrix for updating item embeddings at the end of each hop
-        self.transform_matrix = tf.get_variable(name="transform_matrix", shape=[self.dim, self.dim], dtype=tf.float64,
-                                                initializer=tf.contrib.layers.xavier_initializer())
+        self.transform_matrix = tf.get_variable(
+            name="transform_matrix",
+            shape=[self.dim, self.dim],
+            dtype=tf.float64,
+            initializer=tf.contrib.layers.xavier_initializer(),
+        )
 
         # [batch size, dim]
-        self.item_embeddings = tf.nn.embedding_lookup(self.entity_emb_matrix, self.items)
+        self.item_embeddings = tf.nn.embedding_lookup(
+            self.entity_emb_matrix, self.items
+        )
 
         self.h_emb_list = []
         self.r_emb_list = []
         self.t_emb_list = []
         for i in range(self.n_hop):
             # [batch size, n_memory, dim]
-            self.h_emb_list.append(tf.nn.embedding_lookup(self.entity_emb_matrix, self.memories_h[i]))
+            self.h_emb_list.append(
+                tf.nn.embedding_lookup(self.entity_emb_matrix, self.memories_h[i])
+            )
 
             # [batch size, n_memory, dim, dim]
-            self.r_emb_list.append(tf.nn.embedding_lookup(self.relation_emb_matrix, self.memories_r[i]))
+            self.r_emb_list.append(
+                tf.nn.embedding_lookup(self.relation_emb_matrix, self.memories_r[i])
+            )
 
             # [batch size, n_memory, dim]
-            self.t_emb_list.append(tf.nn.embedding_lookup(self.entity_emb_matrix, self.memories_t[i]))
+            self.t_emb_list.append(
+                tf.nn.embedding_lookup(self.entity_emb_matrix, self.memories_t[i])
+            )
 
         o_list = self._key_addressing()
 
@@ -148,7 +193,7 @@ class RippleNet(object):
         return o_list
 
     def _update_item_embedding(self, item_embeddings, o):
-        
+
         if self.item_update_mode == "replace":
             item_embeddings = o
         elif self.item_update_mode == "plus":
@@ -171,22 +216,37 @@ class RippleNet(object):
         return scores
 
     def _build_loss(self):
-        self.base_loss = tf.reduce_mean(tf.nn.sigmoid_cross_entropy_with_logits(labels=self.labels, logits=self.scores))
+        self.base_loss = tf.reduce_mean(
+            tf.nn.sigmoid_cross_entropy_with_logits(
+                labels=self.labels, logits=self.scores
+            )
+        )
 
         self.kge_loss = 0
         for hop in range(self.n_hop):
             h_expanded = tf.expand_dims(self.h_emb_list[hop], axis=2)
             t_expanded = tf.expand_dims(self.t_emb_list[hop], axis=3)
-            hRt = tf.squeeze(tf.matmul(tf.matmul(h_expanded, self.r_emb_list[hop]), t_expanded))
+            hRt = tf.squeeze(
+                tf.matmul(tf.matmul(h_expanded, self.r_emb_list[hop]), t_expanded)
+            )
             self.kge_loss += tf.reduce_mean(tf.sigmoid(hRt))
         self.kge_loss = -self.kge_weight * self.kge_loss
 
         self.l2_loss = 0
         for hop in range(self.n_hop):
-            self.l2_loss += tf.reduce_mean(tf.reduce_sum(self.h_emb_list[hop] * self.h_emb_list[hop]))
-            self.l2_loss += tf.reduce_mean(tf.reduce_sum(self.t_emb_list[hop] * self.t_emb_list[hop]))
-            self.l2_loss += tf.reduce_mean(tf.reduce_sum(self.r_emb_list[hop] * self.r_emb_list[hop]))
-            if self.item_update_mode == "replace nonlinear" or self.item_update_mode == "plus nonlinear":
+            self.l2_loss += tf.reduce_mean(
+                tf.reduce_sum(self.h_emb_list[hop] * self.h_emb_list[hop])
+            )
+            self.l2_loss += tf.reduce_mean(
+                tf.reduce_sum(self.t_emb_list[hop] * self.t_emb_list[hop])
+            )
+            self.l2_loss += tf.reduce_mean(
+                tf.reduce_sum(self.r_emb_list[hop] * self.r_emb_list[hop])
+            )
+            if (
+                self.item_update_mode == "replace nonlinear"
+                or self.item_update_mode == "plus nonlinear"
+            ):
                 self.l2_loss += tf.nn.l2_loss(self.transform_matrix)
         self.l2_loss = self.l2_weight * self.l2_loss
 
@@ -194,22 +254,24 @@ class RippleNet(object):
 
     def _build_optimizer(self):
 
-        if self.optimizer_method == 'adam':
+        if self.optimizer_method == "adam":
             self.optimizer = tf.train.AdamOptimizer(self.lr).minimize(self.loss)
-        elif self.optimizer_method == 'adadelta':
+        elif self.optimizer_method == "adadelta":
             self.optimizer = tf.train.AdadeltaOptimizer(self.lr).minimize(self.loss)
-        elif self.optimizer_method == "adagrad": 
+        elif self.optimizer_method == "adagrad":
             self.optimizer = tf.train.AdagradOptimizer(self.lr).minimize(self.loss)
-        elif self.optimizer_method == "ftrl": 
+        elif self.optimizer_method == "ftrl":
             self.optimizer = tf.train.FtrlOptimizer(self.lr).minimize(self.loss)
-        elif self.optimizer_method == "gd": 
-            self.optimizer = tf.train.GradientDescentOptimizer(self.lr).minimize(self.loss)
-        elif self.optimizer_method == "rmsprop": 
+        elif self.optimizer_method == "gd":
+            self.optimizer = tf.train.GradientDescentOptimizer(self.lr).minimize(
+                self.loss
+            )
+        elif self.optimizer_method == "rmsprop":
             self.optimizer = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
 
     def _train(self, feed_dict):
         return self.sess.run([self.optimizer, self.loss], feed_dict)
-    
+
     def _return_scores(self, feed_dict):
         labels, scores = self.sess.run([self.labels, self.scores_normalized], feed_dict)
         return labels, scores
@@ -220,32 +282,37 @@ class RippleNet(object):
         predictions = [1 if i >= 0.5 else 0 for i in scores]
         acc = np.mean(np.equal(predictions, labels))
         return auc, acc
-    
+
     def _get_feed_dict(self, data, start, end):
         feed_dict = dict()
         feed_dict[self.items] = data[start:end, 1]
         feed_dict[self.labels] = data[start:end, 2]
         for i in range(self.n_hop):
-            feed_dict[self.memories_h[i]] = [self.ripple_set[user][i][0] for user in data[start:end, 0]]
-            feed_dict[self.memories_r[i]] = [self.ripple_set[user][i][1] for user in data[start:end, 0]]
-            feed_dict[self.memories_t[i]] = [self.ripple_set[user][i][2] for user in data[start:end, 0]]
+            feed_dict[self.memories_h[i]] = [
+                self.ripple_set[user][i][0] for user in data[start:end, 0]
+            ]
+            feed_dict[self.memories_r[i]] = [
+                self.ripple_set[user][i][1] for user in data[start:end, 0]
+            ]
+            feed_dict[self.memories_t[i]] = [
+                self.ripple_set[user][i][2] for user in data[start:end, 0]
+            ]
         return feed_dict
 
-    def _print_metrics_evaluation(self, n_hop, data, batch_size):
+    def _print_metrics_evaluation(self, data, batch_size):
         start = 0
         auc_list = []
         acc_list = []
         while start < data.shape[0]:
-            auc, acc = self._eval(self._get_feed_dict(data, 
-                                                    start, start + batch_size))
+            auc, acc = self._eval(
+                self._get_feed_dict(data=data, start=start, end=start + batch_size)
+            )
             auc_list.append(auc)
             acc_list.append(acc)
             start += batch_size
         return float(np.mean(auc_list)), float(np.mean(acc_list))
 
-    def fit(self,
-            n_epoch, batch_size,
-            train_data, ripple_set, show_loss):
+    def fit(self, n_epoch, batch_size, train_data, ripple_set, show_loss):
         """Main fit method for RippleNet.
 
         Args:
@@ -261,21 +328,24 @@ class RippleNet(object):
             np.random.shuffle(train_data)
             start = 0
             while start < train_data.shape[0]:
-                _, loss = self._train(self._get_feed_dict(
-                                     train_data, 
-                                     start, start + batch_size))
+                _, loss = self._train(
+                    self._get_feed_dict(
+                        data=train_data, start=start, end=start + batch_size
+                    )
+                )
                 start += batch_size
                 if show_loss:
-                    log.info('%.1f%% %.4f' % (start / train_data.shape[0] * 100, loss))
+                    log.info("%.1f%% %.4f" % (start / train_data.shape[0] * 100, loss))
 
-            train_auc, train_acc = self._print_metrics_evaluation(train_data, 
-                                                                 batch_size)
+            train_auc, train_acc = self._print_metrics_evaluation(
+                train_data, batch_size
+            )
 
-            log.info('epoch %d  train auc: %.4f  acc: %.4f'
-                    % (step, train_auc, train_acc))
+            log.info(
+                "epoch %d  train auc: %.4f  acc: %.4f" % (step, train_auc, train_acc)
+            )
 
-    def predict(self,
-    batch_size, data):
+    def predict(self, batch_size, data):
         """Main predict method for RippleNet.
 
         Args:
@@ -289,9 +359,12 @@ class RippleNet(object):
         labels = [0] * data.shape[0]
         scores = [0] * data.shape[0]
         while start < data.shape[0]:
-            labels[start:start + batch_size], scores[start:start + batch_size] = self._return_scores(
-                                                self._get_feed_dict(data, 
-                                                start, start + batch_size))
+            (
+                labels[start : start + batch_size],
+                scores[start : start + batch_size],
+            ) = self._return_scores(
+                self._get_feed_dict(data, start, start + batch_size)
+            )
             start += batch_size
-        
+
         return labels, scores
