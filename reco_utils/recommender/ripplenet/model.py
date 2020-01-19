@@ -268,6 +268,8 @@ class RippleNet(object):
             )
         elif self.optimizer_method == "rmsprop":
             self.optimizer = tf.train.RMSPropOptimizer(self.lr).minimize(self.loss)
+        else:
+            raise Exception("Unkown optimizer method: " + self.optimizer_method)
 
     def _train(self, feed_dict):
         return self.sess.run([self.optimizer, self.loss], feed_dict)
