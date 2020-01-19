@@ -338,7 +338,7 @@ class RippleNet(object):
                     log.info("%.1f%% %.4f" % (start / train_data.shape[0] * 100, loss))
 
             train_auc, train_acc = self._print_metrics_evaluation(
-                train_data, batch_size
+                data=train_data, batch_size=batch_size
             )
 
             log.info(
@@ -363,7 +363,9 @@ class RippleNet(object):
                 labels[start : start + batch_size],
                 scores[start : start + batch_size],
             ) = self._return_scores(
-                self._get_feed_dict(data, start, start + batch_size)
+                feed_dict=self._get_feed_dict(
+                    data=data, start=start, end=start + batch_size
+                )
             )
             start += batch_size
 
