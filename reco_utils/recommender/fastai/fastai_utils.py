@@ -5,8 +5,8 @@
 import numpy as np
 import pandas as pd
 import fastai
-from fastprogress import force_console_behavior
 import fastprogress
+from fastprogress.fastprogress import force_console_behavior
 
 from reco_utils.common import constants as cc
 

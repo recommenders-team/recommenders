@@ -1,0 +1,47 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Pull request against these branches will trigger this build
+pr:
+- staging
+- master
+
+# Any commit to this branch will trigger the build.
+trigger:
+- staging
+- master
+
+variables:
+- group: WindowsAgentPool
+
+jobs:
+- job: unit
+  displayName: 'Unit tests Windows GPU on notebooks'
+  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  pool:
+    name: $(Agent_Pool)
+
+  # workspace:
+  #   clean: all
+
+  steps:
+  - script: |
+      call conda activate reco_gpu
+      pytest tests/unit --durations 0 -m "notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
+    displayName: 'Run Tests'
+    continueOnError: true
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/test-*.xml'
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
+
+  - script: |
+      del /q /S %LOCALAPPDATA%\Temp\*
+      for /d %%i in (%LOCALAPPDATA%\Temp\*) do @rmdir /s /q "%%i"s to this script
+    displayName: 'Remove Temp Files'
+    enabled: false
+    condition: succeededOrFailed()
+  

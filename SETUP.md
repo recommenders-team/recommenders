@@ -19,7 +19,8 @@ This document describes how to setup all the dependencies to run the notebooks i
   * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
   * [Repository installation](#repository-installation)
   * [Troubleshooting Installation on Azure Databricks](#Troubleshooting-Installation-on-Azure-Databricks)
-* [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
+  * [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
+* [Install the utilities via PIP](#install-the-utilities-via-pip)
 * [Setup guide for Docker](#setup-guide-for-docker)
 
 ## Compute environments
@@ -49,6 +50,8 @@ conda update anaconda        # use 'conda install anaconda' if the package is no
 
 We provide a script, [generate_conda_file.py](scripts/generate_conda_file.py), to generate a conda-environment yaml file
 which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
+
+**NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. Detailed instructions for installing `cmake` can be found [here](https://vitux.com/how-to-install-cmake-on-ubuntu-18-04/). The default version of `cmake` is 3.15.2. One can specify a different version by configuring the argument of `CMAKE` in building the Docker image. 
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
@@ -80,9 +83,73 @@ To install the PySpark environment:
     python scripts/generate_conda_file.py --pyspark
     conda env create -f reco_pyspark.yaml
 
-Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
+> Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
+>
+>     python scripts/generate_conda_file.py --pyspark-version 2.4.0
 
-    python scripts/generate_conda_file.py --pyspark-version 2.4.0
+Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
+
+Click on the following menus to see details:
+<details>
+<summary><strong><em>Linux or MacOS</em></strong></summary>
+
+To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
+First, get the path of the environment `reco_pyspark` is installed:
+
+    RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
+
+Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
+
+    #!/bin/sh
+    RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
+    export PYSPARK_PYTHON=$RECO_ENV/bin/python
+    export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
+    export SPARK_HOME_BACKUP=$SPARK_HOME
+    unset SPARK_HOME
+
+This will export the variables every time we do `conda activate reco_pyspark`.
+To unset these variables when we deactivate the environment,
+create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
+
+    #!/bin/sh
+    unset PYSPARK_PYTHON
+    unset PYSPARK_DRIVER_PYTHON
+    export SPARK_HOME=$SPARK_HOME_BACKUP
+    unset SPARK_HOME_BACKUP
+
+</details>
+
+<details><summary><strong><em>Windows</em></strong></summary>
+
+To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
+First, get the path of the environment `reco_pyspark` is installed:
+
+    for /f "delims=" %A in ('conda env list ^| grep reco_pyspark ^| awk "{print $NF}"') do set "RECO_ENV=%A"
+
+Then, create the file `%RECO_ENV%\etc\conda\activate.d\env_vars.bat` and add:
+ 
+    @echo off
+    for /f "delims=" %%A in ('conda env list ^| grep reco_pyspark ^| awk "{print $NF}"') do set "RECO_ENV=%%A"
+    set PYSPARK_PYTHON=%RECO_ENV%\python.exe
+    set PYSPARK_DRIVER_PYTHON=%RECO_ENV%\python.exe
+    set SPARK_HOME_BACKUP=%SPARK_HOME%
+    set SPARK_HOME=
+    set PYTHONPATH_BACKUP=%PYTHONPATH%
+    set PYTHONPATH=
+
+This will export the variables every time we do `conda activate reco_pyspark`.
+To unset these variables when we deactivate the environment,
+create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
+
+    @echo off
+    set PYSPARK_PYTHON=
+    set PYSPARK_DRIVER_PYTHON=
+    set SPARK_HOME=%SPARK_HOME_BACKUP%
+    set SPARK_HOME_BACKUP=
+    set PYTHONPATH=%PYTHONPATH_BACKUP%
+    set PYTHONPATH_BACKUP=
+ 
+</details>
 
 </details>
 
@@ -96,66 +163,10 @@ To install the environment:
     python scripts/generate_conda_file.py --gpu --pyspark
     conda env create -f reco_full.yaml
 
+Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
+See **PySpark environment** setup section for the details about how to setup those variables.
+where you will need to change `reco_pyspark` string in the commands to `reco_full`.
 </details>
-
-
-> **NOTE** - for PySpark environments (`reco_pyspark` and `reco_full`), we need to set the environment variables
-> `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
->
-> Click on the following menus to see details:
->
-> <details>
-> <summary><strong><em>Linux or MacOS</em></strong></summary>
->
-> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
-> Assuming that we have installed the environment in `/anaconda/envs/reco_pyspark`,
-> create the file `/anaconda/envs/reco_pyspark/etc/conda/activate.d/env_vars.sh` and add:
->
->     #!/bin/sh
->     export PYSPARK_PYTHON=/anaconda/envs/reco_pyspark/bin/python
->     export PYSPARK_DRIVER_PYTHON=/anaconda/envs/reco_pyspark/bin/python
->     export SPARK_HOME_BACKUP=$SPARK_HOME
->     unset SPARK_HOME
->
-> This will export the variables every time we do `conda activate reco_pyspark`.
-> To unset these variables when we deactivate the environment,
-> create the file `/anaconda/envs/reco_pyspark/etc/conda/deactivate.d/env_vars.sh` and add:
->
->     #!/bin/sh
->     unset PYSPARK_PYTHON
->     unset PYSPARK_DRIVER_PYTHON
->     export SPARK_HOME=$SPARK_HOME_BACKUP
->     unset SPARK_HOME_BACKUP
-> 
-> </details>
->
-> <details><summary><strong><em>Windows</em></strong></summary>
-> 
-> To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
-> Assuming that we have installed the environment in `c:\anaconda\envs\reco_pyspark`,
-> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\activate.d\env_vars.bat` and add:
-> 
->     @echo off
->     set PYSPARK_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
->     set PYSPARK_DRIVER_PYTHON=c:\anaconda\envs\reco_pyspark\python.exe
->     set SPARK_HOME_BACKUP=%SPARK_HOME%
->     set SPARK_HOME=
->     set PYTHONPATH_BACKUP=%PYTHONPATH%
->     set PYTHONPATH=
-> 
-> This will export the variables every time we do `conda activate reco_pyspark`.
-> To unset these variables when we deactivate the environment,
-> create the file `c:\anaconda\envs\reco_pyspark\etc\conda\deactivate.d\env_vars.bat` and add:
-> 
->     @echo off
->     set PYSPARK_PYTHON=
->     set PYSPARK_DRIVER_PYTHON=
->     set SPARK_HOME=%SPARK_HOME_BACKUP%
->     set SPARK_HOME_BACKUP=
->     set PYTHONPATH=%PYTHONPATH_BACKUP%
->     set PYTHONPATH_BACKUP=
-> 
-> </details>
 
 
 ### Register the conda environment as a kernel in Jupyter
@@ -185,9 +196,10 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 * Databricks Runtime version 4.3 (Apache Spark 2.3.1, Scala 2.11) or greater
 * Python 3
 
-An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).   
+An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
 
 ### Repository installation
+
 You can setup the repository as a library on Databricks either manually or by running an [installation script](scripts/databricks_install.py). Both options assume you have access to a provisioned Databricks workspace and cluster and that you have appropriate permissions to install libraries.
 
 <details>
@@ -199,7 +211,7 @@ This option utilizes an installation script to do the setup, and it requires add
 > * Setup CLI authentication for [Azure Databricks CLI (command-line interface)](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#install-the-cli). Please find details about how to create a token and set authentication [here](https://docs.azuredatabricks.net/user-guide/dev-tools/databricks-cli.html#set-up-authentication). Very briefly, you can install and configure your environment with the following commands.
 >
 >     ```{shell}
->     conda activate reco-pyspark
+>     conda activate reco_pyspark
 >     databricks configure --token
 >     ```
 >
@@ -248,6 +260,7 @@ To install the repo manually onto Databricks, follow the steps:
     cd Recommenders
     zip -r Recommenders.egg .
     ```
+
 3. Once your cluster has started, go to the Databricks workspace, and select the `Home` button.
 4. Your `Home` directory should appear in a panel. Right click within your directory, and select `Import`.
 5. In the pop-up window, there is an option to import a library, where it says: `(To import a library, such as a jar or egg, click here)`. Select `click here`.
@@ -270,7 +283,7 @@ import reco_utils
 
 * For the [reco_utils](reco_utils) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
 
-## Prepare Azure Databricks for Operationalization
+### Prepare Azure Databricks for Operationalization
 
 This repository includes an end-to-end example notebook that uses Azure Databricks to estimate a recommendation model using matrix factorization with Alternating Least Squares, writes pre-computed recommendations to Azure Cosmos DB, and then creates a real-time scoring service that retrieves the recommendations from Cosmos DB. In order to execute that [notebook](notebooks/05_operationalize/als_movie_o16n.ipynb), you must install the Recommenders repository as a library (as described above), **AND** you must also install some additional dependencies. With the *Quick install* method, you just need to pass an additional option to the [installation script](scripts/databricks_install.py).
 
@@ -312,6 +325,21 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
    7. Restart the cluster.
 
 </details>
+
+## Install the utilities via PIP
+
+A [setup.py](reco_utils/setup.py) file is provided in order to simplify the installation of the utilities in this repo from the main directory. 
+
+This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed, you can use the following command to install `reco_utils` as a python package.
+
+    pip install -e .
+
+It is also possible to install directly from GitHub. Or from a specific branch as well.
+
+    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg
+    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg
+
+**NOTE** - The pip installation does not install any of the necessary package dependencies, it is expected that conda will be used as shown above to setup the environment for the utilities being used.
 
 ## Setup guide for Docker
 
