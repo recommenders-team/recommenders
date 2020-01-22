@@ -47,7 +47,7 @@ def predict(
     return predictions
 
 
-def predict_ranking(
+def recommend_k_items(
     model,
     data,
     usercol=DEFAULT_USER_COL,
