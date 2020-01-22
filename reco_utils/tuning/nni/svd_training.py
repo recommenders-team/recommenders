@@ -10,13 +10,11 @@ import pandas as pd
 import nni
 import surprise
 import sys
+
 sys.path.append("../../../")
 
 import reco_utils.evaluation.python_evaluation as evaluation
-from reco_utils.recommender.surprise.surprise_utils import (
-    compute_rating_predictions,
-    recommend_k_items,
-)
+from reco_utils.recommender.surprise.surprise_utils import predict, recommend_k_items
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("surprise_svd")
@@ -68,7 +66,7 @@ def svd_training(params):
     metrics_dict = {}
     rating_metrics = params["rating_metrics"]
     if len(rating_metrics) > 0:
-        predictions = compute_rating_predictions(
+        predictions = predict(
             svd, validation_data, usercol=params["usercol"], itemcol=params["itemcol"]
         )
         for metric in rating_metrics:

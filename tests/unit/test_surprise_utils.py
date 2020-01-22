@@ -11,10 +11,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.recommender.surprise.surprise_utils import (
-    compute_rating_predictions,
-    recommend_k_items,
-)
+from reco_utils.recommender.surprise.surprise_utils import predict, recommend_k_items
 
 
 TOL = 0.001
@@ -50,14 +47,14 @@ def rating_true():
     )
 
 
-def test_compute_rating_predictions(rating_true):
+def test_predict(rating_true):
     svd = surprise.SVD()
     train_set = surprise.Dataset.load_from_df(
         rating_true, reader=surprise.Reader()
     ).build_full_trainset()
     svd.fit(train_set)
 
-    preds = compute_rating_predictions(svd, rating_true)
+    preds = predict(svd, rating_true)
     assert set(preds.columns) == {"userID", "itemID", "prediction"}
     assert preds["userID"].dtypes == rating_true["userID"].dtypes
     assert preds["itemID"].dtypes == rating_true["itemID"].dtypes
@@ -67,7 +64,7 @@ def test_compute_rating_predictions(rating_true):
         "prediction"
     ].values == pytest.approx(svd.predict(user, item).est, rel=TOL)
 
-    preds = compute_rating_predictions(
+    preds = predict(
         svd,
         rating_true.rename(columns={"userID": "uid", "itemID": "iid"}),
         usercol="uid",
@@ -122,7 +119,7 @@ def test_recommend_k_items(rating_true):
     assert preds[(preds["uid"] == user) & (preds["iid"] == item)][
         "pred"
     ].values == pytest.approx(svd.predict(user, item).est, rel=TOL)
-    
+
     # Test remove_seen=False
     assert (
         pd.merge(
