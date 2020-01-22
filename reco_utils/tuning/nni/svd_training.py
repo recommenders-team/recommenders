@@ -15,7 +15,7 @@ sys.path.append("../../../")
 import reco_utils.evaluation.python_evaluation as evaluation
 from reco_utils.recommender.surprise.surprise_utils import (
     compute_rating_predictions,
-    compute_ranking_predictions,
+    recommend_k_items,
 )
 
 logging.basicConfig(level=logging.DEBUG)
@@ -81,7 +81,7 @@ def svd_training(params):
 
     ranking_metrics = params["ranking_metrics"]
     if len(ranking_metrics) > 0:
-        all_predictions = compute_ranking_predictions(
+        all_predictions = recommend_k_items(
             svd,
             train_data,
             usercol=params["usercol"],

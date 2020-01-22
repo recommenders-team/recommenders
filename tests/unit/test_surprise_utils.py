@@ -13,7 +13,7 @@ from reco_utils.common.constants import (
 )
 from reco_utils.recommender.surprise.surprise_utils import (
     compute_rating_predictions,
-    compute_ranking_predictions,
+    recommend_k_items,
 )
 
 
@@ -84,7 +84,7 @@ def test_compute_rating_predictions(rating_true):
     ].values == pytest.approx(svd.predict(user, item).est, rel=TOL)
 
 
-def test_compute_ranking_predictions(rating_true):
+def test_recommend_k_items(rating_true):
     n_users = len(rating_true["userID"].unique())
     n_items = len(rating_true["itemID"].unique())
     svd = surprise.SVD()
@@ -93,7 +93,7 @@ def test_compute_ranking_predictions(rating_true):
     ).build_full_trainset()
     svd.fit(train_set)
 
-    preds = compute_ranking_predictions(svd, rating_true, remove_seen=True)
+    preds = recommend_k_items(svd, rating_true, remove_seen=True)
     assert set(preds.columns) == {"userID", "itemID", "prediction"}
     assert preds["userID"].dtypes == rating_true["userID"].dtypes
     assert preds["itemID"].dtypes == rating_true["itemID"].dtypes
@@ -106,7 +106,7 @@ def test_compute_ranking_predictions(rating_true):
     assert pd.merge(rating_true, preds, on=["userID", "itemID"]).shape[0] == 0
     assert preds.shape[0] == (n_users * n_items - rating_true.shape[0])
 
-    preds = compute_ranking_predictions(
+    preds = recommend_k_items(
         svd,
         rating_true.rename(columns={"userID": "uid", "itemID": "iid", "rating": "r"}),
         usercol="uid",

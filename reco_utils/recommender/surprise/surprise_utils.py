@@ -74,7 +74,7 @@ def compute_rating_predictions(
     return predictions.drop(["details", "r_ui"], axis="columns")
 
 
-def compute_ranking_predictions(
+def recommend_k_items(
     algo,
     data,
     usercol=DEFAULT_USER_COL,
