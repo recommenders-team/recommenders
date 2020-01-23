@@ -18,7 +18,10 @@ except ModuleNotFoundError:
     HAS_AML = False
 
 from reco_utils.evaluation.python_evaluation import *
-from reco_utils.recommender.surprise.surprise_utils import predict, recommend_k_items
+from reco_utils.recommender.surprise.surprise_utils import (
+    predict,
+    compute_ranking_predictions,
+)
 
 
 def svd_training(args):
@@ -71,7 +74,7 @@ def svd_training(args):
 
     ranking_metrics = args.ranking_metrics
     if len(ranking_metrics) > 0:
-        all_predictions = recommend_k_items(
+        all_predictions = compute_ranking_predictions(
             svd,
             train_data,
             usercol=args.usercol,

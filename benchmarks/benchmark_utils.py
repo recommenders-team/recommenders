@@ -25,7 +25,10 @@ from reco_utils.common.spark_utils import start_or_get_spark
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
-from reco_utils.recommender.surprise.surprise_utils import predict, recommend_k_items
+from reco_utils.recommender.surprise.surprise_utils import (
+    predict,
+    compute_ranking_predictions,
+)
 from reco_utils.recommender.fastai.fastai_utils import (
     cartesian_product,
     score,
@@ -137,7 +140,7 @@ def predict_svd(model, test):
 
 def recommend_k_svd(model, test, train):
     with Timer() as t:
-        topk_scores = recommend_k_items(
+        topk_scores = compute_ranking_predictions(
             model,
             train,
             usercol=DEFAULT_USER_COL,

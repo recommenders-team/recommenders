@@ -11,7 +11,10 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.recommender.surprise.surprise_utils import predict, recommend_k_items
+from reco_utils.recommender.surprise.surprise_utils import (
+    predict,
+    compute_ranking_predictions,
+)
 
 
 TOL = 0.001
@@ -90,7 +93,7 @@ def test_recommend_k_items(rating_true):
     ).build_full_trainset()
     svd.fit(train_set)
 
-    preds = recommend_k_items(svd, rating_true, remove_seen=True)
+    preds = compute_ranking_predictions(svd, rating_true, remove_seen=True)
     assert set(preds.columns) == {"userID", "itemID", "prediction"}
     assert preds["userID"].dtypes == rating_true["userID"].dtypes
     assert preds["itemID"].dtypes == rating_true["itemID"].dtypes
@@ -103,7 +106,7 @@ def test_recommend_k_items(rating_true):
     assert pd.merge(rating_true, preds, on=["userID", "itemID"]).shape[0] == 0
     assert preds.shape[0] == (n_users * n_items - rating_true.shape[0])
 
-    preds = recommend_k_items(
+    preds = compute_ranking_predictions(
         svd,
         rating_true.rename(columns={"userID": "uid", "itemID": "iid", "rating": "r"}),
         usercol="uid",
