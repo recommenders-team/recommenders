@@ -11,7 +11,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.recommender.cornac.cornac_utils import predict, recommend_k_items
+from reco_utils.recommender.cornac.cornac_utils import predict, predict_ranking
 from reco_utils.evaluation.python_evaluation import mae, rmse, ndcg_at_k, recall_at_k
 
 TOL = 0.001
@@ -68,7 +68,7 @@ def test_recommend_k_items(rating_true):
     )
     bpr = cornac.models.BPR(k=100, max_iter=10000, seed=42).fit(train_set)
 
-    preds = recommend_k_items(bpr, rating_true, remove_seen=False)
+    preds = predict_ranking(bpr, rating_true, remove_seen=False)
 
     n_users = len(rating_true["userID"].unique())
     n_items = len(rating_true["itemID"].unique())
