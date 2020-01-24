@@ -34,7 +34,7 @@ from reco_utils.recommender.fastai.fastai_utils import (
     score,
     hide_fastai_progress_bar,
 )
-from reco_utils.recommender.cornac.cornac_utils import recommend_k_items
+from reco_utils.recommender.cornac.cornac_utils import predict_ranking
 from reco_utils.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
     SparkRankingEvaluation,
@@ -282,7 +282,7 @@ def train_bpr(params, data):
 
 def recommend_k_bpr(model, test, train):
     with Timer() as t:
-        topk_scores = recommend_k_items(
+        topk_scores = predict_ranking(
             model,
             train,
             usercol=DEFAULT_USER_COL,
