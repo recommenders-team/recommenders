@@ -45,7 +45,7 @@ def surprise_trainset_to_df(
     return df
 
 
-def compute_rating_predictions(
+def predict(
     algo,
     data,
     usercol=DEFAULT_USER_COL,
