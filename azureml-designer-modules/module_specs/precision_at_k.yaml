@@ -38,7 +38,7 @@ inputs:
   description: Number of top k items per user.
 - name: Threshold
   type: Float
-  default: 10
+  default: 10.0
   description: Threshold of top items per user.
 outputs:
 - name: Score
