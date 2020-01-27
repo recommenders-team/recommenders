@@ -2,8 +2,8 @@ name: SAR Scoring
 version: 0.0.1
 category: Recommenders
 description: |
-    Python SAR Recommender
-    repo: https://github.com/Microsoft/Recommenders/tree/master/
+    Python SAR Recommenders
+    repo: https://github.com/Microsoft/Recommenders
 inputs:
 - name: Trained model
   type: ModelDirectory
