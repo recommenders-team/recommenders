@@ -31,7 +31,7 @@ def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
 
     The dataset consists of a portion of Criteo’s traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
-    column is indicates whether this ad has been clicked or not.
+    column indicates whether this ad has been clicked or not.
 
     There are 13 features taking integer values (mostly count features) and 26
     categorical features. The values of the categorical features have been hashed
