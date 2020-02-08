@@ -325,22 +325,23 @@ class RippleNet(object):
             show_loss (bool): whether to show loss update
         """
         self.ripple_set = ripple_set
+        self.train_data = train_data
         for step in range(n_epoch):
             # training
-            np.random.shuffle(train_data)
+            np.random.shuffle(self.train_data)
             start = 0
-            while start < train_data.shape[0]:
+            while start < self.train_data.shape[0]:
                 _, loss = self._train(
                     self._get_feed_dict(
-                        data=train_data, start=start, end=start + batch_size
+                        data=self.train_data, start=start, end=start + batch_size
                     )
                 )
                 start += batch_size
                 if show_loss:
-                    log.info("%.1f%% %.4f" % (start / train_data.shape[0] * 100, loss))
+                    log.info("%.1f%% %.4f" % (start / self.train_data.shape[0] * 100, loss))
 
             train_auc, train_acc = self._print_metrics_evaluation(
-                data=train_data, batch_size=batch_size
+                data=self.train_data, batch_size=batch_size
             )
 
             log.info(
@@ -355,7 +356,7 @@ class RippleNet(object):
             data (pd.DataFrame): User id, item and rating dataframe
         
         Returns:
-            (pd.DataFrame, pd.DataFrame): real labels of the predicted items, predicted scores of the predicted items
+            (list, list): real labels of the predicted items, predicted scores of the predicted items
         """
         start = 0
         labels = [0] * data.shape[0]
@@ -372,3 +373,44 @@ class RippleNet(object):
             start += batch_size
 
         return labels, scores
+    
+    def recommend_k_items(self, batch_size, data, top_k=10, remove_seen=True):
+        """Recomment top K items method for RippleNet.
+
+        Args:
+            batch_size (int): batch size
+            data (pd.DataFrame): User id, item and rating dataframe
+            top_k (int): number of items to recommend
+            remove_seen (bool): if the items seen by an user in train should be recomed from the test set
+        
+        Returns:
+            (pd.DataFrame): top K items by score per user
+        """
+        if remove_seen == True:
+            log.info("Removing seen items")
+            seen_items = data.merge(self.train_data.iloc[:,0:2], on = list(data.columns[0:2]), indicator=True, how = 'left')
+            data = seen_items[seen_items['_merge']=='left_only'].drop(columns = ['_merge'])
+        start = 0
+        labels = [0] * data.shape[0]
+        scores = [0] * data.shape[0]
+        while start < data.shape[0]:
+            (
+                labels[start : start + batch_size],
+                scores[start : start + batch_size],
+            ) = self._return_scores(
+                feed_dict=self._get_feed_dict(
+                    data=data, start=start, end=start + batch_size
+                )
+            )
+            start += batch_size
+
+        data['scores'] = scores
+        top_k_items = (
+            data.groupby(data.columns[0], as_index=False)
+            .apply(lambda x: x.nlargest(top_k, 'scores'))
+            .reset_index(drop=True)
+        )
+        # Add ranks
+        top_k_items["rank"] = top_k_items.groupby(data.columns[0], sort=False).cumcount() + 1
+
+        return top_k_items
