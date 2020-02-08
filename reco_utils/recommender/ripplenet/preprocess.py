@@ -32,7 +32,7 @@ def read_item_index_to_entity_id_file(item_to_entity):
     return item_index_old2new, entity_id2index
 
 
-def convert_rating(ratings, item_index_old2new, threshold, seed):
+def convert_rating(ratings, item_index_old2new, threshold, remove_negative_ratings=True, seed=14):
     """Apply item standarization to ratings dataset. 
     Use rating threshold to determite positive ratings
 
@@ -40,6 +40,8 @@ def convert_rating(ratings, item_index_old2new, threshold, seed):
         ratings (pd.DataFrame): ratings with columns ["UserId", "ItemId", "Rating"]
         item_index_old2new (dictionary): dictionary, conversion from original item ID to internal item ID
         threshold (int): minimum valur for the rating to be considered positive
+        remove_negative_ratings (bool): if the train/test set should exclude items below the threshold,
+                                        as the original papel proposes 
 
     Returns:
         ratings_final (pd.DataFrame): ratings converted with columns userID,
@@ -67,7 +69,7 @@ def convert_rating(ratings, item_index_old2new, threshold, seed):
         else:
             if user_index_old not in user_neg_ratings:
                 user_neg_ratings[user_index_old] = set()
-            user_neg_ratings[user_index_old].add(item_index)
+            user_neg_ratings[user_index_old].add((item_index, rating))
 
     log.info("converting rating file ...")
     writer = []
@@ -90,17 +92,25 @@ def convert_rating(ratings, item_index_old2new, threshold, seed):
         pos_item_set = set(i[0] for i in pos_item_set)
         unwatched_set = item_set - pos_item_set
         if user_index_old in user_neg_ratings:
-            unwatched_set -= user_neg_ratings[user_index_old]
+            negative_set = dict(list(user_neg_ratings[user_index_old]))
+            if remove_negative_ratings == True:
+                unwatched_set -= set(negative_set.keys())
+        else:
+            negative_set = {}
         np.random.seed(seed)
         for item in np.random.choice(
             list(unwatched_set), size=len(pos_item_set), replace=False
         ):
+            if item in negative_set:
+                original_rating = negative_set[item]
+            else:
+                original_rating = 0
             writer.append(
                 {
                     "user_index": user_index,
                     "item": item,
                     "rating": 0,
-                    "original_rating": 0,
+                    "original_rating": original_rating,
                 }
             )
     ratings_final = pd.DataFrame(writer)
