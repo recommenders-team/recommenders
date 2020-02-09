@@ -3,6 +3,7 @@
 
 import tensorflow as tf
 import numpy as np
+import pandas as pd
 import logging
 from sklearn.metrics import roc_auc_score
 
@@ -325,7 +326,7 @@ class RippleNet(object):
             show_loss (bool): whether to show loss update
         """
         self.ripple_set = ripple_set
-        self.train_data = train_data
+        self.train_data = train_data.to_numpy()
         for step in range(n_epoch):
             # training
             np.random.shuffle(self.train_data)
@@ -389,7 +390,8 @@ class RippleNet(object):
         """
         if remove_seen == True:
             log.info("Removing seen items")
-            seen_items = data.merge(self.train_data.iloc[:,0:2], on = list(data.columns[0:2]), indicator=True, how = 'left')
+            train_data = pd.DataFrame(train_data)
+            seen_items = data.merge(train_data.iloc[:,0:2], on = list(data.columns[0:2]), indicator=True, how = 'left')
             data = seen_items[seen_items['_merge']=='left_only'].drop(columns = ['_merge'])
         data_np = data.to_numpy()
         start = 0
