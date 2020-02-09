@@ -392,11 +392,11 @@ class RippleNet(object):
         """
         if remove_seen == True:
             log.info("Removing seen items")
-            train_data = pd.DataFrame(self.train_data)
+            train_data = pd.DataFrame(self.train_data).iloc[:, 0:2]
+            train_data.columns = list(data.columns[0:2])
             seen_items = data.merge(
                 train_data.iloc[:, 0:2],
-                right_on=list(data.columns[0:2]),
-                left_on=list(train_data.columns[0:2]),
+                on=list(data.columns[0:2]),
                 indicator=True,
                 how="left"
             )
