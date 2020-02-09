@@ -358,6 +358,7 @@ class RippleNet(object):
         Returns:
             (list, list): real labels of the predicted items, predicted scores of the predicted items
         """
+        data = data.to_numpy()
         start = 0
         labels = [0] * data.shape[0]
         scores = [0] * data.shape[0]
@@ -375,7 +376,7 @@ class RippleNet(object):
         return labels, scores
     
     def recommend_k_items(self, batch_size, data, top_k=10, remove_seen=True):
-        """Recomment top K items method for RippleNet.
+        """Recommend top K items method for RippleNet.
 
         Args:
             batch_size (int): batch size
@@ -390,16 +391,17 @@ class RippleNet(object):
             log.info("Removing seen items")
             seen_items = data.merge(self.train_data.iloc[:,0:2], on = list(data.columns[0:2]), indicator=True, how = 'left')
             data = seen_items[seen_items['_merge']=='left_only'].drop(columns = ['_merge'])
+        data_np = data.to_numpy()
         start = 0
-        labels = [0] * data.shape[0]
-        scores = [0] * data.shape[0]
-        while start < data.shape[0]:
+        labels = [0] * data_np.shape[0]
+        scores = [0] * data_np.shape[0]
+        while start < data_np.shape[0]:
             (
                 labels[start : start + batch_size],
                 scores[start : start + batch_size],
             ) = self._return_scores(
                 feed_dict=self._get_feed_dict(
-                    data=data, start=start, end=start + batch_size
+                    data=data_np, start=start, end=start + batch_size
                 )
             )
             start += batch_size
