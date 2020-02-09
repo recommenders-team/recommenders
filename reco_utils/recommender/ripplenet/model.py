@@ -339,7 +339,9 @@ class RippleNet(object):
                 )
                 start += batch_size
                 if show_loss:
-                    log.info("%.1f%% %.4f" % (start / self.train_data.shape[0] * 100, loss))
+                    log.info(
+                        "%.1f%% %.4f" % (start / self.train_data.shape[0] * 100, loss)
+                    )
 
             train_auc, train_acc = self._print_metrics_evaluation(
                 data=self.train_data, batch_size=batch_size
@@ -375,7 +377,7 @@ class RippleNet(object):
             start += batch_size
 
         return labels, scores
-    
+
     def recommend_k_items(self, batch_size, data, top_k=10, remove_seen=True):
         """Recommend top K items method for RippleNet.
 
@@ -391,8 +393,16 @@ class RippleNet(object):
         if remove_seen == True:
             log.info("Removing seen items")
             train_data = pd.DataFrame(self.train_data)
-            seen_items = data.merge(train_data.iloc[:,0:2], on = list(data.columns[0:2]), indicator=True, how = 'left')
-            data = seen_items[seen_items['_merge']=='left_only'].drop(columns = ['_merge'])
+            seen_items = data.merge(
+                train_data.iloc[:, 0:2],
+                right_on=list(data.columns[0:2]),
+                left_on=list(train_data.columns[0:2]),
+                indicator=True,
+                how="left"
+            )
+            data = seen_items[seen_items["_merge"] == "left_only"].drop(
+                columns=["_merge"]
+            )
         data_np = data.to_numpy()
         start = 0
         labels = [0] * data_np.shape[0]
@@ -408,13 +418,15 @@ class RippleNet(object):
             )
             start += batch_size
 
-        data['scores'] = scores
+        data["scores"] = scores
         top_k_items = (
             data.groupby(data.columns[0], as_index=False)
-            .apply(lambda x: x.nlargest(top_k, 'scores'))
+            .apply(lambda x: x.nlargest(top_k, "scores"))
             .reset_index(drop=True)
         )
         # Add ranks
-        top_k_items["rank"] = top_k_items.groupby(data.columns[0], sort=False).cumcount() + 1
+        top_k_items["rank"] = (
+            top_k_items.groupby(data.columns[0], sort=False).cumcount() + 1
+        )
 
         return top_k_items
