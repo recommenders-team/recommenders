@@ -69,4 +69,4 @@ implementation:
     - --threshold
     - inputValue: Threshold
     - --score-result
-    - outputValue: Score
+    - outputPath: Score
