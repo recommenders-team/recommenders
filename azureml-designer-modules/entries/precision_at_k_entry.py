@@ -66,14 +66,6 @@ if __name__ == "__main__":
     logger.debug(f"Rating Pred path: {args.rating_pred}")
     logger.debug(f"Shape of loaded DataFrame: {rating_pred.shape}")
 
-    output_train, output_test = python_stratified_split(
-        input_df,
-        ratio=args.ratio,
-        col_user=args.col_user,
-        col_item=args.col_item,
-        seed=args.seed,
-    )
-
     eval_precision = precision_at_k(
         rating_true,
         rating_pred,
