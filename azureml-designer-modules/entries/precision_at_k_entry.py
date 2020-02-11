@@ -1,4 +1,5 @@
 import argparse
+import pandas as pd
 
 from azureml.studio.core.logger import module_logger as logger
 from azureml.studio.core.data_frame_schema import DataFrameSchema
@@ -85,11 +86,12 @@ if __name__ == "__main__":
         threshold=threshold,
     )
 
+    score_result = pd.DataFrame({"precision_at_k": [eval_precision]})
     logger.debug(f"Score: {args.score_result}")
 
-    # save_data_frame_to_directory(
-    #     args.output_train,
-    #     output_train,
-    #     schema=DataFrameSchema.data_frame_to_dict(output_train),
-    # )
+    save_data_frame_to_directory(
+        args.score_result,
+        score_result,
+        schema=DataFrameSchema.data_frame_to_dict(score_result),
+    )
 

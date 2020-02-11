@@ -42,7 +42,7 @@ inputs:
   description: Threshold of top items per user.
 outputs:
 - name: Score
-  type: Float
+  type: DataFrameDirectory
   description: Precision at k (min=0, max=1).
   port: true
 implementation:
