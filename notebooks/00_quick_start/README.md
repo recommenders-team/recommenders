@@ -21,10 +21,13 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | [wide-and-deep](wide_deep_movielens.ipynb) | MovieLens | Python CPU, GPU |  Use Wide-and-Deep Model (Wide-and-Deep) [5] to predict movie ratings in a Python+GPU (TensorFlow) environment. |
 | [xdeepfm](xdeepfm_criteo.ipynb) | Criteo, Synthetic Data | Python CPU, GPU |  Use the eXtreme Deep Factorization Machine (xDeepFM) [3] to learn both low and high order feature interactions for predicting CTR, in a Python+GPU (TensorFlow) environment. |
 
-[1] _Neural Collaborative Filtering_, Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu and Tat-Seng Chua. WWW 2017.<br>
-[2] _DKN: Deep Knowledge-Aware Network for News Recommendation_, Hongwei Wang, Fuzheng Zhang, Xing Xie and Minyi Guo. WWW 2018.<br>
-[3] _xDeepFM: Combining Explicit and Implicit Feature Interactions for Recommender Systems_, Jianxun Lian, Xiaohuan Zhou, Fuzheng Zhang, Zhongxia Chen, Xing Xie and Guangzhong Sun. KDD 2018.<br>
-[4] _Restricted Boltzmann Machines for Collaborative Filtering_, Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton. ICML 2007.<br>
-[5] _Wide & Deep Learning for Recommender Systems_, Heng-Tze Cheng et al., arXiv:1606.07792 2016.
-[6] _A unified framework for structured low-rank matrix learning_, Pratik Jawanpuria and Bamdev Mishra, In International Conference on Machine Learning, 2018.
+[1] _Neural Collaborative Filtering_, Xiangnan He, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu and Tat-Seng Chua, WWW 2017.<br>
+[2] _DKN: Deep Knowledge-Aware Network for News Recommendation_, Hongwei Wang, Fuzheng Zhang, Xing Xie and Minyi Guo, WWW 2018.<br>
+[3] _xDeepFM: Combining Explicit and Implicit Feature Interactions for Recommender Systems_, Jianxun Lian, Xiaohuan Zhou, Fuzheng Zhang, Zhongxia Chen, Xing Xie and Guangzhong Sun, KDD 2018.<br>
+[4] _Restricted Boltzmann Machines for Collaborative Filtering_, Ruslan Salakhutdinov, Andriy Mnih and Geoffrey Hinton, ICML 2007.<br>
+[5] _Wide & Deep Learning for Recommender Systems_, Heng-Tze Cheng et al., arXiv:1606.07792 2016.<br>
+[6] _A unified framework for structured low-rank matrix learning_, Pratik Jawanpuria and Bamdev Mishra, ICML 2018.<br>
+[7] _Adaptive User Modeling with Long and Short-Term Preferences for Personailzed Recommendation_, Z. Yu, J. Lian, A. Mahmoody, G. Liu and X. Xie, IJCAI 2019.<br>
+[8] _Personalized top-n sequential recommendation via convolutional sequence embedding_, J. Tang and K. Wang, ACM WSDM 2018.<br>
+[9] _Session-based Recommendations with Recurrent Neural Networks_, B. Hidasi, A. Karatzoglou, L. Baltrunas and D. Tikk, ICLR 2016.<br>
 
