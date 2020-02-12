@@ -326,7 +326,7 @@ class RippleNet(object):
             show_loss (bool): whether to show loss update
         """
         self.ripple_set = ripple_set
-        self.train_data = train_data.to_numpy()
+        self.train_data = train_data.values
         for step in range(n_epoch):
             # training
             np.random.shuffle(self.train_data)
@@ -361,7 +361,7 @@ class RippleNet(object):
         Returns:
             (list, list): real labels of the predicted items, predicted scores of the predicted items
         """
-        data = data.to_numpy()
+        data = data.values
         start = 0
         labels = [0] * data.shape[0]
         scores = [0] * data.shape[0]
@@ -398,12 +398,12 @@ class RippleNet(object):
                 train_data.iloc[:, 0:2],
                 on=list(data.columns[0:2]),
                 indicator=True,
-                how="left"
+                how="left",
             )
             data = seen_items[seen_items["_merge"] == "left_only"].drop(
                 columns=["_merge"]
             )
-        data_np = data.to_numpy()
+        data_np = data.values
         start = 0
         labels = [0] * data_np.shape[0]
         scores = [0] * data_np.shape[0]
