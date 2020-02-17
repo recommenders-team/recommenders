@@ -1,6 +1,7 @@
 import argparse
 import pandas as pd
 
+from azureml.core import Run
 from azureml.studio.core.logger import module_logger as logger
 from azureml.studio.core.data_frame_schema import DataFrameSchema
 from azureml.studio.core.io.data_frame_directory import (
@@ -80,6 +81,10 @@ if __name__ == "__main__":
 
     score_result = pd.DataFrame({"precision_at_k": [eval_precision]})
     logger.debug(f"Score: {args.score_result}")
+
+    # Log to AzureML dashboard
+    run = Run.get_context()
+    run.parent.log("Precision at {}".format(k), eval_precision)
 
     save_data_frame_to_directory(
         args.score_result,
