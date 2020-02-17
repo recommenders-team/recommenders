@@ -1,9 +1,10 @@
-name: CAT_module_environment
+name: Recommenders_module_environment
 channels:
 - defaults
 dependencies:
 - python=3.7
 - pip:
+  - azureml-core==1.0.85.*
   - azureml-designer-core==0.0.26.*
   - joblib==0.14.0
   - scikit-learn==0.20.3
