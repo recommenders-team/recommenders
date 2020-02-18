@@ -22,7 +22,7 @@ inputs:
   description: Column name of item IDs.
 - name: Rating column
   type: String
-  default: rating
+  default: Rating
   description: Column name of ratings.
 - name: Prediction column
   type: String
