@@ -1,6 +1,6 @@
 name: Recall at K
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 0.0.2
+version: 0.0.3
 category: Recommenders/Metrics
 description: "Recall at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders."
 inputs:
