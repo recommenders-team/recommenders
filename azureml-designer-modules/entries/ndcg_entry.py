@@ -79,13 +79,13 @@ if __name__ == "__main__":
         threshold=threshold,
     )
 
-    score_result = pd.DataFrame({"ndcg_at_k": [eval_ndcg]})
-    logger.debug(f"Score: {args.score_result}")
+    logger.debug(f"Score: {eval_ndcg}")
 
     # Log to AzureML dashboard
     run = Run.get_context()
     run.parent.log("nDCG at {}".format(k), eval_ndcg)
 
+    score_result = pd.DataFrame({"ndcg_at_k": [eval_ndcg]})
     save_data_frame_to_directory(
         args.score_result,
         score_result,

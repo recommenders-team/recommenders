@@ -79,13 +79,13 @@ if __name__ == "__main__":
         threshold=threshold,
     )
 
-    score_result = pd.DataFrame({"recall_at_k": [eval_recall]})
-    logger.debug(f"Score: {args.score_result}")
+    logger.debug(f"Score: {eval_recall}")
 
     # Log to AzureML dashboard
     run = Run.get_context()
     run.parent.log("Recall at {}".format(k), eval_recall)
 
+    score_result = pd.DataFrame({"recall_at_k": [eval_recall]})
     save_data_frame_to_directory(
         args.score_result,
         score_result,

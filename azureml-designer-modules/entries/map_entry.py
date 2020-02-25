@@ -79,13 +79,13 @@ if __name__ == "__main__":
         threshold=threshold,
     )
 
-    score_result = pd.DataFrame({"map_at_k": [eval_map]})
-    logger.debug(f"Score: {args.score_result}")
+    logger.debug(f"Score: {eval_map}")
 
     # Log to AzureML dashboard
     run = Run.get_context()
     run.parent.log("MAP at {}".format(k), eval_map)
 
+    score_result = pd.DataFrame({"map_at_k": [eval_map]})
     save_data_frame_to_directory(
         args.score_result,
         score_result,
