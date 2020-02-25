@@ -85,7 +85,6 @@ if __name__ == "__main__":
     # Log to AzureML dashboard
     run = Run.get_context()
     run.parent.log("nDCG at {}".format(k), eval_ndcg)
-    run.log("ndcg_at_{}".format(k), eval_ndcg)
 
     save_data_frame_to_directory(
         args.score_result,

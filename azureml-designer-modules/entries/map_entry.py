@@ -85,7 +85,6 @@ if __name__ == "__main__":
     # Log to AzureML dashboard
     run = Run.get_context()
     run.parent.log("MAP at {}".format(k), eval_map)
-    run.log("map_at_{}".format(k), eval_map)
 
     save_data_frame_to_directory(
         args.score_result,
