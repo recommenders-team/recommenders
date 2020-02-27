@@ -11,16 +11,8 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.recommender.cornac.cornac_utils import (
-    predict_rating,
-    predict_ranking,
-)
-from reco_utils.evaluation.python_evaluation import (
-    mae,
-    rmse,
-    ndcg_at_k,
-    recall_at_k,
-)
+from reco_utils.recommender.cornac.cornac_utils import predict, predict_ranking
+from reco_utils.evaluation.python_evaluation import mae, rmse, ndcg_at_k, recall_at_k
 
 TOL = 0.001
 
@@ -55,21 +47,25 @@ def rating_true():
     )
 
 
-def test_predict_rating(rating_true):
-    train_set = cornac.data.Dataset.from_uir(rating_true.itertuples(index=False), seed=42)
+def test_predict(rating_true):
+    train_set = cornac.data.Dataset.from_uir(
+        rating_true.itertuples(index=False), seed=42
+    )
     mf = cornac.models.MF(k=100, max_iter=10000, seed=42).fit(train_set)
 
-    preds = predict_rating(mf, rating_true)
+    preds = predict(mf, rating_true)
 
     assert set(preds.columns) == {"userID", "itemID", "prediction"}
     assert preds["userID"].dtypes == rating_true["userID"].dtypes
     assert preds["itemID"].dtypes == rating_true["itemID"].dtypes
-    assert .02 > mae(rating_true, preds)  # ~0.018
-    assert .03 > rmse(rating_true, preds)  # ~0.021
+    assert 0.02 > mae(rating_true, preds)  # ~0.018
+    assert 0.03 > rmse(rating_true, preds)  # ~0.021
 
 
-def test_predict_ranking(rating_true):
-    train_set = cornac.data.Dataset.from_uir(rating_true.itertuples(index=False), seed=42)
+def test_recommend_k_items(rating_true):
+    train_set = cornac.data.Dataset.from_uir(
+        rating_true.itertuples(index=False), seed=42
+    )
     bpr = cornac.models.BPR(k=100, max_iter=10000, seed=42).fit(train_set)
 
     preds = predict_ranking(bpr, rating_true, remove_seen=False)

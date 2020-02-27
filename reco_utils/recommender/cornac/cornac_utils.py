@@ -11,12 +11,12 @@ from reco_utils.common.constants import (
 )
 
 
-def predict_rating(
-        model,
-        data,
-        usercol=DEFAULT_USER_COL,
-        itemcol=DEFAULT_ITEM_COL,
-        predcol=DEFAULT_PREDICTION_COL,
+def predict(
+    model,
+    data,
+    usercol=DEFAULT_USER_COL,
+    itemcol=DEFAULT_ITEM_COL,
+    predcol=DEFAULT_PREDICTION_COL,
 ):
     """Computes predictions of a recommender model from Cornac on the data.
     Can be used for computing rating metrics like RMSE.
@@ -36,8 +36,10 @@ def predict_rating(
         [
             getattr(row, usercol),
             getattr(row, itemcol),
-            model.rate(user_idx=uid_map.get(getattr(row, usercol), len(uid_map)),
-                       item_idx=iid_map.get(getattr(row, itemcol), len(iid_map)))
+            model.rate(
+                user_idx=uid_map.get(getattr(row, usercol), len(uid_map)),
+                item_idx=iid_map.get(getattr(row, itemcol), len(iid_map)),
+            ),
         ]
         for row in data.itertuples()
     ]
@@ -46,12 +48,12 @@ def predict_rating(
 
 
 def predict_ranking(
-        model,
-        data,
-        usercol=DEFAULT_USER_COL,
-        itemcol=DEFAULT_ITEM_COL,
-        predcol=DEFAULT_PREDICTION_COL,
-        remove_seen=False,
+    model,
+    data,
+    usercol=DEFAULT_USER_COL,
+    itemcol=DEFAULT_ITEM_COL,
+    predcol=DEFAULT_PREDICTION_COL,
+    remove_seen=False,
 ):
     """Computes predictions of recommender model from Cornac on all users and items in data.
     It can be used for computing ranking metrics like NDCG.
@@ -74,7 +76,9 @@ def predict_ranking(
         items.extend(item)
         preds.extend(model.score(user_idx).tolist())
 
-    all_predictions = pd.DataFrame(data={usercol: users, itemcol: items, predcol: preds})
+    all_predictions = pd.DataFrame(
+        data={usercol: users, itemcol: items, predcol: preds}
+    )
 
     if remove_seen:
         tempdf = pd.concat(
