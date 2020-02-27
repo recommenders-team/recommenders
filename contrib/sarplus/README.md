@@ -59,8 +59,8 @@ test_df = spark.createDataFrame([
     (3, 3, 1)], 
     ['user_id', 'item_id', 'rating'])
 
-model = SARPlus(spark, col_user='user_id', col_item='item_id', col_rating='rating', col_timestamp='timestamp', similarity_type='jaccard')
-model.fit(train_df)
+model = SARPlus(spark, col_user='user_id', col_item='item_id', col_rating='rating', col_timestamp='timestamp')
+model.fit(train_df, similarity_type='jaccard')
 
 
 model.recommend_k_items(test_df, 'sarplus_cache', top_k=3).show()
@@ -76,7 +76,7 @@ Insert this cell prior to the code above.
 ```python
 import os
 
-SUBMIT_ARGS = "--packages microsoft:sarplus:0.2.6 pyspark-shell"
+SUBMIT_ARGS = "--packages eisber:sarplus:0.2.6 pyspark-shell"
 os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
 from pyspark.sql import SparkSession
@@ -96,7 +96,7 @@ spark = (
 
 ```bash
 pip install pysarplus
-pyspark --packages microsoft:sarplus:0.2.6 --conf spark.sql.crossJoin.enabled=true
+pyspark --packages eisber:sarplus:0.2.6 --conf spark.sql.crossJoin.enabled=true
 ```
 
 ### Databricks
@@ -110,7 +110,7 @@ spark.sql.crossJoin.enabled true
 1. Navigate to your workspace 
 2. Create library
 3. Under 'Source' select 'Maven Coordinate'
-4. Enter 'microsoft:sarplus:0.2.5' or 'microsoft:sarplus:0.2.6' if you're on Spark 2.4.1
+4. Enter 'eisber:sarplus:0.2.5' or 'eisber:sarplus:0.2.6' if you're on Spark 2.4.1
 5. Hit 'Create Library'
 6. Attach to your cluster
 7. Create 2nd library
