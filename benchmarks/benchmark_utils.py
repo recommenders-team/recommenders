@@ -26,11 +26,14 @@ from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
 from reco_utils.recommender.surprise.surprise_utils import (
-    compute_rating_predictions,
+    predict,
     compute_ranking_predictions,
 )
-from reco_utils.recommender.fastai.fastai_utils import (cartesian_product, score,
-                                                        hide_fastai_progress_bar)
+from reco_utils.recommender.fastai.fastai_utils import (
+    cartesian_product,
+    score,
+    hide_fastai_progress_bar,
+)
 from reco_utils.recommender.cornac.cornac_utils import predict_ranking
 from reco_utils.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
@@ -125,7 +128,7 @@ def train_svd(params, data):
 
 def predict_svd(model, test):
     with Timer() as t:
-        preds = compute_rating_predictions(
+        preds = predict(
             model,
             test,
             usercol=DEFAULT_USER_COL,
@@ -266,8 +269,7 @@ def recommend_k_ncf(model, test, train):
 
 def prepare_training_bpr(train):
     return cornac.data.Dataset.from_uir(
-        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
-        seed=SEED
+        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False), seed=SEED
     )
 
 

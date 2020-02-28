@@ -468,19 +468,19 @@ class BaseModel:
             if test_file is not None:
                 print(
                     "at epoch {0:d}".format(epoch)
-                    + " train info: "
+                    + "\ntrain info: "
                     + train_info
-                    + " eval info: "
+                    + "\neval info: "
                     + eval_info
-                    + " test info: "
+                    + "\ntest info: "
                     + test_info
                 )
             else:
                 print(
                     "at epoch {0:d}".format(epoch)
-                    + " train info: "
+                    + "\ntrain info: "
                     + train_info
-                    + " eval info: "
+                    + "\neval info: "
                     + eval_info
                 )
             print(

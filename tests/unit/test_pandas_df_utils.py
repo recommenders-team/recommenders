@@ -4,6 +4,8 @@
 import numpy as np
 import pandas as pd
 import pytest
+from tempfile import TemporaryDirectory
+import os
 
 from reco_utils.dataset.pandas_df_utils import (
     user_item_pairs,
@@ -110,9 +112,6 @@ def test_csv_to_libffm():
         'field3': [1.0, 2.0, 3.0, 4.0, 5.0],
         'field4': ['1', '2', '3', '4', '5']
     })
-
-    from tempfile import TemporaryDirectory
-    import os
 
     with TemporaryDirectory() as td:
         filepath = os.path.join(td, "test")
