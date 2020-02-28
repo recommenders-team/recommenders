@@ -1,5 +1,5 @@
 name: SAR Scoring
-version: 1.0.0
+version: 1.0.1
 category: Recommenders
 description: |
     Python SAR Recommenders
@@ -59,7 +59,7 @@ outputs:
 implementation:
   container:
     conda: sar_conda.yaml
-    entry: azureml-designer-modules/entries/score_sar_entry.py
+    entry: reco_utils/azureml/azureml-designer-modules/entries/score_sar_entry.py
     args: [
       --trained-model, {inputPath: Trained model},
       --dataset-to-score, {inputPath: Dataset to score},

@@ -1,6 +1,6 @@
 name: Precision at K
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 1.0.0
+version: 1.0.1
 category: Recommenders/Metrics
 description: "Precision at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders."
 inputs:
@@ -48,7 +48,7 @@ outputs:
 implementation:
   container:
     conda: sar_conda.yaml
-    entry: azureml-designer-modules/entries/precision_at_k_entry.py
+    entry: reco_utils/azureml/azureml-designer-modules/entries/precision_at_k_entry.py
     args:
     - --rating-true
     - inputPath: Rating true
