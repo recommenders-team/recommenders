@@ -40,7 +40,7 @@ outputs:
 implementation:
   container:
     conda: sar_conda.yaml
-    entry: reco_utils/azureml/azureml-designer-modules/entries/train_sar_entry.py
+    entry: reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py
     args:
     - --input-path
     - inputPath: Input path

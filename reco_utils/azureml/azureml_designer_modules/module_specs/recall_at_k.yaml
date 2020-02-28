@@ -48,7 +48,7 @@ outputs:
 implementation:
   container:
     conda: sar_conda.yaml
-    entry: reco_utils/azureml/azureml-designer-modules/entries/recall_at_k_entry.py
+    entry: reco_utils/azureml/azureml_designer_modules/entries/recall_at_k_entry.py
     args:
     - --rating-true
     - inputPath: Rating true
