@@ -1,6 +1,6 @@
 name: SAR Training
 id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 1.0.1
+version: 1.1.0
 category: Recommenders
 description: "SAR Train from Recommenders repo: https://github.com/Microsoft/Recommenders."
 inputs:
