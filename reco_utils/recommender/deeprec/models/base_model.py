@@ -357,7 +357,7 @@ class BaseModel:
         """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False
-        return sess.run([self.pred, self.iterator.labels], feed_dict=feed_dict,)
+        return sess.run([self.pred, self.iterator.labels], feed_dict=feed_dict)
 
     def infer(self, sess, feed_dict):
         """Given feature data (in feed_dict), get predicted scores with current model.
@@ -435,8 +435,7 @@ class BaseModel:
                 if epoch % self.hparams.save_epoch == 0:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
                     checkpoint_path = self.saver.save(
-                        sess=train_sess,
-                        save_path=save_path_str,
+                        sess=train_sess, save_path=save_path_str
                     )
 
             eval_start = time.time()
@@ -552,7 +551,7 @@ class BaseModel:
             shape=[inputs.shape[-1].value, hidden_size],
             initializer=self.initializer,
         )
-        att_inputs = tf.tensordot(inputs, attention_mat, [[2],[0]])
+        att_inputs = tf.tensordot(inputs, attention_mat, [[2], [0]])
 
         query = tf.get_variable(
             name="query",
@@ -601,9 +600,12 @@ class BaseModel:
                     tf.summary.histogram(
                         "nn_part/" + "b_nn_layer" + str(layer_idx), curr_b_nn_layer
                     )
-                    curr_hidden_nn_layer = tf.tensordot(
-                        hidden_nn_layers[layer_idx], curr_w_nn_layer, axes=1
-                    ) + curr_b_nn_layer
+                    curr_hidden_nn_layer = (
+                        tf.tensordot(
+                            hidden_nn_layers[layer_idx], curr_w_nn_layer, axes=1
+                        )
+                        + curr_b_nn_layer
+                    )
 
                     scope = "nn_part" + str(idx)
                     activation = hparams.activation[idx]
@@ -638,8 +640,9 @@ class BaseModel:
                 tf.summary.histogram(
                     "nn_part/" + "b_nn_output" + str(layer_idx), b_nn_output
                 )
-                nn_output = tf.tensordot(
-                    hidden_nn_layers[-1], w_nn_output, axes=1
-                ) + b_nn_output
+                nn_output = (
+                    tf.tensordot(hidden_nn_layers[-1], w_nn_output, axes=1)
+                    + b_nn_output
+                )
                 self.logit = nn_output
                 return nn_output
