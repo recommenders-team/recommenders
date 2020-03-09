@@ -242,12 +242,18 @@ class SARSingleNode:
             logger.info("Calculating normalization factors")
             temp_df[self.col_unity_rating] = 1.0
             if self.time_decay_flag:
-                temp_df = self.compute_time_decay(df=temp_df, decay_column=self.col_unity_rating)
-            self.unity_user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_unity_rating)
+                temp_df = self.compute_time_decay(
+                    df=temp_df, decay_column=self.col_unity_rating
+                )
+            self.unity_user_affinity = self.compute_affinity_matrix(
+                df=temp_df, rating_col=self.col_unity_rating
+            )
 
         # affinity matrix
         logger.info("Building user affinity sparse matrix")
-        self.user_affinity = self.compute_affinity_matrix(df=temp_df, rating_col=self.col_rating)
+        self.user_affinity = self.compute_affinity_matrix(
+            df=temp_df, rating_col=self.col_rating
+        )
 
         # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
@@ -296,7 +302,7 @@ class SARSingleNode:
         user_ids = list(
             map(
                 lambda user: self.user2index.get(user, np.NaN),
-                test[self.col_user].unique()
+                test[self.col_user].unique(),
             )
         )
         if any(np.isnan(user_ids)):
@@ -317,12 +323,14 @@ class SARSingleNode:
 
         if normalize:
             if self.unity_user_affinity is None:
-                raise ValueError('Cannot use normalize flag during scoring if it was not set at model instantiation')
+                raise ValueError(
+                    "Cannot use normalize flag during scoring if it was not set at model instantiation"
+                )
             else:
                 test_scores = np.array(
                     np.divide(
                         test_scores,
-                        self.unity_user_affinity[user_ids, :].dot(self.item_similarity)
+                        self.unity_user_affinity[user_ids, :].dot(self.item_similarity),
                     )
                 )
                 test_scores = np.where(np.isnan(test_scores), -np.inf, test_scores)
@@ -380,7 +388,7 @@ class SARSingleNode:
             list(
                 map(
                     lambda item: self.item2index.get(item, np.NaN),
-                    items[self.col_item].values
+                    items[self.col_item].values,
                 )
             )
         )
@@ -479,7 +487,7 @@ class SARSingleNode:
             list(
                 map(
                     lambda user: self.user2index.get(user, np.NaN),
-                    test[self.col_user].values
+                    test[self.col_user].values,
                 )
             )
         )
@@ -489,7 +497,7 @@ class SARSingleNode:
             list(
                 map(
                     lambda item: self.item2index.get(item, np.NaN),
-                    test[self.col_item].values
+                    test[self.col_item].values,
                 )
             )
         )
