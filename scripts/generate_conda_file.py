@@ -35,6 +35,7 @@ $ python -m ipykernel install --user --name {conda_env} --display-name "Python (
 CHANNELS = ["defaults", "conda-forge", "pytorch", "fastai"]
 
 CONDA_BASE = {
+    "python": "python==3.6.10",
     "bottleneck": "bottleneck==1.2.1",
     "dask": "dask>=0.17.1",
     "fastparquet": "fastparquet>=0.1.6",
@@ -43,9 +44,8 @@ CONDA_BASE = {
     "matplotlib": "matplotlib>=2.2.2",
     "mock": "mock==2.0.0",
     "numpy": "numpy>=1.13.3",
-    "pandas": "pandas>=0.23.4",
+    "pandas": "pandas>=0.23.4,<1.0.0",
     "pip": "pip>=19.0.3",
-    "python": "python==3.6.8",
     "pytest": "pytest>=3.6.4",
     "pytorch": "pytorch-cpu>=1.0.0",
     "seaborn": "seaborn>=0.8.1",

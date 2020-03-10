@@ -24,7 +24,7 @@ RUN wget ${CMAKE} -O cmake.tgz && \
     cd cmake && \
     ./bootstrap && \
     make && \
-    make install
+    make install && \
     cd .. && \
     rm cmake.tgz && \
     rm -rf cmake
