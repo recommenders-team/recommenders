@@ -1,3 +1,60 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+trigger:
+- master
+
+variables:
+- group: LinuxAgentPool
+
+jobs:
+- job: Artifact
+  displayName: 'Create Recommenders artifact'
+  timeoutInMinutes: 30 # how long to run the job before automatically cancelling
+  pool:
+    name: $(Agent_Pool)
+
+  steps:
+  - bash: |
+      echo "##vso[task.prependpath]/data/anaconda/bin"
+      conda env list
+    displayName: 'Add Conda to PATH'
+
+  - script: |
+      conda env remove -n artifact_reco_base -y   
+    workingDirectory: tests
+    displayName: 'Conda remove'
+    continueOnError: true
+    condition: always() # this step will always run, even if the pipeline is canceled
+
+  - script: |
+      python ./scripts/generate_conda_file.py --name artifact_reco_base
+      conda env create --quiet -f artifact_reco_base.yaml 2> log
+    displayName: 'Setup Conda Env'
+
+  - script: |
+      conda activate artifact_reco_base 
+      pip install wheel twine keyring artifacts-keyring
+      pip list
+    displayName: 'Install dependencies'
+
+  - script: |
+      python setup.py sdist bdist_wheel
+    displayName: 'Build wheel'
+
+  - task: TwineAuthenticate@1
+    inputs:
+      artifactFeed: best-practices/recommenders
+    displayName: 'Twine Authenticate'
+
+  - script: |
+      cat $(PYPIRC_PATH)
+      python -m twine upload -r recommenders --config-file $(PYPIRC_PATH) dist/*.whl --verbose
+    displayName: 'Upload wheel'
+
+  - script: |
+      conda env remove -n artifact_reco_base -y   
+    workingDirectory: tests
+    displayName: 'Conda remove'
+    continueOnError: true
+    condition: always() # this step will always run, even if the pipeline is canceled
