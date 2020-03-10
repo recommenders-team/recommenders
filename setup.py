@@ -13,7 +13,7 @@ with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
 
 setup(
     name="reco_utils",
-    version=VERSION,
+    version=VERSION + ".post0",
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
