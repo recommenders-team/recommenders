@@ -33,8 +33,9 @@ jobs:
     displayName: 'Setup Conda Env'
 
   - script: |
-      conda activate artifact_reco_base 
-      pip install wheel twine keyring artifacts-keyring
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate artifact_reco_base && \
+      pip install wheel twine keyring artifacts-keyring && \
       pip list
     displayName: 'Install dependencies'
 
@@ -48,7 +49,7 @@ jobs:
     displayName: 'Twine Authenticate'
 
   - script: |
-      cat $(PYPIRC_PATH)
+
       python -m twine upload -r recommenders --config-file $(PYPIRC_PATH) dist/*.whl --verbose
     displayName: 'Upload wheel'
 
