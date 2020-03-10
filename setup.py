@@ -31,6 +31,6 @@ setup(
     ],
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
     package_dir={"": "reco_utils"},
-    packages=find_packages(where="reco_utils", exclude=["azureml_designer_modules"])
+    packages=find_packages(where="reco_utils", exclude=["azureml_designer_modules"]),
     python_requires=">=3.6, <4",
 )
