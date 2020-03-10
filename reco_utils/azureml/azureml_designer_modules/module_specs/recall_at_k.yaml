@@ -1,0 +1,72 @@
+name: Recall at K
+id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
+version: 1.1.0
+category: Recommenders/Metrics
+description: "Recall at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders."
+inputs:
+- name: Rating true
+  type: DataFrameDirectory
+  description: True DataFrame.
+  port: true
+- name: Rating pred
+  type: DataFrameDirectory
+  description: Predicted DataFrame.
+  port: true
+- name: User column
+  type: String
+  default: UserId
+  description: Column name of user IDs.
+- name: Item column
+  type: String
+  default: MovieId
+  description: Column name of item IDs.
+- name: Rating column
+  type: String
+  default: Rating
+  description: Column name of ratings.
+- name: Prediction column
+  type: String
+  default: prediction
+  description: Column name of predictions.
+- name: Relevancy method
+  type: String
+  default: top_k
+  description: method for determining relevancy ['top_k', 'by_threshold'].
+- name: Top k
+  type: Int
+  default: 10
+  description: Number of top k items per user.
+- name: Threshold
+  type: Float
+  default: 10.0
+  description: Threshold of top items per user.
+outputs:
+- name: Score
+  type: DataFrameDirectory
+  description: Recall at k (min=0, max=1).
+  port: true
+implementation:
+  container:
+    conda: sar_conda.yaml
+    entry: reco_utils/azureml/azureml_designer_modules/entries/recall_at_k_entry.py
+    args:
+    - --rating-true
+    - inputPath: Rating true
+    - --rating-pred
+    - inputPath: Rating pred
+    - --col-user
+    - inputValue: User column
+    - --col-item
+    - inputValue: Item column
+    - --col-rating
+    - inputValue: Rating column
+    - --col-prediction
+    - inputValue: Prediction column
+    - --relevancy-method
+    - inputValue: Relevancy method
+    - --k
+    - inputValue: Top k
+    - --threshold
+    - inputValue: Threshold
+    - --score-result
+    - outputPath: Score
