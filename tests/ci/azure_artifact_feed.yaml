@@ -47,7 +47,7 @@ jobs:
 
   - task: TwineAuthenticate@1
     inputs:
-      artifactFeed: best-practices/recommenders
+      artifactFeed: recommenders/recommenders
     displayName: 'Twine Authenticate'
 
   - script: |
