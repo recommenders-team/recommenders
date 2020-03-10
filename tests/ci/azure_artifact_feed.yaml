@@ -40,6 +40,8 @@ jobs:
     displayName: 'Install dependencies'
 
   - script: |
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate artifact_reco_base && \
       python setup.py sdist bdist_wheel
     displayName: 'Build wheel'
 
@@ -49,7 +51,8 @@ jobs:
     displayName: 'Twine Authenticate'
 
   - script: |
-
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate artifact_reco_base && \
       python -m twine upload -r recommenders --config-file $(PYPIRC_PATH) dist/*.whl --verbose
     displayName: 'Upload wheel'
 
