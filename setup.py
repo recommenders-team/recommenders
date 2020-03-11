@@ -13,7 +13,7 @@ with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
 
 HASH = environ.get("HASH", "")
 if HASH:
-    version += ".post" + HASH
+    version += ".dev0" + HASH
 
 setup(
     name="reco_utils",
