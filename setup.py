@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import time
 from setuptools import setup, find_packages
 from os import chdir, path, environ
 
@@ -11,13 +12,13 @@ version = __import__("reco_utils.__init__").VERSION
 with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
-HASH = environ.get("HASH", "")
-if HASH:
-    version += ".dev0+" + HASH
+HASH = environ.get("HASH", None)
+if HASH is not None:
+    version += ".dev" + str(int(time.time()))
 
 setup(
     name="reco_utils",
-    version="0.0.dev0+" + HASH,
+    version=version,
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",

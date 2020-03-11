@@ -43,7 +43,7 @@ jobs:
       . /anaconda/etc/profile.d/conda.sh && \
       conda activate artifact_reco_base && \
       rm -rf dist && \
-      HASH=`git log --pretty=format:'%h' -n 1` python setup.py sdist bdist_wheel
+      HASH=True python setup.py sdist bdist_wheel
     displayName: 'Build wheel'
 
   - task: TwineAuthenticate@1
