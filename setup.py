@@ -14,7 +14,7 @@ with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
 
 HASH = environ.get("HASH", None)
 if HASH is not None:
-    version += ".dev" + str(int(time.time()))
+    version += ".post" + str(int(time.time()))
 
 setup(
     name="reco_utils",
