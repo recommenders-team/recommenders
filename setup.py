@@ -2,18 +2,22 @@
 # Licensed under the MIT License.
 
 from setuptools import setup, find_packages
-from os import chdir, path
+from os import chdir, path, environ
 
 chdir(path.abspath(path.dirname(__file__)))
-VERSION = __import__("reco_utils.__init__").VERSION
+version = __import__("reco_utils.__init__").VERSION
 
 # Get the long description from the README file
 with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
+HASH = environ.get("HASH", "")
+if HASH:
+    version += "." + HASH
+
 setup(
     name="reco_utils",
-    version=VERSION + ".post0",
+    version=version,
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
