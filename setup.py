@@ -17,7 +17,7 @@ if HASH:
 
 setup(
     name="reco_utils",
-    version=version,
+    version="0.0.dev0+" + HASH,
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
