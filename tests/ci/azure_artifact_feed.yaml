@@ -16,8 +16,8 @@
 variables:
 - group: LinuxAgentPool
 
-#trigger:
-#- master
+trigger:
+- master
 
 jobs:
 - job: Artifact
