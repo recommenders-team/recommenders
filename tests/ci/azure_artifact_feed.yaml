@@ -63,6 +63,7 @@ jobs:
       artifactFeed: recommenders/recommenders
     displayName: 'Twine Authenticate'
 
+  # Artifact package: https://dev.azure.com/best-practices/recommenders/_packaging?_a=feed&feed=recommenders
   - script: |
       . /anaconda/etc/profile.d/conda.sh && \
       conda activate $(env_name) && \
