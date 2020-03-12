@@ -1,13 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-#trigger:
-#- master
+# NOTE: 
+# This yaml file is used to generate ADO artifacts for Recommenders library.
+# We use the same yaml file to generate the library in different environments: CPU, GPU and PySpark
+# When setting the pipeline, we need to define the variables env_name, env_flag and library_name
+# To add the variables, go to the pipeline, press edit and then variables.
+# An example of the variables we use in the GPU environment:
+# env_name=artifact_reco_gpu
+# env_flag=--gpu
+# library_name=reco_utils_gpu
 
 # The global variables are defined in ADO/Pipelines/Library
 # https://dev.azure.com/best-practices/recommenders/_library?itemType=VariableGroups
 variables:
 - group: LinuxAgentPool
+
+#trigger:
+#- master
 
 jobs:
 - job: Artifact
@@ -30,7 +40,7 @@ jobs:
     condition: always() # this step will always run, even if the pipeline is canceled
 
   - script: |
-      python ./scripts/generate_conda_file.py --name $(env_name)
+      python ./scripts/generate_conda_file.py --name $(env_name) $(env_flag)
       conda env create --quiet -f $(env_name).yaml 2> log
     displayName: 'Setup Conda Env'
 
@@ -45,19 +55,19 @@ jobs:
       . /anaconda/etc/profile.d/conda.sh && \
       conda activate $(env_name) && \
       rm -rf dist && \
-      HASH=True python setup.py sdist bdist_wheel
+      HASH=True NAME=$(library_name) python setup.py sdist bdist_wheel
     displayName: 'Build wheel'
 
-  # - task: TwineAuthenticate@1
-  #   inputs:
-  #     artifactFeed: recommenders/recommenders
-  #   displayName: 'Twine Authenticate'
+  - task: TwineAuthenticate@1
+    inputs:
+      artifactFeed: recommenders/recommenders
+    displayName: 'Twine Authenticate'
 
-  # - script: |
-  #     . /anaconda/etc/profile.d/conda.sh && \
-  #     conda activate $(env_name) && \
-  #     python -m twine upload -r recommenders --config-file $(PYPIRC_PATH) dist/*.whl --verbose
-  #   displayName: 'Upload wheel'
+  - script: |
+      . /anaconda/etc/profile.d/conda.sh && \
+      conda activate $(env_name) && \
+      python -m twine upload -r recommenders --config-file $(PYPIRC_PATH) dist/*.whl --verbose
+    displayName: 'Upload wheel'
 
   - script: |
       conda env remove -n $(env_name) -y   
