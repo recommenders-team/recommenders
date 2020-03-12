@@ -1,6 +1,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# To install recommenders artifact:
+# $ pip install artifacts-keyring --pre
+# Choose the version to install based on your environment:
+# $ pip install reco-utils --index-url=https://pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
+# $ pip install reco-utils-gpu --index-url=https://pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
+# $ pip install reco-utils-pyspark --index-url=https://pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
+
+
 # NOTE: 
 # This yaml file is used to generate ADO artifacts for Recommenders library.
 # We use the same yaml file to generate the library in different environments: CPU, GPU and PySpark
