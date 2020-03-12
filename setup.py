@@ -16,8 +16,10 @@ HASH = environ.get("HASH", None)
 if HASH is not None:
     version += ".post" + str(int(time.time()))
 
+name = environ.get("NAME", "reco_utils")
+
 setup(
-    name="reco_utils",
+    name=name,
     version=version,
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,

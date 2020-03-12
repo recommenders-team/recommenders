@@ -4,6 +4,8 @@
 #trigger:
 #- master
 
+# The global variables are defined in ADO/Pipelines/Library
+# https://dev.azure.com/best-practices/recommenders/_library?itemType=VariableGroups
 variables:
 - group: LinuxAgentPool
 
@@ -21,44 +23,44 @@ jobs:
     displayName: 'Add Conda to PATH'
 
   - script: |
-      conda env remove -n artifact_reco_base -y   
+      conda env remove -n $(env_name) -y   
     workingDirectory: tests
     displayName: 'Conda remove'
     continueOnError: true
     condition: always() # this step will always run, even if the pipeline is canceled
 
   - script: |
-      python ./scripts/generate_conda_file.py --name artifact_reco_base
-      conda env create --quiet -f artifact_reco_base.yaml 2> log
+      python ./scripts/generate_conda_file.py --name $(env_name)
+      conda env create --quiet -f $(env_name).yaml 2> log
     displayName: 'Setup Conda Env'
 
   - script: |
       . /anaconda/etc/profile.d/conda.sh && \
-      conda activate artifact_reco_base && \
+      conda activate $(env_name) && \
       pip install wheel twine keyring artifacts-keyring && \
       pip list
     displayName: 'Install dependencies'
 
   - script: |
       . /anaconda/etc/profile.d/conda.sh && \
-      conda activate artifact_reco_base && \
+      conda activate $(env_name) && \
       rm -rf dist && \
       HASH=True python setup.py sdist bdist_wheel
     displayName: 'Build wheel'
 
-  - task: TwineAuthenticate@1
-    inputs:
-      artifactFeed: recommenders/recommenders
-    displayName: 'Twine Authenticate'
+  # - task: TwineAuthenticate@1
+  #   inputs:
+  #     artifactFeed: recommenders/recommenders
+  #   displayName: 'Twine Authenticate'
+
+  # - script: |
+  #     . /anaconda/etc/profile.d/conda.sh && \
+  #     conda activate $(env_name) && \
+  #     python -m twine upload -r recommenders --config-file $(PYPIRC_PATH) dist/*.whl --verbose
+  #   displayName: 'Upload wheel'
 
   - script: |
-      . /anaconda/etc/profile.d/conda.sh && \
-      conda activate artifact_reco_base && \
-      python -m twine upload -r recommenders --config-file $(PYPIRC_PATH) dist/*.whl --verbose
-    displayName: 'Upload wheel'
-
-  - script: |
-      conda env remove -n artifact_reco_base -y   
+      conda env remove -n $(env_name) -y   
     workingDirectory: tests
     displayName: 'Conda remove'
     continueOnError: true
