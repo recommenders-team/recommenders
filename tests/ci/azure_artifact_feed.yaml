@@ -24,8 +24,13 @@
 variables:
 - group: LinuxAgentPool
 
-# trigger:
-# - master
+# Pull request against these branches will trigger this build
+pr:
+- master
+
+# Any commit to this branch will trigger the build.
+trigger:
+- master
 
 jobs:
 - job: Artifact
