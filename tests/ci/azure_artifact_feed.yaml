@@ -24,11 +24,8 @@
 variables:
 - group: LinuxAgentPool
 
-# Pull request against these branches will trigger this build
-pr:
-- master
-
-# Any commit to this branch will trigger the build.
+# The pipeline will be triggered when we merge to master
+pr: none
 trigger:
 - master
 
