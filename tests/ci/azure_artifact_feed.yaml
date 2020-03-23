@@ -1,13 +1,24 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# To install recommenders artifact:
+# To install recommenders artifact (with manual login to Azure):
 # $ pip install artifacts-keyring --pre
 # Choose the version to install based on your environment:
 # $ pip install reco-utils --index-url=https://pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
 # $ pip install reco-utils-gpu --index-url=https://pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
 # $ pip install reco-utils-pyspark --index-url=https://pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
 
+# To install recommenders artifact programmarically with Personal Access Token (PAT):
+# First generate the PAT:
+# 1. Go to the Personal Access Tokens screen in ADO => User (icon in top right)
+# 2. Generate a new token, with at least Packages/Read permissions selected
+# 3. Add the PAT in the index-url=https://{feed_name}:{PAT}@pkgs.dev.azure.com/{org_name}/{project_name}/_packaging/{feed_name}/pypi/simple/
+# Install dependencies and Recommenders library
+# $ pip install artifacts-keyring --pre
+# Choose the version to install based on your environment:
+# $ pip install reco-utils --index-url=https://recommenders:{PAT}@pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
+# $ pip install reco-utils-gpu --index-url=https://recommenders:{PAT}@pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
+# $ pip install reco-utils-pyspark --index-url=https://recommenders:{PAT}@pkgs.dev.azure.com/best-practices/recommenders/_packaging/recommenders/pypi/simple/
 
 # NOTE: 
 # This yaml file is used to generate ADO artifacts for Recommenders library.
