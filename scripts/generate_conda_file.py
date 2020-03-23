@@ -45,7 +45,7 @@ CONDA_BASE = {
     "mock": "mock==2.0.0",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4,<1.0.0",
-    "pip": "pip>=19.0.3",
+    "pip": "pip>=19.2",
     "pytest": "pytest>=3.6.4",
     "pytorch": "pytorch-cpu>=1.0.0",
     "seaborn": "seaborn>=0.8.1",
@@ -84,7 +84,7 @@ PIP_BASE = {
     "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
-    "xlearn": "xlearn==0.40a1"
+    "xlearn": "xlearn==0.40a1",
 }
 
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
