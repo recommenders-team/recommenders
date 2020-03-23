@@ -1,19 +1,26 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from setuptools import setup
-from os import chdir, path
+import time
+from setuptools import setup, find_packages
+from os import chdir, path, environ
 
 chdir(path.abspath(path.dirname(__file__)))
-VERSION = __import__("reco_utils.__init__").VERSION
+version = __import__("reco_utils.__init__").VERSION
 
 # Get the long description from the README file
 with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
+HASH = environ.get("HASH", None)
+if HASH is not None:
+    version += ".post" + str(int(time.time()))
+
+name = environ.get("NAME", "reco_utils")
+
 setup(
-    name="reco_utils",
-    version=VERSION,
+    name=name,
+    version=version,
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
@@ -30,6 +37,8 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
-    packages=["reco_utils"],
+    package_dir={"reco_utils": "reco_utils"},
+    packages=find_packages(where=".", exclude=["tests", "scripts"]),
     python_requires=">=3.6, <4",
 )
+
