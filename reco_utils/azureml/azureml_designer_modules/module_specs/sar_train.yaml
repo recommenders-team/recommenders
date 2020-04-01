@@ -1,13 +1,15 @@
-name: SAR Training
-id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 1.1.1
-category: Recommenders
+moduleIdentifier: 
+  namespace: microsoft.com/cat
+  moduleName: SAR Training
+  moduleVersion: 1.1.0
+metadata:
+  annotations:
+    tags: ["Recommenders"]
 description: "SAR Train from Recommenders repo: https://github.com/Microsoft/Recommenders."
 inputs:
 - name: Input path
   type: DataFrameDirectory
   description: The directory contains dataframe.
-  port: true
 - name: User column
   type: String
   default: UserId
@@ -36,11 +38,12 @@ outputs:
 - name: Output model
   type: ModelDirectory
   description: The output directory contains a trained model
-  port: true
 implementation:
   container:
-    conda: sar_conda.yaml
-    entry: reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py
+    amlEnvironment:
+      python:
+        condaDependenciesFile: sar_conda.yaml
+    command: [python, reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py]
     args:
     - --input-path
     - inputPath: Input path
