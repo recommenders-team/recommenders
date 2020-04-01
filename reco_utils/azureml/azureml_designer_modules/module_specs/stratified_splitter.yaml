@@ -1,16 +1,20 @@
-name: Splitter Stratified
-id: efd1af54-0d31-42e1-b3d5-ce3b7c538705
-version: 1.1.0
-category: Recommenders
+moduleIdentifier: 
+  namespace: microsoft.com/cat
+  moduleName: Splitter Stratified
+  moduleVersion: 1.1.0
+metadata:
+  annotations:
+    tags: ["Recommenders"]
 description: "Python stratified splitter from Recommenders repo: https://github.com/Microsoft/Recommenders."
 inputs:
 - name: Input path
   type: DataFrameDirectory
   description: The directory contains dataframe.
-  port: true
 - name: Ratio
   type: Float
   default: 0.75
+  max: 1.0
+  min: 0.0
   description: > 
             Ratio for splitting data. If it is a single float number,
             it splits data into two halves and the ratio argument indicates the ratio of 
@@ -26,22 +30,22 @@ inputs:
   default: MovieId
   description: Column name of item IDs.
 - name: Seed
-  type: Int
+  type: Integer
   default: 42
   description: Seed.
 outputs:
 - name: Output train data
   type: DataFrameDirectory
   description: The output directory contains a training dataframe.
-  port: true
 - name: Output test data
   type: DataFrameDirectory
   description: The output directory contains a test dataframe.
-  port: true
 implementation:
   container:
-    conda: sar_conda.yaml
-    entry: reco_utils/azureml/azureml_designer_modules/entries/stratified_splitter_entry.py
+    amlEnvironment:
+      python:
+        condaDependenciesFile: sar_conda.yaml
+    command: [python, reco_utils/azureml/azureml_designer_modules/entries/stratified_splitter_entry.py]
     args:
     - --input-path
     - inputPath: Input path
