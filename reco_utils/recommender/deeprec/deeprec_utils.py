@@ -573,7 +573,7 @@ def cal_metric(labels, preds, metrics):
                         for each_labels, each_preds in zip(labels, preds)
                     ]
                 )
-                res["group_ndcg@{0}".format(k)] = round(ndcg_temp, 4)
+                res["ndcg@{0}".format(k)] = round(ndcg_temp, 4)
         elif metric.startswith("hit"):  # format like:  hit@2;4;6;8
             hit_list = [1, 2]
             ks = metric.split('@')
