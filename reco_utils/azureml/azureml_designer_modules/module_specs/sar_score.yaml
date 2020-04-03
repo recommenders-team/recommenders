@@ -1,26 +1,28 @@
-name: SAR Scoring
-version: 1.1.0
-category: Recommenders
+moduleIdentifier: 
+  namespace: microsoft.com/cat
+  moduleName: SAR Scoring
+  moduleVersion: 1.1.0
 description: |
     Python SAR Recommenders
     repo: https://github.com/Microsoft/Recommenders
+metadata:
+  annotations:
+    tags: ["Recommenders"]
 inputs:
 - name: Trained model
   type: ModelDirectory
   description: The directory contains SAR model.
-  port: true
 - name: Dataset to score
   type: DataFrameDirectory
-  port: true
   description: Dataset to score
 - name: Score type
-  type: Mode
+  type: Enum
   default: Item recommendation
   description: The type of score which the recommender should output
   options:
   - Rating prediction:
     - name: Items to predict
-      type: Mode
+      type: Enum
       default: Items in score set
       description: The set of items to predict for test users
       options:
@@ -28,7 +30,7 @@ inputs:
       - Items in score set
   - Item recommendation:
     - name: Ranking metric
-      type: Mode
+      type: Enum
       default: Rating
       description: The metric of ranking used in item recommendation
       options:
@@ -40,7 +42,7 @@ inputs:
       - Similarity
       - Popularity
     - name: Top k
-      type: Int
+      type: Integer
       default: 10
       description: The number of top items to recommend.
       min: 1
@@ -58,8 +60,10 @@ outputs:
   description: Ratings or items to output
 implementation:
   container:
-    conda: sar_conda.yaml
-    entry: reco_utils/azureml/azureml_designer_modules/entries/score_sar_entry.py
+    amlEnvironment:
+      python:
+        condaDependenciesFile: sar_conda.yaml
+    command: [python, reco_utils/azureml/azureml_designer_modules/entries/score_sar_entry.py]
     args: [
       --trained-model, {inputPath: Trained model},
       --dataset-to-score, {inputPath: Dataset to score},
