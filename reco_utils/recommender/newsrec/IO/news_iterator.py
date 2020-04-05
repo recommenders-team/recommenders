@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
-from .iterator import BaseIterator
+from reco_utils.recommender.deeprec.IO.iterator import BaseIterator
 
 __all__ = ["NewsTrainIterator", "NewsTestIterator"]
 
