@@ -24,7 +24,7 @@ class NAMLModel(BaseModel):
         hparam (obj): Global hyper-parameters.
     """
 
-    def __init__(self, hparams, iterator_creator_train, iterator_creator_test):
+    def __init__(self, hparams, iterator_creator):
         """Initialization steps for NAML.
         Compared with the BaseModel, NAML need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
@@ -38,7 +38,23 @@ class NAMLModel(BaseModel):
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
         self.hparam = hparams
 
-        super().__init__(hparams, iterator_creator_train, iterator_creator_test)
+        super().__init__(hparams, iterator_creator)
+
+    def _get_input_label_from_iter(self, batch_data):
+        input_feat = [
+            batch_data["impression_index_batch"],
+            batch_data["user_index_batch"],
+            batch_data["clicked_title_batch"],
+            batch_data["clicked_body_batch"],
+            batch_data["clicked_vert_batch"],
+            batch_data["clicked_subvert_batch"],
+            batch_data["candidate_title_batch"],
+            batch_data["candidate_body_batch"],
+            batch_data["candidate_vert_batch"],
+            batch_data["candidate_subvert_batch"]
+        ]
+        input_label = batch_data["labels"]
+        return input_feat, input_label
 
     def _init_embedding(self, file_path):
         """Load pre-trained embeddings as a constant tensor.
@@ -260,10 +276,12 @@ class NAMLModel(BaseModel):
         pred_input_vert = keras.Input(shape=(hparams.npratio + 1, 1), dtype="int32")
         pred_input_subvert = keras.Input(shape=(hparams.npratio + 1, 1), dtype="int32")
 
-        pred_input_title_one = keras.Input(shape=(hparams.title_size,), dtype="int32")
-        pred_input_body_one = keras.Input(shape=(hparams.body_size,), dtype="int32")
-        pred_input_vert_one = keras.Input(shape=(1,), dtype="int32")
-        pred_input_subvert_one = keras.Input(shape=(1,), dtype="int32")
+        pred_input_title_one = keras.Input(
+            shape=(1, hparams.title_size,), dtype="int32"
+        )
+        pred_input_body_one = keras.Input(shape=(1, hparams.body_size,), dtype="int32")
+        pred_input_vert_one = keras.Input(shape=(1, 1), dtype="int32")
+        pred_input_subvert_one = keras.Input(shape=(1, 1), dtype="int32")
 
         his_title_body_verts = layers.Concatenate(axis=-1)(
             [his_input_title, his_input_body, his_input_vert, his_input_subvert]
@@ -281,6 +299,7 @@ class NAMLModel(BaseModel):
                 pred_input_subvert_one,
             ]
         )
+        pred_title_body_verts_one = layers.Reshape((-1,))(pred_title_body_verts_one)
 
         imp_indexes = keras.Input(shape=(1,), dtype="int32")
         user_indexes = keras.Input(shape=(1,), dtype="int32")

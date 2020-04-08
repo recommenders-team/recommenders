@@ -24,9 +24,7 @@ class BaseModel:
         seed (int): Random seed.
     """
 
-    def __init__(
-        self, hparams, iterator_creator, seed=None
-    ):
+    def __init__(self, hparams, iterator_creator, seed=None):
         """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function, 
         parameter set.
 
@@ -58,6 +56,11 @@ class BaseModel:
     @abc.abstractmethod
     def _build_graph(self):
         """Subclass will implement this."""
+        pass
+
+    @abc.abstractmethod
+    def _get_input_label_from_iter(self, batch_data):
+        """Subclass will implement this"""
         pass
 
     def _get_loss(self):
@@ -119,7 +122,8 @@ class BaseModel:
         Returns:
             list: A list of values, including update operation, total loss, data loss, and merged summary.
         """
-        rslt = self.model.train_on_batch(train_batch_data[0], train_batch_data[1])
+        train_input, train_label = self._get_input_label_from_iter(train_batch_data)
+        rslt = self.model.train_on_batch(train_input, train_label)
         return rslt
 
     def eval(self, eval_batch_data):
@@ -133,11 +137,11 @@ class BaseModel:
             list: A list of evaluated results, including total loss value, data loss value,
                 predicted scores, and ground-truth labels.
         """
-        input_data, label = eval_batch_data
-        imp_index = input_data[0]
-        pred_rslt = self.scorer.predict_on_batch(input_data)
+        eval_input, eval_label = self._get_input_label_from_iter(eval_batch_data)
+        imp_index = eval_input[0]
+        pred_rslt = self.scorer.predict_on_batch(eval_input)
 
-        return pred_rslt, label, imp_index
+        return pred_rslt, eval_label, imp_index
 
     def fit(self, train_file, valid_file, test_file=None):
         """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.

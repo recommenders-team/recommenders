@@ -8,6 +8,7 @@ from reco_utils.recommender.deeprec.IO.iterator import BaseIterator
 
 __all__ = ["NewsIterator"]
 
+
 class NewsIterator(BaseIterator):
     """Train data loader for the NRMS NPA LSTUR model.
     Those model require a special type of data format, where each instance contains a label, impresion id, user id,
@@ -150,12 +151,10 @@ class NewsIterator(BaseIterator):
         user_indexes = np.asarray(user_indexes, dtype=np.int32)
         candidate_news_index_batch = np.asarray(candidate_news_indexes, dtype=np.int64)
         click_news_index_batch = np.asarray(click_news_indexes, dtype=np.int64)
-        return (
-            [
-                imp_indexes,
-                user_indexes,
-                click_news_index_batch,
-                candidate_news_index_batch,
-            ],
-            labels,
-        )
+        return {
+            "impression_index_batch": imp_indexes,
+            "user_index_batch": user_indexes,
+            "clicked_news_batch": click_news_index_batch,
+            "candidate_news_batch": candidate_news_index_batch,
+            "labels": labels,
+        }

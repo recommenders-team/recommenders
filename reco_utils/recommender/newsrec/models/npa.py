@@ -51,6 +51,16 @@ class NPAModel(BaseModel):
         """
         return np.load(file_path).astype(np.float32)
 
+    def _get_input_label_from_iter(self, batch_data):
+        input_feat = [
+            batch_data["impression_index_batch"],
+            batch_data["user_index_batch"],
+            batch_data["clicked_news_batch"],
+            batch_data["candidate_news_batch"],
+        ]
+        input_label = batch_data["labels"]
+        return input_feat, input_label
+
     def _build_graph(self):
         """Build NPA model and scorer.
 

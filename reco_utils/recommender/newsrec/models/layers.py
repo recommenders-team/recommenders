@@ -72,9 +72,26 @@ class AttLayer2(layers.Layer):
         return K.sum(weighted_input, axis=1)
 
     def compute_mask(self, input, input_mask=None):
+        """Compte output mask value
+
+        Args: 
+            input (obj): input tensor.
+            input_mask: input mask
+        
+        Returns:
+            obj: output mask.
+        """
         return None
 
     def compute_output_shape(self, input_shape):
+        """Compute shape of output tensor
+
+        Args:
+            input_shape (tuple): shape of input tensor.
+        
+        Returns:
+            tuple: shape of output tensor.
+        """
         return input_shape[0], input_shape[-1]
 
 
