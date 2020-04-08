@@ -238,8 +238,8 @@ def create_hparams(flags):
         vert_num=flags["vert_num"] if "vert_num" in flags else None,
         subvert_num=flags["subvert_num"] if "subvert_num" in flags else None,
         his_size=flags["his_size"] if "his_size" in flags else None,
-        npratio=flags["npratio"] if "npratio" in flags else None,
-        dropout=flags["dropout"] if "dropout" in flags else 0.0,
+        npratio=flags.get("npratio"),
+        dropout=flags.get("dropout", 0.0),
         attention_hidden_dim=flags["attention_hidden_dim"] if "attention_hidden_dim" in flags else 200, 
         # nrms
         head_num=flags["head_num"] if "head_num" in flags else 4,
