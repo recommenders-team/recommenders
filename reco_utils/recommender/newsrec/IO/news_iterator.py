@@ -92,10 +92,7 @@ class NewsIterator(BaseIterator):
         cnt = 0
 
         with tf.gfile.GFile(infile, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
+            for line in rd:
 
                 (
                     label,
