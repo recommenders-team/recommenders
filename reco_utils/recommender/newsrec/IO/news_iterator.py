@@ -97,10 +97,7 @@ class NewsTrainIterator(BaseIterator):
         cnt = 0
 
         with tf.gfile.GFile(infile, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
+            for line in rd:
 
                 label, imp_index, user_index, candidate_news_index, click_news_index = self.parser_one_line(line)
 
