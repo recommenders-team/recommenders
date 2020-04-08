@@ -23,8 +23,10 @@ class BaseModel:
         graph (obj): An optional graph.
         seed (int): Random seed.
     """
-    
-    def __init__(self, hparams, iterator_creator_train, iterator_creator_test, seed=None):
+
+    def __init__(
+        self, hparams, iterator_creator, seed=None
+    ):
         """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function, 
         parameter set.
 
@@ -39,8 +41,8 @@ class BaseModel:
         tf.set_random_seed(seed)
         np.random.seed(seed)
 
-        self.train_iterator = iterator_creator_train(hparams)
-        self.test_iterator = iterator_creator_test(hparams)
+        self.train_iterator = iterator_creator(hparams, hparams.npratio)
+        self.test_iterator = iterator_creator(hparams, 0)
 
         self.hparams = hparams
         self.model, self.scorer = self._build_graph()
@@ -48,9 +50,7 @@ class BaseModel:
         self.loss = self._get_loss()
         self.train_optimizer = self._get_opt()
 
-        self.model.compile(
-            loss=self.loss, 
-            optimizer=self.train_optimizer)
+        self.model.compile(loss=self.loss, optimizer=self.train_optimizer)
 
         # set GPU use with demand growth
         gpu_options = tf.GPUOptions(allow_growth=True)
@@ -68,12 +68,11 @@ class BaseModel:
         """
         if self.hparams.loss == "cross_entropy_loss":
             data_loss = "categorical_crossentropy"
-        elif self.hparams.loss == 'log_loss': 
-            data_loss = 'binary_crossentropy'
+        elif self.hparams.loss == "log_loss":
+            data_loss = "binary_crossentropy"
         else:
             raise ValueError("this loss not defined {0}".format(self.hparams.loss))
         return data_loss
-
 
     def _get_opt(self):
         """Get the optimizer according to configuration. Usually we will use Adam.
@@ -83,11 +82,10 @@ class BaseModel:
         lr = self.hparams.learning_rate
         optimizer = self.hparams.optimizer
 
-        if optimizer == 'adam':
+        if optimizer == "adam":
             train_opt = keras.optimizers.Adam(lr=lr)
 
         return train_opt
-
 
     def _get_pred(self, logit, task):
         """Make final output as prediction score, according to different tasks.
@@ -111,7 +109,6 @@ class BaseModel:
             )
         return pred
 
-
     def train(self, train_batch_data):
         """Go through the optimization step once with training data in feed_dict.
 
@@ -122,10 +119,7 @@ class BaseModel:
         Returns:
             list: A list of values, including update operation, total loss, data loss, and merged summary.
         """
-        rslt = self.model.train_on_batch(
-            train_batch_data[0],
-            train_batch_data[1]
-            )
+        rslt = self.model.train_on_batch(train_batch_data[0], train_batch_data[1])
         return rslt
 
     def eval(self, eval_batch_data):
@@ -144,7 +138,6 @@ class BaseModel:
         pred_rslt = self.scorer.predict_on_batch(input_data)
 
         return pred_rslt, label, imp_index
-
 
     def fit(self, train_file, valid_file, test_file=None):
         """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
@@ -168,7 +161,7 @@ class BaseModel:
             for batch_data_input in self.train_iterator.load_data_from_file(train_file):
                 step_result = self.train(batch_data_input)
                 step_data_loss = step_result
-                
+
                 epoch_loss += step_data_loss
                 step += 1
                 if step % self.hparams.show_step == 0:
@@ -181,13 +174,14 @@ class BaseModel:
             train_end = time.time()
             train_time = train_end - train_start
 
-
             eval_start = time.time()
-            
-            train_info = ",".join([
-                str(item[0]) + ":" + str(item[1])
-                    for item in [('logloss loss', epoch_loss/step)]
-            ])
+
+            train_info = ",".join(
+                [
+                    str(item[0]) + ":" + str(item[1])
+                    for item in [("logloss loss", epoch_loss / step)]
+                ]
+            )
 
             eval_res = self.run_eval(valid_file)
             eval_info = ", ".join(
@@ -231,11 +225,10 @@ class BaseModel:
                 )
             )
 
-
         return self
 
     def group_labels(self, labels, preds, group_keys):
-        '''Devide labels and preds into several group according to values in group keys.
+        """Devide labels and preds into several group according to values in group keys.
 
         Args:
             labels (list): ground truth label list.
@@ -246,7 +239,7 @@ class BaseModel:
             all_labels: labels after group.
             all_preds: preds after group.
 
-        '''
+        """
 
         all_keys = list(set(group_keys))
         group_labels = {k: [] for k in all_keys}
@@ -263,7 +256,6 @@ class BaseModel:
             all_preds.append(group_preds[k])
 
         return all_labels, all_preds
-
 
     def run_eval(self, filename):
         """Evaluate the given file and returns some evaluation metrics.
@@ -283,7 +275,7 @@ class BaseModel:
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
             imp_indexes.extend(np.reshape(step_imp_index, -1))
-        
+
         group_labels, group_preds = self.group_labels(labels, preds, imp_indexes)
         res = cal_metric(group_labels, group_preds, self.hparams.metrics)
         return res
