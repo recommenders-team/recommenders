@@ -10,8 +10,8 @@ from reco_utils.recommender.newsrec.models.nrms import NRMSModel
 from reco_utils.recommender.newsrec.models.naml import NAMLModel
 from reco_utils.recommender.newsrec.models.lstur import LSTURModel
 from reco_utils.recommender.newsrec.models.npa import NPAModel
-from reco_utils.recommender.newsrec.IO.news_iterator import NewsTrainIterator, NewsTestIterator
-from reco_utils.recommender.newsrec.IO.naml_iterator import NAMLTrainIterator, NAMLTestIterator
+from reco_utils.recommender.newsrec.IO.news_iterator import NewsIterator
+from reco_utils.recommender.newsrec.IO.naml_iterator import NAMLIterator
 
 @pytest.fixture
 def resource_path():
@@ -20,11 +20,9 @@ def resource_path():
 @pytest.mark.gpu
 @pytest.mark.newsrec
 @pytest.mark.nrms
-def test_nrms_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "newsrec", "nrms")
+def test_nrms_component_definition(tmp):
+    data_path = tmp
     yaml_file = os.path.join(data_path, 'nrms.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
     wordEmb_file = os.path.join(data_path, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
@@ -35,9 +33,8 @@ def test_nrms_component_definition(resource_path):
         )
 
     hparams = prepare_hparams(yaml_file, wordEmb_file=wordEmb_file, epochs=1)
-    train_iterator = NewsTrainIterator
-    test_iterator = NewsTestIterator    
-    model = NRMSModel(hparams, train_iterator, test_iterator)
+    iterator = NewsIterator  
+    model = NRMSModel(hparams, iterator)
 
     assert model.model is not None
     assert model.scorer is not None
@@ -48,11 +45,9 @@ def test_nrms_component_definition(resource_path):
 @pytest.mark.gpu
 @pytest.mark.newsrec
 @pytest.mark.naml
-def test_naml_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "newsrec", "naml")
+def test_naml_component_definition(tmp):
+    data_path = tmp
     yaml_file = os.path.join(data_path, 'naml.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
     wordEmb_file = os.path.join(data_path, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
@@ -63,9 +58,8 @@ def test_naml_component_definition(resource_path):
         )
 
     hparams = prepare_hparams(yaml_file, wordEmb_file=wordEmb_file, epochs=1)
-    train_iterator = NAMLTrainIterator
-    test_iterator = NAMLTestIterator    
-    model = NAMLModel(hparams, train_iterator, test_iterator)
+    iterator = NAMLIterator   
+    model = NAMLModel(hparams, iterator)
 
     assert model.model is not None
     assert model.scorer is not None
@@ -76,11 +70,9 @@ def test_naml_component_definition(resource_path):
 @pytest.mark.gpu
 @pytest.mark.newsrec
 @pytest.mark.npa
-def test_npa_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "newsrec", "npa")
+def test_npa_component_definition(tmp):
+    data_path = tmp
     yaml_file = os.path.join(data_path, 'npa.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
     wordEmb_file = os.path.join(data_path, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
@@ -91,9 +83,8 @@ def test_npa_component_definition(resource_path):
         )
 
     hparams = prepare_hparams(yaml_file, wordEmb_file=wordEmb_file, epochs=1)
-    train_iterator = NewsTrainIterator
-    test_iterator = NewsTestIterator    
-    model = NPAModel(hparams, train_iterator, test_iterator)
+    iterator = NewsIterator
+    model = NPAModel(hparams, iterator)
 
     assert model.model is not None
     assert model.scorer is not None
@@ -103,11 +94,9 @@ def test_npa_component_definition(resource_path):
 @pytest.mark.gpu
 @pytest.mark.newsrec
 @pytest.mark.lstur
-def test_lstur_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "newsrec", "lstur")
+def test_lstur_component_definition(tmp):
+    data_path = tmp
     yaml_file = os.path.join(data_path, 'lstur.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
     wordEmb_file = os.path.join(data_path, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
@@ -118,9 +107,8 @@ def test_lstur_component_definition(resource_path):
         )
 
     hparams = prepare_hparams(yaml_file, wordEmb_file=wordEmb_file, epochs=1)
-    train_iterator = NewsTrainIterator
-    test_iterator = NewsTestIterator    
-    model = LSTURModel(hparams, train_iterator, test_iterator)
+    iterator = NewsIterator  
+    model = LSTURModel(hparams, iterator)
 
     assert model.model is not None
     assert model.scorer is not None
