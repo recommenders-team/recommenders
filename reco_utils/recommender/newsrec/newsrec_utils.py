@@ -283,9 +283,7 @@ def prepare_hparams(yaml_file=None, **kwargs):
     else:
         config = {}
 
-    if kwargs:
-        for name, value in six.iteritems(kwargs):
-            config[name] = value
+    config.update(kwargs)
 
     check_nn_config(config)
     return create_hparams(config)
