@@ -24,7 +24,7 @@ class NAMLModel(BaseModel):
         hparam (obj): Global hyper-parameters.
     """
 
-    def __init__(self, hparams, iterator_creator):
+    def __init__(self, hparams, iterator_creator, seed=None):
         """Initialization steps for NAML.
         Compared with the BaseModel, NAML need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
@@ -38,7 +38,7 @@ class NAMLModel(BaseModel):
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
         self.hparam = hparams
 
-        super().__init__(hparams, iterator_creator)
+        super().__init__(hparams, iterator_creator, seed=seed)
 
     def _get_input_label_from_iter(self, batch_data):
         input_feat = [
@@ -96,7 +96,7 @@ class NAMLModel(BaseModel):
         click_news_presents = layers.TimeDistributed(newsencoder)(
             his_input_title_body_verts
         )
-        user_present = AttLayer2(hparams.attention_hidden_dim)(click_news_presents)
+        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(click_news_presents)
 
         model = keras.Model(
             his_input_title_body_verts, user_present, name="user_encoder"
@@ -145,7 +145,7 @@ class NAMLModel(BaseModel):
         concate_repr = layers.Concatenate(axis=-2)(
             [title_repr, body_repr, vert_repr, subvert_repr]
         )
-        news_repr = AttLayer2(hparams.attention_hidden_dim)(concate_repr)
+        news_repr = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(concate_repr)
 
         model = keras.Model(input_title_body_verts, news_repr, name="news_encoder")
         return model
@@ -169,9 +169,11 @@ class NAMLModel(BaseModel):
             hparams.window_size,
             activation=hparams.cnn_activation,
             padding="same",
+            bias_initializer=keras.initializers.Zeros(),
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
-        pred_title = AttLayer2(hparams.attention_hidden_dim)(y)
+        pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
         pred_title = layers.Reshape((1, hparams.filter_num))(pred_title)
 
         model = keras.Model(sequences_input_title, pred_title, name="title_encoder")
@@ -196,9 +198,11 @@ class NAMLModel(BaseModel):
             hparams.window_size,
             activation=hparams.cnn_activation,
             padding="same",
+            bias_initializer=keras.initializers.Zeros(),
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
-        pred_body = AttLayer2(hparams.attention_hidden_dim)(y)
+        pred_body = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
         pred_body = layers.Reshape((1, hparams.filter_num))(pred_body)
 
         model = keras.Model(sequences_input_body, pred_body, name="body_encoder")
@@ -219,7 +223,10 @@ class NAMLModel(BaseModel):
 
         vert_emb = vert_embedding(input_vert)
         pred_vert = layers.Dense(
-            hparams.filter_num, activation=hparams.dense_activation
+            hparams.filter_num, 
+            activation=hparams.dense_activation,
+            bias_initializer=keras.initializers.Zeros(),
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
         )(vert_emb)
         pred_vert = layers.Reshape((1, hparams.filter_num))(pred_vert)
 
@@ -241,7 +248,10 @@ class NAMLModel(BaseModel):
 
         subvert_emb = subvert_embedding(input_subvert)
         pred_subvert = layers.Dense(
-            hparams.filter_num, activation=hparams.dense_activation
+            hparams.filter_num, 
+            activation=hparams.dense_activation,
+            bias_initializer=keras.initializers.Zeros(),
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
         )(subvert_emb)
         pred_subvert = layers.Reshape((1, hparams.filter_num))(pred_subvert)
 

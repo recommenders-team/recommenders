@@ -26,7 +26,7 @@ class NRMSModel(BaseModel):
         hparam (obj): Global hyper-parameters.
     """
 
-    def __init__(self, hparams, iterator_creator):
+    def __init__(self, hparams, iterator_creator, seed=None):
         """Initialization steps for NRMS.
         Compared with the BaseModel, NRMS need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
@@ -40,7 +40,7 @@ class NRMSModel(BaseModel):
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
         self.hparam = hparams
 
-        super().__init__(hparams, iterator_creator)
+        super().__init__(hparams, iterator_creator, seed=seed)
 
     def _init_embedding(self, file_path):
         """Load pre-trained embeddings as a constant tensor.
@@ -89,10 +89,10 @@ class NRMSModel(BaseModel):
         )
 
         click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
-        y = SelfAttention(hparams.head_num, hparams.head_dim)(
+        y = SelfAttention(hparams.head_num, hparams.head_dim, seed=self.seed)(
             [click_title_presents] * 3
         )
-        user_present = AttLayer2(hparams.attention_hidden_dim)(y)
+        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
 
         model = keras.Model(his_input_title, user_present, name="user_encoder")
         return model
@@ -111,9 +111,9 @@ class NRMSModel(BaseModel):
         embedded_sequences_title = embedding_layer(sequences_input_title)
 
         y = layers.Dropout(hparams.dropout)(embedded_sequences_title)
-        y = SelfAttention(hparams.head_num, hparams.head_dim)([y, y, y])
+        y = SelfAttention(hparams.head_num, hparams.head_dim, seed=self.seed)([y, y, y])
         y = layers.Dropout(hparams.dropout)(y)
-        pred_title = AttLayer2(hparams.attention_hidden_dim)(y)
+        pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
 
         model = keras.Model(sequences_input_title, pred_title, name="news_encoder")
         return model

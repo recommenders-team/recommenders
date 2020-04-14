@@ -210,6 +210,18 @@ def notebooks():
         "slirec_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "sequential_recsys_amazondataset.ipynb"
         ),
+        "nrms_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "nrms_synthetic.ipynb"
+        ),
+        "naml_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "naml_synthetic.ipynb"
+        ),
+        "lstur_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "lstur_synthetic.ipynb"
+        ),
+        "npa_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "npa_synthetic.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),

@@ -14,7 +14,7 @@ class AttLayer2(layers.Layer):
         dim (int): attention hidden dim
     """
 
-    def __init__(self, dim=200, **kwargs):
+    def __init__(self, dim=200, seed=0, **kwargs):
         """Initialization steps for AttLayer2.
         
         Args:
@@ -22,6 +22,7 @@ class AttLayer2(layers.Layer):
         """
 
         self.dim = dim
+        self.seed = seed
         super(AttLayer2, self).__init__(**kwargs)
 
     def build(self, input_shape):
@@ -37,14 +38,20 @@ class AttLayer2(layers.Layer):
         self.W = self.add_weight(
             name="W",
             shape=(int(input_shape[-1]), dim),
-            initializer="glorot_uniform",
+            initializer=keras.initializers.glorot_uniform(seed=self.seed),
             trainable=True,
         )
         self.b = self.add_weight(
-            name="b", shape=(dim,), initializer="zeros", trainable=True
+            name="b",
+            shape=(dim,),
+            initializer=keras.initializers.Zeros(),
+            trainable=True,
         )
         self.q = self.add_weight(
-            name="q", shape=(dim, 1), initializer="glorot_uniform", trainable=True
+            name="q",
+            shape=(dim, 1),
+            initializer=keras.initializers.glorot_uniform(seed=self.seed),
+            trainable=True,
         )
         super(AttLayer2, self).build(input_shape)  # be sure you call this somewhere!
 
@@ -107,7 +114,7 @@ class SelfAttention(layers.Layer):
         obj: Weighted sum after attention.
     """
 
-    def __init__(self, multiheads, head_dim, mask_right=False, **kwargs):
+    def __init__(self, multiheads, head_dim, seed=0, mask_right=False, **kwargs):
         """Initialization steps for AttLayer2.
         
         Args:
@@ -120,6 +127,7 @@ class SelfAttention(layers.Layer):
         self.head_dim = head_dim
         self.output_dim = multiheads * head_dim
         self.mask_right = mask_right
+        self.seed = seed
         super(SelfAttention, self).__init__(**kwargs)
 
     def compute_output_shape(self, input_shape):
@@ -145,19 +153,19 @@ class SelfAttention(layers.Layer):
         self.WQ = self.add_weight(
             name="WQ",
             shape=(int(input_shape[0][-1]), self.output_dim),
-            initializer="glorot_uniform",
+            initializer=keras.initializers.glorot_uniform(seed=self.seed),
             trainable=True,
         )
         self.WK = self.add_weight(
             name="WK",
             shape=(int(input_shape[1][-1]), self.output_dim),
-            initializer="glorot_uniform",
+            initializer=keras.initializers.glorot_uniform(seed=self.seed),
             trainable=True,
         )
         self.WV = self.add_weight(
             name="WV",
             shape=(int(input_shape[2][-1]), self.output_dim),
-            initializer="glorot_uniform",
+            initializer=keras.initializers.glorot_uniform(seed=self.seed),
             trainable=True,
         )
         super(SelfAttention, self).build(input_shape)
@@ -260,7 +268,7 @@ class SelfAttention(layers.Layer):
         return config
 
 
-def PersonalizedAttentivePooling(dim1, dim2, dim3):
+def PersonalizedAttentivePooling(dim1, dim2, dim3, seed=0):
     """Soft alignment attention implement.
 
     Attributes:
@@ -275,7 +283,12 @@ def PersonalizedAttentivePooling(dim1, dim2, dim3):
     query_input = keras.Input(shape=(dim3,), dtype="float32")
 
     user_vecs = layers.Dropout(0.2)(vecs_input)
-    user_att = layers.Dense(dim3, activation="tanh")(user_vecs)
+    user_att = layers.Dense(
+        dim3,
+        activation="tanh",
+        kernel_initializer=keras.initializers.glorot_uniform(seed=seed),
+        bias_initializer=keras.initializers.Zeros(),
+    )(user_vecs)
     user_att2 = layers.Dot(axes=-1)([query_input, user_att])
     user_att2 = layers.Activation("softmax")(user_att2)
     user_vec = layers.Dot((1, 1))([user_vecs, user_att2])

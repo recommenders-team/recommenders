@@ -24,7 +24,7 @@ class NPAModel(BaseModel):
         hparam (obj): Global hyper-parameters.
     """
 
-    def __init__(self, hparams, iterator_creator):
+    def __init__(self, hparams, iterator_creator, seed=None):
         """Initialization steps for MANL.
         Compared with the BaseModel, NPA need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
@@ -38,7 +38,7 @@ class NPAModel(BaseModel):
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
         self.hparam = hparams
 
-        super().__init__(hparams, iterator_creator)
+        super().__init__(hparams, iterator_creator, seed=seed)
 
     def _init_embedding(self, file_path):
         """Load pre-trained embeddings as a constant tensor.
@@ -98,7 +98,10 @@ class NPAModel(BaseModel):
             user_embedding_layer(user_indexes)
         )
         user_present = PersonalizedAttentivePooling(
-            hparams.his_size, hparams.filter_num, hparams.attention_hidden_dim
+            hparams.his_size,
+            hparams.filter_num,
+            hparams.attention_hidden_dim,
+            seed=self.seed,
         )([click_title_presents, layers.Dense(hparams.attention_hidden_dim)(u_emb)])
 
         model = keras.Model(
@@ -138,11 +141,16 @@ class NPAModel(BaseModel):
             hparams.window_size,
             activation=hparams.cnn_activation,
             padding="same",
+            bias_initializer=keras.initializers.Zeros(),
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
 
         pred_title = PersonalizedAttentivePooling(
-            hparams.doc_size, hparams.filter_num, hparams.attention_hidden_dim
+            hparams.doc_size,
+            hparams.filter_num,
+            hparams.attention_hidden_dim,
+            seed=self.seed,
         )([y, layers.Dense(hparams.attention_hidden_dim)(u_emb)])
 
         # pred_title = Reshape((1, feature_size))(pred_title)
@@ -166,7 +174,9 @@ class NPAModel(BaseModel):
             shape=(hparams.npratio + 1, hparams.doc_size), dtype="int32"
         )
         pred_input_title_one = keras.Input(shape=(1, hparams.doc_size,), dtype="int32")
-        pred_title_one_reshape = layers.Reshape((hparams.doc_size,))(pred_input_title_one)
+        pred_title_one_reshape = layers.Reshape((hparams.doc_size,))(
+            pred_input_title_one
+        )
         imp_indexes = keras.Input(shape=(1,), dtype="int32")
         user_indexes = keras.Input(shape=(1,), dtype="int32")
 

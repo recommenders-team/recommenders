@@ -28,7 +28,7 @@ class LSTURModel(BaseModel):
         hparam (obj): Global hyper-parameters.
     """
 
-    def __init__(self, hparams, iterator_creator):
+    def __init__(self, hparams, iterator_creator, seed=None):
         """Initialization steps for LSTUR.
         Compared with the BaseModel, LSTUR need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
@@ -42,7 +42,7 @@ class LSTURModel(BaseModel):
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
         self.hparam = hparams
 
-        super().__init__(hparams, iterator_creator)
+        super().__init__(hparams, iterator_creator, seed=seed)
 
     def _init_embedding(self, file_path):
         """Load pre-trained embeddings as a constant tensor.
@@ -104,19 +104,34 @@ class LSTURModel(BaseModel):
         click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
 
         if type == "ini":
-            user_present = layers.GRU(hparams.gru_unit,)(
+            user_present = layers.GRU(
+                hparams.gru_unit,
+                kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
+                recurrent_initializer=keras.initializers.glorot_uniform(seed=self.seed),
+                bias_initializer=keras.initializers.Zeros(),
+            )(
                 layers.Masking(mask_value=0.0)(click_title_presents),
                 initial_state=[long_u_emb],
             )
         elif type == "con":
-            short_uemb = layers.GRU(hparams.gru_unit,)(
-                layers.Masking(mask_value=0.0)(click_title_presents)
-            )
+            short_uemb = layers.GRU(
+                hparams.gru_unit,
+                kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
+                recurrent_initializer=keras.initializers.glorot_uniform(seed=self.seed),
+                bias_initializer=keras.initializers.Zeros(),
+            )(layers.Masking(mask_value=0.0)(click_title_presents))
+            
             user_present = layers.Concatenate()([short_uemb, long_u_emb])
-            user_present = layers.Dense(hparams.gru_unit)(user_present)
+            user_present = layers.Dense(
+                hparams.gru_unit,
+                bias_initializer=keras.initializers.Zeros(),
+                kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
+            )(user_present)
 
         click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
-        user_present = AttLayer2(hparams.attention_hidden_dim)(click_title_presents)
+        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(
+            click_title_presents
+        )
 
         model = keras.Model(
             [his_input_title, user_indexes], user_present, name="user_encoder"
@@ -142,12 +157,14 @@ class LSTURModel(BaseModel):
             hparams.window_size,
             activation=hparams.cnn_activation,
             padding="same",
+            bias_initializer=keras.initializers.Zeros(),
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
         y = layers.Masking()(
             OverwriteMasking()([y, ComputeMasking()(sequences_input_title)])
         )
-        pred_title = AttLayer2(hparams.attention_hidden_dim)(y)
+        pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
 
         model = keras.Model(sequences_input_title, pred_title, name="news_encoder")
         return model
