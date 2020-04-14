@@ -7,8 +7,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.recommender.deeprec.models.base_model import BaseModel
-from reco_utils.recommender.deeprec.models.layers import AttLayer2
+from reco_utils.recommender.newsrec.models.base_model import BaseModel
+from reco_utils.recommender.newsrec.models.layers import AttLayer2
 
 __all__ = ["NAMLModel"]
 

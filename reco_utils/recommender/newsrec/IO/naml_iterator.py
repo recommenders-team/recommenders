@@ -26,15 +26,7 @@ class NAMLIterator(BaseIterator):
         his_size (int): max clicked news num in user click history.
     """
 
-    def __init__(
-        self,
-        hparams,
-        graph,
-        placeholer_name="",
-        npratio=0,
-        col_spliter=" ",
-        ID_spliter="%",
-    ):
+    def __init__(self, hparams, npratio=0, col_spliter=" ", ID_spliter="%"):
         """Initialize an iterator. Create necessary placeholders for the model.
         
         Args:
@@ -46,63 +38,9 @@ class NAMLIterator(BaseIterator):
         self.col_spliter = col_spliter
         self.ID_spliter = ID_spliter
         self.batch_size = hparams.batch_size
+        self.doc_size = hparams.doc_size
         self.his_size = hparams.his_size
         self.npratio = npratio
-        self.placeholer_name = placeholer_name
-
-        self.graph = graph
-        with self.graph.as_default():
-            self.labels = tf.placeholder(
-                tf.float32, [None, 1], name="labels_{}".format(placeholer_name)
-            )
-            self.inpression_index_batch = tf.placeholder(
-                tf.int32,
-                [None, 1],
-                name="impression_index_batch_{}".format(placeholer_name),
-            )
-            self.user_index_batch = tf.placeholder(
-                tf.int32, [None, 1], name="user_index_batch_{}".format(placeholer_name)
-            )
-            self.candidate_title_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, npratio + 1, hparams.title_size],
-                name="candidate_title_batch_{}".format(placeholer_name),
-            )
-            self.candidate_body_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, npratio + 1, hparams.body_size],
-                name="candidate_body_batch_{}".format(placeholer_name),
-            )
-            self.candidate_vert_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, npratio + 1, 1],
-                name="candidate_vert_batch_{}".format(placeholer_name),
-            )
-            self.candidate_subvert_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, npratio + 1, 1],
-                name="candidate_subvert_batch_{}".format(placeholer_name),
-            )
-            self.clicked_title_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, self.his_size, hparams.title_size],
-                name="clicked_title_batch_{}".format(placeholer_name),
-            )
-            self.clicked_body_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, self.his_size, hparams.body_size],
-                name="clicked_body_batch_{}".format(placeholer_name),
-            )
-            self.clicked_vert_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, self.his_size, 1],
-                name="clicked_vert_batch_{}".format(placeholer_name),
-            )
-            self.clicked_subvert_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, self.his_size, 1],
-                name="clicked_subvert_batch_{}".format(placeholer_name),
-            )
 
     def parser_one_line(self, line):
         """Parse one string line into feature values.
@@ -303,31 +241,15 @@ class NAMLIterator(BaseIterator):
         )
         click_subvert_index_batch = np.asarray(click_subvert_indexes, dtype=np.int64)
         return {
-            "impression_index_batch_{}".format(self.placeholer_name): imp_indexes,
-            "user_index_batch_{}".format(self.placeholer_name): user_indexes,
-            "clicked_title_batch_{}".format(
-                self.placeholer_name
-            ): click_title_index_batch,
-            "clicked_body_batch_{}".format(
-                self.placeholer_name
-            ): click_body_index_batch,
-            "clicked_vert_batch_{}".format(
-                self.placeholer_name
-            ): click_vert_index_batch,
-            "clicked_subvert_batch_{}".format(
-                self.placeholer_name
-            ): click_subvert_index_batch,
-            "candidate_title_batch_{}".format(
-                self.placeholer_name
-            ): candidate_title_index_batch,
-            "candidate_body_batch_{}".format(
-                self.placeholer_name
-            ): candidate_body_index_batch,
-            "candidate_vert_batch_{}".format(
-                self.placeholer_name
-            ): candidate_vert_index_batch,
-            "candidate_subvert_batch_{}".format(
-                self.placeholer_name
-            ): candidate_subvert_index_batch,
-            "labels_{}".format(self.placeholer_name): labels,
+            "impression_index_batch": imp_indexes,
+            "user_index_batch": user_indexes,
+            "clicked_title_batch": click_title_index_batch,
+            "clicked_body_batch": click_body_index_batch,
+            "clicked_vert_batch": click_vert_index_batch,
+            "clicked_subvert_batch": click_subvert_index_batch,
+            "candidate_title_batch": candidate_title_index_batch,
+            "candidate_body_batch": candidate_body_index_batch,
+            "candidate_vert_batch": candidate_vert_index_batch,
+            "candidate_subvert_batch": candidate_subvert_index_batch,
+            "labels": labels,
         }

@@ -25,9 +25,7 @@ class NewsIterator(BaseIterator):
         his_size (int): max clicked news num in user click history.
     """
 
-    def __init__(
-        self, hparams, graph, train_num_ngs=0, col_spliter=" ", ID_spliter="%",
-    ):
+    def __init__(self, hparams, npratio=0, col_spliter=" ", ID_spliter="%"):
         """Initialize an iterator. Create necessary placeholders for the model.
         
         Args:
@@ -41,45 +39,7 @@ class NewsIterator(BaseIterator):
         self.batch_size = hparams.batch_size
         self.doc_size = hparams.doc_size
         self.his_size = hparams.his_size
-        self.train_num_ngs = train_num_ngs
-
-        self.graph = graph
-        with self.graph.as_default():
-            self.labels = tf.placeholder_with_default(
-                tf.constant(
-                    np.zeros((hparams.batch_size, train_num_ngs + 1)), dtype=tf.float32,
-                ),
-                [None, train_num_ngs + 1],
-                name="labels",
-            )
-            self.impression_index_batch = tf.placeholder_with_default(
-                tf.constant(np.zeros((hparams.batch_size, 1)), dtype=tf.int32),
-                [None, 1],
-                name="impression_index_batch",
-            )
-            self.user_index_batch = tf.placeholder_with_default(
-                tf.constant(np.zeros((hparams.batch_size, 1)), dtype=tf.int32),
-                [None, 1],
-                name="user_index_batch",
-            )
-            self.candidate_news_batch = tf.placeholder_with_default(
-                tf.constant(
-                    np.zeros(
-                        (hparams.batch_size, self.train_num_ngs + 1, self.doc_size)
-                    ),
-                    dtype=tf.int32,
-                ),
-                [None, self.train_num_ngs + 1, self.doc_size],
-                name="candidate_news_batch",
-            )
-            self.clicked_news_batch = tf.placeholder_with_default(
-                tf.constant(
-                    np.zeros((hparams.batch_size, self.his_size, self.doc_size)),
-                    dtype=tf.int32,
-                ),
-                [None, self.his_size, self.doc_size],
-                name="clicked_news_batch",
-            )
+        self.npratio = npratio
 
     def parser_one_line(self, line):
         """Parse one string line into feature values.
@@ -94,13 +54,13 @@ class NewsIterator(BaseIterator):
         words = line.strip().split(self.ID_spliter)
 
         cols = words[0].strip().split(self.col_spliter)
-        label = [float(i) for i in cols[: self.train_num_ngs + 1]]
+        label = [float(i) for i in cols[: self.npratio + 1]]
         candidate_news_index = []
         click_news_index = []
         imp_index = []
         user_index = []
 
-        for news in cols[self.train_num_ngs + 1 :]:
+        for news in cols[self.npratio + 1 :]:
             tokens = news.split(":")
             if "Impression" in tokens[0]:
                 imp_index.append(int(tokens[1]))
@@ -151,14 +111,13 @@ class NewsIterator(BaseIterator):
 
                 cnt += 1
                 if cnt >= self.batch_size:
-                    res = self._convert_data(
+                    yield self._convert_data(
                         label_list,
                         imp_indexes,
                         user_indexes,
                         candidate_news_indexes,
                         click_news_indexes,
                     )
-                    yield self.gen_feed_dict(res)
                     candidate_news_indexes = []
                     click_news_indexes = []
                     label_list = []
@@ -199,28 +158,3 @@ class NewsIterator(BaseIterator):
             "candidate_news_batch": candidate_news_index_batch,
             "labels": labels,
         }
-
-    def gen_feed_dict(self, data_dict):
-        """Construct a dictionary that maps graph elements to values.
-        
-        Args:
-            data_dict (dict): a dictionary that maps string name to numpy arrays.
-
-        Returns:
-            dict: a dictionary that maps graph elements to numpy arrays.
-
-        """
-        feed_dict = {
-            self.labels: data_dict["labels"].reshape([-1, self.train_num_ngs + 1]),
-            self.candidate_news_batch: data_dict["candidate_news_batch"].reshape(
-                [-1, self.train_num_ngs + 1, self.doc_size]
-            ),
-            self.clicked_news_batch: data_dict["clicked_news_batch"].reshape(
-                [-1, self.his_size, self.doc_size]
-            ),
-            self.user_index_batch: data_dict["user_index_batch"].reshape([-1, 1]),
-            self.impression_index_batch: data_dict["impression_index_batch"].reshape(
-                [-1, 1]
-            ),
-        }
-        return feed_dict

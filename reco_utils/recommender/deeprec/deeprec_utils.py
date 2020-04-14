@@ -51,12 +51,6 @@ def check_type(config):
         "word_size",
         "entity_size",
         "doc_size",
-        "his_size",
-        "title_size",
-        "body_size",
-        "user_num",
-        "vert_num",
-        "subvert_num",
         "FEATURE_COUNT",
         "FIELD_COUNT",
         "dim",
@@ -82,19 +76,11 @@ def check_type(config):
         "n_h",
         "min_seq_length",
         "attention_size",
+        "epochs",
+        "batch_size",
+        "show_step",
+        "save_epoch",
         "train_num_ngs",
-        "word_emb_dim",
-        "user_emb_dim",
-        "vert_emb_dim",
-        "subvert_emb_dim",
-        "attention_hidden_dim",
-        # self-att
-        "head_num",
-        "head_dim",
-        # cnn
-        "filter_num",
-        "window_size",
-        "gru_unit",
     ]
     for param in int_parameters:
         if param in config and not isinstance(config[param], int):
@@ -125,14 +111,9 @@ def check_type(config):
         "optimizer",
         "init_method",
         "attention_activation",
-        "cnn_activation",
-        "dense_activation",
         "user_vocab",
         "item_vocab",
         "cate_vocab",
-        "wordEmb_file",
-        "type",
-
     ]
     for param in str_parameters:
         if param in config and not isinstance(config[param], str):
@@ -245,90 +226,6 @@ def check_nn_config(f_config):
             "hidden_size",
             "att_fcn_layer_sizes",
         ]
-    elif f_config["model_type"] in ["nrms", "NRMS"]:
-        required_parameters = [
-            "doc_size",
-            "his_size",
-            "user_num",
-            "wordEmb_file",
-            "word_size",
-            "data_format",
-            "word_emb_dim",
-            # nrms
-            "head_num",
-            "head_dim",
-            # attention
-            "attention_hidden_dim",
-            "loss",
-            "data_format",
-            "dropout",
-        ]
-    elif f_config["model_type"] in ["naml", "NAML"]:
-        required_parameters = [
-            "title_size",
-            "body_size",
-            "his_size",
-            "user_num",
-            "vert_num",
-            "subvert_num",
-            "wordEmb_file",
-            "word_size",
-            "data_format",
-            "word_emb_dim",
-            "vert_emb_dim",
-            "subvert_emb_dim",
-            # naml
-            "filter_num",
-            "cnn_activation",
-            "window_size",
-            "dense_activation",
-            # attention
-            "attention_hidden_dim",
-            "loss",
-            "data_format",
-            "dropout",
-        ]
-    elif f_config["model_type"] in ["lstur", "LSTUR"]:
-        required_parameters = [
-            "doc_size",
-            "his_size",
-            "user_num",
-            "wordEmb_file",
-            "word_size",
-            "data_format",
-            "word_emb_dim",
-            # lstur
-            "gru_unit",
-            "type",
-            "filter_num",
-            "cnn_activation",
-            "window_size",
-            # attention
-            "attention_hidden_dim",
-            "loss",
-            "data_format",
-            "dropout",
-        ]
-    elif f_config["model_type"] in ["npa", "NPA"]:
-        required_parameters = [
-            "doc_size",
-            "his_size",
-            "user_num",
-            "wordEmb_file",
-            "word_size",
-            "data_format",
-            "word_emb_dim",
-            # npa
-            "user_emb_dim",
-            "filter_num",
-            "cnn_activation",
-            "window_size",
-            # attention
-            "attention_hidden_dim",
-            "loss",
-            "data_format",
-            "dropout",
-        ]
     else:
         required_parameters = []
 
@@ -348,20 +245,6 @@ def check_nn_config(f_config):
         if f_config["data_format"] != "dkn":
             raise ValueError(
                 "For dkn model, data format must be 'dkn', but your set is {0}".format(
-                    f_config["data_format"]
-                )
-            )
-    elif f_config["model_type"] in ["nrms", "NRMS", "lstur", "LSTUR"]:
-        if f_config["data_format"] != "news":
-            raise ValueError(
-                "For nrms and naml model, data format must be 'news', but your set is {0}".format(
-                    f_config["data_format"]
-                )
-            )
-    elif f_config["model_type"] in ["naml", "NAML"]:
-        if f_config["data_format"] != "naml":
-            raise ValueError(
-                "For nrms and naml model, data format must be 'naml', but your set is {0}".format(
                     f_config["data_format"]
                 )
             )
@@ -398,129 +281,138 @@ def create_hparams(flags):
     """
     return tf.contrib.training.HParams(
         # data
-        kg_file=flags.get("kg_file", None),
-        user_clicks=flags.get("user_clicks", None),
-        FEATURE_COUNT=flags.get("FEATURE_COUNT", None),
-        FIELD_COUNT=flags.get("FIELD_COUNT", None),
-        data_format=flags.get("data_format", None),
-        PAIR_NUM=flags.get("PAIR_NUM", None),
-        DNN_FIELD_NUM=flags.get("DNN_FIELD_NUM", None),
-        n_user=flags.get("n_user", None),
-        n_item=flags.get("n_item", None),
-        n_user_attr=flags.get("n_user_attr", None),
-        n_item_attr=flags.get("n_item_attr", None),
-        iterator_type=flags.get("iterator_type", None),
-        SUMMARIES_DIR=flags.get("SUMMARIES_DIR", None),
-        MODEL_DIR=flags.get("MODEL_DIR", None),
+        kg_file=flags["kg_file"] if "kg_file" in flags else None,
+        user_clicks=flags["user_clicks"] if "user_clicks" in flags else None,
+        FEATURE_COUNT=flags["FEATURE_COUNT"] if "FEATURE_COUNT" in flags else None,
+        FIELD_COUNT=flags["FIELD_COUNT"] if "FIELD_COUNT" in flags else None,
+        data_format=flags["data_format"] if "data_format" in flags else None,
+        PAIR_NUM=flags["PAIR_NUM"] if "PAIR_NUM" in flags else None,
+        DNN_FIELD_NUM=flags["DNN_FIELD_NUM"] if "DNN_FIELD_NUM" in flags else None,
+        n_user=flags["n_user"] if "n_user" in flags else None,
+        n_item=flags["n_item"] if "n_item" in flags else None,
+        n_user_attr=flags["n_user_attr"] if "n_user_attr" in flags else None,
+        n_item_attr=flags["n_item_attr"] if "n_item_attr" in flags else None,
+        iterator_type=flags["iterator_type"] if "iterator_type" in flags else None,
+        SUMMARIES_DIR=flags["SUMMARIES_DIR"] if "SUMMARIES_DIR" in flags else None,
+        MODEL_DIR=flags["MODEL_DIR"] if "MODEL_DIR" in flags else None,
         # dkn
-        wordEmb_file=flags.get("wordEmb_file", None),
-        entityEmb_file=flags.get("entityEmb_file", None),
-        doc_size=flags.get("doc_size", None),
-        word_size=flags.get("word_size", None),
-        entity_size=flags.get("entity_size", None),
-        entity_dim=flags.get("entity_dim", None),
-        entity_embedding_method=flags.get("entity_embedding_method", None),
-        transform=flags.get("transform", None),
-        train_ratio=flags.get("train_ratio", None),
+        wordEmb_file=flags["wordEmb_file"] if "wordEmb_file" in flags else None,
+        entityEmb_file=flags["entityEmb_file"] if "entityEmb_file" in flags else None,
+        doc_size=flags["doc_size"] if "doc_size" in flags else None,
+        word_size=flags["word_size"] if "word_size" in flags else None,
+        entity_size=flags["entity_size"] if "entity_size" in flags else None,
+        entity_dim=flags["entity_dim"] if "entity_dim" in flags else None,
+        entity_embedding_method=flags["entity_embedding_method"]
+        if "entity_embedding_method" in flags
+        else None,
+        transform=flags["transform"] if "transform" in flags else None,
+        train_ratio=flags["train_ratio"] if "train_ratio" in flags else None,
         # model
-        dim=flags.get("dim", None),
-        layer_sizes=flags.get("layer_sizes", None),
-        cross_layer_sizes=flags.get("cross_layer_sizes", None),
-        cross_layers=flags.get("cross_layers", None),
-        activation=flags.get("activation", None),
-        cross_activation=flags.get("cross_activation", "identity"),
-        user_dropout=flags.get("user_dropout", False),
-        dropout=flags.get("dropout", [0.0]),
-        attention_layer_sizes=flags.get("attention_layer_sizes", None),
-        attention_activation=flags.get("attention_activation", None),
-        attention_dropout=flags.get("attention_dropout", 0.0),
-        model_type=flags.get("model_type", None),
-        method=flags.get("method", None),
-        load_saved_model=flags.get("load_saved_model", False),
-        load_model_name=flags.get("load_model_name", None),
-        filter_sizes=flags.get("filter_sizes", None),
-        num_filters=flags.get("num_filters", None),
-        mu=flags.get("mu", None),
-        fast_CIN_d=flags.get("fast_CIN_d", 0),
-        use_Linear_part=flags.get("use_Linear_part", False),
-        use_FM_part=flags.get("use_FM_part", False),
-        use_CIN_part=flags.get("use_CIN_part", False),
-        use_DNN_part=flags.get("use_DNN_part", False),
+        dim=flags["dim"] if "dim" in flags else None,
+        layer_sizes=flags["layer_sizes"] if "layer_sizes" in flags else None,
+        cross_layer_sizes=flags["cross_layer_sizes"]
+        if "cross_layer_sizes" in flags
+        else None,
+        cross_layers=flags["cross_layers"] if "cross_layers" in flags else None,
+        activation=flags["activation"] if "activation" in flags else None,
+        cross_activation=flags["cross_activation"]
+        if "cross_activation" in flags
+        else "identity",
+        user_dropout=flags["user_dropout"] if "user_dropout" in flags else False,
+        dropout=flags["dropout"] if "dropout" in flags else [0.0],
+        attention_layer_sizes=flags["attention_layer_sizes"]
+        if "attention_layer_sizes" in flags
+        else None,
+        attention_activation=flags["attention_activation"]
+        if "attention_activation" in flags
+        else None,
+        attention_dropout=flags["attention_dropout"]
+        if "attention_dropout" in flags
+        else 0.0,
+        model_type=flags["model_type"] if "model_type" in flags else None,
+        method=flags["method"] if "method" in flags else None,
+        load_saved_model=flags["load_saved_model"]
+        if "load_saved_model" in flags
+        else False,
+        load_model_name=flags["load_model_name"]
+        if "load_model_name" in flags
+        else None,
+        filter_sizes=flags["filter_sizes"] if "filter_sizes" in flags else None,
+        num_filters=flags["num_filters"] if "num_filters" in flags else None,
+        mu=flags["mu"] if "mu" in flags else None,
+        fast_CIN_d=flags["fast_CIN_d"] if "fast_CIN_d" in flags else 0,
+        use_Linear_part=flags["use_Linear_part"]
+        if "use_Linear_part" in flags
+        else False,
+        use_FM_part=flags["use_FM_part"] if "use_FM_part" in flags else False,
+        use_CIN_part=flags["use_CIN_part"] if "use_CIN_part" in flags else False,
+        use_DNN_part=flags["use_DNN_part"] if "use_DNN_part" in flags else False,
         # train
-        init_method=flags.get("init_method", "tnormal"),
-        init_value=flags.get("init_value", 0.01),
-        embed_l2=flags.get("embed_l2", 0.0000),
-        embed_l1=flags.get("embed_l1", 0.0000),
-        layer_l2=flags.get("layer_l2", 0.0000),
-        layer_l1=flags.get("layer_l1", 0.0000),
-        cross_l2=flags.get("cross_l2", 0.0000),
-        cross_l1=flags.get("cross_l1", 0.0000),
-        reg_kg=flags.get("reg_kg", 0.0000),
-        learning_rate=flags.get("learning_rate", 0.001),
-        lr_rs=flags.get("lr_rs", 1),
-        lr_kg=flags.get("lr_kg", 0.5),
-        kg_training_interval=flags.get("kg_training_interval", 5),
-        max_grad_norm=flags.get("max_grad_norm", 2),
-        is_clip_norm=flags.get("is_clip_norm", 0),
-        dtype=flags.get("dtype", 32),
-        loss=flags.get("loss", None),
-        optimizer=flags.get("optimizer", "adam"),
-        epochs=flags.get("epochs", 10),
-        batch_size=flags.get("batch_size", 1),
-        enable_BN=flags.get("enable_BN", False),
+        init_method=flags["init_method"] if "init_method" in flags else "tnormal",
+        init_value=flags["init_value"] if "init_value" in flags else 0.01,
+        embed_l2=flags["embed_l2"] if "embed_l2" in flags else 0.0000,
+        embed_l1=flags["embed_l1"] if "embed_l1" in flags else 0.0000,
+        layer_l2=flags["layer_l2"] if "layer_l2" in flags else 0.0000,
+        layer_l1=flags["layer_l1"] if "layer_l1" in flags else 0.0000,
+        cross_l2=flags["cross_l2"] if "cross_l2" in flags else 0.0000,
+        cross_l1=flags["cross_l1"] if "cross_l1" in flags else 0.0000,
+        reg_kg=flags["reg_kg"] if "reg_kg" in flags else 0.0000,
+        learning_rate=flags["learning_rate"] if "learning_rate" in flags else 0.001,
+        lr_rs=flags["lr_rs"] if "lr_rs" in flags else 1,
+        lr_kg=flags["lr_kg"] if "lr_kg" in flags else 0.5,
+        kg_training_interval=flags["kg_training_interval"]
+        if "kg_training_interval" in flags
+        else 5,
+        max_grad_norm=flags["max_grad_norm"] if "max_grad_norm" in flags else 2,
+        is_clip_norm=flags["is_clip_norm"] if "is_clip_norm" in flags else 0,
+        dtype=flags["dtype"] if "dtype" in flags else 32,
+        loss=flags["loss"] if "loss" in flags else None,
+        optimizer=flags["optimizer"] if "optimizer" in flags else "adam",
+        epochs=flags["epochs"] if "epochs" in flags else 10,
+        batch_size=flags["batch_size"] if "batch_size" in flags else 1,
+        enable_BN=flags["enable_BN"] if "enable_BN" in flags else False,
         # show info
-        show_step=flags.get("show_step", 1),
-        save_model=flags.get("save_model", False),
-        save_epoch=flags.get("save_epoch", 5),
-        metrics=flags.get("metrics", None),
-        write_tfevents=flags.get("write_tfevents", False),
+        show_step=flags["show_step"] if "show_step" in flags else 1,
+        save_model=flags["save_model"] if "save_model" in flags else True,
+        save_epoch=flags["save_epoch"] if "save_epoch" in flags else 5,
+        metrics=flags["metrics"] if "metrics" in flags else None,
+        write_tfevents=flags["write_tfevents"] if "write_tfevents" in flags else False,
         # sequential
-        item_embedding_dim=flags.get("item_embedding_dim", None),
-        cate_embedding_dim=flags.get("cate_embedding_dim", None),
-        user_embedding_dim=flags.get("user_embedding_dim", None),
-        train_num_ngs=flags.get("train_num_ngs", 4),
-        need_sample=flags.get("need_sample", True),
-        embedding_dropout=flags.get("embedding_dropout", 0.3),
-        user_vocab=flags.get("user_vocab", None),
-        item_vocab=flags.get("item_vocab", None),
-        cate_vocab=flags.get("cate_vocab", None),
-        pairwise_metrics=flags.get("pairwise_metrics", None),
-        EARLY_STOP=flags.get("EARLY_STOP", 100),
+        item_embedding_dim=flags["item_embedding_dim"]
+        if "item_embedding_dim" in flags
+        else None,
+        cate_embedding_dim=flags["cate_embedding_dim"]
+        if "cate_embedding_dim" in flags
+        else None,
+        user_embedding_dim=flags["user_embedding_dim"]
+        if "user_embedding_dim" in flags
+        else None,
+        train_num_ngs=flags["train_num_ngs"] if "train_num_ngs" in flags else 4,
+        need_sample=flags["need_sample"] if "need_sample" in flags else True,
+        embedding_dropout=flags["embedding_dropout"]
+        if "embedding_dropout" in flags
+        else 0.3,
+        user_vocab=flags["user_vocab"] if "user_vocab" in flags else None,
+        item_vocab=flags["item_vocab"] if "item_vocab" in flags else None,
+        cate_vocab=flags["cate_vocab"] if "cate_vocab" in flags else None,
+        pairwise_metrics=flags["pairwise_metrics"]
+        if "pairwise_metrics" in flags
+        else None,
+        EARLY_STOP=flags["EARLY_STOP"] if "EARLY_STOP" in flags else 100,
         # gru4rec
-        max_seq_length=flags.get("max_seq_length", None),
-        hidden_size=flags.get("hidden_size", None),
+        max_seq_length=flags["max_seq_length"] if "max_seq_length" in flags else None,
+        hidden_size=flags["hidden_size"] if "hidden_size" in flags else None,
         # caser,
-        L=flags.get("L", None),
-        T=flags.get("T", None),
-        n_v=flags.get("n_v", None),
-        n_h=flags.get("n_h", None),
-        min_seq_length=flags.get("min_seq_length", 1),
+        L=flags["L"] if "L" in flags else None,
+        T=flags["T"] if "T" in flags else None,
+        n_v=flags["n_v"] if "n_v" in flags else None,
+        n_h=flags["n_h"] if "n_h" in flags else None,
+        min_seq_length=flags["min_seq_length"] if "min_seq_length" in flags else 1,
         # sli_rec
-        attention_size=flags.get("attention_size", None),
-        att_fcn_layer_sizes=flags.get("att_fcn_layer_sizes", None),
-        # naml
-        title_size=flags.get("title_size", None),
-        body_size=flags.get("body_size", None),
-        word_emb_dim=flags.get("word_emb_dim", None),
-        user_num=flags.get("user_num", None),
-        vert_num=flags.get("vert_num", None),
-        subvert_num=flags.get("subvert_num", None),
-        his_size=flags.get("his_size", None),
-        attention_hidden_dim=flags.get("attention_hidden_dim", 200),
-        cnn_activation=flags.get("cnn_activation", None),
-        dense_activation=flags.get("dense_activation", None),
-        filter_num=flags.get("filter_num", 200),
-        window_size=flags.get("window_size", 3),
-        vert_emb_dim=flags.get("vert_emb_dim", 100),
-        subvert_emb_dim=flags.get("subvert_emb_dim", 100),
-        # nrms
-        head_num=flags.get("head_num", 4),
-        head_dim=flags.get("head_dim", 100),
-        # lstur
-        gru_unit=flags.get("gru_unit", 400),
-        type=flags.get("type", "ini"),
-        # npa
-        user_emb_dim=flags.get("user_emb_dim", 50),
+        attention_size=flags["attention_size"] if "attention_size" in flags else None,
+        att_fcn_layer_sizes=flags["att_fcn_layer_sizes"]
+        if "att_fcn_layer_sizes" in flags
+        else None,
     )
 
 
@@ -539,7 +431,9 @@ def prepare_hparams(yaml_file=None, **kwargs):
     else:
         config = {}
 
-    config.update(kwargs)
+    if kwargs:
+        for name, value in six.iteritems(kwargs):
+            config[name] = value
 
     check_nn_config(config)
     return create_hparams(config)
