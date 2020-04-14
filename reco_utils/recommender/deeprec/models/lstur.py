@@ -7,19 +7,21 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.recommender.newsrec.models.base_model import BaseModel
-from reco_utils.recommender.newsrec.models.layers import AttLayer2, SelfAttention
+from reco_utils.recommender.deeprec.models.base_model import BaseModel
+from reco_utils.recommender.deeprec.models.layers import (
+    AttLayer2,
+    ComputeMasking,
+    OverwriteMasking,
+)
 
-__all__ = ["NRMSModel"]
+__all__ = ["LSTURModel"]
 
 
-class NRMSModel(BaseModel):
-    """NRMS model(Neural News Recommendation with Multi-Head Self-Attention)
+class LSTURModel(BaseModel):
+    """LSTUR model(Neural News Recommendation with Multi-Head Self-Attention)
 
-    Chuhan Wu, Fangzhao Wu, Suyu Ge, Tao Qi, Yongfeng Huang,and Xing Xie, "Neural News
-    Recommendation with Multi-Head Self-Attention" in Proceedings of the 2019 Conference 
-    on Empirical Methods in Natural Language Processing and the 9th International Joint Conference 
-    on Natural Language Processing (EMNLP-IJCNLP)
+    Mingxiao An, Fangzhao Wu, Chuhan Wu, Kun Zhang, Zheng Liu and Xing Xie: 
+    Neural News Recommendation with Long- and Short-term User Representations, ACL 2019
 
     Attributes:
         word2vec_embedding (numpy.array): Pretrained word embedding matrix.
@@ -27,14 +29,14 @@ class NRMSModel(BaseModel):
     """
 
     def __init__(self, hparams, iterator_creator):
-        """Initialization steps for NRMS.
-        Compared with the BaseModel, NRMS need word embedding.
+        """Initialization steps for LSTUR.
+        Compared with the BaseModel, LSTUR need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
         
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
-            iterator_creator_train(obj): NRMS data loader class for train data.
-            iterator_creator_test(obj): NRMS data loader class for test and validation data
+            hparams (obj): Global hyper-parameters. Some key setttings such as type and gru_unit are there.
+            iterator_creator_train(obj): LSTUR data loader class for train data.
+            iterator_creator_test(obj): LSTUR data loader class for test and validation data
         """
 
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
@@ -64,62 +66,94 @@ class NRMSModel(BaseModel):
         return input_feat, input_label
 
     def _build_graph(self):
-        """Build NRMS model and scorer.
+        """Build LSTUR model and scorer.
 
         Returns:
             obj: a model used to train.
             obj: a model used to evaluate and inference.
         """
-        hparams = self.hparams
-        model, scorer = self._build_nrms()
+
+        model, scorer = self._build_lstur()
         return model, scorer
 
-    def _build_userencoder(self, titleencoder):
-        """The main function to create user encoder of NRMS.
+    def _build_userencoder(self, titleencoder, type="ini"):
+        """The main function to create user encoder of LSTUR.
 
         Args:
-            titleencoder(obj): the news encoder of NRMS. 
+            titleencoder(obj): the news encoder of LSTUR. 
 
         Return:
-            obj: the user encoder of NRMS.
+            obj: the user encoder of LSTUR.
         """
         hparams = self.hparams
         his_input_title = keras.Input(
             shape=(hparams.his_size, hparams.doc_size), dtype="int32"
         )
+        user_indexes = keras.Input(shape=(1,), dtype="int32")
+
+        user_embedding_layer = layers.Embedding(
+            hparams.user_num,
+            hparams.gru_unit,
+            trainable=True,
+            embeddings_initializer="zeros",
+        )
+
+        long_u_emb = layers.Reshape((hparams.gru_unit,))(
+            user_embedding_layer(user_indexes)
+        )
+        click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
+
+        if type == "ini":
+            user_present = layers.GRU(hparams.gru_unit,)(
+                layers.Masking(mask_value=0.0)(click_title_presents),
+                initial_state=[long_u_emb],
+            )
+        elif type == "con":
+            short_uemb = layers.GRU(hparams.gru_unit,)(
+                layers.Masking(mask_value=0.0)(click_title_presents)
+            )
+            user_present = layers.Concatenate()([short_uemb, long_u_emb])
+            user_present = layers.Dense(hparams.gru_unit)(user_present)
 
         click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
-        y = SelfAttention(hparams.head_num, hparams.head_dim)(
-            [click_title_presents] * 3
-        )
-        user_present = AttLayer2(hparams.attention_hidden_dim)(y)
+        user_present = AttLayer2(hparams.attention_hidden_dim)(click_title_presents)
 
-        model = keras.Model(his_input_title, user_present, name="user_encoder")
+        model = keras.Model(
+            [his_input_title, user_indexes], user_present, name="user_encoder"
+        )
         return model
 
     def _build_newsencoder(self, embedding_layer):
-        """The main function to create news encoder of NRMS.
+        """The main function to create news encoder of LSTUR.
 
         Args:
             embedding_layer(obj): a word embedding layer.
         
         Return:
-            obj: the news encoder of NRMS.
+            obj: the news encoder of LSTUR.
         """
         hparams = self.hparams
         sequences_input_title = keras.Input(shape=(hparams.doc_size,), dtype="int32")
         embedded_sequences_title = embedding_layer(sequences_input_title)
 
         y = layers.Dropout(hparams.dropout)(embedded_sequences_title)
-        y = SelfAttention(hparams.head_num, hparams.head_dim)([y, y, y])
+        y = layers.Conv1D(
+            hparams.filter_num,
+            hparams.window_size,
+            activation=hparams.cnn_activation,
+            padding="same",
+        )(y)
         y = layers.Dropout(hparams.dropout)(y)
+        y = layers.Masking()(
+            OverwriteMasking()([y, ComputeMasking()(sequences_input_title)])
+        )
         pred_title = AttLayer2(hparams.attention_hidden_dim)(y)
 
         model = keras.Model(sequences_input_title, pred_title, name="news_encoder")
         return model
 
-    def _build_nrms(self):
-        """The main function to create NRMS's logic. The core of NRMS
+    def _build_lstur(self):
+        """The main function to create LSTUR's logic. The core of LSTUR
         is a user encoder and a news encoder.
         
         Returns:
@@ -135,10 +169,7 @@ class NRMSModel(BaseModel):
             shape=(hparams.npratio + 1, hparams.doc_size), dtype="int32"
         )
         pred_input_title_one = keras.Input(shape=(1, hparams.doc_size,), dtype="int32")
-        pred_title_one_reshape = layers.Reshape((hparams.doc_size,))(
-            pred_input_title_one
-        )
-
+        pred_title_reshape = layers.Reshape((hparams.doc_size,))(pred_input_title_one)
         imp_indexes = keras.Input(shape=(1,), dtype="int32")
         user_indexes = keras.Input(shape=(1,), dtype="int32")
 
@@ -150,12 +181,12 @@ class NRMSModel(BaseModel):
         )
 
         titleencoder = self._build_newsencoder(embedding_layer)
-        userencoder = self._build_userencoder(titleencoder)
+        userencoder = self._build_userencoder(titleencoder, type=hparams.type)
         newsencoder = titleencoder
 
-        user_present = userencoder(his_input_title)
+        user_present = userencoder([his_input_title, user_indexes])
         news_present = layers.TimeDistributed(newsencoder)(pred_input_title)
-        news_present_one = newsencoder(pred_title_one_reshape)
+        news_present_one = newsencoder(pred_title_reshape)
 
         preds = layers.Dot(axes=-1)([news_present, user_present])
         preds = layers.Activation(activation="softmax")(preds)
