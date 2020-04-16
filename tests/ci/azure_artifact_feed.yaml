@@ -76,7 +76,7 @@ jobs:
       . /anaconda/etc/profile.d/conda.sh && \
       conda activate $(env_name) && \
       rm -rf dist && \
-      HASH=True NAME=$(library_name) python setup.py sdist bdist_wheel
+      HASH=True LIBRARY_NAME=$(library_name) python setup.py sdist bdist_wheel
     displayName: 'Build wheel'
 
   - task: TwineAuthenticate@1
