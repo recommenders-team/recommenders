@@ -202,7 +202,7 @@ def get_public_domain_text(df, blob_service, container_name):
     df = df.drop(empty_rows)
     
     # Only keep columns of interest
-    df_full = df[['cord_uid','doi','title','publish_time','authors','journal','url','full_text']]
+    df_full = df[['cord_uid','doi','title','publish_time','authors','journal','url','abstract','full_text']]
     df_full = df_full.reset_index()
     
     return df_full
