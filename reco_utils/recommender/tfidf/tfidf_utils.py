@@ -8,48 +8,9 @@ from transformers import BertTokenizer
 import re, string, unicodedata
 import pandas as pd
 import numpy as np
-import argparse
-import json
-import os
 
 import nltk
 from nltk.stem.porter import PorterStemmer
-
-
-def convert_text_to_ascii(df, col_name, verbose=False):
-    """ Converts from unicode representations of special characters to human-readable representations.
-        Can also be used to remove bullet characters.
-    
-    Args:
-        df (pd.DataFrame): Dataframe with text.
-        col_name (str): Name of column to convert text.
-        verbose (boolean): If true, prints.
-    
-    Returns:
-        df (pd.DataFrame): Input dataframe with its text content converted to ASCII.
-    """
-    
-    # First encode ascii
-    for i in range(0, len(df)):
-        try:
-            df[col_name][i] = df[col_name][i].encode('ascii','ignore')
-        except:
-            if verbose is True:
-                print('Row ' + str(i) + ' empty')
-            else:
-                pass
-    
-    # Then decode to remove b""
-    for i in range(0, len(df)):
-        try:
-            df[col_name][i] = df[col_name][i].decode()
-        except:
-            if verbose is True:
-                print('Row ' + str(i) + ' empty')
-            else:
-                pass
-    
-    return df
 
 def clean_text(text, for_BERT=False, verbose=False):
     """ Clean text by removing HTML tags, symbols, and punctuation.
@@ -57,6 +18,7 @@ def clean_text(text, for_BERT=False, verbose=False):
     Args:
         text (str): Text to clean.
         for_BERT (boolean): True or False for if this text is being cleaned for future BERT tokenization.
+        verbose (boolean): True or False for whether to print.
     
     Returns:
         clean (str): Cleaned version of text.
@@ -75,19 +37,14 @@ def clean_text(text, for_BERT=False, verbose=False):
         clean = clean.replace('\r', ' ')
         clean = clean.replace('Â\xa0', '')     # non-breaking space
 
+        # Remove all punctuation and special characters
+        clean = re.sub('([^\s\w]|_)+','', clean)
+
+        # If you want to keep some punctuation, see below commented out example
+        # clean = re.sub('([^\s\w\-\_\(\)]|_)+','', clean)
+
         # Skip further processing if the text will be used in BERT tokenization
         if for_BERT is False:
-            # Remove punctuation
-            clean = clean.replace('-', ' ') # do this before removing all punctuation
-            clean = clean.translate(str.maketrans('', '', string.punctuation))
-
-            # Remove non-breaking space in Latin1 (ISO 8859-1), double quotes "", apostrophe
-            clean = clean.replace('â\x80\x9c', '') # double quote
-            clean = clean.replace('â\x80\x9d', '') # double quote
-            clean = clean.replace('â\x80\x99', '') # apostrophe
-            clean = clean.replace('â\x80\x98', '') # apostrophe
-            clean = clean.replace('â\x80\x93', '') # en-dash
-
             # Lower case
             clean = clean.lower()
     except:
@@ -132,18 +89,18 @@ def clean_dataframe_for_rec(df, cols_to_clean, for_BERT=False):
     
     return df
 
-def tokenize_with_BERT(vector):
+def tokenize_with_BERT(vector, bert_method='bert-base-cased'):
     """ Tokenize the input text with HuggingFace BERT tokenization.
     
     Args:
         vector (pd.Series): Series of textual descriptions (typically values from pandas series df_clean['full_text'']).
     
     Returns:
-        vector_tokenized (pd.Series): BERT tokenized input.
+        vector_tokenized (pd.Series): HuggingFace BERT tokenized input.
     """
     
     # Load pre-trained model tokenizer (vocabulary)
-    tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
+    tokenizer = BertTokenizer.from_pretrained(bert_method)
     
     # Loop through each item
     vector_tokenized = vector.copy()
@@ -188,7 +145,10 @@ def recommend_with_tfidf(df_clean, text_col='cleaned_text', id_col='cord_uid', t
         vector = df_clean[text_col]
     elif tokenization_method.lower() in ['huggingface','hf','bert']:
         tf = TfidfVectorizer(analyzer='word', ngram_range=(1,3), min_df=0, stop_words='english')
-        vector = tokenize_with_BERT(df_clean[text_col])
+        vector = tokenize_with_BERT(df_clean[text_col],'bert-base-cased')
+    elif tokenization_method.lower() in ['scibert','sci-bert','sci_bert']:
+        tf = TfidfVectorizer(analyzer='word', ngram_range=(1,3), min_df=0, stop_words='english')
+        vector = tokenize_with_BERT(df_clean[text_col], 'allenai/scibert_scivocab_cased')
 
     tfidf_matrix = tf.fit_transform(vector)
 
@@ -257,13 +217,14 @@ def organize_results_as_tabular(df_clean, results, id_col='cord_uid', k=5):
 
     return df_output
 
-def get_full_info(df, rec_id, id_col='cord_uid'):
+def get_full_info(df, rec_id, id_col='cord_uid', verbose=True):
     """ Get full information for recommended item.
     
     Args:
         df (pd.DataFrame): Dataframe containing item info.
         rec_id (str): Identifier for recommended item.
         id_col (str): Column with IDs.
+        verbose (boolean): Set to True if you want to print basic info and URL.
         
     Results:
         rec_info (pd.Series): Single row from dataframe containing recommended item info.
@@ -272,5 +233,9 @@ def get_full_info(df, rec_id, id_col='cord_uid'):
     # Return row
     # rec_info = df.loc[df[id_col]==rec_id] # returns truncated info
     rec_info = df.iloc[int(np.where(df[id_col]==rec_id)[0])]
+
+    if verbose == True:
+        print('"'+ rec_info['title'] + '" (' + rec_info['publish_time'].rsplit('-')[0] + ')' + ' by ' + rec_info['authors'] + '.')
+        print('Available at ' + rec_info['url'])
     
     return rec_info
