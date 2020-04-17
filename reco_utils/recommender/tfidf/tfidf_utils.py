@@ -109,7 +109,7 @@ def tokenize_with_BERT(vector, bert_method='bert-base-cased'):
     
     return vector_tokenized
 
-def recommend_with_tfidf(df_clean, text_col='cleaned_text', id_col='cord_uid', title_col='title', tokenization_method='huggingface'):
+def recommend_with_tfidf(df_clean, text_col='cleaned_text', id_col='cord_uid', title_col='title', tokenization_method='scibert'):
     """ Recommend n items similar to the item of interest.
     
     Args:
@@ -117,7 +117,7 @@ def recommend_with_tfidf(df_clean, text_col='cleaned_text', id_col='cord_uid', t
         text_col (str): Column with cleaned text content.
         id_col (str): Column with ID.
         title_col (str): Column with item titles.
-        tokenization_method (str): Either 'no', 'nltk', or 'huggingface'.
+        tokenization_method (str): Either 'none', 'nltk', 'bert', or 'scibert'.
     
     Returns:
         results (dict): Dictionary containing ranked recommendations for all items.
@@ -217,11 +217,11 @@ def organize_results_as_tabular(df_clean, results, id_col='cord_uid', k=5):
 
     return df_output
 
-def get_full_info(df, rec_id, id_col='cord_uid', verbose=True):
-    """ Get full information for recommended item.
+def get_single_item_info(metadata, rec_id, id_col='cord_uid', verbose=True):
+    """ Get full information for a single recommended item.
     
     Args:
-        df (pd.DataFrame): Dataframe containing item info.
+        metadata (pd.DataFrame): Dataframe containing item info.
         rec_id (str): Identifier for recommended item.
         id_col (str): Column with IDs.
         verbose (boolean): Set to True if you want to print basic info and URL.
@@ -231,11 +231,71 @@ def get_full_info(df, rec_id, id_col='cord_uid', verbose=True):
     """
     
     # Return row
-    # rec_info = df.loc[df[id_col]==rec_id] # returns truncated info
-    rec_info = df.iloc[int(np.where(df[id_col]==rec_id)[0])]
+    # rec_info = metadata.loc[metadata[id_col]==rec_id] # returns truncated info
+    rec_info = metadata.iloc[int(np.where(metadata[id_col]==rec_id)[0])]
 
     if verbose == True:
         print('"'+ rec_info['title'] + '" (' + rec_info['publish_time'].rsplit('-')[0] + ')' + ' by ' + rec_info['authors'] + '.')
         print('Available at ' + rec_info['url'])
     
     return rec_info
+
+def make_clickable(address):
+    """ Make URL clickable.
+
+    Args:
+        address (str): URL address to make clickable.
+    """
+    return '<a href="{0}">{0}</a>'.format(address)
+
+def display_top_recommendations(rec_table, metadata, query_id, id_col='cord_uid', verbose=True):
+    """ Fill out the recommendation table with info about the recommendations.
+
+    Args:
+        rec_table (pd.DataFrame): Dataframe holding all recommendations.
+        metadata (pd.DataFrame): Dataframe holding metadata for all public domain papers.
+        query_id (str): ID of item of interest.
+        id_col (str): Column with IDs.
+        verbose (boolean): Set to True if you want to print the table.
+    
+    Results:
+        df (pd.DataFrame): Dataframe holding recommendations and associated metadata just for the item of interest.
+    """
+
+    # Create subset of dataframe with just item of interest
+    df = rec_table.loc[rec_table[id_col]==query_id].reset_index()
+
+    # Remove id_col and title of query item
+    df.drop([id_col, 'title'], axis=1, inplace=True)
+
+    # Initialize new columns
+    df['authors'] = np.nan
+    df['journal'] = np.nan
+    df['publish_time'] = np.nan
+    df['url'] = np.nan
+
+    # Add useful metadata
+    for i in range(0,len(df)):
+        rec_id = df['rec_'+id_col][i]
+        rec_info = get_single_item_info(metadata, rec_id, id_col='cord_uid', verbose=False)
+        df['authors'][i] = rec_info['authors']
+        df['journal'][i] = rec_info['journal']
+        df['publish_time'][i] = rec_info['publish_time']
+        df['url'][i] = rec_info['url']
+
+    # Rename columns such that rec_ is no longer appended, for simplicity
+    df = df.rename(columns={'rec_rank': 'rank',
+                            'rec_score': 'similarity_score',
+                            'rec_title': 'title'})
+
+    # Only keep columns of interest
+    df = df[['rank', 'similarity_score', 'title', 'authors', 'journal', 'publish_time','url']]
+
+    # Make URL clickable
+    format_ = {'url': make_clickable}
+    df = df.head().style.format(format_)
+
+    if verbose == True:
+        df
+
+    return df
