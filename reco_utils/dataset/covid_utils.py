@@ -64,39 +64,43 @@ def extract_public_domain(metadata):
     
     return metadata_public
 
-def remove_duplicates(df, col='cord_uid'):
+def remove_duplicates(df, cols):
     """ Remove duplicated entries.
     
     Args:
         df (pd.DataFrame): Pandas dataframe.
-        col (str): Name of column in which to look for duplicates.
+        cols (list of str): Name of columns in which to look for duplicates.
     
     Returns:
         df (pd.DataFrame): Pandas dataframe with duplicate rows dropped.
     
     """
-    # Find where the identifier variable is duplicated
-    dup_rows = np.where(df.duplicated([col])==True)[0]
-    
-    # Drop duplicated rows
-    df = df.drop(dup_rows)
+    for col in cols:
+        # Find where the identifier variable is duplicated
+        dup_rows = np.where(df.duplicated([col])==True)[0]
+        
+        # Drop duplicated rows
+        df = df.drop(dup_rows)
     
     return df
 
-def remove_nan(df, col='url'):
+def remove_nan(df, cols):
     """ Remove rows with NaN values in specified column.
     
     Args:
         df (pd.DataFrame): Pandas dataframe.
-        col (str): Name of column in which to look for NaN.
+        cols (list of str): Name of columns in which to look for NaN.
     
     Returns:
         df (pd.DataFrame): Pandas dataframe with invalid rows dropped.
     
     """
-    
-    # Remove NaN rows
-    df = df[df[col].notna()]
+    for col in cols:
+        # Convert any empty string cells to nan
+        df[col].replace('', np.nan, inplace=True)
+        
+        # Remove NaN rows
+        df = df[df[col].notna()]
     
     return df
 
@@ -109,12 +113,14 @@ def clean_dataframe(df):
     Returns:
         df (pd.DataFrame): Cleaned pandas dataframe.
     """
-    
+
     # Remove duplicated rows
-    df = remove_duplicates(df)
+    cols=['cord_uid','doi']
+    df = remove_duplicates(df, cols)
     
-    # Remove rows without URLs
-    df = remove_nan(df)
+    # Remove rows without values in specified columns
+    cols=['cord_uid','doi','title','license','url']
+    df = remove_nan(df, cols)
     
     return df
 

@@ -93,7 +93,7 @@ def tokenize_with_BERT(vector, bert_method='bert-base-cased'):
     """ Tokenize the input text with HuggingFace BERT tokenization.
     
     Args:
-        vector (pd.Series): Series of textual descriptions (typically values from pandas series df_clean['full_text'']).
+        vector (pd.Series): Series of textual descriptions (typically values from pandas series df_clean['full_text']).
     
     Returns:
         vector_tokenized (pd.Series): HuggingFace BERT tokenized input.
@@ -259,7 +259,7 @@ def display_top_recommendations(rec_table, metadata, query_id, id_col='cord_uid'
         verbose (boolean): Set to True if you want to print the table.
     
     Results:
-        df (pd.DataFrame): Dataframe holding recommendations and associated metadata just for the item of interest.
+        df (pd.Styler): Stylized dataframe holding recommendations and associated metadata just for the item of interest (can access as normal dataframe by using df.data).
     """
 
     # Create subset of dataframe with just item of interest
