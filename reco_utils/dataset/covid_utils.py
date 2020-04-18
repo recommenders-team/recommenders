@@ -113,6 +113,8 @@ def clean_dataframe(df):
     Returns:
         df (pd.DataFrame): Cleaned pandas dataframe.
     """
+    # Reset index
+    df = df.reset_index()
 
     # Remove duplicated rows
     cols=['cord_uid','doi']
