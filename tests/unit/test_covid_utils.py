@@ -4,7 +4,7 @@
 import pytest
 from reco_utils.dataset.covid_utils import (
     get_blob_service,
-    download_metadata,
+    load_csv_from_blob,
     extract_public_domain,
     remove_duplicates,
     remove_nan,
@@ -32,7 +32,7 @@ def test_get_blob_service():
     # TODO
     pass
 
-def test_download_metadata():
+def test_load_csv_from_blob():
     # TODO
     pass
 

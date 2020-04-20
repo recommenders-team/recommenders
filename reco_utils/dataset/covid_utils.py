@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 from azure.storage.blob import BlockBlobService
+from io import StringIO
 import pandas as pd
 import numpy as np
 import json
@@ -27,29 +28,25 @@ def get_blob_service(azure_storage_account_name, azure_storage_sas_token, contai
     
     return blob_service
 
-def download_metadata(blob_service, container_name, metadata_filename):
-    """ Download the metadata file.
+def load_csv_from_blob(blob_service, container_name, blob_path):
+    """ Download the a .csv file from Azure blob storage.
     
     Args:
         blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
         container_name (str): Azure storage container name.
-        metadata_filename (str): Name of the metadata file located in the remote dataset.
+        blob_path (str): Name of the blob located in the container.
     
     Returns:
-        metadata (pd.DataFrame): Metadata dataframe.
+        df (pd.DataFrame): Loaded dataframe.
     """
-    
-    # download metadata.csv
-    blob_service.get_blob_to_path(
-        container_name=container_name,
-        blob_name=metadata_filename,
-        file_path=metadata_filename
-    )
 
-    # read into a dataframe
-    metadata = pd.read_csv(metadata_filename)
+    # Read blob into memory
+    blob = blob_service.get_blob_to_text(container_name, blob_path)
+
+    # Load into dataframe
+    df = pd.read_csv(StringIO(blob.content))
     
-    return metadata
+    return df
 
 def extract_public_domain(metadata):
     """ Only keep rows containing public domain articles.
@@ -76,12 +73,15 @@ def remove_duplicates(df, cols):
     
     """
     for col in cols:
+        # Reset index
+        df = df.reset_index()
+        
         # Find where the identifier variable is duplicated
         dup_rows = np.where(df.duplicated([col])==True)[0]
         
         # Drop duplicated rows
         df = df.drop(dup_rows)
-    
+
     return df
 
 def remove_nan(df, cols):
@@ -96,12 +96,15 @@ def remove_nan(df, cols):
     
     """
     for col in cols:
+        # Reset index
+        df = df.reset_index()
+
         # Convert any empty string cells to nan
         df[col].replace('', np.nan, inplace=True)
         
         # Remove NaN rows
         df = df[df[col].notna()]
-    
+
     return df
 
 def clean_dataframe(df):
@@ -113,8 +116,6 @@ def clean_dataframe(df):
     Returns:
         df (pd.DataFrame): Cleaned pandas dataframe.
     """
-    # Reset index
-    df = df.reset_index()
 
     # Remove duplicated rows
     cols=['cord_uid','doi']
