@@ -7,7 +7,6 @@ from reco_utils.dataset.covid_utils import (
     remove_duplicates,
     remove_nan,
     clean_dataframe,
-    extract_text_from_file,
     retrieve_text,
     get_public_domain_text
 )
@@ -42,10 +41,6 @@ def test_remove_nan(df):
 def test_clean_dataframe(df):
     output = clean_dataframe(df)
     assert len(df) > len(output)
-
-def test_extract_text_from_file():
-    # TODO
-    pass
 
 def test_retrieve_text():
     # TODO

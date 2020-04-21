@@ -111,34 +111,6 @@ def clean_dataframe(df):
     
     return df
 
-def extract_text_from_file(blob_service, container_name, blob_name):
-    """ Extract the body text from the blob.
-    
-    Args:
-        blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
-        container_name (str): Name of Azure storage container.
-        blob_name (str): Name of blob to access.
-    
-    Results:
-        full_text_flat (str): Full body text as a single string.
-    """
-    
-    data = json.loads(blob_service.get_blob_to_text(container_name=container_name, blob_name=blob_name).content)
-    
-    # the text itself lives under 'body_text'
-    full_text = data['body_text']
-
-    # many NLP tasks play nicely with a list of sentences
-    sentences = list()
-    for paragraph in full_text:
-        sentences.append(paragraph['text'])
-        
-    full_text_flat = ''
-    for sentence in sentences:
-        full_text_flat = full_text_flat + ' ' + sentence
-    
-    return full_text_flat
-
 def retrieve_text(entry, blob_service, container_name):
     """ Retrieve body text from article of interest.
     
@@ -162,7 +134,19 @@ def retrieve_text(entry, blob_service, container_name):
                 print('Neither PDF or PMC_XML data is available for this file')
 
         # Extract text
-        text = extract_text_from_file(blob_service, container_name, blob_name)
+        data = json.loads(blob_service.get_blob_to_text(container_name=container_name, blob_name=blob_name).content)
+    
+        # the text itself lives under 'body_text'
+        full_text = data['body_text']
+
+        # many NLP tasks play nicely with a list of sentences
+        sentences = list()
+        for paragraph in full_text:
+            sentences.append(paragraph['text'])
+            
+        text = ''
+        for sentence in sentences:
+            text = text + ' ' + sentence
     except:
         text = ''
     
