@@ -50,6 +50,8 @@ implementation:
     amlEnvironment:
       python:
         condaDependenciesFile: sar_conda.yaml
+    additionalIncludes:
+      - ../../../
     command: [python, reco_utils/azureml/azureml_designer_modules/entries/map_entry.py]
     args:
     - --rating-true

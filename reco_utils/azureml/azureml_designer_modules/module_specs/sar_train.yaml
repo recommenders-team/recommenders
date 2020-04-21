@@ -43,6 +43,8 @@ implementation:
     amlEnvironment:
       python:
         condaDependenciesFile: sar_conda.yaml
+    additionalIncludes:
+      - ../../../
     command: [python, reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py]
     args:
     - --input-path
