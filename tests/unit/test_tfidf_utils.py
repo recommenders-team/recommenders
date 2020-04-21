@@ -2,18 +2,12 @@
 # Licensed under the MIT License.
 
 import pytest
-from reco_utils.recommender.tfidf.tfidf_utils import (
-    clean_text,
-    clean_dataframe_for_rec,
-    tokenize_with_BERT,
-    recommend_with_tfidf,
-    organize_results_as_tabular,
-    get_single_item_info,
-    make_clickable,
-    display_top_recommendations
-)
+from reco_utils.recommender.tfidf.tfidf_utils import TfidfRecommender
 
 import pandas as pd
+import scipy
+
+CLEAN_COL = 'cleaned_text'
 
 @pytest.fixture(scope='module')
 def df():
@@ -30,57 +24,60 @@ def df():
     }
     return pd.DataFrame(mock_text)
 
-def test_clean_text(df):
-    # Ensure cleaned text is alphanumeric
-    example_text = clean_text(df['full_text'][0])
-    assert example_text.replace(' ','').isalnum() == True
+@pytest.fixture(scope='module')
+def model():
+    return TfidfRecommender(tokenization_method='scibert', k=2)
 
-def test_clean_dataframe_for_rec(df):
-    # Ensure cleaned text in each row is alphanumeric
-    df_clean = clean_dataframe_for_rec(df, ['abstract','full_text'])
+def test_init(model):
+    assert model.id_col == 'cord_uid'
+    assert model.title_col == 'title'
+    assert model.k == 2
+
+def test_clean_dataframe(model, df):
+    df_clean = model.clean_dataframe(df, ['abstract','full_text'], new_col_name=CLEAN_COL)
 
     isalphanumeric = list()
     for idx, _ in df_clean.iterrows():
-        s1 = str(df_clean['cleaned_text'][idx])
+        s1 = str(df_clean[CLEAN_COL][idx])
         isalphanumeric.append(s1.replace(' ','').isalnum())
     
     assert False not in isalphanumeric
 
 @pytest.fixture(scope='module')
-def df_clean(df):
-    return clean_dataframe_for_rec(df, ['abstract','full_text'], for_BERT=True)
+def df_clean(model, df):
+    return model.clean_dataframe(df, ['abstract','full_text'], new_col_name=CLEAN_COL)
 
-def test_tokenize_with_BERT(df_clean):
-    tokens = tokenize_with_BERT(df_clean['cleaned_text'])
-    assert True not in list(df_clean['cleaned_text'] == tokens)
+def test_tokenize_text(model, df_clean):
+    _, vectors_tokenized = model.tokenize_text(df_clean)
+    assert True not in list(df_clean[CLEAN_COL] == vectors_tokenized)
 
-def test_recommend_with_tfidf(df_clean):
-    results = recommend_with_tfidf(df_clean)
-    first_rec_id = results[list(results.keys())[0]][0][1]
-    assert type(results) == dict
-    assert list(results.keys()) == list(df_clean['cord_uid'])
-    assert first_rec_id in list(df_clean['cord_uid'])
+def test_fit_tfidf(model, df_clean):
+    tf, vectors_tokenized = model.tokenize_text(df_clean)
+    tfidf_matrix = model.fit_tfidf(tf, vectors_tokenized)
+    assert type(tfidf_matrix)==scipy.sparse.csr.csr_matrix
 
 @pytest.fixture(scope='module')
-def results(df_clean):
-    return recommend_with_tfidf(df_clean)
+def model_fit(model, df_clean):
+    model_fit = TfidfRecommender(tokenization_method='scibert', k=2)
+    tf, vectors_tokenized = model_fit.tokenize_text(df_clean)
+    model_fit.fit_tfidf(tf, vectors_tokenized)
 
-def test_organize_results_as_tabular(df_clean, results):
-    rec_table = organize_results_as_tabular(df_clean, results, k=2)
-    assert type(rec_table) == pd.core.frame.DataFrame
-    assert len(rec_table) > len(results)
-    assert 'rec_score' in rec_table.columns
-    assert 'rec_title' in rec_table.columns
+    return model_fit
 
-def test_get_single_item_info(df):
-    rec_info = get_single_item_info(df, rec_id='ej795nks')
-    assert rec_info['doi'] == '10.1289/ehp.7117'
+def test_get_tokens(model_fit):
+    tokens = model_fit.get_tokens()
+    assert type(tokens) == dict
+    assert type(list(tokens.keys())[0]) == str
 
-def test_make_clickable(df):
-    # TODO
-    pass
+def test_get_stop_words(model_fit):
+    stop_words = model_fit.get_stop_words()
+    assert type(list(stop_words)[0]) == str
 
-def test_display_top_recommendations(df, df_clean, results):
-    rec_table = organize_results_as_tabular(df_clean, results, k=2)
-    top_recs = display_top_recommendations(rec_table, df, query_id='ej795nks', verbose=False)
-    assert len(top_recs.data) == len(df)-1
+def test_recommend_top_k_items(model_fit, df_clean):
+    top_k_recommendations = model_fit.recommend_top_k_items(df_clean)
+    assert len(top_k_recommendations) > len(df_clean)
+
+def test_get_top_k_recommendations(model_fit, df_clean):
+    query_id = 'ej795nks'
+    displayed_top_k = model_fit.get_top_k_recommendations(df_clean, query_id=query_id)
+    assert len(displayed_top_k.data) == model_fit.k

@@ -74,13 +74,19 @@ def remove_duplicates(df, cols):
     """
     for col in cols:
         # Reset index
-        df = df.reset_index()
+        df = df.reset_index(drop=True)
         
         # Find where the identifier variable is duplicated
         dup_rows = np.where(df.duplicated([col])==True)[0]
         
         # Drop duplicated rows
         df = df.drop(dup_rows)
+    
+    # Remove 'level_0' column added by reset_index()
+    try:
+        df = df.drop(['level_0'], axis=1)
+    except:
+        print('Column level_0 cannot be dropped (likely not created).')
 
     return df
 
@@ -96,9 +102,6 @@ def remove_nan(df, cols):
     
     """
     for col in cols:
-        # Reset index
-        df = df.reset_index()
-
         # Convert any empty string cells to nan
         df[col].replace('', np.nan, inplace=True)
         
@@ -197,7 +200,7 @@ def get_public_domain_text(df, blob_service, container_name):
         df_full (pd.DataFrame): Dataframe with select metadata and full article text.
     """
     # reset index
-    df = df.reset_index()
+    df = df.reset_index(drop=True)
 
     # Add new column to fill
     df['full_text'] = np.nan
