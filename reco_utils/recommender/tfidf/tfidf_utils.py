@@ -18,23 +18,22 @@ class TfidfRecommender:
     This class provides content-based recommendations using TF-IDF vectorization in combination with cosine similarity.
     """
 
-    def __init__(self, tokenization_method, id_col, title_col):
+    def __init__(self, id_col, title_col, tokenization_method='scibert'):
         """Initialize model parameters
 
         Args:
-            tokenization_method (str): ['none','nltk','bert','scibert'] option for tokenization method.
             id_col (str): Name of column containing item IDs.
             title_col (str): Name of column containing item titles.
+            tokenization_method (str): ['none','nltk','bert','scibert'] option for tokenization method.
         """
-        
+        self.id_col = id_col
+        self.title_col = title_col
         if tokenization_method.lower() not in ['none','nltk','bert','scibert']:
             raise ValueError(
                 'Tokenization method must be one of ["none" | "nltk" | "bert" | "scibert"]'
             )
         self.tokenization_method = tokenization_method.lower()
-        self.id_col = id_col
-        self.title_col = title_col
-
+        
         # Initialize other variables used in this class
         self.tf = TfidfVectorizer()
         self.tfidf_matrix = dict()
