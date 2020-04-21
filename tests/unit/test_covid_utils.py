@@ -3,8 +3,6 @@
 
 import pytest
 from reco_utils.dataset.covid_utils import (
-    get_blob_service,
-    load_csv_from_blob,
     extract_public_domain,
     remove_duplicates,
     remove_nan,
@@ -27,14 +25,6 @@ def df():
         'url': ['https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11','https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12','https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13','https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7','https://doi.org/10.1016/s0140-6736(03)13507-6']
     }
     return pd.DataFrame(mock_metadata)
-
-def test_get_blob_service():
-    # TODO
-    pass
-
-def test_load_csv_from_blob():
-    # TODO
-    pass
 
 def test_extract_public_domain(df):
     output = extract_public_domain(df)

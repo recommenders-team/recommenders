@@ -8,6 +8,9 @@ import math
 from contextlib import contextmanager
 from tempfile import TemporaryDirectory
 from tqdm import tqdm
+from azure.storage.blob import BlockBlobService
+from io import StringIO
+import pandas as pd
 
 log = logging.getLogger(__name__)
 
@@ -79,3 +82,43 @@ def download_path(path=None):
     else:
         path = os.path.realpath(path)
         yield path
+
+def get_blob_service(azure_storage_account_name, azure_storage_sas_token, container_name):
+    """ Get the Azure blob service for accessing the dataset.
+    
+    Args:
+        azure_storage_account_name (str): Azure storage account name.
+        azure_storage_sas_token (str): Azure storage SaS token.
+        container_name (str): Azure storage container name.
+    
+    Returns:
+        blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
+    """
+
+    # create a blob service
+    blob_service = BlockBlobService(
+        account_name=azure_storage_account_name,
+        sas_token=azure_storage_sas_token,
+    )
+    
+    return blob_service
+
+def load_csv_from_blob(blob_service, container_name, blob_path):
+    """ Download the a .csv file from Azure blob storage.
+    
+    Args:
+        blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
+        container_name (str): Azure storage container name.
+        blob_path (str): Name of the blob located in the container.
+    
+    Returns:
+        df (pd.DataFrame): Loaded dataframe.
+    """
+
+    # Read blob into memory
+    blob = blob_service.get_blob_to_text(container_name, blob_path)
+
+    # Load into dataframe
+    df = pd.read_csv(StringIO(blob.content))
+    
+    return df

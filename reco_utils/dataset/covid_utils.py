@@ -1,52 +1,39 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from azure.storage.blob import BlockBlobService
+from reco_utils.dataset import download_utils
 from io import StringIO
 import pandas as pd
 import numpy as np
 import json
 
 
-def get_blob_service(azure_storage_account_name, azure_storage_sas_token, container_name):
-    """ Get the Azure blob service for accessing the dataset.
-    
+def load_pandas_df(
+    azure_storage_account_name='azureopendatastorage',
+    azure_storage_sas_token='sv=2019-02-02&ss=bfqt&srt=sco&sp=rlcup&se=2025-04-14T00:21:16Z&st=2020-04-13T16:21:16Z&spr=https&sig=JgwLYbdGruHxRYTpr5dxfJqobKbhGap8WUtKFadcivQ%3D',
+    container_name='covid19temp',
+    metadata_filename='metadata.csv'
+    ):
+    """ Loads the Azure Open Research COVID-19 dataset as a pd.DataFrame.
+
+    The Azure COVID-19 Open Research Dataset may be found at https://azure.microsoft.com/en-us/services/open-datasets/catalog/covid-19-open-research/
+
     Args:
         azure_storage_account_name (str): Azure storage account name.
         azure_storage_sas_token (str): Azure storage SaS token.
         container_name (str): Azure storage container name.
+        metadata_filename (str): Name of file containing top-level metadata for the dataset.
     
     Returns:
+        metadata (pd.DataFrame): Metadata dataframe.
         blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
     """
 
-    # create a blob service
-    blob_service = BlockBlobService(
-        account_name=azure_storage_account_name,
-        sas_token=azure_storage_sas_token,
-    )
-    
-    return blob_service
+    # Get metadata (may take around 1-2 min)
+    blob_service = download_utils.get_blob_service(azure_storage_account_name, azure_storage_sas_token, container_name)
+    metadata = download_utils.load_csv_from_blob(blob_service, container_name, metadata_filename)
 
-def load_csv_from_blob(blob_service, container_name, blob_path):
-    """ Download the a .csv file from Azure blob storage.
-    
-    Args:
-        blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
-        container_name (str): Azure storage container name.
-        blob_path (str): Name of the blob located in the container.
-    
-    Returns:
-        df (pd.DataFrame): Loaded dataframe.
-    """
-
-    # Read blob into memory
-    blob = blob_service.get_blob_to_text(container_name, blob_path)
-
-    # Load into dataframe
-    df = pd.read_csv(StringIO(blob.content))
-    
-    return df
+    return metadata, blob_service
 
 def extract_public_domain(metadata):
     """ Only keep rows containing public domain articles.
@@ -81,12 +68,6 @@ def remove_duplicates(df, cols):
         
         # Drop duplicated rows
         df = df.drop(dup_rows)
-    
-    # Remove 'level_0' column added by reset_index()
-    try:
-        df = df.drop(['level_0'], axis=1)
-    except:
-        print('Column level_0 cannot be dropped (likely not created).')
 
     return df
 
