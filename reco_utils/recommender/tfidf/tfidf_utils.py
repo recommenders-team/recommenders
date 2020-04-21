@@ -95,6 +95,10 @@ class TfidfRecommender:
         Returns:
             df (pd.DataFrame): Dataframe with cleaned text in the new column.
         """
+        # Collapse the table such that all descriptive text is just in a single column
+        df = df.replace(np.nan, '', regex=True)
+        df[new_col_name] = df[cols_to_clean].apply(lambda cols: ' '.join(cols), axis=1)
+        
         # Check if for BERT tokenization
         if self.tokenization_method in ['bert','scibert']:
             for_BERT = True
@@ -102,26 +106,10 @@ class TfidfRecommender:
             for_BERT = False
 
         # Clean the text in the dataframe
-        for i in range(0, len(df)):
-            for col in cols_to_clean:
-                df[col][i] = self.__clean_text(df[col][i], for_BERT)
+        df[new_col_name] = df[new_col_name].map(lambda x: self.__clean_text(x, for_BERT))
 
-        # Collapse the table such that all descriptive text is just in a single column
-        first_col = True
-        for col in cols_to_clean:
-            if first_col is True:
-                # first one
-                df[new_col_name] = df[col]
-                first_col = False
-            else:
-                df[new_col_name] = df[new_col_name] + ' ' + df[col]
-        
         # Make sure any punctuation or special characters in Name are human readible
-        for i in range(0, len(df)):
-            df[self.title_col][i] = df[self.title_col][i].encode('ascii','ignore')
-        
-        for i in range(0, len(df)):
-            df[self.title_col][i] = df[self.title_col][i].decode()
+        df[self.title_col] = df[self.title_col].apply(lambda x: x.encode('ascii', 'ignore').decode())
         
         return df
     

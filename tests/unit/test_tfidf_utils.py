@@ -27,11 +27,12 @@ def df():
 
 @pytest.fixture(scope='module')
 def model():
-    return TfidfRecommender(tokenization_method='scibert')
+    return TfidfRecommender(id_col='cord_uid',title_col='title',tokenization_method='scibert')
 
 def test_init(model):
     assert model.id_col == 'cord_uid'
     assert model.title_col == 'title'
+    assert model.tokenization_method == 'scibert'
 
 def test_clean_dataframe(model, df):
     df_clean = model.clean_dataframe(df, ['abstract','full_text'], new_col_name=CLEAN_COL)
@@ -58,7 +59,7 @@ def test_fit(model, df_clean):
 
 @pytest.fixture(scope='module')
 def model_fit(model, df_clean):
-    model_fit = TfidfRecommender(tokenization_method='scibert')
+    model_fit = TfidfRecommender(id_col='cord_uid',title_col='title',tokenization_method='scibert')
     tf, vectors_tokenized = model_fit.tokenize_text(df_clean)
     model_fit.fit(tf, vectors_tokenized)
 
