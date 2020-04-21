@@ -123,8 +123,7 @@ def extract_text_from_file(blob_service, container_name, blob_name):
         full_text_flat (str): Full body text as a single string.
     """
     
-    blob_as_json_string = blob_service.get_blob_to_text(container_name=container_name, blob_name=blob_name)
-    data = json.loads(blob_as_json_string.content)
+    data = json.loads(blob_service.get_blob_to_text(container_name=container_name, blob_name=blob_name).content)
     
     # the text itself lives under 'body_text'
     full_text = data['body_text']
