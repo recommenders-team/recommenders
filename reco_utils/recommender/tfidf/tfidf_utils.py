@@ -18,12 +18,7 @@ class TfidfRecommender:
     This class provides content-based recommendations using TF-IDF vectorization in combination with cosine similarity.
     """
 
-    def __init__(
-        self,
-        tokenization_method='scibert',
-        id_col='cord_uid',
-        title_col='title'
-        ):
+    def __init__(self, tokenization_method, id_col, title_col):
         """Initialize model parameters
 
         Args:
