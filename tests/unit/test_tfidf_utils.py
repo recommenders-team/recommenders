@@ -8,6 +8,7 @@ import pandas as pd
 import scipy
 
 CLEAN_COL = 'cleaned_text'
+K = 2
 
 @pytest.fixture(scope='module')
 def df():
@@ -26,12 +27,11 @@ def df():
 
 @pytest.fixture(scope='module')
 def model():
-    return TfidfRecommender(tokenization_method='scibert', k=2)
+    return TfidfRecommender(tokenization_method='scibert')
 
 def test_init(model):
     assert model.id_col == 'cord_uid'
     assert model.title_col == 'title'
-    assert model.k == 2
 
 def test_clean_dataframe(model, df):
     df_clean = model.clean_dataframe(df, ['abstract','full_text'], new_col_name=CLEAN_COL)
@@ -51,16 +51,16 @@ def test_tokenize_text(model, df_clean):
     _, vectors_tokenized = model.tokenize_text(df_clean)
     assert True not in list(df_clean[CLEAN_COL] == vectors_tokenized)
 
-def test_fit_tfidf(model, df_clean):
+def test_fit(model, df_clean):
     tf, vectors_tokenized = model.tokenize_text(df_clean)
-    tfidf_matrix = model.fit_tfidf(tf, vectors_tokenized)
-    assert type(tfidf_matrix)==scipy.sparse.csr.csr_matrix
+    model.fit(tf, vectors_tokenized)
+    assert type(model.tfidf_matrix)==scipy.sparse.csr.csr_matrix
 
 @pytest.fixture(scope='module')
 def model_fit(model, df_clean):
-    model_fit = TfidfRecommender(tokenization_method='scibert', k=2)
+    model_fit = TfidfRecommender(tokenization_method='scibert')
     tf, vectors_tokenized = model_fit.tokenize_text(df_clean)
-    model_fit.fit_tfidf(tf, vectors_tokenized)
+    model_fit.fit(tf, vectors_tokenized)
 
     return model_fit
 
@@ -74,10 +74,10 @@ def test_get_stop_words(model_fit):
     assert type(list(stop_words)[0]) == str
 
 def test_recommend_top_k_items(model_fit, df_clean):
-    top_k_recommendations = model_fit.recommend_top_k_items(df_clean)
+    top_k_recommendations = model_fit.recommend_top_k_items(df_clean, k=K)
     assert len(top_k_recommendations) > len(df_clean)
 
 def test_get_top_k_recommendations(model_fit, df_clean):
     query_id = 'ej795nks'
     displayed_top_k = model_fit.get_top_k_recommendations(df_clean, query_id=query_id)
-    assert len(displayed_top_k.data) == model_fit.k
+    assert len(displayed_top_k.data) == K
