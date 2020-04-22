@@ -3,7 +3,6 @@
 
 import pytest
 from reco_utils.dataset.covid_utils import (
-    extract_public_domain,
     remove_duplicates,
     remove_nan,
     clean_dataframe,
@@ -24,11 +23,6 @@ def df():
         'url': ['https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11','https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12','https://www.ncbi.nlm.nih.gov/pmc/articles/PMC13','https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7','https://doi.org/10.1016/s0140-6736(03)13507-6']
     }
     return pd.DataFrame(mock_metadata)
-
-def test_extract_public_domain(df):
-    output = extract_public_domain(df)
-    assert len(np.unique(output['license'])) == 1
-    assert 'cc0' in output['license'].values
 
 def test_remove_duplicates(df):
     output = remove_duplicates(df, cols=['cord_uid','doi','title','license','url'])

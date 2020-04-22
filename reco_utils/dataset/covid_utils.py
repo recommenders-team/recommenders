@@ -36,19 +36,6 @@ def load_pandas_df(
 
     return metadata, blob_service
 
-def extract_public_domain(metadata):
-    """ Only keep rows containing public domain articles.
-    
-    Args:
-        metadata (pd.DataFrame): Metadata dataframe.
-    
-    Returns:
-        metadata_public (pd.DataFrame): Dataframe only containing rows of public domain articles.
-    """
-    metadata_public = metadata.loc[metadata['license']=='cc0']
-    
-    return metadata_public
-
 def remove_duplicates(df, cols):
     """ Remove duplicated entries.
     
