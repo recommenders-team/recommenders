@@ -123,18 +123,8 @@ def retrieve_text(entry, blob_service, container_name):
 
         # Extract text
         data = json.loads(blob_service.get_blob_to_text(container_name=container_name, blob_name=blob_name).content)
-    
-        # the text itself lives under 'body_text'
-        full_text = data['body_text']
-
-        # many NLP tasks play nicely with a list of sentences
-        sentences = list()
-        for paragraph in full_text:
-            sentences.append(paragraph['text'])
-            
-        text = ''
-        for sentence in sentences:
-            text = text + ' ' + sentence
+        text = ' '.join([paragraph['text'] for paragraph in data['body_text']])
+        
     except:
         text = ''
     
