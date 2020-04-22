@@ -319,7 +319,7 @@ class TfidfRecommender:
         # Create subset of dataframe with just recommendations for the item of interest
         df = self.top_k_recommendations.loc[self.top_k_recommendations[self.id_col]==query_id].reset_index()
 
-        # Remove id_col aof query item
+        # Remove id_col of query item
         df.drop([self.id_col], axis=1, inplace=True)
 
         # Add metadata for each recommended item (rec_<id_col>)
@@ -335,7 +335,7 @@ class TfidfRecommender:
 
         # Only keep columns of interest
         if len(cols_to_keep) > 0:
-            # Append
+            # Insert our recommendation scoring/ranking columns
             cols_to_keep.insert(0,'similarity_score')
             cols_to_keep.insert(0,'rank')
             df = df[cols_to_keep]
