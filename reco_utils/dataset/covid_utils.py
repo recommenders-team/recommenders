@@ -1,7 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from reco_utils.dataset import download_utils
+from reco_utils.dataset import blob_utils
+from azure.storage.blob import BlockBlobService
 from io import StringIO
 import pandas as pd
 import numpy as np
@@ -30,8 +31,8 @@ def load_pandas_df(
     """
 
     # Get metadata (may take around 1-2 min)
-    blob_service = download_utils.get_blob_service(azure_storage_account_name, azure_storage_sas_token, container_name)
-    metadata = download_utils.load_csv_from_blob(blob_service, container_name, metadata_filename)
+    blob_service = BlockBlobService(account_name=azure_storage_account_name,sas_token=azure_storage_sas_token)
+    metadata = blob_utils.load_csv_from_blob(blob_service, container_name, metadata_filename)
 
     return metadata, blob_service
 
