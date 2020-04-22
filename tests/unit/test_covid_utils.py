@@ -36,10 +36,12 @@ def test_clean_dataframe(df):
     output = clean_dataframe(df)
     assert len(df) > len(output)
 
+@pytest.mark.skip(reason='TODO: Implement this')
 def test_retrieve_text():
     # TODO
     pass
 
+@pytest.mark.skip(reason='TODO: Implement this')
 def test_get_public_domain_text():
     # TODO
     pass
