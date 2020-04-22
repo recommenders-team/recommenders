@@ -18,16 +18,14 @@ class TfidfRecommender:
     This class provides content-based recommendations using TF-IDF vectorization in combination with cosine similarity.
     """
 
-    def __init__(self, id_col, title_col, tokenization_method='scibert'):
+    def __init__(self, id_col, tokenization_method='scibert'):
         """Initialize model parameters
 
         Args:
             id_col (str): Name of column containing item IDs.
-            title_col (str): Name of column containing item titles.
             tokenization_method (str): ['none','nltk','bert','scibert'] option for tokenization method.
         """
         self.id_col = id_col
-        self.title_col = title_col
         if tokenization_method.lower() not in ['none','nltk','bert','scibert']:
             raise ValueError(
                 'Tokenization method must be one of ["none" | "nltk" | "bert" | "scibert"]'
@@ -108,9 +106,6 @@ class TfidfRecommender:
         # Clean the text in the dataframe
         df[new_col_name] = df[new_col_name].map(lambda x: self.__clean_text(x, for_BERT))
 
-        # Make sure any punctuation or special characters in Name are human readible
-        df[self.title_col] = df[self.title_col].apply(lambda x: x.encode('ascii', 'ignore').decode())
-        
         return df
     
     def tokenize_text(self, df_clean, text_col='cleaned_text', ngram_range=(1,3), min_df=0):
@@ -224,7 +219,7 @@ class TfidfRecommender:
         results = {}
         for idx, row in df_clean.iterrows():
             similar_indices = cosine_sim[idx].argsort()[:-(len(df_clean)+1):-1]
-            similar_items = [(cosine_sim[idx][i], df_clean[self.id_col][i], df_clean[self.title_col][i]) for i in similar_indices]
+            similar_items = [(cosine_sim[idx][i], df_clean[self.id_col][i]) for i in similar_indices]
             results[row[self.id_col]] = similar_items[1:]
         
         # Save to class
@@ -240,38 +235,31 @@ class TfidfRecommender:
         
         # Initialize new dataframe to hold recommendation output
         item_id = list()
-        title = list()
 
         rec_rank = list()
         rec_score = list()
 
         rec_item_id = list()
-        rec_title = list()
 
         for idx in range(0, len(self.recommendations)):
             # Information about the item we are basing recommendations off of
             rec_based_on = list(self.recommendations.keys())[idx]
             tmp_item_id = str(df_clean.loc[df_clean[self.id_col] == rec_based_on][self.id_col].values[0])
-            tmp_title = str(df_clean.loc[df_clean[self.id_col] == rec_based_on][self.title_col].values[0])
 
             # Iterate through top k recommendations
             for i in range(0, k):
                 # Save to lists
                 item_id.append(tmp_item_id)
-                title.append(tmp_title)
                 rec_rank.append(str(i+1))
                 rec_score.append(self.recommendations[rec_based_on][i][0])
                 rec_item_id.append(self.recommendations[rec_based_on][i][1])
-                rec_title.append(self.recommendations[rec_based_on][i][2])
 
         
         # Save the output
         output_dict = {self.id_col: item_id,
-                    self.title_col: title,
                     'rec_rank': rec_rank,
                     'rec_score': rec_score,
-                    'rec_'+self.id_col: rec_item_id,
-                    'rec_'+self.title_col: rec_title}
+                    'rec_'+self.id_col: rec_item_id}
 
         # Convert to dataframe
         self.top_k_recommendations = pd.DataFrame(output_dict)
@@ -284,7 +272,7 @@ class TfidfRecommender:
             k (int): Number of recommendations to return.
         
         Returns:
-            self.top_k_recommendations (pd.DataFrame): Dataframe containing id and title of top k recommendations for all items.
+            self.top_k_recommendations (pd.DataFrame): Dataframe containing id of top k recommendations for all items.
         """
         self.__create_full_recommendation_dictionary(df_clean)
         self.__organize_results_as_tabular(df_clean, k)
@@ -321,7 +309,7 @@ class TfidfRecommender:
         Args:
             metadata (pd.DataFrame): Dataframe holding metadata for all public domain papers.
             query_id (str): ID of item of interest.
-            cols_to_keep (list of str): List of columns from the metadata dataframe to include (e.g., ['authors','journal','publish_time','url']). By default, all columns are kept.
+            cols_to_keep (list of str): List of columns from the metadata dataframe to include (e.g., ['title','authors','journal','publish_time','url']). By default, all columns are kept.
             verbose (boolean): Set to True if you want to print the table.
         
         Results:
@@ -331,25 +319,23 @@ class TfidfRecommender:
         # Create subset of dataframe with just recommendations for the item of interest
         df = self.top_k_recommendations.loc[self.top_k_recommendations[self.id_col]==query_id].reset_index()
 
-        # Remove id_col and title of query item
-        df.drop([self.id_col, self.title_col], axis=1, inplace=True)
+        # Remove id_col aof query item
+        df.drop([self.id_col], axis=1, inplace=True)
 
         # Add metadata for each recommended item (rec_<id_col>)
         metadata_cols = metadata.columns.values
         df[metadata_cols] = df.apply(lambda row: self.__get_single_item_info(metadata, row['rec_'+self.id_col]), axis=1)
 
-        # Remove id col and title col added from metadata (already present from self.top_k_recommendations)
-        df.drop([self.id_col, self.title_col], axis=1, inplace=True)
+        # Remove id col added from metadata (already present from self.top_k_recommendations)
+        df.drop([self.id_col], axis=1, inplace=True)
 
         # Rename columns such that rec_ is no longer appended, for simplicity
         df = df.rename(columns={'rec_rank': 'rank',
-                                'rec_score': 'similarity_score',
-                                'rec_'+self.title_col: self.title_col})
+                                'rec_score': 'similarity_score'})
 
         # Only keep columns of interest
         if len(cols_to_keep) > 0:
             # Append
-            cols_to_keep.insert(0,self.title_col)
             cols_to_keep.insert(0,'similarity_score')
             cols_to_keep.insert(0,'rank')
             df = df[cols_to_keep]
