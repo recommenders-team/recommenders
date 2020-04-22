@@ -89,7 +89,7 @@ class TfidfRecommender:
         
         Args:
             df (pd.DataFrame): Dataframe containing the text content to clean.
-            cols_to_clean (str): List of columns to clean by name (e.g., ['abstract','full_text']).
+            cols_to_clean (list of str): List of columns to clean by name (e.g., ['abstract','full_text']).
             new_col_name (str): Name of the new column that will contain the cleaned text.
 
         Returns:
@@ -267,11 +267,11 @@ class TfidfRecommender:
         
         # Save the output
         output_dict = {self.id_col: item_id,
-                    'title': title,
+                    self.title_col: title,
                     'rec_rank': rec_rank,
                     'rec_score': rec_score,
                     'rec_'+self.id_col: rec_item_id,
-                    'rec_title': rec_title}
+                    'rec_'+self.title_col: rec_title}
 
         # Convert to dataframe
         self.top_k_recommendations = pd.DataFrame(output_dict)
@@ -291,24 +291,19 @@ class TfidfRecommender:
 
         return self.top_k_recommendations
     
-    def __get_single_item_info(self, metadata, rec_id, verbose=True):
+    def __get_single_item_info(self, metadata, rec_id):
         """ Get full information for a single recommended item.
         
         Args:
             metadata (pd.DataFrame): Dataframe containing item info.
             rec_id (str): Identifier for recommended item.
-            verbose (boolean): Set to True if you want to print basic info and URL.
-            
+
         Results:
             rec_info (pd.Series): Single row from dataframe containing recommended item info.
         """
         
         # Return row
         rec_info = metadata.iloc[int(np.where(metadata[self.id_col]==rec_id)[0])]
-
-        if verbose == True:
-            print('"'+ rec_info['title'] + '" (' + rec_info['publish_time'].rsplit('-')[0] + ')' + ' by ' + rec_info['authors'] + '.')
-            print('Available at ' + rec_info['url'])
         
         return rec_info
 
@@ -320,50 +315,49 @@ class TfidfRecommender:
         """
         return '<a href="{0}">{0}</a>'.format(address)
     
-    def get_top_k_recommendations(self, metadata, query_id, verbose=True):
+    def get_top_k_recommendations(self, metadata, query_id, cols_to_keep=[], verbose=True):
         """ Return the top k recommendations with useful metadata for each recommendation.
 
         Args:
             metadata (pd.DataFrame): Dataframe holding metadata for all public domain papers.
             query_id (str): ID of item of interest.
+            cols_to_keep (list of str): List of columns from the metadata dataframe to include (e.g., ['authors','journal','publish_time','url']). By default, all columns are kept.
             verbose (boolean): Set to True if you want to print the table.
         
         Results:
             df (pd.Styler): Stylized dataframe holding recommendations and associated metadata just for the item of interest (can access as normal dataframe by using df.data).
         """
 
-        # Create subset of dataframe with just item of interest
+        # Create subset of dataframe with just recommendations for the item of interest
         df = self.top_k_recommendations.loc[self.top_k_recommendations[self.id_col]==query_id].reset_index()
 
         # Remove id_col and title of query item
-        df.drop([self.id_col, 'title'], axis=1, inplace=True)
+        df.drop([self.id_col, self.title_col], axis=1, inplace=True)
 
-        # Initialize new columns
-        df['authors'] = np.nan
-        df['journal'] = np.nan
-        df['publish_time'] = np.nan
-        df['url'] = np.nan
+        # Add metadata for each recommended item (rec_<id_col>)
+        metadata_cols = metadata.columns.values
+        df[metadata_cols] = df.apply(lambda row: self.__get_single_item_info(metadata, row['rec_'+self.id_col]), axis=1)
 
-        # Add useful metadata
-        for i in range(0,len(df)):
-            rec_id = df['rec_'+self.id_col][i]
-            rec_info = self.__get_single_item_info(metadata, rec_id, verbose=False)
-            df['authors'][i] = rec_info['authors']
-            df['journal'][i] = rec_info['journal']
-            df['publish_time'][i] = rec_info['publish_time']
-            df['url'][i] = rec_info['url']
+        # Remove id col and title col added from metadata (already present from self.top_k_recommendations)
+        df.drop([self.id_col, self.title_col], axis=1, inplace=True)
 
         # Rename columns such that rec_ is no longer appended, for simplicity
         df = df.rename(columns={'rec_rank': 'rank',
                                 'rec_score': 'similarity_score',
-                                'rec_title': 'title'})
+                                'rec_'+self.title_col: self.title_col})
 
         # Only keep columns of interest
-        df = df[['rank', 'similarity_score', 'title', 'authors', 'journal', 'publish_time','url']]
+        if len(cols_to_keep) > 0:
+            # Append
+            cols_to_keep.insert(0,self.title_col)
+            cols_to_keep.insert(0,'similarity_score')
+            cols_to_keep.insert(0,'rank')
+            df = df[cols_to_keep]
 
-        # Make URL clickable
-        format_ = {'url': self.__make_clickable}
-        df = df.head().style.format(format_)
+        # Make URLs clickable if they exist
+        if 'url' in list(map(lambda x: x.lower(), metadata_cols)):
+            format_ = {'url': self.__make_clickable}
+            df = df.head().style.format(format_)
 
         if verbose == True:
             df
