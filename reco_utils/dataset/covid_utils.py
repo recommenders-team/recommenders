@@ -166,13 +166,9 @@ def get_public_domain_text(df, blob_service, container_name):
     # reset index
     df = df.reset_index(drop=True)
 
-    # Add new column to fill
-    df['full_text'] = np.nan
-
     # Add in full_text
-    for row in range(0, len(df)):
-        df['full_text'][row] = retrieve_text(df.iloc[row], blob_service, container_name)
-        
+    df['full_text'] = df.apply(lambda row: retrieve_text(row, blob_service, container_name), axis=1)
+
     # Remove rows with empty full_text
     empty_rows = np.where(df['full_text']=='')[0]
     df = df.drop(empty_rows)
