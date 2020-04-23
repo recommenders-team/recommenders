@@ -43,6 +43,7 @@ CONDA_BASE = {
     "jupyter": "jupyter>=1.0.0",
     "matplotlib": "matplotlib>=2.2.2",
     "mock": "mock==2.0.0",
+    "nltk": "nltk>=3.4",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4,<1.0.0",
     "pip": "pip>=19.2",
@@ -72,6 +73,7 @@ CONDA_GPU = {
 PIP_BASE = {
     "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.69",
     "azure-storage": "azure-storage>=0.36.0",
+    "azure-storage-blob": "azure-storage-blob>=12.0.0",
     "azure-cli-core": "azure-cli-core>=2.0.75",
     "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb>=0.8.0",
     "black": "black>=18.6b4",
@@ -85,6 +87,7 @@ PIP_BASE = {
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
     "xlearn": "xlearn==0.40a1",
+    "transformers": "transformers==2.5.0",
 }
 
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
