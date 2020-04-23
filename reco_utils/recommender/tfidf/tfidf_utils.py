@@ -232,29 +232,29 @@ class TfidfRecommender:
             df_clean (pd.DataFrame): Dataframe with cleaned text.
             k (int): Number of recommendations to return.
         """
-        
         # Initialize new dataframe to hold recommendation output
         item_id = list()
-
         rec_rank = list()
         rec_score = list()
-
         rec_item_id = list()
 
+        # For each item
         for idx in range(0, len(self.recommendations)):
             # Information about the item we are basing recommendations off of
             rec_based_on = list(self.recommendations.keys())[idx]
             tmp_item_id = str(df_clean.loc[df_clean[self.id_col] == rec_based_on][self.id_col].values[0])
 
-            # Iterate through top k recommendations
-            for i in range(0, k):
-                # Save to lists
-                item_id.append(tmp_item_id)
-                rec_rank.append(str(i+1))
-                rec_score.append(self.recommendations[rec_based_on][i][0])
-                rec_item_id.append(self.recommendations[rec_based_on][i][1])
+            # Get all scores and IDs for items recommended for this current item
+            rec_array = self.recommendations[rec_based_on]
+            tmp_rec_score = list(map(lambda x:x[0],rec_array))
+            tmp_rec_id = list(map(lambda x:x[1],rec_array))
 
-        
+            # Append multiple values at a time to list
+            item_id.extend([tmp_item_id]*k)
+            rec_rank.extend(list(range(1,k+1)))
+            rec_score.extend(tmp_rec_score[:k])
+            rec_item_id.extend(tmp_rec_id[:k])
+
         # Save the output
         output_dict = {self.id_col: item_id,
                     'rec_rank': rec_rank,
