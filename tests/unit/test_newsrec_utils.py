@@ -70,11 +70,13 @@ def test_news_iterator(tmp):
     for res in train_iterator.load_data_from_file(train_file):
         assert isinstance(res, dict)
         assert len(res) == 5
+        break
     
     assert test_iterator is not None
     for res in test_iterator.load_data_from_file(valid_file):
         assert isinstance(res, dict)
         assert len(res) == 5
+        break
 
 
 @pytest.mark.gpu
