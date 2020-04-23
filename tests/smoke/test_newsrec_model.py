@@ -17,7 +17,6 @@ from reco_utils.recommender.newsrec.IO.naml_iterator import NAMLIterator
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_model_nrms(tmp):
     yaml_file = os.path.join(tmp, 'nrms.yaml')
     train_file = os.path.join(tmp, 'train.txt')
@@ -42,7 +41,6 @@ def test_model_nrms(tmp):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_model_naml(tmp):
     yaml_file = os.path.join(tmp, 'naml.yaml')
     train_file = os.path.join(tmp, 'train.txt')
@@ -67,7 +65,6 @@ def test_model_naml(tmp):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_model_lstur(tmp):
     yaml_file = os.path.join(tmp, 'lstur.yaml')
     train_file = os.path.join(tmp, 'train.txt')
@@ -93,7 +90,6 @@ def test_model_lstur(tmp):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_model_npa(tmp):
     yaml_file = os.path.join(tmp, 'npa.yaml')
     train_file = os.path.join(tmp, 'train.txt')

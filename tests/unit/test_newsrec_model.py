@@ -18,7 +18,6 @@ def resource_path():
     return os.path.dirname(os.path.realpath(__file__))
 
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_nrms_component_definition(tmp):
     yaml_file = os.path.join(tmp, 'nrms.yaml')
     wordEmb_file = os.path.join(tmp, 'embedding.npy')
@@ -41,7 +40,6 @@ def test_nrms_component_definition(tmp):
 
 
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_naml_component_definition(tmp):
     yaml_file = os.path.join(tmp, 'naml.yaml')
     wordEmb_file = os.path.join(tmp, 'embedding.npy')
@@ -64,7 +62,6 @@ def test_naml_component_definition(tmp):
 
 
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_npa_component_definition(tmp):
     yaml_file = os.path.join(tmp, 'npa.yaml')
     wordEmb_file = os.path.join(tmp, 'embedding.npy')
@@ -86,7 +83,6 @@ def test_npa_component_definition(tmp):
     assert model.train_optimizer is not None
 
 @pytest.mark.gpu
-@pytest.mark.newsrec
 def test_lstur_component_definition(tmp):
     yaml_file = os.path.join(tmp, 'lstur.yaml')
     wordEmb_file = os.path.join(tmp, 'embedding.npy')
