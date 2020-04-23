@@ -8,16 +8,9 @@ import numpy as np
 import os
 import pandas as pd
 import nni
-import surprise
 import sys
 
 sys.path.append("../../../")
-
-import reco_utils.evaluation.python_evaluation as evaluation
-from reco_utils.recommender.surprise.surprise_utils import (
-    predict,
-    compute_ranking_predictions,
-)
 
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
