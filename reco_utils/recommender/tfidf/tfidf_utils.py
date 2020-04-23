@@ -274,6 +274,10 @@ class TfidfRecommender:
         Returns:
             self.top_k_recommendations (pd.DataFrame): Dataframe containing id of top k recommendations for all items.
         """
+        if k > len(df_clean)-1:
+            raise ValueError(
+                'Cannot get more recommendations than there are items. Set k lower.'
+            )
         self.__create_full_recommendation_dictionary(df_clean)
         self.__organize_results_as_tabular(df_clean, k)
 
