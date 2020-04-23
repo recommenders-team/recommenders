@@ -54,7 +54,7 @@ def test_load_yaml_file(tmp):
 
 @pytest.mark.gpu
 @pytest.mark.newsrec
-def test_News_iterator(tmp):
+def test_news_iterator(tmp):
     data_path = tmp
     yaml_file = os.path.join(data_path, 'nrms.yaml')
     train_file = os.path.join(data_path, 'train.txt')
@@ -94,7 +94,7 @@ def test_News_iterator(tmp):
 
 @pytest.mark.gpu
 @pytest.mark.newsrec
-def test_NAML_iterator(tmp):
+def test_naml_iterator(tmp):
     data_path = tmp
     yaml_file = os.path.join(data_path, 'naml.yaml')
     train_file = os.path.join(data_path, 'train.txt')
