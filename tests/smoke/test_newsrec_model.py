@@ -18,18 +18,16 @@ from reco_utils.recommender.newsrec.IO.naml_iterator import NAMLIterator
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.nrms
 def test_model_nrms(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'nrms.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'nrms.yaml')
+    train_file = os.path.join(tmp, 'train.txt')
+    valid_file = os.path.join(tmp, 'test.txt')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "nrms.zip",
         )
 
@@ -45,18 +43,16 @@ def test_model_nrms(tmp):
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.naml
 def test_model_naml(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'naml.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'naml.yaml')
+    train_file = os.path.join(tmp, 'train.txt')
+    valid_file = os.path.join(tmp, 'test.txt')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "naml.zip",
         )
 
@@ -72,18 +68,16 @@ def test_model_naml(tmp):
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.lstur
 def test_model_lstur(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'lstur.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'lstur.yaml')
+    train_file = os.path.join(tmp, 'train.txt')
+    valid_file = os.path.join(tmp, 'test.txt')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "lstur.zip",
         )
 
@@ -100,18 +94,16 @@ def test_model_lstur(tmp):
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.npa
 def test_model_npa(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'npa.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'npa.yaml')
+    train_file = os.path.join(tmp, 'train.txt')
+    valid_file = os.path.join(tmp, 'test.txt')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "npa.zip",
         )
 

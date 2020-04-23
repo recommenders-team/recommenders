@@ -19,16 +19,14 @@ def resource_path():
 
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.nrms
 def test_nrms_component_definition(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'nrms.yaml')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'nrms.yaml')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "nrms.zip",
         )
 
@@ -44,16 +42,14 @@ def test_nrms_component_definition(tmp):
 
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.naml
 def test_naml_component_definition(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'naml.yaml')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'naml.yaml')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "naml.zip",
         )
 
@@ -69,16 +65,14 @@ def test_naml_component_definition(tmp):
 
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.npa
 def test_npa_component_definition(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'npa.yaml')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'npa.yaml')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "npa.zip",
         )
 
@@ -93,16 +87,14 @@ def test_npa_component_definition(tmp):
 
 @pytest.mark.gpu
 @pytest.mark.newsrec
-@pytest.mark.lstur
 def test_lstur_component_definition(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'lstur.yaml')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'lstur.yaml')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "lstur.zip",
         )
 

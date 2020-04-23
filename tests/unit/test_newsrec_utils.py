@@ -21,16 +21,15 @@ def resource_path():
 @pytest.mark.gpu
 @pytest.mark.newsrec
 def test_prepare_hparams(must_exist_attributes, tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'nrms.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'nrms.yaml')
+    train_file = os.path.join(tmp, 'train.txt')
+    valid_file = os.path.join(tmp, 'test.txt')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "nrms.zip",
         )
 
@@ -40,13 +39,12 @@ def test_prepare_hparams(must_exist_attributes, tmp):
 @pytest.mark.gpu
 @pytest.mark.newsrec
 def test_load_yaml_file(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'nrms.yaml')
+    yaml_file = os.path.join(tmp, 'nrms.yaml')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "nrms.zip",
         )
     config = load_yaml(yaml_file)
@@ -55,16 +53,15 @@ def test_load_yaml_file(tmp):
 @pytest.mark.gpu
 @pytest.mark.newsrec
 def test_news_iterator(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'nrms.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'nrms.yaml')
+    train_file = os.path.join(tmp, 'train.txt')
+    valid_file = os.path.join(tmp, 'test.txt')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "nrms.zip",
         )
     
@@ -95,16 +92,15 @@ def test_news_iterator(tmp):
 @pytest.mark.gpu
 @pytest.mark.newsrec
 def test_naml_iterator(tmp):
-    data_path = tmp
-    yaml_file = os.path.join(data_path, 'naml.yaml')
-    train_file = os.path.join(data_path, 'train.txt')
-    valid_file = os.path.join(data_path, 'test.txt')
-    wordEmb_file = os.path.join(data_path, 'embedding.npy')
+    yaml_file = os.path.join(tmp, 'naml.yaml')
+    train_file = os.path.join(tmp, 'train.txt')
+    valid_file = os.path.join(tmp, 'test.txt')
+    wordEmb_file = os.path.join(tmp, 'embedding.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/newsrec/",
-            data_path,
+            tmp,
             "naml.zip",
         )
     
