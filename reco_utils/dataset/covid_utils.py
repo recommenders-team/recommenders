@@ -10,11 +10,11 @@ import json
 
 
 def load_pandas_df(
-    azure_storage_account_name='azureopendatastorage',
-    azure_storage_sas_token='sv=2019-02-02&ss=bfqt&srt=sco&sp=rlcup&se=2025-04-14T00:21:16Z&st=2020-04-13T16:21:16Z&spr=https&sig=JgwLYbdGruHxRYTpr5dxfJqobKbhGap8WUtKFadcivQ%3D',
-    container_name='covid19temp',
-    metadata_filename='metadata.csv'
-    ):
+    azure_storage_account_name="azureopendatastorage",
+    azure_storage_sas_token="sv=2019-02-02&ss=bfqt&srt=sco&sp=rlcup&se=2025-04-14T00:21:16Z&st=2020-04-13T16:21:16Z&spr=https&sig=JgwLYbdGruHxRYTpr5dxfJqobKbhGap8WUtKFadcivQ%3D",
+    container_name="covid19temp",
+    metadata_filename="metadata.csv",
+):
     """ Loads the Azure Open Research COVID-19 dataset as a pd.DataFrame.
 
     The Azure COVID-19 Open Research Dataset may be found at https://azure.microsoft.com/en-us/services/open-datasets/catalog/covid-19-open-research/
@@ -31,10 +31,15 @@ def load_pandas_df(
     """
 
     # Get metadata (may take around 1-2 min)
-    blob_service = BlockBlobService(account_name=azure_storage_account_name,sas_token=azure_storage_sas_token)
-    metadata = blob_utils.load_csv_from_blob(blob_service, container_name, metadata_filename)
+    blob_service = BlockBlobService(
+        account_name=azure_storage_account_name, sas_token=azure_storage_sas_token
+    )
+    metadata = blob_utils.load_csv_from_blob(
+        blob_service, container_name, metadata_filename
+    )
 
     return metadata, blob_service
+
 
 def remove_duplicates(df, cols):
     """ Remove duplicated entries.
@@ -50,14 +55,15 @@ def remove_duplicates(df, cols):
     for col in cols:
         # Reset index
         df = df.reset_index(drop=True)
-        
+
         # Find where the identifier variable is duplicated
-        dup_rows = np.where(df.duplicated([col])==True)[0]
-        
+        dup_rows = np.where(df.duplicated([col]) == True)[0]
+
         # Drop duplicated rows
         df = df.drop(dup_rows)
 
     return df
+
 
 def remove_nan(df, cols):
     """ Remove rows with NaN values in specified column.
@@ -72,12 +78,13 @@ def remove_nan(df, cols):
     """
     for col in cols:
         # Convert any empty string cells to nan
-        df[col].replace('', np.nan, inplace=True)
-        
+        df[col].replace("", np.nan, inplace=True)
+
         # Remove NaN rows
         df = df[df[col].notna()]
 
     return df
+
 
 def clean_dataframe(df):
     """ Clean up the dataframe.
@@ -90,14 +97,15 @@ def clean_dataframe(df):
     """
 
     # Remove duplicated rows
-    cols=['cord_uid','doi']
+    cols = ["cord_uid", "doi"]
     df = remove_duplicates(df, cols)
-    
+
     # Remove rows without values in specified columns
-    cols=['cord_uid','doi','title','license','url']
+    cols = ["cord_uid", "doi", "title", "license", "url"]
     df = remove_nan(df, cols)
-    
+
     return df
+
 
 def retrieve_text(entry, blob_service, container_name):
     """ Retrieve body text from article of interest.
@@ -110,25 +118,34 @@ def retrieve_text(entry, blob_service, container_name):
     Results:
         text (str): Full text of the blob as a single string.
     """
-    
+
     try:
         # select based on whether it's pdf or pmc_xml
-        if entry['has_pdf_parse'] == True:
-            blob_name = '{0}/pdf_json/{1}.json'.format(entry['full_text_file'], entry['sha'])
+        if entry["has_pdf_parse"] == True:
+            blob_name = "{0}/pdf_json/{1}.json".format(
+                entry["full_text_file"], entry["sha"]
+            )
         else:
-            if entry['has_pmc_xml_parse'] == True:
-                blob_name = '{0}/pmc_json/{1}.xml.json'.format(entry['full_text_file'], entry['pmcid']) 
+            if entry["has_pmc_xml_parse"] == True:
+                blob_name = "{0}/pmc_json/{1}.xml.json".format(
+                    entry["full_text_file"], entry["pmcid"]
+                )
             else:
-                print('Neither PDF or PMC_XML data is available for this file')
+                print("Neither PDF or PMC_XML data is available for this file")
 
         # Extract text
-        data = json.loads(blob_service.get_blob_to_text(container_name=container_name, blob_name=blob_name).content)
-        text = ' '.join([paragraph['text'] for paragraph in data['body_text']])
-        
+        data = json.loads(
+            blob_service.get_blob_to_text(
+                container_name=container_name, blob_name=blob_name
+            ).content
+        )
+        text = " ".join([paragraph["text"] for paragraph in data["body_text"]])
+
     except:
-        text = ''
-    
+        text = ""
+
     return text
+
 
 def get_public_domain_text(df, blob_service, container_name):
     """ Get all public domain text.
@@ -145,14 +162,28 @@ def get_public_domain_text(df, blob_service, container_name):
     df = df.reset_index(drop=True)
 
     # Add in full_text
-    df['full_text'] = df.apply(lambda row: retrieve_text(row, blob_service, container_name), axis=1)
+    df["full_text"] = df.apply(
+        lambda row: retrieve_text(row, blob_service, container_name), axis=1
+    )
 
     # Remove rows with empty full_text
-    empty_rows = np.where(df['full_text']=='')[0]
+    empty_rows = np.where(df["full_text"] == "")[0]
     df = df.drop(empty_rows)
-    
+
     # Only keep columns of interest
-    df_full = df[['cord_uid','doi','title','publish_time','authors','journal','url','abstract','full_text']]
+    df_full = df[
+        [
+            "cord_uid",
+            "doi",
+            "title",
+            "publish_time",
+            "authors",
+            "journal",
+            "url",
+            "abstract",
+            "full_text",
+        ]
+    ]
     df_full = df_full.reset_index()
-    
+
     return df_full

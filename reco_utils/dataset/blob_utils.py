@@ -22,5 +22,5 @@ def load_csv_from_blob(blob_service, container_name, blob_name, **kwargs):
 
     # Load into dataframe
     df = pd.read_csv(StringIO(blob.content), **kwargs)
-    
+
     return df
