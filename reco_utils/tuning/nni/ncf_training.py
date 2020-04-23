@@ -38,17 +38,6 @@ def ncf_training(params):
 
     data = NCFDataset(train=train_data, test=validation_data, seed=DEFAULT_SEED)
 
-    ncf_params = {
-        p: params[p]
-        for p in [
-            "random_state",
-            "n_epochs",
-            "verbose",
-            "n_factors",
-            "learning_rate",
-        ]
-    }
-
     model = NCF (
         n_users=data.n_users, 
         n_items=data.n_items,
