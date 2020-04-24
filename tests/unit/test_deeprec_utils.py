@@ -9,9 +9,9 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
     download_deeprec_resources,
     load_yaml,
 )
-from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
-from reco_utils.recommender.deeprec.IO.dkn_iterator import DKNTextIterator
-from reco_utils.recommender.deeprec.IO.sequential_iterator import SequentialIterator
+from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
+from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
+from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 
