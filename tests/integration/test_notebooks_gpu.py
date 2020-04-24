@@ -43,7 +43,11 @@ def test_ncf_integration(notebooks, size, epochs, expected_values, seed):
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=512, SEED=seed,
+            TOP_K=10,
+            MOVIELENS_DATA_SIZE=size,
+            EPOCHS=epochs,
+            BATCH_SIZE=512,
+            SEED=seed,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -84,7 +88,11 @@ def test_ncf_deep_dive_integration(
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=batch_size, SEED=seed,
+            TOP_K=10,
+            MOVIELENS_DATA_SIZE=size,
+            EPOCHS=epochs,
+            BATCH_SIZE=batch_size,
+            SEED=seed,
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
@@ -139,20 +147,16 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
             15,
             10,
             {
-                "res_syn": {
-                    "auc": 0.9716,
-                    "logloss": 0.699,
-                },
-                "res_real": {
-                    "auc": 0.749,
-                    "logloss": 0.4926,
-                },
+                "res_syn": {"auc": 0.9716, "logloss": 0.699,},
+                "res_real": {"auc": 0.749, "logloss": 0.4926,},
             },
             42,
         )
     ],
 )
-def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_values, seed):
+def test_xdeepfm_integration(
+    notebooks, syn_epochs, criteo_epochs, expected_values, seed
+):
     notebook_path = notebooks["xdeepfm_quickstart"]
     pm.execute_notebook(
         notebook_path,
@@ -170,7 +174,9 @@ def test_xdeepfm_integration(notebooks, syn_epochs, criteo_epochs, expected_valu
 
     for key, value in expected_values.items():
         assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
-        assert results[key]["logloss"] == pytest.approx(value["logloss"], rel=TOL, abs=ABS_TOL)
+        assert results[key]["logloss"] == pytest.approx(
+            value["logloss"], rel=TOL, abs=ABS_TOL
+        )
 
 
 @pytest.mark.integration
@@ -215,6 +221,7 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
+
 @pytest.mark.sequential
 @pytest.mark.integration
 @pytest.mark.gpu
@@ -226,17 +233,14 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
             os.path.join("tests", "resources", "deeprec", "slirec"),
             10,
             400,
-            {
-                "res_syn": {
-                    "auc": 0.7183,
-                    "logloss": 0.6045,
-                },
-            },
+            {"res_syn": {"auc": 0.7183, "logloss": 0.6045,},},
             2019,
         )
     ],
 )
-def test_slirec_quickstart_integration(notebooks, yaml_file, data_path, epochs, batch_size, expected_values, seed):
+def test_slirec_quickstart_integration(
+    notebooks, yaml_file, data_path, epochs, batch_size, expected_values, seed
+):
     notebook_path = notebooks["slirec_quickstart"]
 
     params = {
@@ -252,4 +256,189 @@ def test_slirec_quickstart_integration(notebooks, yaml_file, data_path, epochs, 
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
     for key, value in expected_values.items():
         assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
-        assert results[key]["logloss"] == pytest.approx(value["logloss"], rel=TOL, abs=ABS_TOL)
+        assert results[key]["logloss"] == pytest.approx(
+            value["logloss"], rel=TOL, abs=ABS_TOL
+        )
+
+
+@pytest.mark.nrms
+@pytest.mark.integration
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "epochs, seed, expected_values",
+    [
+        (
+            10,
+            42,
+            {
+                "res_syn": {
+                    "group_auc": 0.5845,
+                    "mean_mrr": 0.202,
+                    "ndcg@5": 0.1977,
+                    "ndcg@10": 0.2655,
+                },
+            },
+        )
+    ],
+)
+def test_nrms_quickstart_integration(notebooks, epochs, seed, expected_values):
+    notebook_path = notebooks["nrms_quickstart"]
+
+    params = {
+        "epochs": epochs,
+        "seed": seed,
+    }
+    pm.execute_notebook(
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    for key, value in expected_values.items():
+        assert results[key]["group_auc"] == pytest.approx(
+            value["group_auc"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["mean_mrr"] == pytest.approx(
+            value["mean_mrr"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@5"] == pytest.approx(
+            value["ndcg@5"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@10"] == pytest.approx(
+            value["ndcg@10"], rel=TOL, abs=ABS_TOL
+        )
+
+
+@pytest.mark.naml
+@pytest.mark.integration
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "epochs, seed, expected_values",
+    [
+        (
+            5,
+            42,
+            {
+                "res_syn": {
+                    "group_auc": 0.5667,
+                    "mean_mrr": 0.1827,
+                    "ndcg@5": 0.1898,
+                    "ndcg@10": 0.2465,
+                },
+            },
+        )
+    ],
+)
+def test_naml_quickstart_integration(notebooks, epochs, seed, expected_values):
+    notebook_path = notebooks["nrms_quickstart"]
+
+    params = {
+        "epochs": epochs,
+        "seed": seed,
+    }
+    pm.execute_notebook(
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    for key, value in expected_values.items():
+        assert results[key]["group_auc"] == pytest.approx(
+            value["group_auc"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["mean_mrr"] == pytest.approx(
+            value["mean_mrr"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@5"] == pytest.approx(
+            value["ndcg@5"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@10"] == pytest.approx(
+            value["ndcg@10"], rel=TOL, abs=ABS_TOL
+        )
+
+
+@pytest.mark.lstur
+@pytest.mark.integration
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "epochs, seed, expected_values",
+    [
+        (
+            5,
+            42,
+            {
+                "res_syn": {
+                    "group_auc": 0.5599,
+                    "mean_mrr": 0.2027,
+                    "ndcg@5": 0.2065,
+                    "ndcg@10": 0.268,
+                },
+            },
+        )
+    ],
+)
+def test_lstur_quickstart_integration(notebooks, epochs, seed, expected_values):
+    notebook_path = notebooks["lstur_quickstart"]
+
+    params = {
+        "epochs": epochs,
+        "seed": seed,
+    }
+    pm.execute_notebook(
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    for key, value in expected_values.items():
+        assert results[key]["group_auc"] == pytest.approx(
+            value["group_auc"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["mean_mrr"] == pytest.approx(
+            value["mean_mrr"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@5"] == pytest.approx(
+            value["ndcg@5"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@10"] == pytest.approx(
+            value["ndcg@10"], rel=TOL, abs=ABS_TOL
+        )
+
+@pytest.mark.npa
+@pytest.mark.integration
+@pytest.mark.gpu
+@pytest.mark.parametrize(
+    "epochs, seed, expected_values",
+    [
+        (
+            5,
+            42,
+            {
+                "res_syn": {
+                    "group_auc": 0.5583,
+                    "mean_mrr": 0.1741,
+                    "ndcg@5": 0.1676,
+                    "ndcg@10": 0.2462,
+                },
+            },
+        )
+    ],
+)
+def test_npa_quickstart_integration(notebooks, epochs, seed, expected_values):
+    notebook_path = notebooks["npa_quickstart"]
+
+    params = {
+        "epochs": epochs,
+        "seed": seed,
+    }
+    pm.execute_notebook(
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    for key, value in expected_values.items():
+        assert results[key]["group_auc"] == pytest.approx(
+            value["group_auc"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["mean_mrr"] == pytest.approx(
+            value["mean_mrr"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@5"] == pytest.approx(
+            value["ndcg@5"], rel=TOL, abs=ABS_TOL
+        )
+        assert results[key]["ndcg@10"] == pytest.approx(
+            value["ndcg@10"], rel=TOL, abs=ABS_TOL
+        )
