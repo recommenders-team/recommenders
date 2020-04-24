@@ -1,7 +1,7 @@
 moduleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: Precision at K
-  moduleVersion: 1.1.0
+  moduleVersion: 1.1.1
 description: "Precision at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders."
 metadata:
   annotations:
