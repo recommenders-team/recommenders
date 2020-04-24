@@ -38,7 +38,7 @@ def compare_metric(df_list, metric='AUC', stage='test'):
 
     
 def track_model_metrics(model, train_interactions, test_interactions, k=10,
-                         no_epochs=100, no_threads=8, **kwargs):
+                         no_epochs=100, no_threads=8, show_plot=True, **kwargs):
     """
     Function to record model's performance at each epoch, formats the performance into tidy format,
     plots the performance and outputs the performance data
@@ -52,6 +52,7 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
         **kwargs: other keyword arguments to be passed down
     Returns:
         Pandas dataframe: performance traces of the fitted model
+        LightFM model: fitted model
         matplotlib axes: side effect of the method
     """
     # initialising temp data storage
@@ -94,8 +95,9 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
     metric_keys = {'auc':'AUC', 'prec':'Precision', 'rec':'Recall'}
     fitting_metrics.metric.replace(metric_keys, inplace=True)
     # plots the performance data
-    model_perf_plots(fitting_metrics)
-    return fitting_metrics
+    if show_plot == True:
+        model_perf_plots(fitting_metrics)
+    return fitting_metrics, model
 
 
 def similar_users(user_id, user_features, model, N=10):
