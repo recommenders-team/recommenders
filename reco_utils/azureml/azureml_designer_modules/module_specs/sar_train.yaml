@@ -1,7 +1,7 @@
 moduleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: SAR Training
-  moduleVersion: 1.1.0
+  moduleVersion: 1.1.1
 metadata:
   annotations:
     tags: ["Recommenders"]
@@ -43,6 +43,8 @@ implementation:
     amlEnvironment:
       python:
         condaDependenciesFile: sar_conda.yaml
+    additionalIncludes:
+      - ../../../
     command: [python, reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py]
     args:
     - --input-path

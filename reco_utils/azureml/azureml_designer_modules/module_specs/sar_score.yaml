@@ -1,7 +1,7 @@
 moduleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: SAR Scoring
-  moduleVersion: 1.1.0
+  moduleVersion: 1.1.1
 description: |
     Python SAR Recommenders
     repo: https://github.com/Microsoft/Recommenders
@@ -63,6 +63,8 @@ implementation:
     amlEnvironment:
       python:
         condaDependenciesFile: sar_conda.yaml
+    additionalIncludes:
+      - ../../../
     command: [python, reco_utils/azureml/azureml_designer_modules/entries/score_sar_entry.py]
     args: [
       --trained-model, {inputPath: Trained model},
