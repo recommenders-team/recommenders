@@ -6,6 +6,7 @@ import seaborn as sns
 import lightfm
 from lightfm.evaluation import precision_at_k, recall_at_k, auc_score
 
+
 def model_perf_plots(df):
     """
     Function to plot model performance metrics
@@ -16,6 +17,7 @@ def model_perf_plots(df):
     """
     g = sns.FacetGrid(df, col="metric", hue='stage', col_wrap=3, sharey=False)
     g = g.map(sns.scatterplot, "epoch", "value").add_legend()    
+
 
 def compare_metric(df_list, metric='AUC', stage='test'):
     """

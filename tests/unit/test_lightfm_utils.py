@@ -1,3 +1,7 @@
+# import sys
+# sys.path.append("../../")
+# import os
+
 import pytest
 from reco_utils.recommender.lightfm.lightfm_utils import (
 	compare_metric, track_model_metrics, similar_users, similar_items)
