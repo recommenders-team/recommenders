@@ -22,7 +22,6 @@ def resource_path():
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_xdeepfm_component_definition(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
@@ -43,7 +42,6 @@ def test_xdeepfm_component_definition(resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_dkn_component_definition(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
     yaml_file = os.path.join(data_path, "dkn.yaml")
@@ -73,8 +71,6 @@ def test_dkn_component_definition(resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
-@pytest.mark.sequential
 def test_slirec_component_definition(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "slirec")
     yaml_file = os.path.join(
