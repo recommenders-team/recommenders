@@ -1,7 +1,7 @@
 moduleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: nDCG
-  moduleVersion: 1.1.0
+  moduleVersion: 1.1.1
 description: "Normalized Discounted Cumulative Gain (nDCG) at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders."
 metadata:
   annotations:

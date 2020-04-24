@@ -115,7 +115,6 @@ def test_surprise_svd_integration(notebooks, size, expected_values):
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.vw
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
@@ -219,4 +218,3 @@ def test_xlearn_fm_integration(notebooks):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     assert results["auc_score"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)
-

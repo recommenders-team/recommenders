@@ -58,6 +58,7 @@ The recommender submodule contains implementations of various algorithms that ca
 * FastAI
 * LightGBM
 * NCF
+* NewsRec (includes LSTUR, NAML NPA and NRMS)
 * RBM
 * RLRMC
 * SAR
