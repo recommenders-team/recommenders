@@ -54,7 +54,7 @@ CONDA_BASE = {
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
     "swig": "swig==3.0.12",
-    "tensorflow": "tensorflow==1.12.0",
+    "tensorflow": "tensorflow==1.15.2",
     "lightgbm": "lightgbm==2.2.1",
     "cornac": "cornac>=1.1.2",
     "papermill": "papermill==0.19.1",
@@ -67,7 +67,7 @@ CONDA_GPU = {
     "fastai": "fastai==1.0.46",
     "numba": "numba>=0.38.1",
     "pytorch": "pytorch>=1.0.0",
-    "tensorflow": "tensorflow-gpu==1.12.0",
+    "tensorflow": "tensorflow-gpu==1.15.2",
 }
 
 PIP_BASE = {
