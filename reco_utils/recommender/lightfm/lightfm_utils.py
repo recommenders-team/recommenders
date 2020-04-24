@@ -8,10 +8,10 @@ from lightfm.evaluation import precision_at_k, recall_at_k, auc_score
 
 
 def model_perf_plots(df):
-    """
-    Function to plot model performance metrics
+    """Function to plot model performance metrics
     Args:
         df (Pandas dataframe): Dataframe in tidy format, with ['epoch','level','value'] columns
+    
     Returns:
         matplotlib axes
     """
@@ -20,12 +20,12 @@ def model_perf_plots(df):
 
 
 def compare_metric(df_list, metric='AUC', stage='test'):
-    """
-    Function to combine and prepare list of dataframes into tidy format
+    """Function to combine and prepare list of dataframes into tidy format
     Args:
         df_list (list): List of dataframes 
         metrics (str): name of metric to be extracted, optional
         stage (str): name of model fitting stage to be extracted, optional
+    
     Returns:
         Pandas dataframe
     """
@@ -41,8 +41,7 @@ def compare_metric(df_list, metric='AUC', stage='test'):
     
 def track_model_metrics(model, train_interactions, test_interactions, k=10,
                          no_epochs=100, no_threads=8, show_plot=True, **kwargs):
-    """
-    Function to record model's performance at each epoch, formats the performance into tidy format,
+    """Function to record model's performance at each epoch, formats the performance into tidy format,
     plots the performance and outputs the performance data
     Args:
         model (LightFM instance): fitted LightFM model
@@ -52,6 +51,7 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
         no_epochs (int): no of epochs to run, optional
         no_threads (int): no of parallel threads to use, optional 
         **kwargs: other keyword arguments to be passed down
+    
     Returns:
         Pandas dataframe: performance traces of the fitted model
         LightFM model: fitted model
@@ -103,14 +103,14 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
 
 
 def similar_users(user_id, user_features, model, N=10):
-    """
-    Function to return top N similar users
+    """Function to return top N similar users
     based on https://github.com/lyst/lightfm/issues/244#issuecomment-355305681
      Args:
         user_id (int): id of user to be used as reference
         user_features (scipy sparse CSR matrix): user feature matric
         model (LightFM instance): fitted LightFM model 
         N (int): No of top similar users to return
+    
     Returns:
         Pandas dataframe of top N most similar users with score
     """
@@ -128,14 +128,14 @@ def similar_users(user_id, user_features, model, N=10):
 
 
 def similar_items(item_id, item_features, model, N=10):
-    """
-    Function to return top N similar items
+    """Function to return top N similar items
     based on https://github.com/lyst/lightfm/issues/244#issuecomment-355305681
     Args:
         item_id (int): id of item to be used as reference
         item_features (scipy sparse CSR matrix): item feature matric
         model (LightFM instance): fitted LightFM model 
         N (int): No of top similar items to return
+    
     Returns:
         Pandas dataframe of top N most similar items with score
     """
