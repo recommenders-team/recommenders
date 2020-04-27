@@ -4,6 +4,25 @@ An increasing number of online companies are utilizing recommendation systems to
 
 Companies across many different areas of enterprise are beginning to implement recommendation systems in an attempt to enhance their customer’s online purchasing experience, increase sales and retain customers. Business owners are recognizing potential in the fact that recommendation systems allow the collection of a huge amount of information relating to user’s behavior and their transactions within an enterprise. This information can then be systematically stored within user profiles to be used for future interactions.
 
+## Typical Business Scenarios in Recommendation Systems for Retail
+
+The most common scenarios companies use are:
+
+* Others you may like (also called similar items): The "Others you may like" recommendation predicts the next product that a user is most likely to engage with or purchase. The prediction is based on both the entire shopping or viewing history of the user and the candidate product's relevance to a current specified product.
+
+* Frequently bought together"(shopping cart expansion): The "Frequently bought together" recommendation predicts items frequently bought together for a specific product within the same shopping session. If a list of products is being viewed, then it predicts items frequently bought with that product list. This recommendation is useful when the user has indicated an intent to purchase a particular product (or list of products) already, and you are looking to recommend complements (as opposed to substitutes). This recommendation is commonly displayed on the "add to cart" page, or on the "shopping cart" or "registry" pages (for shopping cart expansion).
+
+* Recommended for you: The "Recommended for you" recommendation predicts the next product that a user is most likely to engage with or purchase, based on the shopping or viewing history of that user. This recommendation is typically used on the home page.
+
+
+## Business success metrics
+
+Below are some of the various potential benefits of recommendation systems in business, and the metrics that tipically are used:
+
+
+
+
+
 ## Types of Recommendation Systems for Retail
 
 Typically recommendation systems in retail can be divided into three categories:
@@ -15,5 +34,11 @@ Typically recommendation systems in retail can be divided into three categories:
 * Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems.
 
 
+## Challenges in Recommendation systems for Retail
 
-sources: [1](https://emerj.com/ai-sector-overviews/use-cases-recommendation-systems/), 
+* Cold start: Personalized recommender systems take advantage of users past history to make predictions. The cold start problem concerns the personalized recommendations for users with no or few past history (new users). Providing recommendations to users with small past history becomes a difficult problem for CF models because their learning and predictive ability is limited. Multiple research have been conducted in this direction using hybrid models. These models use auxiliary information (multimodal information, side information, etc.) to overcome the cold start problem.
+
+
+## References and resources
+
+sources: [1](https://emerj.com/ai-sector-overviews/use-cases-recommendation-systems/), [2](https://cloud.google.com/recommendations-ai/docs/placements), [3](https://www.researchgate.net/post/Can_anyone_explain_what_is_cold_start_problem_in_recommender_system)
