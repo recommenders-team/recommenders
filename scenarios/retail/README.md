@@ -67,7 +67,13 @@ Below are some of the various potential benefits of recommendation systems in bu
 
 * Long tail products:
 
-## 
+## Building end 2 end recommendation scenarios with Microsoft Recommenders
+
+In the repository we have the following examples that can be used in retail
+
+
+
+
 
 ## References and resources
 
