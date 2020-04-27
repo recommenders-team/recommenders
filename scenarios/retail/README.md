@@ -15,14 +15,6 @@ The most common scenarios companies use are:
 * Recommended for you: The "Recommended for you" recommendation predicts the next product that a user is most likely to engage with or purchase, based on the shopping or viewing history of that user. This recommendation is typically used on the home page.
 
 
-## Business success metrics
-
-Below are some of the various potential benefits of recommendation systems in business, and the metrics that tipically are used:
-
-
-
-
-
 ## Types of Recommendation Systems for Retail
 
 Typically recommendation systems in retail can be divided into three categories:
@@ -34,10 +26,48 @@ Typically recommendation systems in retail can be divided into three categories:
 * Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems.
 
 
+## Measuring Recommendation performance
+
+### Machine learning metrics (offline metrics)
+
+In Recommenders, offine metrics implementation for python are found on [python_evaluation.py](https://github.com/microsoft/recommenders/blob/master/reco_utils/evaluation/python_evaluation.py) and those for PySpark are found on [spark_evaluation.py](https://github.com/microsoft/recommenders/blob/master/reco_utils/evaluation/spark_evaluation.py).
+
+Currently available metrics include:
+
+- Root Mean Squared Error
+- Mean Absolute Error
+- R<sup>2</sup>
+- Explained Variance
+- Precision at K
+- Recall at K
+- Normalized Discounted Cumulative Gain at K
+- Mean Average Precision at K
+- Area Under Curve
+- Logistic Loss
+
+### Business success metrics (online metrics)
+
+Below are some of the various potential benefits of recommendation systems in business, and the metrics that tipically are used:
+
+* Click-through rate (CTR): Optimizing for CTR emphasizes engagement; you should optimize for CTR when you want to maximize the likelihood that the user interacts with the recommendation.
+
+* Revenue per order: The revenue per order optimization objective is the default optimization objective for the "Frequently bought together" recommendation model type. This optimization objective cannot be specified for any other recommendation model type.
+
+* Conversion rate: Optimizing for conversion rate maximizes the likelihood that the user purchases the recommended item; if you want to increase the number of purchases per session, optimize for conversion rate.
+
+### Relationship between online and offline metrics
+
+### A/B testing
+
+### Advanced A/B testing: online learning with VW
+
 ## Challenges in Recommendation systems for Retail
 
 * Cold start: Personalized recommender systems take advantage of users past history to make predictions. The cold start problem concerns the personalized recommendations for users with no or few past history (new users). Providing recommendations to users with small past history becomes a difficult problem for CF models because their learning and predictive ability is limited. Multiple research have been conducted in this direction using hybrid models. These models use auxiliary information (multimodal information, side information, etc.) to overcome the cold start problem.
 
+* Long tail products:
+
+## 
 
 ## References and resources
 
