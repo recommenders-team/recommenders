@@ -67,11 +67,29 @@ Below are some of the various potential benefits of recommendation systems in bu
 
 * Long tail products:
 
+## Data types
+
+ * Explicit interactions:
+
+ * Implicit interactions:
+
+ * Knowledge graph data:
+
+ * User features:
+
+ * Item features:
+
+ Thoughts about data size...
+
 ## Building end 2 end recommendation scenarios with Microsoft Recommenders
 
 In the repository we have the following examples that can be used in retail
 
 
+| Scenario | Description | Algorithm | Implementation |
+|----------|-------------|-----------|----------------|
+| Collaborative Filtering with explicit interactions in Spark environment |  Matrix factorization algorithm for explicit feedback in large datasets, optimized by Spark MLLib for scalability and distributed computing capability | Alternating Least Squares (ALS) | [pyspark notebook using Movielens dataset](https://github.com/microsoft/recommenders/blob/staging/notebooks/00_quick_start/als_movielens.ipynb) |
+| Content-Based Filtering for content recommendation in Spark environment | Gradient Boosting Tree algorithm for fast training and low memory usage in content-based problems | LightGBM/MMLSpark | [spark notebook using Criteo dataset](https://github.com/microsoft/recommenders/blob/staging/notebooks/02_model/mmlspark_lightgbm_criteo.ipynb) |
 
 
 
