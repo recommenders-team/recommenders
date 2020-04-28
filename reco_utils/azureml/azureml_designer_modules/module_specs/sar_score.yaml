@@ -1,4 +1,4 @@
-moduleIdentifier: 
+amlModuleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: SAR Scoring
   moduleVersion: 1.1.1
