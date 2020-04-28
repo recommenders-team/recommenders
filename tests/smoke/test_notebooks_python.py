@@ -72,7 +72,6 @@ def test_surprise_svd_smoke(notebooks):
     assert results["recall"] == pytest.approx(0.032, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.vw
 @pytest.mark.smoke
 def test_vw_deep_dive_smoke(notebooks):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
@@ -103,19 +102,25 @@ def test_lightgbm_quickstart_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(MAX_LEAF = 64,
-                        MIN_DATA = 20,
-                        NUM_OF_TREES = 100,
-                        TREE_LEARNING_RATE = 0.15,
-                        EARLY_STOPPING_ROUNDS = 20,
-                        METRIC = "auc"),
+        parameters=dict(
+            MAX_LEAF=64,
+            MIN_DATA=20,
+            NUM_OF_TREES=100,
+            TREE_LEARNING_RATE=0.15,
+            EARLY_STOPPING_ROUNDS=20,
+            METRIC="auc",
+        ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     assert results["res_basic"]["auc"] == pytest.approx(0.7674, rel=TOL, abs=ABS_TOL)
-    assert results["res_basic"]["logloss"] == pytest.approx(0.4669, rel=TOL, abs=ABS_TOL)
+    assert results["res_basic"]["logloss"] == pytest.approx(
+        0.4669, rel=TOL, abs=ABS_TOL
+    )
     assert results["res_optim"]["auc"] == pytest.approx(0.7757, rel=TOL, abs=ABS_TOL)
-    assert results["res_optim"]["logloss"] == pytest.approx(0.4607, rel=TOL, abs=ABS_TOL)
+    assert results["res_optim"]["logloss"] == pytest.approx(
+        0.4607, rel=TOL, abs=ABS_TOL
+    )
 
 
 @pytest.mark.smoke
