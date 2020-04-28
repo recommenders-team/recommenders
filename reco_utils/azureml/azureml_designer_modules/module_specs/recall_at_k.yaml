@@ -1,4 +1,4 @@
-moduleIdentifier: 
+amlModuleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: Recall at K
   moduleVersion: 1.1.1
