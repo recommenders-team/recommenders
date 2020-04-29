@@ -109,7 +109,7 @@ def get_trials(optimize_mode):
         raise ValueError("optimize_mode should equal either minimize or maximize")
     all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
     trials = [
-        (ast.literal_eval(eval(trial["finalMetricData"][0]["data"])), trial["logPath"].split(":")[-1])
+        (ast.literal_eval(ast.literal_eval(trial['finalMetricData'][0]['data'])), trial["logPath"].split(":")[-1])
         for trial in all_trials
     ]
     sorted_trials = sorted(
