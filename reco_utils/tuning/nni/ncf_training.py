@@ -12,6 +12,7 @@ import sys
 
 sys.path.append("../../../")
 
+import reco_utils.evaluation.python_evaluation as evaluation
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
 from reco_utils.dataset import movielens
