@@ -150,9 +150,6 @@ def main(params):
     logger.debug("Number of epochs %d", params["n_epochs"])
 
     model = ncf_training(params)
-    # Save NCF model to the output directory for later use
-    output_dir = os.environ.get("NNI_OUTPUT_DIR")
-    # surprise.dump.dump(os.path.join(output_dir, "model.dump"), algo=svd)
 
 
 if __name__ == "__main__":
@@ -160,7 +157,7 @@ if __name__ == "__main__":
         tuner_params = nni.get_next_parameter()
         logger.debug("Hyperparameters: %s", tuner_params)
         params = vars(get_params())
-        # in the case of Hyperband, use STEPS to allocate the number of epochs SVD will run for
+        # in the case of Hyperband, use STEPS to allocate the number of epochs NCF will run for
         if "STEPS" in tuner_params:
             steps_param = tuner_params["STEPS"]
             params["n_epochs"] = int(np.rint(steps_param))
