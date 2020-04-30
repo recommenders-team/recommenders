@@ -9,11 +9,11 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
 )
 from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
 from reco_utils.recommender.deeprec.models.dkn import DKN
-from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
-from reco_utils.recommender.deeprec.IO.dkn_iterator import DKNTextIterator
+from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
+from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
-from reco_utils.recommender.deeprec.IO.sequential_iterator import SequentialIterator
+from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 
 
 @pytest.fixture
@@ -22,7 +22,6 @@ def resource_path():
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_xdeepfm_component_definition(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
@@ -43,7 +42,6 @@ def test_xdeepfm_component_definition(resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_dkn_component_definition(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
     yaml_file = os.path.join(data_path, "dkn.yaml")
@@ -73,8 +71,6 @@ def test_dkn_component_definition(resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
-@pytest.mark.sequential
 def test_slirec_component_definition(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "slirec")
     yaml_file = os.path.join(

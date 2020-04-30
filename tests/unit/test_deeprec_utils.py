@@ -9,9 +9,9 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
     download_deeprec_resources,
     load_yaml,
 )
-from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
-from reco_utils.recommender.deeprec.IO.dkn_iterator import DKNTextIterator
-from reco_utils.recommender.deeprec.IO.sequential_iterator import SequentialIterator
+from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
+from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
+from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 
@@ -25,7 +25,6 @@ def resource_path():
     "must_exist_attributes", ["FEATURE_COUNT", "data_format", "dim"]
 )
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_prepare_hparams(must_exist_attributes, resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
@@ -40,7 +39,6 @@ def test_prepare_hparams(must_exist_attributes, resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_load_yaml_file(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
@@ -57,7 +55,6 @@ def test_load_yaml_file(resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_FFM_iterator(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
@@ -78,7 +75,6 @@ def test_FFM_iterator(resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
 def test_DKN_iterator(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
     data_file = os.path.join(data_path, "final_test_with_entity.txt")
@@ -98,8 +94,6 @@ def test_DKN_iterator(resource_path):
 
 
 @pytest.mark.gpu
-@pytest.mark.deeprec
-@pytest.mark.sequential
 def test_Sequential_Iterator(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "slirec")
     yaml_file = os.path.join(
