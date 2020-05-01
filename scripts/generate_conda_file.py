@@ -93,8 +93,8 @@ PIP_BASE = {
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
-PIP_DARWIN = {"nni": "nni==0.5.2.1.1"}
-PIP_LINUX = {"nni": "nni==0.5.2.1.1"}
+PIP_DARWIN = {"nni": "nni==1.5"}
+PIP_LINUX = {"nni": "nni==1.5"}
 PIP_WIN32 = {}
 
 
