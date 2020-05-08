@@ -15,11 +15,11 @@ def model_perf_plots(df):
     Returns:
         matplotlib axes
     """
-    g = sns.FacetGrid(df, col="metric", hue='stage', col_wrap=3, sharey=False)
+    g = sns.FacetGrid(df, col="metric", hue='stage', col_wrap=2, sharey=False)
     g = g.map(sns.scatterplot, "epoch", "value").add_legend()    
 
 
-def compare_metric(df_list, metric='AUC', stage='test'):
+def compare_metric(df_list, metric='prec', stage='test'):
     """Function to combine and prepare list of dataframes into tidy format
     Args:
         df_list (list): List of dataframes 
@@ -58,9 +58,6 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
         matplotlib axes: side effect of the method
     """
     # initialising temp data storage
-    model_auc_train = [0]*no_epochs
-    model_auc_test = [0]*no_epochs
-
     model_prec_train = [0]*no_epochs
     model_prec_test = [0]*no_epochs
 
@@ -77,15 +74,11 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
 
         model_rec_train[epoch] = recall_at_k(model, train_interactions, k=k, **kwargs).mean()
         model_rec_test[epoch] = recall_at_k(model, test_interactions, k=k, **kwargs).mean()
-
-        model_auc_train[epoch] = auc_score(model, train_interactions, **kwargs).mean()
-        model_auc_test[epoch] = auc_score(model, test_interactions, **kwargs).mean()
     
     # collect the performance metrics into a dataframe
-    fitting_metrics = pd.DataFrame(zip(model_auc_train, model_auc_test, model_prec_train, 
-                                       model_prec_test, model_rec_train, model_rec_test),
-                                   columns=['model_auc_train', 'model_auc_test', 'model_prec_train', 
-                                            'model_prec_test', 'model_rec_train', 'model_rec_test'])
+    fitting_metrics = pd.DataFrame(zip(model_prec_train, model_prec_test, 
+        model_rec_train, model_rec_test),
+        columns=['model_prec_train', 'model_prec_test', 'model_rec_train', 'model_rec_test'])
     # convert into tidy format
     fitting_metrics = fitting_metrics.stack().reset_index()
     fitting_metrics.columns = ['epoch','level','value']
@@ -94,7 +87,7 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
     fitting_metrics['metric'] = fitting_metrics.level.str.split('_').str[1]
     fitting_metrics.drop(['level'], axis = 1, inplace=True)
     # replace the metric keys to improve visualisation
-    metric_keys = {'auc':'AUC', 'prec':'Precision', 'rec':'Recall'}
+    metric_keys = {'prec':'Precision', 'rec':'Recall'}
     fitting_metrics.metric.replace(metric_keys, inplace=True)
     # plots the performance data
     if show_plot == True:
@@ -150,3 +143,75 @@ def similar_items(item_id, item_features, model, N=10):
     best = np.argpartition(scores, -(N+1))[-(N+1):]
     return pd.DataFrame(sorted(zip(best, scores[best] / item_norms[item_id]), 
                   key=lambda x: -x[1])[1:], columns = ['itemID', 'score'])    
+
+
+def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
+    """Function to prepare test df for evaluation
+    Args:
+        test_idx (slice): slice of test indices
+        uids (np.array): Array of internal user indices
+        iids (np.array): Array of internal item indices
+        uid_map (dict): Keys to map internal user indices to external ids.
+        iid_map (dict): Keys to map internal item indices to external ids.
+        weights (np.float32 coo_matrix): user-item interaction
+
+    Returns:
+        Pandas dataframe of user-item selected for testing
+    """
+    test_df = pd.DataFrame(zip(
+        uids[test_idx],
+        iids[test_idx], 
+        [list(uid_map.keys())[x] for x in uids[test_idx]],
+        [list(iid_map.keys())[x] for x in iids[test_idx]]),
+        columns=['uid','iid','userID','itemID'])
+
+    dok_weights = weights.todok()
+    test_df['rating'] = test_df.apply(
+        lambda x:dok_weights[x.uid,x.iid], axis=1)
+
+    return test_df[['userID', 'itemID', 'rating']]
+
+
+def prepare_all_predictions(data, uid_map, iid_map, interactions, 
+                            model, num_threads, 
+                            user_features=None,
+                            item_features=None):
+    """Function to prepare all predictions for evaluation
+    Args:
+        data (pandas df): dataframe of all users, items and ratings as loaded
+        uid_map (dict): Keys to map internal user indices to external ids.
+        iid_map (dict): Keys to map internal item indices to external ids.
+        interactions (np.float32 coo_matrix): user-item interaction
+        model (LightFM instance): fitted LightFM model
+        num_threads (int): number of parallel computation threads
+        user_features (np.float32 csr_matrix): User weights over features 
+        item_features (np.float32 csr_matrix):  Item weights over features
+
+    Returns:
+        Pandas dataframe of all predictions
+    """
+    users, items, preds = [], [], []
+    item = list(data.itemID.unique())
+    for user in data.userID.unique():
+        user = [user] * len(item) 
+        users.extend(user)
+        items.extend(item)
+
+    all_predictions = pd.DataFrame(data={"userID": users, "itemID":items})
+    all_predictions['uid'] = all_predictions.userID.map(uid_map)
+    all_predictions['iid'] = all_predictions.itemID.map(iid_map)
+
+    dok_weights = interactions.todok()
+    all_predictions['rating'] = all_predictions.apply(
+        lambda x: dok_weights[x.uid,x.iid], axis=1)
+    
+    all_predictions = all_predictions[all_predictions.rating < 1].reset_index(drop=True)
+    all_predictions = all_predictions.drop('rating', axis=1)
+    
+    all_predictions['prediction'] = all_predictions.apply(lambda x: model.predict(
+        user_ids=x['uid'], item_ids=[x['iid']],
+        user_features=user_features,
+        item_features=item_features,
+        num_threads=num_threads)[0], axis=1)
+    
+    return all_predictions[['userID','itemID','prediction']]    
