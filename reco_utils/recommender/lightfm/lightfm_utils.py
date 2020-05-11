@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 import lightfm
-from lightfm.evaluation import precision_at_k, recall_at_k, auc_score
+from lightfm.evaluation import precision_at_k, recall_at_k
 
 
 def model_perf_plots(df):
