@@ -16,5 +16,6 @@ In this directory, notebooks are provided to give a deep dive into training mode
 | [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Python CPU | Deep dive on a SVD algorithm and implementation.
 | [vowpal_wabbit_deep_dive](vowpal_wabbit_deep_dive.ipynb) | Python CPU | Deep dive into using Vowpal Wabbit for regression and matrix factorization.
 | [fm_deep_dive](fm_deep_dive.ipynb) | Python CPU | Deep dive into factorization machine (FM) and field-aware FM (FFM) algorithm.
+| [lightfm_deep_dive](lightfm_deep_dive.ipynb) | Python CPU | Deep dive into hybrid matrix factorisation model with LightFM.
 
 Details on model training are best found inside each notebook.
