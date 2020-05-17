@@ -261,7 +261,7 @@ class SelfAttention(layers.Layer):
         config.update(
             {
                 "multiheads": self.multiheads,
-                "head_dim": self.multiheads,
+                "head_dim": self.head_dim,
                 "mask_right": self.mask_right,
             }
         )

@@ -361,13 +361,13 @@ def test_naml_quickstart_integration(notebooks, epochs, seed, expected_values):
     [
         (
             5,
-            42,
+            40,
             {
                 "res_syn": {
-                    "group_auc": 0.5599,
-                    "mean_mrr": 0.2027,
-                    "ndcg@5": 0.2065,
-                    "ndcg@10": 0.268,
+                    "group_auc": 0.5768,
+                    "mean_mrr": 0.1797,
+                    "ndcg@5": 0.1780,
+                    "ndcg@10": 0.2449,
                 },
             },
         )
