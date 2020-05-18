@@ -34,6 +34,15 @@ logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("ncf")
 
 
+def _update_metrics(metrics_dict, metric, params, result):
+    logger.debug("%s@%d = %g", metric, params["k"], result)
+    if metric == params["primary_metric"]:
+        metrics_dict["default"] = result
+    else:
+        metrics_dict[metric] = result
+    return metrics_dict
+
+
 def ncf_training(params):
     """
     Train NCF using the given hyper-parameters
@@ -81,11 +90,7 @@ def ncf_training(params):
 
         for metric in rating_metrics:
             result = getattr(evaluation, metric)(validation_data, predictions)
-            logger.debug("%s = %g", metric, result)
-            if metric == params["primary_metric"]:
-                metrics_dict["default"] = result
-            else:
-                metrics_dict[metric] = result
+            metrics_dict = _update_metrics(metrics_dict, metric, params, result)
 
     ranking_metrics = params["ranking_metrics"]
     if len(ranking_metrics) > 0:
@@ -112,11 +117,8 @@ def ncf_training(params):
                 col_prediction="prediction",
                 k=params["k"],
             )
-            logger.debug("%s@%d = %g", metric, params["k"], result)
-            if metric == params["primary_metric"]:
-                metrics_dict["default"] = result
-            else:
-                metrics_dict[metric] = result
+            metrics_dict = _update_metrics(metrics_dict, metric, params, result)
+
 
     if len(ranking_metrics) == 0 and len(rating_metrics) == 0:
         raise ValueError("No metrics were specified.")
@@ -163,14 +165,12 @@ def get_params():
     # Hyperparameters to be tuned
     parser.add_argument("--n_factors", type=int, dest="n_factors", default=100)
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def main(params):
     logger.debug("Args: %s", str(params))
     logger.debug("Number of epochs %d", params["n_epochs"])
-
     model = ncf_training(params)
 
 
@@ -179,6 +179,7 @@ if __name__ == "__main__":
         tuner_params = nni.get_next_parameter()
         logger.debug("Hyperparameters: %s", tuner_params)
         params = vars(get_params())
+        
         # in the case of Hyperband, use STEPS to allocate the number of epochs NCF will run for
         if "STEPS" in tuner_params:
             steps_param = tuner_params["STEPS"]
