@@ -8,6 +8,7 @@ import requests
 import subprocess
 import sys
 import time
+import pandas as pd
 
 
 NNI_REST_ENDPOINT = "http://localhost:8080/api/v1/nni"
@@ -152,3 +153,5 @@ def start_nni(config_path, wait=WAITING_TIME, max_retries=MAX_RETRIES):
     if proc.returncode != 0:
         raise RuntimeError("'nnictl create' failed with code %d" % proc.returncode)
     check_experiment_status(wait=wait, max_retries=max_retries)
+
+    
