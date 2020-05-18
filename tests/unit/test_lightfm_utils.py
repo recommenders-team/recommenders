@@ -1,11 +1,9 @@
-# import sys
-# sys.path.append("../../")
-# import os
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 
 import pytest
 from reco_utils.recommender.lightfm.lightfm_utils import (
 	compare_metric, track_model_metrics, similar_users, similar_items)
-
 import itertools
 import numpy as np
 import pandas as pd
@@ -17,7 +15,6 @@ SEEDNO = 42
 TEST_PERCENTAGE = 0.25
 TEST_USER_ID = 2
 TEST_ITEM_ID = 1
-N = 5
 
 
 # note user and item ID need to be sequential for similar users and similar items to work
@@ -84,7 +81,7 @@ def sim_users(interactions, fitting):
 	_, _, _, user_features = interactions		
 	_, fitted_model = fitting
 	return similar_users(user_id=TEST_USER_ID, user_features=user_features, 
-		model=fitted_model, N=N)
+		model=fitted_model, N=5)
 
 
 @pytest.fixture(scope="module")
@@ -92,7 +89,7 @@ def sim_items(interactions, fitting):
 	_, _, item_features, _ = interactions		
 	_, fitted_model = fitting
 	return similar_items(item_id=TEST_ITEM_ID, item_features=item_features, 
-		model=fitted_model, N=N)
+		model=fitted_model, N=5)
 
 
 
@@ -110,8 +107,8 @@ def test_fitting(fitting):
 
 
 def test_sim_users(sim_users):
-	assert sim_users.shape == (N, 2)
+	assert sim_users.shape == (5, 2)
 
 
 def test_sim_items(sim_items):
-	assert sim_items.shape == (N, 2)
+	assert sim_items.shape == (5, 2)
