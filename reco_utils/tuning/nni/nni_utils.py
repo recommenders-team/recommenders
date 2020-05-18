@@ -149,7 +149,6 @@ def start_nni(config_path, wait=WAITING_TIME, max_retries=MAX_RETRIES):
     proc = subprocess.run(
         [sys.prefix + "/bin/nnictl", "create", "--config", config_path], env=nni_env
     )
-    # proc = subprocess.run(["nnictl", "create", "--config", config_path], env=nni_env)
     if proc.returncode != 0:
         raise RuntimeError("'nnictl create' failed with code %d" % proc.returncode)
     check_experiment_status(wait=wait, max_retries=max_retries)
