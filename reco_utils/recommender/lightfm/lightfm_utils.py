@@ -15,11 +15,11 @@ def model_perf_plots(df):
     Returns:
         matplotlib axes
     """
-    g = sns.FacetGrid(df, col="metric", hue='stage', col_wrap=2, sharey=False)
-    g = g.map(sns.scatterplot, "epoch", "value").add_legend()    
+    g = sns.FacetGrid(df, col="metric", hue="stage", col_wrap=2, sharey=False)
+    g = g.map(sns.scatterplot, "epoch", "value").add_legend()
 
 
-def compare_metric(df_list, metric='prec', stage='test'):
+def compare_metric(df_list, metric="prec", stage="test"):
     """Function to combine and prepare list of dataframes into tidy format
     Args:
         df_list (list): List of dataframes 
@@ -29,18 +29,29 @@ def compare_metric(df_list, metric='prec', stage='test'):
     Returns:
         Pandas dataframe
     """
-    colnames = ['model'+str(x) for x in list(range(1,len(df_list)+1))]
-    models = [df[(df['stage']==stage) & (df['metric']==metric)]['value'].reset_index(
-        drop=True).values for df in df_list]
+    colnames = ["model" + str(x) for x in list(range(1, len(df_list) + 1))]
+    models = [
+        df[(df["stage"] == stage) & (df["metric"] == metric)]["value"]
+        .reset_index(drop=True)
+        .values
+        for df in df_list
+    ]
 
-    output = pd.DataFrame(zip(*models), 
-                          columns=colnames).stack().reset_index()
-    output.columns = ['epoch','data','value']
-    return output   
+    output = pd.DataFrame(zip(*models), columns=colnames).stack().reset_index()
+    output.columns = ["epoch", "data", "value"]
+    return output
 
-    
-def track_model_metrics(model, train_interactions, test_interactions, k=10,
-                         no_epochs=100, no_threads=8, show_plot=True, **kwargs):
+
+def track_model_metrics(
+    model,
+    train_interactions,
+    test_interactions,
+    k=10,
+    no_epochs=100,
+    no_threads=8,
+    show_plot=True,
+    **kwargs
+):
     """Function to record model's performance at each epoch, formats the performance into tidy format,
     plots the performance and outputs the performance data
     Args:
@@ -58,36 +69,51 @@ def track_model_metrics(model, train_interactions, test_interactions, k=10,
         matplotlib axes: side effect of the method
     """
     # initialising temp data storage
-    model_prec_train = [0]*no_epochs
-    model_prec_test = [0]*no_epochs
+    model_prec_train = [0] * no_epochs
+    model_prec_test = [0] * no_epochs
 
-    model_rec_train = [0]*no_epochs
-    model_rec_test = [0]*no_epochs
-    
-    # fit model and store train/test metrics at each epoch 
+    model_rec_train = [0] * no_epochs
+    model_rec_test = [0] * no_epochs
+
+    # fit model and store train/test metrics at each epoch
     for epoch in range(no_epochs):
-    #     print(f'Epoch: {epoch}/{epochs}')
-        model.fit_partial(interactions=train_interactions, epochs=1,
-                                   num_threads=no_threads, **kwargs)
-        model_prec_train[epoch] = precision_at_k(model, train_interactions, k=k, **kwargs).mean()
-        model_prec_test[epoch] = precision_at_k(model, test_interactions, k=k, **kwargs).mean()
+        #     print(f'Epoch: {epoch}/{epochs}')
+        model.fit_partial(
+            interactions=train_interactions, epochs=1, num_threads=no_threads, **kwargs
+        )
+        model_prec_train[epoch] = precision_at_k(
+            model, train_interactions, k=k, **kwargs
+        ).mean()
+        model_prec_test[epoch] = precision_at_k(
+            model, test_interactions, k=k, **kwargs
+        ).mean()
 
-        model_rec_train[epoch] = recall_at_k(model, train_interactions, k=k, **kwargs).mean()
-        model_rec_test[epoch] = recall_at_k(model, test_interactions, k=k, **kwargs).mean()
-    
+        model_rec_train[epoch] = recall_at_k(
+            model, train_interactions, k=k, **kwargs
+        ).mean()
+        model_rec_test[epoch] = recall_at_k(
+            model, test_interactions, k=k, **kwargs
+        ).mean()
+
     # collect the performance metrics into a dataframe
-    fitting_metrics = pd.DataFrame(zip(model_prec_train, model_prec_test, 
-        model_rec_train, model_rec_test),
-        columns=['model_prec_train', 'model_prec_test', 'model_rec_train', 'model_rec_test'])
+    fitting_metrics = pd.DataFrame(
+        zip(model_prec_train, model_prec_test, model_rec_train, model_rec_test),
+        columns=[
+            "model_prec_train",
+            "model_prec_test",
+            "model_rec_train",
+            "model_rec_test",
+        ],
+    )
     # convert into tidy format
     fitting_metrics = fitting_metrics.stack().reset_index()
-    fitting_metrics.columns = ['epoch','level','value']
+    fitting_metrics.columns = ["epoch", "level", "value"]
     # exact the labels for each observation
-    fitting_metrics['stage'] = fitting_metrics.level.str.split('_').str[-1]
-    fitting_metrics['metric'] = fitting_metrics.level.str.split('_').str[1]
-    fitting_metrics.drop(['level'], axis = 1, inplace=True)
+    fitting_metrics["stage"] = fitting_metrics.level.str.split("_").str[-1]
+    fitting_metrics["metric"] = fitting_metrics.level.str.split("_").str[1]
+    fitting_metrics.drop(["level"], axis=1, inplace=True)
     # replace the metric keys to improve visualisation
-    metric_keys = {'prec':'Precision', 'rec':'Recall'}
+    metric_keys = {"prec": "Precision", "rec": "Recall"}
     fitting_metrics.metric.replace(metric_keys, inplace=True)
     # plots the performance data
     if show_plot == True:
@@ -115,9 +141,11 @@ def similar_users(user_id, user_features, model, N=10):
     user_norms[user_norms == 0] = 1e-10
     scores /= user_norms
 
-    best = np.argpartition(scores, -(N+1))[-(N+1):]
-    return pd.DataFrame(sorted(zip(best, scores[best] / user_norms[user_id]), 
-                  key=lambda x: -x[1])[1:], columns = ['userID', 'score'])
+    best = np.argpartition(scores, -(N + 1))[-(N + 1) :]
+    return pd.DataFrame(
+        sorted(zip(best, scores[best] / user_norms[user_id]), key=lambda x: -x[1])[1:],
+        columns=["userID", "score"],
+    )
 
 
 def similar_items(item_id, item_features, model, N=10):
@@ -133,16 +161,18 @@ def similar_items(item_id, item_features, model, N=10):
         Pandas dataframe of top N most similar items with score
     """
     _, item_representations = model.get_item_representations(features=item_features)
-    
+
     # Cosine similarity
     scores = item_representations.dot(item_representations[item_id, :])
     item_norms = np.linalg.norm(item_representations, axis=1)
     item_norms[item_norms == 0] = 1e-10
     scores /= item_norms
 
-    best = np.argpartition(scores, -(N+1))[-(N+1):]
-    return pd.DataFrame(sorted(zip(best, scores[best] / item_norms[item_id]), 
-                  key=lambda x: -x[1])[1:], columns = ['itemID', 'score'])    
+    best = np.argpartition(scores, -(N + 1))[-(N + 1) :]
+    return pd.DataFrame(
+        sorted(zip(best, scores[best] / item_norms[item_id]), key=lambda x: -x[1])[1:],
+        columns=["itemID", "score"],
+    )
 
 
 def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
@@ -158,24 +188,32 @@ def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
     Returns:
         Pandas dataframe of user-item selected for testing
     """
-    test_df = pd.DataFrame(zip(
-        uids[test_idx],
-        iids[test_idx], 
-        [list(uid_map.keys())[x] for x in uids[test_idx]],
-        [list(iid_map.keys())[x] for x in iids[test_idx]]),
-        columns=['uid','iid','userID','itemID'])
+    test_df = pd.DataFrame(
+        zip(
+            uids[test_idx],
+            iids[test_idx],
+            [list(uid_map.keys())[x] for x in uids[test_idx]],
+            [list(iid_map.keys())[x] for x in iids[test_idx]],
+        ),
+        columns=["uid", "iid", "userID", "itemID"],
+    )
 
     dok_weights = weights.todok()
-    test_df['rating'] = test_df.apply(
-        lambda x:dok_weights[x.uid,x.iid], axis=1)
+    test_df["rating"] = test_df.apply(lambda x: dok_weights[x.uid, x.iid], axis=1)
 
-    return test_df[['userID', 'itemID', 'rating']]
+    return test_df[["userID", "itemID", "rating"]]
 
 
-def prepare_all_predictions(data, uid_map, iid_map, interactions, 
-                            model, num_threads, 
-                            user_features=None,
-                            item_features=None):
+def prepare_all_predictions(
+    data,
+    uid_map,
+    iid_map,
+    interactions,
+    model,
+    num_threads,
+    user_features=None,
+    item_features=None,
+):
     """Function to prepare all predictions for evaluation
     Args:
         data (pandas df): dataframe of all users, items and ratings as loaded
@@ -193,25 +231,31 @@ def prepare_all_predictions(data, uid_map, iid_map, interactions,
     users, items, preds = [], [], []
     item = list(data.itemID.unique())
     for user in data.userID.unique():
-        user = [user] * len(item) 
+        user = [user] * len(item)
         users.extend(user)
         items.extend(item)
 
-    all_predictions = pd.DataFrame(data={"userID": users, "itemID":items})
-    all_predictions['uid'] = all_predictions.userID.map(uid_map)
-    all_predictions['iid'] = all_predictions.itemID.map(iid_map)
+    all_predictions = pd.DataFrame(data={"userID": users, "itemID": items})
+    all_predictions["uid"] = all_predictions.userID.map(uid_map)
+    all_predictions["iid"] = all_predictions.itemID.map(iid_map)
 
     dok_weights = interactions.todok()
-    all_predictions['rating'] = all_predictions.apply(
-        lambda x: dok_weights[x.uid,x.iid], axis=1)
-    
+    all_predictions["rating"] = all_predictions.apply(
+        lambda x: dok_weights[x.uid, x.iid], axis=1
+    )
+
     all_predictions = all_predictions[all_predictions.rating < 1].reset_index(drop=True)
-    all_predictions = all_predictions.drop('rating', axis=1)
-    
-    all_predictions['prediction'] = all_predictions.apply(lambda x: model.predict(
-        user_ids=x['uid'], item_ids=[x['iid']],
-        user_features=user_features,
-        item_features=item_features,
-        num_threads=num_threads)[0], axis=1)
-    
-    return all_predictions[['userID','itemID','prediction']]    
+    all_predictions = all_predictions.drop("rating", axis=1)
+
+    all_predictions["prediction"] = all_predictions.apply(
+        lambda x: model.predict(
+            user_ids=x["uid"],
+            item_ids=[x["iid"]],
+            user_features=user_features,
+            item_features=item_features,
+            num_threads=num_threads,
+        )[0],
+        axis=1,
+    )
+
+    return all_predictions[["userID", "itemID", "prediction"]]

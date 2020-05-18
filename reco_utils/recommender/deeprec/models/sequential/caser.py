@@ -16,6 +16,7 @@ class CaserModel(SequentialBaseModel):
     sequence embedding", in Proceedings of the Eleventh ACM International Conference on 
     Web Search and Data Mining, ACM, 2018.
     """
+
     def __init__(self, hparams, iterator_creator):
         """Initialization of variables for caser 
 

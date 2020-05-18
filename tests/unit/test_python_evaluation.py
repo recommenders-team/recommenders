@@ -393,14 +393,22 @@ def test_python_errors(rating_true, rating_pred):
         rmse(rating_true, rating_true, col_user="not_user")
 
     with pytest.raises(ValueError):
-        mae(rating_pred, rating_pred, col_rating=DEFAULT_PREDICTION_COL, col_user="not_user")
+        mae(
+            rating_pred,
+            rating_pred,
+            col_rating=DEFAULT_PREDICTION_COL,
+            col_user="not_user",
+        )
 
     with pytest.raises(ValueError):
         rsquared(rating_true, rating_pred, col_item="not_item")
 
     with pytest.raises(ValueError):
         exp_var(
-            rating_pred, rating_pred, col_rating=DEFAULT_PREDICTION_COL, col_item="not_item"
+            rating_pred,
+            rating_pred,
+            col_rating=DEFAULT_PREDICTION_COL,
+            col_item="not_item",
         )
 
     with pytest.raises(ValueError):
@@ -414,5 +422,8 @@ def test_python_errors(rating_true, rating_pred):
 
     with pytest.raises(ValueError):
         map_at_k(
-            rating_pred, rating_pred, col_rating=DEFAULT_PREDICTION_COL, col_user="not_user"
+            rating_pred,
+            rating_pred,
+            col_rating=DEFAULT_PREDICTION_COL,
+            col_user="not_user",
         )

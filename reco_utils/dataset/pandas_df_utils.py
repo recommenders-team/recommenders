@@ -220,7 +220,7 @@ class LibffmConverter:
 
         def _convert(field, feature, field_index, field_feature_index_dict):
             field_feature_index = field_feature_index_dict[(field, feature)]
-            if isinstance(feature, str):                
+            if isinstance(feature, str):
                 feature = 1
             return "{}:{}:{}".format(field_index, field_feature_index, feature)
 

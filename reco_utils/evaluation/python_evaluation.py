@@ -623,7 +623,9 @@ def map_at_k(
 
     # calculate reciprocal rank of items for each user and sum them up
     df_hit_sorted = df_hit.copy()
-    df_hit_sorted["rr"] = (df_hit_sorted.groupby(col_user).cumcount() + 1) / df_hit_sorted["rank"]
+    df_hit_sorted["rr"] = (
+        df_hit_sorted.groupby(col_user).cumcount() + 1
+    ) / df_hit_sorted["rank"]
     df_hit_sorted = df_hit_sorted.groupby(col_user).agg({"rr": "sum"}).reset_index()
 
     df_merge = pd.merge(df_hit_sorted, df_hit_count, on=col_user)

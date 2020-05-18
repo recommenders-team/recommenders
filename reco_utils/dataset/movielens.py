@@ -199,7 +199,7 @@ def load_pandas_df(
     movie_col = header[1]
 
     with download_path(local_cache_path) as path:
-        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        filepath = os.path.join(path, "ml-{}.zip".format(size))
         datapath, item_datapath = _maybe_download_and_extract(size, filepath)
 
         # Load movie features such as title, genres, and release year
@@ -256,7 +256,7 @@ def load_item_df(
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     with download_path(local_cache_path) as path:
-        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        filepath = os.path.join(path, "ml-{}.zip".format(size))
         _, item_datapath = _maybe_download_and_extract(size, filepath)
         item_df = _load_item_df(
             size, item_datapath, movie_col, title_col, genres_col, year_col
@@ -404,14 +404,16 @@ def load_spark_df(
     movie_col = schema[1].name
 
     with download_path(local_cache_path) as path:
-        filepath = os.path.join(path, "ml-{}.zip".format(size)) 
+        filepath = os.path.join(path, "ml-{}.zip".format(size))
         datapath, item_datapath = _maybe_download_and_extract(size, filepath)
         spark_datapath = "file:///" + datapath  # shorten form of file://localhost/
 
         # Load movie features such as title, genres, and release year.
         # Since the file size is small, we directly load as pd.DataFrame from the driver node
         # and then convert into spark.DataFrame
-        item_pd_df = _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_col)
+        item_pd_df = _load_item_df(
+            size, item_datapath, movie_col, title_col, genres_col, year_col
+        )
         item_df = spark.createDataFrame(item_pd_df) if item_pd_df is not None else None
 
         if is_databricks():
@@ -467,8 +469,7 @@ def _get_schema(header, schema):
         schema = StructType()
         try:
             (
-                schema
-                .add(StructField(header[0], IntegerType()))
+                schema.add(StructField(header[0], IntegerType()))
                 .add(StructField(header[1], IntegerType()))
                 .add(StructField(header[2], FloatType()))
                 .add(StructField(header[3], LongType()))

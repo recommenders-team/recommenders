@@ -17,9 +17,7 @@ def test_is_jupyter():
     # Test on Jupyter notebook
     path = os.path.join("tests", "unit", "test_notebook_utils.ipynb")
     pm.execute_notebook(
-        path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
     )
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
     df = nb.dataframe
@@ -27,6 +25,7 @@ def test_is_jupyter():
     assert result_is_jupyter is True
     result_is_databricks = df.loc[df["name"] == "is_databricks", "value"].values[0]
     assert result_is_databricks is False
+
 
 # @pytest.mark.notebooks
 # def test_is_databricks():

@@ -49,4 +49,3 @@ def read_matrix(file, row_map=None, col_map=None):
         array = array[row_index, :]
         array = array[:, col_index]
     return array, row_ids, col_ids
-
