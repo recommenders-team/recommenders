@@ -2,18 +2,18 @@
 # Licensed under the MIT License.
 
 import pytest
-from reco_utils.recommender.lightfm.lightfm_utils import (
-    compare_metric,
-    track_model_metrics,
-    similar_users,
-    similar_items,
-)
 import itertools
 import numpy as np
 import pandas as pd
 import lightfm
 from lightfm import LightFM, cross_validation
 from lightfm.data import Dataset
+from reco_utils.recommender.lightfm.lightfm_utils import (
+    compare_metric,
+    track_model_metrics,
+    similar_users,
+    similar_items,
+)
 
 SEEDNO = 42
 TEST_PERCENTAGE = 0.25
