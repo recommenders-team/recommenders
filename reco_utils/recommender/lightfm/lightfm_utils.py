@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -8,26 +11,28 @@ from lightfm.evaluation import precision_at_k, recall_at_k
 
 
 def model_perf_plots(df):
-    """Function to plot model performance metrics
+    """Function to plot model performance metrics.
+
     Args:
-        df (Pandas dataframe): Dataframe in tidy format, with ['epoch','level','value'] columns
+        df (pd.DataFrame): Dataframe in tidy format, with ['epoch','level','value'] columns
     
     Returns:
-        matplotlib axes
+        obj: matplotlib axes
     """
     g = sns.FacetGrid(df, col="metric", hue="stage", col_wrap=2, sharey=False)
     g = g.map(sns.scatterplot, "epoch", "value").add_legend()
 
 
 def compare_metric(df_list, metric="prec", stage="test"):
-    """Function to combine and prepare list of dataframes into tidy format
+    """Function to combine and prepare list of dataframes into tidy format.
+
     Args:
         df_list (list): List of dataframes 
         metrics (str): name of metric to be extracted, optional
         stage (str): name of model fitting stage to be extracted, optional
     
     Returns:
-        Pandas dataframe
+        pd.DataFrame: Metrics
     """
     colnames = ["model" + str(x) for x in list(range(1, len(df_list) + 1))]
     models = [
@@ -53,18 +58,19 @@ def track_model_metrics(
     **kwargs
 ):
     """Function to record model's performance at each epoch, formats the performance into tidy format,
-    plots the performance and outputs the performance data
+    plots the performance and outputs the performance data.
+
     Args:
         model (LightFM instance): fitted LightFM model
         train_interactions (scipy sparse COO matrix): train interactions set
         test_interactions (scipy sparse COO matrix): test interaction set
         k (int): number of recommendations, optional
-        no_epochs (int): no of epochs to run, optional
-        no_threads (int): no of parallel threads to use, optional 
+        no_epochs (int): Number of epochs to run, optional
+        no_threads (int): Number of parallel threads to use, optional 
         **kwargs: other keyword arguments to be passed down
     
     Returns:
-        Pandas dataframe: performance traces of the fitted model
+        pd.DataFrame: performance traces of the fitted model
         LightFM model: fitted model
         matplotlib axes: side effect of the method
     """
@@ -77,7 +83,6 @@ def track_model_metrics(
 
     # fit model and store train/test metrics at each epoch
     for epoch in range(no_epochs):
-        #     print(f'Epoch: {epoch}/{epochs}')
         model.fit_partial(
             interactions=train_interactions, epochs=1, num_threads=no_threads, **kwargs
         )
@@ -122,16 +127,16 @@ def track_model_metrics(
 
 
 def similar_users(user_id, user_features, model, N=10):
-    """Function to return top N similar users
-    based on https://github.com/lyst/lightfm/issues/244#issuecomment-355305681
+    """Function to return top N similar users based on https://github.com/lyst/lightfm/issues/244#issuecomment-355305681
+
      Args:
         user_id (int): id of user to be used as reference
         user_features (scipy sparse CSR matrix): user feature matric
         model (LightFM instance): fitted LightFM model 
-        N (int): No of top similar users to return
+        N (int): Number of top similar users to return
     
     Returns:
-        Pandas dataframe of top N most similar users with score
+        pd.DataFrame: top N most similar users with score
     """
     _, user_representations = model.get_user_representations(features=user_features)
 
@@ -151,14 +156,15 @@ def similar_users(user_id, user_features, model, N=10):
 def similar_items(item_id, item_features, model, N=10):
     """Function to return top N similar items
     based on https://github.com/lyst/lightfm/issues/244#issuecomment-355305681
+
     Args:
         item_id (int): id of item to be used as reference
         item_features (scipy sparse CSR matrix): item feature matric
         model (LightFM instance): fitted LightFM model 
-        N (int): No of top similar items to return
+        N (int): Number of top similar items to return
     
     Returns:
-        Pandas dataframe of top N most similar items with score
+        pd.DataFrame: top N most similar items with score
     """
     _, item_representations = model.get_item_representations(features=item_features)
 
@@ -177,6 +183,7 @@ def similar_items(item_id, item_features, model, N=10):
 
 def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
     """Function to prepare test df for evaluation
+
     Args:
         test_idx (slice): slice of test indices
         uids (np.array): Array of internal user indices
@@ -186,7 +193,7 @@ def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
         weights (np.float32 coo_matrix): user-item interaction
 
     Returns:
-        Pandas dataframe of user-item selected for testing
+        pd.DataFrame: user-item selected for testing
     """
     test_df = pd.DataFrame(
         zip(
@@ -214,7 +221,8 @@ def prepare_all_predictions(
     user_features=None,
     item_features=None,
 ):
-    """Function to prepare all predictions for evaluation
+    """Function to prepare all predictions for evaluation.
+    
     Args:
         data (pandas df): dataframe of all users, items and ratings as loaded
         uid_map (dict): Keys to map internal user indices to external ids.
@@ -226,7 +234,7 @@ def prepare_all_predictions(
         item_features (np.float32 csr_matrix):  Item weights over features
 
     Returns:
-        Pandas dataframe of all predictions
+        pd.DataFrame of all predictions
     """
     users, items, preds = [], [], []
     item = list(data.itemID.unique())
