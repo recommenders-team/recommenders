@@ -41,6 +41,7 @@ CONDA_BASE = {
     "fastparquet": "fastparquet>=0.1.6",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
+    "lightfm": "lightfm>=1.15",
     "matplotlib": "matplotlib>=2.2.2",
     "mock": "mock==2.0.0",
     "nltk": "nltk>=3.4",
@@ -93,8 +94,8 @@ PIP_BASE = {
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
-PIP_DARWIN = {"nni": "nni==0.5.2.1.1"}
-PIP_LINUX = {"nni": "nni==0.5.2.1.1"}
+PIP_DARWIN = {"nni": "nni==1.5"}
+PIP_LINUX = {"nni": "nni==1.5"}
 PIP_WIN32 = {}
 
 
