@@ -41,8 +41,10 @@ CONDA_BASE = {
     "fastparquet": "fastparquet>=0.1.6",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
+    "lightfm": "lightfm>=1.15",
     "matplotlib": "matplotlib>=2.2.2",
     "mock": "mock==2.0.0",
+    "nltk": "nltk>=3.4",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>=0.23.4,<1.0.0",
     "pip": "pip>=19.2",
@@ -53,7 +55,7 @@ CONDA_BASE = {
     "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
     "swig": "swig==3.0.12",
-    "tensorflow": "tensorflow==1.12.0",
+    "tensorflow": "tensorflow==1.15.2",
     "lightgbm": "lightgbm==2.2.1",
     "cornac": "cornac>=1.1.2",
     "papermill": "papermill==0.19.1",
@@ -66,12 +68,13 @@ CONDA_GPU = {
     "fastai": "fastai==1.0.46",
     "numba": "numba>=0.38.1",
     "pytorch": "pytorch>=1.0.0",
-    "tensorflow": "tensorflow-gpu==1.12.0",
+    "tensorflow": "tensorflow-gpu==1.15.2",
 }
 
 PIP_BASE = {
     "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.69",
     "azure-storage": "azure-storage>=0.36.0",
+    "azure-storage-blob": "azure-storage-blob>=12.0.0",
     "azure-cli-core": "azure-cli-core>=2.0.75",
     "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb>=0.8.0",
     "black": "black>=18.6b4",
@@ -85,13 +88,14 @@ PIP_BASE = {
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.3",
     "xlearn": "xlearn==0.40a1",
+    "transformers": "transformers==2.5.0",
 }
 
 PIP_GPU = {"nvidia-ml-py3": "nvidia-ml-py3>=7.352.0"}
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
-PIP_DARWIN = {"nni": "nni==0.5.2.1.1"}
-PIP_LINUX = {"nni": "nni==0.5.2.1.1"}
+PIP_DARWIN = {"nni": "nni==1.5"}
+PIP_LINUX = {"nni": "nni==1.5"}
 PIP_WIN32 = {}
 
 

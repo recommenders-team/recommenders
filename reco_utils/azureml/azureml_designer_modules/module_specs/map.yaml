@@ -1,7 +1,7 @@
-moduleIdentifier: 
+amlModuleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: MAP
-  moduleVersion: 1.1.0
+  moduleVersion: 1.1.1
 description: "Mean Average Precision at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders."
 metadata:
   annotations:
@@ -50,6 +50,8 @@ implementation:
     amlEnvironment:
       python:
         condaDependenciesFile: sar_conda.yaml
+    additionalIncludes:
+      - ../../../
     command: [python, reco_utils/azureml/azureml_designer_modules/entries/map_entry.py]
     args:
     - --rating-true
