@@ -15,35 +15,11 @@ The most common scenarios companies use are:
 * Recommended for you: The "Recommended for you" recommendation predicts the next product that a user is most likely to engage with or purchase, based on the shopping or viewing history of that user. This recommendation is typically used on the home page.
 
 
-## Types of Recommendation Systems for Retail
-
-Typically recommendation systems in retail can be divided into three categories:
-
-* Collaborative filtering: This type of recommendation system makes predictions of what might interest a person based on the taste of many other users. It assumes that if person X likes Snickers, and person Y likes Snickers and Milky Way, then person X might like Milky Way as well.
-
-* Content-based filtering: This type of recommendation system focuses on the products themselves and recommends other products that have similar attributes. Content-based filtering relies on the characteristics of the products themselves, so it doesn’t rely on other users to interact with the products before making a recommendation.
-
-* Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems.
-
-
 ## Measuring Recommendation performance
 
 ### Machine learning metrics (offline metrics)
 
-In Recommenders, offine metrics implementation for python are found on [python_evaluation.py](https://github.com/microsoft/recommenders/blob/master/reco_utils/evaluation/python_evaluation.py) and those for PySpark are found on [spark_evaluation.py](https://github.com/microsoft/recommenders/blob/master/reco_utils/evaluation/spark_evaluation.py).
-
-Currently available metrics include:
-
-- Root Mean Squared Error
-- Mean Absolute Error
-- R<sup>2</sup>
-- Explained Variance
-- Precision at K
-- Recall at K
-- Normalized Discounted Cumulative Gain at K
-- Mean Average Precision at K
-- Area Under Curve
-- Logistic Loss
+Please [see the main metrics description]() for understanding machine learning metrics. 
 
 ### Business success metrics (online metrics)
 
@@ -55,7 +31,10 @@ Below are some of the various potential benefits of recommendation systems in bu
 
 * Conversion rate: Optimizing for conversion rate maximizes the likelihood that the user purchases the recommended item; if you want to increase the number of purchases per session, optimize for conversion rate.
 
-### Relationship between online and offline metrics
+### Relationship between online and offline metrics in retail
+
+There is some literature about the relationship between offline and online metrics...
+
 
 ### A/B testing
 
@@ -67,19 +46,7 @@ Below are some of the various potential benefits of recommendation systems in bu
 
 * Long tail products:
 
-## Data types
 
- * Explicit interactions:
-
- * Implicit interactions:
-
- * Knowledge graph data:
-
- * User features:
-
- * Item features:
-
- Thoughts about data size...
 
 ## Building end 2 end recommendation scenarios with Microsoft Recommenders
 
