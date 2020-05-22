@@ -125,4 +125,3 @@ def get_cudnn_version():
     else:
         raise ValueError("Not in Windows, Linux or Mac")
     return find_cudnn_in_headers(candidates)
-

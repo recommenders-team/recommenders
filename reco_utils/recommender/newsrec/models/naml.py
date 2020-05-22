@@ -51,7 +51,7 @@ class NAMLModel(BaseModel):
             batch_data["candidate_title_batch"],
             batch_data["candidate_body_batch"],
             batch_data["candidate_vert_batch"],
-            batch_data["candidate_subvert_batch"]
+            batch_data["candidate_subvert_batch"],
         ]
         input_label = batch_data["labels"]
         return input_feat, input_label
@@ -96,7 +96,9 @@ class NAMLModel(BaseModel):
         click_news_presents = layers.TimeDistributed(newsencoder)(
             his_input_title_body_verts
         )
-        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(click_news_presents)
+        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(
+            click_news_presents
+        )
 
         model = keras.Model(
             his_input_title_body_verts, user_present, name="user_encoder"
@@ -145,7 +147,9 @@ class NAMLModel(BaseModel):
         concate_repr = layers.Concatenate(axis=-2)(
             [title_repr, body_repr, vert_repr, subvert_repr]
         )
-        news_repr = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(concate_repr)
+        news_repr = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(
+            concate_repr
+        )
 
         model = keras.Model(input_title_body_verts, news_repr, name="news_encoder")
         return model
@@ -170,7 +174,7 @@ class NAMLModel(BaseModel):
             activation=hparams.cnn_activation,
             padding="same",
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
         pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
@@ -199,7 +203,7 @@ class NAMLModel(BaseModel):
             activation=hparams.cnn_activation,
             padding="same",
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
         pred_body = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
@@ -223,10 +227,10 @@ class NAMLModel(BaseModel):
 
         vert_emb = vert_embedding(input_vert)
         pred_vert = layers.Dense(
-            hparams.filter_num, 
+            hparams.filter_num,
             activation=hparams.dense_activation,
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(vert_emb)
         pred_vert = layers.Reshape((1, hparams.filter_num))(pred_vert)
 
@@ -248,10 +252,10 @@ class NAMLModel(BaseModel):
 
         subvert_emb = subvert_embedding(input_subvert)
         pred_subvert = layers.Dense(
-            hparams.filter_num, 
+            hparams.filter_num,
             activation=hparams.dense_activation,
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(subvert_emb)
         pred_subvert = layers.Reshape((1, hparams.filter_num))(pred_subvert)
 
