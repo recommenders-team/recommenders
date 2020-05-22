@@ -17,8 +17,10 @@ BATCH_SIZE = 32
 
 def test_data_preprocessing(python_dataset_ncf):
     train, test = python_dataset_ncf
-    data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST, seed=SEED)
-    
+    data = Dataset(
+        train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST, seed=SEED
+    )
+
     # shape
     assert len(data.train) == len(train)
     assert len(data.test) == len(test)
@@ -39,7 +41,9 @@ def test_data_preprocessing(python_dataset_ncf):
 
 def test_train_loader(python_dataset_ncf):
     train, test = python_dataset_ncf
-    data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST, seed=SEED)
+    data = Dataset(
+        train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST, seed=SEED
+    )
 
     # collect positvie user-item dict
     positive_pool = {}
@@ -49,7 +53,7 @@ def test_train_loader(python_dataset_ncf):
     # without negative sampling
     for batch in data.train_loader(batch_size=BATCH_SIZE, shuffle=False):
         user, item, labels = batch
-        #shape
+        # shape
         assert len(user) == BATCH_SIZE
         assert len(item) == BATCH_SIZE
         assert len(labels) == BATCH_SIZE
@@ -58,9 +62,9 @@ def test_train_loader(python_dataset_ncf):
         # right labels
         for u, i, is_pos in zip(user, item, labels):
             if is_pos:
-                assert i in positive_pool[u] 
-            else: 
-                assert i not in positive_pool[u] 
+                assert i in positive_pool[u]
+            else:
+                assert i not in positive_pool[u]
 
     data.negative_sampling()
     label_list = []
@@ -73,9 +77,9 @@ def test_train_loader(python_dataset_ncf):
         # right labels
         for u, i, is_pos in zip(user, item, labels):
             if is_pos:
-                assert i in positive_pool[u] 
-            else: 
-                assert i not in positive_pool[u] 
+                assert i in positive_pool[u]
+            else:
+                assert i not in positive_pool[u]
 
             label_list.append(is_pos)
 
@@ -90,7 +94,7 @@ def test_test_loader(python_dataset_ncf):
     # positive user-item dict, noting that the pool is train+test
     positive_pool = {}
     df = train.append(test)
-    for u in df[DEFAULT_USER_COL].unique(): 
+    for u in df[DEFAULT_USER_COL].unique():
         positive_pool[u] = set(df[df[DEFAULT_USER_COL] == u][DEFAULT_ITEM_COL])
 
     for batch in data.test_loader():
@@ -104,9 +108,9 @@ def test_test_loader(python_dataset_ncf):
 
         for u, i, is_pos in zip(user, item, labels):
             if is_pos:
-                assert i in positive_pool[u] 
-            else: 
-                assert i not in positive_pool[u] 
+                assert i in positive_pool[u]
+            else:
+                assert i not in positive_pool[u]
 
             label_list.append(is_pos)
 

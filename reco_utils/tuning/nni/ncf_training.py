@@ -17,12 +17,30 @@ from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
 from reco_utils.dataset import movielens
 from reco_utils.dataset.python_splitters import python_chrono_split
-from reco_utils.evaluation.python_evaluation import (rmse, mae, rsquared, exp_var, map_at_k, ndcg_at_k, precision_at_k, 
-                                                     recall_at_k, get_top_k_items)
+from reco_utils.evaluation.python_evaluation import (
+    rmse,
+    mae,
+    rsquared,
+    exp_var,
+    map_at_k,
+    ndcg_at_k,
+    precision_at_k,
+    recall_at_k,
+    get_top_k_items,
+)
 from reco_utils.common.constants import SEED as DEFAULT_SEED
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("ncf")
+
+
+def _update_metrics(metrics_dict, metric, params, result):
+    logger.debug("%s@%d = %g", metric, params["k"], result)
+    if metric == params["primary_metric"]:
+        metrics_dict["default"] = result
+    else:
+        metrics_dict[metric] = result
+    return metrics_dict
 
 
 def ncf_training(params):
@@ -39,16 +57,16 @@ def ncf_training(params):
 
     data = NCFDataset(train=train_data, test=validation_data, seed=DEFAULT_SEED)
 
-    model = NCF (
-        n_users=data.n_users, 
+    model = NCF(
+        n_users=data.n_users,
         n_items=data.n_items,
         model_type="NeuMF",
         n_factors=params["n_factors"],
-        layer_sizes=[16,8,4],
+        layer_sizes=[16, 8, 4],
         n_epochs=params["n_epochs"],
         learning_rate=params["learning_rate"],
         verbose=params["verbose"],
-        seed=DEFAULT_SEED
+        seed=DEFAULT_SEED,
     )
 
     model.fit(data)
@@ -58,43 +76,49 @@ def ncf_training(params):
     metrics_dict = {}
     rating_metrics = params["rating_metrics"]
     if len(rating_metrics) > 0:
-        predictions = [[row.userID, row.itemID, model.predict(row.userID, row.itemID)]
-               for (_, row) in validation_data.iterrows()]
+        predictions = [
+            [row.userID, row.itemID, model.predict(row.userID, row.itemID)]
+            for (_, row) in validation_data.iterrows()
+        ]
 
-        predictions = pd.DataFrame(predictions, columns=['userID', 'itemID', 'prediction'])
-        predictions = predictions.astype({'userID': 'int64', 'itemID': 'int64', 'prediction': 'float64'})
-        
+        predictions = pd.DataFrame(
+            predictions, columns=["userID", "itemID", "prediction"]
+        )
+        predictions = predictions.astype(
+            {"userID": "int64", "itemID": "int64", "prediction": "float64"}
+        )
+
         for metric in rating_metrics:
             result = getattr(evaluation, metric)(validation_data, predictions)
-            logger.debug("%s = %g", metric, result)
-            if metric == params["primary_metric"]:
-                metrics_dict["default"] = result
-            else:
-                metrics_dict[metric] = result
+            metrics_dict = _update_metrics(metrics_dict, metric, params, result)
 
     ranking_metrics = params["ranking_metrics"]
     if len(ranking_metrics) > 0:
         users, items, preds = [], [], []
         item = list(train_data.itemID.unique())
         for user in train_data.userID.unique():
-            user = [user] * len(item) 
+            user = [user] * len(item)
             users.extend(user)
             items.extend(item)
             preds.extend(list(model.predict(user, item, is_list=True)))
 
-        all_predictions = pd.DataFrame(data={"userID": users, "itemID": items, "prediction": preds})
+        all_predictions = pd.DataFrame(
+            data={"userID": users, "itemID": items, "prediction": preds}
+        )
 
-        merged = pd.merge(train_data, all_predictions, on=["userID", "itemID"], how="outer")
-        all_predictions = merged[merged.rating.isnull()].drop('rating', axis=1)
+        merged = pd.merge(
+            train_data, all_predictions, on=["userID", "itemID"], how="outer"
+        )
+        all_predictions = merged[merged.rating.isnull()].drop("rating", axis=1)
         for metric in ranking_metrics:
             result = getattr(evaluation, metric)(
-                validation_data, all_predictions, col_prediction="prediction", k=params["k"]
+                validation_data,
+                all_predictions,
+                col_prediction="prediction",
+                k=params["k"],
             )
-            logger.debug("%s@%d = %g", metric, params["k"], result)
-            if metric == params["primary_metric"]:
-                metrics_dict["default"] = result
-            else:
-                metrics_dict[metric] = result
+            metrics_dict = _update_metrics(metrics_dict, metric, params, result)
+
 
     if len(ranking_metrics) == 0 and len(rating_metrics) == 0:
         raise ValueError("No metrics were specified.")
@@ -141,14 +165,12 @@ def get_params():
     # Hyperparameters to be tuned
     parser.add_argument("--n_factors", type=int, dest="n_factors", default=100)
 
-    args = parser.parse_args()
-    return args
+    return parser.parse_args()
 
 
 def main(params):
     logger.debug("Args: %s", str(params))
     logger.debug("Number of epochs %d", params["n_epochs"])
-
     model = ncf_training(params)
 
 
@@ -157,6 +179,7 @@ if __name__ == "__main__":
         tuner_params = nni.get_next_parameter()
         logger.debug("Hyperparameters: %s", tuner_params)
         params = vars(get_params())
+        
         # in the case of Hyperband, use STEPS to allocate the number of epochs NCF will run for
         if "STEPS" in tuner_params:
             steps_param = tuner_params["STEPS"]

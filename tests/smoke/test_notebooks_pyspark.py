@@ -36,18 +36,14 @@ def test_als_pyspark_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.spark
-@pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
+@pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
 def test_mmlspark_lightgbm_criteo_smoke(notebooks):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(
-            DATA_SIZE="sample",
-            NUM_ITERATIONS=50,
-            EARLY_STOPPING_ROUND=10
-        )
+        parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=50, EARLY_STOPPING_ROUND=10),
     )
     nb = pm.read_notebook(OUTPUT_NOTEBOOK)
     results = nb.dataframe.set_index("name")["value"]

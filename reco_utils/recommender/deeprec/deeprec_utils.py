@@ -486,6 +486,7 @@ def ndcg_score(y_true, y_score, k=10):
     actual = dcg_score(y_true, y_score, k)
     return actual / best
 
+
 def hit_score(y_true, y_score, k=10):
     """Computing hit score metric at k.
 
@@ -503,6 +504,7 @@ def hit_score(y_true, y_score, k=10):
             return 1
     return 0
 
+
 def dcg_score(y_true, y_score, k=10):
     """Computing dcg score metric at k.
 
@@ -519,7 +521,6 @@ def dcg_score(y_true, y_score, k=10):
     gains = 2 ** y_true - 1
     discounts = np.log2(np.arange(len(y_true)) + 2)
     return np.sum(gains / discounts)
-
 
 
 def cal_metric(labels, preds, metrics):
@@ -555,7 +556,7 @@ def cal_metric(labels, preds, metrics):
             res["f1"] = round(f1, 4)
         elif metric == "mean_mrr":
             mean_mrr = np.mean(
-                [   
+                [
                     mrr_score(each_labels, each_preds)
                     for each_labels, each_preds in zip(labels, preds)
                 ]
@@ -563,12 +564,12 @@ def cal_metric(labels, preds, metrics):
             res["mean_mrr"] = round(mean_mrr, 4)
         elif metric.startswith("ndcg"):  # format like:  ndcg@2;4;6;8
             ndcg_list = [1, 2]
-            ks = metric.split('@')
+            ks = metric.split("@")
             if len(ks) > 1:
-                ndcg_list = [int(token) for token in ks[1].split(';')]
+                ndcg_list = [int(token) for token in ks[1].split(";")]
             for k in ndcg_list:
                 ndcg_temp = np.mean(
-                    [   
+                    [
                         ndcg_score(each_labels, each_preds, k)
                         for each_labels, each_preds in zip(labels, preds)
                     ]
@@ -576,13 +577,13 @@ def cal_metric(labels, preds, metrics):
                 res["ndcg@{0}".format(k)] = round(ndcg_temp, 4)
         elif metric.startswith("hit"):  # format like:  hit@2;4;6;8
             hit_list = [1, 2]
-            ks = metric.split('@')
+            ks = metric.split("@")
             if len(ks) > 1:
-                hit_list = [int(token) for token in ks[1].split(';')]
+                hit_list = [int(token) for token in ks[1].split(";")]
             for k in hit_list:
                 hit_temp = np.mean(
                     [
-                        hit_score(each_labels, each_preds, k) 
+                        hit_score(each_labels, each_preds, k)
                         for each_labels, each_preds in zip(labels, preds)
                     ]
                 )

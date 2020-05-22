@@ -120,7 +120,7 @@ class LSTURModel(BaseModel):
                 recurrent_initializer=keras.initializers.glorot_uniform(seed=self.seed),
                 bias_initializer=keras.initializers.Zeros(),
             )(layers.Masking(mask_value=0.0)(click_title_presents))
-            
+
             user_present = layers.Concatenate()([short_uemb, long_u_emb])
             user_present = layers.Dense(
                 hparams.gru_unit,
