@@ -16,6 +16,7 @@ class DKN(BaseModel):
     Recommendation", in Proceedings of the 2018 World Wide Web Conference on World 
     Wide Web, 2018.
     """
+
     def __init__(self, hparams, iterator_creator):
         """Initialization steps for DKN.
         Compared with the BaseModel, DKN requires two different pre-computed embeddings,

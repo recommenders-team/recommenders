@@ -1,12 +1,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import ast
 import json
 import os
 import requests
 import subprocess
 import sys
 import time
+import pandas as pd
 
 
 NNI_REST_ENDPOINT = "http://localhost:8080/api/v1/nni"
@@ -108,7 +110,10 @@ def get_trials(optimize_mode):
         raise ValueError("optimize_mode should equal either minimize or maximize")
     all_trials = requests.get(NNI_TRIAL_JOBS_URL).json()
     trials = [
-        (eval(trial["finalMetricData"][0]["data"]), trial["logPath"].split(":")[-1])
+        (
+            ast.literal_eval(ast.literal_eval(trial["finalMetricData"][0]["data"])),
+            trial["logPath"].split(":")[-1],
+        )
         for trial in all_trials
     ]
     sorted_trials = sorted(
@@ -142,7 +147,11 @@ def start_nni(config_path, wait=WAITING_TIME, max_retries=MAX_RETRIES):
     """
     nni_env = os.environ.copy()
     nni_env["PATH"] = sys.prefix + "/bin:" + nni_env["PATH"]
-    proc = subprocess.run(["nnictl", "create", "--config", config_path], env=nni_env)
+    proc = subprocess.run(
+        [sys.prefix + "/bin/nnictl", "create", "--config", config_path], env=nni_env
+    )
     if proc.returncode != 0:
         raise RuntimeError("'nnictl create' failed with code %d" % proc.returncode)
     check_experiment_status(wait=wait, max_retries=max_retries)
+
+    

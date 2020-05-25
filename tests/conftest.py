@@ -222,6 +222,9 @@ def notebooks():
         "npa_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "npa_synthetic.ipynb"
         ),
+        "rlrmc_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "rlrmc_movielens.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
@@ -258,9 +261,6 @@ def notebooks():
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "spark_tuning": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "tuning_spark_als.ipynb"
-        ),
-        "rlrmc_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "rlrmc_movielens.ipynb"
         ),
         "nni_tuning_svd": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"

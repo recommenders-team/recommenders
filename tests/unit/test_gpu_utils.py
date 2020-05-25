@@ -29,7 +29,7 @@ def test_clear_memory_all_gpus():
 
 
 @pytest.mark.gpu
-@pytest.mark.skipif(sys.platform == 'win32', reason="Not implemented on Windows")
+@pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
 def test_get_cuda_version():
     assert get_cuda_version() > "9.0.0"
 

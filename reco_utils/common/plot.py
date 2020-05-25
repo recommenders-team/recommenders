@@ -34,10 +34,14 @@ def line_graph(
         # Setup figure only once
         if subplot[2] == 1:
             if plot_size:
-                plt.figure(figsize=(
-                    plot_size[0]*subplot[1],  # fig width = plot width * num columns
-                    plot_size[1]*subplot[0]   # fig height = plot height * num rows
-                ))
+                plt.figure(
+                    figsize=(
+                        plot_size[0]
+                        * subplot[1],  # fig width = plot width * num columns
+                        plot_size[1]
+                        * subplot[0],  # fig height = plot height * num rows
+                    )
+                )
             plt.subplots_adjust(wspace=0.5)
         plt.subplot(*subplot)
     else:

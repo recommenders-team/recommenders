@@ -5,7 +5,14 @@ This is the one and only (to rule them all) implementation of SAR.
 import logging
 import pyspark.sql.functions as F
 import pandas as pd
-from pyspark.sql.types import StringType, DoubleType, StructType, StructField, IntegerType, FloatType
+from pyspark.sql.types import (
+    StringType,
+    DoubleType,
+    StructType,
+    StructField,
+    IntegerType,
+    FloatType,
+)
 from pyspark.sql.functions import pandas_udf, PandasUDFType
 from pysarplus import SARModel
 
@@ -14,7 +21,8 @@ SIM_JACCARD = "jaccard"
 SIM_LIFT = "lift"
 
 logging.basicConfig(level=logging.INFO)
-log = logging.getLogger('sarplus')
+log = logging.getLogger("sarplus")
+
 
 class SARPlus:
     """SAR implementation for PySpark"""
@@ -31,7 +39,7 @@ class SARPlus:
         time_decay_coefficient=30,
         time_now=None,
         timedecay_formula=False,
-        threshold=1
+        threshold=1,
     ):
         assert threshold > 0
 
@@ -44,7 +52,7 @@ class SARPlus:
             "prefix": table_prefix,
             "time_now": time_now,
             "time_decay_coefficient": time_decay_coefficient,
-            "threshold": threshold
+            "threshold": threshold,
         }
 
         self.similarity_type = similarity_type
@@ -83,7 +91,7 @@ class SARPlus:
             # the folling is the query which we want to run
 
             query = self.f(
-            """
+                """
             SELECT
                  {col_user}, {col_item}, 
                  SUM({col_rating} * EXP(-log(2) * (latest_timestamp - CAST({col_timestamp} AS long)) / ({time_decay_coefficient} * 3600 * 24))) as {col_rating}
@@ -91,16 +99,19 @@ class SARPlus:
                  (SELECT CAST(MAX({col_timestamp}) AS long) latest_timestamp FROM {prefix}df_train_input)
             GROUP BY {col_user}, {col_item} 
             CLUSTER BY {col_user} 
-            """)
+            """
+            )
 
             # replace with timedecayed version
             df = self.spark.sql(query)
         else:
             # since SQL is case insensitive, this check needs to be performed similar
-            if self.header['col_timestamp'].lower() in [s.name.lower() for s in df.schema]:
+            if self.header["col_timestamp"].lower() in [
+                s.name.lower() for s in df.schema
+            ]:
                 # we need to de-duplicate items by using the latest item
                 query = self.f(
-                """
+                    """
                 SELECT {col_user}, {col_item}, {col_rating}
                 FROM
                 (
@@ -112,7 +123,7 @@ class SARPlus:
                 WHERE latest = 1
                 """
                 )
-                
+
                 df = self.spark.sql(query)
 
         df.createOrReplaceTempView(self.f("{prefix}df_train"))
@@ -128,7 +139,8 @@ class SARPlus:
         GROUP  BY A.{col_item}, B.{col_item}
         HAVING COUNT(*) >= {threshold}
         CLUSTER BY i1, i2
-        """)
+        """
+        )
 
         item_cooccurrence = self.spark.sql(query)
         item_cooccurrence.write.mode("overwrite").saveAsTable(
@@ -148,7 +160,7 @@ class SARPlus:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == SIM_JACCARD:
             query = self.f(
-            """
+                """
             SELECT i1, i2, value / (M1.margin + M2.margin - value) AS value
             FROM {prefix}item_cooccurrence A 
                 INNER JOIN {prefix}item_marginal M1 ON A.i1 = M1.i 
@@ -159,7 +171,7 @@ class SARPlus:
             self.item_similarity = self.spark.sql(query)
         elif self.similarity_type == SIM_LIFT:
             query = self.f(
-            """
+                """
             SELECT i1, i2, value / (M1.margin * M2.margin) AS value
             FROM {prefix}item_cooccurrence A 
                 INNER JOIN {prefix}item_marginal M1 ON A.i1 = M1.i 
@@ -169,11 +181,14 @@ class SARPlus:
             )
             self.item_similarity = self.spark.sql(query)
         else:
-            raise ValueError("Unknown similarity type: {0}".format(self.similarity_type))
-
+            raise ValueError(
+                "Unknown similarity type: {0}".format(self.similarity_type)
+            )
 
         # store upper triangular
-        log.info("sarplus.fit 2/2: compute similiarity metric %s..." % self.similarity_type)
+        log.info(
+            "sarplus.fit 2/2: compute similiarity metric %s..." % self.similarity_type
+        )
         self.item_similarity.write.mode("overwrite").saveAsTable(
             self.f("{prefix}item_similarity_upper")
         )
@@ -181,7 +196,7 @@ class SARPlus:
         # expand upper triangular to full matrix
 
         query = self.f(
-        """
+            """
         SELECT i1, i2, value
         FROM
         (
@@ -223,7 +238,7 @@ class SARPlus:
         )
 
         query = self.f(
-        """
+            """
           SELECT a.{col_user}, a.{col_item}, CAST(a.{col_rating} AS double) {col_rating}
           FROM {prefix}df_train a INNER JOIN {prefix}df_test_users b ON a.{col_user} = b.{col_user} 
           DISTRIBUTE BY {col_user}
@@ -233,39 +248,59 @@ class SARPlus:
 
         return self.spark.sql(query)
 
-    def recommend_k_items(self, test, cache_path, top_k=10, remove_seen=True, n_user_prediction_partitions=200):
+    def recommend_k_items(
+        self,
+        test,
+        cache_path,
+        top_k=10,
+        remove_seen=True,
+        n_user_prediction_partitions=200,
+    ):
 
         # create item id to continuous index mapping
         log.info("sarplus.recommend_k_items 1/3: create item index")
-        self.spark.sql(self.f("SELECT i1, row_number() OVER(ORDER BY i1)-1 idx FROM (SELECT DISTINCT i1 FROM {prefix}item_similarity) CLUSTER BY i1"))\
-            .write.mode("overwrite").saveAsTable(self.f("{prefix}item_mapping"))
+        self.spark.sql(
+            self.f(
+                "SELECT i1, row_number() OVER(ORDER BY i1)-1 idx FROM (SELECT DISTINCT i1 FROM {prefix}item_similarity) CLUSTER BY i1"
+            )
+        ).write.mode("overwrite").saveAsTable(self.f("{prefix}item_mapping"))
 
         # map similarity matrix into index space
-        self.spark.sql(self.f("""
+        self.spark.sql(
+            self.f(
+                """
             SELECT a.idx i1, b.idx i2, is.value
             FROM {prefix}item_similarity is, {prefix}item_mapping a, {prefix}item_mapping b
             WHERE is.i1 = a.i1 AND i2 = b.i1
-        """))\
-        .write.mode("overwrite").saveAsTable(self.f("{prefix}item_similarity_mapped"))
+        """
+            )
+        ).write.mode("overwrite").saveAsTable(self.f("{prefix}item_similarity_mapped"))
 
         cache_path_output = cache_path
-        if cache_path.startswith('dbfs:'):
-            cache_path_input = '/dbfs' + cache_path[5:]
+        if cache_path.startswith("dbfs:"):
+            cache_path_input = "/dbfs" + cache_path[5:]
         else:
             cache_path_input = cache_path
 
         # export similarity matrix for C++ backed UDF
         log.info("sarplus.recommend_k_items 2/3: prepare similarity matrix")
 
-        self.spark.sql(self.f("SELECT i1, i2, CAST(value AS DOUBLE) value FROM {prefix}item_similarity_mapped ORDER BY i1, i2"))\
-            .coalesce(1)\
-            .write.format("com.microsoft.sarplus").mode("overwrite")\
-            .save(cache_path_output)
+        self.spark.sql(
+            self.f(
+                "SELECT i1, i2, CAST(value AS DOUBLE) value FROM {prefix}item_similarity_mapped ORDER BY i1, i2"
+            )
+        ).coalesce(1).write.format("com.microsoft.sarplus").mode("overwrite").save(
+            cache_path_output
+        )
 
-        self.get_user_affinity(test).createOrReplaceTempView(self.f("{prefix}user_affinity"))
+        self.get_user_affinity(test).createOrReplaceTempView(
+            self.f("{prefix}user_affinity")
+        )
 
         # map item ids to index space
-        pred_input = self.spark.sql(self.f("""
+        pred_input = self.spark.sql(
+            self.f(
+                """
             SELECT {col_user}, idx, rating
             FROM 
             (
@@ -273,13 +308,19 @@ class SARPlus:
                 FROM {prefix}user_affinity JOIN {prefix}item_mapping b ON {col_item} = b.i1 
             )
             CLUSTER BY {col_user}
-        """))
+        """
+            )
+        )
 
-        schema = StructType([
-            StructField("userID", pred_input.schema[self.header['col_user']].dataType, True), 
-            StructField("itemID", IntegerType(), True),
-            StructField("score", FloatType(), True)
-        ])
+        schema = StructType(
+            [
+                StructField(
+                    "userID", pred_input.schema[self.header["col_user"]].dataType, True
+                ),
+                StructField("itemID", IntegerType(), True),
+                StructField("score", FloatType(), True),
+            ]
+        )
 
         # make sure only the header is pickled
         local_header = self.header
@@ -291,33 +332,42 @@ class SARPlus:
             # The cache_path points to file write to by com.microsoft.sarplus
             # This has exactly the memory layout we need and since the file is
             # memory mapped, the memory consumption only happens ones per worker
-            # for all python processes 
+            # for all python processes
             model = SARModel(cache_path_input)
-            preds = model.predict(df['idx'].values, df['rating'].values, top_k, remove_seen)
-        
-            user = df[local_header['col_user']].iloc[0]
+            preds = model.predict(
+                df["idx"].values, df["rating"].values, top_k, remove_seen
+            )
+
+            user = df[local_header["col_user"]].iloc[0]
 
             preds_ret = pd.DataFrame(
-                [(user, x.id, x.score) for x in preds],
-                columns=range(3))
+                [(user, x.id, x.score) for x in preds], columns=range(3)
+            )
 
             return preds_ret
-        
+
         log.info("sarplus.recommend_k_items 3/3: compute recommendations")
 
-        df_preds = pred_input\
-            .repartition(n_user_prediction_partitions, self.header['col_user'])\
-            .groupby(self.header['col_user'])\
+        df_preds = (
+            pred_input.repartition(
+                n_user_prediction_partitions, self.header["col_user"]
+            )
+            .groupby(self.header["col_user"])
             .apply(sar_predict_udf)
+        )
 
         df_preds.createOrReplaceTempView(self.f("{prefix}predictions"))
 
-        return self.spark.sql(self.f("""
+        return self.spark.sql(
+            self.f(
+                """
         SELECT userID {col_user}, b.i1 {col_item}, score
         FROM {prefix}predictions p, {prefix}item_mapping b
         WHERE p.itemID = b.idx
-        """))
-        
+        """
+            )
+        )
+
     def recommend_k_items_slow(self, test, top_k=10, remove_seen=True):
         """Recommend top K items for all users which are in the test set.
 
@@ -331,9 +381,9 @@ class SARPlus:
         if remove_seen:
             raise ValueError("Not implemented")
 
-        self.get_user_affinity(test)\
-            .write.mode("overwrite")\
-            .saveAsTable(self.f("{prefix}user_affinity"))
+        self.get_user_affinity(test).write.mode("overwrite").saveAsTable(
+            self.f("{prefix}user_affinity")
+        )
 
         # user_affinity * item_similarity
         # filter top-k

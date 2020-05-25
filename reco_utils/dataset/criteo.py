@@ -174,4 +174,3 @@ def get_spark_schema(header=DEFAULT_HEADER):
     for i in range(26):
         schema.add(StructField(header[i + n_ints], StringType()))
     return schema
-

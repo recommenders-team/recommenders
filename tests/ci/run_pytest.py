@@ -16,59 +16,70 @@ from azureml.core import Run
 
 
 def create_arg_parser():
-    parser = argparse.ArgumentParser(description='Process inputs')
+    parser = argparse.ArgumentParser(description="Process inputs")
     # test folder
-    parser.add_argument("--testfolder", "-f",
-                        action="store",
-                        default="./tests/unit",
-                        help="Folder where tests are located")
-    parser.add_argument("--num",
-                        action="store",
-                        default="99",
-                        help="test num")
+    parser.add_argument(
+        "--testfolder",
+        "-f",
+        action="store",
+        default="./tests/unit",
+        help="Folder where tests are located",
+    )
+    parser.add_argument("--num", action="store", default="99", help="test num")
     # test markers
-    parser.add_argument("--testmarkers", "-m",
-                        action="store",
-                        default="not notebooks and not spark and not gpu",
-                        help="Specify test markers for test selection")
+    parser.add_argument(
+        "--testmarkers",
+        "-m",
+        action="store",
+        default="not notebooks and not spark and not gpu",
+        help="Specify test markers for test selection",
+    )
     # test results file
-    parser.add_argument("--xmlname", "-j",
-                        action="store",
-                        default="reports/test-unit.xml",
-                        help="Test results")
+    parser.add_argument(
+        "--xmlname",
+        "-j",
+        action="store",
+        default="reports/test-unit.xml",
+        help="Test results",
+    )
     args = parser.parse_args()
 
     return args
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger('submit_azureml_pytest.py')
+    logger = logging.getLogger("submit_azureml_pytest.py")
     args = create_arg_parser()
 
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-    logger.debug('junit_xml {}'.format(args.xmlname))
+    logger.debug("junit_xml {}".format(args.xmlname))
 
     # Run.get_context() is needed to save context as pytest causes corruption
     # of env vars
     run = Run.get_context()
-    '''
+    """
     This is an example of a working subprocess.run for a unit test run:
     subprocess.run(["pytest", "tests/unit",
                     "-m", "not notebooks and not spark and not gpu",
                     "--junitxml=reports/test-unit.xml"])
-    '''
-    logger.debug('args.junitxml {}'.format(args.xmlname))
-    logger.debug('junit= --junitxml={}'.format(args.xmlname))
-    pytest_cmd = ['pytest', args.testfolder, '-m', args.testmarkers,
-                  '--junitxml={}'.format(args.xmlname)]
-    logger.info('pytest run:{}'.format(' '.join(pytest_cmd)))
+    """
+    logger.debug("args.junitxml {}".format(args.xmlname))
+    logger.debug("junit= --junitxml={}".format(args.xmlname))
+    pytest_cmd = [
+        "pytest",
+        args.testfolder,
+        "-m",
+        args.testmarkers,
+        "--junitxml={}".format(args.xmlname),
+    ]
+    logger.info("pytest run:{}".format(" ".join(pytest_cmd)))
     subprocess.run(pytest_cmd)
 
     #
     # Leveraged code from this  notebook:
     # https://msdata.visualstudio.com/Vienna/_search?action=contents&text=upload_folder&type=code&lp=code-Project&filters=ProjectFilters%7BVienna%7DRepositoryFilters%7BAzureMlCli%7D&pageSize=25&sortOptions=%5B%7B%22field%22%3A%22relevance%22%2C%22sortOrder%22%3A%22desc%22%7D%5D&result=DefaultCollection%2FVienna%2FAzureMlCli%2FGBmaster%2F%2Fsrc%2Fazureml-core%2Fazureml%2Fcore%2Frun.py
-    logger.debug('os.listdir files {}'.format(os.listdir('.')))
+    logger.debug("os.listdir files {}".format(os.listdir(".")))
 
     #  files for AzureML
     name_of_upload = "reports"

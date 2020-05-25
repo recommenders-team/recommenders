@@ -1,4 +1,4 @@
-moduleIdentifier: 
+amlModuleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: SAR Scoring
   moduleVersion: 1.1.1
@@ -70,11 +70,11 @@ implementation:
       --trained-model, {inputPath: Trained model},
       --dataset-to-score, {inputPath: Dataset to score},
       --score-type, {inputValue: Score type},
-      --items-to-predict, {inputValue: Items to predict},
+      [--items-to-predict, {inputValue: Items to predict}],
       --normalize, {inputValue: Normalize},
-      --ranking-metric, {inputValue: Ranking metric},
-      --top-k, {inputValue: Top k},
-      --sort-top-k, {inputValue: Sort top k},
-      --remove-seen-items, {inputValue: Remove seen items},
+      [--ranking-metric, {inputValue: Ranking metric}],
+      [--top-k, {inputValue: Top k}],
+      [--sort-top-k, {inputValue: Sort top k}],
+      [--remove-seen-items, {inputValue: Remove seen items}],
       --score-result, {outputPath: Score result},
     ]

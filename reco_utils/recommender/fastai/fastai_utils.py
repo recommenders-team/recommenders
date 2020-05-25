@@ -81,4 +81,3 @@ def hide_fastai_progress_bar():
         master_bar,
         progress_bar,
     )
-
