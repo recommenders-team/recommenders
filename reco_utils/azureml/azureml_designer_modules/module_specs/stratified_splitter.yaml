@@ -5,7 +5,11 @@ amlModuleIdentifier:
 metadata:
   annotations:
     tags: ["Recommenders"]
-description: "Python stratified splitter from Recommenders repo: https://github.com/Microsoft/Recommenders."
+description: "Python stratified splitter from Recommenders repo: https://github.com/Microsoft/Recommenders.
+test
+long
+description
+Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders."
 inputs:
 - name: Input path
   type: DataFrameDirectory
