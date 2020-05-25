@@ -2,13 +2,14 @@
 
 This project uses unit, smoke and integration tests with Python files and notebooks:
 
- * In the unit tests we just make sure the utilities and notebooks run. 
- * In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics. 
- * In the integration tests we use a bigger dataset for more epochs and we test that the metrics are what we expect. 
+ * In the unit tests we just make sure the utilities and notebooks run.
+ * In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics.
+ * In the integration tests we use a bigger dataset for more epochs and we test that the metrics are what we expect.
 
-For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**. 
+For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
 
 AzureML is also used to run the existing unit, smoke and integration tests as-is. AzureML benefits include managing the compute environment by automatically turning it on/off, scaling, automatic logging of artifacts from test runs and more. Azure DevOps is used as a control plane to provide information to scripts to configure and run the tests as-is on AzureML.  A separate set of pipelines was created to run the tests on AzureML and parameters to configure AzureML are defined in the pipeline yml files. There are two scripts used with each pipeline:
+
 * submit_azureml_pytest.py - this script uses parameters in the pipeline yml to set up the AzureML environment for testing using the AzureML SDK .
 * run_pytest.py - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above. The same tests and testmarkers are used as described below.
 
@@ -50,7 +51,6 @@ For executing the PySpark unit tests for the notebooks:
     pytest tests/unit -m "notebooks and spark and not gpu"
 
 </details>
-
 
 <details>
 <summary><strong><em>Smoke tests</em></strong></summary>
@@ -144,9 +144,7 @@ Example:
     def test_to_skip():
         assert False
 
-
 </details>
-
 
 ## How to create tests on notebooks with Papermill
 
@@ -154,7 +152,7 @@ In the notebooks of this repo, we use [Papermill](https://github.com/nteract/pap
 
 ### Developing unit tests with Papermill
 
-Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/test_notebooks_python.py](unit/test_notebooks_python.py). 
+Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/test_notebooks_python.py](unit/test_notebooks_python.py).
 
 ```
 import pytest
@@ -176,7 +174,6 @@ For executing this test, first make sure you are in the correct environment as d
 ```
 pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
 ```
-
 
 ### Developing smoke and integration tests with Papermill
 
@@ -222,4 +219,3 @@ pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
 ```
 
 More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill).
-

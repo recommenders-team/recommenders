@@ -137,13 +137,7 @@ def test_load_pandas_df(
     ],
 )
 def test_load_item_df(
-    size,
-    num_movies,
-    movie_example,
-    title_example,
-    genres_example,
-    year_example,
-    tmp,
+    size, num_movies, movie_example, title_example, genres_example, year_example, tmp,
 ):
     """Test movielens item data load (not rating data)
     """
@@ -154,7 +148,13 @@ def test_load_item_df(
     assert df["title"][0] == title_example
 
     # Test title and genres
-    df = load_item_df(size, local_cache_path=tmp, movie_col="item", genres_col="genres", year_col="year")
+    df = load_item_df(
+        size,
+        local_cache_path=tmp,
+        movie_col="item",
+        genres_col="genres",
+        year_col="year",
+    )
     assert len(df) == num_movies
     # movile_col, genres_col and year_col
     assert len(df.columns) == 3
@@ -214,10 +214,7 @@ def test_load_spark_df(
     # Test if correct data are loaded
     header = ["1", "2", "3"]
     schema = StructType(
-        [
-            StructField("u", IntegerType()),
-            StructField("m", IntegerType()),
-        ]
+        [StructField("u", IntegerType()), StructField("m", IntegerType()),]
     )
     with pytest.warns(Warning):
         df = load_spark_df(

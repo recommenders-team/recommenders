@@ -23,6 +23,7 @@ class A2SVDModel(SequentialBaseModel):
     the 28th International Joint Conferences on Artificial Intelligence, IJCAI’19, 
     Pages 4213-4219, AAAI Press, 2019.
     """
+
     def _build_seq_graph(self):
         """The main function to create A2SVD model.
         
