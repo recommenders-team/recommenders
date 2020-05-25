@@ -261,7 +261,6 @@ def test_slirec_quickstart_integration(
         )
 
 
-@pytest.mark.nrms
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
@@ -307,7 +306,6 @@ def test_nrms_quickstart_integration(notebooks, epochs, seed, expected_values):
         )
 
 
-@pytest.mark.naml
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
@@ -353,7 +351,6 @@ def test_naml_quickstart_integration(notebooks, epochs, seed, expected_values):
         )
 
 
-@pytest.mark.lstur
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
@@ -398,7 +395,6 @@ def test_lstur_quickstart_integration(notebooks, epochs, seed, expected_values):
             value["ndcg@10"], rel=TOL, abs=ABS_TOL
         )
 
-@pytest.mark.npa
 @pytest.mark.integration
 @pytest.mark.gpu
 @pytest.mark.parametrize(
