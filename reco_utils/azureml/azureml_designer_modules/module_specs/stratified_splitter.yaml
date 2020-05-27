@@ -1,14 +1,14 @@
 amlModuleIdentifier: 
   namespace: microsoft.com/cat
   moduleName: Stratified Splitter 
-  moduleVersion: 1.1.2
+  moduleVersion: 1.1.3
 metadata:
   annotations:
     tags: ["Recommenders"]
 description: "Python stratified splitter from Recommenders repo: https://github.com/Microsoft/Recommenders.
-test
-long
-description
+             test
+             long
+             description
 \n
 Python stratified splitter from Recommenders repohttps://github.com/Microsoft/Recommenders.
 \n
