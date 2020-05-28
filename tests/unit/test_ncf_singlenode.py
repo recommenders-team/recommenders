@@ -24,7 +24,9 @@ N_NEG_TEST = 10
     "model_type, n_users, n_items", [("NeuMF", 1, 1), ("GMF", 10, 10), ("MLP", 4, 8)]
 )
 def test_init(model_type, n_users, n_items):
-    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1, seed=SEED)
+    model = NCF(
+        n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1, seed=SEED
+    )
     # model type
     assert model.model_type == model_type.lower()
     # number of users in dataset
@@ -39,7 +41,7 @@ def test_init(model_type, n_users, n_items):
     assert model.embedding_mlp_P.shape == [n_users, model.n_factors]
     # dimension of mlp item embedding
     assert model.embedding_mlp_Q.shape == [n_items, model.n_factors]
-    
+
     # TODO: more parameters
 
 
@@ -52,7 +54,9 @@ def test_regular_save_load(model_type, n_users, n_items):
     if os.path.exists(ckpt):
         shutil.rmtree(ckpt)
 
-    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1, seed=SEED)
+    model = NCF(
+        n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1, seed=SEED
+    )
     model.save(ckpt)
     if model.model_type == "neumf":
         P = model.sess.run(model.embedding_gmf_P)
@@ -65,7 +69,9 @@ def test_regular_save_load(model_type, n_users, n_items):
         Q = model.sess.run(model.embedding_mlp_Q)
 
     del model
-    model = NCF(n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1, seed=SEED)
+    model = NCF(
+        n_users=n_users, n_items=n_items, model_type=model_type, n_epochs=1, seed=SEED
+    )
 
     if model.model_type == "neumf":
         model.load(neumf_dir=ckpt)
@@ -89,9 +95,7 @@ def test_regular_save_load(model_type, n_users, n_items):
 
 
 @pytest.mark.gpu
-@pytest.mark.parametrize(
-    "n_users, n_items", [(5, 5), (4, 8)]
-)
+@pytest.mark.parametrize("n_users, n_items", [(5, 5), (4, 8)])
 def test_neumf_save_load(n_users, n_items):
     model_type = "gmf"
     ckpt_gmf = ".%s" % model_type
@@ -137,31 +141,31 @@ def test_neumf_save_load(n_users, n_items):
 
 
 @pytest.mark.gpu
-@pytest.mark.parametrize(
-    "model_type", ["NeuMF", "GMF", "MLP"]
-)
+@pytest.mark.parametrize("model_type", ["NeuMF", "GMF", "MLP"])
 def test_fit(python_dataset_ncf, model_type):
     train, test = python_dataset_ncf
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
-    model = NCF(n_users=data.n_users, n_items=data.n_items, model_type=model_type, n_epochs=1)
+    model = NCF(
+        n_users=data.n_users, n_items=data.n_items, model_type=model_type, n_epochs=1
+    )
     model.fit(data)
 
 
 @pytest.mark.gpu
-@pytest.mark.parametrize(
-    "model_type", ["NeuMF", "GMF", "MLP"]
-)
+@pytest.mark.parametrize("model_type", ["NeuMF", "GMF", "MLP"])
 def test_predict(python_dataset_ncf, model_type):
     # test data format
     train, test = python_dataset_ncf
     data = Dataset(train=train, test=test, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
-    model = NCF(n_users=data.n_users, n_items=data.n_items, model_type=model_type, n_epochs=1)
+    model = NCF(
+        n_users=data.n_users, n_items=data.n_items, model_type=model_type, n_epochs=1
+    )
     model.fit(data)
 
     test_users, test_items = list(test[DEFAULT_USER_COL]), list(test[DEFAULT_ITEM_COL])
 
     assert type(model.predict(test_users[0], test_items[0])) == float
-    
+
     res = model.predict(test_users, test_items, is_list=True)
 
     assert type(res) == list

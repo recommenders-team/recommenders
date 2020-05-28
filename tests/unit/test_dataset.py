@@ -30,4 +30,3 @@ def test_download_path():
     with download_path(tmp_dir.name) as path:
         assert os.path.isdir(path)
     assert os.path.isdir(path)
-

@@ -146,9 +146,16 @@ class DKNTextIterator(BaseIterator):
                 if not line:
                     break
 
-                label, candidate_news_index, candidate_news_val, click_news_index, click_news_val, candidate_news_entity_index, click_news_entity_index, impression_id = self.parser_one_line(
-                    line
-                )
+                (
+                    label,
+                    candidate_news_index,
+                    candidate_news_val,
+                    click_news_index,
+                    click_news_val,
+                    candidate_news_entity_index,
+                    click_news_entity_index,
+                    impression_id,
+                ) = self.parser_one_line(line)
 
                 candidate_news_index_batch.append(candidate_news_index)
                 candidate_news_val_batch.append(candidate_news_val)

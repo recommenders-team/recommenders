@@ -9,10 +9,10 @@ DEFAULT_LABEL_COL = "label"
 DEFAULT_TIMESTAMP_COL = "timestamp"
 DEFAULT_PREDICTION_COL = "prediction"
 COL_DICT = {
-    "col_user": DEFAULT_USER_COL, 
-    "col_item": DEFAULT_ITEM_COL, 
-    "col_rating": DEFAULT_RATING_COL, 
-    "col_prediction": DEFAULT_PREDICTION_COL
+    "col_user": DEFAULT_USER_COL,
+    "col_item": DEFAULT_ITEM_COL,
+    "col_rating": DEFAULT_RATING_COL,
+    "col_prediction": DEFAULT_PREDICTION_COL,
 }
 
 # Filtering variables

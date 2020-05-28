@@ -27,4 +27,3 @@ if __name__ == "__main__":
     deps += list(PIP_WIN32.values())
     with open("requirements.txt", "w") as f:
         f.write("\n".join(set(deps)))
-

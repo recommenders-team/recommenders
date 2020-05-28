@@ -29,4 +29,3 @@ class SARModel:
 
     def predict(self, items, ratings, top_k, remove_seen):
         return self.model.predict(items, ratings, top_k, remove_seen)
-
