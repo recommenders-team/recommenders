@@ -8,7 +8,7 @@ metadata:
 description: "SAR Train from Recommenders repo: https://github.com/Microsoft/Recommenders."
 inputs:
 - name: Input path
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: The directory contains dataframe.
 - name: User column
   type: String
@@ -36,7 +36,7 @@ inputs:
   description: Flag to apply time decay
 outputs:
 - name: Output model
-  type: ModelDirectory
+  type: AnyDirectory
   description: The output directory contains a trained model
 implementation:
   container:

@@ -8,7 +8,7 @@ metadata:
 description: "Python stratified splitter from Recommenders repo: https://github.com/Microsoft/Recommenders."
 inputs:
 - name: Input path
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: The directory contains dataframe.
 - name: Ratio
   type: Float
@@ -35,10 +35,10 @@ inputs:
   description: Seed.
 outputs:
 - name: Output train data
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: The output directory contains a training dataframe.
 - name: Output test data
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: The output directory contains a test dataframe.
 implementation:
   container:
