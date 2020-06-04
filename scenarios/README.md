@@ -1,25 +1,16 @@
 # Recommendation System Scenarios
 
-On this section there is listed a number of business scenarios that are common in Recommendation Systems (RS).
+On this section there is listed a number of business scenarios that are common in Recommendation Systems.
 
 The list of scenarios are:
 
-* Ads
-* Entertainment
-* Food and restaurants
-* News
-* Retail
-* Travel
+* [Ads](ads)
+* [Entertainment](entertainment)
+* [Food and restaurants](food_and_restaurants)
+* [News and document]()
+* [Retail](retail)
+* [Travel](travel)
 
-## Types of Recommendation Systems
-
-Typically recommendation systems in retail can be divided into three categories:
-
-* Collaborative filtering: This type of recommendation system makes predictions of what might interest a person based on the taste of many other users. It assumes that if person X likes Snickers, and person Y likes Snickers and Milky Way, then person X might like Milky Way as well.
-
-* Content-based filtering: This type of recommendation system focuses on the products themselves and recommends other products that have similar attributes. Content-based filtering relies on the characteristics of the products themselves, so it doesn’t rely on other users to interact with the products before making a recommendation.
-
-* Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems.
 
 ## Data in Recommendation Systems
 
