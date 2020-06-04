@@ -14,15 +14,6 @@ The most common scenarios companies use are:
 
 * Recommended for you: The "Recommended for you" recommendation predicts the next product that a user is most likely to engage with or purchase, based on the shopping or viewing history of that user. This recommendation is typically used on the home page.
 
-From a technical perspective, RS can be grouped in these categories [1]:
-
-* Collaborative filtering: This type of recommendation system makes predictions of what might interest a person based on the taste of many other users. It assumes that if person X likes Snickers, and person Y likes Snickers and Milky Way, then person X might like Milky Way as well. See the [list of examples in Recommenders repository](../../examples/02_model_collaborative_filtering).
-
-* Content-based filtering: This type of recommendation system focuses on the products themselves and recommends other products that have similar attributes. Content-based filtering relies on the characteristics of the products themselves, so it doesn’t rely on other users to interact with the products before making a recommendation. See the [list of examples in Recommenders repository](../../examples/02_model_content_based_filtering).
-
-* Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems. See the [list of examples in Recommenders repository](../../examples/02_model_hybrid).
-
-* Knowledge-base: ...
 
 ## Data in Recommendation Systems
 
@@ -80,6 +71,16 @@ There is some literature about the relationship between offline and online metri
 ...
 
 ## Examples of end 2 end recommendation scenarios with Microsoft Recommenders
+
+From a technical perspective, RS can be grouped in these categories [1]:
+
+* Collaborative filtering: This type of recommendation system makes predictions of what might interest a person based on the taste of many other users. It assumes that if person X likes Snickers, and person Y likes Snickers and Milky Way, then person X might like Milky Way as well. See the [list of examples in Recommenders repository](../../examples/02_model_collaborative_filtering).
+
+* Content-based filtering: This type of recommendation system focuses on the products themselves and recommends other products that have similar attributes. Content-based filtering relies on the characteristics of the products themselves, so it doesn’t rely on other users to interact with the products before making a recommendation. See the [list of examples in Recommenders repository](../../examples/02_model_content_based_filtering).
+
+* Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems. See the [list of examples in Recommenders repository](../../examples/02_model_hybrid).
+
+* Knowledge-base: ...
 
 In the repository we have the following examples that can be used in retail
 
