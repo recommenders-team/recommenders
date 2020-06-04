@@ -22,6 +22,31 @@ From a technical perspective, RS can be grouped in three categories:
 
 * Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems. See the [list of examples in Recommenders repository](../../examples/02_model_hybrid).
 
+## Data in Recommendation Systems
+
+### Data types
+
+In RS for retail there are typically the following types of data
+
+* Explicit interactions: When a user explicitly rate an item, typically between 1-5, the user is giving a value on the likeliness of the item. In retail, this kind of data is not very common.
+
+* Implicit interactions: Implicit interactions are views or clicks that show a certain interest of the user about a specific items. These kind of data is more common but it doesn't define the intention of the user as clearly as the explicit data.
+
+* User features: These include all information that define the user, some examples can be name, address, email, demographics, etc. 
+
+* Item features: These include information about the item, some examples can be SKU, description, brand, price, etc.
+
+* Knowledge graph data: ...
+
+### Considerations about data size
+
+The size of the data is important when designing the system...
+
+### Cold start scenarios
+
+....
+
+
 ## Measuring Recommendation performance
 
 ### Machine learning metrics (offline metrics)
