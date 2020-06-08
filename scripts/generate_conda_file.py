@@ -71,7 +71,7 @@ CONDA_GPU = {
 
 PIP_BASE = {
     "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.69",
-    "azure-storage-blob": "azure-storage-blob>=12.0.0",
+    "azure-storage-blob": "azure-storage-blob>=12.0.0,<12.3.1",
     "azure-cli-core": "azure-cli-core>=2.0.75",
     "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb>=0.8.0",
     "black": "black>=18.6b4",
