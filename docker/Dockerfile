@@ -30,7 +30,7 @@ RUN wget ${CMAKE} -O cmake.tgz && \
     rm -rf cmake
 
 # Install Anaconda
-ARG ANACONDA="https://repo.continuum.io/miniconda/Miniconda3-4.7.12.1-Linux-x86_64.sh"
+ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
 RUN curl ${ANACONDA} -o anaconda.sh && \
     /bin/bash anaconda.sh -b -p conda && \
     rm anaconda.sh && \
@@ -90,7 +90,6 @@ WORKDIR ${HOME}
 COPY --from=base ${HOME} .
 
 # Setup Conda environment
-ENV PATH="${HOME}/conda/bin:${PATH}"
 RUN python recommenders/scripts/generate_conda_file.py --name base --gpu
 
 
