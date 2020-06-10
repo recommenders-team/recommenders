@@ -90,6 +90,7 @@ WORKDIR ${HOME}
 COPY --from=base ${HOME} .
 
 # Setup Conda environment
+ENV PATH="${HOME}/conda/bin:${PATH}"
 RUN python recommenders/scripts/generate_conda_file.py --name base --gpu
 
 
