@@ -10,10 +10,10 @@ metadata:
     tags: ["Recommenders"]
 inputs:
 - name: Trained model
-  type: ModelDirectory
+  type: AnyDirectory
   description: The directory contains SAR model.
 - name: Dataset to score
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: Dataset to score
 - name: Score type
   type: Enum
@@ -56,7 +56,7 @@ inputs:
   description: Flag to normalize predictions to scale of original ratings
 outputs:
 - name: Score result
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: Ratings or items to output
 implementation:
   container:
