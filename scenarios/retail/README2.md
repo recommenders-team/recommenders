@@ -4,17 +4,35 @@ Retail is one of the areas where recommendation systems have been more successfu
 
 An increasing number of online retailers are utilizing recommendation systems to increase revenue, improve customer engagement and satisfaction, increase time on the page, enhance customer’s purchasing experience, gain understanding about customers, expand the shopping cart, etc.
 
-Next we will list the most common scenarios retailers use
+Next we will list the most common scenarios retailers use.
 
 ## Personalized recommendation
 
 This scenario predicts which products or set of products a user is most likely to engage with or purchase, based on the shopping or viewing history of that user. This scenario is commonly shown on the home page or in a personalized newsletter.
 
-The kind of data
+The kind of data these kind of scenarios need is:
+
+* Interactions: 
+
+* User information:
+
+* Item information: 
+
+To measure the performance of the personalized recommendation machine learning algorithm, it is common to use [ranking metrics](../GLOSSARY.md). In production, the metrics used are CTR,  
+
 
 ## You might also like
 
 This recommendation scenario is similar to the personalized recommendation as it predicts the next product a user is likely to engage with or purchase. However, the starting point is typically a product page, so in addition to considering the entire shopping or viewing history of the user, the relevance of the specified product in relation to other items is used to recommend additional products.
+
+The kind of data these kind of scenarios need is:
+
+* Interactions: 
+
+* User information:
+
+* Item information: 
+
 
 ## Frequently bought together
 
@@ -70,11 +88,7 @@ Offline metrics in RS are based on rating, ranking, classification or diversity.
 
 Below are some of the various potential benefits of recommendation systems in business, and the metrics that tipically are used:
 
-* Click-through rate (CTR): Optimizing for CTR emphasizes engagement; you should optimize for CTR when you want to maximize the likelihood that the user interacts with the recommendation.
 
-* Revenue per order: The revenue per order optimization objective is the default optimization objective for the "Frequently bought together" recommendation model type. This optimization objective cannot be specified for any other recommendation model type.
-
-* Conversion rate: Optimizing for conversion rate maximizes the likelihood that the user purchases the recommended item; if you want to increase the number of purchases per session, optimize for conversion rate.
 
 ### Relationship between online and offline metrics in retail
 
@@ -91,13 +105,7 @@ There is some literature about the relationship between offline and online metri
 
 From a technical perspective, RS can be grouped in these categories [1]:
 
-* Collaborative filtering: This type of recommendation system makes predictions of what might interest a person based on the taste of many other users. It assumes that if person X likes Snickers, and person Y likes Snickers and Milky Way, then person X might like Milky Way as well. See the [list of examples in Recommenders repository](../../examples/02_model_collaborative_filtering).
 
-* Content-based filtering: This type of recommendation system focuses on the products themselves and recommends other products that have similar attributes. Content-based filtering relies on the characteristics of the products themselves, so it doesn’t rely on other users to interact with the products before making a recommendation. See the [list of examples in Recommenders repository](../../examples/02_model_content_based_filtering).
-
-* Hybrid filtering: This type of recommendation system can implement a combination fo any two of the above systems. See the [list of examples in Recommenders repository](../../examples/02_model_hybrid).
-
-* Knowledge-base: ...
 
 In the repository we have the following examples that can be used in retail
 
