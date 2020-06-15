@@ -36,7 +36,7 @@
 
 * Offline metrics: Metrics computed offline for measuring the performance of the machine learning model. These metrics include ranking, rating, diversity and novelty metrics.
 
-* Ranking metrics:
+* Ranking metrics: These are used to evaluate how relevant recommendations are for users. They include precision at k, recall at k, nDCG and MAP. 
 
 * Rating metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items. They include RMSE, MAE, R squared or explained variance. 
 
