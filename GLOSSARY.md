@@ -32,13 +32,13 @@
 
 * Novelty metrics: In Recommendation Systems, the novelty of a piece of information generally refers to how different it is with respect to "what has been previously seen" [4]. 
 
-* Online metrics: 
+* Online metrics: Also named business metrics. They are the metrics computed online that reflect how the Recommendation System is helping the business to improve user engagement or revenue. These metrics include CTR, conversion rate, etc.
 
 * Offline metrics: Metrics computed offline for measuring the performance of the machine learning model. These metrics include ranking, rating, diversity and novelty metrics.
 
 * Ranking metrics:
 
-* Rating metrics:
+* Rating metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items. They include RMSE, MAE, R squared or explained variance. 
 
 * Revenue per order: The revenue per order optimization objective is the default optimization objective for the "Frequently bought together" recommendation model type. This optimization objective cannot be specified for any other recommendation model type.
 
