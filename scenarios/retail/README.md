@@ -11,7 +11,7 @@ A major task in applying recommenations in retail is to predict which products o
 
 ## You might also like
 
-In this scenario, the user is already viewing a product page, and the task is to make recommendations that are relevant to it.  Personalized recommendaton techniques are still applicable here, but relevance to the product being viewed is of special importance.  As such, item similarity can be useful here, especially for cold items and cold users that do not have much interaction data.
+In this scenario, the user is already viewing a product page, and the task is to make recommendations that are relevant to it.  Personalized recommendation techniques are still applicable here, but relevance to the product being viewed is of special importance.  As such, item similarity can be useful here, especially for cold items and cold users that do not have much interaction data.
 
 
 ## Frequently bought together
@@ -24,7 +24,7 @@ This scenario covers down-selling or out of stock alternatives to avoid losing a
 
 ## Data and evaluation
 
-Datasets used in retail reommendations usually include  [user information](../GLOSSARY.md), [item information](../GLOSSARY.md) and [interaction data](../GLOSSARY.md), among others.
+Datasets used in retail recommendations usually include  [user information](../GLOSSARY.md), [item information](../GLOSSARY.md) and [interaction data](../GLOSSARY.md), among others.
 
 To measure the performance of the recommender, it is common to use [ranking metrics](../GLOSSARY.md). In production, the business metrics used are [CTR](../GLOSSARY.md) and [revenue per order](../GLOSSARY.md). To evaluate a model's performance in production in an online manner, [A/B testing](../GLOSSARY.md) is often applied.
 

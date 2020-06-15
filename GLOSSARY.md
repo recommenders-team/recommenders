@@ -1,6 +1,6 @@
 # Glossary
 
-* A/B testing:
+* A/B testing: Methodology to evaluate the performance of a system in production. In the context of Recommendation Systems it is used to measure a machine learning model performance in real-time. It works by randomizing an environment response into two groups A and B. The first 
 
 * Click-through rate (CTR): Optimizing for CTR emphasizes engagement; you should optimize for CTR when you want to maximize the likelihood that the user interacts with the recommendation.
 
