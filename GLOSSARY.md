@@ -1,8 +1,8 @@
 # Glossary
 
-* A/B testing: Methodology to evaluate the performance of a system in production. In the context of Recommendation Systems it is used to measure a machine learning model performance in real-time. It works by randomizing an environment response into two groups A and B. The first 
+* A/B testing: Methodology to evaluate the performance of a system in production. In the context of Recommendation Systems it is used to measure a machine learning model performance in real-time. It works by randomizing an environment response into two groups A and B, typically half of the traffic goes to the machine learning model output and the other half is left without model. By comparing the metrics from A and B branches, it is possible to evaluate whether it is beneficial the use of the model or not. A test with more than two groups it is named Multi-Variate Test.
 
-* Click-through rate (CTR): Optimizing for CTR emphasizes engagement; you should optimize for CTR when you want to maximize the likelihood that the user interacts with the recommendation.
+* Click-through rate (CTR): Ratio of the number of users who click on a link over the total number of users that visited the page. CTR is a measure of the user engagement.
 
 * Cold-start problem: The cold start problem concerns the personalized recommendations for users with no or few past history (new users). Providing recommendations to users with small past history becomes a difficult problem for CF models because their learning and predictive ability is limited. Multiple research have been conducted in this direction using hybrid models. These models use auxiliary information (multimodal information, side information, etc.) to overcome the cold start problem.
 
@@ -27,6 +27,12 @@
 * Knowledge graph data: ...
 
 * Long tail products: Typically, the shape of items interacted in retail follow a long tail distribution [1,2]....
+
+* Multi-Variate Test (MVT): Methodology to evaluate the performance of a system in production. It is similar to A/B testing, with the difference that instead of having two test groups, MVT has multiples groups. 
+
+* Online metrics: 
+
+* Offline metrics:
 
 * Ranking metrics:
 
