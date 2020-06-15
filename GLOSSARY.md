@@ -36,9 +36,9 @@
 
 * Offline metrics: Metrics computed offline for measuring the performance of the machine learning model. These metrics include ranking, rating, diversity and novelty metrics.
 
-* Ranking metrics: These are used to evaluate how relevant recommendations are for users. They include precision at k, recall at k, nDCG and MAP. 
+* Ranking metrics: These are used to evaluate how relevant recommendations are for users. They include precision at k, recall at k, nDCG and MAP. See the [list of metrics in Recommenders repository](../../examples/03_evaluate).
 
-* Rating metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items. They include RMSE, MAE, R squared or explained variance. 
+* Rating metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items. They include RMSE, MAE, R squared or explained variance. See the [list of metrics in Recommenders repository](../../examples/03_evaluate).
 
 * Revenue per order: The revenue per order optimization objective is the default optimization objective for the "Frequently bought together" recommendation model type. This optimization objective cannot be specified for any other recommendation model type.
 
