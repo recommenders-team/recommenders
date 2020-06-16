@@ -1,6 +1,6 @@
 # Recommender Systems for Retail
 
-Recommender systems have become a key growth and revenue driver for modern retail.  For example, recommendation was estimated to [account for 35% of customer purchases on Amazon](https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers#).  In addition, recommenders have been applied by retailers to delight and retain customers and improve staff productivity. 
+Recommender systems have become a key growth and revenue driver for modern retail.  For example, recommendation was estimated to [account for 35% of customer purchases on Amazon](https://www.mckinsey.com/industries/retail/our-insights/how-retailers-can-keep-up-with-consumers#). In addition, recommenders have been applied by retailers to delight and retain customers and improve staff productivity. 
 
 Next we will describe several most common retail scenarios and main considerations when applying recommendations in retail.
 
@@ -24,9 +24,9 @@ This scenario covers down-selling or out of stock alternatives to avoid losing a
 
 ## Data and evaluation
 
-Datasets used in retail recommendations usually include  [user information](../GLOSSARY.md), [item information](../GLOSSARY.md) and [interaction data](../GLOSSARY.md), among others.
+Datasets used in retail recommendations usually include  [user information](../../GLOSSARY.md), [item information](../../GLOSSARY.md) and [interaction data](../../GLOSSARY.md), among others.
 
-To measure the performance of the recommender, it is common to use [ranking metrics](../GLOSSARY.md). In production, the business metrics used are [CTR](../GLOSSARY.md) and [revenue per order](../GLOSSARY.md). To evaluate a model's performance in production in an online manner, [A/B testing](../GLOSSARY.md) is often applied.
+To measure the performance of the recommender, it is common to use [ranking metrics](../GLOSSARY.md). In production, the business metrics used are [CTR](../../GLOSSARY.md) and [revenue per order](../../GLOSSARY.md). To evaluate a model's performance in production in an online manner, [A/B testing](../../GLOSSARY.md) is often applied.
 
 
 ## Other considerations
