@@ -232,31 +232,41 @@ def notebooks():
             folder_notebooks, "01_prepare_data", "wikidata_knowledge_graph.ipynb"
         ),
         "als_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "als_deep_dive.ipynb"
+            folder_notebooks, "02_model_collaborative_filtering", "als_deep_dive.ipynb"
         ),
         "surprise_svd_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "surprise_svd_deep_dive.ipynb"
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "surprise_svd_deep_dive.ipynb",
         ),
         "baseline_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "baseline_deep_dive.ipynb"
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "baseline_deep_dive.ipynb",
         ),
         "ncf_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "ncf_deep_dive.ipynb"
+            folder_notebooks, "02_model_hybrid", "ncf_deep_dive.ipynb"
         ),
         "sar_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "sar_deep_dive.ipynb"
+            folder_notebooks, "02_model_collaborative_filtering", "sar_deep_dive.ipynb"
         ),
         "vowpal_wabbit_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "vowpal_wabbit_deep_dive.ipynb"
+            folder_notebooks,
+            "02_model_content_based_filtering",
+            "vowpal_wabbit_deep_dive.ipynb",
         ),
         "mmlspark_lightgbm_criteo": os.path.join(
-            folder_notebooks, "02_model", "mmlspark_lightgbm_criteo.ipynb"
+            folder_notebooks,
+            "02_model_content_based_filtering",
+            "mmlspark_lightgbm_criteo.ipynb",
         ),
         "cornac_bpr_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "cornac_bpr_deep_dive.ipynb"
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "cornac_bpr_deep_dive.ipynb",
         ),
         "xlearn_fm_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "fm_deep_dive.ipynb"
+            folder_notebooks, "02_model_hybrid", "fm_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "spark_tuning": os.path.join(
