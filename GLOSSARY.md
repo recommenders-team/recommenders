@@ -22,9 +22,9 @@
 
 * Item information: These include information about the item, some examples can be name, description, price, etc.
 
-* Knowledge-base algorithms: ...
+* Knowledge graph algorithms: A knowledge graph algorithm is the one that uses knowledge graph data. In comparison with standard algorithms, it allows to explore graph's latent connections and improve the precision of results; the various relations in the graph can extend users' interest and increase the diversity of recommended items; also, these algorithms bring explainability to recommendation systems [5].
 
-* Knowledge graph data: ...
+* Knowledge graph data: A knowledge graph is a directed heterogeneous graph in which nodes correspond to entities (items or item attributes) and edges correspond to relations [5].
 
 * Long tail products: Typically, the shape of items interacted in retail follow a long tail distribution [1,2]....
 
@@ -46,11 +46,11 @@
 
 ## References and resources
 
-[1] Aggarwal, Charu C. Recommender systems. Vol. 1. Cham: Springer International Publishing, 2016.
+[1] Aggarwal, Charu C. "Recommender systems". Vol. 1. Cham: Springer International Publishing, 2016.
 [2]. Park, Yoon-Joo, and Tuzhilin, Alexander. "The long tail of recommender systems and how to leverage it." In Proceedings of the 2008 ACM conference on Recommender systems, pp. 11-18. 2008. [Link to paper](http://people.stern.nyu.edu/atuzhili/pdf/Park-Tuzhilin-RecSys08-final.pdf).
 [3]. Armstrong, Robert. "The long tail: Why the future of business is selling less of more." Canadian Journal of Communication 33, no. 1 (2008). [Link to paper](https://www.cjc-online.ca/index.php/journal/article/view/1946/3141).
 [4] Castells, P., Vargas, S., and Wang, Jun. "Novelty and diversity metrics for recommender systems: choice, discovery and relevance." (2011). [Link to paper](https://repositorio.uam.es/bitstream/handle/10486/666094/novelty_castells_DDR_2011.pdf?sequence=1).
-
+[5] Wang, Hongwei; Zhao, Miao; Xie, Xing; Li, Wenjie and Guo, Minyi. "Knowledge Graph Convolutional Networks for Recommender Systems". The World Wide Web Conference WWW'19. 2019. [Link to paper](https://arxiv.org/abs/1904.12575).
 
 
 
