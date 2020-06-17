@@ -103,6 +103,7 @@ def fitting(model, interactions, df):
         test_interactions=test_interactions,
         user_features=user_features,
         item_features=item_features,
+        no_epochs=1,
         show_plot=False,
     )
     return output, fitted_model
