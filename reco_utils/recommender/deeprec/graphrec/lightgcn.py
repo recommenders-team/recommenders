@@ -25,7 +25,7 @@ class LightGCN(object):
         learning_rate=0.001,
         embed_size=64,
         batch_size=2048,
-        layer_size=[64, 64, 64],
+        n_layers=3,
         decay=1e-4,
         eval_epoch=20,
         top_k=20,
@@ -46,7 +46,7 @@ class LightGCN(object):
             learning rate (float): Learning rate.
             embed_size (int): Embedding dimension for all users and items.
             batch_size (int): Batch size.
-            layer_size (int): Output sizes of every layer.
+            n_layers (int): Number of layers.
             decay (int): Regularization coefficient.
             eval_epoch (int): If it is None, evaluation metrics will not be calculated; otherwise metrics will be calculated
                 on test data every "eval_epoch" epochs.
@@ -69,8 +69,7 @@ class LightGCN(object):
         self.lr = learning_rate
         self.emb_dim = embed_size
         self.batch_size = batch_size
-        self.weight_size = layer_size
-        self.n_layers = len(self.weight_size)
+        self.n_layers = n_layers
         self.decay = decay
         self.eval_epoch = eval_epoch
         self.top_k = top_k
