@@ -423,3 +423,44 @@ def test_npa_quickstart_integration(notebooks, epochs, seed, expected_values):
         assert results[key]["ndcg@10"] == pytest.approx(
             value["ndcg@10"], rel=TOL, abs=ABS_TOL
         )
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, epochs, batch_size, expected_values, seed",
+    [
+        (
+            "100k",
+            10,
+            512,
+            {
+                "map": 0.038587,
+                "ndcg": 0.160105,
+                "precision": 0.141251,
+                "recall": 0.081423,
+            },
+            42,
+        )
+    ],
+)
+def test_lightgcn_deep_dive_integration(
+    notebooks, size, epochs, batch_size, expected_values, seed
+):
+    notebook_path = notebooks["lightgcn_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            TOP_K=10,
+            MOVIELENS_DATA_SIZE=size,
+            EPOCHS=epochs,
+            BATCH_SIZE=batch_size,
+            SEED=seed,
+        ),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)

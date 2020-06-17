@@ -16,6 +16,17 @@ from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
+from reco_utils.recommender.deeprec.graphrec.lightgcn import LightGCN
+from reco_utils.recommender.deeprec.graphrec.dataset import Dataset as LightGCNDataset
+from reco_utils.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_TIMESTAMP_COL,
+    SEED,
+)
+from reco_utils.dataset import movielens
+from reco_utils.dataset.python_splitters import python_chrono_split
 
 
 @pytest.fixture
@@ -155,3 +166,23 @@ def test_model_slirec(resource_path):
         model.fit(train_file, valid_file, valid_num_ngs=valid_num_ngs), BaseModel
     )
     assert model.predict(test_file, output_file) is not None
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+@pytest.mark.deeprec
+def test_model_lightgcn():
+    df = movielens.load_pandas_df(
+        size="100k",
+        header=[DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, DEFAULT_TIMESTAMP_COL]
+    )
+    train, test = python_chrono_split(df, 0.75)
+
+    embed_size = 64
+    data = LightGCNDataset(train=train, test=test, seed=SEED)
+    model = LightGCN(data, seed=SEED, epoch=1, embed_size=embed_size, eval_epoch=None)
+
+    assert model.run_eval() is not None
+    model.fit()
+    assert isinstance(model, LightGCN)
+    assert model.recommend_k_items(test) is not None
