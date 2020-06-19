@@ -137,7 +137,17 @@ def test_interactions(interactions):
 
 def test_fitting(fitting):
     output, _ = fitting
-    assert output.shape == (600, 4)
+    assert output.shape == (4, 4)
+    target = np.array(
+        [
+            [0, 0.10000000894069672, "train", "Precision"],
+            [0, 0.10000000149011612, "test", "Precision"],
+            [0, 1.0, "train", "Recall"],
+            [0, 1.0, "test", "Recall"],
+        ],
+        dtype="object",
+    )
+    np.testing.assert_array_equal(output, target)
 
 
 def test_sim_users(sim_users):
