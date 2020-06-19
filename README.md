@@ -127,10 +127,10 @@ The following tests run on a Windows and Linux DSVM daily. These machines run 24
 
 ## Related projects
 
-[Microsoft AI Github](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository. 
-[NLP best practices](https://github.com/microsoft/nlp-recipes): Best practices and examples on NLP.
-[Computer vision best practices](https://github.com/microsoft/computervision-recipes): Best practices and examples on computer vision.
-[Forecasting best practices](https://github.com/microsoft/forecasting): Best practices and examples on time series forecasting.
+- [Microsoft AI Github](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository.
+- [NLP best practices](https://github.com/microsoft/nlp-recipes): Best practices and examples on NLP.
+- [Computer vision best practices](https://github.com/microsoft/computervision-recipes): Best practices and examples on computer vision.
+- [Forecasting best practices](https://github.com/microsoft/forecasting): Best practices and examples on time series forecasting.
 
 ## Reference papers
 
