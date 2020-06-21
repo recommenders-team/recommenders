@@ -11,18 +11,12 @@ from reco_utils.common.constants import (
     DEFAULT_PREDICTION_COL,
     DEFAULT_K,
 )
-from reco_utils.dataset.pandas_df_utils import (
-    lru_cache_df,
-)
+from reco_utils.dataset.pandas_df_utils import lru_cache_df
 
 
 @lru_cache_df(maxsize=1)
 def merge_ranking_true_pred(
-    rating_true,
-    rating_pred,
-    col_user,
-    col_item,
-    col_prediction,
+    rating_true, rating_pred, col_user, col_item, col_prediction,
 ):
     """
     Note:

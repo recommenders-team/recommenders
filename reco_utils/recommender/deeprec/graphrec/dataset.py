@@ -93,9 +93,7 @@ class Dataset(object):
         if self.col_rating in df.columns:
             df = df[df[self.col_rating] >= min_rating]
 
-        df_reindex = df[
-            [self.col_user + "_idx", self.col_item + "_idx"]
-        ]
+        df_reindex = df[[self.col_user + "_idx", self.col_item + "_idx"]]
         df_reindex.columns = [self.col_user, self.col_item]
 
         return df_reindex
@@ -110,27 +108,29 @@ class Dataset(object):
         except Exception:
             norm_adj_mat = self.create_norm_adj_mat()
             if self.adj_dir is not None:
-                sp.save_npz(self.adj_dir + '/norm_adj_mat.npz', norm_adj_mat)
+                sp.save_npz(self.adj_dir + "/norm_adj_mat.npz", norm_adj_mat)
         return norm_adj_mat
 
     def create_norm_adj_mat(self):
-        adj_mat = sp.dok_matrix((self.n_users + self.n_items, self.n_users + self.n_items), dtype=np.float32)
+        adj_mat = sp.dok_matrix(
+            (self.n_users + self.n_items, self.n_users + self.n_items), dtype=np.float32
+        )
         adj_mat = adj_mat.tolil()
         R = self.R.tolil()
 
-        adj_mat[:self.n_users, self.n_users:] = R
-        adj_mat[self.n_users:, :self.n_users] = R.T
+        adj_mat[: self.n_users, self.n_users :] = R
+        adj_mat[self.n_users :, : self.n_users] = R.T
         adj_mat = adj_mat.todok()
         print("Already create adjacency matrix.")
-        
+
         rowsum = np.array(adj_mat.sum(1))
         d_inv = np.power(rowsum, -0.5).flatten()
-        d_inv[np.isinf(d_inv)] = 0.
+        d_inv[np.isinf(d_inv)] = 0.0
         d_mat_inv = sp.diags(d_inv)
         norm_adj_mat = d_mat_inv.dot(adj_mat)
         norm_adj_mat = norm_adj_mat.dot(d_mat_inv)
         print("Already normalize adjacency matrix.")
-        
+
         return norm_adj_mat.tocsr()
 
     def _init_train_data(self):
@@ -141,11 +141,12 @@ class Dataset(object):
             .rename(columns={self.col_item: self.col_item + "_interacted"})
         )
         self.R = sp.dok_matrix((self.n_users, self.n_items), dtype=np.float32)
-        self.R[list(self.train[self.col_user]), list(self.train[self.col_item])] = 1.
+        self.R[list(self.train[self.col_user]), list(self.train[self.col_item])] = 1.0
 
     def train_loader(self, batch_size):
         """Sample train data every batch.
         """
+
         def sample_neg(x):
             while True:
                 neg_id = random.randint(0, self.n_items - 1)
@@ -159,11 +160,11 @@ class Dataset(object):
             users = random.sample(indices, batch_size)
 
         interact = self.interact_status.iloc[users]
-        pos_items = interact[
-            self.col_item + "_interacted"
-        ].apply(lambda x: random.choice(list(x)))
-        neg_items = interact[
-            self.col_item + "_interacted"
-        ].apply(lambda x: sample_neg(x))
+        pos_items = interact[self.col_item + "_interacted"].apply(
+            lambda x: random.choice(list(x))
+        )
+        neg_items = interact[self.col_item + "_interacted"].apply(
+            lambda x: sample_neg(x)
+        )
 
         return np.array(users), np.array(pos_items), np.array(neg_items)

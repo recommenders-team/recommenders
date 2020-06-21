@@ -151,14 +151,19 @@ def test_slirec_component_definition(resource_path):
 def test_lightgcn_component_definition():
     df = movielens.load_pandas_df(
         size="100k",
-        header=[DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, DEFAULT_TIMESTAMP_COL]
+        header=[
+            DEFAULT_USER_COL,
+            DEFAULT_ITEM_COL,
+            DEFAULT_RATING_COL,
+            DEFAULT_TIMESTAMP_COL,
+        ],
     )
     train, test = python_chrono_split(df, 0.75)
 
     embed_size = 64
     data = LightGCNDataset(train=train, test=test, seed=SEED)
     model = LightGCN(data, seed=SEED, epoch=1, embed_size=embed_size)
-    
+
     assert model.norm_adj is not None
     assert model.ua_embeddings.shape == [data.n_users, embed_size]
     assert model.ia_embeddings.shape == [data.n_items, embed_size]

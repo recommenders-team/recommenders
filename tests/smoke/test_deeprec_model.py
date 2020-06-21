@@ -174,7 +174,12 @@ def test_model_slirec(resource_path):
 def test_model_lightgcn():
     df = movielens.load_pandas_df(
         size="100k",
-        header=[DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, DEFAULT_TIMESTAMP_COL]
+        header=[
+            DEFAULT_USER_COL,
+            DEFAULT_ITEM_COL,
+            DEFAULT_RATING_COL,
+            DEFAULT_TIMESTAMP_COL,
+        ],
     )
     train, test = python_chrono_split(df, 0.75)
 
