@@ -4,7 +4,7 @@
 import papermill as pm
 import pytest
 
-# from reco_utils.common.gpu_utils import get_number_gpus
+from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 import os
 
@@ -13,10 +13,10 @@ TOL = 0.5
 ABS_TOL = 0.05
 
 
-# @pytest.mark.gpu
-# @pytest.mark.integration
-# def test_gpu_vm():
-#     assert get_number_gpus() >= 1
+@pytest.mark.gpu
+@pytest.mark.integration
+def test_gpu_vm():
+    assert get_number_gpus() >= 1
 
 
 @pytest.mark.gpu

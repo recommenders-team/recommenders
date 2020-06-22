@@ -15,7 +15,11 @@ from reco_utils.common.constants import (
 
 
 class ImplicitCF(object):
-    """Dataset class for LightGCN"""
+    """Data processing class for GCN models which use implicit feedback.
+
+    Initialize train and test set, create normalized adjacency matrix and sample data for training epochs.
+    
+    """
 
     def __init__(
         self,

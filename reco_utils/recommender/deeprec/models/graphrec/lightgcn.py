@@ -17,6 +17,13 @@ from reco_utils.common.python_utils import get_top_k_scored_items
 
 
 class LightGCN(object):
+    """LightGCN model
+
+    SIGIR 2020. He, Xiangnan, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, and Meng Wang.
+    "LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation." arXiv
+    preprint arXiv:2002.02126 (2020).
+    """
+
     def __init__(self, hparams, data, seed=None):
         """Initializing the model. Create parameters, placeholders, embeddings and loss function.
         
@@ -125,8 +132,8 @@ class LightGCN(object):
         """Calculate the average embeddings of users and items after every layer of the model.
 
         Returns:
-            tf.tensor: average user embeddings
-            tf.tensor: average item embeddings
+            tf.Tensor: average user embeddings
+            tf.Tensor: average item embeddings
 
         """
         A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj)
@@ -149,6 +156,11 @@ class LightGCN(object):
 
     def _create_bpr_loss(self, users, pos_items, neg_items):
         """Calculate BPR loss.
+
+        Args:
+            users (tf.Tensor): User embeddings to calculate loss.
+            pos_items (tf.Tensor): Positive item embeddings to calculate loss.
+            neg_items (tf.Tensor): Negative item embeddings to calculate loss.
 
         Returns:
             tf.Tensor: Matrix factorization loss.
