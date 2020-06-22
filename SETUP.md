@@ -96,6 +96,8 @@ To set these variables every time the environment is activated, we can follow th
 First, get the path of the environment `reco_pyspark` is installed:
 
     RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
+    mkdir -p $RECO_ENV/etc/conda/activate.d
+    mkdir -p $RECO_ENV/etc/conda/deactivate.d
 
 Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 
@@ -107,8 +109,7 @@ Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
     unset SPARK_HOME
 
 This will export the variables every time we do `conda activate reco_pyspark`.
-To unset these variables when we deactivate the environment,
-create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
+To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
 
     #!/bin/sh
     unset PYSPARK_PYTHON
@@ -180,6 +181,7 @@ If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsof
 ### Troubleshooting for the DSVM
 
 * We found that there can be problems if the Spark version of the machine is not the same as the one in the conda file. You can use the option `--pyspark-version` to address this issue.
+
 * When running Spark on a single local node it is possible to run out of disk space as temporary files are written to the user's home directory. To avoid this on a DSVM, we attached an additional disk to the DSVM and made modifications to the Spark configuration. This is done by including the following lines in the file at `/dsvm/tools/spark/current/conf/spark-env.sh`.
 
 ```{shell}
@@ -187,6 +189,8 @@ SPARK_LOCAL_DIRS="/mnt"
 SPARK_WORKER_DIR="/mnt"
 SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.appDataTtl=3600, -Dspark.worker.cleanup.interval=300, -Dspark.storage.cleanupFilesAfterExecutorExit=true"
 ```
+
+* Another source of problems is when the variable `SPARK_HOME` is not set correctly. In the Azure DSVM, `SPARK_HOME` should be `/dsvm/tools/spark/current`.
 
 ## Setup guide for Azure Databricks
 
