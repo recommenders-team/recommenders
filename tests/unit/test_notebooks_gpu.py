@@ -108,17 +108,3 @@ def test_wide_deep(notebooks, tmp):
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params,
     )
-
-
-@pytest.mark.notebooks
-@pytest.mark.gpu
-def test_lightgcn_deep_dive(notebooks):
-    notebook_path = notebooks["lightgcn_deep_dive"]
-    pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=2048
-        ),
-    )

@@ -14,17 +14,10 @@ from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
-from reco_utils.recommender.deeprec.graphrec.lightgcn import LightGCN
-from reco_utils.recommender.deeprec.graphrec.dataset import Dataset as LightGCNDataset
-from reco_utils.common.constants import (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
-    SEED,
-)
+from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
+from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
 from reco_utils.dataset import movielens
-from reco_utils.dataset.python_splitters import python_chrono_split
+from reco_utils.dataset.python_splitters import python_stratified_split
 
 
 @pytest.fixture
@@ -148,21 +141,26 @@ def test_slirec_component_definition(resource_path):
 
 
 @pytest.mark.gpu
-def test_lightgcn_component_definition():
-    df = movielens.load_pandas_df(
-        size="100k",
-        header=[
-            DEFAULT_USER_COL,
-            DEFAULT_ITEM_COL,
-            DEFAULT_RATING_COL,
-            DEFAULT_TIMESTAMP_COL,
-        ],
+def test_lightgcn_component_definition(resource_path):
+    yaml_file = os.path.join(
+        resource_path,
+        "..",
+        "..",
+        "reco_utils",
+        "recommender",
+        "deeprec",
+        "config",
+        "lightgcn.yaml",
     )
-    train, test = python_chrono_split(df, 0.75)
+
+    df = movielens.load_pandas_df(size="100k")
+    train, test = python_stratified_split(df, ratio=0.75)
+
+    data = ImplicitCF(train=train, test=test)
 
     embed_size = 64
-    data = LightGCNDataset(train=train, test=test, seed=SEED)
-    model = LightGCN(data, seed=SEED, epoch=1, embed_size=embed_size)
+    hparams = prepare_hparams(yaml_file, embed_size=embed_size)
+    model = LightGCN(hparams, data)
 
     assert model.norm_adj is not None
     assert model.ua_embeddings.shape == [data.n_users, embed_size]

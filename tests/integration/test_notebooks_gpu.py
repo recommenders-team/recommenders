@@ -3,7 +3,8 @@
 
 import papermill as pm
 import pytest
-from reco_utils.common.gpu_utils import get_number_gpus
+
+# from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 import os
 
@@ -12,10 +13,10 @@ TOL = 0.5
 ABS_TOL = 0.05
 
 
-@pytest.mark.gpu
-@pytest.mark.integration
-def test_gpu_vm():
-    assert get_number_gpus() >= 1
+# @pytest.mark.gpu
+# @pytest.mark.integration
+# def test_gpu_vm():
+#     assert get_number_gpus() >= 1
 
 
 @pytest.mark.gpu
@@ -428,24 +429,26 @@ def test_npa_quickstart_integration(notebooks, epochs, seed, expected_values):
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "size, epochs, batch_size, expected_values, seed",
+    "yaml_file, data_path, size, epochs, batch_size, expected_values, seed",
     [
         (
+            "reco_utils/recommender/deeprec/config/lightgcn.yaml",
+            os.path.join("tests", "resources", "deeprec", "lightgcn"),
             "100k",
-            10,
-            512,
+            5,
+            1024,
             {
-                "map": 0.038587,
-                "ndcg": 0.160105,
-                "precision": 0.141251,
-                "recall": 0.081423,
+                "map": 0.094794,
+                "ndcg": 0.354145,
+                "precision": 0.308165,
+                "recall": 0.163034,
             },
             42,
         )
     ],
 )
 def test_lightgcn_deep_dive_integration(
-    notebooks, size, epochs, batch_size, expected_values, seed
+    notebooks, yaml_file, data_path, size, epochs, batch_size, expected_values, seed
 ):
     notebook_path = notebooks["lightgcn_deep_dive"]
     pm.execute_notebook(
@@ -458,6 +461,9 @@ def test_lightgcn_deep_dive_integration(
             EPOCHS=epochs,
             BATCH_SIZE=batch_size,
             SEED=seed,
+            yaml_file=yaml_file,
+            user_file=os.path.join(data_path, r"user_embeddings"),
+            item_file=os.path.join(data_path, r"item_embeddings"),
         ),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]

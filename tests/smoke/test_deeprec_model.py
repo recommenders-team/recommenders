@@ -16,17 +16,10 @@ from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
-from reco_utils.recommender.deeprec.graphrec.lightgcn import LightGCN
-from reco_utils.recommender.deeprec.graphrec.dataset import Dataset as LightGCNDataset
-from reco_utils.common.constants import (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
-    SEED,
-)
+from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
+from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
 from reco_utils.dataset import movielens
-from reco_utils.dataset.python_splitters import python_chrono_split
+from reco_utils.dataset.python_splitters import python_stratified_split
 
 
 @pytest.fixture
@@ -171,23 +164,32 @@ def test_model_slirec(resource_path):
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.deeprec
-def test_model_lightgcn():
-    df = movielens.load_pandas_df(
-        size="100k",
-        header=[
-            DEFAULT_USER_COL,
-            DEFAULT_ITEM_COL,
-            DEFAULT_RATING_COL,
-            DEFAULT_TIMESTAMP_COL,
-        ],
+def test_model_lightgcn(resource_path):
+    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
+    yaml_file = os.path.join(
+        resource_path,
+        "..",
+        "..",
+        "reco_utils",
+        "recommender",
+        "deeprec",
+        "config",
+        "lightgcn.yaml",
     )
-    train, test = python_chrono_split(df, 0.75)
+    user_file = os.path.join(data_path, r"user_embeddings.csv")
+    item_file = os.path.join(data_path, r"item_embeddings.csv")
 
-    embed_size = 64
-    data = LightGCNDataset(train=train, test=test, seed=SEED)
-    model = LightGCN(data, seed=SEED, epoch=1, embed_size=embed_size, eval_epoch=None)
+    df = movielens.load_pandas_df(size="100k")
+    train, test = python_stratified_split(df, ratio=0.75)
+
+    data = ImplicitCF(train=train, test=test)
+
+    hparams = prepare_hparams(yaml_file, epochs=1)
+    model = LightGCN(hparams, data)
 
     assert model.run_eval() is not None
     model.fit()
-    assert isinstance(model, LightGCN)
     assert model.recommend_k_items(test) is not None
+    model.infer_embedding(user_file, item_file)
+    assert os.path.getsize(user_file) != 0
+    assert os.path.getsize(item_file) != 0
