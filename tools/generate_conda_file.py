@@ -83,7 +83,7 @@ PIP_BASE = {
     "memory-profiler": "memory-profiler>=0.54.0",
     "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
-    "pymanopt": "pymanopt==0.2.3",
+    "pymanopt": "pymanopt==0.2.5",
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
     "tensorflow": "tensorflow==1.15.2",
