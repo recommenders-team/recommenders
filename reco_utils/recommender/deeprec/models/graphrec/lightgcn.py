@@ -22,8 +22,9 @@ class LightGCN(object):
         
         Args:
             hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-            data (obj): An reco_utils.recommender.deeprec.DataModel.ImplicitCF object, load and process data.
-            seed (int): Random seed.
+            data (obj): A reco_utils.recommender.deeprec.DataModel.ImplicitCF object, load and process data.
+            seed (int): Seed.
+
         """
 
         tf.set_random_seed(seed)
@@ -101,6 +102,12 @@ class LightGCN(object):
         self.sess.run(tf.global_variables_initializer())
 
     def _init_weights(self):
+        """Initialize user and item embeddings.
+
+        Returns:
+            dict: With keys "user_embedding" and "item_embedding", embeddings of all users and items.
+
+        """
         all_weights = dict()
         initializer = tf.contrib.layers.xavier_initializer()
 
@@ -115,6 +122,13 @@ class LightGCN(object):
         return all_weights
 
     def _create_lightgcn_embed(self):
+        """Calculate the average embeddings of users and items after every layer of the model.
+
+        Returns:
+            tf.tensor: average user embeddings
+            tf.tensor: average item embeddings
+
+        """
         A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj)
 
         ego_embeddings = tf.concat(
@@ -134,6 +148,13 @@ class LightGCN(object):
         return u_g_embeddings, i_g_embeddings
 
     def _create_bpr_loss(self, users, pos_items, neg_items):
+        """Calculate BPR loss.
+
+        Returns:
+            tf.Tensor: Matrix factorization loss.
+            tf.Tensor: Embedding regularization loss.
+
+        """
         pos_scores = tf.reduce_sum(tf.multiply(users, pos_items), axis=1)
         neg_scores = tf.reduce_sum(tf.multiply(users, neg_items), axis=1)
 
@@ -148,11 +169,21 @@ class LightGCN(object):
         return mf_loss, emb_loss
 
     def _convert_sp_mat_to_sp_tensor(self, X):
+        """Convert a scipy sparse matrix to tf.SparseTensor.
+
+        Returns:
+            tf.SparseTensor: SparseTensor after conversion.
+            
+        """
         coo = X.tocoo().astype(np.float32)
         indices = np.mat([coo.row, coo.col]).transpose()
         return tf.SparseTensor(indices, coo.data, coo.shape)
 
     def fit(self):
+        """Fit the model on self.data.train. If eval_epoch is not -1, evaluate the model on self.data.test
+            every "eval_epoch" epoch to observe the training status.
+
+        """
         for epoch in range(1, self.epochs + 1):
             train_start = time.time()
             loss, mf_loss, emb_loss = 0.0, 0.0, 0.0
@@ -218,6 +249,7 @@ class LightGCN(object):
 
         Raises:
             IOError: if the restore operation failed.
+
         """
         try:
             self.saver.restore(self.sess, model_path)
@@ -227,6 +259,11 @@ class LightGCN(object):
             )
 
     def run_eval(self):
+        """Run evaluation on self.data.test.
+
+        Returns:
+            dict: Results of all metrics in self.metrics.
+        """
         topk_scores = self.recommend_k_items(
             self.data.test, top_k=self.top_k, use_id=True
         )
@@ -259,6 +296,16 @@ class LightGCN(object):
         return ret
 
     def score(self, user_ids, remove_seen=True):
+        """Score all items for test users.
+
+        Args:
+            user_ids (np.array): Users to test.
+            remove_seen (bool): Flag to remove items seen in training from recommendation.
+
+        Returns:
+            np.ndarray: Value of interest of all items for the users.
+
+        """
         if any(np.isnan(user_ids)):
             raise ValueError(
                 "LightGCN cannot score users that are not in the training set"
@@ -283,16 +330,17 @@ class LightGCN(object):
     def recommend_k_items(
         self, test, top_k=10, sort_top_k=True, remove_seen=True, use_id=False
     ):
-        """Recommend top K items for all users which are in the test set
+        """Recommend top K items for all users in the test set.
 
         Args:
             test (pd.DataFrame): Test data.
-            top_k (int): Number of top items to recommend
-            sort_top_k (bool): flag to sort top k results
-            remove_seen (bool): flag to remove items seen in training from recommendation
+            top_k (int): Number of top items to recommend.
+            sort_top_k (bool): Flag to sort top k results.
+            remove_seen (bool): Flag to remove items seen in training from recommendation.
 
         Returns:
-            pd.DataFrame: top k recommendation items for each user
+            pd.DataFrame: Top k recommendation items for each user.
+
         """
         data = self.data
         if use_id == False:
@@ -319,3 +367,37 @@ class LightGCN(object):
         )
 
         return df.replace(-np.inf, np.nan).dropna()
+
+    def infer_embedding(self, user_file, item_file):
+        """Export user and item embeddings to csv files.
+
+        Args:
+            user_file (str): Path of file to save user embeddings.
+            item_file (str): Path of file to save item embeddings.
+
+        """
+        # create output directories if they do not exist
+        dirs, _ = os.path.split(user_file)
+        if not os.path.exists(dirs):
+            os.makedirs(dirs)
+        dirs, _ = os.path.split(item_file)
+        if not os.path.exists(dirs):
+            os.makedirs(dirs)
+
+        data = self.data
+
+        df = pd.DataFrame(
+            {
+                data.col_user: [data.id2user[id] for id in range(self.n_users)],
+                "embedding": list(self.ua_embeddings.eval(session=self.sess)),
+            }
+        )
+        df.to_csv(user_file, sep=" ", index=False)
+
+        df = pd.DataFrame(
+            {
+                data.col_item: [data.id2item[id] for id in range(self.n_items)],
+                "embedding": list(self.ia_embeddings.eval(session=self.sess)),
+            }
+        )
+        df.to_csv(item_file, sep=" ", index=False)

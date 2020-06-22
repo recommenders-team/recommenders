@@ -31,11 +31,11 @@ class ImplicitCF(object):
         """Constructor 
         
         Args:
-            adj_dir (str): Directory to save / load adjacency matrices. If it is None, adjacency matrices will be created
-                and will not be saved.
+            adj_dir (str): Directory to save / load adjacency matrices. If it is None, adjacency
+                matrices will be created and will not be saved.
             train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
-            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating). If test
-                is not None, evaluation metrics will be calculated on test periodically during model training.
+            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating).
+                test can be None, if so, we only process the training data.
             col_user (str): User column name.
             col_item (str): Item column name.
             col_rating (str): Rating column name. 
@@ -55,6 +55,17 @@ class ImplicitCF(object):
         random.seed(seed)
 
     def _data_processing(self, train, test):
+        """Process the dataset to reindex userID and itemID and only keep records with ratings greater than 0.
+
+        Args:
+            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating). 
+            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating).
+                test can be None, if so, we only process the training data.
+
+        Returns:
+            list: train and test pd.DataFrame Dataset, which have been reindexed and filtered.
+        
+        """
         df = train if test is None else train.append(test)
 
         if self.user_idx is None:
@@ -82,7 +93,14 @@ class ImplicitCF(object):
         return self._reindex(train), self._reindex(test)
 
     def _reindex(self, df):
-        """Process dataset to reindex userID and itemID, also delete rows with rating == 0
+        """Process the dataset to reindex userID and itemID and only keep records with ratings greater than 0.
+
+        Args:
+            df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating).
+
+        Returns:
+            list: train and test pandas.DataFrame Dataset, which have been reindexed and filtered.
+        
         """
 
         if df is None:
@@ -100,8 +118,26 @@ class ImplicitCF(object):
 
         return df_reindex
 
+    def _init_train_data(self):
+        """Record items interated with each user in a dataframe self.interact_status, and create adjacency
+        matrix self.R.
+        
+        """
+        self.interact_status = (
+            self.train.groupby(self.col_user)[self.col_item]
+            .apply(set)
+            .reset_index()
+            .rename(columns={self.col_item: self.col_item + "_interacted"})
+        )
+        self.R = sp.dok_matrix((self.n_users, self.n_items), dtype=np.float32)
+        self.R[list(self.train[self.col_user]), list(self.train[self.col_item])] = 1.0
+
     def get_norm_adj_mat(self):
-        """Load adjacency matrices if they exist, otherwise create the matrices.
+        """Load normalized adjacency matrix if it exists, otherwise create (and save) it.
+
+        Returns:
+            scipy.sparse.csr_matrix: Normalized adjacency matrix.
+
         """
         try:
             norm_adj_mat = sp.load_npz(self.norm_adj_dir + "/norm_adj_mat.npz")
@@ -114,6 +150,12 @@ class ImplicitCF(object):
         return norm_adj_mat
 
     def create_norm_adj_mat(self):
+        """Create normalized adjacency matrix.
+
+        Returns:
+            scipy.sparse.csr_matrix: Normalized adjacency matrix.
+            
+        """
         adj_mat = sp.dok_matrix(
             (self.n_users + self.n_items, self.n_users + self.n_items), dtype=np.float32
         )
@@ -135,18 +177,17 @@ class ImplicitCF(object):
 
         return norm_adj_mat.tocsr()
 
-    def _init_train_data(self):
-        self.interact_status = (
-            self.train.groupby(self.col_user)[self.col_item]
-            .apply(set)
-            .reset_index()
-            .rename(columns={self.col_item: self.col_item + "_interacted"})
-        )
-        self.R = sp.dok_matrix((self.n_users, self.n_items), dtype=np.float32)
-        self.R[list(self.train[self.col_user]), list(self.train[self.col_item])] = 1.0
-
     def train_loader(self, batch_size):
-        """Sample train data every batch.
+        """Sample train data every batch. One positive item and one negative item sampled for each user.
+
+        Args:
+            batch_size (int): Batch size of users.
+
+        Returns:
+            np.array: Sampled users.
+            np.array: Sampled positive items.
+            np.array: Sampled negative items.
+
         """
 
         def sample_neg(x):
