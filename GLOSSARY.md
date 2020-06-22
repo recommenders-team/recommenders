@@ -26,7 +26,7 @@
 
 * Knowledge graph data: A knowledge graph is a directed heterogeneous graph in which nodes correspond to entities (items or item attributes) and edges correspond to relations [5].
 
-* Long tail products: Typically, the shape of items interacted in retail follow a long tail distribution [1,2]....
+* Long tail items: Typically, the item interaction distribution has the form of long tail, where items in the tail have a small number of interactions, corresponding to unpopular items, and items in the head have a large number of interactions [1,2]. From the algorithmic point of view, items in the tail suffer from the cold-start problem, making them hard for recommendation systems to use. However, from the business point of view, the items in the tail can be highly profitable, since these items are less popular, business can apply a higher margin to them. Recommendation systems that optimize metrics like novelty and diversity, can help to find users willing to get these long tail items. 
 
 * Multi-Variate Test (MVT): Methodology to evaluate the performance of a system in production. It is similar to A/B testing, with the difference that instead of having two test groups, MVT has multiples groups. 
 
@@ -38,7 +38,7 @@
 
 * Ranking metrics: These are used to evaluate how relevant recommendations are for users. They include precision at k, recall at k, nDCG and MAP. See the [list of metrics in Recommenders repository](../../examples/03_evaluate).
 
-* Rating metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items. They include RMSE, MAE, R squared or explained variance. See the [list of metrics in Recommenders repository](../../examples/03_evaluate).
+* Rating metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users give to items. They include RMSE, MAE, R squared or explained variance. See the [list of metrics in Recommenders repository](../../examples/03_evaluate).
 
 * Revenue per order: The revenue per order optimization objective is the default optimization objective for the "Frequently bought together" recommendation model type. This optimization objective cannot be specified for any other recommendation model type.
 
