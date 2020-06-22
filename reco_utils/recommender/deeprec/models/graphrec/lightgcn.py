@@ -7,80 +7,42 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-from reco_utils.recommender.deeprec.graphrec.ranking_metrics import (
+from reco_utils.evaluation.python_evaluation import (
     map_at_k,
     ndcg_at_k,
     precision_at_k,
     recall_at_k,
 )
 from reco_utils.common.python_utils import get_top_k_scored_items
-from reco_utils.common import constants
 
 
 class LightGCN(object):
-    def __init__(
-        self,
-        data,
-        col_user=constants.DEFAULT_USER_COL,
-        col_item=constants.DEFAULT_ITEM_COL,
-        col_rating=constants.DEFAULT_RATING_COL,
-        col_prediction=constants.DEFAULT_PREDICTION_COL,
-        seed=None,
-        epoch=1000,
-        learning_rate=0.001,
-        embed_size=64,
-        batch_size=2048,
-        n_layers=3,
-        decay=1e-4,
-        eval_epoch=20,
-        top_k=20,
-        save_epoch=100,
-        metrics=["recall", "ndcg", "precision", "map"],
-        model_dir=None,
-    ):
-        """Constructor
+    def __init__(self, hparams, data, seed=None):
+        """Initializing the model. Create parameters, placeholders, embeddings and loss function.
         
         Args:
-            data (Dataset): initialized Dataset in ./dataset.py
-            col_user (str): User column name.
-            col_item (str): Item column name.
-            col_rating (str): Rating column name.
-            col_prediction (str): Prediction column name.
-            seed (int): Seed.
-            epoch (int): Number of epochs for training.
-            learning rate (float): Learning rate.
-            embed_size (int): Embedding dimension for all users and items.
-            batch_size (int): Batch size.
-            n_layers (int): Number of layers.
-            decay (int): Regularization coefficient.
-            eval_epoch (int): If it is None, evaluation metrics will not be calculated; otherwise metrics will be calculated
-                on test data every "eval_epoch" epochs.
-            top_k (int): Parameter k for ranking metrics like ndcg@k.
-            save_epoch (int): If it is None, model will not be saved; otherwise save the latest model every "save_epoch" epochs.
-            metrics (int): Evaluation metrics.
-            model_dir (str): Directory to save model.
+            hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+            data (obj): An reco_utils.recommender.deeprec.DataModel.ImplicitCF object, load and process data.
+            seed (int): Random seed.
         """
 
         tf.set_random_seed(seed)
         np.random.seed(seed)
 
-        self.col_user = col_user
-        self.col_item = col_item
-        self.col_rating = col_rating
-        self.col_prediction = col_prediction
         self.data = data
-        self.n_fold = 100
-        self.epoch = epoch
-        self.lr = learning_rate
-        self.emb_dim = embed_size
-        self.batch_size = batch_size
-        self.n_layers = n_layers
-        self.decay = decay
-        self.eval_epoch = eval_epoch
-        self.top_k = top_k
-        self.save_epoch = save_epoch
-        self.metrics = metrics
-        self.model_dir = model_dir
+        self.n_fold = 1
+        self.epochs = hparams.epochs
+        self.lr = hparams.learning_rate
+        self.emb_dim = hparams.embed_size
+        self.batch_size = hparams.batch_size
+        self.n_layers = hparams.n_layers
+        self.decay = hparams.decay
+        self.eval_epoch = hparams.eval_epoch
+        self.top_k = hparams.top_k
+        self.save_model = hparams.save_model
+        self.save_epoch = hparams.save_epoch
+        self.metrics = hparams.metrics
+        self.model_dir = hparams.MODEL_DIR
 
         metric_options = ["map", "ndcg", "precision", "recall"]
         for metric in self.metrics:
@@ -212,7 +174,7 @@ class LightGCN(object):
         return tf.SparseTensor(indices, coo.data, coo.shape)
 
     def fit(self):
-        for epoch in range(1, self.epoch + 1):
+        for epoch in range(1, self.epochs + 1):
             train_start = time.time()
             loss, mf_loss, emb_loss = 0.0, 0.0, 0.0
             n_batch = self.data.train.shape[0] // self.batch_size + 1
@@ -236,21 +198,13 @@ class LightGCN(object):
             train_end = time.time()
             train_time = train_end - train_start
 
-            if (
-                self.model_dir is not None
-                and self.save_epoch is not None
-                and epoch % self.save_epoch == 0
-            ):
+            if self.save_model and epoch % self.save_epoch == 0:
                 save_path_str = os.path.join(self.model_dir, "epoch_" + str(epoch))
                 checkpoint_path = self.saver.save(
                     sess=self.sess, save_path=save_path_str
                 )
 
-            if (
-                self.data.test is None
-                or self.eval_epoch is None
-                or epoch % self.eval_epoch != 0
-            ):
+            if self.eval_epoch == -1 or epoch % self.eval_epoch != 0:
                 print(
                     "Epoch %d (train)%.1fs: train loss = %.5f = (mf)%.5f + (embed)%.5f"
                     % (epoch, train_time, loss, mf_loss, emb_loss)
@@ -300,13 +254,29 @@ class LightGCN(object):
         ret = []
         for metric in self.metrics:
             if metric == "map":
-                ret.append(map_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(
+                    map_at_k(
+                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                    )
+                )
             elif metric == "ndcg":
-                ret.append(ndcg_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(
+                    ndcg_at_k(
+                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                    )
+                )
             elif metric == "precision":
-                ret.append(precision_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(
+                    precision_at_k(
+                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                    )
+                )
             elif metric == "recall":
-                ret.append(recall_at_k(self.data.test, topk_scores, k=self.top_k))
+                ret.append(
+                    recall_at_k(
+                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                    )
+                )
         return ret
 
     def score(self, user_ids, remove_seen=True):
@@ -345,12 +315,11 @@ class LightGCN(object):
         Returns:
             pd.DataFrame: top k recommendation items for each user
         """
+        data = self.data
         if use_id == False:
-            user_ids = np.array(
-                [self.data.user2id[x] for x in test[self.col_user].unique()]
-            )
+            user_ids = np.array([data.user2id[x] for x in test[data.col_user].unique()])
         else:
-            user_ids = np.array(test[self.col_user].unique())
+            user_ids = np.array(test[data.col_user].unique())
 
         test_scores = self.score(user_ids, remove_seen=remove_seen)
 
@@ -360,13 +329,13 @@ class LightGCN(object):
 
         df = pd.DataFrame(
             {
-                self.col_user: np.repeat(
-                    test[self.col_user].drop_duplicates().values, top_items.shape[1]
+                data.col_user: np.repeat(
+                    test[data.col_user].drop_duplicates().values, top_items.shape[1]
                 ),
-                self.col_item: top_items.flatten()
+                data.col_item: top_items.flatten()
                 if use_id
-                else [self.data.id2item[item] for item in top_items.flatten()],
-                self.col_prediction: top_scores.flatten(),
+                else [data.id2item[item] for item in top_items.flatten()],
+                data.col_prediction: top_scores.flatten(),
             }
         )
 

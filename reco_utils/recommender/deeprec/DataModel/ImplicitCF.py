@@ -10,10 +10,11 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_RATING_COL,
+    DEFAULT_PREDICTION_COL,
 )
 
 
-class Dataset(object):
+class ImplicitCF(object):
     """Dataset class for LightGCN"""
 
     def __init__(
@@ -24,6 +25,7 @@ class Dataset(object):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
         seed=None,
     ):
         """Constructor 
@@ -31,10 +33,8 @@ class Dataset(object):
         Args:
             adj_dir (str): Directory to save / load adjacency matrices. If it is None, adjacency matrices will be created
                 and will not be saved.
-            train (pd.DataFrame): Training data. For explicit feedback, at least columns (col_user, col_item, col_rating) 
-                are required; for implicit positive feedback, at least columns (col_user, col_item) are required.
-            test (pd.DataFrame): Test data. For explicit feedback, at least columns (col_user, col_item, col_rating) 
-                are required; for implicit positive feedback, at least columns (col_user, col_item) are required. If test
+            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
+            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating). If test
                 is not None, evaluation metrics will be calculated on test periodically during model training.
             col_user (str): User column name.
             col_item (str): Item column name.
@@ -48,6 +48,7 @@ class Dataset(object):
         self.col_user = col_user
         self.col_item = col_item
         self.col_rating = col_rating
+        self.col_prediction = col_prediction
         self.train, self.test = self._data_processing(train, test)
         self._init_train_data()
 
@@ -78,10 +79,10 @@ class Dataset(object):
             )
             self.id2item = {self.item2id[k]: k for k in self.item2id}
 
-        return self._reindex(train, 1), self._reindex(test, 1)
+        return self._reindex(train), self._reindex(test)
 
-    def _reindex(self, df, min_rating):
-        """Process dataset to reindex userID and itemID, also delete rows with rating < min_rating
+    def _reindex(self, df):
+        """Process dataset to reindex userID and itemID, also delete rows with rating == 0
         """
 
         if df is None:
@@ -90,11 +91,12 @@ class Dataset(object):
         df = pd.merge(df, self.user_idx, on=self.col_user, how="left")
         df = pd.merge(df, self.item_idx, on=self.col_item, how="left")
 
-        if self.col_rating in df.columns:
-            df = df[df[self.col_rating] >= min_rating]
+        df = df[df[self.col_rating] > 0]
 
-        df_reindex = df[[self.col_user + "_idx", self.col_item + "_idx"]]
-        df_reindex.columns = [self.col_user, self.col_item]
+        df_reindex = df[
+            [self.col_user + "_idx", self.col_item + "_idx", self.col_rating]
+        ]
+        df_reindex.columns = [self.col_user, self.col_item, self.col_rating]
 
         return df_reindex
 

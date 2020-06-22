@@ -413,6 +413,12 @@ def create_hparams(flags):
         att_fcn_layer_sizes=flags["att_fcn_layer_sizes"]
         if "att_fcn_layer_sizes" in flags
         else None,
+        # lightgcn
+        embed_size=flags["embed_size"] if "embed_size" in flags else None,
+        n_layers=flags["n_layers"] if "n_layers" in flags else None,
+        decay=flags["decay"] if "decay" in flags else None,
+        eval_epoch=flags["eval_epoch"] if "eval_epoch" in flags else None,
+        top_k=flags["top_k"] if "top_k" in flags else None,
     )
 
 

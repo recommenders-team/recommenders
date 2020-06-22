@@ -1,0 +1,22 @@
+#model
+model:
+    model_type : "lightgcn"
+    embed_size : 64
+    n_layers : 3
+    
+#train
+train:
+    batch_size : 1024
+    decay : 0.0001
+    epochs : 1000
+    learning_rate : 0.001
+    eval_epoch : -1
+    top_k : 20
+
+#show info
+#metric : "recall", "ndcg", "precision", "map"
+info:
+    save_model : False
+    save_epoch : 100
+    metrics : ["recall", "ndcg", "precision", "map"]
+    MODEL_DIR : ./tests/resources/deeprec/lightgcn/model/lightgcn_model/ # directory of saved models.
