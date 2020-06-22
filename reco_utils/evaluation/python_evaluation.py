@@ -650,8 +650,8 @@ def get_top_k_items(
         customerID-itemID-rating)
         col_user (str): column name for user
         col_rating (str): column name for rating
-        k (int or None): number of items for each user; None means that the input has already
-        been filtered out top k items and there is no need to do that again.
+        k (int or None): number of items for each user; None means that the input has already been
+        filtered out top k items and sorted by ratings and there is no need to do that again.
 
     Returns:
         pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`

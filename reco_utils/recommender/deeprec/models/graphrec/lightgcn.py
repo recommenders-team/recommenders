@@ -30,7 +30,6 @@ class LightGCN(object):
         np.random.seed(seed)
 
         self.data = data
-        self.n_fold = 1
         self.epochs = hparams.epochs
         self.lr = hparams.learning_rate
         self.emb_dim = hparams.embed_size
@@ -115,21 +114,8 @@ class LightGCN(object):
 
         return all_weights
 
-    def _split_A_hat(self, X):
-        A_fold_hat = []
-
-        fold_len = (self.n_users + self.n_items) // self.n_fold
-        for i_fold in range(self.n_fold):
-            start = i_fold * fold_len
-            if i_fold == self.n_fold - 1:
-                end = self.n_users + self.n_items
-            else:
-                end = (i_fold + 1) * fold_len
-            A_fold_hat.append(self._convert_sp_mat_to_sp_tensor(X[start:end]))
-        return A_fold_hat
-
     def _create_lightgcn_embed(self):
-        A_fold_hat = self._split_A_hat(self.norm_adj)
+        A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj)
 
         ego_embeddings = tf.concat(
             [self.weights["user_embedding"], self.weights["item_embedding"]], axis=0
@@ -137,16 +123,9 @@ class LightGCN(object):
         all_embeddings = [ego_embeddings]
 
         for k in range(0, self.n_layers):
-
-            temp_embed = []
-            for f in range(self.n_fold):
-                temp_embed.append(
-                    tf.sparse_tensor_dense_matmul(A_fold_hat[f], ego_embeddings)
-                )
-
-            side_embeddings = tf.concat(temp_embed, 0)
-            ego_embeddings = side_embeddings
+            ego_embeddings = tf.sparse_tensor_dense_matmul(A_hat, ego_embeddings)
             all_embeddings += [ego_embeddings]
+
         all_embeddings = tf.stack(all_embeddings, 1)
         all_embeddings = tf.reduce_mean(all_embeddings, axis=1, keepdims=False)
         u_g_embeddings, i_g_embeddings = tf.split(
