@@ -192,6 +192,13 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 
 * Another source of problems is when the variable `SPARK_HOME` is not set correctly. In the Azure DSVM, `SPARK_HOME` should be `/dsvm/tools/spark/current`.
 
+* Java 11 might produce errors when running the notebooks. To change it to Java 8:
+
+```
+sudo apt install openjdk-8-jdk
+sudo update-alternatives --config java
+```
+
 ## Setup guide for Azure Databricks
 
 ### Requirements of Azure Databricks
