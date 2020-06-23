@@ -108,6 +108,20 @@ class NextItNetModel(SequentialBaseModel):
         causal=True,
         train=True,
     ):
+        """The main function to use dilated CNN and residual network at sequence data
+
+        Args:
+            input_ (obj): The output of history sequential embeddings
+            dilation (int): The dilation number of CNN layer
+            layer_id (str): String value of layer ID, 0, 1, 2...
+            residual_channels (int): Embedding size of input sequence
+            kernel_size (int): Kernel size of CNN mask
+            causal (bool): Whether to pad in front of the sequence or to pad surroundingly
+            train (bool): is in training stage
+
+        Returns:
+            obj:the output of residual layers.
+        """
         resblock_type = "decoder"
         resblock_name = "nextitnet_residual_block_one_{}_layer_{}_{}".format(
             resblock_type, layer_id, dilation
@@ -146,6 +160,11 @@ class NextItNetModel(SequentialBaseModel):
         causal=False,
         name="dilated_conv",
     ):
+        """Call a dilated CNN layer
+
+        Returns:
+            obj:the output of dilated CNN layers.
+        """
         with tf.variable_scope(name):
             weight = tf.get_variable(
                 "weight",
@@ -168,7 +187,6 @@ class NextItNetModel(SequentialBaseModel):
                 )
             else:
                 input_expanded = tf.expand_dims(input_, dim=1)
-                # out = tf.nn.atrous_conv2d(input_expanded, w, rate = dilation, padding = 'SAME') + bias
                 out = (
                     tf.nn.conv2d(
                         input_expanded, weight, strides=[1, 1, 1, 1], padding="SAME"
@@ -180,6 +198,11 @@ class NextItNetModel(SequentialBaseModel):
 
     # tf.contrib.layers.layer_norm
     def _layer_norm(self, x, name, epsilon=1e-8, trainable=True):
+        """Call a layer normalization
+
+        Returns:
+            obj: Normalized data
+        """
         with tf.variable_scope(name):
             shape = x.get_shape()
             beta = tf.get_variable(
