@@ -9,18 +9,20 @@ import random
 import os
 import time
 
+from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.deeprec_utils import load_dict
 
 __all__ = ["NextItNetIterator"]
 
 
-class NextItNetIterator:
+class NextItNetIterator(SequentialIterator):
     """Data loader for the NextItNet model.
     NextItNet requires a special type of data format. In training stage, each instance will produce (sequence_length * train_num_ngs) target items and labels, to let NextItNet output predictions of every item in a sequence except only of the last item.
     """
 
     def __init__(self, hparams, graph, col_spliter="\t"):
         """Initialize an iterator. Create necessary placeholders for the model.
+        * different from sequential iterator
         
         Args:
             hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
@@ -68,216 +70,6 @@ class NextItNetIterator:
             self.time_to_now = tf.placeholder(
                 tf.float32, [None, self.max_seq_length], name="time_to_now"
             )
-
-    def parse_file(self, input_file):
-        """Parse the file to a list ready to be used for downstream tasks
-        
-        Args:
-            input_file: One of train, valid or test file which has never been parsed.
-        
-        Returns: 
-            list: A list with parsing result
-        """
-        with open(input_file, "r") as f:
-            lines = f.readlines()
-        res = []
-        for line in lines:
-            if not line:
-                continue
-            res.append(self.parser_one_line(line))
-        return res
-
-    def parser_one_line(self, line):
-        """Parse one string line into feature values.
-            a line was saved as the following format:
-            label \t user_hash \t item_hash \t item_cate \t operation_time \t item_history_sequence \t item_cate_history_sequence \t time_history_sequence
-
-        Args:
-            line (str): a string indicating one instance
-
-        Returns:
-            tuple/list: Parsed results including label, user_id, target_item_id, target_category, item_history, cate_history(, timeinterval_history,
-            timelast_history, timenow_history, mid_mask, seq_len, learning_rate)
-
-        """
-        words = line.strip().split(self.col_spliter)
-        label = int(words[0])
-        user_id = self.userdict[words[1]] if words[1] in self.userdict else 0
-        item_id = self.itemdict[words[2]] if words[2] in self.itemdict else 0
-        item_cate = self.catedict[words[3]] if words[3] in self.catedict else 0
-        current_time = float(words[4])
-
-        item_history_sequence = []
-        cate_history_sequence = []
-        time_history_sequence = []
-
-        item_history_words = words[5].strip().split(",")
-        for item in item_history_words:
-            item_history_sequence.append(
-                self.itemdict[item] if item in self.itemdict else 0
-            )
-
-        cate_history_words = words[6].strip().split(",")
-        for cate in cate_history_words:
-            cate_history_sequence.append(
-                self.catedict[cate] if cate in self.catedict else 0
-            )
-
-        time_history_words = words[7].strip().split(",")
-        time_history_sequence = [float(i) for i in time_history_words]
-
-        time_range = 3600 * 24
-
-        time_diff = []
-        for i in range(len(time_history_sequence) - 1):
-            diff = (
-                time_history_sequence[i + 1] - time_history_sequence[i]
-            ) / time_range
-            diff = max(diff, 0.5)
-            time_diff.append(diff)
-        last_diff = (current_time - time_history_sequence[-1]) / time_range
-        last_diff = max(last_diff, 0.5)
-        time_diff.append(last_diff)
-        time_diff = np.log(time_diff)
-
-        time_from_first_action = []
-        first_time = time_history_sequence[0]
-        time_from_first_action = [
-            (t - first_time) / time_range for t in time_history_sequence[1:]
-        ]
-        time_from_first_action = [max(t, 0.5) for t in time_from_first_action]
-        last_diff = (current_time - first_time) / time_range
-        last_diff = max(last_diff, 0.5)
-        time_from_first_action.append(last_diff)
-        time_from_first_action = np.log(time_from_first_action)
-
-        time_to_now = []
-        time_to_now = [(current_time - t) / time_range for t in time_history_sequence]
-        time_to_now = [max(t, 0.5) for t in time_to_now]
-        time_to_now = np.log(time_to_now)
-
-        return (
-            label,
-            user_id,
-            item_id,
-            item_cate,
-            item_history_sequence,
-            cate_history_sequence,
-            current_time,
-            time_diff,
-            time_from_first_action,
-            time_to_now,
-        )
-
-    def load_data_from_file(self, infile, batch_num_ngs=0, min_seq_length=1):
-        """Read and parse data from a file.
-        
-        Args:
-            infile (str): Text input file. Each line in this file is an instance.
-            batch_num_ngs (int): The number of negative sampling here in batch. 
-                0 represents that there is no need to do negative sampling here.
-            min_seq_length (int): The minimum number of a sequence length. 
-                Sequences with length lower than min_seq_length will be ignored.
-
-        Returns:
-            obj: An iterator that will yields parsed results, in the format of graph feed_dict.
-        """
-        label_list = []
-        user_list = []
-        item_list = []
-        item_cate_list = []
-        item_history_batch = []
-        item_cate_history_batch = []
-        time_list = []
-        time_diff_list = []
-        time_from_first_action_list = []
-        time_to_now_list = []
-
-        cnt = 0
-
-        if infile not in self.iter_data:
-            lines = self.parse_file(infile)
-            self.iter_data[infile] = lines
-        else:
-            lines = self.iter_data[infile]
-
-        if batch_num_ngs > 0:
-            random.shuffle(lines)
-
-        for line in lines:
-            if not line:
-                continue
-
-            (
-                label,
-                user_id,
-                item_id,
-                item_cate,
-                item_history_sequence,
-                item_cate_history_sequence,
-                current_time,
-                time_diff,
-                time_from_first_action,
-                time_to_now,
-            ) = line
-            if len(item_history_sequence) < min_seq_length:
-                continue
-
-            label_list.append(label)
-            user_list.append(user_id)
-            item_list.append(item_id)
-            item_cate_list.append(item_cate)
-            item_history_batch.append(item_history_sequence)
-            item_cate_history_batch.append(item_cate_history_sequence)
-            time_list.append(current_time)
-            time_diff_list.append(time_diff)
-            time_from_first_action_list.append(time_from_first_action)
-            time_to_now_list.append(time_to_now)
-
-            cnt += 1
-            if cnt == self.batch_size:
-                res = self._convert_data(
-                    label_list,
-                    user_list,
-                    item_list,
-                    item_cate_list,
-                    item_history_batch,
-                    item_cate_history_batch,
-                    time_list,
-                    time_diff_list,
-                    time_from_first_action_list,
-                    time_to_now_list,
-                    batch_num_ngs,
-                )
-                batch_input = self.gen_feed_dict(res)
-                yield batch_input if batch_input else None
-                label_list = []
-                user_list = []
-                item_list = []
-                item_cate_list = []
-                item_history_batch = []
-                item_cate_history_batch = []
-                time_list = []
-                time_diff_list = []
-                time_from_first_action_list = []
-                time_to_now_list = []
-                cnt = 0
-        if cnt > 0:
-            res = self._convert_data(
-                label_list,
-                user_list,
-                item_list,
-                item_cate_list,
-                item_history_batch,
-                item_cate_history_batch,
-                time_list,
-                time_diff_list,
-                time_from_first_action_list,
-                time_to_now_list,
-                batch_num_ngs,
-            )
-            batch_input = self.gen_feed_dict(res)
-            yield batch_input if batch_input else None
 
     def _convert_data(
         self,
@@ -421,6 +213,9 @@ class NextItNetIterator:
             res["time_from_first_action"] = time_from_first_action_batch
             res["time_to_now"] = time_to_now_batch
 
+            # print("label_list_all.shape: ", res["labels"].shape)
+            # print("item_list_all.shape: ", res["items"].shape)
+
             return res
 
         else:
@@ -472,30 +267,3 @@ class NextItNetIterator:
             res["time_from_first_action"] = time_from_first_action_batch
             res["time_to_now"] = time_to_now_batch
             return res
-
-    def gen_feed_dict(self, data_dict):
-        """Construct a dictionary that maps graph elements to values.
-        
-        Args:
-            data_dict (dict): a dictionary that maps string name to numpy arrays.
-
-        Returns:
-            dict: a dictionary that maps graph elements to numpy arrays.
-
-        """
-        if not data_dict:
-            return dict()
-        feed_dict = {
-            self.labels: data_dict["labels"],
-            self.users: data_dict["users"],
-            self.items: data_dict["items"],
-            self.cates: data_dict["cates"],
-            self.item_history: data_dict["item_history"],
-            self.item_cate_history: data_dict["item_cate_history"],
-            self.mask: data_dict["mask"],
-            self.time: data_dict["time"],
-            self.time_diff: data_dict["time_diff"],
-            self.time_from_first_action: data_dict["time_from_first_action"],
-            self.time_to_now: data_dict["time_to_now"],
-        }
-        return feed_dict
