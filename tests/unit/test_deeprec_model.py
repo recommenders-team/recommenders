@@ -13,7 +13,9 @@ from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
 from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
+from reco_utils.recommender.deeprec.models.sequential.nextitnet import NextItNetModel
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
+from reco_utils.recommender.deeprec.io.nextitnet_iterator import NextItNetIterator
 
 
 @pytest.fixture
@@ -83,6 +85,16 @@ def test_slirec_component_definition(resource_path):
         "config",
         "sli_rec.yaml",
     )
+    yaml_file_nextitnet = os.path.join(
+        resource_path,
+        "..",
+        "..",
+        "reco_utils",
+        "recommender",
+        "deeprec",
+        "config",
+        "nextitnet.yaml",
+    )
     train_file = os.path.join(data_path, r"train_data")
 
     if not os.path.exists(train_file):
@@ -130,7 +142,14 @@ def test_slirec_component_definition(resource_path):
         yaml_file, train_num_ngs=4
     )  # confirm the train_num_ngs when initializing a SLi_Rec model.
     model = SLI_RECModel(hparams, SequentialIterator)
+    # nextitnet model
+    hparams_nextitnet = prepare_hparams(yaml_file_nextitnet, train_num_ngs=4)
+    model_nextitnet = NextItNetModel(hparams_nextitnet, NextItNetIterator)
 
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
+
+    assert model_nextitnet.logit is not None
+    assert model_nextitnet.update is not None
+    assert model_nextitnet.iterator is not None
