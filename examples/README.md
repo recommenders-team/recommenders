@@ -13,12 +13,15 @@ The following summarizes each directory of the best practice notebooks.
 
 | Directory | Runs Local | Description |
 | --- | --- | --- |
-| [00_quick_start](./00_quick_start)| Yes | Quick start notebooks that demonstrate workflow of developing a recommender by using an algorithm in local environment|
-| [01_prepare_data](./01_prepare_data) | Yes | Data preparation notebooks for each recommender algorithm|
-| [02_model](./02_model) | Yes | Deep dive notebooks about model building by using various classical and deep learning recommender algorithms|
-| [03_evaluate](./03_evaluate) | Yes | Notebooks that introduce different evaluation methods for recommenders|
-| [04_model_select_and_optimize](04_model_select_and_optimize) | Some local, some on Azure | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies|
-| [05_operationalize](05_operationalize) | No, Run on Azure | Operationalization notebooks that illustrate an end-to-end pipeline by using a recommender algorithm for a certain real-world use case scenario|
+| [00_quick_start](00_quick_start)| Yes | Quick start notebooks that demonstrate workflow of developing a recommender by using an algorithm in local environment|
+| [01_prepare_data](01_prepare_data) | Yes | Data preparation notebooks for each recommender algorithm|
+| [02_model_collaborative_filtering](02_model_collaborative_filtering) | Yes | Deep dive notebooks about model training and evaluation using collaborative filtering algorithms |
+| [02_model_content_based_filtering](02_model_content_based_filtering) | Yes |Deep dive notebooks about model training and evaluation using content-based filtering algorithms |
+| [02_model_hybrid](02_model_hybrid) | Yes | Deep dive notebooks about model training and evaluation using hybrid algorithms |
+| [03_evaluate](03_evaluate) | Yes | Notebooks that introduce different evaluation methods for recommenders |
+| [04_model_select_and_optimize](04_model_select_and_optimize) | Some local, some on Azure | Best practice notebooks for model tuning and selecting by using Azure Machine Learning Service and/or open source technologies |
+| [05_operationalize](05_operationalize) | No, Run on Azure | Operationalization notebooks that illustrate an end-to-end pipeline by using a recommender algorithm for a certain real-world use case scenario |
+| [06_benchmarks](06_benchmarks) | Yes | Benchmark comparison of several recommender algorithms |
 
 ## On-premise notebooks
 
@@ -57,11 +60,13 @@ those will be provided in the notebooks.
 ### Submit an existing notebook to Azure Machine Learning
 
  The [run_notebook_on_azureml](./run_notebook_on_azureml.ipynb) notebook provides a scaffold to directly submit an existing notebook to AzureML compute targets. After setting up a compute target and creating a run configuration, simply replace the notebook file name and submit the notebook directly. 
+
 ```python
 cfg = NotebookRunConfig(source_directory='../',
-                            notebook='notebooks/00_quick_start/' + NOTEBOOK_NAME,
+                            notebook='examples/00_quick_start/' + NOTEBOOK_NAME,
                             output_notebook='outputs/out.ipynb',
                             parameters={"MOVIELENS_DATA_SIZE": "100k", "TOP_K": 10},
                             run_config=run_config)
 ```
+
 All metrics and parameters logged with `pm.record` will be stored on the run as tracked metrics. The initial notebook that was submitted, will be stored as an output notebook ```out.ipynb``` in the outputs tab of the Azure Portal. 
