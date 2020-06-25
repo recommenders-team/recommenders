@@ -3,6 +3,7 @@
 
 import papermill as pm
 import pytest
+
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 import os
@@ -423,3 +424,49 @@ def test_npa_quickstart_integration(notebooks, epochs, seed, expected_values):
         assert results[key]["ndcg@10"] == pytest.approx(
             value["ndcg@10"], rel=TOL, abs=ABS_TOL
         )
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "yaml_file, data_path, size, epochs, batch_size, expected_values, seed",
+    [
+        (
+            "reco_utils/recommender/deeprec/config/lightgcn.yaml",
+            os.path.join("tests", "resources", "deeprec", "lightgcn"),
+            "100k",
+            5,
+            1024,
+            {
+                "map": 0.094794,
+                "ndcg": 0.354145,
+                "precision": 0.308165,
+                "recall": 0.163034,
+            },
+            42,
+        )
+    ],
+)
+def test_lightgcn_deep_dive_integration(
+    notebooks, yaml_file, data_path, size, epochs, batch_size, expected_values, seed
+):
+    notebook_path = notebooks["lightgcn_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            TOP_K=10,
+            MOVIELENS_DATA_SIZE=size,
+            EPOCHS=epochs,
+            BATCH_SIZE=batch_size,
+            SEED=seed,
+            yaml_file=yaml_file,
+            user_file=os.path.join(data_path, r"user_embeddings"),
+            item_file=os.path.join(data_path, r"item_embeddings"),
+        ),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)

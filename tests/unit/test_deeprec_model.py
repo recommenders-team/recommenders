@@ -14,6 +14,10 @@ from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
+from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
+from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
+from reco_utils.dataset import movielens
+from reco_utils.dataset.python_splitters import python_stratified_split
 
 
 @pytest.fixture
@@ -134,3 +138,36 @@ def test_slirec_component_definition(resource_path):
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
+
+
+@pytest.mark.gpu
+def test_lightgcn_component_definition(resource_path):
+    yaml_file = os.path.join(
+        resource_path,
+        "..",
+        "..",
+        "reco_utils",
+        "recommender",
+        "deeprec",
+        "config",
+        "lightgcn.yaml",
+    )
+
+    df = movielens.load_pandas_df(size="100k")
+    train, test = python_stratified_split(df, ratio=0.75)
+
+    data = ImplicitCF(train=train, test=test)
+
+    embed_size = 64
+    hparams = prepare_hparams(yaml_file, embed_size=embed_size)
+    model = LightGCN(hparams, data)
+
+    assert model.norm_adj is not None
+    assert model.ua_embeddings.shape == [data.n_users, embed_size]
+    assert model.ia_embeddings.shape == [data.n_items, embed_size]
+    assert model.u_g_embeddings is not None
+    assert model.pos_i_g_embeddings is not None
+    assert model.neg_i_g_embeddings is not None
+    assert model.batch_ratings is not None
+    assert model.loss is not None
+    assert model.opt is not None
