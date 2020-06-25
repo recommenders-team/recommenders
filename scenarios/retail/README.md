@@ -20,7 +20,7 @@ In this task, the retailer tries to predict product(s) complementary to or bough
 
 ### Similar alternatives
 
-This scenario covers down-selling or out of stock alternatives to avoid losing a sale. Similar alternatives predicts other products with similar features, like price, type, brand or visual appearance.
+This scenario covers down-selling or out of stock alternatives to avoid losing a sale. Similar alternatives predict other products with similar features, like price, type, brand or visual appearance.
 
 ## Data and evaluation
 
