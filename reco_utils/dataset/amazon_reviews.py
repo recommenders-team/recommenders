@@ -24,7 +24,7 @@ def data_preprocessing(
     sample_rate=0.01,
     valid_num_ngs=4,
     test_num_ngs=9,
-    is_history_expanding=False,
+    is_history_expanding=True,
 ):
     """Create data for training, validation and testing from original dataset
 
