@@ -24,7 +24,7 @@ def data_preprocessing(
     sample_rate=0.01,
     valid_num_ngs=4,
     test_num_ngs=9,
-    is_history_expanding=True,
+    is_history_expanding=False,
 ):
     """Create data for training, validation and testing from original dataset
 
@@ -259,7 +259,7 @@ def _data_generating_no_history_expanding(input_file, train_file, valid_file, te
             fo = f_valid
         elif tfile == "test":
             fo = f_test
-        if user_id != last_user_id:
+        if user_id != last_user_id or tfile == "valid" or tfile == "test":
             if last_user_id != None:
                 history_clk_num = len(movie_id_list)
                 cat_str = ""
