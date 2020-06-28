@@ -170,6 +170,11 @@ def _negative_sampling_offline(
 
 
 def _data_generating(input_file, train_file, valid_file, test_file, min_sequence=1):
+    '''produce train, valid and test file from processed_output file
+    Each user's behavior sequence will be unfolded and produce multiple lines in trian file.
+    Like, user's behavior sequence: 12345, and this function will write into train file:
+    1, 12, 123, 1234, 12345
+    '''
     f_input = open(input_file, "r")
     f_train = open(train_file, "w")
     f_valid = open(valid_file, "w")
@@ -238,6 +243,10 @@ def _data_generating(input_file, train_file, valid_file, test_file, min_sequence
             dt_list.append(date_time)
 
 def _data_generating_no_history_expanding(input_file, train_file, valid_file, test_file, min_sequence=1):
+    '''produce train, valid and test file from processed_output file
+    Each user's behavior sequence will only produce one line in trian file.
+    Like, user's behavior sequence: 12345, and this function will write into train file: 12345
+    '''
     f_input = open(input_file, "r")
     f_train = open(train_file, "w")
     f_valid = open(valid_file, "w")
