@@ -62,6 +62,24 @@ class DKNTextIterator(BaseIterator):
             self.click_news_entity_values = tf.placeholder(
                 tf.int64, [None], name="click_news_entity"
             )
+        self.news_word_index = {}
+        self.news_entity_index = {}
+        with tf.gfile.GFile(hparams.news_feature_file, "r") as rd:
+            while True:
+                line = rd.readline()
+                if not line:
+                    break
+                newsid, word_inde, entity_index = line.strip().split(col_spliter)
+                self.news_word_index[newsid] = word_inde
+                self.news_entity_index[newsid] = entity_index
+        self.user_history = {}
+        with tf.gfile.GFile(hparams.user_history_file, "r") as rd:
+            while True:
+                line = rd.readline()
+                if not line:
+                    break
+                userid, user_history_string = line.strip().split(ID_spliter)
+                self.user_history[userid] = user_history_string
 
     def parser_one_line(self, line):
         """Parse one string line into feature values.
@@ -74,7 +92,7 @@ class DKNTextIterator(BaseIterator):
             candidate_news_entity_index, click_news_entity_index, impression_id
 
         """
-        impression_id = None
+        impression_id = 0
         words = line.strip().split(self.ID_spliter)
         if len(words) == 2:
             impression_id = words[1].strip()
@@ -88,27 +106,23 @@ class DKNTextIterator(BaseIterator):
         candidate_news_entity_index = []
         click_news_entity_index = []
 
-        for news in cols[1:]:
+        userid = cols[1]
+        candidate_news = cols[2]
+
+        for item in self.news_word_index[candidate_news].split(","):
+            candidate_news_index.append(int(item))
+            candidate_news_val.append(float(1))
+        for item in self.news_entity_index[candidate_news].split(","):
+            candidate_news_entity_index.append(int(item))
+
+        user_history = self.user_history[userid].split(" ")
+        for news in user_history:
             tokens = news.split(":")
-            if tokens[0] == "CandidateNews":
-                # word index start by 0
-                for item in tokens[1].split(","):
-                    candidate_news_index.append(int(item))
-                    candidate_news_val.append(float(1))
-            elif "clickedNews" in tokens[0]:
-                for item in tokens[1].split(","):
-                    click_news_index.append(int(item))
-                    click_news_val.append(float(1))
-
-            elif tokens[0] == "entity":
-                for item in tokens[1].split(","):
-                    candidate_news_entity_index.append(int(item))
-            elif "entity" in tokens[0]:
-                for item in tokens[1].split(","):
-                    click_news_entity_index.append(int(item))
-
-            else:
-                raise ValueError("data format is wrong")
+            for item in self.news_word_index[tokens[1]].split(","):
+                click_news_index.append(int(item))
+                click_news_val.append(float(1))
+            for item in self.news_entity_index[tokens[1]].split(","):
+                click_news_entity_index.append(int(item))
 
         return (
             label,
@@ -176,8 +190,9 @@ class DKNTextIterator(BaseIterator):
                         click_news_val_batch,
                         candidate_news_entity_index_batch,
                         click_news_entity_index_batch,
+                        impression_id_list
                     )
-                    yield self.gen_feed_dict(res)
+                    yield self.gen_feed_dict(res), impression_id_list
                     candidate_news_index_batch = []
                     candidate_news_val_batch = []
                     click_news_index_batch = []
