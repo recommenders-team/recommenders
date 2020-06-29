@@ -74,6 +74,7 @@ def check_type(config):
         "L",
         "n_v",
         "n_h",
+        "kernel_size",
         "min_seq_length",
         "attention_size",
         "epochs",
@@ -119,7 +120,13 @@ def check_type(config):
         if param in config and not isinstance(config[param], str):
             raise TypeError("Parameters {0} must be str".format(param))
 
-    list_parameters = ["layer_sizes", "activation", "dropout", "att_fcn_layer_sizes"]
+    list_parameters = [
+        "layer_sizes",
+        "activation",
+        "dropout",
+        "att_fcn_layer_sizes",
+        "dilations",
+    ]
     for param in list_parameters:
         if param in config and not isinstance(config[param], list):
             raise TypeError("Parameters {0} must be list".format(param))
@@ -225,6 +232,26 @@ def check_nn_config(f_config):
             "attention_size",
             "hidden_size",
             "att_fcn_layer_sizes",
+        ]
+    elif f_config["model_type"] in [
+        "nextitnet",
+        "next_it_net",
+        "NextItNet",
+        "NEXT_IT_NET",
+    ]:
+        required_parameters = [
+            "item_embedding_dim",
+            "cate_embedding_dim",
+            "user_embedding_dim",
+            "max_seq_length",
+            "loss",
+            "method",
+            "user_vocab",
+            "item_vocab",
+            "cate_vocab",
+            "dilations",
+            "kernel_size",
+            "min_seq_length",
         ]
     else:
         required_parameters = []
@@ -413,6 +440,9 @@ def create_hparams(flags):
         att_fcn_layer_sizes=flags["att_fcn_layer_sizes"]
         if "att_fcn_layer_sizes" in flags
         else None,
+        # nextitnet
+        dilations=flags["dilations"] if "dilations" in flags else None,
+        kernel_size=flags["kernel_size"] if "kernel_size" in flags else None,
         # lightgcn
         embed_size=flags["embed_size"] if "embed_size" in flags else None,
         n_layers=flags["n_layers"] if "n_layers" in flags else None,
