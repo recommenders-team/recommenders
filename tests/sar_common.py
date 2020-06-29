@@ -34,6 +34,7 @@ def load_userpred(file, k=10):
 def read_matrix(file, row_map=None, col_map=None):
     """read in test matrix and hash it"""
     reader = _csv_reader_url(file)
+
     # skip the header
     col_ids = next(reader)[1:]
     row_ids = []
@@ -42,6 +43,7 @@ def read_matrix(file, row_map=None, col_map=None):
         rows += [row[1:]]
         row_ids += [row[0]]
     array = np.array(rows)
+
     # now map the rows and columns to the right values
     if row_map is not None and col_map is not None:
         row_index = [row_map[x] for x in row_ids]

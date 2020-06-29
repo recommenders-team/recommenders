@@ -1,0 +1,15 @@
+# Deep dive in collaborative filtering algorithms
+
+In this directory, notebooks are provided to give a deep dive of collaborative filtering recommendation algorithms. The notebooks make use of the utility functions ([reco_utils](../../reco_utils)) available in the repo.
+
+| Notebook | Environment | Description |
+| --- | --- | --- |
+| [als_deep_dive](als_deep_dive.ipynb) | PySpark | Deep dive on the ALS algorithm and implementation.
+| [baseline_deep_dive](baseline_deep_dive.ipynb) | --- | Deep dive on baseline performance estimation.
+| [cornac_bpr_deep_dive](cornac_bpr_deep_dive.ipynb) | Python CPU | Deep dive on the BPR algorithm and implementation.
+| [lightgcn_deep_dive](lightgcn_deep_dive.ipynb) | Python CPU, GPU | Deep dive on a LightGCN algorithm and implementation.
+| [rbm_deep_dive](rbm_deep_dive.ipynb)| Python CPU, GPU | Deep dive on the rbm algorithm and its implementation.
+| [sar_deep_dive](sar_deep_dive.ipynb) | Python CPU | Deep dive on the SAR algorithm and implementation.
+| [surprise_svd_deep_dive](surprise_svd_deep_dive.ipynb) | Python CPU | Deep dive on a SVD algorithm and implementation.
+
+Details on model training are best found inside each notebook.
