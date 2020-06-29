@@ -78,6 +78,9 @@ To contributors: please add your name to the list when you submit a patch to the
    * Jupyter notebook demonstrating the use of [Surprise](https://github.com/NicolasHug/Surprise) library for recommendations
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
+* **[Qi Wan](https://github.com/Qcactus)**
+   * LightGCN algorithm
+   * Deep dive notebook demonstrating the use of LightGCN
 * **[Quoc-Tuan Truong](https://github.com/tqtg)**
    * BPR notebook using [Cornac](https://github.com/PreferredAI/cornac) framework
 * **[Robert Alexander](https://github.com/roalexan)**

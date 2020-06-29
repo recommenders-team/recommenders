@@ -83,6 +83,7 @@ The table below lists the recommender algorithms currently available in the repo
 | Vowpal Wabbit Family (VW)<sup>*</sup> | [Python CPU (online training)](notebooks/02_model/vowpal_wabbit_deep_dive.ipynb) | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing |
 | Wide and Deep | [Python CPU / Python GPU](notebooks/00_quick_start/wide_deep_movielens.ipynb) | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
 | xLearn/Factorization Machine (FM) & Field-Aware FM (FFM) | [Python CPU](notebooks/02_model/fm_deep_dive.ipynb) | Content-Based Filtering | Quick and memory efficient algorithm to predict labels with user/item features |
+| LightGCN | [Python CPU / Python GPU](notebooks/02_model/lightgcn_deep_dive.ipynb) | Collaborative Filtering | Deep learning algorithm with simplifies the design of GCN for predicting implicit feedback |
 
 **NOTE**: <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
 
@@ -96,7 +97,7 @@ Independent or incubating algorithms and utilities are candidates for the [contr
 
 We provide a [benchmark notebook](benchmarks/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, the MovieLens dataset is split into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 P100 GPU). Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k, running the algorithms for 15 epochs.
 
-| Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance | 
+| Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [ALS](notebooks/00_quick_start/als_movielens.ipynb) | 0.004732 |	0.044239 |	0.048462 |	0.017796 | 0.965038 |	0.753001 |	0.255647 |	0.251648 |
 | [SVD](notebooks/02_model/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 |	0.742690	| 0.291967 |	0.291971 |
@@ -131,9 +132,9 @@ The following tests run on a Windows and Linux DSVM daily. These machines run 24
 
 The following tests run on an AzureML [compute target](https://docs.microsoft.com/en-us/azure/machine-learning/service/concept-compute-target). AzureML allows to programmatically start a virtual machine, execute the tests, gather the results in [Azure DevOps](https://azure.microsoft.com/en-gb/services/devops/) and shut down the machine.
 
-| Build Type | Branch | Status |  | Branch | Status |  
-| --- | --- | --- | --- | --- | --- |  
-| **nightly_cpu_tests** | master | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/nightly_cpu_tests?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=25&branchName=master) |   | Staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/nightly_cpu_tests?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=25&branchName=staging) | 
+| Build Type | Branch | Status |  | Branch | Status |
+| --- | --- | --- | --- | --- | --- |
+| **nightly_cpu_tests** | master | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/nightly_cpu_tests?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=25&branchName=master) |   | Staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/nightly_cpu_tests?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=25&branchName=staging) |
 | **nightly_gpu_tests** | master | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/bp-nightly_gpu_tests?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=5&branchName=master) |   | Staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/bp-nightly_gpu_tests?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=5&branchName=staging) |
 -->
 

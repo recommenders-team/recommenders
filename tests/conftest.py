@@ -258,6 +258,9 @@ def notebooks():
         "xlearn_fm_deep_dive": os.path.join(
             folder_notebooks, "02_model", "fm_deep_dive.ipynb"
         ),
+        "lightgcn_deep_dive": os.path.join(
+            folder_notebooks, "02_model", "lightgcn_deep_dive.ipynb"
+        ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "spark_tuning": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "tuning_spark_als.ipynb"

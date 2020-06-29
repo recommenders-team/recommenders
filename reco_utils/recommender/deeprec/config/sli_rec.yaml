@@ -1,5 +1,5 @@
 #data
-#data format:sequential model
+#data format:sequential model 
 data: 
     user_vocab : ./tests/resources/deeprec/slirec/user_vocab.pkl # the map file of user to id
     item_vocab : ./tests/resources/deeprec/slirec/item_vocab.pkl # the map file of item to id
