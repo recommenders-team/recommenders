@@ -48,10 +48,9 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "5": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/1.3.5/azure-cosmosdb-spark_2.4.0_2.11-1.3.5-uber.jar",
 }
 
-
 MMLSPARK_INFO = {
     "maven": {
-        "coordinates": "Azure:mmlspark:0.17",
+        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.18.1",
         "repo": "https://mvnrepository.com/artifact",
     }
 }

@@ -210,7 +210,16 @@ class BaseModel:
         elif self.hparams.loss == "softmax":
             group = self.train_num_ngs + 1
             logits = tf.reshape(self.logit, (-1, group))
-            labels = tf.reshape(self.iterator.labels, (-1, group))
+            if self.hparams.model_type == "NextItNet":
+                labels = (
+                    tf.transpose(
+                        tf.reshape(self.iterator.labels, (-1, group, self.hparams.max_seq_length)),
+                        [0, 2, 1],
+                    ),
+                )
+                labels = tf.reshape(labels, (-1, group))
+            else:
+                labels = tf.reshape(self.iterator.labels, (-1, group))
             softmax_pred = tf.nn.softmax(logits, axis=-1)
             boolean_mask = tf.equal(labels, tf.ones_like(labels))
             mask_paddings = tf.ones_like(softmax_pred)
