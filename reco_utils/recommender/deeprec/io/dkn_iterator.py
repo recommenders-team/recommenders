@@ -69,8 +69,8 @@ class DKNTextIterator(BaseIterator):
                 line = rd.readline()
                 if not line:
                     break
-                newsid, word_inde, entity_index = line.strip().split(col_spliter)
-                self.news_word_index[newsid] = word_inde
+                newsid, word_index, entity_index = line.strip().split(col_spliter)
+                self.news_word_index[newsid] = word_index
                 self.news_entity_index[newsid] = entity_index
         self.user_history = {}
         with tf.gfile.GFile(hparams.user_history_file, "r") as rd:
@@ -143,6 +143,8 @@ class DKNTextIterator(BaseIterator):
 
         Returns:
             obj: An iterator that will yields parsed results, in the format of graph feed_dict.
+            List: impression id list
+            Int: size of the data in a batch
         """
         candidate_news_index_batch = []
         candidate_news_val_batch = []
@@ -192,7 +194,8 @@ class DKNTextIterator(BaseIterator):
                         click_news_entity_index_batch,
                         impression_id_list
                     )
-                    yield self.gen_feed_dict(res), impression_id_list
+                    data_size = self.batch_size
+                    yield self.gen_feed_dict(res), impression_id_list, data_size
                     candidate_news_index_batch = []
                     candidate_news_val_batch = []
                     click_news_index_batch = []
@@ -202,6 +205,97 @@ class DKNTextIterator(BaseIterator):
                     label_list = []
                     impression_id_list = []
                     cnt = 0
+            if cnt > 0:
+                data_size = cnt
+                while cnt < self.batch_size:
+                    candidate_news_index_batch.append(candidate_news_index_batch[cnt%data_size])
+                    candidate_news_val_batch.append(candidate_news_val_batch[cnt%data_size])
+                    click_news_index_batch.append(click_news_index_batch[cnt%data_size])
+                    click_news_val_batch.append(click_news_val_batch[cnt%data_size])
+                    candidate_news_entity_index_batch.append(candidate_news_entity_index_batch[cnt%data_size])
+                    click_news_entity_index_batch.append(click_news_entity_index_batch[cnt%data_size])
+                    label_list.append(label_list[cnt%data_size])
+                    impression_id_list.append(impression_id_list[cnt%data_size])
+                    cnt += 1
+                res = self._convert_data(
+                    label_list,
+                    candidate_news_index_batch,
+                    candidate_news_val_batch,
+                    click_news_index_batch,
+                    click_news_val_batch,
+                    candidate_news_entity_index_batch,
+                    click_news_entity_index_batch,
+                    impression_id_list
+                )
+                data_size = self.batch_size
+                yield self.gen_feed_dict(res), impression_id_list, data_size
+
+    def load_infer_data_from_file(self, infile):
+        """Read and parse data from a file for infer document embedding.
+
+        Args:
+            infile (str): text input file. Each line in this file is an instance.
+
+        Returns:
+            obj: An iterator that will yields parsed results, in the format of graph feed_dict.
+            List: impression id list
+            Int: size of the data in a batch
+        """
+        newsid_list = []
+        candidate_news_index_batch = []
+        candidate_news_val_batch = []
+        candidate_news_entity_index_batch = []
+        cnt = 0
+        with tf.gfile.GFile(infile, "r") as rd:
+            while True:
+                line = rd.readline()
+                if not line:
+                    break
+                newsid, word_index, entity_index = line.strip().split(" ")
+                newsid_list.append(newsid)
+                candidate_news_index = []
+                candidate_news_val = []
+                candidate_news_entity_index = []
+                for item in word_index.split(","):
+                    candidate_news_index.append(int(item))
+                    candidate_news_val.append(float(1))
+                for item in entity_index.split(","):
+                    candidate_news_entity_index.append(int(item))
+
+                candidate_news_index_batch.append(candidate_news_index)
+                candidate_news_val_batch.append(candidate_news_val)
+                candidate_news_entity_index_batch.append(candidate_news_entity_index)
+
+                cnt += 1
+                if cnt >= self.batch_size:
+                    res = self._convert_infer_data(
+                        candidate_news_index_batch,
+                        candidate_news_val_batch,
+                        candidate_news_entity_index_batch,
+                    )
+                    data_size = self.batch_size
+                    test = self.gen_infer_feed_dict(res)
+                    yield self.gen_infer_feed_dict(res), data_size
+                    candidate_news_index_batch = []
+                    candidate_news_val_batch = []
+                    candidate_news_entity_index_batch = []
+                    cnt = 0
+
+            if cnt > 0:
+                data_size = cnt
+                while cnt < self.batch_size:
+                    candidate_news_index_batch.append(candidate_news_index_batch[cnt%data_size])
+                    candidate_news_val_batch.append(candidate_news_val_batch[cnt%data_size])
+                    candidate_news_entity_index_batch.append(candidate_news_entity_index_batch[cnt%data_size])
+                    cnt += 1
+                res = self._convert_infer_data(
+                    candidate_news_index_batch,
+                    candidate_news_val_batch,
+                    candidate_news_entity_index_batch,
+                )
+                test = self.gen_infer_feed_dict(res)
+                yield self.gen_infer_feed_dict(res), data_size
+
 
     def _convert_data(
         self,
@@ -212,6 +306,7 @@ class DKNTextIterator(BaseIterator):
         click_news_val_batch,
         candidate_news_entity_index_batch,
         click_news_entity_index_batch,
+        impression_id_list
     ):
         """Convert data into numpy arrays that are good for further model operation.
         
@@ -223,6 +318,7 @@ class DKNTextIterator(BaseIterator):
             click_news_val_batch (list): words values for user's clicked news articles. For now the values are always 1.0
             candidate_news_entity_index_batch (list): the candidate news article's entities indices
             click_news_entity_index_batch (list): the user's clicked news article's entities indices
+            impression_id_list (list) : the session's impression indices
 
         Returns:
             dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
@@ -265,6 +361,36 @@ class DKNTextIterator(BaseIterator):
         res["click_news_entity_values"] = np.asarray(
             click_news_entity_values, dtype=np.int64
         )
+        res["impression_id"] = np.asarray(
+            impression_id_list, dtype=np.int64
+        )
+        return res
+
+    def _convert_infer_data(
+            self,
+            candidate_news_index_batch,
+            candidate_news_val_batch,
+            candidate_news_entity_index_batch,
+    ):
+        """Convert data into numpy arrays that are good for further model operation.
+
+        Args:
+            candidate_news_index_batch (list): the candidate news article's words indices
+            candidate_news_val_batch (list): the candidate news article's word values. For now the values are always 1.0
+            candidate_news_entity_index_batch (list): the candidate news article's entities indices
+        Returns:
+            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+        """
+        res = {}
+        res["candidate_news_index_batch"] = np.asarray(
+            candidate_news_index_batch, dtype=np.int64
+        )
+        res["candidate_news_val_batch"] = np.asarray(
+            candidate_news_val_batch, dtype=np.float32
+        )
+        res["candidate_news_entity_index_batch"] = np.asarray(
+            candidate_news_entity_index_batch, dtype=np.int64
+        )
         return res
 
     def gen_feed_dict(self, data_dict):
@@ -295,3 +421,27 @@ class DKNTextIterator(BaseIterator):
             self.click_news_entity_values: data_dict["click_news_entity_values"],
         }
         return feed_dict
+
+    def gen_infer_feed_dict(self, data_dict):
+        """Construct a dictionary that maps graph elements to values.
+
+                Args:
+                    data_dict (dict): a dictionary that maps string name to numpy arrays.
+
+                Returns:
+                    dict: a dictionary that maps graph elements to numpy arrays.
+
+                """
+        feed_dict = {
+            self.candidate_news_index_batch: data_dict[
+                "candidate_news_index_batch"
+            ].reshape([self.batch_size, self.doc_size]),
+            self.candidate_news_val_batch: data_dict[
+                "candidate_news_val_batch"
+            ].reshape([self.batch_size, self.doc_size]),
+            self.candidate_news_entity_index_batch: data_dict[
+                "candidate_news_entity_index_batch"
+            ].reshape([-1, self.doc_size]),
+        }
+        return feed_dict
+

@@ -238,6 +238,7 @@ class DKN(BaseModel):
 
         click_field_embed_final_batch = []
         news_field_embed_final_batch = []
+        self.news_field_embed_final_batch = []
 
         with tf.variable_scope("kims_cnn") as kcnn_scope:
             pass
@@ -326,14 +327,14 @@ class DKN(BaseModel):
                     if attention_output_b not in self.layer_params:
                         self.layer_params.append(attention_output_b)
 
-                news_field_embed_final_batch.append(news_field_embed)
+                self.news_field_embed_final_batch.append(news_field_embed)
                 click_field_embed_final_batch.append(click_field_embed_final)
                 scope.reuse_variables()
 
         click_field_embed_final_batch = tf.concat(click_field_embed_final_batch, axis=0)
-        news_field_embed_final_batch = tf.concat(news_field_embed_final_batch, axis=0)
+        self.news_field_embed_final_batch = tf.concat(self.news_field_embed_final_batch, axis=0)
 
-        return click_field_embed_final_batch, news_field_embed_final_batch
+        return click_field_embed_final_batch, self.news_field_embed_final_batch
 
     def _kims_cnn(self, word, entity, hparams):
         """The KCNN module. KCNN is an extension of traditional CNN that incorporates symbolic knowledge from

@@ -414,7 +414,7 @@ class BaseModel:
 
             epoch_loss = 0
             train_start = time.time()
-            for batch_data_input, impression in self.iterator.load_data_from_file(train_file):
+            for batch_data_input, impression, data_size in self.iterator.load_data_from_file(train_file):
                 step_result = self.train(train_sess, batch_data_input)
                 (_, _, step_loss, step_data_loss, summary) = step_result
                 if self.hparams.write_tfevents:
@@ -529,7 +529,7 @@ class BaseModel:
         preds = []
         labels = []
         imp_indexs = []
-        for batch_data_input, imp_index in self.iterator.load_data_from_file(filename):
+        for batch_data_input, imp_index, data_size in self.iterator.load_data_from_file(filename):
             step_pred, step_labels = self.eval(load_sess, batch_data_input)
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
@@ -676,3 +676,33 @@ class BaseModel:
                 )
                 self.logit = nn_output
                 return nn_output
+
+    def infer_embedding(self, sess, feed_dict):
+        """Infer document embedding in feed_dict with current model.
+
+        Args:
+            sess (obj): The model session object.
+            feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
+
+        Returns:
+            list: news embedding in a batch
+        """
+        feed_dict[self.layer_keeps] = self.keep_prob_test
+        feed_dict[self.is_train_stage] = False
+        return sess.run([self.news_field_embed_final_batch], feed_dict=feed_dict)
+
+    def run_get_embedding(self, filename):
+        """infer document embedding with current model.
+
+        Args:
+            filename (str): Input file name.
+
+        Returns:
+            list: news embedding list
+        """
+        load_sess = self.sess
+        news_embeddings = []
+        for batch_data_input, data_size in self.iterator.load_infer_data_from_file(filename):
+            news_embedding = self.infer_embedding(load_sess, batch_data_input)[0]
+            news_embeddings.extend(news_embedding[:data_size])
+        return news_embeddings
