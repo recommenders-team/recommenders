@@ -5,17 +5,17 @@ import pandas as pd
 
 
 def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
-	"""Compute the test results using a trained NCF model.
+    """Compute the test results using a trained NCF model.
     
     Args:
-    	model (obj): TF model.
+        model (obj): TF model.
         train (pd.DataFrame): Train set.
         test (pd.DataFrame): Test set.
         rating_metrics (list): List of rating metrics.
         ranking_metrics (list): List of ranking metrics.
         
     Returns:
-    	dict: Test results. 
+        dict: Test results. 
     
     """
     test_results = {}
@@ -51,13 +51,13 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
   
   
 def combine_metrics_dicts(*metrics):
-	"""Combine metrics from dicts.
+    """Combine metrics from dicts.
     
     Args:
-    	metrics (dict): Metrics
+        metrics (dict): Metrics
         
     Returns:
-    	pd.DataFrame: Dataframe with metrics combined.    
+        pd.DataFrame: Dataframe with metrics combined.    
     """
     df = pd.DataFrame(metrics[0], index=[0])
     for metric in metrics[1:]:
