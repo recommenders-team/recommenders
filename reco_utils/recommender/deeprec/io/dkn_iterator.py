@@ -78,7 +78,7 @@ class DKNTextIterator(BaseIterator):
                 line = rd.readline()
                 if not line:
                     break
-                userid, user_history_string = line.strip().split(ID_spliter)
+                userid, user_history_string = line.strip().split(col_spliter)
                 self.user_history[userid] = user_history_string
 
     def parser_one_line(self, line):
@@ -115,13 +115,12 @@ class DKNTextIterator(BaseIterator):
         for item in self.news_entity_index[candidate_news].split(","):
             candidate_news_entity_index.append(int(item))
 
-        user_history = self.user_history[userid].split(" ")
+        user_history = self.user_history[userid].split(",")
         for news in user_history:
-            tokens = news.split(":")
-            for item in self.news_word_index[tokens[1]].split(","):
+            for item in self.news_word_index[news].split(","):
                 click_news_index.append(int(item))
                 click_news_val.append(float(1))
-            for item in self.news_entity_index[tokens[1]].split(","):
+            for item in self.news_entity_index[news].split(","):
                 click_news_entity_index.append(int(item))
 
         return (
@@ -238,7 +237,7 @@ class DKNTextIterator(BaseIterator):
 
         Returns:
             obj: An iterator that will yields parsed results, in the format of graph feed_dict.
-            List: impression id list
+            List: news id list
             Int: size of the data in a batch
         """
         newsid_list = []
@@ -274,11 +273,11 @@ class DKNTextIterator(BaseIterator):
                         candidate_news_entity_index_batch,
                     )
                     data_size = self.batch_size
-                    test = self.gen_infer_feed_dict(res)
-                    yield self.gen_infer_feed_dict(res), data_size
+                    yield self.gen_infer_feed_dict(res), newsid_list, data_size
                     candidate_news_index_batch = []
                     candidate_news_val_batch = []
                     candidate_news_entity_index_batch = []
+                    newsid_list = []
                     cnt = 0
 
             if cnt > 0:
@@ -293,8 +292,7 @@ class DKNTextIterator(BaseIterator):
                     candidate_news_val_batch,
                     candidate_news_entity_index_batch,
                 )
-                test = self.gen_infer_feed_dict(res)
-                yield self.gen_infer_feed_dict(res), data_size
+                yield self.gen_infer_feed_dict(res), newsid_list, data_size
 
 
     def _convert_data(

@@ -199,7 +199,7 @@ def notebooks():
             folder_notebooks, "00_quick_start", "xdeepfm_criteo.ipynb"
         ),
         "dkn_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "dkn_synthetic.ipynb"
+            folder_notebooks, "00_quick_start", "dkn_MIND_dataset.ipynb"
         ),
         "lightgbm_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "lightgbm_tinycriteo.ipynb"

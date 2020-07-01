@@ -700,18 +700,20 @@ class BaseModel:
         feed_dict[self.is_train_stage] = False
         return sess.run([self.news_field_embed_final_batch], feed_dict=feed_dict)
 
-    def run_get_embedding(self, filename):
+    def run_get_embedding(self, infile_name, outfile_name):
         """infer document embedding with current model.
 
         Args:
-            filename (str): Input file name.
+            infile_name (str): Input file name.
+            outfile_name (str): Output file name.
 
         Returns:
-            list: news embedding list
+            obj: An instance of self.
         """
         load_sess = self.sess
-        news_embeddings = []
-        for batch_data_input, data_size in self.iterator.load_infer_data_from_file(filename):
-            news_embedding = self.infer_embedding(load_sess, batch_data_input)[0]
-            news_embeddings.extend(news_embedding[:data_size])
-        return news_embeddings
+        with tf.gfile.GFile(outfile_name, "w") as wt:
+            for batch_data_input, newsid_list, data_size in self.iterator.load_infer_data_from_file(infile_name):
+                news_embedding = self.infer_embedding(load_sess, batch_data_input)[0]
+                for i in range(data_size):
+                    wt.write(newsid_list[i] + " " + ",".join([str(embedding_value) for embedding_value in news_embedding[i]]) + '\n')
+        return self
