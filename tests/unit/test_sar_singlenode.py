@@ -292,25 +292,25 @@ def test_get_normalized_scores(header):
 
     model = SARSingleNode(**header, timedecay_formula=True, normalize=True)
     model.fit(train)
-    actual = model.score(test, remove_seen=True, normalize=True)
+    actual = model.score(test, remove_seen=True)
     expected = np.array(
         [
-            [-np.inf, -np.inf, -np.inf, -np.inf, 3.0, 3.0, 3.0],
-            [-np.inf, 3.0, 3.0, 3.0, -np.inf, -np.inf, -np.inf],
+            [-np.inf, -np.inf, -np.inf, -np.inf, 0.51722405, 0.51722405, 0.51722405],
+            [-np.inf, 0.51723082, 0.51723082, 0.51723082, -np.inf, -np.inf, -np.inf],
         ]
     )
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray)
-    assert np.isclose(expected, actual).all()
+    assert np.isclose(expected, np.asarray(actual)).all()
 
-    actual = model.score(test, normalize=True)
+    actual = model.score(test)
     expected = np.array(
         [
-            [3.80000633, 4.14285448, 4.14285448, 4.14285448, 3.0, 3.0, 3.0],
-            [2.8000859, 3.0, 3.0, 3.0, 2.71441353, 2.71441353, 2.71441353],
+            [3.27583607, 5., 5., 5., 0.51722405, 0.51722405, 0.51722405],
+            [2.4139186, 0.51723082, 0.51723082, 0.51723082, 3.27614473, 3.27614473, 3.27614473],
         ]
     )
 
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray)
-    assert np.isclose(expected, actual).all()
+    assert np.isclose(expected, np.asarray(actual)).all()
