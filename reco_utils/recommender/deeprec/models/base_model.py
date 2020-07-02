@@ -555,8 +555,8 @@ class BaseModel:
         """Make predictions on the given data, and output predicted scores to a file.
         
         Args:
-            infile_name (str): Input file name.
-            outfile_name (str): Output file name.
+            infile_name (str): Input file name, format is same as train/val/test file.
+            outfile_name (str): Output file name, each line is the predict score.
 
         Returns:
             obj: An instance of self.
@@ -704,8 +704,8 @@ class BaseModel:
         """infer document embedding with current model.
 
         Args:
-            infile_name (str): Input file name.
-            outfile_name (str): Output file name.
+            infile_name (str): Input file name, format is [Newsid] [w1,w2,w3...] [e1,e2,e3...]
+            outfile_name (str): Output file name, format is [Newsid] [embedding]
 
         Returns:
             obj: An instance of self.
