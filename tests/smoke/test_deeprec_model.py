@@ -69,8 +69,7 @@ def test_model_dkn(resource_path):
     entityEmb_file = os.path.join(data_path, r'TransE_entity2vec_100.npy')
     contextEmb_file = os.path.join(data_path, r'TransE_context2vec_100.npy')
 
-    if not os.path.exists(yaml_file):
-        download_deeprec_resources(
+    download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/deeprec/",
             data_path,
             "mind-demo.zip",

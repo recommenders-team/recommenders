@@ -119,8 +119,8 @@ def test_dkn_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res"]["auc"] == pytest.approx(0.4707, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["acc"] == pytest.approx(0.5725, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["auc"] == pytest.approx(0.5653, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["mean_mrr"] == pytest.approx(0.1629, rel=TOL, abs=ABS_TOL)
     # assert results["res"]["f1"] == pytest.approx(0.7281, rel=TOL, abs=ABS_TOL) # FIXME: issue #528
 
 
