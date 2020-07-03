@@ -295,8 +295,8 @@ def test_get_normalized_scores(header):
     actual = model.score(test, remove_seen=True)
     expected = np.array(
         [
-            [-np.inf, -np.inf, -np.inf, -np.inf, 0.51722405, 0.51722405, 0.51722405],
-            [-np.inf, 0.51723082, 0.51723082, 0.51723082, -np.inf, -np.inf, -np.inf],
+            [-np.inf, -np.inf, -np.inf, -np.inf, 1.23512374, 1.23512374, 1.23512374],
+            [-np.inf, 1.23512374, 1.23512374, 1.23512374, -np.inf, -np.inf, -np.inf],
         ]
     )
     assert actual.shape == (2, 7)
@@ -306,8 +306,8 @@ def test_get_normalized_scores(header):
     actual = model.score(test)
     expected = np.array(
         [
-            [3.27583607, 5., 5., 5., 0.51722405, 0.51722405, 0.51722405],
-            [2.4139186, 0.51723082, 0.51723082, 0.51723082, 3.27614473, 3.27614473, 3.27614473],
+            [3.11754872, 4.29408577, 4.29408577, 4.29408577, 1.23512374, 1.23512374, 1.23512374],
+            [2.5293308, 1.23511758, 1.23511758, 1.23511758, 3.11767458, 3.11767458, 3.11767458],
         ]
     )
 

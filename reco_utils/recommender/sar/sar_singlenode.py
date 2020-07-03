@@ -11,8 +11,7 @@ from reco_utils.common.python_utils import (
     jaccard,
     lift,
     exponential_decay,
-    get_top_k_scored_items,
-    rescale,
+    get_top_k_scored_items
 )
 from reco_utils.common import constants
 
@@ -100,8 +99,8 @@ class SARSingleNode:
         self.n_items = None
 
         # The min and max of the rating scale, obtained from the training data.
-        self.rating_scale_min = None
-        self.rating_scale_max = None
+        self.rating_min = None
+        self.rating_max = None
 
         # mapping for item to matrix element
         self.user2index = None
@@ -242,11 +241,17 @@ class SARSingleNode:
             lambda user: self.user2index.get(user, np.NaN)
         )
 
-        if self.normalize and self.time_decay_flag:
-            logger.info("Calculating normalized time-decayed affinities")
+        if self.normalize:
+            self.rating_min = temp_df[self.col_rating].min()
+            self.rating_max = temp_df[self.col_rating].max()
+            logger.info("Calculating normalization factors")
             temp_df[self.col_unity_rating] = 1.0
-            temp_df = self.compute_time_decay(
-                df=temp_df, decay_column=self.col_unity_rating
+            if self.time_decay_flag:
+                temp_df = self.compute_time_decay(
+                    df=temp_df, decay_column=self.col_unity_rating
+                )
+            self.unity_user_affinity = self.compute_affinity_matrix(
+                df=temp_df, rating_col=self.col_unity_rating
             )
 
         # affinity matrix
@@ -254,9 +259,6 @@ class SARSingleNode:
         self.user_affinity = self.compute_affinity_matrix(
             df=temp_df, rating_col=self.col_rating
         )
-
-        self.rating_scale_min = self.user_affinity.min()
-        self.rating_scale_max = self.user_affinity.max()
 
         # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
@@ -319,7 +321,11 @@ class SARSingleNode:
             test_scores = test_scores.toarray()
 
         if self.normalize:
-            test_scores = rescale(test_scores, self.rating_scale_min, self.rating_scale_max, data_min=0)
+            counts = self.unity_user_affinity[user_ids, :].dot(self.item_similarity)
+            user_min_scores = np.tile(counts.min(axis=1)[:, np.newaxis], test_scores.shape[1]) * self.rating_min
+            user_max_scores = np.tile(counts.max(axis=1)[:, np.newaxis], test_scores.shape[1]) * self.rating_max
+            test_scores = (test_scores - user_min_scores) / (user_max_scores - user_min_scores)
+            test_scores = test_scores * (self.rating_max - self.rating_min) + self.rating_min
 
         # remove items in the train set so recommended items are always novel
         if remove_seen:
