@@ -119,10 +119,10 @@ def test_dkn_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res"]["auc"] == pytest.approx(0.5653, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["mean_mrr"] == pytest.approx(0.1629, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["ndcg@5"] == pytest.approx(0.1807, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["ndcg@10"] == pytest.approx(0.2381, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
