@@ -69,7 +69,12 @@ class AttLayer2(layers.Layer):
         attention = K.dot(attention, self.q)
 
         attention = K.squeeze(attention, axis=2)
-        attention = K.exp(attention)
+
+        if mask == None:
+            attention = K.exp(attention)
+        else:
+            attention = K.exp(attention) * K.cast(mask, dtype="float32")
+            
         attention_weight = attention / (
             K.sum(attention, axis=-1, keepdims=True) + K.epsilon()
         )
