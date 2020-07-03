@@ -134,6 +134,7 @@ reco_*.yaml
 *.dat
 *.csv
 *.zip
+*.7z
 .vscode/
 u.item
 ml-100k/
@@ -150,7 +151,8 @@ ml-20m/
 *.ckpt*
 *.png
 *.jpg
-*.gif
 *.jpeg
+*.gif
 *.model
 *.mml
+nohup.out

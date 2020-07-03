@@ -77,7 +77,9 @@ def test_FFM_iterator(resource_path):
 @pytest.mark.gpu
 def test_DKN_iterator(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
-    data_file = os.path.join(data_path, "final_test_with_entity.txt")
+    data_file = os.path.join(data_path, r"train_mind_demo.txt")
+    news_feature_file = os.path.join(data_path, r'doc_feature.txt')
+    user_history_file = os.path.join(data_path, r'user_history.txt')
     yaml_file = os.path.join(data_path, "dkn.yaml")
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
@@ -86,10 +88,15 @@ def test_DKN_iterator(resource_path):
             "dknresources.zip",
         )
 
-    hparams = prepare_hparams(yaml_file, wordEmb_file="", entityEmb_file="")
+    hparams = prepare_hparams(yaml_file,
+                              news_feature_file=news_feature_file,
+                              user_history_file=user_history_file,
+                              wordEmb_file="",
+                              entityEmb_file="",
+                              contextEmb_file="")
     iterator = DKNTextIterator(hparams, tf.Graph())
     assert iterator is not None
-    for res in iterator.load_data_from_file(data_file):
+    for res, impression in iterator.load_data_from_file(data_file):
         assert isinstance(res, dict)
 
 

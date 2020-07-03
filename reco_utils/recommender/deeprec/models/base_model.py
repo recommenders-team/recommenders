@@ -210,7 +210,16 @@ class BaseModel:
         elif self.hparams.loss == "softmax":
             group = self.train_num_ngs + 1
             logits = tf.reshape(self.logit, (-1, group))
-            labels = tf.reshape(self.iterator.labels, (-1, group))
+            if self.hparams.model_type == "NextItNet":
+                labels = (
+                    tf.transpose(
+                        tf.reshape(self.iterator.labels, (-1, group, self.hparams.max_seq_length)),
+                        [0, 2, 1],
+                    ),
+                )
+                labels = tf.reshape(labels, (-1, group))
+            else:
+                labels = tf.reshape(self.iterator.labels, (-1, group))
             softmax_pred = tf.nn.softmax(logits, axis=-1)
             boolean_mask = tf.equal(labels, tf.ones_like(labels))
             mask_paddings = tf.ones_like(softmax_pred)
@@ -414,7 +423,7 @@ class BaseModel:
 
             epoch_loss = 0
             train_start = time.time()
-            for batch_data_input in self.iterator.load_data_from_file(train_file):
+            for batch_data_input, impression, data_size in self.iterator.load_data_from_file(train_file):
                 step_result = self.train(train_sess, batch_data_input)
                 (_, _, step_loss, step_data_loss, summary) = step_result
                 if self.hparams.write_tfevents:
@@ -441,10 +450,10 @@ class BaseModel:
             eval_start = time.time()
             train_res = self.run_eval(train_file)
             eval_res = self.run_eval(valid_file)
-            train_info = ", ".join(
+            train_info = ",".join(
                 [
                     str(item[0]) + ":" + str(item[1])
-                    for item in sorted(train_res.items(), key=lambda x: x[0])
+                    for item in [("logloss loss", epoch_loss / step)]
                 ]
             )
             eval_info = ", ".join(
@@ -493,9 +502,32 @@ class BaseModel:
 
         return self
 
+    def group_labels(self, labels, preds, group_keys):
+        """Devide labels and preds into several group according to values in group keys.
+        Args:
+            labels (list): ground truth label list.
+            preds (list): prediction score list.
+            group_keys (list): group key list.
+        Returns:
+            all_labels: labels after group.
+            all_preds: preds after group.
+        """
+        all_keys = list(set(group_keys))
+        group_labels = {k: [] for k in all_keys}
+        group_preds = {k: [] for k in all_keys}
+        for l, p, k in zip(labels, preds, group_keys):
+            group_labels[k].append(l)
+            group_preds[k].append(p)
+        all_labels = []
+        all_preds = []
+        for k in all_keys:
+            all_labels.append(group_labels[k])
+            all_preds.append(group_preds[k])
+        return all_labels, all_preds
+
     def run_eval(self, filename):
         """Evaluate the given file and returns some evaluation metrics.
-        
+
         Args:
             filename (str): A file name that will be evaluated.
 
@@ -505,19 +537,26 @@ class BaseModel:
         load_sess = self.sess
         preds = []
         labels = []
-        for batch_data_input in self.iterator.load_data_from_file(filename):
+        imp_indexs = []
+        for batch_data_input, imp_index, data_size in self.iterator.load_data_from_file(filename):
             step_pred, step_labels = self.eval(load_sess, batch_data_input)
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
+            imp_indexs.extend(np.reshape(imp_index, -1))
+        group_labels, group_preds = self.group_labels(labels, preds, imp_indexs)
         res = cal_metric(labels, preds, self.hparams.metrics)
+        res_pairwise = cal_metric(
+            group_labels, group_preds, self.hparams.pairwise_metrics
+        )
+        res.update(res_pairwise)
         return res
 
     def predict(self, infile_name, outfile_name):
         """Make predictions on the given data, and output predicted scores to a file.
         
         Args:
-            infile_name (str): Input file name.
-            outfile_name (str): Output file name.
+            infile_name (str): Input file name, format is same as train/val/test file.
+            outfile_name (str): Output file name, each line is the predict score.
 
         Returns:
             obj: An instance of self.
@@ -646,3 +685,35 @@ class BaseModel:
                 )
                 self.logit = nn_output
                 return nn_output
+
+    def infer_embedding(self, sess, feed_dict):
+        """Infer document embedding in feed_dict with current model.
+
+        Args:
+            sess (obj): The model session object.
+            feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
+
+        Returns:
+            list: news embedding in a batch
+        """
+        feed_dict[self.layer_keeps] = self.keep_prob_test
+        feed_dict[self.is_train_stage] = False
+        return sess.run([self.news_field_embed_final_batch], feed_dict=feed_dict)
+
+    def run_get_embedding(self, infile_name, outfile_name):
+        """infer document embedding with current model.
+
+        Args:
+            infile_name (str): Input file name, format is [Newsid] [w1,w2,w3...] [e1,e2,e3...]
+            outfile_name (str): Output file name, format is [Newsid] [embedding]
+
+        Returns:
+            obj: An instance of self.
+        """
+        load_sess = self.sess
+        with tf.gfile.GFile(outfile_name, "w") as wt:
+            for batch_data_input, newsid_list, data_size in self.iterator.load_infer_data_from_file(infile_name):
+                news_embedding = self.infer_embedding(load_sess, batch_data_input)[0]
+                for i in range(data_size):
+                    wt.write(newsid_list[i] + " " + ",".join([str(embedding_value) for embedding_value in news_embedding[i]]) + '\n')
+        return self

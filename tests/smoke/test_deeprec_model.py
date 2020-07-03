@@ -16,6 +16,10 @@ from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
+from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
+from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
+from reco_utils.dataset import movielens
+from reco_utils.dataset.python_splitters import python_stratified_split
 
 
 @pytest.fixture
@@ -55,26 +59,31 @@ def test_model_xdeepfm(resource_path):
 @pytest.mark.deeprec
 def test_model_dkn(resource_path):
     data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
-    yaml_file = os.path.join(data_path, "dkn.yaml")
-    train_file = os.path.join(data_path, "final_test_with_entity.txt")
-    valid_file = os.path.join(data_path, "final_test_with_entity.txt")
-    wordEmb_file = os.path.join(data_path, "word_embeddings_100.npy")
-    entityEmb_file = os.path.join(data_path, "TransE_entity2vec_100.npy")
+    yaml_file = os.path.join(data_path, r'dkn.yaml')
+    train_file = os.path.join(data_path, r'train_mind_demo.txt')
+    valid_file = os.path.join(data_path, r'valid_mind_demo.txt')
+    test_file = os.path.join(data_path, r'test_mind_demo.txt')
+    news_feature_file = os.path.join(data_path, r'doc_feature.txt')
+    user_history_file = os.path.join(data_path, r'user_history.txt')
+    wordEmb_file = os.path.join(data_path, r'word_embeddings_100.npy')
+    entityEmb_file = os.path.join(data_path, r'TransE_entity2vec_100.npy')
+    contextEmb_file = os.path.join(data_path, r'TransE_context2vec_100.npy')
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             "https://recodatasets.blob.core.windows.net/deeprec/",
             data_path,
-            "dknresources.zip",
+            "mind-demo.zip",
         )
 
-    hparams = prepare_hparams(
-        yaml_file,
-        wordEmb_file=wordEmb_file,
-        entityEmb_file=entityEmb_file,
-        epochs=1,
-        learning_rate=0.0001,
-    )
+    hparams = prepare_hparams(yaml_file,
+                              news_feature_file=news_feature_file,
+                              user_history_file=user_history_file,
+                              wordEmb_file=wordEmb_file,
+                              entityEmb_file=entityEmb_file,
+                              contextEmb_file=contextEmb_file,
+                              epochs=1,
+                              learning_rate=0.0001)
     input_creator = DKNTextIterator
     model = DKN(hparams, input_creator)
 
@@ -155,3 +164,37 @@ def test_model_slirec(resource_path):
         model.fit(train_file, valid_file, valid_num_ngs=valid_num_ngs), BaseModel
     )
     assert model.predict(test_file, output_file) is not None
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+@pytest.mark.deeprec
+def test_model_lightgcn(resource_path):
+    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
+    yaml_file = os.path.join(
+        resource_path,
+        "..",
+        "..",
+        "reco_utils",
+        "recommender",
+        "deeprec",
+        "config",
+        "lightgcn.yaml",
+    )
+    user_file = os.path.join(data_path, r"user_embeddings.csv")
+    item_file = os.path.join(data_path, r"item_embeddings.csv")
+
+    df = movielens.load_pandas_df(size="100k")
+    train, test = python_stratified_split(df, ratio=0.75)
+
+    data = ImplicitCF(train=train, test=test)
+
+    hparams = prepare_hparams(yaml_file, epochs=1)
+    model = LightGCN(hparams, data)
+
+    assert model.run_eval() is not None
+    model.fit()
+    assert model.recommend_k_items(test) is not None
+    model.infer_embedding(user_file, item_file)
+    assert os.path.getsize(user_file) != 0
+    assert os.path.getsize(item_file) != 0

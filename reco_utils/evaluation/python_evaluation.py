@@ -357,7 +357,7 @@ def merge_ranking_true_pred(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold']
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
         k (int): number of top k items per user (optional)
         threshold (float): threshold of top items per user (optional)
 
@@ -380,6 +380,8 @@ def merge_ranking_true_pred(
         top_k = k
     elif relevancy_method == "by_threshold":
         top_k = threshold
+    elif relevancy_method is None:
+        top_k = None
     else:
         raise NotImplementedError("Invalid relevancy_method")
     df_hit = get_top_k_items(
@@ -431,7 +433,7 @@ def precision_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold']
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
@@ -477,7 +479,7 @@ def recall_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold']
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
@@ -526,7 +528,7 @@ def ndcg_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold']
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
@@ -598,7 +600,7 @@ def map_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold']
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
@@ -648,17 +650,21 @@ def get_top_k_items(
         customerID-itemID-rating)
         col_user (str): column name for user
         col_rating (str): column name for rating
-        k (int): number of items for each user
+        k (int or None): number of items for each user; None means that the input has already been
+        filtered out top k items and sorted by ratings and there is no need to do that again.
 
     Returns:
         pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`
     """
     # Sort dataframe by col_user and (top k) col_rating
-    top_k_items = (
-        dataframe.groupby(col_user, as_index=False)
-        .apply(lambda x: x.nlargest(k, col_rating))
-        .reset_index(drop=True)
-    )
+    if k is None:
+        top_k_items = dataframe
+    else:
+        top_k_items = (
+            dataframe.groupby(col_user, as_index=False)
+            .apply(lambda x: x.nlargest(k, col_rating))
+            .reset_index(drop=True)
+        )
     # Add ranks
     top_k_items["rank"] = top_k_items.groupby(col_user, sort=False).cumcount() + 1
     return top_k_items
