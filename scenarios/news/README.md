@@ -1,4 +1,4 @@
-# Recommendation systems for News
+# Recommendation Systems for News
 
 Online news services such as Microsoft News have become popular platforms for news reading. However, the massive continuously generated news information brings heavy news information overload to users. Personalized news recommendation can help target users with their interested news. It has been applied to many online news platforms, and effectively improves the news reading experience of many users.
 
@@ -6,7 +6,7 @@ Online news services such as Microsoft News have become popular platforms for ne
 
 Next we will describe several most common retail scenarios and main considerations when applying recommendations in news.
 
-### Personalized recommendation
+### Personalized news recommendation
 
 A major task in personalized news recommendation is to predict which news articles a user is most likely to read based on the personal interest of this user. Users’ personal interest in news is usually inferred from their behaviors on the online news platforms, such as their clicked news articles. This scenario widely exists in the personalized news websites and feeds for news items selection and ranking. The models in this repo such as [NAML](../../examples/00_quick_start/naml_synthetic.ipynb), [NRMS](../../examples/00_quick_start/nrms_synthetic.ipynb), [DKN](../../examples/00_quick_start/dkn_MIND_dataset.ipynb) and [LSTUR](../../example/00_quick_start/lstur_synthetic.ipynb) can be used for personalized news recommendation.
 
