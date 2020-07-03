@@ -78,7 +78,7 @@ class FFMTextIterator(BaseIterator):
             list: Parsed results,including label, features and impression_id
 
         """
-        impression_id = None
+        impression_id = 0
         words = line.strip().split(self.ID_spliter)
         if len(words) == 2:
             impression_id = words[1].strip()
@@ -125,14 +125,14 @@ class FFMTextIterator(BaseIterator):
                 cnt += 1
                 if cnt == self.batch_size:
                     res = self._convert_data(label_list, features_list)
-                    yield self.gen_feed_dict(res)
+                    yield self.gen_feed_dict(res), impression_id_list, self.batch_size
                     label_list = []
                     features_list = []
                     impression_id_list = []
                     cnt = 0
             if cnt > 0:
                 res = self._convert_data(label_list, features_list)
-                yield self.gen_feed_dict(res)
+                yield self.gen_feed_dict(res), impression_id_list, cnt
 
     def _convert_data(self, labels, features):
         """Convert data into numpy arrays that are good for further operation.
