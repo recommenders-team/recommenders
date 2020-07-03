@@ -30,6 +30,8 @@
 
 * **Multi-Variate Test (MVT)**: Methodology to evaluate the performance of a system in production. It is similar to A/B testing, with the difference that instead of having two test groups, MVT has multiples groups.
 
+* **News Information**: These include information about the news, some examples can be title, body, verticle, etc.
+
 * **Novelty metrics**: In Recommendation Systems, the novelty of a piece of information generally refers to how different it is with respect to "what has been previously seen" [4].
 
 * **Online metrics**: Also named business metrics. They are the metrics computed online that reflect how the Recommendation System is helping the business to improve user engagement or revenue. These metrics include CTR, conversion rate, etc.
@@ -43,6 +45,7 @@
 * **Revenue per order**: The revenue per order optimization objective is the default optimization objective for the "Frequently bought together" recommendation model type. This optimization objective cannot be specified for any other recommendation model type.
 
 * **User information**: These include all information that define the user, some examples can be name, address, email, demographics, etc. 
+
 
 ## References and resources
 

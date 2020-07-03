@@ -7,7 +7,7 @@ The list of scenarios are:
 * [Ads](ads)
 * [Entertainment](entertainment)
 * [Food and restaurants](food_and_restaurants)
-* [News and document]()
+* [News and document](news)
 * [Retail](retail)
 * [Travel](travel)
 
