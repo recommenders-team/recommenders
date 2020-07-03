@@ -11,7 +11,8 @@ from reco_utils.common.python_utils import (
     jaccard,
     lift,
     exponential_decay,
-    get_top_k_scored_items
+    get_top_k_scored_items,
+    rescale,
 )
 from reco_utils.common import constants
 
@@ -322,10 +323,21 @@ class SARSingleNode:
 
         if self.normalize:
             counts = self.unity_user_affinity[user_ids, :].dot(self.item_similarity)
-            user_min_scores = np.tile(counts.min(axis=1)[:, np.newaxis], test_scores.shape[1]) * self.rating_min
-            user_max_scores = np.tile(counts.max(axis=1)[:, np.newaxis], test_scores.shape[1]) * self.rating_max
-            test_scores = (test_scores - user_min_scores) / (user_max_scores - user_min_scores)
-            test_scores = test_scores * (self.rating_max - self.rating_min) + self.rating_min
+            user_min_scores = (
+                np.tile(counts.min(axis=1)[:, np.newaxis], test_scores.shape[1])
+                * self.rating_min
+            )
+            user_max_scores = (
+                np.tile(counts.max(axis=1)[:, np.newaxis], test_scores.shape[1])
+                * self.rating_max
+            )
+            test_scores = rescale(
+                test_scores,
+                self.rating_min,
+                self.rating_max,
+                user_min_scores,
+                user_max_scores,
+            )
 
         # remove items in the train set so recommended items are always novel
         if remove_seen:
@@ -435,9 +447,7 @@ class SARSingleNode:
         # drop invalid items
         return df.replace(-np.inf, np.nan).dropna()
 
-    def recommend_k_items(
-        self, test, top_k=10, sort_top_k=True, remove_seen=False
-    ):
+    def recommend_k_items(self, test, top_k=10, sort_top_k=True, remove_seen=False):
         """Recommend top K items for all users which are in the test set
 
         Args:

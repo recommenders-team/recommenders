@@ -112,7 +112,7 @@ def binarize(a, threshold):
     """
     return np.where(
         a > threshold,
-        1.0s,
+        1.0,
         0.0
     )
 

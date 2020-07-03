@@ -304,7 +304,7 @@ def binarize_datasets(
     df_pred,
     threshold,
     col_rating=DEFAULT_RATING_COL,
-    col_prediction=DEFAULT_PREDICTION_COL
+    col_prediction=DEFAULT_PREDICTION_COL,
 ):
     """
     Transform the ground truth and prediction datasets in the following way:
@@ -325,10 +325,14 @@ def binarize_datasets(
     """
 
     df_true_bin = df_true.copy()
-    df_true_bin[col_rating] = df_true_bin[col_rating].apply(lambda x: 1 if x >= threshold else 0)
+    df_true_bin[col_rating] = df_true_bin[col_rating].apply(
+        lambda x: 1 if x >= threshold else 0
+    )
 
     df_pred_prob = df_pred.copy()
-    df_pred_prob[col_prediction] = minmax_scale(df_pred_prob[col_prediction].astype(float))
+    df_pred_prob[col_prediction] = minmax_scale(
+        df_pred_prob[col_prediction].astype(float)
+    )
 
     return df_true_bin, df_pred_prob
 
