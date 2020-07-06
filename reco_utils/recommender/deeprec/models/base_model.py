@@ -543,12 +543,13 @@ class BaseModel:
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
             imp_indexs.extend(np.reshape(imp_index, -1))
-        group_labels, group_preds = self.group_labels(labels, preds, imp_indexs)
         res = cal_metric(labels, preds, self.hparams.metrics)
-        res_pairwise = cal_metric(
-            group_labels, group_preds, self.hparams.pairwise_metrics
-        )
-        res.update(res_pairwise)
+        if self.hparams.pairwise_metrics != None:
+            group_labels, group_preds = self.group_labels(labels, preds, imp_indexs)
+            res_pairwise = cal_metric(
+                group_labels, group_preds, self.hparams.pairwise_metrics
+            )
+            res.update(res_pairwise)
         return res
 
     def predict(self, infile_name, outfile_name):
@@ -563,7 +564,7 @@ class BaseModel:
         """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input in self.iterator.load_data_from_file(infile_name):
+            for batch_data_input, _, _ in self.iterator.load_data_from_file(infile_name):
                 step_pred = self.infer(load_sess, batch_data_input)
                 step_pred = np.reshape(step_pred, -1)
                 wt.write("\n".join(map(str, step_pred)))
