@@ -213,7 +213,10 @@ class BaseModel:
             if self.hparams.model_type == "NextItNet":
                 labels = (
                     tf.transpose(
-                        tf.reshape(self.iterator.labels, (-1, group, self.hparams.max_seq_length)),
+                        tf.reshape(
+                            self.iterator.labels,
+                            (-1, group, self.hparams.max_seq_length),
+                        ),
                         [0, 2, 1],
                     ),
                 )
@@ -423,7 +426,11 @@ class BaseModel:
 
             epoch_loss = 0
             train_start = time.time()
-            for batch_data_input, impression, data_size in self.iterator.load_data_from_file(train_file):
+            for (
+                batch_data_input,
+                impression,
+                data_size,
+            ) in self.iterator.load_data_from_file(train_file):
                 step_result = self.train(train_sess, batch_data_input)
                 (_, _, step_loss, step_data_loss, summary) = step_result
                 if self.hparams.write_tfevents:
@@ -538,13 +545,15 @@ class BaseModel:
         preds = []
         labels = []
         imp_indexs = []
-        for batch_data_input, imp_index, data_size in self.iterator.load_data_from_file(filename):
+        for batch_data_input, imp_index, data_size in self.iterator.load_data_from_file(
+            filename
+        ):
             step_pred, step_labels = self.eval(load_sess, batch_data_input)
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
             imp_indexs.extend(np.reshape(imp_index, -1))
         res = cal_metric(labels, preds, self.hparams.metrics)
-        if self.hparams.pairwise_metrics != None:
+        if self.hparams.pairwise_metrics is not None:
             group_labels, group_preds = self.group_labels(labels, preds, imp_indexs)
             res_pairwise = cal_metric(
                 group_labels, group_preds, self.hparams.pairwise_metrics
@@ -564,7 +573,9 @@ class BaseModel:
         """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input, _, _ in self.iterator.load_data_from_file(infile_name):
+            for batch_data_input, _, _ in self.iterator.load_data_from_file(
+                infile_name
+            ):
                 step_pred = self.infer(load_sess, batch_data_input)
                 step_pred = np.reshape(step_pred, -1)
                 wt.write("\n".join(map(str, step_pred)))
@@ -713,8 +724,22 @@ class BaseModel:
         """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input, newsid_list, data_size in self.iterator.load_infer_data_from_file(infile_name):
+            for (
+                batch_data_input,
+                newsid_list,
+                data_size,
+            ) in self.iterator.load_infer_data_from_file(infile_name):
                 news_embedding = self.infer_embedding(load_sess, batch_data_input)[0]
                 for i in range(data_size):
-                    wt.write(newsid_list[i] + " " + ",".join([str(embedding_value) for embedding_value in news_embedding[i]]) + '\n')
+                    wt.write(
+                        newsid_list[i]
+                        + " "
+                        + ",".join(
+                            [
+                                str(embedding_value)
+                                for embedding_value in news_embedding[i]
+                            ]
+                        )
+                        + "\n"
+                    )
         return self

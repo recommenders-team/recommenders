@@ -41,7 +41,9 @@ def data_preprocessing(
     if is_history_expanding:
         _data_generating(preprocessed_output, train_file, valid_file, test_file)
     else:
-        _data_generating_no_history_expanding(preprocessed_output, train_file, valid_file, test_file)
+        _data_generating_no_history_expanding(
+            preprocessed_output, train_file, valid_file, test_file
+        )
     _create_vocab(train_file, user_vocab, item_vocab, cate_vocab)
     _negative_sampling_offline(
         sampled_instance_file, valid_file, test_file, valid_num_ngs, test_num_ngs
@@ -170,11 +172,11 @@ def _negative_sampling_offline(
 
 
 def _data_generating(input_file, train_file, valid_file, test_file, min_sequence=1):
-    '''produce train, valid and test file from processed_output file
+    """produce train, valid and test file from processed_output file
     Each user's behavior sequence will be unfolded and produce multiple lines in trian file.
     Like, user's behavior sequence: 12345, and this function will write into train file:
     1, 12, 123, 1234, 12345
-    '''
+    """
     f_input = open(input_file, "r")
     f_train = open(train_file, "w")
     f_valid = open(valid_file, "w")
@@ -242,11 +244,14 @@ def _data_generating(input_file, train_file, valid_file, test_file, min_sequence
             cate_list.append(category)
             dt_list.append(date_time)
 
-def _data_generating_no_history_expanding(input_file, train_file, valid_file, test_file, min_sequence=1):
-    '''produce train, valid and test file from processed_output file
+
+def _data_generating_no_history_expanding(
+    input_file, train_file, valid_file, test_file, min_sequence=1
+):
+    """produce train, valid and test file from processed_output file
     Each user's behavior sequence will only produce one line in trian file.
     Like, user's behavior sequence: 12345, and this function will write into train file: 12345
-    '''
+    """
     f_input = open(input_file, "r")
     f_train = open(train_file, "w")
     f_valid = open(valid_file, "w")
@@ -274,7 +279,7 @@ def _data_generating_no_history_expanding(input_file, train_file, valid_file, te
         elif last_tfile == "test":
             fo = f_test
         if user_id != last_user_id or tfile == "valid" or tfile == "test":
-            if last_user_id != None:
+            if last_user_id is not None:
                 history_clk_num = len(movie_id_list)
                 cat_str = ""
                 mid_str = ""
@@ -310,7 +315,7 @@ def _data_generating_no_history_expanding(input_file, train_file, valid_file, te
                         + dt_str
                         + "\n"
                     )
-            if tfile == "train" or last_user_id == None:        
+            if tfile == "train" or last_user_id == None:
                 movie_id_list = []
                 cate_list = []
                 dt_list = []
@@ -323,6 +328,7 @@ def _data_generating_no_history_expanding(input_file, train_file, valid_file, te
             movie_id_list.append(movie_id)
             cate_list.append(category)
             dt_list.append(date_time)
+
 
 def _create_item2cate(instance_file):
     print("creating item2cate dict")
