@@ -30,7 +30,7 @@ jobs:
   # Uncomment if needed
   # Conda creation can take around 10min
   # - bash: |
-  #     python scripts/generate_conda_file.py
+  #     python tools/generate_conda_file.py
   #     conda env update -n reco_base -f reco_base.yaml
   #   displayName: 'Creating Conda Environment with dependencies'
 

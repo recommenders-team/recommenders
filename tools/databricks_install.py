@@ -227,7 +227,7 @@ if __name__ == "__main__":
 
     # make sure path_to_recommenders is on sys.path to allow for import
     sys.path.append(args.path_to_recommenders)
-    from scripts.generate_conda_file import PIP_BASE, CONDA_BASE
+    from tools.generate_conda_file import PIP_BASE, CONDA_BASE
 
     ## depend on PIP_BASE:
     PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], CONDA_BASE["papermill"]]
