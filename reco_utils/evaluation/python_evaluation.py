@@ -357,7 +357,8 @@ def merge_ranking_true_pred(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+            top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user (optional)
         threshold (float): threshold of top items per user (optional)
 
@@ -433,7 +434,8 @@ def precision_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+            top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
@@ -479,7 +481,8 @@ def recall_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+            top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
@@ -528,7 +531,8 @@ def ndcg_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+            top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
@@ -600,7 +604,8 @@ def map_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+            top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
