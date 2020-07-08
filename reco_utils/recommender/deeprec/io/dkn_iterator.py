@@ -6,6 +6,7 @@ import numpy as np
 
 from reco_utils.recommender.deeprec.io.iterator import BaseIterator
 
+
 __all__ = ["DKNTextIterator"]
 
 
