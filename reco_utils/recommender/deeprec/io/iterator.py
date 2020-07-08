@@ -111,11 +111,7 @@ class FFMTextIterator(BaseIterator):
         cnt = 0
 
         with tf.gfile.GFile(infile, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
-
+            for line in rd:
                 label, features, impression_id = self.parser_one_line(line)
 
                 features_list.append(features)
