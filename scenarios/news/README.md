@@ -18,6 +18,4 @@ News recommendation has two major differences with the general recommendation.
 
 Datasets used in news recommendation usually include user historical clicked news, [news information](../../GLOSSARY.md) and [interaction data](../../GLOSSARY.md), among others.
 
-To measure the performance of the recommender, it is common to use [ranking metrics](../../GLOSSARY.md). In production, the business metrics used are [CTR](../../GLOSSARY.md), etc. To evaluate a model's performance in production in an online manner, [A/B testing](../../GLOSSARY.md) is often applied.
-
 To measure the performance of the recommender, it is common to use [ranking metrics](../../GLOSSARY.md). In production, the business metrics used are [CTR](../../GLOSSARY.md) and [revenue per order](../../GLOSSARY.md). To evaluate a model's performance in production in an online manner, [A/B testing](../../GLOSSARY.md) is often applied.
