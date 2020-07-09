@@ -128,11 +128,6 @@ class LSTURModel(BaseModel):
                 kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
             )(user_present)
 
-        click_title_presents = layers.TimeDistributed(titleencoder)(his_input_title)
-        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(
-            click_title_presents
-        )
-
         model = keras.Model(
             [his_input_title, user_indexes], user_present, name="user_encoder"
         )
