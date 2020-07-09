@@ -60,7 +60,7 @@ steps:
   displayName: 'pip install'
   
 - script: 
-     python scripts/generate_conda_file.py --gpu --name reco 
+     python tools/generate_conda_file.py --gpu --name reco 
   displayName: ' generate_conda_file.py'
 
 - script: 

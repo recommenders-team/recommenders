@@ -34,7 +34,7 @@ jobs:
     displayName: 'Remove Conda Env if it exists'
 
   - script: |
-      python ./scripts/generate_conda_file.py --pyspark --name nightly_reco_pyspark
+      python ./tools/generate_conda_file.py --pyspark --name nightly_reco_pyspark
       conda env create --quiet -f nightly_reco_pyspark.yaml --verbose
     displayName: 'Setup Conda Env'
 

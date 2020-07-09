@@ -16,7 +16,7 @@ jobs:
 
   steps:
   - bash: |
-      python scripts/generate_requirements_txt.py
+      python tools/generate_requirements_txt.py
     displayName: 'Generate requirements.txt file from generate_conda_file.py'
 
   - task: ComponentGovernanceComponentDetection@0

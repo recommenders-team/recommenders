@@ -2,9 +2,11 @@
 
 This project uses unit, smoke and integration tests with Python files and notebooks:
 
- * In the unit tests we just make sure the utilities and notebooks run.
- * In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics.
- * In the integration tests we use a bigger dataset for more epochs and we test that the metrics are what we expect.
+* In the unit tests we just make sure the utilities and notebooks run.
+
+* In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics.
+
+* In the integration tests we use a bigger dataset for more epochs and we test that the metrics are what we expect.
 
 For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
 

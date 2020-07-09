@@ -55,7 +55,7 @@ RUN mkdir ${HOME}/.jupyter && \
 # CPU Stage
 FROM base AS cpu
 
-RUN python recommenders/scripts/generate_conda_file.py --name base
+RUN python recommenders/tools/generate_conda_file.py --name base
 
 
 # PySpark Stage
@@ -73,7 +73,7 @@ RUN mkdir spark && \
     rm spark.tgz
 
 # Setup Conda environment
-RUN python recommenders/scripts/generate_conda_file.py --name base --pyspark
+RUN python recommenders/tools/generate_conda_file.py --name base --pyspark
 
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
     PYSPARK_PYTHON="${HOME}/conda/bin/python" \
@@ -91,7 +91,7 @@ COPY --from=base ${HOME} .
 
 # Setup Conda environment
 ENV PATH="${HOME}/conda/bin:${PATH}"
-RUN python recommenders/scripts/generate_conda_file.py --name base --gpu
+RUN python recommenders/tools/generate_conda_file.py --name base --gpu
 
 
 # Full Stage
@@ -103,7 +103,7 @@ WORKDIR ${HOME}
 COPY --from=pyspark ${HOME}/spark spark
 
 # Setup Conda environment
-RUN python recommenders/scripts/generate_conda_file.py --name base --gpu --pyspark
+RUN python recommenders/tools/generate_conda_file.py --name base --gpu --pyspark
 
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
     PYSPARK_PYTHON="${HOME}/conda/bin/python" \

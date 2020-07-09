@@ -31,7 +31,7 @@ git clone https://github.com/Microsoft/Recommenders
 
 ```
 cd Recommenders
-python scripts/generate_conda_file.py
+python tools/generate_conda_file.py
 conda env create -f reco_base.yaml  
 ```
 
@@ -67,7 +67,7 @@ The table below lists the recommender algorithms currently available in the repo
 | FastAI Embedding Dot Bias (FAST) | [Python CPU / Python GPU](examples/00_quick_start/fastai_movielens.ipynb) | Collaborative Filtering | General purpose algorithm with embeddings and biases for users and items |
 | LightFM/Hybrid Matrix Factorization | [Python CPU](examples/02_model_hybrid/lightfm_deep_dive.ipynb) | Hybrid | Hybrid matrix factorization algorithm for both implicit and explicit feedbacks |
 | LightGBM/Gradient Boosting Tree<sup>*</sup> | [Python CPU](examples/00_quick_start/lightgbm_tinycriteo.ipynb) / [PySpark](examples/02_model_content_based_filtering/mmlspark_lightgbm_criteo.ipynb) | Content-Based Filtering | Gradient Boosting Tree algorithm for fast training and low memory usage in content-based problems |
-| LightGCN | [Python CPU / Python GPU](examples/02_model_collaborative_fildering/lightgcn_deep_dive.ipynb) | Collaborative Filtering | Deep learning algorithm with simplifies the design of GCN for predicting implicit feedback |
+| LightGCN | [Python CPU / Python GPU](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | Collaborative Filtering | Deep learning algorithm with simplifies the design of GCN for predicting implicit feedback |
 | GRU4Rec | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using recurrent neural networks |
 | Neural Recommendation with Long- and Short-term User Representations (LSTUR)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/lstur_synthetic.ipynb) | Content-Based Filtering | Neural recommendation algorithm with long- and short-term user interest modeling |
 | Neural Recommendation with Attentive Multi-View Learning (NAML)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/naml_synthetic.ipynb) | Content-Based Filtering | Neural recommendation algorithm with attentive multi-view learning |
@@ -81,7 +81,7 @@ The table below lists the recommender algorithms currently available in the repo
 | Short-term and Long-term preference Integrated Recommender (SLi-Rec)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism, a time-aware controller and a content-aware controller |
 | Surprise/Singular Value Decomposition (SVD) | [Python CPU](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in datasets that are not very large |
 | Term Frequency - Inverse Document Frequency (TF-IDF) | [Python CPU](examples/00_quick_start/tfidf_covid.ipynb) | Content-Based Filtering | Simple similarity-based algorithm for content-based recommendations with text datasets |
-| Vowpal Wabbit Family (VW)<sup>*</sup> | [Python CPU (online training)](examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing |
+| Vowpal Wabbit (VW)<sup>*</sup> | [Python CPU (online training)](examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing |
 | Wide and Deep | [Python CPU / Python GPU](examples/00_quick_start/wide_deep_movielens.ipynb) | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
 | xLearn/Factorization Machine (FM) & Field-Aware FM (FFM) | [Python CPU](examples/02_model_hybrid/fm_deep_dive.ipynb) | Content-Based Filtering | Quick and memory efficient algorithm to predict labels with user/item features |
 

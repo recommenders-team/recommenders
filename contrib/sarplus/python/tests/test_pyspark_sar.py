@@ -149,12 +149,6 @@ def test_e2e(spark, pandas_dummy_dataset, header):
     df = spark.createDataFrame(pandas_dummy_dataset)
     sar.fit(df)
 
-    # assert 4*4 + 32 == sar.item_similarity.count()
-
-    # print(sar.item_similarity
-    # .toPandas()
-    # .pivot_table(index='i1', columns='i2', values='value'))
-
     test_df = spark.createDataFrame(
         pd.DataFrame({header["col_user"]: [3], header["col_item"]: [2]})
     )

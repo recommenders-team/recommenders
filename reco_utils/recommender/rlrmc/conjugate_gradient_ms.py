@@ -204,7 +204,6 @@ class ConjugateGradientMS(Solver):
                     # if ip_diff = man.inner(newx, diff, desc_dir) = 0
                     except ZeroDivisionError:
                         beta = 1
-                    # print(ip_diff,beta,man.inner(newx, diff, desc_dir))
                 elif self._beta_type == BetaTypes.HagerZhang:
                     diff = newgrad - oldgrad
                     Poldgrad = man.transp(x, newx, Pgrad)

@@ -30,15 +30,11 @@ class NextItNetIterator(SequentialIterator):
             col_spliter (str): column spliter in one line.
         """
         self.col_spliter = col_spliter
-        user_vocab, item_vocab, cate_vocab = (
-            hparams.user_vocab,
-            hparams.item_vocab,
-            hparams.cate_vocab,
-        )
+
         self.userdict, self.itemdict, self.catedict = (
-            load_dict(user_vocab),
-            load_dict(item_vocab),
-            load_dict(cate_vocab),
+            load_dict(hparams.user_vocab),
+            load_dict(hparams.item_vocab),
+            load_dict(hparams.cate_vocab),
         )
 
         self.max_seq_length = hparams.max_seq_length
@@ -122,23 +118,29 @@ class NextItNetIterator(SequentialIterator):
             history_lengths = [len(item_history_batch[i]) for i in range(instance_cnt)]
             max_seq_length_batch = self.max_seq_length
             item_history_batch_all = np.zeros(
-                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch)
-            ).astype("int32")
+                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch),
+                dtype=np.int32,
+            )
             item_cate_history_batch_all = np.zeros(
-                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch)
-            ).astype("int32")
+                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch),
+                dtype=np.int32,
+            )
             time_diff_batch = np.zeros(
-                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch)
-            ).astype("float32")
+                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch),
+                dtype=np.float32,
+            )
             time_from_first_action_batch = np.zeros(
-                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch)
-            ).astype("float32")
+                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch),
+                dtype=np.float32,
+            )
             time_to_now_batch = np.zeros(
-                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch)
-            ).astype("float32")
+                (instance_cnt * (batch_num_ngs + 1), max_seq_length_batch),
+                dtype=np.float32,
+            )
             mask = np.zeros(
-                (instance_cnt * (1 + batch_num_ngs), max_seq_length_batch)
-            ).astype("float32")
+                (instance_cnt * (1 + batch_num_ngs), max_seq_length_batch),
+                dtype=np.float32,
+            )
 
             for i in range(instance_cnt):
                 this_length = min(history_lengths[i], max_seq_length_batch)
@@ -174,7 +176,6 @@ class NextItNetIterator(SequentialIterator):
                     item_cate_list[i],
                 ]
                 label_list_all.append([1] * max_seq_length_batch)
-                # label_list_all.append(1)
                 item_list_all.append(positive_item)
                 item_cate_list_all.append(positive_item_cate)
 
@@ -193,7 +194,6 @@ class NextItNetIterator(SequentialIterator):
                         count_inner += 1
 
                     label_list_all.append([0] * max_seq_length_batch)
-                    # label_list_all.append(0)
                     item_list_all.append(negative_item_list)
                     item_cate_list_all.append(negative_item_cate_list)
                     count += 1
@@ -213,9 +213,6 @@ class NextItNetIterator(SequentialIterator):
             res["time_from_first_action"] = time_from_first_action_batch
             res["time_to_now"] = time_to_now_batch
 
-            # print("label_list_all.shape: ", res["labels"].shape)
-            # print("item_list_all.shape: ", res["items"].shape)
-
             return res
 
         else:
@@ -223,21 +220,21 @@ class NextItNetIterator(SequentialIterator):
             history_lengths = [len(item_history_batch[i]) for i in range(instance_cnt)]
             max_seq_length_batch = self.max_seq_length
             item_history_batch_all = np.zeros(
-                (instance_cnt, max_seq_length_batch)
-            ).astype("int32")
+                (instance_cnt, max_seq_length_batch), dtype=np.int32
+            )
             item_cate_history_batch_all = np.zeros(
-                (instance_cnt, max_seq_length_batch)
-            ).astype("int32")
-            time_diff_batch = np.zeros((instance_cnt, max_seq_length_batch)).astype(
-                "float32"
+                (instance_cnt, max_seq_length_batch), dtype=np.int32
+            )
+            time_diff_batch = np.zeros(
+                (instance_cnt, max_seq_length_batch), dtype=np.float32
             )
             time_from_first_action_batch = np.zeros(
-                (instance_cnt, max_seq_length_batch)
-            ).astype("float32")
-            time_to_now_batch = np.zeros((instance_cnt, max_seq_length_batch)).astype(
-                "float32"
+                (instance_cnt, max_seq_length_batch), dtype=np.float32
             )
-            mask = np.zeros((instance_cnt, max_seq_length_batch)).astype("float32")
+            time_to_now_batch = np.zeros(
+                (instance_cnt, max_seq_length_batch), dtype=np.float32
+            )
+            mask = np.zeros((instance_cnt, max_seq_length_batch), dtype=np.float32)
 
             for i in range(instance_cnt):
                 this_length = min(history_lengths[i], max_seq_length_batch)

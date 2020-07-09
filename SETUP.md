@@ -90,7 +90,7 @@ Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRI
 
 Click on the following menus to see details:
 <details>
-<summary><strong><em>Linux or MacOS</em></strong></summary>
+<summary><strong><em>Set PySpark environment variables on Linux or MacOS</em></strong></summary>
 
 To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
 First, get the path of the environment `reco_pyspark` is installed:
@@ -119,7 +119,7 @@ To unset these variables when we deactivate the environment, create the file `$R
 
 </details>
 
-<details><summary><strong><em>Windows</em></strong></summary>
+<details><summary><strong><em>Set PySpark environment variables on Windows</em></strong></summary>
 
 To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#windows).
 First, get the path of the environment `reco_pyspark` is installed:

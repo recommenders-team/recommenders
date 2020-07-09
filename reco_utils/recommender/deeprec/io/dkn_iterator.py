@@ -6,6 +6,7 @@ import numpy as np
 
 from reco_utils.recommender.deeprec.io.iterator import BaseIterator
 
+
 __all__ = ["DKNTextIterator"]
 
 
@@ -65,19 +66,13 @@ class DKNTextIterator(BaseIterator):
         self.news_word_index = {}
         self.news_entity_index = {}
         with tf.gfile.GFile(hparams.news_feature_file, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
+            for line in rd:
                 newsid, word_index, entity_index = line.strip().split(col_spliter)
                 self.news_word_index[newsid] = word_index
                 self.news_entity_index[newsid] = entity_index
         self.user_history = {}
         with tf.gfile.GFile(hparams.user_history_file, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
+            for line in rd:
                 userid, user_history_string = line.strip().split(col_spliter)
                 self.user_history[userid] = user_history_string
 
@@ -156,11 +151,7 @@ class DKNTextIterator(BaseIterator):
         cnt = 0
 
         with tf.gfile.GFile(infile, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
-
+            for line in rd:
                 (
                     label,
                     candidate_news_index,
@@ -191,7 +182,7 @@ class DKNTextIterator(BaseIterator):
                         click_news_val_batch,
                         candidate_news_entity_index_batch,
                         click_news_entity_index_batch,
-                        impression_id_list
+                        impression_id_list,
                     )
                     data_size = self.batch_size
                     yield self.gen_feed_dict(res), impression_id_list, data_size
@@ -207,14 +198,24 @@ class DKNTextIterator(BaseIterator):
             if cnt > 0:
                 data_size = cnt
                 while cnt < self.batch_size:
-                    candidate_news_index_batch.append(candidate_news_index_batch[cnt%data_size])
-                    candidate_news_val_batch.append(candidate_news_val_batch[cnt%data_size])
-                    click_news_index_batch.append(click_news_index_batch[cnt%data_size])
-                    click_news_val_batch.append(click_news_val_batch[cnt%data_size])
-                    candidate_news_entity_index_batch.append(candidate_news_entity_index_batch[cnt%data_size])
-                    click_news_entity_index_batch.append(click_news_entity_index_batch[cnt%data_size])
-                    label_list.append(label_list[cnt%data_size])
-                    impression_id_list.append(impression_id_list[cnt%data_size])
+                    candidate_news_index_batch.append(
+                        candidate_news_index_batch[cnt % data_size]
+                    )
+                    candidate_news_val_batch.append(
+                        candidate_news_val_batch[cnt % data_size]
+                    )
+                    click_news_index_batch.append(
+                        click_news_index_batch[cnt % data_size]
+                    )
+                    click_news_val_batch.append(click_news_val_batch[cnt % data_size])
+                    candidate_news_entity_index_batch.append(
+                        candidate_news_entity_index_batch[cnt % data_size]
+                    )
+                    click_news_entity_index_batch.append(
+                        click_news_entity_index_batch[cnt % data_size]
+                    )
+                    label_list.append(label_list[cnt % data_size])
+                    impression_id_list.append(impression_id_list[cnt % data_size])
                     cnt += 1
                 res = self._convert_data(
                     label_list,
@@ -224,7 +225,7 @@ class DKNTextIterator(BaseIterator):
                     click_news_val_batch,
                     candidate_news_entity_index_batch,
                     click_news_entity_index_batch,
-                    impression_id_list
+                    impression_id_list,
                 )
                 data_size = self.batch_size
                 yield self.gen_feed_dict(res), impression_id_list, data_size
@@ -246,10 +247,7 @@ class DKNTextIterator(BaseIterator):
         candidate_news_entity_index_batch = []
         cnt = 0
         with tf.gfile.GFile(infile, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
+            for line in rd:
                 newsid, word_index, entity_index = line.strip().split(" ")
                 newsid_list.append(newsid)
                 candidate_news_index = []
@@ -283,9 +281,15 @@ class DKNTextIterator(BaseIterator):
             if cnt > 0:
                 data_size = cnt
                 while cnt < self.batch_size:
-                    candidate_news_index_batch.append(candidate_news_index_batch[cnt%data_size])
-                    candidate_news_val_batch.append(candidate_news_val_batch[cnt%data_size])
-                    candidate_news_entity_index_batch.append(candidate_news_entity_index_batch[cnt%data_size])
+                    candidate_news_index_batch.append(
+                        candidate_news_index_batch[cnt % data_size]
+                    )
+                    candidate_news_val_batch.append(
+                        candidate_news_val_batch[cnt % data_size]
+                    )
+                    candidate_news_entity_index_batch.append(
+                        candidate_news_entity_index_batch[cnt % data_size]
+                    )
                     cnt += 1
                 res = self._convert_infer_data(
                     candidate_news_index_batch,
@@ -293,7 +297,6 @@ class DKNTextIterator(BaseIterator):
                     candidate_news_entity_index_batch,
                 )
                 yield self.gen_infer_feed_dict(res), newsid_list, data_size
-
 
     def _convert_data(
         self,
@@ -304,7 +307,7 @@ class DKNTextIterator(BaseIterator):
         click_news_val_batch,
         candidate_news_entity_index_batch,
         click_news_entity_index_batch,
-        impression_id_list
+        impression_id_list,
     ):
         """Convert data into numpy arrays that are good for further model operation.
         
@@ -359,16 +362,14 @@ class DKNTextIterator(BaseIterator):
         res["click_news_entity_values"] = np.asarray(
             click_news_entity_values, dtype=np.int64
         )
-        res["impression_id"] = np.asarray(
-            impression_id_list, dtype=np.int64
-        )
+        res["impression_id"] = np.asarray(impression_id_list, dtype=np.int64)
         return res
 
     def _convert_infer_data(
-            self,
-            candidate_news_index_batch,
-            candidate_news_val_batch,
-            candidate_news_entity_index_batch,
+        self,
+        candidate_news_index_batch,
+        candidate_news_val_batch,
+        candidate_news_entity_index_batch,
     ):
         """Convert data into numpy arrays that are good for further model operation.
 

@@ -30,7 +30,7 @@ jobs:
   # Uncomment if needed
   # Conda creation can take around 10min
   # - bash: |
-  #     python scripts/generate_conda_file.py  --pyspark
+  #     python tools/generate_conda_file.py  --pyspark
   #     conda env update -n reco_pyspark -f reco_pyspark.yaml
   #   displayName: 'Creating Conda Environment with dependencies'
 

@@ -8,8 +8,12 @@ import warnings
 import pandas as pd
 import gzip
 import random
+import logging
 import _pickle as cPickle
 from reco_utils.dataset.download_utils import maybe_download, download_path
+
+
+logger = logging.getLogger()
 
 
 def data_preprocessing(
@@ -41,7 +45,9 @@ def data_preprocessing(
     if is_history_expanding:
         _data_generating(preprocessed_output, train_file, valid_file, test_file)
     else:
-        _data_generating_no_history_expanding(preprocessed_output, train_file, valid_file, test_file)
+        _data_generating_no_history_expanding(
+            preprocessed_output, train_file, valid_file, test_file
+        )
     _create_vocab(train_file, user_vocab, item_vocab, cate_vocab)
     _negative_sampling_offline(
         sampled_instance_file, valid_file, test_file, valid_num_ngs, test_num_ngs
@@ -56,7 +62,7 @@ def _create_vocab(train_file, user_vocab, item_vocab, cate_vocab):
     item_dict = {}
     cat_dict = {}
 
-    print("vocab generating...")
+    logger.info("vocab generating...")
     for line in f_train:
         arr = line.strip("\n").split("\t")
         uid = arr[1]
@@ -125,7 +131,7 @@ def _negative_sampling_offline(
     global item2cate
 
     # valid negative sampling
-    print("start valid negative sampling")
+    logger.info("start valid negative sampling")
     with open(valid_file, "r") as f:
         valid_lines = f.readlines()
     write_valid = open(valid_file, "w")
@@ -147,7 +153,7 @@ def _negative_sampling_offline(
             write_valid.write("\t".join(words) + "\n")
 
     # test negative sampling
-    print("start test negative sampling")
+    logger.info("start test negative sampling")
     with open(test_file, "r") as f:
         test_lines = f.readlines()
     write_test = open(test_file, "w")
@@ -170,16 +176,16 @@ def _negative_sampling_offline(
 
 
 def _data_generating(input_file, train_file, valid_file, test_file, min_sequence=1):
-    '''produce train, valid and test file from processed_output file
+    """produce train, valid and test file from processed_output file
     Each user's behavior sequence will be unfolded and produce multiple lines in trian file.
     Like, user's behavior sequence: 12345, and this function will write into train file:
     1, 12, 123, 1234, 12345
-    '''
+    """
     f_input = open(input_file, "r")
     f_train = open(train_file, "w")
     f_valid = open(valid_file, "w")
     f_test = open(test_file, "w")
-    print("data generating...")
+    logger.info("data generating...")
     last_user_id = None
     for line in f_input:
         line_split = line.strip().split("\t")
@@ -242,16 +248,19 @@ def _data_generating(input_file, train_file, valid_file, test_file, min_sequence
             cate_list.append(category)
             dt_list.append(date_time)
 
-def _data_generating_no_history_expanding(input_file, train_file, valid_file, test_file, min_sequence=1):
-    '''produce train, valid and test file from processed_output file
+
+def _data_generating_no_history_expanding(
+    input_file, train_file, valid_file, test_file, min_sequence=1
+):
+    """produce train, valid and test file from processed_output file
     Each user's behavior sequence will only produce one line in trian file.
     Like, user's behavior sequence: 12345, and this function will write into train file: 12345
-    '''
+    """
     f_input = open(input_file, "r")
     f_train = open(train_file, "w")
     f_valid = open(valid_file, "w")
     f_test = open(test_file, "w")
-    print("data generating...")
+    logger.info("data generating...")
 
     last_user_id = None
     last_movie_id = None
@@ -274,7 +283,7 @@ def _data_generating_no_history_expanding(input_file, train_file, valid_file, te
         elif last_tfile == "test":
             fo = f_test
         if user_id != last_user_id or tfile == "valid" or tfile == "test":
-            if last_user_id != None:
+            if last_user_id is not None:
                 history_clk_num = len(movie_id_list)
                 cat_str = ""
                 mid_str = ""
@@ -310,7 +319,7 @@ def _data_generating_no_history_expanding(input_file, train_file, valid_file, te
                         + dt_str
                         + "\n"
                     )
-            if tfile == "train" or last_user_id == None:        
+            if tfile == "train" or last_user_id == None:
                 movie_id_list = []
                 cate_list = []
                 dt_list = []
@@ -324,8 +333,9 @@ def _data_generating_no_history_expanding(input_file, train_file, valid_file, te
             cate_list.append(category)
             dt_list.append(date_time)
 
+
 def _create_item2cate(instance_file):
-    print("creating item2cate dict")
+    logger.info("creating item2cate dict")
     global item2cate
     instance_df = pd.read_csv(
         instance_file,
@@ -336,7 +346,7 @@ def _create_item2cate(instance_file):
 
 
 def _get_sampled_data(instance_file, sample_rate):
-    print("getting sampled data...")
+    logger.info("getting sampled data...")
     global item2cate
     output_file = instance_file + "_" + str(sample_rate)
     columns = ["label", "user_id", "item_id", "timestamp", "cate_id"]
@@ -355,7 +365,7 @@ def _get_sampled_data(instance_file, sample_rate):
 
 
 def _meta_preprocessing(meta_readfile):
-    print("start meta preprocessing...")
+    logger.info("start meta preprocessing...")
     meta_writefile = meta_readfile + "_output"
     meta_r = open(meta_readfile, "r")
     meta_w = open(meta_writefile, "w")
@@ -368,7 +378,7 @@ def _meta_preprocessing(meta_readfile):
 
 
 def _reviews_preprocessing(reviews_readfile):
-    print("start reviews preprocessing...")
+    logger.info("start reviews preprocessing...")
     reviews_writefile = reviews_readfile + "_output"
     reviews_r = open(reviews_readfile, "r")
     reviews_w = open(reviews_writefile, "w")
@@ -388,7 +398,7 @@ def _reviews_preprocessing(reviews_readfile):
 
 
 def _create_instance(reviews_file, meta_file):
-    print("start create instances...")
+    logger.info("start create instances...")
     dirs, _ = os.path.split(reviews_file)
     output_file = os.path.join(dirs, "instance_output")
 
@@ -429,7 +439,7 @@ def _create_instance(reviews_file, meta_file):
 
 
 def _data_processing(input_file):
-    print("start data processing...")
+    logger.info("start data processing...")
     dirs, _ = os.path.split(input_file)
     output_file = os.path.join(dirs, "preprocessed_output")
 
