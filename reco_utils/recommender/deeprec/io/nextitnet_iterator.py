@@ -30,15 +30,11 @@ class NextItNetIterator(SequentialIterator):
             col_spliter (str): column spliter in one line.
         """
         self.col_spliter = col_spliter
-        user_vocab, item_vocab, cate_vocab = (
-            hparams.user_vocab,
-            hparams.item_vocab,
-            hparams.cate_vocab,
-        )
+
         self.userdict, self.itemdict, self.catedict = (
-            load_dict(user_vocab),
-            load_dict(item_vocab),
-            load_dict(cate_vocab),
+            load_dict(hparams.user_vocab),
+            load_dict(hparams.item_vocab),
+            load_dict(hparams.cate_vocab),
         )
 
         self.max_seq_length = hparams.max_seq_length
