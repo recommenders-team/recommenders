@@ -81,7 +81,9 @@ class ImplicitCF(object):
             self.user2id = dict(
                 zip(user_idx[self.col_user], user_idx[self.col_user + "_idx"])
             )
-            self.id2user = {self.user2id[k]: k for k in self.user2id}
+            self.id2user = dict(
+                zip(user_idx[self.col_user + "_idx"], user_idx[self.col_user])
+            )
 
         if self.item_idx is None:
             item_idx = df[[self.col_item]].drop_duplicates()
@@ -92,7 +94,9 @@ class ImplicitCF(object):
             self.item2id = dict(
                 zip(item_idx[self.col_item], item_idx[self.col_item + "_idx"])
             )
-            self.id2item = {self.item2id[k]: k for k in self.item2id}
+            self.id2item = dict(
+                zip(item_idx[self.col_item + "_idx"], item_idx[self.col_item])
+            )
 
         return self._reindex(train), self._reindex(test)
 
