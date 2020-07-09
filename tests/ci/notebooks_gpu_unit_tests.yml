@@ -51,7 +51,7 @@ jobs:
   - template: env-setup.yml # template reference
 
   - script: 
-      python scripts/generate_conda_file.py --gpu --name reco 
+      python tools/generate_conda_file.py --gpu --name reco 
     displayName: ' generate_conda_file.py'
 
   - script: 

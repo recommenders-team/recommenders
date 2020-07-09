@@ -317,7 +317,7 @@ class SequentialBaseModel(BaseModel):
         self.embed_params.append(involved_cate_embedding)
 
         self.target_item_embedding = tf.concat(
-            [self.item_embedding, self.cate_embedding], 1
+            [self.item_embedding, self.cate_embedding], -1
         )
         tf.summary.histogram("target_item_embedding_output", self.target_item_embedding)
 

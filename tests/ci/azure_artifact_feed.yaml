@@ -61,7 +61,7 @@ jobs:
     condition: always() # this step will always run, even if the pipeline is canceled
 
   - script: |
-      python ./scripts/generate_conda_file.py --name $(env_name) $(env_flag)
+      python ./tools/generate_conda_file.py --name $(env_name) $(env_flag)
       conda env create --quiet -f $(env_name).yaml 2> log
     displayName: 'Setup Conda Env'
 

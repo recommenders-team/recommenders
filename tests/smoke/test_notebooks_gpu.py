@@ -119,9 +119,10 @@ def test_dkn_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res"]["auc"] == pytest.approx(0.4707, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["acc"] == pytest.approx(0.5725, rel=TOL, abs=ABS_TOL)
-    # assert results["res"]["f1"] == pytest.approx(0.7281, rel=TOL, abs=ABS_TOL) # FIXME: issue #528
+    assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
@@ -147,3 +148,67 @@ def test_wide_deep_smoke(notebooks, tmp):
     assert results["mae"] == pytest.approx(0.876228, rel=TOL, abs=ABS_TOL)
     assert results["ndcg_at_k"] == pytest.approx(0.181513, rel=TOL, abs=ABS_TOL)
     assert results["precision_at_k"] == pytest.approx(0.158961, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+def test_naml_smoke(notebooks):
+    notebook_path = notebooks["naml_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epoch=1, seed=42),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res_syn"]["group_auc"] == pytest.approx(0.5565, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1811, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+def test_nrms_smoke(notebooks):
+    notebook_path = notebooks["nrms_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epoch=1, seed=42),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res_syn"]["group_auc"] == pytest.approx(0.5579, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1785, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+def test_npa_smoke(notebooks):
+    notebook_path = notebooks["npa_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epoch=1, seed=42),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res_syn"]["group_auc"] == pytest.approx(0.538, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1686, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.smoke
+@pytest.mark.gpu
+def test_lstur_smoke(notebooks):
+    notebook_path = notebooks["lstur_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epoch=1, seed=40),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res_syn"]["group_auc"] == pytest.approx(0.5527, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1762, rel=TOL, abs=ABS_TOL)

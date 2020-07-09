@@ -34,7 +34,7 @@ jobs:
     displayName: 'Remove Conda Env if it exists'
 
   - script: |
-      python ./scripts/generate_conda_file.py --gpu --name nightly_reco_gpu
+      python ./tools/generate_conda_file.py --gpu --name nightly_reco_gpu
       conda env create --quiet -f nightly_reco_gpu.yaml --verbose
     displayName: 'Setup Conda Env'
 

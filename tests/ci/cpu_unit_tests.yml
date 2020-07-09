@@ -50,7 +50,7 @@ steps:
 - template: env-setup.yml 
 
 - script: 
-     python scripts/generate_conda_file.py --name reco 
+     python tools/generate_conda_file.py --name reco 
   displayName: ' generate_conda_file.py'
 
 - script: 

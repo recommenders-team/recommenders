@@ -8,10 +8,10 @@ metadata:
     tags: ["Recommenders", "Metrics"]
 inputs:
 - name: Rating true
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: True DataFrame.
 - name: Rating pred
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: Predicted DataFrame.
 - name: User column
   type: String
@@ -43,7 +43,7 @@ inputs:
   description: Threshold of top items per user.
 outputs:
 - name: Score
-  type: DataFrameDirectory
+  type: AnyDirectory
   description: MAP at k (min=0, max=1).
 implementation:
   container:

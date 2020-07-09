@@ -56,6 +56,22 @@ class DKN(BaseModel):
                 e_embedding_transformed = tf.nn.tanh(tf.matmul(e_embedding, W) + b)
                 self.entity_embedding.assign(e_embedding_transformed)
 
+                if hparams.use_context:
+                    self.context_embedding = tf.Variable(
+                        tf.constant(
+                            0.0, shape=[hparams.entity_size, hparams.dim], dtype=tf.float32
+                        ),
+                        trainable=True,
+                        name="context",
+                    )
+                    c_embedding = self._init_embedding(hparams.contextEmb_file)
+                    W = tf.Variable(
+                        tf.random_uniform([hparams.entity_dim, hparams.dim], -1, 1)
+                    )
+                    b = tf.Variable(tf.zeros([hparams.dim]))
+                    c_embedding_transformed = tf.nn.tanh(tf.matmul(c_embedding, W) + b)
+                    self.context_embedding.assign(c_embedding_transformed)
+
         super().__init__(hparams, iterator_creator, graph=self.graph)
 
     def _init_embedding(self, file_path):
@@ -79,6 +95,10 @@ class DKN(BaseModel):
         l2_loss = tf.add(
             l2_loss, tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.entity_embedding))
         )
+        if hparams.use_context:
+            l2_loss = tf.add(
+                l2_loss, tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.context_embedding))
+            )
         params = self.layer_params
         for param in params:
             l2_loss = tf.add(
@@ -97,6 +117,11 @@ class DKN(BaseModel):
             l1_loss,
             tf.multiply(hparams.embed_l1, tf.norm(self.entity_embedding, ord=1)),
         )
+        if hparams.use_context:
+            l1_loss = tf.add(
+                l1_loss,
+                tf.multiply(hparams.embed_l1, tf.norm(self.context_embedding, ord=1)),
+            )
         params = self.layer_params
         for param in params:
             l1_loss = tf.add(
@@ -213,6 +238,7 @@ class DKN(BaseModel):
 
         click_field_embed_final_batch = []
         news_field_embed_final_batch = []
+        self.news_field_embed_final_batch = []
 
         with tf.variable_scope("kims_cnn") as kcnn_scope:
             pass
@@ -301,14 +327,14 @@ class DKN(BaseModel):
                     if attention_output_b not in self.layer_params:
                         self.layer_params.append(attention_output_b)
 
-                news_field_embed_final_batch.append(news_field_embed)
+                self.news_field_embed_final_batch.append(news_field_embed)
                 click_field_embed_final_batch.append(click_field_embed_final)
                 scope.reuse_variables()
 
         click_field_embed_final_batch = tf.concat(click_field_embed_final_batch, axis=0)
-        news_field_embed_final_batch = tf.concat(news_field_embed_final_batch, axis=0)
+        self.news_field_embed_final_batch = tf.concat(self.news_field_embed_final_batch, axis=0)
 
-        return click_field_embed_final_batch, news_field_embed_final_batch
+        return click_field_embed_final_batch, self.news_field_embed_final_batch
 
     def _kims_cnn(self, word, entity, hparams):
         """The KCNN module. KCNN is an extension of traditional CNN that incorporates symbolic knowledge from
@@ -329,7 +355,11 @@ class DKN(BaseModel):
         embedded_chars = tf.nn.embedding_lookup(self.embedding, word)
 
         entity_embedded_chars = tf.nn.embedding_lookup(self.entity_embedding, entity)
-        concat = tf.concat([embedded_chars, entity_embedded_chars], axis=-1)
+        if hparams.use_context:
+            context_embedded_chars = tf.nn.embedding_lookup(self.context_embedding, entity)
+            concat = tf.concat([embedded_chars, entity_embedded_chars, context_embedded_chars], axis=-1)
+        else:
+            concat = tf.concat([embedded_chars, entity_embedded_chars], axis=-1)
         concat_expanded = tf.expand_dims(concat, -1)
 
         # Create a convolution + maxpool layer for each filter size
@@ -339,7 +369,10 @@ class DKN(BaseModel):
                 "conv-maxpool-%s" % filter_size, initializer=self.initializer
             ):
                 # Convolution Layer
-                filter_shape = [filter_size, dim * 2, 1, num_filters]
+                if hparams.use_context:
+                    filter_shape = [filter_size, dim * 3, 1, num_filters]
+                else:
+                    filter_shape = [filter_size, dim * 2, 1, num_filters]
                 W = tf.get_variable(
                     name="W" + "_filter_size_" + str(filter_size),
                     shape=filter_shape,
