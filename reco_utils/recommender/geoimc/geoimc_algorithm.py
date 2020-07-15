@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 """
 Module maintaining the IMC problem.
 """
@@ -63,6 +66,8 @@ class IMCProblem(object):
 
 
     def loadTarget(self, ):
+        """Loads target matrix from the dataset pointer.
+        """
         self.Y = self.dataset.get_data()
 
 
@@ -81,7 +86,14 @@ class IMCProblem(object):
         return residual_global
 
 
-    def cost(self, params, target, residual_global):
+    def cost(self, params, residual_global):
+        """Compute the cost of GeoIMC optimization problem
+
+        Args:
+            params (Iterator): An iterator containing the manifold point at which
+            the cost needs to be evaluated.
+            residual_global (csr_matrix): Residual matrix.
+        """
         U = params[0]
         B = params[1]
         V = params[2]
@@ -101,13 +113,20 @@ class IMCProblem(object):
         return cost
 
 
-    def _egrad(self, params, target_indices, target_indptr, residual_global):
+    def _egrad(self, params, residual_global):
+        """Computes the euclidean gradient
+
+        Args:
+            params (Iterator): An iterator containing the manifold point at which
+            the cost needs to be evaluated.
+            residual_global (csr_matrix): Residual matrix.
+        """
         U = params[0]
         B = params[1]
         V = params[2]
 
         residual_global_csr = csr_matrix(
-            (residual_global, target_indices, target_indptr),
+            (residual_global, self.Y.indices, self.Y.indptr),
             shape=self.shape,
         )
 
@@ -152,6 +171,10 @@ class IMCProblem(object):
 
 
     def _optimize(self, max_opt_time, max_opt_iter, verbosity):
+        """Optimize the GeoIMC optimization problem
+
+        Args: The args of `solve`
+        """
         residual_global = np.zeros(self.Y.data.shape)
 
         solver = ConjugateGradient(maxtime=max_opt_time, maxiter=max_opt_iter, linesearch=LineSearchBackTracking())
@@ -159,13 +182,10 @@ class IMCProblem(object):
             manifold=self.manifold,
             cost=lambda x: self.cost(
                 x,
-                self.Y,
                 residual_global
             ),
             egrad=lambda z: self._egrad(
                 z,
-                self.Y.indices,
-                self.Y.indptr,
                 residual_global
             ),
             verbosity=verbosity
@@ -173,10 +193,12 @@ class IMCProblem(object):
         solution = solver.solve(prb, x=self.W)
         self.W = [solution[0], solution[1], solution[2]]
 
-        return self.cost(self.W, self.Y, residual_global)
+        return self.cost(self.W, residual_global)
 
 
     def reset(self):
+        """Reset the model.
+        """
         self.optima_reached = False
         self.W = None
         return

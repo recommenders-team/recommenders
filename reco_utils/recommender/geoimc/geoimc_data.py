@@ -1,4 +1,8 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import warnings
+import logging
 from scipy.io import loadmat
 import pandas as pd
 import numpy as np
@@ -9,8 +13,10 @@ from sklearn.preprocessing import normalize
 from numba import jit, prange
 
 from IPython import embed
-from .GeoIMCutils import length_normalize, reduce_dims
+from .geoimc_utils import length_normalize, reduce_dims, binarize
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("geoimc")
 
 class DataPtr():
     """
@@ -18,6 +24,13 @@ class DataPtr():
     """
 
     def __init__(self, data, entities):
+        """Initialize a data pointer
+
+        Args:
+            data (csr_matrix): The target data matrix.
+            entities (Iterator): An iterator (of 2 elements (ndarray)) containing
+            the features of row, col entities.
+        """
         assert isspmatrix_csr(data)
 
         self.data = data
@@ -27,12 +40,23 @@ class DataPtr():
 
 
     def get_data(self):
+        """
+        Returns:
+            csr_matrix: Target matrix (based on the data_indices filter)
+        """
         if self.data_indices is None:
             return self.data
         return self.data[self.data_indices]
 
 
     def get_entity(self, of="row"):
+        """ Get entity
+
+        Args:
+            of (str): The entity, either 'row' or 'col'
+        Returns:
+            ndarray: Entity matrix (based on the entity_indices filter)
+        """
         idx = 0 if of=="row" else 1
         if self.entity_indices[idx] is None:
             return self.entities[idx]
@@ -73,25 +97,28 @@ class Dataset():
         self.target_transform = target_transform
 
 
-    def load_data(self, path):
-        raise NotImplementedError(f"{self.name} should implement it")
-
-
-    def binarize_rating(self, v):
-        return 1 if v >=3 else 0
-
-
     def normalize(self):
+        """Normalizes the entity features
+
+        """
         if self.feat_normalize:
             for i in range(len(self.entities)):
                 if isspmatrix_csr(self.entities[i]):
-                    print(f"Normalizing CSR matrix")
+                    logger.info(f"Normalizing CSR matrix")
                     self.entities[i] = normalize(self.entities[i])
                 else:
                     self.entities[i] = length_normalize(self.entities[i])
 
 
     def generate_train_test_data(self, data, test_ratio=0.3):
+        """Generate train, test split. The split is performed on the row
+        entities. So, this essentially becomes a cold start row entity test.
+
+        Args:
+            data (csr_matrix): The entire target matrix.
+            test_ratio (float): Ratio of test split.
+
+        """
         self.training_data = DataPtr(data, self.entities)
         self.test_data = DataPtr(data, self.entities)
 
@@ -106,10 +133,13 @@ class Dataset():
 
 
     def reduce_dims(self):
+        """Reduces the dimensionality of entity features.
+
+        """
         if self.features_dim != 0:
             self.entities[0] = reduce_dims(self.entities[0], self.features_dim)
             self.entities[1] = reduce_dims(self.entities[1], self.features_dim)
-            print(f"Dimensionality reduced ...")
+            logger.info(f"Dimensionality reduced ...")
 
 
 class ML_100K(Dataset):
@@ -122,21 +152,33 @@ class ML_100K(Dataset):
 
 
     def df2coo(self, df):
+        """Convert the input dataframe into a coo matrix
+
+        Args:
+            df (pd.DataFrame): DataFrame containing the target matrix information.
+        """
         data = []
         row = list(df['user id']-1)
         col = list(df['item id']-1)
         for idx in range(0, len(df)):
             val = df['rating'].iloc[idx]
-            if self.target_transform == 'normalize':
-                val = val/7.4162
-            elif self.target_transform == 'binarize':
-                val = self.binarize_rating(val)
             data += [val]
+
+        if self.target_transform == 'normalize':
+            data = data/7.4162
+        elif self.target_transform == 'binarize':
+            data = binarize(np.array(data), 3)
+
         # TODO: Get this from `u.info`
         return coo_matrix((data, (row, col)), shape=(943, 1682))
 
 
     def _read_from_file(self, path):
+        """Read the traget matrix from file at path.
+
+        Args:
+            path (str): Path to the target matrix
+        """
         df = pd.read_csv(path, delimiter='\t', names=['user id','item id','rating','timestamp'], encoding="ISO-8859-1")
         df.drop(['timestamp'], axis=1, inplace=True)
         return self.df2coo(df)
@@ -158,5 +200,12 @@ class ML_100K(Dataset):
 
 
     def _load_features(self, path, key):
+        """Load entitiy features
+
+        Args:
+            path (str): Path to the file containing features. It should be a matlab file.
+            key (str): key containing the feature information.
+
+        """
         data = loadmat(path)
         return data[key].toarray()

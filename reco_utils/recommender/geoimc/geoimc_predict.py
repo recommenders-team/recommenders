@@ -1,9 +1,12 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import numpy as np
 from scipy.linalg import sqrtm
 from numba import njit, jit, prange
 
 from IPython import embed
-from .GeoIMCutils import binarize as conv_binary, length_normalize
+from .geoimc_utils import binarize as conv_binary, length_normalize
 
 class PlainScalarProduct(object):
     """
@@ -27,6 +30,8 @@ class PlainScalarProduct(object):
 
 
     def sim(self, **kwargs):
+        """Calculate the similarity score
+        """
         sim = self.X.dot(self.Y.T)
         return sim
 
@@ -61,6 +66,14 @@ class Inferer():
 
 
     def get_method(self, k):
+        """Get the inferer method
+
+        Args:
+            k (str): The inferer name
+
+        Returns:
+            class: A class object implementing the inferer 'k'
+        """
         if k == 'dot':
             method = PlainScalarProduct
         else:
