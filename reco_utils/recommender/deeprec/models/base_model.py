@@ -572,10 +572,11 @@ class BaseModel:
         """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input, _, _ in self.iterator.load_data_from_file(
+            for batch_data_input, _, data_size in self.iterator.load_data_from_file(
                 infile_name
             ):
                 step_pred = self.infer(load_sess, batch_data_input)
+                step_pred = step_pred[0][:data_size]
                 step_pred = np.reshape(step_pred, -1)
                 wt.write("\n".join(map(str, step_pred)))
                 # line break after each batch.

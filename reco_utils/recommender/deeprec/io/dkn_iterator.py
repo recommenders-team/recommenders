@@ -196,7 +196,6 @@ class DKNTextIterator(BaseIterator):
                     click_news_entity_index_batch,
                     impression_id_list,
                 )
-                data_size = self.batch_size
                 yield self.gen_feed_dict(res), impression_id_list, data_size
 
     def load_infer_data_from_file(self, infile):
