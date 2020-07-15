@@ -9,8 +9,6 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 ## Table of Contents
 
-- [Setup guide](#setup-guide)
-  - [Table of Contents](#table-of-contents)
   - [Compute environments](#compute-environments)
   - [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
     - [Requirements](#requirements)
