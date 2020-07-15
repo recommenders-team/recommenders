@@ -9,19 +9,22 @@ This document describes how to setup all the dependencies to run the notebooks i
 
 ## Table of Contents
 
-* [Compute environments](#compute-environments)
-* [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
-  * [Requirements](#requirements)
-  * [Dependencies setup](#dependencies-setup)
-  * [Register the conda environment as a kernel in Jupyter](#Register-the-conda-environment-as-a-kernel-in-Jupyter)
-  * [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
-* [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
-  * [Requirements of Azure Databricks](#requirements-of-azure-databricks)
-  * [Repository installation](#repository-installation)
-  * [Troubleshooting Installation on Azure Databricks](#Troubleshooting-Installation-on-Azure-Databricks)
-  * [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
-* [Install the utilities via PIP](#install-the-utilities-via-pip)
-* [Setup guide for Docker](#setup-guide-for-docker)
+- [Setup guide](#setup-guide)
+  - [Table of Contents](#table-of-contents)
+  - [Compute environments](#compute-environments)
+  - [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
+    - [Requirements](#requirements)
+    - [Dependencies setup](#dependencies-setup)
+    - [Register the conda environment as a kernel in Jupyter](#register-the-conda-environment-as-a-kernel-in-jupyter)
+    - [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
+  - [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
+    - [Requirements of Azure Databricks](#requirements-of-azure-databricks)
+    - [Repository installation](#repository-installation)
+    - [Confirm Installation](#confirm-installation)
+    - [Troubleshooting Installation on Azure Databricks](#troubleshooting-installation-on-azure-databricks)
+    - [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
+  - [Install the utilities via PIP](#install-the-utilities-via-pip)
+  - [Setup guide for Docker](#setup-guide-for-docker)
 
 ## Compute environments
 
@@ -50,7 +53,7 @@ conda update anaconda        # use 'conda install anaconda' if the package is no
 We provide a script, [generate_conda_file.py](tools/generate_conda_file.py), to generate a conda-environment yaml file
 which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
 
-**NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. Detailed instructions for installing `cmake` can be found [here](https://vitux.com/how-to-install-cmake-on-ubuntu-18-04/). The default version of `cmake` is 3.15.2. One can specify a different version by configuring the argument of `CMAKE` in building the Docker image. 
+**NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/). 
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
