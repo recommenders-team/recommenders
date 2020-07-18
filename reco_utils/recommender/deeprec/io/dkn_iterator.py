@@ -64,8 +64,12 @@ class DKNTextIterator(BaseIterator):
         self.user_history = {}
         with tf.gfile.GFile(hparams.user_history_file, "r") as rd:
             for line in rd:
-                userid, user_history_string = line.strip().split(col_spliter)
-                user_history = user_history_string.split(",")
+                if len(line.strip().split(col_spliter)) == 1:
+                    userid = line.strip()
+                    user_history = []
+                else:
+                    userid, user_history_string = line.strip().split(col_spliter)
+                    user_history = user_history_string.split(",")
                 click_news_index = []
                 click_news_entity_index = []
                 if len(user_history) > self.his_size:
