@@ -162,8 +162,10 @@ def test_naml_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(0.5565, rel=TOL, abs=ABS_TOL)
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1811, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["group_auc"] == pytest.approx(
+        0.5801, rel=TOL, abs=ABS_TOL
+    )
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2512, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
@@ -178,8 +180,10 @@ def test_nrms_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(0.5579, rel=TOL, abs=ABS_TOL)
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1785, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["group_auc"] == pytest.approx(
+        0.5768, rel=TOL, abs=ABS_TOL
+    )
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2457, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
@@ -194,8 +198,10 @@ def test_npa_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(0.538, rel=TOL, abs=ABS_TOL)
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1686, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["group_auc"] == pytest.approx(
+        0.5861, rel=TOL, abs=ABS_TOL
+    )
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.255, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.smoke
@@ -210,5 +216,7 @@ def test_lstur_smoke(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(0.5527, rel=TOL, abs=ABS_TOL)
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.1762, rel=TOL, abs=ABS_TOL)
+    assert results["res_syn"]["group_auc"] == pytest.approx(
+        0.5977, rel=TOL, abs=ABS_TOL
+    )
+    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2618, rel=TOL, abs=ABS_TOL)

@@ -268,10 +268,10 @@ def test_slirec_quickstart_integration(
             42,
             {
                 "res_syn": {
-                    "group_auc": 0.5889,
-                    "mean_mrr": 0.2013,
-                    "ndcg@5": 0.2025,
-                    "ndcg@10": 0.2668,
+                    "group_auc": 0.6249,
+                    "mean_mrr": 0.2816,
+                    "ndcg@5": 0.3064,
+                    "ndcg@10": 0.3762,
                 }
             },
         )
@@ -306,14 +306,14 @@ def test_nrms_quickstart_integration(notebooks, epochs, seed, expected_values):
     "epochs, seed, expected_values",
     [
         (
-            5,
+            8,
             42,
             {
                 "res_syn": {
-                    "group_auc": 0.5667,
-                    "mean_mrr": 0.1919,
-                    "ndcg@5": 0.1955,
-                    "ndcg@10": 0.2574,
+                    "group_auc": 0.6427,
+                    "mean_mrr": 0.2921,
+                    "ndcg@5": 0.3219,
+                    "ndcg@10": 0.3876,
                 }
             },
         )
@@ -352,10 +352,10 @@ def test_naml_quickstart_integration(notebooks, epochs, seed, expected_values):
             40,
             {
                 "res_syn": {
-                    "group_auc": 0.5790,
-                    "mean_mrr": 0.1931,
-                    "ndcg@5": 0.1931,
-                    "ndcg@10": 0.2571,
+                    "group_auc": 0.6444,
+                    "mean_mrr": 0.2983,
+                    "ndcg@5": 0.3287,
+                    "ndcg@10": 0.3938,
                 }
             },
         )
@@ -383,20 +383,21 @@ def test_lstur_quickstart_integration(notebooks, epochs, seed, expected_values):
             value["ndcg@10"], rel=TOL, abs=ABS_TOL
         )
 
+
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "epochs, seed, expected_values",
     [
         (
-            5,
+            6,
             42,
             {
                 "res_syn": {
-                    "group_auc": 0.5609,
-                    "mean_mrr": 0.1783,
-                    "ndcg@5": 0.1697,
-                    "ndcg@10": 0.2486,
+                    "group_auc": 0.6035,
+                    "mean_mrr": 0.2765,
+                    "ndcg@5": 0.2977,
+                    "ndcg@10": 0.3637,
                 }
             },
         )
