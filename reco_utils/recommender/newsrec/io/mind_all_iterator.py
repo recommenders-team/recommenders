@@ -25,7 +25,9 @@ class MINDAllIterator(BaseIterator):
         ID_spliter (str): ID spliter in one line.
         batch_size (int): the samples num in one batch.
         title_size (int): max word num in news title.
+        body_size (int): max word num in news body (abstract used in MIND).
         his_size (int): max clicked news num in user click history.
+        npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.
     """
 
     def __init__(
@@ -58,7 +60,7 @@ class MINDAllIterator(BaseIterator):
             file path (str): file path
         
         Returns:
-            (obj): picle load obj
+            (obj): pickle load obj
         """
         with open(file_path, "rb") as f:
             return pickle.load(f)
@@ -120,6 +122,11 @@ class MINDAllIterator(BaseIterator):
                 self.news_subvert_index[news_index, 0] = self.subvert_dict[subvert]
 
     def init_behaviors(self, behaviors_file):
+        """ init behavior logs given behaviors file.
+
+        Args:
+        behaviors_file: path of behaviors file
+        """
         self.histories = []
         self.imprs = []
         self.labels = []
@@ -155,7 +162,10 @@ class MINDAllIterator(BaseIterator):
 
         Returns:
             list: Parsed results including label, impression id , user id, 
-            candidate_title_index, clicked_title_index.
+            candidate_title_index, clicked_title_index, 
+            candidate_ab_index, clicked_ab_index,
+            candidate_vert_index, clicked_vert_index,
+            candidate_subvert_index, clicked_subvert_index,
         """
         if self.npratio > 0:
             impr_label = self.labels[line]
@@ -350,7 +360,13 @@ class MINDAllIterator(BaseIterator):
             imp_indexes (list): a list of impression indexes.
             user_indexes (list): a list of user indexes.
             candidate_title_indexes (list): the candidate news titles' words indices.
+            candidate_ab_indexes (list): the candidate news abstarcts' words indices.
+            candidate_vert_indexes (list): the candidate news verts' words indices.
+            candidate_subvert_indexes (list): the candidate news subverts' indices.
             click_title_indexes (list): words indices for user's clicked news titles.
+            click_ab_indexes (list): words indices for user's clicked news abstarcts.
+            click_vert_indexes (list): indices for user's clicked news verts.
+            click_subvert_indexes (list):indices for user's clicked news subverts.
             
         Returns:
             dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
@@ -386,6 +402,16 @@ class MINDAllIterator(BaseIterator):
         }
 
     def load_user_from_file(self, news_file, behavior_file):
+        """Read and parse user data from news file and behavior file.
+        
+        Args:
+            news_file (str): A file contains several informations of news.
+            beahaviros_file (str): A file contains information of user impressions.
+
+        Returns:
+            obj: An iterator that will yields parsed user feature, in the format of dict.
+        """
+
         if not hasattr(self, "news_title_index"):
             self.init_news(news_file)
 
@@ -439,7 +465,10 @@ class MINDAllIterator(BaseIterator):
         Args:
             user_indexes (list): a list of user indexes.
             click_title_indexes (list): words indices for user's clicked news titles.
-            
+            click_ab_indexes (list): words indices for user's clicked news abs.
+            click_vert_indexes (list): words indices for user's clicked news verts.
+            click_subvert_indexes (list): words indices for user's clicked news subverts.
+
         Returns:
             dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
         """
@@ -461,6 +490,14 @@ class MINDAllIterator(BaseIterator):
         }
 
     def load_news_from_file(self, news_file):
+        """Read and parse user data from news file.
+        
+        Args:
+            news_file (str): A file contains several informations of news.
+            
+        Returns:
+            obj: An iterator that will yields parsed news feature, in the format of dict.
+        """
         if not hasattr(self, "news_title_index"):
             self.init_news(news_file)
 
@@ -506,6 +543,9 @@ class MINDAllIterator(BaseIterator):
         Args:
             news_indexes (list): a list of news indexes.
             candidate_title_indexes (list): the candidate news titles' words indices.
+            candidate_ab_indexes (list): the candidate news abstarcts' words indices.
+            candidate_vert_indexes (list): the candidate news verts' words indices.
+            candidate_subvert_indexes (list): the candidate news subverts' words indices.
             
         Returns:
             dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
@@ -530,6 +570,14 @@ class MINDAllIterator(BaseIterator):
         }
 
     def load_impression_from_file(self, behaivors_file):
+        """Read and parse impression data from behaivors file.
+        
+        Args:
+            behaivors_file (str): A file contains several informations of behaviros.
+            
+        Returns:
+            obj: An iterator that will yields parsed impression data, in the format of dict.
+        """
         if not hasattr(self, "impr_indexes"):
             self.init_behaviors(behaivors_file)
 

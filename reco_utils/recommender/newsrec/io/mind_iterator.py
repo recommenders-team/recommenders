@@ -26,6 +26,7 @@ class MINDIterator(BaseIterator):
         batch_size (int): the samples num in one batch.
         title_size (int): max word num in news title.
         his_size (int): max clicked news num in user click history.
+        npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.
     """
 
     def __init__(
@@ -35,7 +36,7 @@ class MINDIterator(BaseIterator):
         
         Args:
             hparams (obj): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
-            npratio (obj): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.
+            npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.
             col_spliter (str): column spliter in one line.
             ID_spliter (str): ID spliter in one line.
         """
@@ -55,7 +56,7 @@ class MINDIterator(BaseIterator):
             file path (str): file path
         
         Returns:
-            (obj): picle load obj
+            (obj): pickle load obj
         """
         with open(file_path, "rb") as f:
             return pickle.load(f)
@@ -390,7 +391,9 @@ class MINDIterator(BaseIterator):
         """
 
         news_indexes_batch = np.asarray(news_indexes, dtype=np.int32)
-        candidate_title_index_batch = np.asarray(candidate_title_indexes, dtype=np.int32)
+        candidate_title_index_batch = np.asarray(
+            candidate_title_indexes, dtype=np.int32
+        )
 
         return {
             "news_index_batch": news_indexes_batch,
