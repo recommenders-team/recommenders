@@ -33,7 +33,7 @@ class DKNTextIterator(BaseIterator):
         self.ID_spliter = ID_spliter
         self.batch_size = hparams.batch_size
         self.doc_size = hparams.doc_size
-        self.his_size = hparams.his_size
+        self.history_size = hparams.history_size
 
         self.graph = graph
         with self.graph.as_default():
@@ -42,7 +42,7 @@ class DKNTextIterator(BaseIterator):
                 tf.int64, [self.batch_size, self.doc_size], name="candidate_news_index"
             )
             self.click_news_index_batch = tf.placeholder(
-                tf.int64, [self.batch_size, self.his_size, self.doc_size], name="click_news_index"
+                tf.int64, [self.batch_size, self.history_size, self.doc_size], name="click_news_index"
             )
             self.candidate_news_entity_index_batch = tf.placeholder(
                 tf.int64,
@@ -51,7 +51,7 @@ class DKNTextIterator(BaseIterator):
             )
             self.click_news_entity_index_batch = tf.placeholder(
                 tf.int64,
-                [self.batch_size, self.his_size, self.doc_size],
+                [self.batch_size, self.history_size, self.doc_size],
                 name="click_news_entity_index",
             )
         self.news_word_index = {}
@@ -72,12 +72,12 @@ class DKNTextIterator(BaseIterator):
                     user_history = user_history_string.split(",")
                 click_news_index = []
                 click_news_entity_index = []
-                if len(user_history) > self.his_size:
-                    user_history = user_history[-self.his_size:]
+                if len(user_history) > self.history_size:
+                    user_history = user_history[-self.history_size:]
                 for newsid in user_history:
                     click_news_index.append(self.news_word_index[newsid])
                     click_news_entity_index.append(self.news_entity_index[newsid])
-                for i in range(self.his_size- len(user_history)):
+                for i in range(self.history_size- len(user_history)):
                     click_news_index.append(np.zeros(self.doc_size))
                     click_news_entity_index.append(np.zeros(self.doc_size))
                 self.user_history[userid] = (click_news_index, click_news_entity_index)
@@ -338,13 +338,13 @@ class DKNTextIterator(BaseIterator):
             ].reshape([self.batch_size, self.doc_size]),
             self.click_news_index_batch: data_dict[
                 "click_news_index_batch"
-            ].reshape([self.batch_size, self.his_size, self.doc_size]),
+            ].reshape([self.batch_size, self.history_size, self.doc_size]),
             self.candidate_news_entity_index_batch: data_dict[
                 "candidate_news_entity_index_batch"
             ].reshape([-1, self.doc_size]),
             self.click_news_entity_index_batch: data_dict[
                 "click_news_entity_index_batch"
-            ].reshape([-1, self.his_size, self.doc_size])
+            ].reshape([-1, self.history_size, self.doc_size])
 
         }
         return feed_dict

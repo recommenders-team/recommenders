@@ -239,7 +239,7 @@ class DKN(BaseModel):
                     clicked_words, clicked_entities, hparams
                 )
                 click_field_embed = tf.reshape(
-                    click_field_embed, shape=[-1, hparams.his_size, hparams.num_filters * len(hparams.filter_sizes)])
+                    click_field_embed, shape=[-1, hparams.history_size, hparams.num_filters * len(hparams.filter_sizes)])
 
             avg_strategy = False
             if avg_strategy:
@@ -292,7 +292,7 @@ class DKN(BaseModel):
                 attention_weight = tf.nn.xw_plus_b(
                         curr_attention_layer, attention_output_w, attention_output_b
                     )
-                attention_weight = tf.reshape(attention_weight, shape=[-1, hparams.his_size, 1])
+                attention_weight = tf.reshape(attention_weight, shape=[-1, hparams.history_size, 1])
                 norm_attention_weight = tf.nn.softmax(attention_weight, axis=1)
                 click_field_embed_final = tf.reduce_sum(
                     tf.multiply(click_field_embed, norm_attention_weight),
