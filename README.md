@@ -2,6 +2,13 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
+## What's New (July 20, 2020)
+[Microsoft MIND Competition!](https://msnews.github.io/competition.html)
+
+Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into the [quick start example](examples/00_quick_start/dkn_MIND_dataset.ipynb) using the DKN algorithm. Then try some other algorthms and tools in recommenders and submit your entry!
+
+## Introduction
+
 This repository contains examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on five key tasks: 
 - [Prepare Data](examples/01_prepare_data): Preparing and loading data for each recommender algorithm
 - [Model](examples/00_quick_start): Building models using various classical and deep learning recommender algorithms such as Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)) or eXtreme Deep Factorization Machines ([xDeepFM](https://arxiv.org/abs/1803.05170)).
