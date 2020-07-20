@@ -4,6 +4,7 @@
 from os.path import join
 import abc
 import time
+import os
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -448,6 +449,8 @@ class BaseModel:
             train_time = train_end - train_start
 
             if self.hparams.save_model:
+                if not os.path.exists(self.hparams.MODEL_DIR):
+                    os.makedirs(self.hparams.MODEL_DIR)
                 if epoch % self.hparams.save_epoch == 0:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
                     checkpoint_path = self.saver.save(

@@ -51,7 +51,7 @@ def check_type(config):
         "word_size",
         "entity_size",
         "doc_size",
-        "his_size",
+        "history_size",
         "FEATURE_COUNT",
         "FIELD_COUNT",
         "dim",
@@ -149,7 +149,7 @@ def check_nn_config(f_config):
     elif f_config["model_type"] in ["dkn", "DKN"]:
         required_parameters = [
             "doc_size",
-            "his_size",
+            "history_size",
             "wordEmb_file",
             "entityEmb_file",
             "contextEmb_file",
@@ -338,7 +338,7 @@ def create_hparams(flags):
         use_entity=flags["use_entity"] if "use_entity" in flags else False,
         use_context=flags["use_context"] if "use_context" in flags else False,
         doc_size=flags["doc_size"] if "doc_size" in flags else None,
-        his_size=flags["his_size"] if "his_size" in flags else None,
+        history_size=flags["history_size"] if "history_size" in flags else None,
         word_size=flags["word_size"] if "word_size" in flags else None,
         entity_size=flags["entity_size"] if "entity_size" in flags else None,
         entity_dim=flags["entity_dim"] if "entity_dim" in flags else None,
