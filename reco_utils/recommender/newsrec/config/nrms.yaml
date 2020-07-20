@@ -1,0 +1,29 @@
+data:
+  title_size: 10
+  his_size: 50
+  user_num: 10338
+  data_format: news
+  npratio: 4
+  
+info:
+  metrics:
+  - group_auc
+  - mean_mrr
+  - ndcg@5;10
+  show_step: 100000
+  
+model:
+  attention_hidden_dim: 200
+  word_emb_dim: 100
+
+  dropout: 0.2
+  head_num: 3
+  head_dim: 50
+  model_type: nrms
+
+train:
+  batch_size: 64
+  epochs: 10
+  learning_rate: 0.0001
+  loss: cross_entropy_loss
+  optimizer: adam

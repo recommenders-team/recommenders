@@ -1,0 +1,37 @@
+data:
+  title_size: 10
+  body_size: 50
+  his_size: 50
+  word_size: 54071
+  user_num: 10329
+  vert_num: 17
+  subvert_num: 249
+  data_format: naml
+  npratio: 4
+  
+info:
+  metrics:
+  - group_auc
+  - mean_mrr
+  - ndcg@5;10
+  show_step: 100000
+  
+model:
+  attention_hidden_dim: 100
+  word_emb_dim: 100
+  vert_emb_dim: 100
+  subvert_emb_dim: 100
+
+  dropout: 0.2
+  filter_num: 200
+  window_size: 3
+  cnn_activation: relu
+  model_type: naml
+  dense_activation: relu
+
+train:
+  batch_size: 64
+  epochs: 10
+  learning_rate: 0.0001
+  loss: cross_entropy_loss
+  optimizer: adam

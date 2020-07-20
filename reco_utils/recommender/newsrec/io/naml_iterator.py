@@ -241,8 +241,6 @@ class NAMLIterator(BaseIterator):
         )
         click_subvert_index_batch = np.asarray(click_subvert_indexes, dtype=np.int64)
         return {
-            "impression_index_batch": imp_indexes,
-            "user_index_batch": user_indexes,
             "clicked_title_batch": click_title_index_batch,
             "clicked_body_batch": click_body_index_batch,
             "clicked_vert_batch": click_vert_index_batch,
