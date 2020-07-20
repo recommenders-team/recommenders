@@ -7,8 +7,6 @@
 
 Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into the [quick start example](examples/00_quick_start/dkn_MIND_dataset.ipynb) using the DKN algorithm. Then try some other algorthms and tools in recommenders and submit your entry!
 
----
-
 ## Introduction
 
 This repository contains examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on five key tasks: 
