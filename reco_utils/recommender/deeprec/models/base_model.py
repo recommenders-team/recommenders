@@ -4,6 +4,7 @@
 from os.path import join
 import abc
 import time
+import os
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -448,6 +449,8 @@ class BaseModel:
             train_time = train_end - train_start
 
             if self.hparams.save_model:
+                if not os.path.exists(self.hparams.MODEL_DIR):
+                    os.makedirs(self.hparams.MODEL_DIR)
                 if epoch % self.hparams.save_epoch == 0:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
                     checkpoint_path = self.saver.save(
@@ -455,7 +458,6 @@ class BaseModel:
                     )
 
             eval_start = time.time()
-            train_res = self.run_eval(train_file)
             eval_res = self.run_eval(valid_file)
             train_info = ",".join(
                 [
@@ -573,10 +575,11 @@ class BaseModel:
         """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input, _, _ in self.iterator.load_data_from_file(
+            for batch_data_input, _, data_size in self.iterator.load_data_from_file(
                 infile_name
             ):
                 step_pred = self.infer(load_sess, batch_data_input)
+                step_pred = step_pred[0][:data_size]
                 step_pred = np.reshape(step_pred, -1)
                 wt.write("\n".join(map(str, step_pred)))
                 # line break after each batch.
