@@ -158,7 +158,7 @@ def test_naml_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epoch=1, seed=42),
+        parameters=dict(epochs=1, seed=42),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -176,7 +176,7 @@ def test_nrms_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epoch=1, seed=42),
+        parameters=dict(epochs=1, seed=42),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -194,7 +194,7 @@ def test_npa_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epoch=1, seed=42),
+        parameters=dict(epochs=1, seed=42),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -212,7 +212,7 @@ def test_lstur_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epoch=1, seed=40),
+        parameters=dict(epochs=1, seed=40),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
