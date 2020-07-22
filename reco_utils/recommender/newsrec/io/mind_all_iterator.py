@@ -578,15 +578,20 @@ class MINDAllIterator(BaseIterator):
         Returns:
             obj: An iterator that will yields parsed impression data, in the format of dict.
         """
-        if not hasattr(self, "impr_indexes"):
+
+        if not hasattr(self, "histories"):
             self.init_behaviors(behaivors_file)
 
         indexes = np.arange(len(self.labels))
 
         for index in indexes:
-            impr_label = self.labels[index]
-            impr = self.imprs[index]
+            impr_label = np.array(self.labels[index], dtype="int32")
+            impr_news = np.array(self.imprs[index], dtype="int32")
 
-            for news, label in zip(impr, impr_label):
-                yield (self.impr_indexes[index], news, self.uindexes[index], label)
+            yield (
+                self.impr_indexes[index],
+                impr_news,
+                self.uindexes[index],
+                impr_label,
+            )
 
