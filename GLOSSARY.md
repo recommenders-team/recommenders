@@ -6,9 +6,9 @@
 
 * **Cold-start problem**: The cold start problem concerns the recommendations for users with no or few past history (new users). Providing recommendations to users with small past history becomes a difficult problem for collaborative filtering models because their learning and predictive ability is limited. Multiple research have been conducted in this direction using content-based filtering models or hybrid models. These models use auxiliary information like user or item metadata to overcome the cold start problem.
 
-* **Collaborative filtering algorithms (CF)**: CF algorithms make prediction of what is the likelihood of a user selecting an item based on the behavior of other users [1]. It assumes that if user A likes item X and Y, and user B likes item X, user B would probably like item Y. See the [list of CF examples in Recommenders repository](../../examples/02_model_collaborative_filtering).
+* **Collaborative filtering algorithms (CF)**: CF algorithms make prediction of what is the likelihood of a user selecting an item based on the behavior of other users [1]. It assumes that if user A likes item X and Y, and user B likes item X, user B would probably like item Y. See the [list of CF examples in Recommenders repository](../examples/02_model_collaborative_filtering).
 
-* **Content-based filtering algorithms (CB)**: CB algorithms make prediction of what is the likelihood of a user selecting an item based on the similarity of users and items among themselves [1]. It assumes that if user A lives in country X, has age Y and likes item Z, and user B lives in country X and has age Y, user B would probably like item Z. See the [list of CB examples in Recommenders repository](../../examples/02_model_content_based_filtering).
+* **Content-based filtering algorithms (CB)**: CB algorithms make prediction of what is the likelihood of a user selecting an item based on the similarity of users and items among themselves [1]. It assumes that if user A lives in country X, has age Y and likes item Z, and user B lives in country X and has age Y, user B would probably like item Z. See the [list of CB examples in Recommenders repository](../examples/02_model_content_based_filtering).
 
 * **Conversion rate**: In the context of e-commerce, the conversion rate is the ratio between the number of conversions (e.g. number of bought items) over the total number of visits. In the context of recommendation systems, conversion rate measures how efficient is an algorithm to provide recommendations that the user buys.
 
@@ -16,7 +16,7 @@
 
 * **Explicit interaction data**: When a user explicitly rate an item, typically between 1-5, the user is giving a value on the likeliness of the item. 
 
-* **Hybrid filtering algorithms**: This type of recommendation system can implement a combination of collaborative and content-based filtering models. See the [list of examples in Recommenders repository](../../examples/02_model_hybrid).
+* **Hybrid filtering algorithms**: This type of recommendation system can implement a combination of collaborative and content-based filtering models. See the [list of examples in Recommenders repository](../examples/02_model_hybrid).
 
 * **Implicit interaction data**: Implicit interactions are views or clicks that show a certain interest of the user about a specific items. These kind of data is more common but it doesn't define the intention of the user as clearly as the explicit data.
 
@@ -38,9 +38,9 @@
 
 * **Offline metrics**: Metrics computed offline for measuring the performance of the machine learning model. These metrics include ranking, rating, diversity and novelty metrics.
 
-* **Ranking metrics**: These are used to evaluate how relevant recommendations are for users. They include precision at k, recall at k, nDCG and MAP. See the [list of metrics in Recommenders repository](../../examples/03_evaluate).
+* **Ranking metrics**: These are used to evaluate how relevant recommendations are for users. They include precision at k, recall at k, nDCG and MAP. See the [list of metrics in Recommenders repository](../examples/03_evaluate).
 
-* **Rating metrics**: These are used to evaluate how accurate a recommender is at predicting ratings that users give to items. They include RMSE, MAE, R squared or explained variance. See the [list of metrics in Recommenders repository](../../examples/03_evaluate).
+* **Rating metrics**: These are used to evaluate how accurate a recommender is at predicting ratings that users give to items. They include RMSE, MAE, R squared or explained variance. See the [list of metrics in Recommenders repository](../examples/03_evaluate).
 
 * **Revenue per order**: The revenue per order optimization objective is the default optimization objective for the "Frequently bought together" recommendation model type. This optimization objective cannot be specified for any other recommendation model type.
 
