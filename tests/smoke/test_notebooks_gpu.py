@@ -115,7 +115,7 @@ def test_dkn_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epoch=1),
+        parameters=dict(epoch=1, run_MIND_small=False),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
