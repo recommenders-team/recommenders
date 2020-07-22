@@ -264,14 +264,14 @@ def test_slirec_quickstart_integration(
     "epochs, seed, expected_values",
     [
         (
-            10,
+            8,
             42,
             {
                 "res_syn": {
-                    "group_auc": 0.6249,
-                    "mean_mrr": 0.2816,
-                    "ndcg@5": 0.3064,
-                    "ndcg@10": 0.3762,
+                    "group_auc": 0.6217,
+                    "mean_mrr": 0.2783,
+                    "ndcg@5": 0.3024,
+                    "ndcg@10": 0.3719,
                 }
             },
         )
@@ -306,14 +306,14 @@ def test_nrms_quickstart_integration(notebooks, epochs, seed, expected_values):
     "epochs, seed, expected_values",
     [
         (
-            8,
+            6,
             42,
             {
                 "res_syn": {
-                    "group_auc": 0.6427,
-                    "mean_mrr": 0.2921,
-                    "ndcg@5": 0.3219,
-                    "ndcg@10": 0.3876,
+                    "group_auc": 0.6436,
+                    "mean_mrr": 0.2990,
+                    "ndcg@5": 0.3297,
+                    "ndcg@10": 0.3933,
                 }
             },
         )

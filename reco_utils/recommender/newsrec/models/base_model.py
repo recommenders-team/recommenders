@@ -48,7 +48,7 @@ class BaseModel:
 
         self.hparams = hparams
         self.support_quick_scoring = hparams.support_quick_scoring
-        
+
         self.model, self.scorer = self._build_graph()
 
         self.loss = self._get_loss()
@@ -301,7 +301,7 @@ class BaseModel:
         """
 
         if self.support_quick_scoring:
-            preds, labels, imp_indexes = self.run_fast_eval(
+            group_labels, group_preds = self.run_fast_eval(
                 news_filename, behaviors_file
             )
         else:
@@ -317,7 +317,7 @@ class BaseModel:
                 labels.extend(np.reshape(step_labels, -1))
                 imp_indexes.extend(np.reshape(step_imp_index, -1))
 
-        group_labels, group_preds = self.group_labels(labels, preds, imp_indexes)
+            group_labels, group_preds = self.group_labels(labels, preds, imp_indexes)
         res = cal_metric(group_labels, group_preds, self.hparams.metrics)
         return res
 
@@ -367,9 +367,8 @@ class BaseModel:
         news_vecs = self.run_news(news_filename)
         user_vecs = self.run_user(news_filename, behaviors_file)
 
-        preds = []
-        labels = []
-        imp_indexes = []
+        group_labels = []
+        group_preds = []
 
         for (
             impr_index,
@@ -377,10 +376,12 @@ class BaseModel:
             user_index,
             label,
         ) in self.test_iterator.load_impression_from_file(behaviors_file):
-            pred = np.dot(news_vecs[news_index], user_vecs[impr_index])
-            preds.append(pred)
-            labels.append(label)
-            imp_indexes.append(impr_index)
+            pred = np.dot(
+                np.stack([news_vecs[i] for i in news_index], axis=0),
+                user_vecs[impr_index],
+            )
+            group_labels.append(label)
+            group_preds.append(pred)
 
-        return preds, labels, imp_indexes
+        return group_labels, group_preds
 
