@@ -211,16 +211,16 @@ def notebooks():
             folder_notebooks, "00_quick_start", "sequential_recsys_amazondataset.ipynb"
         ),
         "nrms_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "nrms_synthetic.ipynb"
+            folder_notebooks, "00_quick_start", "nrms_MIND.ipynb"
         ),
         "naml_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "naml_synthetic.ipynb"
+            folder_notebooks, "00_quick_start", "naml_MIND.ipynb"
         ),
         "lstur_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "lstur_synthetic.ipynb"
+            folder_notebooks, "00_quick_start", "lstur_MIND.ipynb"
         ),
         "npa_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "npa_synthetic.ipynb"
+            folder_notebooks, "00_quick_start", "npa_MIND.ipynb"
         ),
         "rlrmc_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "rlrmc_movielens.ipynb"
