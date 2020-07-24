@@ -6,7 +6,7 @@
 
 [Microsoft MIND Competition!](https://msnews.github.io/competition.html)
 
-Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into the [quick start example](examples/00_quick_start/dkn_MIND_dataset.ipynb) using the DKN algorithm. Then try some other algorithms (NAML, NPA, NRMS, LSTUR) and tools in recommenders and submit your entry!
+Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into the [quick start example](examples/00_quick_start/dkn_MIND.ipynb) using the DKN algorithm. Then try some other algorithms (NAML, NPA, NRMS, LSTUR) and tools in recommenders and submit your entry!
 
 ## Introduction
 
@@ -71,7 +71,7 @@ The table below lists the recommender algorithms currently available in the repo
 | Attentive Asynchronous Singular Value Decomposition (A2SVD)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism |
 | Cornac/Bayesian Personalized Ranking (BPR) | [Python CPU](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | Collaborative Filtering | Matrix factorization algorithm for predicting item ranking with implicit feedback |
 | Convolutional Sequence Embedding Recommendation (Caser) | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Algorithm based on convolutions that aims to capture both user’s general preferences and sequential patterns |
-| Deep Knowledge-Aware Network (DKN)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/dkn_MIND_dataset.ipynb) | Content-Based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |
+| Deep Knowledge-Aware Network (DKN)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/dkn_MIND.ipynb) | Content-Based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |
 | Extreme Deep Factorization Machine (xDeepFM)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/xdeepfm_criteo.ipynb) | Hybrid | Deep learning based algorithm for implicit and explicit feedback with user/item features |
 | FastAI Embedding Dot Bias (FAST) | [Python CPU / Python GPU](examples/00_quick_start/fastai_movielens.ipynb) | Collaborative Filtering | General purpose algorithm with embeddings and biases for users and items |
 | LightFM/Hybrid Matrix Factorization | [Python CPU](examples/02_model_hybrid/lightfm_deep_dive.ipynb) | Hybrid | Hybrid matrix factorization algorithm for both implicit and explicit feedbacks |

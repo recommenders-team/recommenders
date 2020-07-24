@@ -5,7 +5,7 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | Notebook | Dataset | Environment | Description |
 | --- | --- | --- | --- |
 | [als](als_movielens.ipynb) | MovieLens | PySpark | Utilizing ALS algorithm to predict movie ratings in a PySpark environment.
-| [dkn](dkn_MIND_dataset.ipynb) | MIND | Python CPU, GPU | Utilizing the Deep Knowledge-Aware Network (DKN) [2] algorithm for news recommendations using information from a knowledge graph, in a Python+GPU (TensorFlow) environment.
+| [dkn](dkn_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Deep Knowledge-Aware Network (DKN) [2] algorithm for news recommendations using information from a knowledge graph, in a Python+GPU (TensorFlow) environment.
 | [fastai](fastai_movielens.ipynb) | MovieLens | Python CPU, GPU | Utilizing FastAI recommender to predict movie ratings in a Python+GPU (PyTorch) environment.
 | [lightgbm](lightgbm_tinycriteo.ipynb) | Criteo | Python CPU | Utilizing LightGBM Boosting Tree to predict whether or not a user has clicked on an e-commerce ad |
 | [lstur](lstur_MIND.ipynb) | MIND | Python CPU, GPU | Utilizing the Neural News Recommendation with Long- and Short-term User Representations (LSTUR) [9] for news recommendation, in a Python+GPU (Tensorflow) enviroment.
