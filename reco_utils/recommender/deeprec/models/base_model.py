@@ -41,11 +41,13 @@ class BaseModel:
             self.layer_params = []
             self.embed_params = []
             self.cross_params = []
-            self.layer_keeps = tf.placeholder(tf.float32, name="layer_keeps")
+            self.layer_keeps = tf.compat.v1.placeholder(tf.float32, name="layer_keeps")
             self.keep_prob_train = None
             self.keep_prob_test = None
-            self.is_train_stage = tf.placeholder(tf.bool, shape=(), name="is_training")
-            self.group = tf.placeholder(tf.int32, shape=(), name="group")
+            self.is_train_stage = tf.compat.v1.placeholder(
+                tf.bool, shape=(), name="is_training"
+            )
+            self.group = tf.compat.v1.placeholder(tf.int32, shape=(), name="group")
 
             self.initializer = self._get_initializer()
 

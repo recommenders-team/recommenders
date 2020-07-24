@@ -459,7 +459,7 @@ class DKN(BaseModel):
             obj: An instance of self.
         """
         load_sess = self.sess
-        with tf.gfile.GFile(outfile_name, "w") as wt:
+        with tf.io.gfile.GFile(outfile_name, "w") as wt:
             for (
                 batch_data_input,
                 newsid_list,
