@@ -37,32 +37,38 @@ class DKNTextIterator(BaseIterator):
 
         self.graph = graph
         with self.graph.as_default():
-            self.labels = tf.placeholder(tf.float32, [None, 1], name="label")
-            self.candidate_news_index_batch = tf.placeholder(
+            self.labels = tf.compat.v1.placeholder(tf.float32, [None, 1], name="label")
+            self.candidate_news_index_batch = tf.compat.v1.placeholder(
                 tf.int64, [self.batch_size, self.doc_size], name="candidate_news_index"
             )
-            self.click_news_index_batch = tf.placeholder(
-                tf.int64, [self.batch_size, self.history_size, self.doc_size], name="click_news_index"
+            self.click_news_index_batch = tf.compat.v1.placeholder(
+                tf.int64,
+                [self.batch_size, self.history_size, self.doc_size],
+                name="click_news_index",
             )
-            self.candidate_news_entity_index_batch = tf.placeholder(
+            self.candidate_news_entity_index_batch = tf.compat.v1.placeholder(
                 tf.int64,
                 [self.batch_size, self.doc_size],
                 name="candidate_news_entity_index",
             )
-            self.click_news_entity_index_batch = tf.placeholder(
+            self.click_news_entity_index_batch = tf.compat.v1.placeholder(
                 tf.int64,
                 [self.batch_size, self.history_size, self.doc_size],
                 name="click_news_entity_index",
             )
         self.news_word_index = {}
         self.news_entity_index = {}
-        with tf.gfile.GFile(hparams.news_feature_file, "r") as rd:
+        with tf.io.gfile.GFile(hparams.news_feature_file, "r") as rd:
             for line in rd:
                 newsid, word_index, entity_index = line.strip().split(col_spliter)
-                self.news_word_index[newsid] = [int(item) for item in word_index.split(',')]
-                self.news_entity_index[newsid] = [int(item) for item in entity_index.split(',')]
+                self.news_word_index[newsid] = [
+                    int(item) for item in word_index.split(",")
+                ]
+                self.news_entity_index[newsid] = [
+                    int(item) for item in entity_index.split(",")
+                ]
         self.user_history = {}
-        with tf.gfile.GFile(hparams.user_history_file, "r") as rd:
+        with tf.io.gfile.GFile(hparams.user_history_file, "r") as rd:
             for line in rd:
                 if len(line.strip().split(col_spliter)) == 1:
                     userid = line.strip()
@@ -73,11 +79,11 @@ class DKNTextIterator(BaseIterator):
                 click_news_index = []
                 click_news_entity_index = []
                 if len(user_history) > self.history_size:
-                    user_history = user_history[-self.history_size:]
+                    user_history = user_history[-self.history_size :]
                 for newsid in user_history:
                     click_news_index.append(self.news_word_index[newsid])
                     click_news_entity_index.append(self.news_entity_index[newsid])
-                for i in range(self.history_size- len(user_history)):
+                for i in range(self.history_size - len(user_history)):
                     click_news_index.append(np.zeros(self.doc_size))
                     click_news_entity_index.append(np.zeros(self.doc_size))
                 self.user_history[userid] = (click_news_index, click_news_entity_index)
@@ -137,7 +143,7 @@ class DKNTextIterator(BaseIterator):
         impression_id_list = []
         cnt = 0
 
-        with tf.gfile.GFile(infile, "r") as rd:
+        with tf.io.gfile.GFile(infile, "r") as rd:
             for line in rd:
                 (
                     label,
@@ -217,7 +223,7 @@ class DKNTextIterator(BaseIterator):
         candidate_news_index_batch = []
         candidate_news_entity_index_batch = []
         cnt = 0
-        with tf.gfile.GFile(infile, "r") as rd:
+        with tf.io.gfile.GFile(infile, "r") as rd:
             for line in rd:
                 newsid, word_index, entity_index = line.strip().split(" ")
                 newsid_list.append(newsid)
@@ -234,8 +240,7 @@ class DKNTextIterator(BaseIterator):
                 cnt += 1
                 if cnt >= self.batch_size:
                     res = self._convert_infer_data(
-                        candidate_news_index_batch,
-                        candidate_news_entity_index_batch,
+                        candidate_news_index_batch, candidate_news_entity_index_batch
                     )
                     data_size = self.batch_size
                     yield self.gen_infer_feed_dict(res), newsid_list, data_size
@@ -255,8 +260,7 @@ class DKNTextIterator(BaseIterator):
                     )
                     cnt += 1
                 res = self._convert_infer_data(
-                    candidate_news_index_batch,
-                    candidate_news_entity_index_batch,
+                    candidate_news_index_batch, candidate_news_entity_index_batch
                 )
                 yield self.gen_infer_feed_dict(res), newsid_list, data_size
 
@@ -300,9 +304,7 @@ class DKNTextIterator(BaseIterator):
         return res
 
     def _convert_infer_data(
-        self,
-        candidate_news_index_batch,
-        candidate_news_entity_index_batch,
+        self, candidate_news_index_batch, candidate_news_entity_index_batch
     ):
         """Convert data into numpy arrays that are good for further model operation.
 
@@ -336,16 +338,15 @@ class DKNTextIterator(BaseIterator):
             self.candidate_news_index_batch: data_dict[
                 "candidate_news_index_batch"
             ].reshape([self.batch_size, self.doc_size]),
-            self.click_news_index_batch: data_dict[
-                "click_news_index_batch"
-            ].reshape([self.batch_size, self.history_size, self.doc_size]),
+            self.click_news_index_batch: data_dict["click_news_index_batch"].reshape(
+                [self.batch_size, self.history_size, self.doc_size]
+            ),
             self.candidate_news_entity_index_batch: data_dict[
                 "candidate_news_entity_index_batch"
             ].reshape([-1, self.doc_size]),
             self.click_news_entity_index_batch: data_dict[
                 "click_news_entity_index_batch"
-            ].reshape([-1, self.history_size, self.doc_size])
-
+            ].reshape([-1, self.history_size, self.doc_size]),
         }
         return feed_dict
 

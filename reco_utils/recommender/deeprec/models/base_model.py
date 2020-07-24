@@ -26,7 +26,7 @@ class BaseModel:
             seed (int): Random seed.
         """
         self.seed = seed
-        tf.set_random_seed(seed)
+        tf.compat.v1.set_random_seed(seed)
         np.random.seed(seed)
 
         self.graph = graph if graph is not None else tf.Graph()
@@ -53,16 +53,18 @@ class BaseModel:
             self.pred = self._get_pred(self.logit, self.hparams.method)
 
             self.loss = self._get_loss()
-            self.saver = tf.train.Saver(max_to_keep=self.hparams.epochs)
+            self.saver = tf.compat.v1.train.Saver(max_to_keep=self.hparams.epochs)
             self.update = self._build_train_opt()
-            self.extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-            self.init_op = tf.global_variables_initializer()
+            self.extra_update_ops = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.UPDATE_OPS
+            )
+            self.init_op = tf.compat.v1.global_variables_initializer()
             self.merged = self._add_summaries()
 
         # set GPU use with demand growth
-        gpu_options = tf.GPUOptions(allow_growth=True)
-        self.sess = tf.Session(
-            graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options)
+        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+        self.sess = tf.compat.v1.Session(
+            graph=self.graph, config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
         )
         self.sess.run(self.init_op)
 
@@ -105,10 +107,10 @@ class BaseModel:
         return pred
 
     def _add_summaries(self):
-        tf.summary.scalar("data_loss", self.data_loss)
-        tf.summary.scalar("regular_loss", self.regular_loss)
-        tf.summary.scalar("loss", self.loss)
-        merged = tf.summary.merge_all()
+        tf.compat.v1.summary.scalar("data_loss", self.data_loss)
+        tf.compat.v1.summary.scalar("regular_loss", self.regular_loss)
+        tf.compat.v1.summary.scalar("loss", self.loss)
+        merged = tf.compat.v1.summary.merge_all()
         return merged
 
     def _l2_loss(self):
@@ -203,7 +205,7 @@ class BaseModel:
             )
         elif self.hparams.loss == "log_loss":
             data_loss = tf.reduce_mean(
-                tf.losses.log_loss(
+                tf.compat.v1.losses.log_loss(
                     predictions=tf.reshape(self.pred, [-1]),
                     labels=tf.reshape(self.iterator.labels, [-1]),
                 )
@@ -257,7 +259,7 @@ class BaseModel:
         elif optimizer == "sgd":
             train_step = tf.train.GradientDescentOptimizer(lr)
         elif optimizer == "adam":
-            train_step = tf.train.AdamOptimizer(lr)
+            train_step = tf.compat.v1.train.AdamOptimizer(lr)
         elif optimizer == "ftrl":
             train_step = tf.train.FtrlOptimizer(lr)
         elif optimizer == "gd":
@@ -700,5 +702,4 @@ class BaseModel:
                 )
                 self.logit = nn_output
                 return nn_output
-
 
