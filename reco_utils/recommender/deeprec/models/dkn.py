@@ -32,7 +32,9 @@ class DKN(BaseModel):
             with tf.name_scope("embedding"):
                 word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
                 self.embedding = tf.Variable(
-                    word2vec_embedding, trainable=True, name="word"
+                    word2vec_embedding,
+                    trainable=True,
+                    name="word",
                 )
 
                 if hparams.use_entity:
@@ -43,14 +45,14 @@ class DKN(BaseModel):
                     b = tf.Variable(tf.zeros([hparams.dim]))
                     e_embedding_transformed = tf.nn.tanh(tf.matmul(e_embedding, W) + b)
                     self.entity_embedding = tf.Variable(
-                        e_embedding_transformed, trainable=True, name="entity"
+                        e_embedding_transformed,
+                        trainable=True,
+                        name="entity",
                     )
                 else:
                     self.entity_embedding = tf.Variable(
                         tf.constant(
-                            0.0,
-                            shape=[hparams.entity_size, hparams.dim],
-                            dtype=tf.float32,
+                            0.0, shape=[hparams.entity_size, hparams.dim], dtype=tf.float32
                         ),
                         trainable=True,
                         name="entity",
@@ -64,14 +66,14 @@ class DKN(BaseModel):
                     b = tf.Variable(tf.zeros([hparams.dim]))
                     c_embedding_transformed = tf.nn.tanh(tf.matmul(c_embedding, W) + b)
                     self.context_embedding = tf.Variable(
-                        c_embedding_transformed, trainable=True, name="context"
+                        c_embedding_transformed,
+                        trainable=True,
+                        name="context",
                     )
                 else:
                     self.context_embedding = tf.Variable(
                         tf.constant(
-                            0.0,
-                            shape=[hparams.entity_size, hparams.dim],
-                            dtype=tf.float32,
+                            0.0, shape=[hparams.entity_size, hparams.dim], dtype=tf.float32
                         ),
                         trainable=True,
                         name="context",
@@ -99,13 +101,11 @@ class DKN(BaseModel):
         )
         if hparams.use_entity:
             l2_loss = tf.add(
-                l2_loss,
-                tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.entity_embedding)),
+                l2_loss, tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.entity_embedding))
             )
         if hparams.use_entity and hparams.use_context:
             l2_loss = tf.add(
-                l2_loss,
-                tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.context_embedding)),
+                l2_loss, tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.context_embedding))
             )
         params = self.layer_params
         for param in params:
@@ -215,14 +215,7 @@ class DKN(BaseModel):
             nn_output = tf.nn.xw_plus_b(hidden_nn_layers[-1], w_nn_output, b_nn_output)
             return nn_output
 
-    def _build_pair_attention(
-        self,
-        candidate_word_batch,
-        candidate_entity_batch,
-        click_word_batch,
-        click_entity_batch,
-        hparams,
-    ):
+    def _build_pair_attention(self, candidate_word_batch, candidate_entity_batch, click_word_batch, click_entity_batch, hparams):
         """This function learns the candidate news article's embedding and user embedding.
         User embedding is generated from click history and also depends on the candidate news article via attention mechanism.
         Article embedding is generated via KCNN module.
@@ -246,23 +239,13 @@ class DKN(BaseModel):
         with tf.variable_scope("attention_net", initializer=self.initializer) as scope:
 
             # use kims cnn to get conv embedding
-            with tf.variable_scope(
-                "kcnn", initializer=self.initializer, reuse=tf.AUTO_REUSE
-            ) as cnn_scope:
-                news_field_embed = self._kims_cnn(
-                    candidate_word_batch, candidate_entity_batch, hparams
-                )
+            with tf.variable_scope("kcnn", initializer=self.initializer, reuse=tf.AUTO_REUSE) as cnn_scope:
+                news_field_embed = self._kims_cnn(candidate_word_batch, candidate_entity_batch, hparams)
                 click_field_embed = self._kims_cnn(
                     clicked_words, clicked_entities, hparams
                 )
                 click_field_embed = tf.reshape(
-                    click_field_embed,
-                    shape=[
-                        -1,
-                        hparams.history_size,
-                        hparams.num_filters * len(hparams.filter_sizes),
-                    ],
-                )
+                    click_field_embed, shape=[-1, hparams.history_size, hparams.num_filters * len(hparams.filter_sizes)])
 
             avg_strategy = False
             if avg_strategy:
@@ -277,9 +260,7 @@ class DKN(BaseModel):
                 attention_x = tf.concat(
                     axis=-1, values=[click_field_embed, news_field_embed_repeat]
                 )
-                attention_x = tf.reshape(
-                    attention_x, shape=[-1, self.num_filters_total * 2]
-                )
+                attention_x = tf.reshape(attention_x, shape=[-1, self.num_filters_total * 2])
                 attention_w = tf.get_variable(
                     name="attention_hidden_w",
                     shape=[self.num_filters_total * 2, attention_hidden_sizes],
@@ -315,11 +296,9 @@ class DKN(BaseModel):
                     name="attention_output_b", shape=[1], dtype=tf.float32
                 )
                 attention_weight = tf.nn.xw_plus_b(
-                    curr_attention_layer, attention_output_w, attention_output_b
-                )
-                attention_weight = tf.reshape(
-                    attention_weight, shape=[-1, hparams.history_size, 1]
-                )
+                        curr_attention_layer, attention_output_w, attention_output_b
+                    )
+                attention_weight = tf.reshape(attention_weight, shape=[-1, hparams.history_size, 1])
                 norm_attention_weight = tf.nn.softmax(attention_weight, axis=1)
                 click_field_embed_final = tf.reduce_sum(
                     tf.multiply(click_field_embed, norm_attention_weight),
@@ -357,19 +336,11 @@ class DKN(BaseModel):
         dim = hparams.dim
         embedded_chars = tf.nn.embedding_lookup(self.embedding, word)
         if hparams.use_entity and hparams.use_context:
-            entity_embedded_chars = tf.nn.embedding_lookup(
-                self.entity_embedding, entity
-            )
-            context_embedded_chars = tf.nn.embedding_lookup(
-                self.context_embedding, entity
-            )
-            concat = tf.concat(
-                [embedded_chars, entity_embedded_chars, context_embedded_chars], axis=-1
-            )
+            entity_embedded_chars = tf.nn.embedding_lookup(self.entity_embedding, entity)
+            context_embedded_chars = tf.nn.embedding_lookup(self.context_embedding, entity)
+            concat = tf.concat([embedded_chars, entity_embedded_chars, context_embedded_chars], axis=-1)
         elif hparams.use_entity:
-            entity_embedded_chars = tf.nn.embedding_lookup(
-                self.entity_embedding, entity
-            )
+            entity_embedded_chars = tf.nn.embedding_lookup(self.entity_embedding, entity)
             concat = tf.concat([embedded_chars, entity_embedded_chars], axis=-1)
         else:
             concat = embedded_chars
