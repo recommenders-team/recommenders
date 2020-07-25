@@ -1,12 +1,13 @@
 
 echo $PWD
+cd data_folder
 git clone https://github.com/thunlp/Fast-TransX.git
 cd Fast-TransX
 cd transE
 g++ transE.cpp -o transE -pthread -O3 -march=native
 
-inpath="../../data_folder/my/KG/"
-outpath="../../data_folder/my/KG/"
+inpath="../../my/KG/"
+outpath="../../my/KG/"
 if [ ! -d $outpath ]; then
   mkdir -p $outpath;
 fi

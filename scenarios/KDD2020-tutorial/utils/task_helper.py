@@ -1,3 +1,16 @@
+import codecs
+import pickle
+import time
+import os
+from datetime import datetime  
+import random
+import numpy as np
+import math
+
+from utils.general import *
+from utils.data_helper import *
+
+
 def gen_paper_content(InFile_PaperTitleAbs_bySentence, OutFileName, word2idx, entity2idx, field=["Title"], doc_len=10):
     if len(word2idx) == 0:
         word2idx['NULL'] = 0
@@ -84,7 +97,7 @@ def convert2id(sentence, fieldOfStudy, word2idx, entity2idx):
 
 def gen_knowledge_relations(InFile_RelatedFieldOfStudy, OutFile_dirname, entity2idx, relation2idx):
     print('processing file {0}...'.format(os.path.basename(InFile_RelatedFieldOfStudy)), end=' ')
-    OutFile_relation_triples = os.path.join(OutFile_dirname, 'triple2id.txt')
+    OutFile_relation_triples = os.path.join(OutFile_dirname, 'train2id.txt')
     lines = []
     with open(InFile_RelatedFieldOfStudy, 'r', encoding='utf-8', newline='\r\n') as rd:
         while True:
@@ -313,7 +326,7 @@ def gen_experiment_splits(file_Author2ReferencePapers, OutFile_dir, InFile_paper
     #dump_dict_as_txt(item2cnt, os.path.join(OutFile_dir, 'item2freq.tsv'))
 
 
-    def normalize_score(pair2CocitedCnt, paper2cited_list, min_k = 10, min_score=0.1):
+def normalize_score(pair2CocitedCnt, paper2cited_list, min_k = 10, min_score=0.1):
     res = {}
     for pair, cnt in pair2CocitedCnt.items():
         if pair[0] not in paper2cited_list or pair[1] not in paper2cited_list:
@@ -495,3 +508,78 @@ def format_word_embeddings(word_vecfile, word2id_file, np_file):
                     word_embeddings[_idx][i-1] = float(words[i])
     with open(np_file, 'wb') as f:
         np.save(f, word_embeddings)
+
+
+
+########  data preparation for lightGCN
+def load_instance_file(
+        filename,
+        target_triples,
+        label=None
+    ):
+    print('load_instance_file: {0}  '.format(os.path.basename(filename)), end=' ')
+    user_hist_keys = set()
+    with open(filename, 'r') as rd:
+        while True:
+            line = rd.readline()
+            if not line:
+                break
+            words = line.strip().split('%')
+            tokens = words[0].split(' ')
+            if label:
+                target_triples.append((words[1], tokens[2], label))  # (userid, itemid, label)
+            else:
+                target_triples.append((words[1], tokens[2], tokens[0]))  #(userid, itemid, label)
+            user_hist_keys.add(tokens[1])
+    print('done.')
+    return user_hist_keys
+
+def write_to_file(filename, triples):
+    with open(filename, 'w') as wt:
+        for t in triples:
+            wt.write('{0} {1} {2}\n'.format(t[0], t[1], t[2]))
+
+def load_user_behaviors(
+        user_behavior_file,
+        train_triples,
+        user_behavior_keys=None
+    ):
+    with open(user_behavior_file, 'r') as rd:
+        while True:
+            line = rd.readline()
+            if not line:
+                break
+            words = line.strip().split(' ')
+            if user_behavior_keys and not words[0] in user_behavior_keys:
+                continue
+            userid = words[0].split('_')[0]
+            items = words[1].split(',')
+            for item in items:
+                train_triples.append((userid, item, '1'))
+
+
+def prepare_dataset(output_folder, input_folder, tag):
+    train_triples, valid_triples = [], []
+
+    training_user_hist_keys = load_instance_file(
+        os.path.join(input_folder, 'train_{0}.txt'.format(tag)),
+        train_triples
+    )
+    load_instance_file(
+        os.path.join(input_folder, 'valid_{0}.txt'.format(tag)),
+        valid_triples
+    )
+    load_instance_file(
+        os.path.join(input_folder, 'test_{0}.txt'.format(tag)),
+        valid_triples,
+        label='0'
+    )
+
+    load_user_behaviors(
+        os.path.join(input_folder, 'user_history_{0}.txt'.format(tag)),
+        train_triples,
+        training_user_hist_keys
+    )
+
+    write_to_file(os.path.join(output_folder, 'lightgcn_train_{0}.txt'.format(tag)), train_triples)
+    write_to_file(os.path.join(output_folder, 'lightgcn_valid_{0}.txt'.format(tag)), valid_triples)
