@@ -509,7 +509,50 @@ def format_word_embeddings(word_vecfile, word2id_file, np_file):
     with open(np_file, 'wb') as f:
         np.save(f, word_embeddings)
 
+def gen_context_embedding(entity_file, context_file, kg_file):
+    #load embedding_vec
+    entity_index = 0
+    entity_dict = {}
+    fp_entity = open(entity_file, 'r')
+    for line in fp_entity:
+        linesplit = line.strip().split('\t')[:EMBEDDING_LENGTH]
+        linesplit = list(map(float, linesplit))
+        entity_dict[str(entity_index)] = linesplit
+        entity_index += 1
+    fp_entity.close()
 
+    #build neighbor for entity in entity_dict
+    fp_kg = open(kg_file, 'r', encoding='utf-8')
+    triple_num = fp_kg.readline()
+    triples = fp_kg.readlines()
+    kg_neighbor_dict = {}
+    for triple in triples:
+        linesplit = triple.strip().split(' ')
+        head = linesplit[0]
+        tail = linesplit[1]
+        if head not in kg_neighbor_dict:
+            kg_neighbor_dict[head] = set()
+        kg_neighbor_dict[head].add(tail)
+
+        if tail not in kg_neighbor_dict:
+            kg_neighbor_dict[tail] = set()
+        kg_neighbor_dict[tail].add(head)        
+    fp_kg.close()
+
+    context_embeddings = np.zeros([entity_index , EMBEDDING_LENGTH])
+
+    for entity in entity_dict:
+        if entity in kg_neighbor_dict:
+            context_entity = kg_neighbor_dict[entity]
+            context_vecs = []
+            for c_entity in context_entity:
+                context_vecs.append(entity_dict[c_entity])
+
+            context_vec = np.mean(np.asarray(context_vecs), axis=0)
+            context_embeddings[int(entity)] = context_vec
+
+    np.savetxt(context_file, context_embeddings, delimiter='\t')
+    
 
 ########  data preparation for lightGCN
 def load_instance_file(
