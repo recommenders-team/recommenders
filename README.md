@@ -32,13 +32,13 @@ To setup on your local machine:
 
 2. Clone the repository
 
-```
+```bash
 git clone https://github.com/Microsoft/Recommenders
 ```
 
 3. Run the generate conda file script to create a conda environment: (This is for a basic python environment, see [SETUP.md](SETUP.md) for PySpark and GPU environment setup)
 
-```
+```bash
 cd Recommenders
 python tools/generate_conda_file.py
 conda env create -f reco_base.yaml  
@@ -46,14 +46,14 @@ conda env create -f reco_base.yaml
 
 4. Activate the conda environment and register it with Jupyter:
 
-```
+```bash
 conda activate reco_base
 python -m ipykernel install --user --name reco_base --display-name "Python (reco)"
 ```
 
 5. Start the Jupyter notebook server
 
-```
+```bash
 jupyter notebook
 ```
 
