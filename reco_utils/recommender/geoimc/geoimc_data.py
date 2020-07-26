@@ -12,8 +12,9 @@ from sklearn import datasets
 from sklearn.preprocessing import normalize
 from numba import jit, prange
 
+from reco_utils.common.python_utils import binarize
+from .geoimc_utils import length_normalize, reduce_dims
 from IPython import embed
-from .geoimc_utils import length_normalize, reduce_dims, binarize
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("geoimc")
@@ -149,6 +150,8 @@ class ML_100K(Dataset):
 
     def __init__(self, **kwargs):
         super().__init__(self.__class__.__name__, **kwargs)
+        self.min_rating = 1
+        self.max_rating = 5
 
 
     def df2coo(self, df):
@@ -165,7 +168,7 @@ class ML_100K(Dataset):
             data += [val]
 
         if self.target_transform == 'normalize':
-            data = data/7.4162
+            data = data/np.sqrt(np.sum(np.arange(self.min_rating, self.max_rating+1)**2))
         elif self.target_transform == 'binarize':
             data = binarize(np.array(data), 3)
 

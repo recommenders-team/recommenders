@@ -31,20 +31,6 @@ def mean_center(matrix):
     matrix -= avg
 
 
-def binarize(a, threshold):
-    """Binarize the values.
-
-    Args:
-        a (np.ndarray): Input array that needs to be binarized.
-        threshold (float): Threshold below which all values are set to 0, else 1.
-    """
-    return np.where(
-        a > threshold,
-        1.0,
-        0.0
-    )
-
-
 def reduce_dims(matrix, target_dim):
     """Reduce dimensionality of the data using PCA.
 

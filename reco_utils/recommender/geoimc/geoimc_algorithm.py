@@ -43,7 +43,7 @@ class IMCProblem(object):
         self.X = self.dataset.get_entity("row")
         self.Z = self.dataset.get_entity("col")
         self.rank = rank
-        self.loadTarget()
+        self._loadTarget()
         self.shape = (self.X.shape[0], self.Z.shape[0])
         self.lambda1 = lambda1
         self.nSamples = self.Y.data.shape[0]
@@ -65,7 +65,7 @@ class IMCProblem(object):
         ])
 
 
-    def loadTarget(self, ):
+    def _loadTarget(self, ):
         """Loads target matrix from the dataset pointer.
         """
         self.Y = self.dataset.get_data()
@@ -86,7 +86,7 @@ class IMCProblem(object):
         return residual_global
 
 
-    def cost(self, params, residual_global):
+    def _cost(self, params, residual_global):
         """Compute the cost of GeoIMC optimization problem
 
         Args:
@@ -180,7 +180,7 @@ class IMCProblem(object):
         solver = ConjugateGradient(maxtime=max_opt_time, maxiter=max_opt_iter, linesearch=LineSearchBackTracking())
         prb = Problem(
             manifold=self.manifold,
-            cost=lambda x: self.cost(
+            cost=lambda x: self._cost(
                 x,
                 residual_global
             ),
@@ -193,7 +193,7 @@ class IMCProblem(object):
         solution = solver.solve(prb, x=self.W)
         self.W = [solution[0], solution[1], solution[2]]
 
-        return self.cost(self.W, residual_global)
+        return self._cost(self.W, residual_global)
 
 
     def reset(self):

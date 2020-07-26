@@ -6,7 +6,8 @@ from scipy.linalg import sqrtm
 from numba import njit, jit, prange
 
 from IPython import embed
-from .geoimc_utils import binarize as conv_binary, length_normalize
+from .geoimc_utils import length_normalize
+from reco_utils.common.python_utils import binarize as conv_binary
 
 class PlainScalarProduct(object):
     """
@@ -60,12 +61,12 @@ class Inferer():
                 setting rest of them to 0), '' (No transformation) are
                 supported.
         """
-        self.method = self.get_method(method)
+        self.method = self._get_method(method)
         self.k = k
         self.transformation = transformation
 
 
-    def get_method(self, k):
+    def _get_method(self, k):
         """Get the inferer method
 
         Args:
