@@ -474,7 +474,7 @@ def test_lightgcn_deep_dive_integration(
 
 @pytest.mark.gpu
 @pytest.mark.integration
-def test_dkn_quickstart(notebooks):
+def test_dkn_quickstart_integration(notebooks):
     notebook_path = notebooks["dkn_quickstart"]
     pm.execute_notebook(
         notebook_path,
@@ -484,3 +484,7 @@ def test_dkn_quickstart(notebooks):
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
+    assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
