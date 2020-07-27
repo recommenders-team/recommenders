@@ -45,7 +45,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
             ):
                 file.write(data)
     else:
-        log.debug("File {} already downloaded".format(filepath))
+        log.info("File {} already downloaded".format(filepath))
     if expected_bytes is not None:
         statinfo = os.stat(filepath)
         if statinfo.st_size != expected_bytes:
@@ -90,7 +90,7 @@ def unzip_file(zip_src, dst_dir, clean_zip_file=True):
         dst_dir (str): Destination folder.
         clean_zip_file (bool): Whether or not to clean the zip file.
     """
-    fz = zipfile.ZipFile(zip_src, 'r')
+    fz = zipfile.ZipFile(zip_src, "r")
     for file in fz.namelist():
         fz.extract(file, dst_dir)
     if clean_zip_file:
