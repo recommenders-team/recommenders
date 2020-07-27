@@ -199,7 +199,7 @@ def notebooks():
             folder_notebooks, "00_quick_start", "xdeepfm_criteo.ipynb"
         ),
         "dkn_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "dkn_MIND_dataset.ipynb"
+            folder_notebooks, "00_quick_start", "dkn_MIND.ipynb"
         ),
         "lightgbm_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "lightgbm_tinycriteo.ipynb"
@@ -244,6 +244,11 @@ def notebooks():
             "02_model_collaborative_filtering",
             "baseline_deep_dive.ipynb",
         ),
+        "lightgcn_deep_dive": os.path.join(
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "lightgcn_deep_dive.ipynb",
+        ),
         "ncf_deep_dive": os.path.join(
             folder_notebooks, "02_model_hybrid", "ncf_deep_dive.ipynb"
         ),
@@ -267,9 +272,6 @@ def notebooks():
         ),
         "xlearn_fm_deep_dive": os.path.join(
             folder_notebooks, "02_model_hybrid", "fm_deep_dive.ipynb"
-        ),
-        "lightgcn_deep_dive": os.path.join(
-            folder_notebooks, "02_model", "lightgcn_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "spark_tuning": os.path.join(
