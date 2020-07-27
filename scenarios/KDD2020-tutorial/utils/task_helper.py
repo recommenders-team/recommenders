@@ -206,7 +206,12 @@ def output_author2reference_list(author2reference_list, filename):
 
 def sample_negative_and_write_to_file(outfilename, samples, neg_cnt, positive_pairs, item_list, sample_probs, remove_false_negative=False):
     with open(outfilename, 'w') as wt:
+        _cnt, _total = 0, len(samples)
+        _t0 = time.time()
         for sample in samples:
+            _cnt += 1
+            if _cnt % 1000 == 0:
+                print('\rsampling  {0} / {1}, time elapses: {2:.1f}s'.format(_cnt, _total, time.time() - _t0), end=' ')
             words = sample.split('%')
             label, user_tag, item_id = words[0].split(' ')
             wt.write(sample+'\n')
@@ -215,6 +220,7 @@ def sample_negative_and_write_to_file(outfilename, samples, neg_cnt, positive_pa
                 sampled_item = item_list[sampled_item_idx]
                 if not remove_false_negative or (words[1], sampled_item) not in positive_pairs:
                     wt.write('{0} {1} {2}%{3}\n'.format(0, user_tag, sampled_item, words[1]))
+    print('\tdone.')
 
 
 def get_normalized_item_freq(item2cnt):
