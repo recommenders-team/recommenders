@@ -64,7 +64,6 @@ class DKNItem2Item(DKN):
             news_field_embed = tf.tanh(tf.matmul(news_field_embed, W))
         return news_field_embed
 
-
     def eval(self, sess, feed_dict):
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False

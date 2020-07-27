@@ -6,6 +6,7 @@ from datetime import datetime
 import random
 import numpy as np
 import math
+from multiprocessing import Process
 
 from utils.general import *
 from utils.data_helper import *
@@ -204,9 +205,17 @@ def output_author2reference_list(author2reference_list, filename):
             paper_cited_date_list = [str(a[2]) for a in ref_list]
             wt.write('{0}\t{1}\t{2}\t{3}\n'.format(author, ','.join(paper_list), ','.join(paper_publich_date_list), ','.join(paper_cited_date_list)))
 
-def sample_negative_and_write_to_file(outfilename, samples, neg_cnt, positive_pairs, item_list, sample_probs, remove_false_negative=False):
+
+def sample_negative_and_write_to_file(outfilename, samples, neg_cnt, positive_pairs, item_list, sample_probs, remove_false_negative=False, process_id=0, process_num=4):
     with open(outfilename, 'w') as wt:
+        _cnt, _total = 0, len(samples)
+        _t0 = time.time()
         for sample in samples:
+            _cnt += 1
+            if _cnt % 1000 == 0:
+                print('\rsampling process {3}:  {0} / {1}, time elapses: {2:.1f}s'.format(_cnt, _total, time.time() - _t0, process_id), end=' ')
+            if _cnt % process_num != process_id:
+                continue
             words = sample.split('%')
             label, user_tag, item_id = words[0].split(' ')
             wt.write(sample+'\n')
@@ -215,6 +224,7 @@ def sample_negative_and_write_to_file(outfilename, samples, neg_cnt, positive_pa
                 sampled_item = item_list[sampled_item_idx]
                 if not remove_false_negative or (words[1], sampled_item) not in positive_pairs:
                     wt.write('{0} {1} {2}%{3}\n'.format(0, user_tag, sampled_item, words[1]))
+    print('\tsampling process {0} done.'.format(process_id))
 
 
 def get_normalized_item_freq(item2cnt):
@@ -237,7 +247,7 @@ def load_has_feature_items(InFile_paper_feature):
             item_set.add(words[0])
     return item_set
 
-def gen_experiment_splits(file_Author2ReferencePapers, OutFile_dir, InFile_paper_feature, item_ratio=1.0, tag=''):
+def gen_experiment_splits(file_Author2ReferencePapers, OutFile_dir, InFile_paper_feature, tag, item_ratio=1.0, process_num=1):
     if not os.path.exists(OutFile_dir):
         os.mkdir(OutFile_dir)
 
@@ -271,7 +281,7 @@ def gen_experiment_splits(file_Author2ReferencePapers, OutFile_dir, InFile_paper
             _cnt += 1
             if _cnt % 1000 == 0:
                 print('\rprocessing user number : {0}, time elapses: {1:.1f}s'.format(_cnt, time.time() - _t0), end=' ')
-            words = line.split('\t')
+            words = line.strip().split('\t')
             act_items = words[1].split(',')
             act_items = [_item for _item in act_items if _item in item_set]
             act_items_len = len(act_items)
@@ -307,7 +317,7 @@ def gen_experiment_splits(file_Author2ReferencePapers, OutFile_dir, InFile_paper
                         valid_samples.append(instance)
                     else:
                         train_samples.append(instance)
-    print('done. Sample number in train / valid / test is {0} / {1} / {2}'.format(len(train_samples), len(valid_samples), len(test_samples)))
+    print('done. \nsample number in train / valid / test is {0} / {1} / {2}'.format(len(train_samples), len(valid_samples), len(test_samples)))
 
     random.shuffle(train_samples)
 
@@ -315,16 +325,39 @@ def gen_experiment_splits(file_Author2ReferencePapers, OutFile_dir, InFile_paper
     item2cnt = {k: v for k, v in item2cnt.items() if k in item_set}
 
     item_list, sample_probs = get_normalized_item_freq(item2cnt)
-    print('Negative sampling for train...')
-    sample_negative_and_write_to_file(train_file, train_samples, train_neg_cnt,  positive_pairs, item_list, sample_probs)
-    print('Negative sampling for validation...')
-    sample_negative_and_write_to_file(valid_file, valid_samples, train_neg_cnt, positive_pairs, item_list, sample_probs)
-    print('Negative sampling for test...')
-    sample_negative_and_write_to_file(test_file, test_samples, test_neg_cnt, positive_pairs, item_list, sample_probs)
+    print('negative sampling for train...')
+    sample_negative_and_write_to_file_wrapper(train_file, train_samples, train_neg_cnt,  positive_pairs, item_list, sample_probs, process_num=process_num)
+    print('negative sampling for validation...')
+    sample_negative_and_write_to_file_wrapper(valid_file, valid_samples, train_neg_cnt, positive_pairs, item_list, sample_probs, process_num=process_num)
+    print('negative sampling for test...')
+    sample_negative_and_write_to_file_wrapper(test_file, test_samples, test_neg_cnt, positive_pairs, item_list, sample_probs, process_num=process_num)
     print('done.')
 
-    #dump_dict_as_txt(item2cnt, os.path.join(OutFile_dir, 'item2freq.tsv'))
+    dump_dict_as_txt(item2cnt, os.path.join(OutFile_dir, 'item2freq.tsv'))
 
+
+def sample_negative_and_write_to_file_wrapper(otuput_file, pos_samples, neg_cnt,  positive_pairs, item_list, sample_probs, process_num=1):
+    p_list = []
+    for i in range(process_num):
+        outfile = otuput_file + '_part{0}'.format(i)
+        p = Process(target=sample_negative_and_write_to_file, args=(outfile, pos_samples, neg_cnt,  positive_pairs, item_list, sample_probs, False, i, process_num))
+        p.start()
+        p_list.append(p)
+    for p in p_list:
+        p.join()
+
+    ### merge files and delete temporary files.
+    with open(otuput_file, 'w') as wt:
+        for i in range(process_num):
+            infile = otuput_file + '_part{0}'.format(i)
+            with open(infile, 'r') as rd:
+                while True:
+                    line = rd.readline()
+                    if not line:
+                        break
+                    if len(line) > 1:
+                        wt.write(line)
+            os.remove(infile)
 
 def normalize_score(pair2CocitedCnt, paper2cited_list, min_k = 10, min_score=0.1):
     res = {}
@@ -509,13 +542,13 @@ def format_word_embeddings(word_vecfile, word2id_file, np_file):
     with open(np_file, 'wb') as f:
         np.save(f, word_embeddings)
 
-def gen_context_embedding(entity_file, context_file, kg_file):
+def gen_context_embedding(entity_file, context_file, kg_file, dim):
     #load embedding_vec
     entity_index = 0
     entity_dict = {}
     fp_entity = open(entity_file, 'r')
     for line in fp_entity:
-        linesplit = line.strip().split('\t')[:EMBEDDING_LENGTH]
+        linesplit = line.strip().split('\t')[:dim]
         linesplit = list(map(float, linesplit))
         entity_dict[str(entity_index)] = linesplit
         entity_index += 1
@@ -539,7 +572,7 @@ def gen_context_embedding(entity_file, context_file, kg_file):
         kg_neighbor_dict[tail].add(head)        
     fp_kg.close()
 
-    context_embeddings = np.zeros([entity_index , EMBEDDING_LENGTH])
+    context_embeddings = np.zeros([entity_index , dim])
 
     for entity in entity_dict:
         if entity in kg_neighbor_dict:
@@ -626,3 +659,39 @@ def prepare_dataset(output_folder, input_folder, tag):
 
     write_to_file(os.path.join(output_folder, 'lightgcn_train_{0}.txt'.format(tag)), train_triples)
     write_to_file(os.path.join(output_folder, 'lightgcn_valid_{0}.txt'.format(tag)), valid_triples)
+
+
+def group_labels(labels, preds, group_keys):
+    """Devide labels and preds into several group according to values in group keys.
+    Args:
+        labels (list): ground truth label list.
+        preds (list): prediction score list.
+        group_keys (list): group key list.
+    Returns:
+        all_labels: labels after group.
+        all_preds: preds after group.
+    """
+    all_keys = list(set(group_keys))
+    group_labels = {k: [] for k in all_keys}
+    group_preds = {k: [] for k in all_keys}
+    for l, p, k in zip(labels, preds, group_keys):
+        group_labels[k].append(l)
+        group_preds[k].append(p)
+    all_labels = []
+    all_preds = []
+    for k in all_keys:
+        all_labels.append(group_labels[k])
+        all_preds.append(group_preds[k])
+    return all_labels, all_preds
+
+def load_emb_file(emb_file):
+    res = {}
+    with open(emb_file, 'r') as rd:
+        while True:
+            line = rd.readline()
+            if not line:
+                break
+            words = line.strip().split('\t')
+            values = [float(a) for a in words[1].split(' ')]
+            res[words[0]] = np.asarray(values, dtype=np.float32)
+    return res
