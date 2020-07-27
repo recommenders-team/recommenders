@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-
+import os
 from reco_utils.dataset.download_utils import maybe_download, download_path, unzip_file
 
 
@@ -23,17 +23,7 @@ URL_MIND = {
 }
 
 
-def _maybe_download_mind(size, dest_path):
-    url_train, url_valid = URL_MIND[size]
-    with download_path(dest_path) as path:
-        train_path = maybe_download(url=url_train, work_directory=path)
-        valid_path = maybe_download(url=url_valid, work_directory=path)
-    return train_path, valid_path
-
-
-def download_mind(
-    size="small", dest_path=None, train_folder="train", valid_folder="valid"
-):
+def download_mind(size="small", dest_path=None):
     """Download MIND dataset
 
     Args:
@@ -42,9 +32,25 @@ def download_mind(
     Returns:
         str, str: Path to train and validation sets.
     """
-    train_zip, valid_zip = _maybe_download_mind(size, dest_path)
-    train_path = os.path.join(dest_path, train_folder)
-    valid_path = os.path.join(dest_path, valid_folder)
+    url_train, url_valid = URL_MIND[size]
+    with download_path(dest_path) as path:
+        train_path = maybe_download(url=url_train, work_directory=path)
+        valid_path = maybe_download(url=url_valid, work_directory=path)
+    return train_path, valid_path
+
+
+def extract_mind(train_path, valid_path, train_folder="train", valid_folder="valid"):
+    """Extract MIND dataset
+
+    Args:
+        train_path (str): Path to train zip file
+        valid_path (str): Path to valid zip file
+        train_folder (str): Destination forder for train set
+        valid_folder (str): Destination forder for validation set
+    """
+    root_folder = os.path.basename(train_path)
+    train_path = os.path.join(root_folder, train_folder)
+    valid_path = os.path.join(root_folder, valid_folder)
     unzip_file(train_zip, train_path)
     unzip_file(valid_zip, valid_path)
     return train_path, valid_path
