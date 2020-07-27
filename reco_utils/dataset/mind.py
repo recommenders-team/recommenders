@@ -32,6 +32,9 @@ def download_mind(size="small", dest_path=None):
     Returns:
         str, str: Path to train and validation sets.
     """
+    size_options = ["small", "large"]
+    if size not in size_options:
+        raise ValueError(f"Wrong size option, available options are {size_options}")
     url_train, url_valid = URL_MIND[size]
     with download_path(dest_path) as path:
         train_path = maybe_download(url=url_train, work_directory=path)
@@ -39,16 +42,19 @@ def download_mind(size="small", dest_path=None):
     return train_path, valid_path
 
 
-def extract_mind(train_path, valid_path, train_folder="train", valid_folder="valid"):
+def extract_mind(train_zip, valid_zip, train_folder="train", valid_folder="valid"):
     """Extract MIND dataset
 
     Args:
-        train_path (str): Path to train zip file
-        valid_path (str): Path to valid zip file
+        train_zip (str): Path to train zip file
+        valid_zip (str): Path to valid zip file
         train_folder (str): Destination forder for train set
         valid_folder (str): Destination forder for validation set
+    
+    Retuns:
+        str, str: Train and validation folders
     """
-    root_folder = os.path.basename(train_path)
+    root_folder = os.path.basename(train_zip)
     train_path = os.path.join(root_folder, train_folder)
     valid_path = os.path.join(root_folder, valid_folder)
     unzip_file(train_zip, train_path)

@@ -6,7 +6,7 @@ import os
 from reco_utils.dataset.mind import download_mind
 
 
-@pytest.mark.smoke
+@pytest.mark.integration
 def test_download_mind(tmp_path):
     train_path, valid_path = download_mind(size="large", dest_path=tmp_path)
     statinfo = os.stat(train_path)
