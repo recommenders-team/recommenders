@@ -38,6 +38,7 @@ def download_mind(size="small", dest_path=None):
     Args:
         size (str): Dataset size. One of ["small", "large"]
         dest_path (str): Download path. If path is None, it will download the dataset on a temporal path
+        
     Returns:
         str, str: Path to train and validation sets.
     """
@@ -60,7 +61,7 @@ def extract_mind(train_zip, valid_zip, train_folder="train", valid_folder="valid
         train_folder (str): Destination forder for train set
         valid_folder (str): Destination forder for validation set
     
-    Retuns:
+    Returns:
         str, str: Train and validation folders
     """
     root_folder = os.path.basename(train_zip)
@@ -182,9 +183,9 @@ def get_words_and_entities(train_news, valid_news):
 
 def _download_and_extract_globe(dest_path):
     url = "http://nlp.stanford.edu/data/glove.6B.zip"
-    filepath = maybe_download(url=url_train, work_directory=dest_path)
+    filepath = maybe_download(url=url, work_directory=dest_path)
     glove_path = os.path.join(dest_path, "glove")
-    unzip_file(filepath, dest_path, clean_zip_file=False)
+    unzip_file(filepath, glove_path, clean_zip_file=False)
     return glove_path
 
 
