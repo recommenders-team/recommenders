@@ -101,3 +101,18 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
         top_scores = top_scores[test_user_idx, sort_ind]
 
     return np.array(top_items), np.array(top_scores)
+
+
+def binarize(a, threshold):
+    """Binarize the values.
+
+    Args:
+        a (np.ndarray): Input array that needs to be binarized.
+        threshold (float): Threshold below which all values are set to 0, else 1.
+    """
+    return np.where(
+        a > threshold,
+        1.0,
+        0.0
+    )
+

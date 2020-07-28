@@ -225,6 +225,9 @@ def notebooks():
         "rlrmc_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "rlrmc_movielens.ipynb"
         ),
+        "geoimc_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "geoimc_movielens.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),
