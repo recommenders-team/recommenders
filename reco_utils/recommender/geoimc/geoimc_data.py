@@ -187,7 +187,7 @@ class ML_100K(Dataset):
         return self.df2coo(df)
 
 
-    def load_data(self, path, e1_path, e2_path):
+    def load_data(self, path):
         """ Load dataset
 
         Args:
@@ -195,20 +195,74 @@ class ML_100K(Dataset):
             e1_path (str): Path to the file containing row (user) features of ML100K dataset
             e2_path (str): Path to the file containing col (movie) features of ML100K dataset
         """
-        self.entities = [self._load_features(e1_path, "userFeatures"), self._load_features(e2_path, "itemFeatures")]
+        self.entities = [self._load_user_features(f"{path}/u.user"), self._load_item_features(f"{path}/u.item")]
         self.normalize()
         self.reduce_dims()
         self.training_data = DataPtr(self._read_from_file(f"{path}/u1.base").tocsr(), self.entities)
         self.test_data = DataPtr(self._read_from_file(f"{path}/u1.test").tocsr(), self.entities)
 
 
-    def _load_features(self, path, key):
-        """Load entitiy features
+    def _load_user_features(self, path):
+        """Load user features
 
         Args:
-            path (str): Path to the file containing features. It should be a matlab file.
-            key (str): key containing the feature information.
+            path (str): Path to the file containing user features information
 
         """
-        data = loadmat(path)
-        return data[key].toarray()
+        data = pd.read_csv(path, delimiter='|', names=['user_id', 'age', 'gender', 'occupation', 'zip_code'])
+        features_df = pd.concat(
+            [data['user_id'],
+             pd.get_dummies(data['user_id']),
+             pd.get_dummies(data['age']),
+             pd.get_dummies(data['gender']),
+             pd.get_dummies(data['occupation']),
+             pd.get_dummies(data['zip_code'])],
+            axis=1
+        )
+        features_df.drop(['user_id'], axis=1, inplace=True)
+        user_features = np.nan_to_num(features_df.to_numpy())
+        return user_features
+
+
+    def _load_item_features(self, path):
+        """Load item features
+
+        Args:
+            path (str): Path to the file containing item features information
+
+        """
+        header =[
+            'movie_id',
+            'movie_title',
+            'release_date',
+            'video_release_date',
+            'IMDb_URL',
+            'unknown',
+            'Action',
+            'Adventure',
+            'Animation',
+            'Childrens',
+            'Comedy',
+            'Crime',
+            'Documentary',
+            'Drama',
+            'Fantasy',
+            'Film-Noir',
+            'Horror',
+            'Musical',
+            'Mystery',
+            'Romance',
+            'Sci-Fi',
+            'Thriller',
+            'War',
+            'Western']
+        data = pd.read_csv(path, delimiter='|', names=header, encoding="ISO-8859-1")
+
+        features_df = pd.concat([
+            pd.get_dummies(data['movie_title']),
+            pd.get_dummies(data['release_date']),
+            pd.get_dummies('video_release_date'),
+            pd.get_dummies('IMDb_URL'),
+            data[header[5:]]], axis=1)
+        item_features = np.nan_to_num(features_df.to_numpy())
+        return item_features
