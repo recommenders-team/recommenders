@@ -42,17 +42,3 @@ def reduce_dims(matrix, target_dim):
     model = PCA(n_components=target_dim)
     model.fit(matrix)
     return model.transform(matrix)
-
-
-def download_geoimc_features(remote_base_url, remote_filenames, dest):
-    """A small utility to download features
-
-    Args:
-        remote_base_url (url): Base URL at which features are present.
-        remote_filenames (Iterator): An iterator (of 2 elements, in general) containing
-        the filenames of row, col features at the remote_base_url.
-        dest (str): The destination of these downloaded files (Destination dir should already be
-        created).
-    """
-    for _remote_fname in remote_filenames:
-        maybe_download(f"{remote_base_url}/{_remote_fname}", f"{dest}/{_remote_fname}")
