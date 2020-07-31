@@ -73,13 +73,23 @@ def extract_mind(train_zip, valid_zip, train_folder="train", valid_folder="valid
 
 
 def read_clickhistory(path, filename):
+    """Read click history file
+
+    Args:
+        path (str): Folder path
+        filename (str): Filename
+
+    Returns:
+        list, dict: List of user session with user_id, clicks, positive and negative interactions. Dictionary
+            with user_id click history
+    """
     userid_history = {}
     with open(os.path.join(path, filename)) as f:
         lines = f.readlines()
     sessions = []
     for i in range(len(lines)):
         _, userid, imp_time, click, imps = lines[i].strip().split("\t")
-        clikcs = click.split(" ")
+        clicks = click.split(" ")
         pos = []
         neg = []
         imps = imps.split(" ")
@@ -88,8 +98,8 @@ def read_clickhistory(path, filename):
                 pos.append(imp.split("-")[0])
             else:
                 neg.append(imp.split("-")[0])
-        userid_history[userid] = clikcs
-        sessions.append([userid, clikcs, pos, neg])
+        userid_history[userid] = clicks
+        sessions.append([userid, clicks, pos, neg])
     return sessions, userid_history
 
 
@@ -101,6 +111,12 @@ def _newsample(nnn, ratio):
 
 
 def get_train_input(session, train_file_path, npratio=4):
+    """Manage train file.
+
+    Args:
+        session (list): List of user session with user_id, clicks, positive and negative interactions.        
+
+    """
     fp_train = open(train_file_path, "w", encoding="utf-8")
     for sess_id in range(len(session)):
         sess = session[sess_id]
