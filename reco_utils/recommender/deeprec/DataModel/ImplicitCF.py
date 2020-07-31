@@ -176,7 +176,7 @@ class ImplicitCF(object):
         print("Already create adjacency matrix.")
 
         rowsum = np.array(adj_mat.sum(1))
-        d_inv = np.power(rowsum, -0.5).flatten()
+        d_inv = np.power(rowsum + 1e-9, -0.5).flatten()
         d_inv[np.isinf(d_inv)] = 0.0
         d_mat_inv = sp.diags(d_inv)
         norm_adj_mat = d_mat_inv.dot(adj_mat)
