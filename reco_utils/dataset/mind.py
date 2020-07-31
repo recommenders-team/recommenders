@@ -111,11 +111,12 @@ def _newsample(nnn, ratio):
 
 
 def get_train_input(session, train_file_path, npratio=4):
-    """Manage train file.
+    """Generate train file.
 
     Args:
-        session (list): List of user session with user_id, clicks, positive and negative interactions.        
-
+        session (list): List of user session with user_id, clicks, positive and negative interactions.
+        train_file_path (str): Path to file.
+        npration (int): Ratio for negative sampling.
     """
     fp_train = open(train_file_path, "w", encoding="utf-8")
     for sess_id in range(len(session)):
@@ -135,6 +136,12 @@ def get_train_input(session, train_file_path, npratio=4):
 
 
 def get_valid_input(session, valid_file_path):
+    """Generate validation file.
+
+    Args:
+        session (list): List of user session with user_id, clicks, positive and negative interactions.
+        valid_file_path (str): Path to file.
+    """
     fp_valid = open(valid_file_path, "w", encoding="utf-8")
     for sess_id in range(len(session)):
         userid, _, poss, negs = session[sess_id]
@@ -154,6 +161,13 @@ def get_valid_input(session, valid_file_path):
 
 
 def get_user_history(train_history, valid_history, user_history_path):
+    """Generate user history file.
+
+    Args:
+        train_history (list): Train history.
+        valid_history (list): Validation history
+        user_history_path (str): Path to file.
+    """
     fp_user_history = open(user_history_path, "w", encoding="utf-8")
     for userid in train_history:
         fp_user_history.write(
