@@ -199,6 +199,15 @@ def _read_news(filepath, news_words, news_entities, tokenizer):
 
 
 def get_words_and_entities(train_news, valid_news):
+    """Load words and entities
+
+    Args:
+        train_news (str): News train file.
+        valid_news (str): News validation file.
+
+    Returns: 
+        dict, dict: Words and entities dictionaries.
+    """
     news_words = {}
     news_entities = {}
     tokenizer = RegexpTokenizer(r"\w+")
@@ -228,6 +237,20 @@ def generate_embeddings(
     max_sentence=10,
     word_embedding_dim=100,
 ):
+    """Generate embeddings.
+
+    Args:
+        data_path (str): Data path.
+        news_words (dict): News word dictionary.
+        news_entities (dict): News entity dictionary.
+        train_entities (str): Train entity file.
+        valid_entities (str): Validation entity file.
+        max_sentence (int): Max sentence size.
+        word_embedding_dim (int): Word embedding dimension.
+
+    Returns:
+        str, str, str: File paths to news, word and entity embeddings.
+    """
     embedding_dimensions = [50, 100, 200, 300]
     if word_embedding_dim not in embedding_dimensions:
         raise ValueError(
