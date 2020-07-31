@@ -67,6 +67,7 @@ CONDA_GPU = {
     "fastai": "fastai==1.0.46",
     "numba": "numba>=0.38.1",
     "pytorch": "pytorch>=1.0.0",
+    "cudatoolkit": "cudatoolkit=10.0",
 }
 
 PIP_BASE = {
