@@ -2,11 +2,11 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (July, 2020)
+## What's New (August 3, 2020)
 
 [Microsoft MIND Competition!](https://msnews.github.io/competition.html)
 
-Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into the [quick start example](examples/00_quick_start/dkn_MIND.ipynb) using the DKN algorithm. Then try some other algorithms (NAML, NPA, NRMS, LSTUR) and tools in recommenders and submit your entry!
+Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into the quick start examples featuring [Deep Knowledge Network](examples/00_quick_start/dkn_MIND.ipynb), [Long- and Short-term User Representations](examples/00_quick_start/lstur_MIND.ipynb),[Neural News Recommendation with Attentive Multi-View Learning](examples/00_quick_start/naml_MIND.ipynb), [Neural News Recommendation with Personal Attention](examples/00_quick_start/npa_MIND.ipynb) and [Neural News Recommendation with Multi-Head Self-Attention](examples/00_quick_start/nrms_MIND.ipynb). Then try some other tools in this repo and [join the competition](https://competitions.codalab.org/competitions/24122)!
 
 ## Introduction
 
