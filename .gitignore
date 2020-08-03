@@ -156,3 +156,6 @@ ml-20m/
 *.model
 *.mml
 nohup.out
+*.vec
+*.tsv
+*.sh
