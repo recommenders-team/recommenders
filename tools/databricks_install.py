@@ -230,7 +230,7 @@ if __name__ == "__main__":
     from tools.generate_conda_file import PIP_BASE, CONDA_BASE
 
     ## depend on PIP_BASE:
-    PYPI_RECO_LIB_DEPS = [PIP_BASE["tqdm"], CONDA_BASE["papermill"]]
+    PYPI_RECO_LIB_DEPS = [CONDA_BASE["tqdm"]]
 
     PYPI_O16N_LIBS = [
         "azure-cli==2.0.56",

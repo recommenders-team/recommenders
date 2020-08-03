@@ -44,26 +44,20 @@ class LSTURModel(BaseModel):
 
         super().__init__(hparams, iterator_creator, seed=seed)
 
-    def _init_embedding(self, file_path):
-        """Load pre-trained embeddings as a constant tensor.
-        
-        Args:
-            file_path (str): the pre-trained embeddings filename.
-
-        Returns:
-            np.array: A constant numpy array.
-        """
-        return np.load(file_path).astype(np.float32)
-
     def _get_input_label_from_iter(self, batch_data):
         input_feat = [
-            batch_data["impression_index_batch"],
             batch_data["user_index_batch"],
-            batch_data["clicked_news_batch"],
-            batch_data["candidate_news_batch"],
+            batch_data["clicked_title_batch"],
+            batch_data["candidate_title_batch"],
         ]
         input_label = batch_data["labels"]
         return input_feat, input_label
+
+    def _get_user_feature_from_iter(self, batch_data):
+        return [batch_data["clicked_title_batch"], batch_data["user_index_batch"]]
+
+    def _get_news_feature_from_iter(self, batch_data):
+        return batch_data["candidate_title_batch"]
 
     def _build_graph(self):
         """Build LSTUR model and scorer.
@@ -87,12 +81,12 @@ class LSTURModel(BaseModel):
         """
         hparams = self.hparams
         his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.doc_size), dtype="int32"
+            shape=(hparams.his_size, hparams.title_size), dtype="int32"
         )
         user_indexes = keras.Input(shape=(1,), dtype="int32")
 
         user_embedding_layer = layers.Embedding(
-            hparams.user_num,
+            len(self.train_iterator.uid2index),
             hparams.gru_unit,
             trainable=True,
             embeddings_initializer="zeros",
@@ -143,7 +137,7 @@ class LSTURModel(BaseModel):
             obj: the news encoder of LSTUR.
         """
         hparams = self.hparams
-        sequences_input_title = keras.Input(shape=(hparams.doc_size,), dtype="int32")
+        sequences_input_title = keras.Input(shape=(hparams.title_size,), dtype="int32")
         embedded_sequences_title = embedding_layer(sequences_input_title)
 
         y = layers.Dropout(hparams.dropout)(embedded_sequences_title)
@@ -155,12 +149,13 @@ class LSTURModel(BaseModel):
             bias_initializer=keras.initializers.Zeros(),
             kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(y)
+        print(y)
         y = layers.Dropout(hparams.dropout)(y)
         y = layers.Masking()(
             OverwriteMasking()([y, ComputeMasking()(sequences_input_title)])
         )
         pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
-
+        print(pred_title)
         model = keras.Model(sequences_input_title, pred_title, name="news_encoder")
         return model
 
@@ -175,30 +170,31 @@ class LSTURModel(BaseModel):
         hparams = self.hparams
 
         his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.doc_size), dtype="int32"
+            shape=(hparams.his_size, hparams.title_size), dtype="int32"
         )
         pred_input_title = keras.Input(
-            shape=(hparams.npratio + 1, hparams.doc_size), dtype="int32"
+            shape=(hparams.npratio + 1, hparams.title_size), dtype="int32"
         )
-        pred_input_title_one = keras.Input(shape=(1, hparams.doc_size,), dtype="int32")
-        pred_title_reshape = layers.Reshape((hparams.doc_size,))(pred_input_title_one)
-        imp_indexes = keras.Input(shape=(1,), dtype="int32")
+        pred_input_title_one = keras.Input(
+            shape=(1, hparams.title_size,), dtype="int32"
+        )
+        pred_title_reshape = layers.Reshape((hparams.title_size,))(pred_input_title_one)
         user_indexes = keras.Input(shape=(1,), dtype="int32")
 
         embedding_layer = layers.Embedding(
-            hparams.word_size,
+            self.word2vec_embedding.shape[0],
             hparams.word_emb_dim,
             weights=[self.word2vec_embedding],
             trainable=True,
         )
 
         titleencoder = self._build_newsencoder(embedding_layer)
-        userencoder = self._build_userencoder(titleencoder, type=hparams.type)
-        newsencoder = titleencoder
+        self.userencoder = self._build_userencoder(titleencoder, type=hparams.type)
+        self.newsencoder = titleencoder
 
-        user_present = userencoder([his_input_title, user_indexes])
-        news_present = layers.TimeDistributed(newsencoder)(pred_input_title)
-        news_present_one = newsencoder(pred_title_reshape)
+        user_present = self.userencoder([his_input_title, user_indexes])
+        news_present = layers.TimeDistributed(self.newsencoder)(pred_input_title)
+        news_present_one = self.newsencoder(pred_title_reshape)
 
         preds = layers.Dot(axes=-1)([news_present, user_present])
         preds = layers.Activation(activation="softmax")(preds)
@@ -206,11 +202,9 @@ class LSTURModel(BaseModel):
         pred_one = layers.Dot(axes=-1)([news_present_one, user_present])
         pred_one = layers.Activation(activation="sigmoid")(pred_one)
 
-        model = keras.Model(
-            [imp_indexes, user_indexes, his_input_title, pred_input_title], preds
-        )
+        model = keras.Model([user_indexes, his_input_title, pred_input_title], preds)
         scorer = keras.Model(
-            [imp_indexes, user_indexes, his_input_title, pred_input_title_one], pred_one
+            [user_indexes, his_input_title, pred_input_title_one], pred_one
         )
 
         return model, scorer

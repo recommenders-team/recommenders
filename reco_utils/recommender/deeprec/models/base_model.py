@@ -26,7 +26,7 @@ class BaseModel:
             seed (int): Random seed.
         """
         self.seed = seed
-        tf.set_random_seed(seed)
+        tf.compat.v1.set_random_seed(seed)
         np.random.seed(seed)
 
         self.graph = graph if graph is not None else tf.Graph()
@@ -41,11 +41,13 @@ class BaseModel:
             self.layer_params = []
             self.embed_params = []
             self.cross_params = []
-            self.layer_keeps = tf.placeholder(tf.float32, name="layer_keeps")
+            self.layer_keeps = tf.compat.v1.placeholder(tf.float32, name="layer_keeps")
             self.keep_prob_train = None
             self.keep_prob_test = None
-            self.is_train_stage = tf.placeholder(tf.bool, shape=(), name="is_training")
-            self.group = tf.placeholder(tf.int32, shape=(), name="group")
+            self.is_train_stage = tf.compat.v1.placeholder(
+                tf.bool, shape=(), name="is_training"
+            )
+            self.group = tf.compat.v1.placeholder(tf.int32, shape=(), name="group")
 
             self.initializer = self._get_initializer()
 
@@ -53,16 +55,18 @@ class BaseModel:
             self.pred = self._get_pred(self.logit, self.hparams.method)
 
             self.loss = self._get_loss()
-            self.saver = tf.train.Saver(max_to_keep=self.hparams.epochs)
+            self.saver = tf.compat.v1.train.Saver(max_to_keep=self.hparams.epochs)
             self.update = self._build_train_opt()
-            self.extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-            self.init_op = tf.global_variables_initializer()
+            self.extra_update_ops = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.UPDATE_OPS
+            )
+            self.init_op = tf.compat.v1.global_variables_initializer()
             self.merged = self._add_summaries()
 
         # set GPU use with demand growth
-        gpu_options = tf.GPUOptions(allow_growth=True)
-        self.sess = tf.Session(
-            graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options)
+        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+        self.sess = tf.compat.v1.Session(
+            graph=self.graph, config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
         )
         self.sess.run(self.init_op)
 
@@ -105,10 +109,10 @@ class BaseModel:
         return pred
 
     def _add_summaries(self):
-        tf.summary.scalar("data_loss", self.data_loss)
-        tf.summary.scalar("regular_loss", self.regular_loss)
-        tf.summary.scalar("loss", self.loss)
-        merged = tf.summary.merge_all()
+        tf.compat.v1.summary.scalar("data_loss", self.data_loss)
+        tf.compat.v1.summary.scalar("regular_loss", self.regular_loss)
+        tf.compat.v1.summary.scalar("loss", self.loss)
+        merged = tf.compat.v1.summary.merge_all()
         return merged
 
     def _l2_loss(self):
@@ -203,7 +207,7 @@ class BaseModel:
             )
         elif self.hparams.loss == "log_loss":
             data_loss = tf.reduce_mean(
-                tf.losses.log_loss(
+                tf.compat.v1.losses.log_loss(
                     predictions=tf.reshape(self.pred, [-1]),
                     labels=tf.reshape(self.iterator.labels, [-1]),
                 )
@@ -257,7 +261,7 @@ class BaseModel:
         elif optimizer == "sgd":
             train_step = tf.train.GradientDescentOptimizer(lr)
         elif optimizer == "adam":
-            train_step = tf.train.AdamOptimizer(lr)
+            train_step = tf.compat.v1.train.AdamOptimizer(lr)
         elif optimizer == "ftrl":
             train_step = tf.train.FtrlOptimizer(lr)
         elif optimizer == "gd":
@@ -701,48 +705,3 @@ class BaseModel:
                 self.logit = nn_output
                 return nn_output
 
-    def infer_embedding(self, sess, feed_dict):
-        """Infer document embedding in feed_dict with current model.
-
-        Args:
-            sess (obj): The model session object.
-            feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
-
-        Returns:
-            list: news embedding in a batch
-        """
-        feed_dict[self.layer_keeps] = self.keep_prob_test
-        feed_dict[self.is_train_stage] = False
-        return sess.run([self.news_field_embed_final_batch], feed_dict=feed_dict)
-
-    def run_get_embedding(self, infile_name, outfile_name):
-        """infer document embedding with current model.
-
-        Args:
-            infile_name (str): Input file name, format is [Newsid] [w1,w2,w3...] [e1,e2,e3...]
-            outfile_name (str): Output file name, format is [Newsid] [embedding]
-
-        Returns:
-            obj: An instance of self.
-        """
-        load_sess = self.sess
-        with tf.gfile.GFile(outfile_name, "w") as wt:
-            for (
-                batch_data_input,
-                newsid_list,
-                data_size,
-            ) in self.iterator.load_infer_data_from_file(infile_name):
-                news_embedding = self.infer_embedding(load_sess, batch_data_input)[0]
-                for i in range(data_size):
-                    wt.write(
-                        newsid_list[i]
-                        + " "
-                        + ",".join(
-                            [
-                                str(embedding_value)
-                                for embedding_value in news_embedding[i]
-                            ]
-                        )
-                        + "\n"
-                    )
-        return self
