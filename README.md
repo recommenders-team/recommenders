@@ -6,7 +6,7 @@
 
 [Microsoft MIND Competition!](https://msnews.github.io/competition.html)
 
-Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into the quick start examples featuring [DKN](examples/00_quick_start/dkn_MIND.ipynb), [LSTUR](examples/00_quick_start/lstur_MIND.ipynb),[NAML](examples/00_quick_start/naml_MIND.ipynb), [NPA](examples/00_quick_start/npa_MIND.ipynb) and [NRMS](examples/00_quick_start/nrms_MIND.ipynb). Then try some other tools in this repo and [join the competition](https://competitions.codalab.org/competitions/24122)!
+Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news), and dive into some baselines such as [DKN](examples/00_quick_start/dkn_MIND.ipynb), [LSTUR](examples/00_quick_start/lstur_MIND.ipynb), [NAML](examples/00_quick_start/naml_MIND.ipynb), [NPA](examples/00_quick_start/npa_MIND.ipynb) and [NRMS](examples/00_quick_start/nrms_MIND.ipynb). Then try some other tools in this repo and [join the competition](https://competitions.codalab.org/competitions/24122)!
 
 ## Introduction
 
