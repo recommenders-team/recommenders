@@ -1,21 +1,25 @@
 # Recommendation Systems for News
 
-Online news services such as Microsoft News have become popular platforms for news reading. However, the massive continuously generated news information brings heavy news information overload to users. Personalized news recommendation can help target users with their interested news. It has been applied to many online news platforms, and effectively improves the news reading experience of many users.
+While online news services have become a major source of information for millions of people, the massive amount of continuously generated content brings heavy information overload to users. Personalized news recommendation, which predicts which news articles a user is likely to read, can help reduce information overload and improve user experience. 
 
-## Scenarios
+There are several aspects to consider when developing news recommendation systems.  Especially:
 
-Next we will describe several most common retail scenarios and main considerations when applying recommendations in news.
+1. Cold-start is a major challenge for news recommendation. New articles are continuously emerging, and existing news articles will expire quickly. Effective representation and recommendation of new articles is essential to good performance in news recommendation.  
 
-### Personalized news recommendation
+2. In news recommendation it is not optimal to represent items (i.e., news articles) using handcrafted features like IDs. In addition, news articles have rich texts. NLP methods are important to learn news content representations from news texts.
 
-A major task in personalized news recommendation is to predict which news articles a user is most likely to read based on the personal interest of this user. Users’ personal interest in news is usually inferred from their behaviors on the online news platforms, such as their clicked news articles. This scenario widely exists in the personalized news websites and feeds for news items selection and ranking. The models in this repo such as [NAML](../../examples/00_quick_start/naml_synthetic.ipynb), [NRMS](../../examples/00_quick_start/nrms_synthetic.ipynb), [DKN](../../examples/00_quick_start/dkn_MIND_dataset.ipynb) and [LSTUR](../../example/00_quick_start/lstur_synthetic.ipynb) can be used for personalized news recommendation.
-
-News recommendation has two major differences with the general recommendation.
-1. News recommendation has serious cold-start problem. New news articles are continuously emerging, and existing news articles will expire quickly. Thus, news recommendation always faces new items, which are very challenging for ID-based recommender systems.  
-2. In news recommendation it is not optimal to represent items (i.e., news articles) using handcrafted features like IDs. In addition, news articles have rich texts. NLP methods are important to learn news content representations from news texts. 
+For more details, please refer to [this ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf) and references therein.
 
 ## Data and evaluation
 
-Datasets used in news recommendation usually include user historical clicked news, [news information](../../GLOSSARY.md) and [interaction data](../../GLOSSARY.md), among others.
+Datasets used in news recommendation usually include articles read by a user, which can be used as a proxy of user interest.  In addition to such [implicit interation data](../../GLOSSARY.md), news datasets could also include [news information](../../GLOSSARY.md).  
 
-To measure the performance of the recommender, it is common to use [ranking metrics](../../GLOSSARY.md). In production, the business metrics used are [CTR](../../GLOSSARY.md) and [revenue per order](../../GLOSSARY.md). To evaluate a model's performance in production in an online manner, [A/B testing](../../GLOSSARY.md) is often applied.
+To measure the performance of the recommender, it is common to use [ranking metrics](../../GLOSSARY.md) such as MRR and nDCG. In production, business metrics used may include [CTR](../../GLOSSARY.md) and engagement time. To evaluate a model's performance in production in an online manner, [A/B testing](../../GLOSSARY.md) is often applied.
+
+## Microsoft News Dataset (MIND) and MIND News Recommendation Competition
+
+To support the advancement of open research in news recommendation, Microsoft has made [MIND](https://msnews.github.io/) (Microsoft News Dataset) available to the research community.  MIND is a large-scale dataset on English news, containing 161,000 news articles, over 3 million entities and 1 million users.  More details of the dataset can be find in [here](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf).
+
+In conjunction with MIND, Microsoft also launched [MIND News Competition](https://msnews.github.io/competition.html).  The development phase of the competition srarts on July 20, 2020.  The final test phase starts on August 21, 2020, and the competition ends on September 4, 2020.  More details can be found on the MIND News Competition page above.
+
+To help competition participants get started, we have made available in this repo several baselines models for MIND and MIND News Competition.  These include complete notebooks for [DKN](../../examples/00_quick_start/dkn_MIND.ipynb), [LSTUR](../../examples/00_quick_start/lstur_MIND.ipynb), [NAML](../../examples/00_quick_start/naml_MIND.ipynb), [NPA](../../examples/00_quick_start/npa_MIND.ipynb) and [NRMS](../../examples/00_quick_start/nrms_MIND.ipynb) developed and tested on MIND sample datasets.
