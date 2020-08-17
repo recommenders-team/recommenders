@@ -280,6 +280,7 @@ class BaseModel:
         """
 
         all_keys = list(set(group_keys))
+        all_keys.sort()
         group_labels = {k: [] for k in all_keys}
         group_preds = {k: [] for k in all_keys}
 
