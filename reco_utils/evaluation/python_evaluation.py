@@ -12,7 +12,6 @@ from sklearn.metrics import (
     roc_auc_score,
     log_loss,
 )
-from sklearn.preprocessing import minmax_scale
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -297,44 +296,6 @@ def auc(
         col_prediction=col_prediction,
     )
     return roc_auc_score(y_true, y_pred)
-
-
-def binarize_datasets(
-    df_true,
-    df_pred,
-    threshold,
-    col_rating=DEFAULT_RATING_COL,
-    col_prediction=DEFAULT_PREDICTION_COL,
-):
-    """
-    Transform the ground truth and prediction datasets in the following way:
-      - Ground truth's ratings become binary (1 if the rating exceed the threshold and 0 if it doesn't)
-      - Prediction's ratings are scaled down to 0..1 range which effectively give us the probabilities for
-        accurate/high rating.
-    This is used to prepare the datasets for computing logloss (see below).
-
-    Args:
-        df_true (pd.DataFrame): True data
-        df_pred (pd.DataFrame): Predicted data
-        threshold (float): Positivity threshold
-        col_rating (str): column name for rating
-        col_prediction (str): column name for prediction
-
-    Returns:
-        pd.DataFrame, pd.DataFrame: The binary ground truth dataset and and the scaled prediction dataset.
-    """
-
-    df_true_bin = df_true.copy()
-    df_true_bin[col_rating] = df_true_bin[col_rating].apply(
-        lambda x: 1 if x >= threshold else 0
-    )
-
-    df_pred_prob = df_pred.copy()
-    df_pred_prob[col_prediction] = minmax_scale(
-        df_pred_prob[col_prediction].astype(float)
-    )
-
-    return df_true_bin, df_pred_prob
 
 
 def logloss(
