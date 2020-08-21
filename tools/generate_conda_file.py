@@ -13,7 +13,7 @@
 # For generating a conda file for running python gpu and pyspark:
 # $ python generate_conda_file.py --gpu --pyspark
 # For generating a conda file for running python gpu and pyspark with a particular version:
-# $ python generate_conda_file.py --gpu --pyspark-version 2.4.0
+# $ python generate_conda_file.py --gpu --pyspark-version 2.4.5
 
 import argparse
 import textwrap
@@ -61,7 +61,7 @@ CONDA_BASE = {
     "tqdm": "tqdm>=4.31.1",
 }
 
-CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.4.3"}
+CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.4.5"}
 
 CONDA_GPU = {
     "fastai": "fastai==1.0.46",
@@ -134,7 +134,7 @@ if __name__ == "__main__":
                 "PySpark version input must be valid numeric format (e.g. --pyspark-version=2.3.1)"
             )
     else:
-        args.pyspark_version = "2.4.3"
+        args.pyspark_version = "2.4.5"
 
     # set name for environment and output yaml file
     conda_env = "reco_base"
