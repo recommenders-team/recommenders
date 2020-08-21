@@ -85,7 +85,7 @@ To install the PySpark environment:
 
 > Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
 >
->     python tools/generate_conda_file.py --pyspark-version 2.4.0
+>     python tools/generate_conda_file.py --pyspark-version 2.4.5
 
 Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
 
@@ -107,7 +107,7 @@ Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
     export PYSPARK_PYTHON=$RECO_ENV/bin/python
     export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
     export SPARK_HOME_BACKUP=$SPARK_HOME
-    unset SPARK_HOME
+    export SPARK_HOME=/dsvm/tools/spark/current
 
 This will export the variables every time we do `conda activate reco_pyspark`.
 To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
