@@ -331,7 +331,7 @@ def test_sar_item_similarity(
         .reset_index(drop=True)
     )
 
-    if similarity_type is "cooccurrence":
+    if similarity_type == "cooccurrence":
         assert (item_similarity_ref == item_similarity).all().all()
     else:
         assert (
