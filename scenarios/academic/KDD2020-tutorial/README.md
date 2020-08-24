@@ -29,7 +29,7 @@ The following setup instructions assume users work in a Linux system. The testin
         ```
     1. The Python script will be run in a conda environment where the dependencies are installed. This can be done by using the `reco_gpu_kdd.yaml` file provided in the branch subfolder with the following commands.
         ```bash
-        conda create -n kdd_tutorial_2020 -f reco_gpu_kdd.yaml
+        conda env create -n kdd_tutorial_2020 -f reco_gpu_kdd.yaml
         conda activate kdd_tutorial_2020
         ```
 1. The tutorial will be conducated by using the Jupyter notebooks. The newly created conda kernel can be registered with the Jupyter notebook server

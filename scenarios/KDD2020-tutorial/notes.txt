@@ -1,6 +1,0 @@
-
-git clone https://github.com/microsoft/recommenders 
-
-cd recommenders
-
-git checkout -b kdd2020_tutorial origin/staging
