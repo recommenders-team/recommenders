@@ -13,8 +13,6 @@ name: reco_gpu_kdd
 channels:
 - defaults
 - conda-forge
-- pytorch
-- fastai
 dependencies:
 - numpy>=1.13.3
 - pandas>=0.23.4,<1.0.0
@@ -28,7 +26,6 @@ dependencies:
 - pytest>=3.6.4
 - numba>=0.38.1
 - pip>=19.2
-- pytorch>=1.0.0
 - pip:
   - nbconvert==5.5.0
   - tensorflow-gpu==1.15.2
