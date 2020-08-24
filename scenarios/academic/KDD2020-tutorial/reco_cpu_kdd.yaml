@@ -9,7 +9,7 @@
 # $ conda activate reco_gpu
 # $ python -m ipykernel install --user --name reco_gpu --display-name "Python (reco_gpu)"
 # 
-name: reco_gpu_kdd
+name: reco_cpu_kdd
 channels:
 - defaults
 - conda-forge
