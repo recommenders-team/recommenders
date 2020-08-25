@@ -26,6 +26,7 @@ dependencies:
 - pytest>=3.6.4
 - numba>=0.38.1
 - pip>=19.2
+- seaborn==0.10.1
 - pip:
   - nbconvert==5.5.0
   - tensorflow-gpu==1.15.2
