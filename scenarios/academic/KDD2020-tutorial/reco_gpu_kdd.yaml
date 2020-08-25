@@ -1,9 +1,9 @@
 # 
 # To create the conda environment:
-# $ conda env create -f reco_gpu.yaml
+# $ conda env create -f reco_gpu_kdd.yaml
 # 
 # To update the conda environment:
-# $ conda env update -f reco_gpu.yaml
+# $ conda env update -f reco_gpu_kdd.yaml
 # 
 # To register the conda environment in Jupyter:
 # $ conda activate reco_gpu
