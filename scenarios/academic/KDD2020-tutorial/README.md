@@ -1,5 +1,6 @@
 # Environment setup
 The following setup instructions assume users work in a Linux system. The testing was performed on a Ubuntu Linux system.
+We use Conda to install packages and manage the virtual environment. Type ``` conda list ``` to check if you have conda in your machine. If not, please follow the instructions on https://conda.io/projects/conda/en/latest/user-guide/install/linux.html to install either Miniconda or Anaconda (preferred) before we proceed. 
 
 1. Clone the repository
     ```bash
