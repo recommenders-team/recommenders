@@ -116,7 +116,7 @@ def test_sar_item_similarity(
         sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
-    if similarity_type is "cooccurrence":
+    if similarity_type == "cooccurrence":
         test_item_similarity = _rearrange_to_test(
             model.item_similarity.todense(),
             row_ids,
