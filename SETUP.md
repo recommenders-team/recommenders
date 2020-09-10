@@ -85,7 +85,7 @@ To install the PySpark environment:
 
 > Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
 >
->     python tools/generate_conda_file.py --pyspark-version 2.4.0
+>     python tools/generate_conda_file.py --pyspark-version 2.4.5
 
 Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
 
@@ -94,11 +94,14 @@ Click on the following menus to see details:
 <summary><strong><em>Set PySpark environment variables on Linux or MacOS</em></strong></summary>
 
 To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
+
 First, get the path of the environment `reco_pyspark` is installed:
 
     RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
     mkdir -p $RECO_ENV/etc/conda/activate.d
     mkdir -p $RECO_ENV/etc/conda/deactivate.d
+
+You also need to find where Spark is installed and set `SPARK_HOME` variable, on the DSVM, `SPARK_HOME=/dsvm/tools/spark/current`.
 
 Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 
@@ -106,17 +109,14 @@ Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
     RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
     export PYSPARK_PYTHON=$RECO_ENV/bin/python
     export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
-    export SPARK_HOME_BACKUP=$SPARK_HOME
-    unset SPARK_HOME
+    export SPARK_HOME=/dsvm/tools/spark/current
 
-This will export the variables every time we do `conda activate reco_pyspark`.
-To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
+This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
 
     #!/bin/sh
     unset PYSPARK_PYTHON
     unset PYSPARK_DRIVER_PYTHON
-    export SPARK_HOME=$SPARK_HOME_BACKUP
-    unset SPARK_HOME_BACKUP
+
 
 </details>
 
