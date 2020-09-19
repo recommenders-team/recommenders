@@ -324,6 +324,8 @@ def negative_feedback_sampler(
     df_neg = user_item_pairs(
         pd.DataFrame(users, columns=[col_user]),
         pd.DataFrame(items, columns=[col_item]),
+        col_user,
+        col_item,
         user_item_filter_df=df,
     )
     df_neg[col_label] = 0

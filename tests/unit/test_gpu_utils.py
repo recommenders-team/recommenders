@@ -3,6 +3,9 @@
 
 import sys
 import pytest
+import tensorflow as tf
+import torch
+
 from reco_utils.common.gpu_utils import (
     get_cuda_version,
     get_cudnn_version,
@@ -37,3 +40,14 @@ def test_get_cuda_version():
 @pytest.mark.gpu
 def test_get_cudnn_version():
     assert get_cudnn_version() > "7.0.0"
+
+    
+@pytest.mark.gpu
+def test_tensorflow_gpu():
+    assert tf.test.is_gpu_available()
+
+
+@pytest.mark.gpu
+def test_pytorch_gpu():
+    assert torch.cuda.is_available()
+

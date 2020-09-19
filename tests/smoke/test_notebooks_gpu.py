@@ -109,24 +109,6 @@ def test_xdeepfm_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_dkn_smoke(notebooks):
-    notebook_path = notebooks["dkn_quickstart"]
-    pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=dict(epoch=1, run_MIND_small=False),
-    )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-
-    assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
-
-
-@pytest.mark.smoke
-@pytest.mark.gpu
 def test_wide_deep_smoke(notebooks, tmp):
     notebook_path = notebooks["wide_deep"]
 
@@ -158,7 +140,7 @@ def test_naml_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epochs=1, seed=42),
+        parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -176,7 +158,7 @@ def test_nrms_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epochs=1, seed=42),
+        parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -194,7 +176,7 @@ def test_npa_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epochs=1, seed=42),
+        parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
@@ -212,7 +194,7 @@ def test_lstur_smoke(notebooks):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(epochs=1, seed=40),
+        parameters=dict(epochs=1, seed=40, MIND_type="demo"),
     )
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 

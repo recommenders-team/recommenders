@@ -218,3 +218,28 @@ def test_xlearn_fm_integration(notebooks):
     results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
 
     assert results["auc_score"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "expected_values",
+    [
+        (
+            {
+                "rmse": 0.4969,
+                "mae": 0.4761
+            }
+        )
+    ],
+)
+def test_geoimc_integration(notebooks, expected_values):
+    notebook_path = notebooks["geoimc_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
