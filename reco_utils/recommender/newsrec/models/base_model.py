@@ -8,7 +8,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from reco_utils.recommender.deeprec.deeprec_utils import cal_metric
-
+from tqdm import tqdm
 
 __all__ = ["BaseModel"]
 
@@ -189,18 +189,23 @@ class BaseModel:
             epoch_loss = 0
             train_start = time.time()
 
-            for batch_data_input in self.train_iterator.load_data_from_file(
-                train_news_file, train_behaviors_file
-            ):
+            tqdm_util = tqdm(
+                self.train_iterator.load_data_from_file(
+                    train_news_file, train_behaviors_file
+                )
+            )
+
+            for batch_data_input in tqdm_util:
+
                 step_result = self.train(batch_data_input)
                 step_data_loss = step_result
 
                 epoch_loss += step_data_loss
                 step += 1
                 if step % self.hparams.show_step == 0:
-                    print(
+                    tqdm_util.set_description(
                         "step {0:d} , total_loss: {1:.4f}, data_loss: {2:.4f}".format(
-                            step, epoch_loss, step_data_loss
+                            step, epoch_loss / step, step_data_loss
                         )
                     )
 
@@ -275,6 +280,7 @@ class BaseModel:
         """
 
         all_keys = list(set(group_keys))
+        all_keys.sort()
         group_labels = {k: [] for k in all_keys}
         group_preds = {k: [] for k in all_keys}
 
@@ -288,7 +294,7 @@ class BaseModel:
             all_labels.append(group_labels[k])
             all_preds.append(group_preds[k])
 
-        return all_labels, all_preds
+        return all_keys, all_labels, all_preds
 
     def run_eval(self, news_filename, behaviors_file):
         """Evaluate the given file and returns some evaluation metrics.
@@ -301,23 +307,13 @@ class BaseModel:
         """
 
         if self.support_quick_scoring:
-            group_labels, group_preds = self.run_fast_eval(
+            _, group_labels, group_preds = self.run_fast_eval(
                 news_filename, behaviors_file
             )
         else:
-            preds = []
-            labels = []
-            imp_indexes = []
-
-            for batch_data_input in self.test_iterator.load_data_from_file(
+            _, group_labels, group_preds = self.run_slow_eval(
                 news_filename, behaviors_file
-            ):
-                step_pred, step_labels, step_imp_index = self.eval(batch_data_input)
-                preds.extend(np.reshape(step_pred, -1))
-                labels.extend(np.reshape(step_labels, -1))
-                imp_indexes.extend(np.reshape(step_imp_index, -1))
-
-            group_labels, group_preds = self.group_labels(labels, preds, imp_indexes)
+            )
         res = cal_metric(group_labels, group_preds, self.hparams.metrics)
         return res
 
@@ -341,8 +337,8 @@ class BaseModel:
 
         user_indexes = []
         user_vecs = []
-        for batch_data_input in self.test_iterator.load_user_from_file(
-            news_filename, behaviors_file
+        for batch_data_input in tqdm(
+            self.test_iterator.load_user_from_file(news_filename, behaviors_file)
         ):
             user_index, user_vec = self.user(batch_data_input)
             user_indexes.extend(np.reshape(user_index, -1))
@@ -356,32 +352,53 @@ class BaseModel:
 
         news_indexes = []
         news_vecs = []
-        for batch_data_input in self.test_iterator.load_news_from_file(news_filename):
+        for batch_data_input in tqdm(
+            self.test_iterator.load_news_from_file(news_filename)
+        ):
             news_index, news_vec = self.news(batch_data_input)
             news_indexes.extend(np.reshape(news_index, -1))
             news_vecs.extend(news_vec)
 
         return dict(zip(news_indexes, news_vecs))
 
+    def run_slow_eval(self, news_filename, behaviors_file):
+        preds = []
+        labels = []
+        imp_indexes = []
+
+        for batch_data_input in tqdm(
+            self.test_iterator.load_data_from_file(news_filename, behaviors_file)
+        ):
+            step_pred, step_labels, step_imp_index = self.eval(batch_data_input)
+            preds.extend(np.reshape(step_pred, -1))
+            labels.extend(np.reshape(step_labels, -1))
+            imp_indexes.extend(np.reshape(step_imp_index, -1))
+
+        group_impr_indexes, group_labels, group_preds = self.group_labels(
+            labels, preds, imp_indexes
+        )
+        return group_impr_indexes, group_labels, group_preds
+
     def run_fast_eval(self, news_filename, behaviors_file):
         news_vecs = self.run_news(news_filename)
         user_vecs = self.run_user(news_filename, behaviors_file)
 
+        self.news_vecs = news_vecs
+        self.user_vecs = user_vecs
+
+        group_impr_indexes = []
         group_labels = []
         group_preds = []
 
-        for (
-            impr_index,
-            news_index,
-            user_index,
-            label,
-        ) in self.test_iterator.load_impression_from_file(behaviors_file):
+        for (impr_index, news_index, user_index, label,) in tqdm(
+            self.test_iterator.load_impression_from_file(behaviors_file)
+        ):
             pred = np.dot(
                 np.stack([news_vecs[i] for i in news_index], axis=0),
                 user_vecs[impr_index],
             )
+            group_impr_indexes.append(impr_index)
             group_labels.append(label)
             group_preds.append(pred)
 
-        return group_labels, group_preds
-
+        return group_impr_indexes, group_labels, group_preds

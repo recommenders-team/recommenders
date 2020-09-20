@@ -77,6 +77,7 @@ The table below lists the recommender algorithms currently available in the repo
 | LightFM/Hybrid Matrix Factorization | [Python CPU](examples/02_model_hybrid/lightfm_deep_dive.ipynb) | Hybrid | Hybrid matrix factorization algorithm for both implicit and explicit feedbacks |
 | LightGBM/Gradient Boosting Tree<sup>*</sup> | [Python CPU](examples/00_quick_start/lightgbm_tinycriteo.ipynb) / [PySpark](examples/02_model_content_based_filtering/mmlspark_lightgbm_criteo.ipynb) | Content-Based Filtering | Gradient Boosting Tree algorithm for fast training and low memory usage in content-based problems |
 | LightGCN | [Python CPU / Python GPU](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | Collaborative Filtering | Deep learning algorithm with simplifies the design of GCN for predicting implicit feedback |
+| GeoIMC | [Python CPU](examples/00_quick_start/geoimc_movielens.ipynb) | Hybrid | Matrix completion algorithm that has into account user and item features using Riemannian conjugate gradients optimization and following a geometric approach. |
 | GRU4Rec | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using recurrent neural networks |
 | Neural Recommendation with Long- and Short-term User Representations (LSTUR)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/lstur_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with long- and short-term user interest modeling |
 | Neural Recommendation with Attentive Multi-View Learning (NAML)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/naml_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with attentive multi-view learning |
@@ -110,7 +111,7 @@ We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to ill
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [ALS](examples/00_quick_start/als_movielens.ipynb) | 0.004732 |	0.044239 |	0.048462 |	0.017796 | 0.965038 |	0.753001 |	0.255647 |	0.251648 |
 | [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
-| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.113028 |	0.388321 | 	0.333828 | 0.183179 | N/A |	N/A |	N/A |	N/A |
+| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
 | [NCF](examples/02_model_hybrid/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A |	N/A |	N/A |	N/A |
 | [BPR](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | 0.105365	| 0.389948 |	0.349841 |	0.181807 | N/A |	N/A |	N/A |	N/A |
 | [FastAI](examples/00_quick_start/fastai_movielens.ipynb) | 0.025503 |	0.147866 |	0.130329 |	0.053824 | 0.943084 |	0.744337 |	0.285308 |	0.287671 |

@@ -10,7 +10,8 @@ from reco_utils.common.python_utils import (
     jaccard,
     lift,
     get_top_k_scored_items,
-    binarize
+    binarize,
+    rescale,
 )
 
 TOL = 0.0001
@@ -45,9 +46,13 @@ def target_matrices(scope="module"):
 
 
 @pytest.fixture(scope="module")
-def python_data():
-    cooccurrence1 = np.array([[1.0, 0.0, 1.0], [0.0, 2.0, 1.0], [1.0, 1.0, 2.0]])
-    cooccurrence2 = np.array(
+def cooccurrence1():
+    return np.array([[1.0, 0.0, 1.0], [0.0, 2.0, 1.0], [1.0, 1.0, 2.0]])
+
+
+@pytest.fixture(scope="module")
+def cooccurrence2():
+    return np.array(
         [
             [2.0, 0.0, 0.0, 1.0],
             [0.0, 3.0, 0.0, 0.0],
@@ -55,11 +60,14 @@ def python_data():
             [1.0, 0.0, 2.0, 4.0],
         ]
     )
-    return cooccurrence1, cooccurrence2
 
 
-def test_python_jaccard(python_data, target_matrices):
-    cooccurrence1, cooccurrence2 = python_data
+@pytest.fixture(scope="module")
+def scores():
+    return np.array([[1, 2, 3, 4, 5], [5, 4, 3, 2, 1], [1, 5, 3, 4, 2]])
+
+
+def test_python_jaccard(cooccurrence1, cooccurrence2, target_matrices):
     J1 = jaccard(cooccurrence1)
     assert type(J1) == np.ndarray
     assert J1 == target_matrices["jaccard1"]
@@ -69,8 +77,7 @@ def test_python_jaccard(python_data, target_matrices):
     assert J2 == target_matrices["jaccard2"]
 
 
-def test_python_lift(python_data, target_matrices):
-    cooccurrence1, cooccurrence2 = python_data
+def test_python_lift(cooccurrence1, cooccurrence2, target_matrices):
     L1 = lift(cooccurrence1)
     assert type(L1) == np.ndarray
     assert L1 == target_matrices["lift1"]
@@ -87,8 +94,7 @@ def test_exponential_decay():
     assert np.allclose(actual, expected, atol=TOL)
 
 
-def test_get_top_k_scored_items():
-    scores = np.array([[1, 2, 3, 4, 5], [5, 4, 3, 2, 1], [1, 5, 3, 4, 2]])
+def test_get_top_k_scored_items(scores):
     top_items, top_scores = get_top_k_scored_items(
         scores=scores, top_k=3, sort_top_k=True
     )
@@ -110,3 +116,24 @@ def test_binarize():
          [1, 1, 1]]
     )
     assert np.array_equal(binarize(data, threshold), expected)
+
+
+def test_rescale(scores):
+    expected = np.array(
+        [[0, 0.25, 0.5, 0.75, 1], [1, 0.75, 0.5, 0.25, 0], [0, 1, 0.5, 0.75, 0.25]]
+    )
+    assert np.allclose(expected, rescale(scores, 0, 1))
+
+    expected = np.array([[3, 5, 7, 9, 11.0], [11, 9, 7, 5, 3], [3, 11, 7, 9, 5]])
+    assert np.allclose(expected, rescale(scores, 1, 11, 0, 5))
+
+    expected = np.array(
+        [
+            [0, 0.2, 0.4, 0.6, 0.8],
+            [0.625, 0.5, 0.375, 0.25, 0.125],
+            [0, 1, 0.5, 0.75, 0.25],
+        ]
+    )
+    data_min = np.tile(np.array([1, 0, 1])[:, np.newaxis], scores.shape[1])
+    data_max = np.tile(np.array([6, 8, 5])[:, np.newaxis], scores.shape[1])
+    assert np.allclose(expected, rescale(scores, 0, 1, data_min, data_max))
