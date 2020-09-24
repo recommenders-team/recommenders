@@ -7,7 +7,7 @@
 # 
 # To register the conda environment in Jupyter:
 # $ conda activate reco_gpu
-# $ python -m ipykernel install --user --name reco_gpu --display-name "Python (reco_gpu)"
+# $ python -m ipykernel install --user --name reco_gpu_kdd --display-name "Python (reco_gpu_kdd)"
 # 
 name: reco_gpu_kdd
 channels:
