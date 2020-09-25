@@ -9,8 +9,10 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
 )
 from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
 from reco_utils.recommender.deeprec.models.dkn import DKN
+from reco_utils.recommender.deeprec.models.dkn_item2item import DKNItem2Item
 from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
 from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
+from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import DKNItem2itemTextIterator
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.recommender.deeprec.models.sequential.nextitnet import NextItNetModel
@@ -78,6 +80,29 @@ def test_dkn_component_definition(resource_path):
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
+
+    ###  test DKN's item2item version
+    hparams = prepare_hparams(
+        yaml_file,
+        news_feature_file=news_feature_file,
+        wordEmb_file=wordEmb_file,
+        entityEmb_file=entityEmb_file,
+        contextEmb_file=contextEmb_file,
+        epochs=1,
+        is_clip_norm=True,
+        max_grad_norm=0.5,
+        his_size=20,
+        MODEL_DIR=os.path.join(data_path, 'save_models'),
+        use_entity=True,
+        use_context=True
+    )    
+    hparams.neg_num=9
+    assert hparams is not None
+    model_item2item = DKNItem2Item(hparams, DKNItem2itemTextIterator)
+
+    assert model_item2item.pred_logits is not None
+    assert model_item2item.update is not None
+    assert model_item2item.iterator is not None
 
 
 @pytest.mark.gpu

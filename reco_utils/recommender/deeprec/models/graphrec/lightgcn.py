@@ -222,9 +222,12 @@ class LightGCN(object):
 
             if self.save_model and epoch % self.save_epoch == 0:
                 save_path_str = os.path.join(self.model_dir, "epoch_" + str(epoch))
+                if not os.path.exists(save_path_str):
+                    os.makedirs(save_path_str)
                 checkpoint_path = self.saver.save(
                     sess=self.sess, save_path=save_path_str
                 )
+                print('Save model to path {0}'.format(os.path.abspath(save_path_str)))
 
             if self.eval_epoch == -1 or epoch % self.eval_epoch != 0:
                 print(
@@ -380,6 +383,13 @@ class LightGCN(object):
 
         return df.replace(-np.inf, np.nan).dropna()
 
+    def output_embeddings(self, idmapper, n, target, user_file):
+        embeddings = list(target.eval(session=self.sess))
+        with open(user_file, 'w') as wt:
+            for i in range(n):
+                wt.write('{0}\t{1}\n'.format(idmapper[i], ' '.join([str(a) for a in embeddings[i]])))
+
+
     def infer_embedding(self, user_file, item_file):
         """Export user and item embeddings to csv files.
 
@@ -398,18 +408,5 @@ class LightGCN(object):
 
         data = self.data
 
-        df = pd.DataFrame(
-            {
-                data.col_user: [data.id2user[id] for id in range(self.n_users)],
-                "embedding": list(self.ua_embeddings.eval(session=self.sess)),
-            }
-        )
-        df.to_csv(user_file, sep=" ", index=False)
-
-        df = pd.DataFrame(
-            {
-                data.col_item: [data.id2item[id] for id in range(self.n_items)],
-                "embedding": list(self.ia_embeddings.eval(session=self.sess)),
-            }
-        )
-        df.to_csv(item_file, sep=" ", index=False)
+        self.output_embeddings(data.id2user, self.n_users, self.ua_embeddings, user_file)
+        self.output_embeddings(data.id2item, self.n_items, self.ia_embeddings, item_file)
