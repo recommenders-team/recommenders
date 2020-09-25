@@ -1,8 +1,8 @@
 data:
-  doc_size: 15
-  his_size: 20
-  word_size: 194755 
-  entity_size: 57267 
+  doc_size: 15  # Each feature length should be fixed at doc_size, if the number of words in document is more than doc_size, you should truncate the document to doc_size words, and if the number of words in document is less than doc_size, you should padding 0. 
+  his_size: 20  # Max number of user click history, we will automatically keep the last his_size number of user click history, if users' click history is more than his_size, and we will automatically padding 0 if less than his_size.
+  word_size: 194755  # word vocabulary size
+  entity_size: 57267 # entity vocabulary size
   data_format: dkn
   
 info:
@@ -12,7 +12,7 @@ info:
   - group_auc
   - mean_mrr
   - ndcg@2;4;6
-  show_step: 10000
+  show_step: 10000  # print loss every show_step batches
   
 model:
   method : classification
@@ -21,24 +21,25 @@ model:
   attention_activation: relu
   attention_dropout: 0.0
   attention_layer_sizes: 32
-  dim: 32
-  use_context: true
+  dim: 32  # word embedding dim
+  use_entity: true # use entity embedding
+  use_context: true # use context embedding
  
-  entity_dim: 32
+  entity_dim: 32 # entity embedding dim
   entity_embedding_method: TransE
-  transform: true
+  transform: true # add a transform layer for entity and context embeddings
  
   dropout:
   - 0.0
-  filter_sizes:
+  filter_sizes: # window size of kcnn filters
   - 1
   - 2
   - 3
-  layer_sizes:
+  layer_sizes:  # layer size for final prediction score layer
   - 300
   # model_type: DKN_without_context
   model_type: dkn
-  num_filters: 50  #dddd  
+  num_filters: 50   # number of filter for each filter_size in kcnn part
   infer_model_name : epoch_2
 
 train:
@@ -54,7 +55,7 @@ train:
   loss: log_loss
   optimizer: adam
   save_model: True
-  save_epoch : 1
+  save_epoch : 1 # save model every save_epoch epochs
   enable_BN : False
   is_clip_norm: False
   max_grad_norm: 0.5

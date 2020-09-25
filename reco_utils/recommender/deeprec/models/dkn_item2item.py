@@ -3,6 +3,10 @@ from reco_utils.recommender.deeprec.models.dkn import DKN
 import numpy as np
 from reco_utils.recommender.deeprec.deeprec_utils import cal_metric
 
+r"""
+This new model adapts DKN's structure for item-to-item recommendations.
+The tutorial can be found at: https://github.com/microsoft/recommenders/blob/kdd2020_tutorial/scenarios/academic/KDD2020-tutorial/step4_run_dkn_item2item.ipynb
+ """
 class DKNItem2Item(DKN):
     def _compute_data_loss(self):
         logits = self.pred
@@ -51,6 +55,9 @@ class DKNItem2Item(DKN):
         return tf.nn.softmax(logit, axis=-1)
 
     def _build_doc_embedding(self, candidate_word_batch, candidate_entity_batch):
+        """
+        To make the document embedding be dense, we add one tanh layer on top of the kims_cnn module.
+        """
         with tf.variable_scope("kcnn", initializer=self.initializer):
             news_field_embed = self._kims_cnn(candidate_word_batch, candidate_entity_batch, self.hparams)
             W = tf.get_variable(

@@ -4,8 +4,16 @@ import numpy as np
 
 from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
 
+r"""
+This new iterator is for DKN's item-to-item recommendations version.
+The tutorial can be found at: https://github.com/microsoft/recommenders/blob/kdd2020_tutorial/scenarios/academic/KDD2020-tutorial/step4_run_dkn_item2item.ipynb
+ """
 class DKNItem2itemTextIterator(DKNTextIterator):
     def __init__(self, hparams, graph):
+        """
+        Compared with user-to-item recommendations, we don't need the user behavior module.
+        So the placeholder can be simplified from the original DKNTextIterator.
+        """
         self.hparams = hparams
         self.graph = graph
         self.neg_num = hparams.neg_num
@@ -26,6 +34,10 @@ class DKNItem2itemTextIterator(DKNTextIterator):
         self._loading_nessary_files()
 
     def _loading_nessary_files(self):
+        """
+        Only one feature file is needed:  news_feature_file
+        This function loads the news article's features into two dictionaries: self.news_word_index and self.news_entity_index
+        """
         hparams = self.hparams
         self.news_word_index = {}
         self.news_entity_index = {}
@@ -40,6 +52,11 @@ class DKNItem2itemTextIterator(DKNTextIterator):
         
 
     def load_data_from_file(self, infile):
+        """
+        Each line of infile is a news article's ID
+        This function will return a mini-batch of data with features, 
+        by looking up news_word_index dictionary and news_entity_index dictionary according to the news article's ID.
+        """
         newsid_list = []
         candidate_news_index_batch = []
         candidate_news_entity_index_batch = []

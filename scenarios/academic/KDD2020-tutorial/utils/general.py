@@ -21,18 +21,6 @@ def dump_dict_as_txt(d, filename):
             wt.write('{0}\t{1}\n'.format(k, v))
 
 
-# def reparameter_sampling02(sample_size, probabilities):
-#     r'''
-#     Faster sampling algorithm, for details please refer to https://medium.com/ibm-watson/incredibly-fast-random-sampling-in-python-baf154bd836a
-#     :param sample_size:
-#     :param probabilities:
-#     :return:  index of sampled items (biased)
-#     '''
-#     random_values = np.random.gumbel(size=probabilities.shape)
-#     # shifted_probabilities = -random_values - probabilities
-#     # return np.argpartition(shifted_probabilities, sample_size)[:sample_size]
-#     return [np.argmax(np.log(probabilities) + random_values)]
-
 
 def reparameter_sampling(sample_size, probabilities):
     r'''
