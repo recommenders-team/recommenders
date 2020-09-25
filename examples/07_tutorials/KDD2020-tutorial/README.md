@@ -7,14 +7,9 @@ We use Conda to install packages and manage the virtual environment. Type ``` co
     git clone https://github.com/microsoft/recommenders 
     ```
 
-1. Check out the tutorial branch
+1. Navigate to the tutorial folder. The materials for the tutorial are located under the directory of `recommenders/examples/07_tutorials/KDD2020-tutorial`.
     ```bash
-    cd recommenders
-    git checkout kdd2020_tutorial
-    ```
-    The materials for the tutorial are located under the directory of `recommenders/examples/07_tutorials/KDD2020-tutorial`.
-    ```bash
-    cd examples/07_tutorials/KDD2020-tutorial
+    cd recommenders/examples/07_tutorials/KDD2020-tutorial
     ```
 1. Download the dataset
     1. Download the dataset for hands on experiments and unzip to data_folder:
