@@ -10,6 +10,8 @@ r"""
 This new iterator is for DKN's item-to-item recommendations version.
 The tutorial can be found at: https://github.com/microsoft/recommenders/blob/kdd2020_tutorial/scenarios/academic/KDD2020-tutorial/step4_run_dkn_item2item.ipynb
  """
+
+
 class DKNItem2itemTextIterator(DKNTextIterator):
     def __init__(self, hparams, graph):
         """
@@ -23,9 +25,7 @@ class DKNItem2itemTextIterator(DKNTextIterator):
         self.doc_size = hparams.doc_size
         with self.graph.as_default():
             self.candidate_news_index_batch = tf.placeholder(
-                tf.int64,
-                [self.batch_size, self.doc_size],
-                name="candidate_news_index"
+                tf.int64, [self.batch_size, self.doc_size], name="candidate_news_index"
             )
             self.candidate_news_entity_index_batch = tf.placeholder(
                 tf.int64,
@@ -48,15 +48,18 @@ class DKNItem2itemTextIterator(DKNTextIterator):
                 line = rd.readline()
                 if not line:
                     break
-                newsid, word_index, entity_index = line.strip().split(' ')
-                self.news_word_index[newsid] = [int(item) for item in word_index.split(',')]
-                self.news_entity_index[newsid] = [int(item) for item in entity_index.split(',')]
-        
+                newsid, word_index, entity_index = line.strip().split(" ")
+                self.news_word_index[newsid] = [
+                    int(item) for item in word_index.split(",")
+                ]
+                self.news_entity_index[newsid] = [
+                    int(item) for item in entity_index.split(",")
+                ]
 
     def load_data_from_file(self, infile):
         """
         Each line of infile is a news article's ID
-        This function will return a mini-batch of data with features, 
+        This function will return a mini-batch of data with features,
         by looking up news_word_index dictionary and news_entity_index dictionary according to the news article's ID.
         """
         newsid_list = []
@@ -69,7 +72,10 @@ class DKNItem2itemTextIterator(DKNTextIterator):
                 if not line:
                     break
                 newsid = line.strip()
-                word_index, entity_index = self.news_word_index[newsid], self.news_entity_index[newsid]
+                word_index, entity_index = (
+                    self.news_word_index[newsid],
+                    self.news_entity_index[newsid],
+                )
                 newsid_list.append(newsid)
 
                 candidate_news_index_batch.append(word_index)

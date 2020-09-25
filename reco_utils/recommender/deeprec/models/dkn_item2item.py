@@ -10,6 +10,8 @@ r"""
 This new model adapts DKN's structure for item-to-item recommendations.
 The tutorial can be found at: https://github.com/microsoft/recommenders/blob/kdd2020_tutorial/scenarios/academic/KDD2020-tutorial/step4_run_dkn_item2item.ipynb
  """
+
+
 class DKNItem2Item(DKN):
     def _compute_data_loss(self):
         logits = self.pred
@@ -24,7 +26,7 @@ class DKNItem2Item(DKN):
         """
         news_field_embed_final_batch = self._build_doc_embedding(
             self.iterator.candidate_news_index_batch,
-            self.iterator.candidate_news_entity_index_batch
+            self.iterator.candidate_news_entity_index_batch,
         )
 
         self.news_field_embed_final_batch = tf.math.l2_normalize(
@@ -33,7 +35,11 @@ class DKNItem2Item(DKN):
 
         item_embs_train = tf.reshape(
             self.news_field_embed_final_batch,
-            [-1, self.iterator.neg_num + 2, self.news_field_embed_final_batch.shape[-1]]
+            [
+                -1,
+                self.iterator.neg_num + 2,
+                self.news_field_embed_final_batch.shape[-1],
+            ],
         )  # (B, group, D)
 
         item_embs_source = item_embs_train[:, 0, :]  # get the source item
@@ -41,14 +47,8 @@ class DKNItem2Item(DKN):
 
         item_embs_target = item_embs_train[:, 1:, :]
 
-        item_relation = tf.math.multiply(
-            item_embs_target,
-            item_embs_source
-        )
-        item_relation = tf.reduce_sum(
-            item_relation,
-            -1
-        )#(B, neg_num + 1)
+        item_relation = tf.math.multiply(item_embs_target, item_embs_source)
+        item_relation = tf.reduce_sum(item_relation, -1)  # (B, neg_num + 1)
 
         self.pred_logits = item_relation
 
@@ -62,7 +62,9 @@ class DKNItem2Item(DKN):
         To make the document embedding be dense, we add one tanh layer on top of the kims_cnn module.
         """
         with tf.variable_scope("kcnn", initializer=self.initializer):
-            news_field_embed = self._kims_cnn(candidate_word_batch, candidate_entity_batch, self.hparams)
+            news_field_embed = self._kims_cnn(
+                candidate_word_batch, candidate_entity_batch, self.hparams
+            )
             W = tf.get_variable(
                 name="W_doc_trans",
                 shape=(news_field_embed.shape[-1], self.num_filters_total),
@@ -87,15 +89,15 @@ class DKNItem2Item(DKN):
         group_preds = []
         group_labels = []
 
-        for batch_data_input, newsid_list, data_size in self.iterator.load_data_from_file(
-                filename
-        ):
+        for (
+            batch_data_input,
+            newsid_list,
+            data_size,
+        ) in self.iterator.load_data_from_file(filename):
             if batch_data_input:
                 step_pred, step_labels = self.eval(load_sess, batch_data_input)
                 group_preds.extend(step_pred)
                 group_labels.extend(step_labels)
 
-        res = cal_metric(
-            group_labels, group_preds, self.hparams.pairwise_metrics
-        )
+        res = cal_metric(group_labels, group_preds, self.hparams.pairwise_metrics)
         return res
