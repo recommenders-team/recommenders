@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import tensorflow as tf
 from reco_utils.recommender.deeprec.models.dkn import DKN
 import numpy as np
