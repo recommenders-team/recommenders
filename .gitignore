@@ -159,7 +159,6 @@ nohup.out
 
 #####  kdd 2020 tutorial data folder
 scenarios/KDD2020-tutorial/data_folder/
-scenarios/academic/KDD2020-tutorial/data_folder/
 examples/07_tutorials/KDD2020-tutorial/data_folder/
 
 *.vec
