@@ -61,6 +61,21 @@ Assuming the repo is cloned as `Recommenders` in the local system, to install **
 
 You can specify the environment name as well with the flag `-n`.
 
+<details>
+<summary><strong><em>Java version for PySpark</em></strong></summary>
+
+**Note.** By default we use pyspark v2.4.3. It doesn't work on Java versions >8.
+
+To install Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
+
+    brew install asdf
+    asdf plugin add Java
+    asdf install java adoptopenjdk-8.0.265+1
+    asdf global java adoptopenjdk-8.0.265+1
+    . ~/.asdf/plugins/java/set-java-home.zsh
+
+</details>
+
 Click on the following menus to see how to install Python GPU and PySpark environments:
 
 <details>
