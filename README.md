@@ -12,6 +12,8 @@ The competition is based on the recently released [MIND dataset](https://msnews.
 
 With the competition successfully closed, the [leaderboard](https://msnews.github.io/competition.html#leaderboard) will reopen soon.  Want to see if you can grab the top spot? Get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/master/scenarios/news).  Then dive into some baselines such as [DKN](examples/00_quick_start/dkn_MIND.ipynb), [LSTUR](examples/00_quick_start/lstur_MIND.ipynb), [NAML](examples/00_quick_start/naml_MIND.ipynb), [NPA](examples/00_quick_start/npa_MIND.ipynb) and [NRMS](examples/00_quick_start/nrms_MIND.ipynb) and get ready!
 
+See past announcements in [NEWS.md](NEWS.md).
+
 ## Introduction
 
 This repository contains examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on five key tasks:
