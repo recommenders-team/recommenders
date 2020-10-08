@@ -24,6 +24,10 @@ New relase: [Recommenders 2020.8](https://github.com/microsoft/recommenders/rele
 
 New relase: [Recommenders 2019.9](https://github.com/microsoft/recommenders/releases/tag/2019.09)
 
+## Update September 15, 2019
+
+We reached 5000 stars!!
+
 ## Update June 3, 2019
 
 New release: [Recommenders 2019.6](https://github.com/microsoft/recommenders/releases/tag/2019.06)
@@ -31,6 +35,10 @@ New release: [Recommenders 2019.6](https://github.com/microsoft/recommenders/rel
 ## Update February 20, 2019
 
 New release: [Recommenders 2019.2](https://github.com/microsoft/recommenders/releases/tag/2019.02)
+
+## Update February 11, 2019
+
+We reached 1000 stars!!
 
 ## Update December 12, 2018
 
