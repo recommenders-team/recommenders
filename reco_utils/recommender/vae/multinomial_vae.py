@@ -270,7 +270,7 @@ class Mult_VAE:
             self.beta = beta
       
         # Compute total annealing steps
-        self.total_anneal_steps = (self.number_of_batches * (self.n_epochs - int(self.n_epochs * 0.2))) 
+        self.total_anneal_steps = self.number_of_batches * (self.n_epochs - int(self.n_epochs * 0.2)) // self.anneal_cap
 
         # Dropout parameters
         self.drop_encoder = drop_encoder
