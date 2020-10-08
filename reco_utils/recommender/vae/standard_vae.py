@@ -263,7 +263,7 @@ class StandardVAE:
             self.beta = beta
       
         # Compute total annealing steps
-        self.total_anneal_steps = (self.number_of_batches * (self.n_epochs - int(self.n_epochs * 0.2))) 
+        self.total_anneal_steps = (self.number_of_batches * (self.n_epochs - int(self.n_epochs * 0.2))) // self.anneal_cap
 
         # Dropout parameters
         self.drop_encoder = drop_encoder
@@ -298,7 +298,7 @@ class StandardVAE:
 
         # Training
         self.model = Model(self.x, self.x_decoded)
-        self.model.compile(optimizer='adam', loss=self._get_vae_loss)
+        self.model.compile(optimizer=keras.optimizers.Adam(learning_rate=0.001), loss=self._get_vae_loss)
       
 
     def _get_vae_loss(self, x, x_bar): 
