@@ -10,9 +10,9 @@ from reco_utils.dataset.mind import download_mind, extract_mind
 def test_download_mind(tmp):
     train_path, valid_path = download_mind(size="small", dest_path=tmp)
     statinfo = os.stat(train_path)
-    assert statinfo.st_size == 54772957
+    assert statinfo.st_size == 52952752
     statinfo = os.stat(valid_path)
-    assert statinfo.st_size == 32470157
+    assert statinfo.st_size == 30945572
 
 
 @pytest.mark.smoke
