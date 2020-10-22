@@ -34,23 +34,23 @@ For executing the Python unit tests for the utilities:
 
 For executing the Python unit tests for the notebooks:
 
-    pytest tests/unit -m "notebooks and not spark and not gpu"
+    pytest tests/unit -m "notebooks and not spark and not gpu" --durations 0
 
 For executing the Python GPU unit tests for the utilities:
 
-    pytest tests/unit -m "not notebooks and not spark and gpu"
+    pytest tests/unit -m "not notebooks and not spark and gpu" --durations 0
 
 For executing the Python GPU unit tests for the notebooks:
 
-    pytest tests/unit -m "notebooks and not spark and gpu"
+    pytest tests/unit -m "notebooks and not spark and gpu" --durations 0
 
 For executing the PySpark unit tests for the utilities:
 
-    pytest tests/unit -m "not notebooks and spark and not gpu"
+    pytest tests/unit -m "not notebooks and spark and not gpu" --durations 0
 
 For executing the PySpark unit tests for the notebooks:
 
-    pytest tests/unit -m "notebooks and spark and not gpu"
+    pytest tests/unit -m "notebooks and spark and not gpu" --durations 0
 
 </details>
 
@@ -74,6 +74,8 @@ For executing the PySpark smoke tests:
     pytest tests/smoke -m "smoke and spark and not gpu" --durations 0
 
 *NOTE: Adding `--durations 0` shows the computation time of all tests.*
+
+*NOTE: Adding `--disable-warnings` will disable the warning messages.*
 
 </details>
 
