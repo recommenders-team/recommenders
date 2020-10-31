@@ -56,7 +56,7 @@ To contributors: please add your name to the list when you submit a patch to the
    * SAR PySpark improvement
 * **[Daniel Schneider](https://github.com/danielsc)**
    * FastAI notebook
-* **Evgenia Chroni, Alexandros Ioannou, Kaisar Mussalim
+* <b>Evgenia Chroni, Alexandros Ioannou, Kaisar Mussalim</b> 
    * Standard VAE algorithm
    * Multinomial VAE algorithm
 * **[Gianluca Campanella](https://github.com/gcampanella)**
