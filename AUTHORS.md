@@ -45,6 +45,9 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
+* **[Alexandros Ioannou](https://github.com/aioannou96)**
+   * Standard VAE algorithm
+   * Multinomial VAE algorithm
 * **[Bamdev Mishra](https://github.com/bamdevm)**
    * RLRMC algorithm
    * GeoIMC algorithm
@@ -56,7 +59,7 @@ To contributors: please add your name to the list when you submit a patch to the
    * SAR PySpark improvement
 * **[Daniel Schneider](https://github.com/danielsc)**
    * FastAI notebook
-* <b>Evgenia Chroni, Alexandros Ioannou, Kaisar Mussalim</b> 
+* **[Evgenia Chroni](https://github.com/EvgeniaChroni)**
    * Standard VAE algorithm
    * Multinomial VAE algorithm
 * **[Gianluca Campanella](https://github.com/gcampanella)**
