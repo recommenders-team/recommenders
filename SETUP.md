@@ -214,6 +214,13 @@ sudo apt install openjdk-8-jdk
 sudo update-alternatives --config java
 ```
 
+* We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
+
+```
+cd /dsvm/tools/spark/current/jars
+sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsoft.ml.lightgbm_lightgbmlib-2.0.120.jar
+```
+
 ## Setup guide for Azure Databricks
 
 ### Requirements of Azure Databricks
