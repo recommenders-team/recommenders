@@ -57,6 +57,7 @@ which you can use to create the target environment using the Python version 3.6 
 
 <details> 
 <summary><strong><em>Install Java 8 on MacOS</em></strong></summary>
+  
 To install Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
 
     brew install asdf
