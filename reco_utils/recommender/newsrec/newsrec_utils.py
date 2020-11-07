@@ -355,7 +355,7 @@ def get_mind_data_set(type):
             "https://mind201910small.blob.core.windows.net/release/",
             "MINDsmall_train.zip",
             "MINDsmall_dev.zip",
-            "MINDsma_utils.zip",
+            "MINDsmall_utils.zip",
         )
 
     elif type == "demo":

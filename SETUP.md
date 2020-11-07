@@ -53,6 +53,21 @@ which you can use to create the target environment using the Python version 3.6 
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
 
+**NOTE** PySpark v2.4.x requires Java version 8. 
+
+<details> 
+<summary><strong><em>Install Java 8 on MacOS</em></strong></summary>
+  
+To install Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
+
+    brew install asdf
+    asdf plugin add Java
+    asdf install java adoptopenjdk-8.0.265+1
+    asdf global java adoptopenjdk-8.0.265+1
+    . ~/.asdf/plugins/java/set-java-home.zsh
+
+</details>
+
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
     cd Recommenders
@@ -198,6 +213,13 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 ```
 sudo apt install openjdk-8-jdk
 sudo update-alternatives --config java
+```
+
+* We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
+
+```
+cd /dsvm/tools/spark/current/jars
+sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsoft.ml.lightgbm_lightgbmlib-2.0.120.jar
 ```
 
 ## Setup guide for Azure Databricks
