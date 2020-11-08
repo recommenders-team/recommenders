@@ -6,6 +6,7 @@ import os
 import requests
 from reco_utils.dataset.mind import download_mind, extract_mind
 
+@pytest.mark.smoke
 @pytest.mark.parametrize("url, content_length, etag", 
     [("https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_train.zip",
     "17372879", "0x8D82C63E386D09C"),
@@ -34,6 +35,7 @@ def test_mind_url(url, content_length, etag):
     assert url_headers["Content-Length"] == content_length
     assert url_headers["ETag"] == etag
 
+@pytest.mark.smoke
 @pytest.mark.parametrize("size",[("demo"),("small")])
 def test_extract_mind(size,tmp):
     """ Test file download and extration for demo and small datasets """
