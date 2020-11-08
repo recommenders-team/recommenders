@@ -6,9 +6,6 @@ import os
 import requests
 from reco_utils.dataset.mind import download_mind, extract_mind
 
-
-
-
 @pytest.mark.parametrize("url, content_length, etag", 
     [("https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_train.zip",
     "17372879", "0x8D82C63E386D09C"),
