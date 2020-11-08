@@ -33,18 +33,13 @@ URL_MIND_DEMO_UTILS = (
       "https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_utils.zip"
 )
 
-
-
 URL_MIND = {
     "large": (URL_MIND_LARGE_TRAIN, URL_MIND_LARGE_VALID),
     "small": (URL_MIND_SMALL_TRAIN, URL_MIND_SMALL_VALID),
-#    "demo": (URL_MIND_DEMO_TRAIN, URL_MIND_DEMO_VALID, URL_MIND_DEMO_UTILS)
     "demo": (URL_MIND_DEMO_TRAIN, URL_MIND_DEMO_VALID)
 }
 
-
 logger = logging.getLogger()
-
 
 def download_mind(size="small", dest_path=None):
     """Download MIND dataset
