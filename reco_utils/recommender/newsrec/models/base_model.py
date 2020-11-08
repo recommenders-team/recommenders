@@ -5,10 +5,11 @@ from os.path import join
 import abc
 import time
 import numpy as np
+from tqdm import tqdm
 import tensorflow as tf
 from tensorflow import keras
+
 from reco_utils.recommender.deeprec.deeprec_utils import cal_metric
-from tqdm import tqdm
 
 __all__ = ["BaseModel"]
 
@@ -18,21 +19,24 @@ class BaseModel:
 
     Attributes:
         hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-        iterator_creator_train (obj): An iterator to load the data in trainning steps.
+        iterator_creator_train (obj): An iterator to load the data in training steps.
         iterator_creator_train (obj): An iterator to load the data in testing steps.
         graph (obj): An optional graph.
         seed (int): Random seed.
     """
 
     def __init__(
-        self, hparams, iterator_creator, seed=None,
+        self,
+        hparams,
+        iterator_creator,
+        seed=None,
     ):
-        """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function, 
+        """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function,
         parameter set.
 
         Args:
             hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-            iterator_creator_train (obj): An iterator to load the data in trainning steps.
+            iterator_creator_train (obj): An iterator to load the data in training steps.
             iterator_creator_train (obj): An iterator to load the data in testing steps.
             graph (obj): An optional graph.
             seed (int): Random seed.
@@ -42,13 +46,29 @@ class BaseModel:
         np.random.seed(seed)
 
         self.train_iterator = iterator_creator(
-            hparams, hparams.npratio, col_spliter="\t",
+            hparams,
+            hparams.npratio,
+            col_spliter="\t",
         )
-        self.test_iterator = iterator_creator(hparams, col_spliter="\t",)
+        self.test_iterator = iterator_creator(
+            hparams,
+            col_spliter="\t",
+        )
 
         self.hparams = hparams
         self.support_quick_scoring = hparams.support_quick_scoring
 
+        # set GPU use with on demand growth
+        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+        sess = tf.compat.v1.Session(
+            config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
+        )
+
+        # set this TensorFlow session as the default session for Keras
+        tf.compat.v1.keras.backend.set_session(sess)
+
+        # IMPORTANT: models have to be loaded AFTER SETTING THE SESSION for keras!
+        # Otherwise, their weights will be unavailable in the threads after the session there has been set
         self.model, self.scorer = self._build_graph()
 
         self.loss = self._get_loss()
@@ -56,12 +76,9 @@ class BaseModel:
 
         self.model.compile(loss=self.loss, optimizer=self.train_optimizer)
 
-        # set GPU use with demand growth
-        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-
     def _init_embedding(self, file_path):
         """Load pre-trained embeddings as a constant tensor.
-        
+
         Args:
             file_path (str): the pre-trained glove embeddings file path.
 
@@ -83,7 +100,7 @@ class BaseModel:
 
     def _get_loss(self):
         """Make loss function, consists of data loss and regularization loss
-        
+
         Returns:
             obj: Loss function or loss function name
         """
@@ -110,11 +127,11 @@ class BaseModel:
 
     def _get_pred(self, logit, task):
         """Make final output as prediction score, according to different tasks.
-        
+
         Args:
             logit (obj): Base prediction value.
             task (str): A task (values: regression/classification)
-        
+
         Returns:
             obj: Transformed score
         """
@@ -173,7 +190,7 @@ class BaseModel:
     ):
         """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
         If test_news_file is not None, evaluate it too.
-        
+
         Args:
             train_file (str): training data set.
             valid_file (str): validation set.
@@ -298,7 +315,7 @@ class BaseModel:
 
     def run_eval(self, news_filename, behaviors_file):
         """Evaluate the given file and returns some evaluation metrics.
-        
+
         Args:
             filename (str): A file name that will be evaluated.
 
@@ -390,9 +407,12 @@ class BaseModel:
         group_labels = []
         group_preds = []
 
-        for (impr_index, news_index, user_index, label,) in tqdm(
-            self.test_iterator.load_impression_from_file(behaviors_file)
-        ):
+        for (
+            impr_index,
+            news_index,
+            user_index,
+            label,
+        ) in tqdm(self.test_iterator.load_impression_from_file(behaviors_file)):
             pred = np.dot(
                 np.stack([news_vecs[i] for i in news_index], axis=0),
                 user_vecs[impr_index],
