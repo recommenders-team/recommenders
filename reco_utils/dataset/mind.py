@@ -23,14 +23,23 @@ URL_MIND_SMALL_TRAIN = (
 URL_MIND_SMALL_VALID = (
     "https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip"
 )
+URL_MIND_DEMO_TRAIN = (
+    "https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_train.zip"
+)
+URL_MIND_DEMO_VALID = (
+      "https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_dev.zip"
+)
+URL_MIND_DEMO_UTILS = (
+      "https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_utils.zip"
+)
+
 URL_MIND = {
     "large": (URL_MIND_LARGE_TRAIN, URL_MIND_LARGE_VALID),
     "small": (URL_MIND_SMALL_TRAIN, URL_MIND_SMALL_VALID),
+    "demo": (URL_MIND_DEMO_TRAIN, URL_MIND_DEMO_VALID)
 }
 
-
 logger = logging.getLogger()
-
 
 def download_mind(size="small", dest_path=None):
     """Download MIND dataset
@@ -42,7 +51,7 @@ def download_mind(size="small", dest_path=None):
     Returns:
         str, str: Path to train and validation sets.
     """
-    size_options = ["small", "large"]
+    size_options = ["small", "large","demo"]
     if size not in size_options:
         raise ValueError(f"Wrong size option, available options are {size_options}")
     url_train, url_valid = URL_MIND[size]
