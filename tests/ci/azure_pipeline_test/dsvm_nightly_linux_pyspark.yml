@@ -51,6 +51,9 @@ jobs:
       pytest tests/integration --durations 0 -m "integration and spark and not gpu" --junitxml=reports/test-integration.xml && \
       conda deactivate    
     displayName: 'Run Tests'
+    env:
+      PYSPARK_PYTHON: /anaconda/envs/nightly_reco_pyspark/bin/python
+      PYSPARK_DRIVER_PYTHON: /anaconda/envs/nightly_reco_pyspark/bin/python
 
   - task: PublishTestResults@2
     displayName: 'Publish Test Results '
