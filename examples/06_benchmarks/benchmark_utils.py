@@ -36,6 +36,7 @@ from reco_utils.recommender.fastai.fastai_utils import (
 )
 from reco_utils.recommender.cornac.cornac_utils import predict_ranking
 from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
+from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
 from reco_utils.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
     SparkRankingEvaluation,
