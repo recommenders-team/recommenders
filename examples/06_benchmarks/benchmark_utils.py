@@ -309,6 +309,18 @@ def recommend_k_sar(model, test, train):
     return topk_scores, t
 
 
+def prepare_training_lightgcn(train, test):
+    pass
+
+
+def train_lightgcn(params, data):
+    pass
+
+
+def recommend_k_lightgcn(model, test, train):
+    pass
+
+
 def rating_metrics_pyspark(test, predictions):
     rating_eval = SparkRatingEvaluation(test, predictions, **COL_DICT)
     return {
