@@ -1,80 +1,80 @@
-amlModuleIdentifier: 
-  namespace: microsoft.com/cat
-  moduleName: SAR Scoring
-  moduleVersion: 1.1.1
+$schema: http://azureml/sdk-2-0/CommandComponent.json
+name: microsoft.com.cat.sar_scoring
+version: 1.1.1
+display_name: SAR Scoring
+type: CommandComponent
 description: |
-    Python SAR Recommenders
-    repo: https://github.com/Microsoft/Recommenders
-metadata:
-  annotations:
-    tags: ["Recommenders"]
+  Python SAR Recommenders
+  repo: https://github.com/Microsoft/Recommenders
+tags:
+  Recommenders:
 inputs:
-- name: Trained model
-  type: AnyDirectory
-  description: The directory contains SAR model.
-- name: Dataset to score
-  type: AnyDirectory
-  description: Dataset to score
-- name: Score type
-  type: Enum
-  default: Item recommendation
-  description: The type of score which the recommender should output
-  options:
-  - Rating prediction:
-    - name: Items to predict
-      type: Enum
-      default: Items in score set
-      description: The set of items to predict for test users
-      options:
-      - Items in training set
-      - Items in score set
-  - Item recommendation:
-    - name: Ranking metric
-      type: Enum
-      default: Rating
-      description: The metric of ranking used in item recommendation
-      options:
-      - Rating:
-        - name: Remove seen items
-          type: Boolean
-          description: Flag to remove items seen in training from recommendation
-          default: false
-      - Similarity
-      - Popularity
-    - name: Top k
-      type: Integer
-      default: 10
-      description: The number of top items to recommend.
-      min: 1
-    - name: Sort top k
-      type: Boolean
-      description: Flag to sort top k results.
-      default: true
-- name: Normalize
-  type: Boolean
-  default: false
-  description: Flag to normalize predictions to scale of original ratings
+  trained_model:
+    type: AnyDirectory
+    description: The directory contains SAR model.
+    optional: false
+  dataset_to_score:
+    type: AnyDirectory
+    description: Dataset to score
+    optional: false
+  score_type:
+    type: Enum
+    description: The type of score which the recommender should output
+    enum:
+    - Rating prediction
+    - Item recommendation
+    default: Item recommendation
+    optional: false
+  items_to_predict:
+    type: Enum
+    description: The set of items to predict for test users
+    enum:
+    - Items in training set
+    - Items in score set
+    default: Items in score set
+    optional: true
+  ranking_metric:
+    type: Enum
+    description: The metric of ranking used in item recommendation
+    enum:
+    - Rating
+    - Similarity
+    - Popularity
+    default: Rating
+    optional: true
+  remove_seen_items:
+    type: Boolean
+    description: Flag to remove items seen in training from recommendation
+    default: false
+    optional: true
+  top_k:
+    type: Integer
+    description: The number of top items to recommend.
+    min: 1
+    default: 10
+    optional: true
+  sort_top_k:
+    type: Boolean
+    description: Flag to sort top k results.
+    default: true
+    optional: true
+  normalize:
+    type: Boolean
+    description: Flag to normalize predictions to scale of original ratings
+    default: false
+    optional: false
 outputs:
-- name: Score result
-  type: AnyDirectory
-  description: Ratings or items to output
-implementation:
-  container:
-    amlEnvironment:
-      python:
-        condaDependenciesFile: sar_conda.yaml
-    additionalIncludes:
-      - ../../../
-    command: [python, reco_utils/azureml/azureml_designer_modules/entries/score_sar_entry.py]
-    args: [
-      --trained-model, {inputPath: Trained model},
-      --dataset-to-score, {inputPath: Dataset to score},
-      --score-type, {inputValue: Score type},
-      [--items-to-predict, {inputValue: Items to predict}],
-      --normalize, {inputValue: Normalize},
-      [--ranking-metric, {inputValue: Ranking metric}],
-      [--top-k, {inputValue: Top k}],
-      [--sort-top-k, {inputValue: Sort top k}],
-      [--remove-seen-items, {inputValue: Remove seen items}],
-      --score-result, {outputPath: Score result},
-    ]
+  score_result:
+    type: AnyDirectory
+    description: Ratings or items to output
+command: >-
+  python reco_utils/azureml/azureml_designer_modules/entries/score_sar_entry.py --trained-model
+  {inputs.trained_model} --dataset-to-score {inputs.dataset_to_score} --score-type
+  {inputs.score_type} [--items-to-predict {inputs.items_to_predict}] --normalize {inputs.normalize}
+  [--ranking-metric {inputs.ranking_metric}] [--top-k {inputs.top_k}] [--sort-top-k
+  {inputs.sort_top_k}] [--remove-seen-items {inputs.remove_seen_items}] --score-result
+  {outputs.score_result}
+environment:
+  conda:
+    conda_dependencies_file: sar_conda.yaml
+  os: Linux
