@@ -4,6 +4,7 @@
 from os.path import join
 import abc
 import time
+import os
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -25,7 +26,7 @@ class BaseModel:
             seed (int): Random seed.
         """
         self.seed = seed
-        tf.set_random_seed(seed)
+        tf.compat.v1.set_random_seed(seed)
         np.random.seed(seed)
 
         self.graph = graph if graph is not None else tf.Graph()
@@ -40,11 +41,13 @@ class BaseModel:
             self.layer_params = []
             self.embed_params = []
             self.cross_params = []
-            self.layer_keeps = tf.placeholder(tf.float32, name="layer_keeps")
+            self.layer_keeps = tf.compat.v1.placeholder(tf.float32, name="layer_keeps")
             self.keep_prob_train = None
             self.keep_prob_test = None
-            self.is_train_stage = tf.placeholder(tf.bool, shape=(), name="is_training")
-            self.group = tf.placeholder(tf.int32, shape=(), name="group")
+            self.is_train_stage = tf.compat.v1.placeholder(
+                tf.bool, shape=(), name="is_training"
+            )
+            self.group = tf.compat.v1.placeholder(tf.int32, shape=(), name="group")
 
             self.initializer = self._get_initializer()
 
@@ -52,16 +55,18 @@ class BaseModel:
             self.pred = self._get_pred(self.logit, self.hparams.method)
 
             self.loss = self._get_loss()
-            self.saver = tf.train.Saver(max_to_keep=self.hparams.epochs)
+            self.saver = tf.compat.v1.train.Saver(max_to_keep=self.hparams.epochs)
             self.update = self._build_train_opt()
-            self.extra_update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
-            self.init_op = tf.global_variables_initializer()
+            self.extra_update_ops = tf.compat.v1.get_collection(
+                tf.compat.v1.GraphKeys.UPDATE_OPS
+            )
+            self.init_op = tf.compat.v1.global_variables_initializer()
             self.merged = self._add_summaries()
 
         # set GPU use with demand growth
-        gpu_options = tf.GPUOptions(allow_growth=True)
-        self.sess = tf.Session(
-            graph=self.graph, config=tf.ConfigProto(gpu_options=gpu_options)
+        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+        self.sess = tf.compat.v1.Session(
+            graph=self.graph, config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
         )
         self.sess.run(self.init_op)
 
@@ -104,10 +109,10 @@ class BaseModel:
         return pred
 
     def _add_summaries(self):
-        tf.summary.scalar("data_loss", self.data_loss)
-        tf.summary.scalar("regular_loss", self.regular_loss)
-        tf.summary.scalar("loss", self.loss)
-        merged = tf.summary.merge_all()
+        tf.compat.v1.summary.scalar("data_loss", self.data_loss)
+        tf.compat.v1.summary.scalar("regular_loss", self.regular_loss)
+        tf.compat.v1.summary.scalar("loss", self.loss)
+        merged = tf.compat.v1.summary.merge_all()
         return merged
 
     def _l2_loss(self):
@@ -202,7 +207,7 @@ class BaseModel:
             )
         elif self.hparams.loss == "log_loss":
             data_loss = tf.reduce_mean(
-                tf.losses.log_loss(
+                tf.compat.v1.losses.log_loss(
                     predictions=tf.reshape(self.pred, [-1]),
                     labels=tf.reshape(self.iterator.labels, [-1]),
                 )
@@ -210,7 +215,19 @@ class BaseModel:
         elif self.hparams.loss == "softmax":
             group = self.train_num_ngs + 1
             logits = tf.reshape(self.logit, (-1, group))
-            labels = tf.reshape(self.iterator.labels, (-1, group))
+            if self.hparams.model_type == "NextItNet":
+                labels = (
+                    tf.transpose(
+                        tf.reshape(
+                            self.iterator.labels,
+                            (-1, group, self.hparams.max_seq_length),
+                        ),
+                        [0, 2, 1],
+                    ),
+                )
+                labels = tf.reshape(labels, (-1, group))
+            else:
+                labels = tf.reshape(self.iterator.labels, (-1, group))
             softmax_pred = tf.nn.softmax(logits, axis=-1)
             boolean_mask = tf.equal(labels, tf.ones_like(labels))
             mask_paddings = tf.ones_like(softmax_pred)
@@ -244,7 +261,7 @@ class BaseModel:
         elif optimizer == "sgd":
             train_step = tf.train.GradientDescentOptimizer(lr)
         elif optimizer == "adam":
-            train_step = tf.train.AdamOptimizer(lr)
+            train_step = tf.compat.v1.train.AdamOptimizer(lr)
         elif optimizer == "ftrl":
             train_step = tf.train.FtrlOptimizer(lr)
         elif optimizer == "gd":
@@ -414,7 +431,11 @@ class BaseModel:
 
             epoch_loss = 0
             train_start = time.time()
-            for batch_data_input in self.iterator.load_data_from_file(train_file):
+            for (
+                batch_data_input,
+                impression,
+                data_size,
+            ) in self.iterator.load_data_from_file(train_file):
                 step_result = self.train(train_sess, batch_data_input)
                 (_, _, step_loss, step_data_loss, summary) = step_result
                 if self.hparams.write_tfevents:
@@ -432,6 +453,8 @@ class BaseModel:
             train_time = train_end - train_start
 
             if self.hparams.save_model:
+                if not os.path.exists(self.hparams.MODEL_DIR):
+                    os.makedirs(self.hparams.MODEL_DIR)
                 if epoch % self.hparams.save_epoch == 0:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
                     checkpoint_path = self.saver.save(
@@ -439,12 +462,11 @@ class BaseModel:
                     )
 
             eval_start = time.time()
-            train_res = self.run_eval(train_file)
             eval_res = self.run_eval(valid_file)
-            train_info = ", ".join(
+            train_info = ",".join(
                 [
                     str(item[0]) + ":" + str(item[1])
-                    for item in sorted(train_res.items(), key=lambda x: x[0])
+                    for item in [("logloss loss", epoch_loss / step)]
                 ]
             )
             eval_info = ", ".join(
@@ -493,9 +515,32 @@ class BaseModel:
 
         return self
 
+    def group_labels(self, labels, preds, group_keys):
+        """Devide labels and preds into several group according to values in group keys.
+        Args:
+            labels (list): ground truth label list.
+            preds (list): prediction score list.
+            group_keys (list): group key list.
+        Returns:
+            all_labels: labels after group.
+            all_preds: preds after group.
+        """
+        all_keys = list(set(group_keys))
+        group_labels = {k: [] for k in all_keys}
+        group_preds = {k: [] for k in all_keys}
+        for l, p, k in zip(labels, preds, group_keys):
+            group_labels[k].append(l)
+            group_preds[k].append(p)
+        all_labels = []
+        all_preds = []
+        for k in all_keys:
+            all_labels.append(group_labels[k])
+            all_preds.append(group_preds[k])
+        return all_labels, all_preds
+
     def run_eval(self, filename):
         """Evaluate the given file and returns some evaluation metrics.
-        
+
         Args:
             filename (str): A file name that will be evaluated.
 
@@ -505,27 +550,40 @@ class BaseModel:
         load_sess = self.sess
         preds = []
         labels = []
-        for batch_data_input in self.iterator.load_data_from_file(filename):
+        imp_indexs = []
+        for batch_data_input, imp_index, data_size in self.iterator.load_data_from_file(
+            filename
+        ):
             step_pred, step_labels = self.eval(load_sess, batch_data_input)
             preds.extend(np.reshape(step_pred, -1))
             labels.extend(np.reshape(step_labels, -1))
+            imp_indexs.extend(np.reshape(imp_index, -1))
         res = cal_metric(labels, preds, self.hparams.metrics)
+        if self.hparams.pairwise_metrics is not None:
+            group_labels, group_preds = self.group_labels(labels, preds, imp_indexs)
+            res_pairwise = cal_metric(
+                group_labels, group_preds, self.hparams.pairwise_metrics
+            )
+            res.update(res_pairwise)
         return res
 
     def predict(self, infile_name, outfile_name):
         """Make predictions on the given data, and output predicted scores to a file.
         
         Args:
-            infile_name (str): Input file name.
-            outfile_name (str): Output file name.
+            infile_name (str): Input file name, format is same as train/val/test file.
+            outfile_name (str): Output file name, each line is the predict score.
 
         Returns:
             obj: An instance of self.
         """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, "w") as wt:
-            for batch_data_input in self.iterator.load_data_from_file(infile_name):
+            for batch_data_input, _, data_size in self.iterator.load_data_from_file(
+                infile_name
+            ):
                 step_pred = self.infer(load_sess, batch_data_input)
+                step_pred = step_pred[0][:data_size]
                 step_pred = np.reshape(step_pred, -1)
                 wt.write("\n".join(map(str, step_pred)))
                 # line break after each batch.
@@ -646,3 +704,4 @@ class BaseModel:
                 )
                 self.logit = nn_output
                 return nn_output
+

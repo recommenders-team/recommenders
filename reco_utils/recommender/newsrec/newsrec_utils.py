@@ -23,6 +23,8 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
 )
 import json
 import pickle as pkl
+import random
+import re
 
 
 def check_type(config):
@@ -38,11 +40,8 @@ def check_type(config):
     int_parameters = [
         "word_size",
         "his_size",
-        "doc_size",
         "title_size",
         "body_size",
-        "vert_num",
-        "subvert_num",
         "npratio",
         "word_emb_dim",
         "attention_hidden_dim",
@@ -71,6 +70,10 @@ def check_type(config):
 
     str_parameters = [
         "wordEmb_file",
+        "wordDict_file",
+        "userDict_file",
+        "vertDict_file",
+        "subvertDict_file",
         "method",
         "loss",
         "optimizer",
@@ -86,6 +89,11 @@ def check_type(config):
         if param in config and not isinstance(config[param], list):
             raise TypeError("Parameters {0} must be list".format(param))
 
+    bool_parameters = ["support_quick_scoring"]
+    for param in bool_parameters:
+        if param in config and not isinstance(config[param], bool):
+            raise TypeError("Parameters {0} must be bool".format(param))
+
 
 def check_nn_config(f_config):
     """Check neural networks configuration.
@@ -99,11 +107,11 @@ def check_nn_config(f_config):
 
     if f_config["model_type"] in ["nrms", "NRMS"]:
         required_parameters = [
-            "doc_size",
+            "title_size",
             "his_size",
-            "user_num",
             "wordEmb_file",
-            "word_size",
+            "wordDict_file",
+            "userDict_file",
             "npratio",
             "data_format",
             "word_emb_dim",
@@ -122,11 +130,11 @@ def check_nn_config(f_config):
             "title_size",
             "body_size",
             "his_size",
-            "user_num",
-            "vert_num",
-            "subvert_num",
             "wordEmb_file",
-            "word_size",
+            "subvertDict_file",
+            "vertDict_file",
+            "wordDict_file",
+            "userDict_file",
             "npratio",
             "data_format",
             "word_emb_dim",
@@ -145,11 +153,11 @@ def check_nn_config(f_config):
         ]
     elif f_config["model_type"] in ["lstur", "LSTUR"]:
         required_parameters = [
-            "doc_size",
+            "title_size",
             "his_size",
-            "user_num",
             "wordEmb_file",
-            "word_size",
+            "wordDict_file",
+            "userDict_file",
             "npratio",
             "data_format",
             "word_emb_dim",
@@ -167,11 +175,11 @@ def check_nn_config(f_config):
         ]
     elif f_config["model_type"] in ["npa", "NPA"]:
         required_parameters = [
-            "doc_size",
+            "title_size",
             "his_size",
-            "user_num",
             "wordEmb_file",
-            "word_size",
+            "wordDict_file",
+            "userDict_file",
             "npratio",
             "data_format",
             "word_emb_dim",
@@ -225,9 +233,13 @@ def create_hparams(flags):
         # data
         data_format=flags.get("data_format", None),
         iterator_type=flags.get("iterator_type", None),
-        # models
+        support_quick_scoring=flags.get("support_quick_scoring", False),
         wordEmb_file=flags.get("wordEmb_file", None),
-        doc_size=flags.get("doc_size", None),
+        wordDict_file=flags.get("wordDict_file", None),
+        userDict_file=flags.get("userDict_file", None),
+        vertDict_file=flags.get("vertDict_file", None),
+        subvertDict_file=flags.get("subvertDict_file", None),
+        # models
         title_size=flags.get("title_size", None),
         body_size=flags.get("body_size", None),
         word_emb_dim=flags.get("word_emb_dim", None),
@@ -285,3 +297,72 @@ def prepare_hparams(yaml_file=None, **kwargs):
 
     check_nn_config(config)
     return create_hparams(config)
+
+
+def word_tokenize(sent):
+    """ Split sentence into word list using regex.
+    Args:
+        sent (str): Input sentence
+
+    Return:
+        list: word list
+    """
+    pat = re.compile(r"[\w]+|[.,!?;|]")
+    if isinstance(sent, str):
+        return pat.findall(sent.lower())
+    else:
+        return []
+
+
+def newsample(news, ratio):
+    """ Sample ratio samples from news list. 
+    If length of news is less than ratio, pad zeros.
+
+    Args:
+        news (list): input news list
+        ratio (int): sample number
+    
+    Returns:
+        list: output of sample list.
+    """
+    if ratio > len(news):
+        return news + [0] * (ratio - len(news))
+    else:
+        return random.sample(news, ratio)
+
+
+def get_mind_data_set(type):
+    """ Get MIND dataset address 
+
+    Args:
+        type (str): type of mind dataset, must be in ['large', 'small', 'demo']
+        
+    Returns:
+        list: data url and train valid dataset name
+    """
+    assert type in ["large", "small", "demo"]
+
+    if type == "large":
+        return (
+            "https://mind201910small.blob.core.windows.net/release/",
+            "MINDlarge_train.zip",
+            "MINDlarge_dev.zip",
+            "MINDlarge_utils.zip",
+        )
+
+    elif type == "small":
+        return (
+            "https://mind201910small.blob.core.windows.net/release/",
+            "MINDsmall_train.zip",
+            "MINDsmall_dev.zip",
+            "MINDsmall_utils.zip",
+        )
+
+    elif type == "demo":
+        return (
+            "https://recodatasets.blob.core.windows.net/newsrec/",
+            "MINDdemo_train.zip",
+            "MINDdemo_dev.zip",
+            "MINDdemo_utils.zip",
+        )
+

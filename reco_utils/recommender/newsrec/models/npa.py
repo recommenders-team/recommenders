@@ -40,23 +40,11 @@ class NPAModel(BaseModel):
 
         super().__init__(hparams, iterator_creator, seed=seed)
 
-    def _init_embedding(self, file_path):
-        """Load pre-trained embeddings as a constant tensor.
-        
-        Args:
-            file_path (str): the pre-trained embeddings filename.
-
-        Returns:
-            np.array: A constant numpy array.
-        """
-        return np.load(file_path).astype(np.float32)
-
     def _get_input_label_from_iter(self, batch_data):
         input_feat = [
-            batch_data["impression_index_batch"],
             batch_data["user_index_batch"],
-            batch_data["clicked_news_batch"],
-            batch_data["candidate_news_batch"],
+            batch_data["clicked_title_batch"],
+            batch_data["candidate_title_batch"],
         ]
         input_label = batch_data["labels"]
         return input_feat, input_label
@@ -84,7 +72,7 @@ class NPAModel(BaseModel):
         hparams = self.hparams
 
         his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.doc_size), dtype="int32"
+            shape=(hparams.his_size, hparams.title_size), dtype="int32"
         )
         user_indexes = keras.Input(shape=(1,), dtype="int32")
 
@@ -120,13 +108,13 @@ class NPAModel(BaseModel):
         """
         hparams = self.hparams
         sequence_title_uindex = keras.Input(
-            shape=(hparams.doc_size + 1,), dtype="int32"
+            shape=(hparams.title_size + 1,), dtype="int32"
         )
 
-        sequences_input_title = layers.Lambda(lambda x: x[:, : hparams.doc_size])(
+        sequences_input_title = layers.Lambda(lambda x: x[:, : hparams.title_size])(
             sequence_title_uindex
         )
-        user_index = layers.Lambda(lambda x: x[:, hparams.doc_size :])(
+        user_index = layers.Lambda(lambda x: x[:, hparams.title_size :])(
             sequence_title_uindex
         )
 
@@ -147,7 +135,7 @@ class NPAModel(BaseModel):
         y = layers.Dropout(hparams.dropout)(y)
 
         pred_title = PersonalizedAttentivePooling(
-            hparams.doc_size,
+            hparams.title_size,
             hparams.filter_num,
             hparams.attention_hidden_dim,
             seed=self.seed,
@@ -168,16 +156,17 @@ class NPAModel(BaseModel):
         hparams = self.hparams
 
         his_input_title = keras.Input(
-            shape=(hparams.his_size, hparams.doc_size), dtype="int32"
+            shape=(hparams.his_size, hparams.title_size), dtype="int32"
         )
         pred_input_title = keras.Input(
-            shape=(hparams.npratio + 1, hparams.doc_size), dtype="int32"
+            shape=(hparams.npratio + 1, hparams.title_size), dtype="int32"
         )
-        pred_input_title_one = keras.Input(shape=(1, hparams.doc_size,), dtype="int32")
-        pred_title_one_reshape = layers.Reshape((hparams.doc_size,))(
+        pred_input_title_one = keras.Input(
+            shape=(1, hparams.title_size,), dtype="int32"
+        )
+        pred_title_one_reshape = layers.Reshape((hparams.title_size,))(
             pred_input_title_one
         )
-        imp_indexes = keras.Input(shape=(1,), dtype="int32")
         user_indexes = keras.Input(shape=(1,), dtype="int32")
 
         nuser_index = layers.Reshape((1, 1))(user_indexes)
@@ -192,14 +181,14 @@ class NPAModel(BaseModel):
         )
 
         embedding_layer = layers.Embedding(
-            hparams.word_size,
+            self.word2vec_embedding.shape[0],
             hparams.word_emb_dim,
             weights=[self.word2vec_embedding],
             trainable=True,
         )
 
         user_embedding_layer = layers.Embedding(
-            hparams.user_num,
+            len(self.train_iterator.uid2index),
             hparams.user_emb_dim,
             trainable=True,
             embeddings_initializer="zeros",
@@ -220,11 +209,9 @@ class NPAModel(BaseModel):
         pred_one = layers.Dot(axes=-1)([news_present_one, user_present])
         pred_one = layers.Activation(activation="sigmoid")(pred_one)
 
-        model = keras.Model(
-            [imp_indexes, user_indexes, his_input_title, pred_input_title], preds
-        )
+        model = keras.Model([user_indexes, his_input_title, pred_input_title], preds)
         scorer = keras.Model(
-            [imp_indexes, user_indexes, his_input_title, pred_input_title_one], pred_one
+            [user_indexes, his_input_title, pred_input_title_one], pred_one
         )
 
         return model, scorer

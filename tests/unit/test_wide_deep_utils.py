@@ -132,4 +132,3 @@ def test_wide_deep_model(pd_df, tmp):
     # Close the event file so that the model folder can be cleaned up.
     summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
     summary_writer.close()
-

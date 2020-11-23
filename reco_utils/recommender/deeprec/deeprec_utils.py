@@ -2,9 +2,8 @@
 # Licensed under the MIT License.
 
 
-import tensorflow as tf
-import six
 import os
+import six
 from sklearn.metrics import (
     roc_auc_score,
     log_loss,
@@ -15,9 +14,11 @@ from sklearn.metrics import (
 import numpy as np
 import yaml
 import zipfile
-from reco_utils.dataset.download_utils import maybe_download
 import json
 import pickle as pkl
+import tensorflow as tf
+
+from reco_utils.dataset.download_utils import maybe_download
 
 
 def flat_config(config):
@@ -51,6 +52,7 @@ def check_type(config):
         "word_size",
         "entity_size",
         "doc_size",
+        "history_size",
         "FEATURE_COUNT",
         "FIELD_COUNT",
         "dim",
@@ -74,6 +76,7 @@ def check_type(config):
         "L",
         "n_v",
         "n_h",
+        "kernel_size",
         "min_seq_length",
         "attention_size",
         "epochs",
@@ -119,7 +122,13 @@ def check_type(config):
         if param in config and not isinstance(config[param], str):
             raise TypeError("Parameters {0} must be str".format(param))
 
-    list_parameters = ["layer_sizes", "activation", "dropout", "att_fcn_layer_sizes"]
+    list_parameters = [
+        "layer_sizes",
+        "activation",
+        "dropout",
+        "att_fcn_layer_sizes",
+        "dilations",
+    ]
     for param in list_parameters:
         if param in config and not isinstance(config[param], list):
             raise TypeError("Parameters {0} must be list".format(param))
@@ -141,10 +150,16 @@ def check_nn_config(f_config):
     elif f_config["model_type"] in ["dkn", "DKN"]:
         required_parameters = [
             "doc_size",
+            "history_size",
             "wordEmb_file",
             "entityEmb_file",
+            "contextEmb_file",
+            "news_feature_file",
+            "user_history_file",
             "word_size",
             "entity_size",
+            "use_entity",
+            "use_context",
             "data_format",
             "dim",
             "layer_sizes",
@@ -226,6 +241,26 @@ def check_nn_config(f_config):
             "hidden_size",
             "att_fcn_layer_sizes",
         ]
+    elif f_config["model_type"] in [
+        "nextitnet",
+        "next_it_net",
+        "NextItNet",
+        "NEXT_IT_NET",
+    ]:
+        required_parameters = [
+            "item_embedding_dim",
+            "cate_embedding_dim",
+            "user_embedding_dim",
+            "max_seq_length",
+            "loss",
+            "method",
+            "user_vocab",
+            "item_vocab",
+            "cate_vocab",
+            "dilations",
+            "kernel_size",
+            "min_seq_length",
+        ]
     else:
         required_parameters = []
 
@@ -298,7 +333,19 @@ def create_hparams(flags):
         # dkn
         wordEmb_file=flags["wordEmb_file"] if "wordEmb_file" in flags else None,
         entityEmb_file=flags["entityEmb_file"] if "entityEmb_file" in flags else None,
+        contextEmb_file=flags["contextEmb_file"]
+        if "contextEmb_file" in flags
+        else None,
+        news_feature_file=flags["news_feature_file"]
+        if "news_feature_file" in flags
+        else None,
+        user_history_file=flags["user_history_file"]
+        if "user_history_file" in flags
+        else None,
+        use_entity=flags["use_entity"] if "use_entity" in flags else True,
+        use_context=flags["use_context"] if "use_context" in flags else True,
         doc_size=flags["doc_size"] if "doc_size" in flags else None,
+        history_size=flags["history_size"] if "history_size" in flags else None,
         word_size=flags["word_size"] if "word_size" in flags else None,
         entity_size=flags["entity_size"] if "entity_size" in flags else None,
         entity_dim=flags["entity_dim"] if "entity_dim" in flags else None,
@@ -413,6 +460,15 @@ def create_hparams(flags):
         att_fcn_layer_sizes=flags["att_fcn_layer_sizes"]
         if "att_fcn_layer_sizes" in flags
         else None,
+        # nextitnet
+        dilations=flags["dilations"] if "dilations" in flags else None,
+        kernel_size=flags["kernel_size"] if "kernel_size" in flags else None,
+        # lightgcn
+        embed_size=flags["embed_size"] if "embed_size" in flags else None,
+        n_layers=flags["n_layers"] if "n_layers" in flags else None,
+        decay=flags["decay"] if "decay" in flags else None,
+        eval_epoch=flags["eval_epoch"] if "eval_epoch" in flags else None,
+        top_k=flags["top_k"] if "top_k" in flags else None,
     )
 
 
@@ -460,11 +516,11 @@ def mrr_score(y_true, y_score):
     """Computing mrr score metric.
 
     Args:
-        y_true (numpy.ndarray): ground-truth labels.
-        y_score (numpy.ndarray): predicted labels.
+        y_true (np.ndarray): ground-truth labels.
+        y_score (np.ndarray): predicted labels.
     
     Returns:
-        numpy.ndarray: mrr scores.
+        np.ndarray: mrr scores.
     """
     order = np.argsort(y_score)[::-1]
     y_true = np.take(y_true, order)
@@ -476,25 +532,26 @@ def ndcg_score(y_true, y_score, k=10):
     """Computing ndcg score metric at k.
 
     Args:
-        y_true (numpy.ndarray): ground-truth labels.
-        y_score (numpy.ndarray): predicted labels.
+        y_true (np.ndarray): ground-truth labels.
+        y_score (np.ndarray): predicted labels.
 
     Returns:
-        numpy.ndarray: ndcg scores.
+        np.ndarray: ndcg scores.
     """
     best = dcg_score(y_true, y_true, k)
     actual = dcg_score(y_true, y_score, k)
     return actual / best
 
+
 def hit_score(y_true, y_score, k=10):
     """Computing hit score metric at k.
 
     Args:
-        y_true (numpy.ndarray): ground-truth labels.
-        y_score (numpy.ndarray): predicted labels.
+        y_true (np.ndarray): ground-truth labels.
+        y_score (np.ndarray): predicted labels.
 
     Returns:
-        numpy.ndarray: hit score.
+        np.ndarray: hit score.
     """
     ground_truth = np.where(y_true == 1)[0]
     argsort = np.argsort(y_score)[::-1][:k]
@@ -503,15 +560,16 @@ def hit_score(y_true, y_score, k=10):
             return 1
     return 0
 
+
 def dcg_score(y_true, y_score, k=10):
     """Computing dcg score metric at k.
 
     Args:
-        y_true (numpy.ndarray): ground-truth labels.
-        y_score (numpy.ndarray): predicted labels.
+        y_true (np.ndarray): ground-truth labels.
+        y_score (np.ndarray): predicted labels.
 
     Returns:
-        numpy.ndarray: dcg scores.
+        np.ndarray: dcg scores.
     """
     k = min(np.shape(y_true)[-1], k)
     order = np.argsort(y_score)[::-1]
@@ -519,7 +577,6 @@ def dcg_score(y_true, y_score, k=10):
     gains = 2 ** y_true - 1
     discounts = np.log2(np.arange(len(y_true)) + 2)
     return np.sum(gains / discounts)
-
 
 
 def cal_metric(labels, preds, metrics):
@@ -555,7 +612,7 @@ def cal_metric(labels, preds, metrics):
             res["f1"] = round(f1, 4)
         elif metric == "mean_mrr":
             mean_mrr = np.mean(
-                [   
+                [
                     mrr_score(each_labels, each_preds)
                     for each_labels, each_preds in zip(labels, preds)
                 ]
@@ -563,12 +620,12 @@ def cal_metric(labels, preds, metrics):
             res["mean_mrr"] = round(mean_mrr, 4)
         elif metric.startswith("ndcg"):  # format like:  ndcg@2;4;6;8
             ndcg_list = [1, 2]
-            ks = metric.split('@')
+            ks = metric.split("@")
             if len(ks) > 1:
-                ndcg_list = [int(token) for token in ks[1].split(';')]
+                ndcg_list = [int(token) for token in ks[1].split(";")]
             for k in ndcg_list:
                 ndcg_temp = np.mean(
-                    [   
+                    [
                         ndcg_score(each_labels, each_preds, k)
                         for each_labels, each_preds in zip(labels, preds)
                     ]
@@ -576,13 +633,13 @@ def cal_metric(labels, preds, metrics):
                 res["ndcg@{0}".format(k)] = round(ndcg_temp, 4)
         elif metric.startswith("hit"):  # format like:  hit@2;4;6;8
             hit_list = [1, 2]
-            ks = metric.split('@')
+            ks = metric.split("@")
             if len(ks) > 1:
-                hit_list = [int(token) for token in ks[1].split(';')]
+                hit_list = [int(token) for token in ks[1].split(";")]
             for k in hit_list:
                 hit_temp = np.mean(
                     [
-                        hit_score(each_labels, each_preds, k) 
+                        hit_score(each_labels, each_preds, k)
                         for each_labels, each_preds in zip(labels, preds)
                     ]
                 )

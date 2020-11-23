@@ -116,7 +116,7 @@ def test_sar_item_similarity(
         sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
-    if similarity_type is "cooccurrence":
+    if similarity_type == "cooccurrence":
         test_item_similarity = _rearrange_to_test(
             model.item_similarity.todense(),
             row_ids,
@@ -274,31 +274,59 @@ def test_get_popularity_based_topk(header):
 
 
 def test_get_normalized_scores(header):
-    train = pd.DataFrame({header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2],
-                          header["col_item"]: [1, 2, 3, 4, 1, 5, 6, 7],
-                          header["col_rating"]: [3., 4., 5., 4., 3., 2., 1., 5.],
-                          header["col_timestamp"]: [1, 20, 30, 400, 50, 60, 70, 800]})
-    test = pd.DataFrame({header["col_user"]: [1, 1, 1, 2, 2, 2],
-                         header["col_item"]: [5, 6, 7, 2, 3, 4],
-                         header["col_rating"]: [2., 1., 5., 3., 4., 5.]})
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2],
+            header["col_item"]: [1, 2, 3, 4, 1, 5, 6, 7],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0],
+            header["col_timestamp"]: [1, 20, 30, 400, 50, 60, 70, 800],
+        }
+    )
+    test = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 1, 2, 2, 2],
+            header["col_item"]: [5, 6, 7, 2, 3, 4],
+            header["col_rating"]: [2.0, 1.0, 5.0, 3.0, 4.0, 5.0],
+        }
+    )
 
     model = SARSingleNode(**header, timedecay_formula=True, normalize=True)
     model.fit(train)
-    actual = model.score(test, remove_seen=True, normalize=True)
-    expected = np.array([
-            [-np.inf, -np.inf, -np.inf, -np.inf, 3., 3., 3.],
-            [-np.inf, 3., 3., 3., -np.inf, -np.inf, -np.inf],
-    ])
+    actual = model.score(test, remove_seen=True)
+    expected = np.array(
+        [
+            [-np.inf, -np.inf, -np.inf, -np.inf, 1.23512374, 1.23512374, 1.23512374],
+            [-np.inf, 1.23512374, 1.23512374, 1.23512374, -np.inf, -np.inf, -np.inf],
+        ]
+    )
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray)
-    assert np.isclose(expected, actual).all()
+    assert np.isclose(expected, np.asarray(actual)).all()
 
-    actual = model.score(test, normalize=True)
-    expected = np.array([
-        [3.80000633, 4.14285448, 4.14285448, 4.14285448, 3., 3., 3.],
-        [2.8000859, 3., 3., 3., 2.71441353, 2.71441353, 2.71441353]
-    ])
+    actual = model.score(test)
+    expected = np.array(
+        [
+            [
+                3.11754872,
+                4.29408577,
+                4.29408577,
+                4.29408577,
+                1.23512374,
+                1.23512374,
+                1.23512374,
+            ],
+            [
+                2.5293308,
+                1.23511758,
+                1.23511758,
+                1.23511758,
+                3.11767458,
+                3.11767458,
+                3.11767458,
+            ],
+        ]
+    )
 
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray)
-    assert np.isclose(expected, actual).all()
+    assert np.isclose(expected, np.asarray(actual)).all()

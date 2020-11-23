@@ -21,6 +21,7 @@ class SLI_RECModel(SequentialBaseModel):
     the 28th International Joint Conferences on Artificial Intelligence, IJCAI’19, 
     Pages 4213-4219, AAAI Press, 2019.
     """
+
     def _build_seq_graph(self):
         """The main function to create sli_rec model.
         
@@ -112,7 +113,7 @@ class SLI_RECModel(SequentialBaseModel):
                 shape=[user_embedding.shape.as_list()[-1], query_size],
                 initializer=self.initializer,
             )
-            att_inputs = tf.tensordot(user_embedding, attention_mat, [[2],[0]])
+            att_inputs = tf.tensordot(user_embedding, attention_mat, [[2], [0]])
 
             queries = tf.reshape(
                 tf.tile(query, [1, att_inputs.shape[1].value]), tf.shape(att_inputs)

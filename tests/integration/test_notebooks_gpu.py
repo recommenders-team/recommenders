@@ -3,6 +3,7 @@
 
 import papermill as pm
 import pytest
+
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 import os
@@ -260,26 +261,27 @@ def test_slirec_quickstart_integration(
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, expected_values",
+    "epochs, seed, MIND_type, expected_values",
     [
         (
-            10,
+            8,
             42,
+            "demo",
             {
                 "res_syn": {
-                    "group_auc": 0.5845,
-                    "mean_mrr": 0.202,
-                    "ndcg@5": 0.1977,
-                    "ndcg@10": 0.2655,
+                    "group_auc": 0.6217,
+                    "mean_mrr": 0.2783,
+                    "ndcg@5": 0.3024,
+                    "ndcg@10": 0.3719,
                 }
             },
         )
     ],
 )
-def test_nrms_quickstart_integration(notebooks, epochs, seed, expected_values):
+def test_nrms_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
     notebook_path = notebooks["nrms_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed}
+    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
@@ -302,26 +304,27 @@ def test_nrms_quickstart_integration(notebooks, epochs, seed, expected_values):
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, expected_values",
+    "epochs, seed, MIND_type, expected_values",
     [
         (
-            5,
+            6,
             42,
+            "demo",
             {
                 "res_syn": {
-                    "group_auc": 0.5667,
-                    "mean_mrr": 0.1827,
-                    "ndcg@5": 0.1898,
-                    "ndcg@10": 0.2465,
+                    "group_auc": 0.6436,
+                    "mean_mrr": 0.2990,
+                    "ndcg@5": 0.3297,
+                    "ndcg@10": 0.3933,
                 }
             },
         )
     ],
 )
-def test_naml_quickstart_integration(notebooks, epochs, seed, expected_values):
-    notebook_path = notebooks["nrms_quickstart"]
+def test_naml_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
+    notebook_path = notebooks["naml_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed}
+    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
@@ -344,26 +347,27 @@ def test_naml_quickstart_integration(notebooks, epochs, seed, expected_values):
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, expected_values",
+    "epochs, seed, MIND_type, expected_values",
     [
         (
             5,
-            42,
+            40,
+            "demo",
             {
                 "res_syn": {
-                    "group_auc": 0.5599,
-                    "mean_mrr": 0.2027,
-                    "ndcg@5": 0.2065,
-                    "ndcg@10": 0.268,
+                    "group_auc": 0.6444,
+                    "mean_mrr": 0.2983,
+                    "ndcg@5": 0.3287,
+                    "ndcg@10": 0.3938,
                 }
             },
         )
     ],
 )
-def test_lstur_quickstart_integration(notebooks, epochs, seed, expected_values):
+def test_lstur_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
     notebook_path = notebooks["lstur_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed}
+    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
@@ -386,26 +390,27 @@ def test_lstur_quickstart_integration(notebooks, epochs, seed, expected_values):
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, expected_values",
+    "epochs, seed, MIND_type, expected_values",
     [
         (
-            5,
+            6,
             42,
+            "demo",
             {
                 "res_syn": {
-                    "group_auc": 0.5583,
-                    "mean_mrr": 0.1741,
-                    "ndcg@5": 0.1676,
-                    "ndcg@10": 0.2462,
+                    "group_auc": 0.6035,
+                    "mean_mrr": 0.2765,
+                    "ndcg@5": 0.2977,
+                    "ndcg@10": 0.3637,
                 }
             },
         )
     ],
 )
-def test_npa_quickstart_integration(notebooks, epochs, seed, expected_values):
+def test_npa_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
     notebook_path = notebooks["npa_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed}
+    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
@@ -423,3 +428,67 @@ def test_npa_quickstart_integration(notebooks, epochs, seed, expected_values):
         assert results[key]["ndcg@10"] == pytest.approx(
             value["ndcg@10"], rel=TOL, abs=ABS_TOL
         )
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "yaml_file, data_path, size, epochs, batch_size, expected_values, seed",
+    [
+        (
+            "reco_utils/recommender/deeprec/config/lightgcn.yaml",
+            os.path.join("tests", "resources", "deeprec", "lightgcn"),
+            "100k",
+            5,
+            1024,
+            {
+                "map": 0.094794,
+                "ndcg": 0.354145,
+                "precision": 0.308165,
+                "recall": 0.163034,
+            },
+            42,
+        )
+    ],
+)
+def test_lightgcn_deep_dive_integration(
+    notebooks, yaml_file, data_path, size, epochs, batch_size, expected_values, seed
+):
+    notebook_path = notebooks["lightgcn_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            TOP_K=10,
+            MOVIELENS_DATA_SIZE=size,
+            EPOCHS=epochs,
+            BATCH_SIZE=batch_size,
+            SEED=seed,
+            yaml_file=yaml_file,
+            user_file=os.path.join(data_path, r"user_embeddings"),
+            item_file=os.path.join(data_path, r"item_embeddings"),
+        ),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
+def test_dkn_quickstart_integration(notebooks):
+    notebook_path = notebooks["dkn_quickstart"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(epochs=5, batch_size=500),
+    )
+    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+
+    assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
+    assert results["res"]["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)

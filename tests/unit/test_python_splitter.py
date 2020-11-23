@@ -119,7 +119,7 @@ def test_min_rating_filter():
         {
             DEFAULT_USER_COL: [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5],
             DEFAULT_ITEM_COL: [5, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3, 2, 2, 1],
-            DEFAULT_RATING_COL: np.random.randint(1, 6, 15)
+            DEFAULT_RATING_COL: np.random.randint(1, 6, 15),
         }
     )
 
@@ -198,10 +198,11 @@ def test_random_splitter(test_specs, python_dataset):
 
     # check values sum to 1
     splits = python_random_split(
-        python_dataset, ratio=[.7, .2, .1], seed=test_specs["seed"]
+        python_dataset, ratio=[0.7, 0.2, 0.1], seed=test_specs["seed"]
     )
 
-    assert(len(splits)) == 3
+    assert (len(splits)) == 3
+
 
 def test_chrono_splitter(test_specs, python_dataset):
     splits = python_chrono_split(
@@ -435,4 +436,3 @@ def test_float_numpy_stratified_splitter(test_specs, python_float_dataset):
     assert Xtst_rated / X_rated == pytest.approx(
         (1 - test_specs["ratio"]), rel=test_specs["fluctuation"]
     )
-

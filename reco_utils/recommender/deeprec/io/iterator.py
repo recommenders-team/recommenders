@@ -29,6 +29,7 @@ class FFMTextIterator(BaseIterator):
     Iterator will not load the whole data into memory. Instead, it loads data into memory
     per mini-batch, so that large files can be used as input data.
     """
+
     def __init__(self, hparams, graph, col_spliter=" ", ID_spliter="%"):
         """Initialize an iterator. Create necessary placeholders for the model.
         
@@ -77,7 +78,7 @@ class FFMTextIterator(BaseIterator):
             list: Parsed results,including label, features and impression_id
 
         """
-        impression_id = None
+        impression_id = 0
         words = line.strip().split(self.ID_spliter)
         if len(words) == 2:
             impression_id = words[1].strip()
@@ -110,11 +111,7 @@ class FFMTextIterator(BaseIterator):
         cnt = 0
 
         with tf.gfile.GFile(infile, "r") as rd:
-            while True:
-                line = rd.readline()
-                if not line:
-                    break
-
+            for line in rd:
                 label, features, impression_id = self.parser_one_line(line)
 
                 features_list.append(features)
@@ -124,14 +121,14 @@ class FFMTextIterator(BaseIterator):
                 cnt += 1
                 if cnt == self.batch_size:
                     res = self._convert_data(label_list, features_list)
-                    yield self.gen_feed_dict(res)
+                    yield self.gen_feed_dict(res), impression_id_list, self.batch_size
                     label_list = []
                     features_list = []
                     impression_id_list = []
                     cnt = 0
             if cnt > 0:
                 res = self._convert_data(label_list, features_list)
-                yield self.gen_feed_dict(res)
+                yield self.gen_feed_dict(res), impression_id_list, cnt
 
     def _convert_data(self, labels, features):
         """Convert data into numpy arrays that are good for further operation.

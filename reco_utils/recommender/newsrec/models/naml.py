@@ -42,30 +42,51 @@ class NAMLModel(BaseModel):
 
     def _get_input_label_from_iter(self, batch_data):
         input_feat = [
-            batch_data["impression_index_batch"],
-            batch_data["user_index_batch"],
             batch_data["clicked_title_batch"],
-            batch_data["clicked_body_batch"],
+            batch_data["clicked_ab_batch"],
             batch_data["clicked_vert_batch"],
             batch_data["clicked_subvert_batch"],
             batch_data["candidate_title_batch"],
-            batch_data["candidate_body_batch"],
+            batch_data["candidate_ab_batch"],
             batch_data["candidate_vert_batch"],
-            batch_data["candidate_subvert_batch"]
+            batch_data["candidate_subvert_batch"],
         ]
         input_label = batch_data["labels"]
         return input_feat, input_label
 
-    def _init_embedding(self, file_path):
-        """Load pre-trained embeddings as a constant tensor.
-        
+    def _get_user_feature_from_iter(self, batch_data):
+        """ get input of user encoder 
         Args:
-            file_path (str): the pre-trained embeddings filename.
-
+            batch_data: input batch data from user iterator
+        
         Returns:
-            np.array: A constant numpy array.
+            array: input user feature (clicked title batch)
         """
-        return np.load(file_path).astype(np.float32)
+        input_feature = [
+            batch_data["clicked_title_batch"],
+            batch_data["clicked_ab_batch"],
+            batch_data["clicked_vert_batch"],
+            batch_data["clicked_subvert_batch"],
+        ]
+        input_feature = np.concatenate(input_feature, axis=-1)
+        return input_feature
+
+    def _get_news_feature_from_iter(self, batch_data):
+        """ get input of news encoder
+        Args:
+            batch_data: input batch data from news iterator
+        
+        Returns:
+            array: input news feature (candidate title batch)
+        """
+        input_feature = [
+            batch_data["candidate_title_batch"],
+            batch_data["candidate_ab_batch"],
+            batch_data["candidate_vert_batch"],
+            batch_data["candidate_subvert_batch"],
+        ]
+        input_feature = np.concatenate(input_feature, axis=-1)
+        return input_feature
 
     def _build_graph(self):
         """Build NAML model and scorer.
@@ -96,7 +117,9 @@ class NAMLModel(BaseModel):
         click_news_presents = layers.TimeDistributed(newsencoder)(
             his_input_title_body_verts
         )
-        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(click_news_presents)
+        user_present = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(
+            click_news_presents
+        )
 
         model = keras.Model(
             his_input_title_body_verts, user_present, name="user_encoder"
@@ -145,7 +168,9 @@ class NAMLModel(BaseModel):
         concate_repr = layers.Concatenate(axis=-2)(
             [title_repr, body_repr, vert_repr, subvert_repr]
         )
-        news_repr = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(concate_repr)
+        news_repr = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(
+            concate_repr
+        )
 
         model = keras.Model(input_title_body_verts, news_repr, name="news_encoder")
         return model
@@ -170,7 +195,7 @@ class NAMLModel(BaseModel):
             activation=hparams.cnn_activation,
             padding="same",
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
         pred_title = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
@@ -199,7 +224,7 @@ class NAMLModel(BaseModel):
             activation=hparams.cnn_activation,
             padding="same",
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(y)
         y = layers.Dropout(hparams.dropout)(y)
         pred_body = AttLayer2(hparams.attention_hidden_dim, seed=self.seed)(y)
@@ -223,10 +248,10 @@ class NAMLModel(BaseModel):
 
         vert_emb = vert_embedding(input_vert)
         pred_vert = layers.Dense(
-            hparams.filter_num, 
+            hparams.filter_num,
             activation=hparams.dense_activation,
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(vert_emb)
         pred_vert = layers.Reshape((1, hparams.filter_num))(pred_vert)
 
@@ -248,10 +273,10 @@ class NAMLModel(BaseModel):
 
         subvert_emb = subvert_embedding(input_subvert)
         pred_subvert = layers.Dense(
-            hparams.filter_num, 
+            hparams.filter_num,
             activation=hparams.dense_activation,
             bias_initializer=keras.initializers.Zeros(),
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed)
+            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
         )(subvert_emb)
         pred_subvert = layers.Reshape((1, hparams.filter_num))(pred_subvert)
 
@@ -311,22 +336,19 @@ class NAMLModel(BaseModel):
         )
         pred_title_body_verts_one = layers.Reshape((-1,))(pred_title_body_verts_one)
 
-        imp_indexes = keras.Input(shape=(1,), dtype="int32")
-        user_indexes = keras.Input(shape=(1,), dtype="int32")
-
         embedding_layer = layers.Embedding(
-            hparams.word_size,
+            self.word2vec_embedding.shape[0],
             hparams.word_emb_dim,
             weights=[self.word2vec_embedding],
             trainable=True,
         )
 
-        newsencoder = self._build_newsencoder(embedding_layer)
-        userencoder = self._build_userencoder(newsencoder)
+        self.newsencoder = self._build_newsencoder(embedding_layer)
+        self.userencoder = self._build_userencoder(self.newsencoder)
 
-        user_present = userencoder(his_title_body_verts)
-        news_present = layers.TimeDistributed(newsencoder)(pred_title_body_verts)
-        news_present_one = newsencoder(pred_title_body_verts_one)
+        user_present = self.userencoder(his_title_body_verts)
+        news_present = layers.TimeDistributed(self.newsencoder)(pred_title_body_verts)
+        news_present_one = self.newsencoder(pred_title_body_verts_one)
 
         preds = layers.Dot(axes=-1)([news_present, user_present])
         preds = layers.Activation(activation="softmax")(preds)
@@ -336,8 +358,6 @@ class NAMLModel(BaseModel):
 
         model = keras.Model(
             [
-                imp_indexes,
-                user_indexes,
                 his_input_title,
                 his_input_body,
                 his_input_vert,
@@ -352,8 +372,6 @@ class NAMLModel(BaseModel):
 
         scorer = keras.Model(
             [
-                imp_indexes,
-                user_indexes,
                 his_input_title,
                 his_input_body,
                 his_input_vert,

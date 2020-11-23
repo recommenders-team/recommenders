@@ -12,6 +12,7 @@ from reco_utils.common.python_utils import (
     lift,
     exponential_decay,
     get_top_k_scored_items,
+    rescale,
 )
 from reco_utils.common import constants
 
@@ -89,7 +90,6 @@ class SARSingleNode:
         # set flag to capture unity-rating user-affinity matrix for scaling scores
         self.normalize = normalize
         self.col_unity_rating = "_unity_rating"
-        self.unity_user_affinity = None
 
         # column for mapping user / item ids to internal indices
         self.col_item_id = "_indexed_items"
@@ -98,6 +98,10 @@ class SARSingleNode:
         # obtain all the users and items from both training and test data
         self.n_users = None
         self.n_items = None
+
+        # The min and max of the rating scale, obtained from the training data.
+        self.rating_min = None
+        self.rating_max = None
 
         # mapping for item to matrix element
         self.user2index = None
@@ -239,6 +243,8 @@ class SARSingleNode:
         )
 
         if self.normalize:
+            self.rating_min = temp_df[self.col_rating].min()
+            self.rating_max = temp_df[self.col_rating].max()
             logger.info("Calculating normalization factors")
             temp_df[self.col_unity_rating] = 1.0
             if self.time_decay_flag:
@@ -286,13 +292,12 @@ class SARSingleNode:
 
         logger.info("Done training")
 
-    def score(self, test, remove_seen=False, normalize=False):
+    def score(self, test, remove_seen=False):
         """Score all items for test users.
 
         Args:
             test (pd.DataFrame): user to test
             remove_seen (bool): flag to remove items seen in training from recommendation
-            normalize (bool): flag to normalize scores to be in the same scale as the original ratings
 
         Returns:
             np.ndarray: Value of interest of all items for the users.
@@ -316,24 +321,28 @@ class SARSingleNode:
         if isinstance(test_scores, sparse.spmatrix):
             test_scores = test_scores.toarray()
 
+        if self.normalize:
+            counts = self.unity_user_affinity[user_ids, :].dot(self.item_similarity)
+            user_min_scores = (
+                np.tile(counts.min(axis=1)[:, np.newaxis], test_scores.shape[1])
+                * self.rating_min
+            )
+            user_max_scores = (
+                np.tile(counts.max(axis=1)[:, np.newaxis], test_scores.shape[1])
+                * self.rating_max
+            )
+            test_scores = rescale(
+                test_scores,
+                self.rating_min,
+                self.rating_max,
+                user_min_scores,
+                user_max_scores,
+            )
+
         # remove items in the train set so recommended items are always novel
         if remove_seen:
             logger.info("Removing seen items")
             test_scores += self.user_affinity[user_ids, :] * -np.inf
-
-        if normalize:
-            if self.unity_user_affinity is None:
-                raise ValueError(
-                    "Cannot use normalize flag during scoring if it was not set at model instantiation"
-                )
-            else:
-                test_scores = np.array(
-                    np.divide(
-                        test_scores,
-                        self.unity_user_affinity[user_ids, :].dot(self.item_similarity),
-                    )
-                )
-                test_scores = np.where(np.isnan(test_scores), -np.inf, test_scores)
 
         return test_scores
 
@@ -438,9 +447,7 @@ class SARSingleNode:
         # drop invalid items
         return df.replace(-np.inf, np.nan).dropna()
 
-    def recommend_k_items(
-        self, test, top_k=10, sort_top_k=True, remove_seen=False, normalize=False
-    ):
+    def recommend_k_items(self, test, top_k=10, sort_top_k=True, remove_seen=False):
         """Recommend top K items for all users which are in the test set
 
         Args:
@@ -453,7 +460,7 @@ class SARSingleNode:
             pd.DataFrame: top k recommendation items for each user
         """
 
-        test_scores = self.score(test, remove_seen=remove_seen, normalize=normalize)
+        test_scores = self.score(test, remove_seen=remove_seen)
 
         top_items, top_scores = get_top_k_scored_items(
             scores=test_scores, top_k=top_k, sort_top_k=sort_top_k

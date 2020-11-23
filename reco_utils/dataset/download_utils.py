@@ -5,6 +5,7 @@ import os
 import logging
 import requests
 import math
+import zipfile
 from contextlib import contextmanager
 from tempfile import TemporaryDirectory
 from tqdm import tqdm
@@ -44,7 +45,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
             ):
                 file.write(data)
     else:
-        log.debug("File {} already downloaded".format(filepath))
+        log.info("File {} already downloaded".format(filepath))
     if expected_bytes is not None:
         statinfo = os.stat(filepath)
         if statinfo.st_size != expected_bytes:
@@ -79,3 +80,18 @@ def download_path(path=None):
     else:
         path = os.path.realpath(path)
         yield path
+
+
+def unzip_file(zip_src, dst_dir, clean_zip_file=True):
+    """Unzip a file
+
+    Args:
+        zip_src (str): Zip file.
+        dst_dir (str): Destination folder.
+        clean_zip_file (bool): Whether or not to clean the zip file.
+    """
+    fz = zipfile.ZipFile(zip_src, "r")
+    for file in fz.namelist():
+        fz.extract(file, dst_dir)
+    if clean_zip_file:
+        os.remove(zip_src)

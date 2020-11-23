@@ -16,6 +16,7 @@ class DKN(BaseModel):
     Recommendation", in Proceedings of the 2018 World Wide Web Conference on World 
     Wide Web, 2018.
     """
+
     def __init__(self, hparams, iterator_creator):
         """Initialization steps for DKN.
         Compared with the BaseModel, DKN requires two different pre-computed embeddings,
@@ -29,31 +30,52 @@ class DKN(BaseModel):
         self.graph = tf.Graph()
         with self.graph.as_default():
             with tf.name_scope("embedding"):
-                self.embedding = tf.Variable(
-                    tf.constant(
-                        0.0, shape=[hparams.word_size, hparams.dim], dtype=tf.float32
-                    ),
-                    trainable=True,
-                    name="word",
-                )
-
                 word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
-                self.init_embedding = self.embedding.assign(word2vec_embedding)
-                self.entity_embedding = tf.Variable(
-                    tf.constant(
-                        0.0, shape=[hparams.entity_size, hparams.dim], dtype=tf.float32
-                    ),
-                    trainable=True,
-                    name="entity",
+                self.embedding = tf.Variable(
+                    word2vec_embedding, trainable=True, name="word"
                 )
 
-                e_embedding = self._init_embedding(hparams.entityEmb_file)
-                W = tf.Variable(
-                    tf.random_uniform([hparams.entity_dim, hparams.dim], -1, 1)
-                )
-                b = tf.Variable(tf.zeros([hparams.dim]))
-                e_embedding_transformed = tf.nn.tanh(tf.matmul(e_embedding, W) + b)
-                self.entity_embedding.assign(e_embedding_transformed)
+                if hparams.use_entity:
+                    e_embedding = self._init_embedding(hparams.entityEmb_file)
+                    W = tf.Variable(
+                        tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1)
+                    )
+                    b = tf.Variable(tf.zeros([hparams.dim]))
+                    e_embedding_transformed = tf.nn.tanh(tf.matmul(e_embedding, W) + b)
+                    self.entity_embedding = tf.Variable(
+                        e_embedding_transformed, trainable=True, name="entity"
+                    )
+                else:
+                    self.entity_embedding = tf.Variable(
+                        tf.constant(
+                            0.0,
+                            shape=[hparams.entity_size, hparams.dim],
+                            dtype=tf.float32,
+                        ),
+                        trainable=True,
+                        name="entity",
+                    )
+
+                if hparams.use_context:
+                    c_embedding = self._init_embedding(hparams.contextEmb_file)
+                    W = tf.Variable(
+                        tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1)
+                    )
+                    b = tf.Variable(tf.zeros([hparams.dim]))
+                    c_embedding_transformed = tf.nn.tanh(tf.matmul(c_embedding, W) + b)
+                    self.context_embedding = tf.Variable(
+                        c_embedding_transformed, trainable=True, name="context"
+                    )
+                else:
+                    self.context_embedding = tf.Variable(
+                        tf.constant(
+                            0.0,
+                            shape=[hparams.entity_size, hparams.dim],
+                            dtype=tf.float32,
+                        ),
+                        trainable=True,
+                        name="context",
+                    )
 
         super().__init__(hparams, iterator_creator, graph=self.graph)
 
@@ -75,9 +97,16 @@ class DKN(BaseModel):
         l2_loss = tf.add(
             l2_loss, tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.embedding))
         )
-        l2_loss = tf.add(
-            l2_loss, tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.entity_embedding))
-        )
+        if hparams.use_entity:
+            l2_loss = tf.add(
+                l2_loss,
+                tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.entity_embedding)),
+            )
+        if hparams.use_entity and hparams.use_context:
+            l2_loss = tf.add(
+                l2_loss,
+                tf.multiply(hparams.embed_l2, tf.nn.l2_loss(self.context_embedding)),
+            )
         params = self.layer_params
         for param in params:
             l2_loss = tf.add(
@@ -92,10 +121,16 @@ class DKN(BaseModel):
         l1_loss = tf.add(
             l1_loss, tf.multiply(hparams.embed_l1, tf.norm(self.embedding, ord=1))
         )
-        l1_loss = tf.add(
-            l1_loss,
-            tf.multiply(hparams.embed_l1, tf.norm(self.entity_embedding, ord=1)),
-        )
+        if hparams.use_entity:
+            l1_loss = tf.add(
+                l1_loss,
+                tf.multiply(hparams.embed_l1, tf.norm(self.entity_embedding, ord=1)),
+            )
+        if hparams.use_entity and hparams.use_context:
+            l1_loss = tf.add(
+                l1_loss,
+                tf.multiply(hparams.embed_l1, tf.norm(self.context_embedding, ord=1)),
+            )
         params = self.layer_params
         for param in params:
             l1_loss = tf.add(
@@ -107,7 +142,7 @@ class DKN(BaseModel):
         hparams = self.hparams
         self.keep_prob_train = 1 - np.array(hparams.dropout)
         self.keep_prob_test = np.ones_like(hparams.dropout)
-        with tf.variable_scope("DKN") as scope:
+        with tf.compat.v1.variable_scope("DKN") as scope:
             logit = self._build_dkn()
             return logit
 
@@ -120,9 +155,10 @@ class DKN(BaseModel):
         hparams = self.hparams
         # build attention model for clicked news and candidate news
         click_news_embed_batch, candidate_news_embed_batch = self._build_pair_attention(
-            self.iterator.click_news_indices,
-            self.iterator.click_news_values,
-            self.iterator.click_news_shape,
+            self.iterator.candidate_news_index_batch,
+            self.iterator.candidate_news_entity_index_batch,
+            self.iterator.click_news_index_batch,
+            self.iterator.click_news_entity_index_batch,
             hparams,
         )
 
@@ -135,22 +171,31 @@ class DKN(BaseModel):
         layer_idx = 0
         hidden_nn_layers = []
         hidden_nn_layers.append(nn_input)
-        with tf.variable_scope("nn_part", initializer=self.initializer) as scope:
+        with tf.compat.v1.variable_scope(
+            "nn_part", initializer=self.initializer
+        ) as scope:
             for idx, layer_size in enumerate(hparams.layer_sizes):
-                curr_w_nn_layer = tf.get_variable(
+                curr_w_nn_layer = tf.compat.v1.get_variable(
                     name="w_nn_layer" + str(layer_idx),
                     shape=[last_layer_size, layer_size],
                     dtype=tf.float32,
                 )
-                curr_b_nn_layer = tf.get_variable(
+                curr_b_nn_layer = tf.compat.v1.get_variable(
                     name="b_nn_layer" + str(layer_idx),
                     shape=[layer_size],
                     dtype=tf.float32,
                 )
-                curr_hidden_nn_layer = tf.nn.xw_plus_b(
+                curr_hidden_nn_layer = tf.compat.v1.nn.xw_plus_b(
                     hidden_nn_layers[layer_idx], curr_w_nn_layer, curr_b_nn_layer
                 )
-                scope = "nn_part" + str(idx)
+                if hparams.enable_BN is True:
+                    curr_hidden_nn_layer = tf.layers.batch_normalization(
+                        curr_hidden_nn_layer,
+                        momentum=0.95,
+                        epsilon=0.0001,
+                        training=self.is_train_stage,
+                    )
+
                 activation = hparams.activation[idx]
                 curr_hidden_nn_layer = self._active_layer(
                     logit=curr_hidden_nn_layer, activation=activation
@@ -161,27 +206,36 @@ class DKN(BaseModel):
                 self.layer_params.append(curr_w_nn_layer)
                 self.layer_params.append(curr_b_nn_layer)
 
-            w_nn_output = tf.get_variable(
+            w_nn_output = tf.compat.v1.get_variable(
                 name="w_nn_output", shape=[last_layer_size, 1], dtype=tf.float32
             )
-            b_nn_output = tf.get_variable(
+            b_nn_output = tf.compat.v1.get_variable(
                 name="b_nn_output", shape=[1], dtype=tf.float32
             )
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
-            nn_output = tf.nn.xw_plus_b(hidden_nn_layers[-1], w_nn_output, b_nn_output)
+            nn_output = tf.compat.v1.nn.xw_plus_b(
+                hidden_nn_layers[-1], w_nn_output, b_nn_output
+            )
             return nn_output
 
-    def _build_pair_attention(self, field_indices, field_values, field_shape, hparams):
+    def _build_pair_attention(
+        self,
+        candidate_word_batch,
+        candidate_entity_batch,
+        click_word_batch,
+        click_entity_batch,
+        hparams,
+    ):
         """This function learns the candidate news article's embedding and user embedding.
         User embedding is generated from click history and also depends on the candidate news article via attention mechanism.
         Article embedding is generated via KCNN module.
         Args:
-            field_indices (obj): sparse tensor indices for constructing user clicked history
-            field_values (obj): sparse tensor values for constructing user clicked history
-            field_shape (obj): sparse tensor shape for constructing user clicked history
+            candidate_word_batch (obj): tensor word indices for constructing news article
+            candidate_entity_batch (obj): tensor entity values for constructing news article
+            click_word_batch (obj): tensor word indices for constructing user clicked history
+            click_entity_batch (obj): tensor entity indices for constructing user clicked history
             hparams (obj): global hyper-parameters
-
         Returns:
             click_field_embed_final_batch: user embedding
             news_field_embed_final_batch: candidate news article embedding
@@ -190,124 +244,106 @@ class DKN(BaseModel):
         doc_size = hparams.doc_size
         attention_hidden_sizes = hparams.attention_layer_sizes
 
-        candidate_word_batch = self.iterator.candidate_news_index_batch
-        click_word_batch = tf.SparseTensor(field_indices, field_values, field_shape)
-        click_word_split = tf.sparse_split(
-            axis=0, num_split=hparams.batch_size, sp_input=click_word_batch
-        )
-        news_word_split = tf.split(
-            axis=0, num_or_size_splits=hparams.batch_size, value=candidate_word_batch
-        )
+        clicked_words = tf.reshape(click_word_batch, shape=[-1, doc_size])
+        clicked_entities = tf.reshape(click_entity_batch, shape=[-1, doc_size])
 
-        candidate_entity_batch = self.iterator.candidate_news_entity_index_batch
-        news_entity_split = tf.split(
-            axis=0, num_or_size_splits=hparams.batch_size, value=candidate_entity_batch
-        )
+        with tf.compat.v1.variable_scope(
+            "attention_net", initializer=self.initializer
+        ) as scope:
 
-        field_entities = self.iterator.click_news_entity_values
-        click_entity_batch = tf.SparseTensor(field_indices, field_entities, field_shape)
-        click_entity_split = tf.sparse_split(
-            axis=0, num_split=hparams.batch_size, sp_input=click_entity_batch
-        )
+            # use kims cnn to get conv embedding
+            with tf.compat.v1.variable_scope(
+                "kcnn", initializer=self.initializer, reuse=tf.compat.v1.AUTO_REUSE
+            ) as cnn_scope:
+                news_field_embed = self._kims_cnn(
+                    candidate_word_batch, candidate_entity_batch, hparams
+                )
+                click_field_embed = self._kims_cnn(
+                    clicked_words, clicked_entities, hparams
+                )
+                click_field_embed = tf.reshape(
+                    click_field_embed,
+                    shape=[
+                        -1,
+                        hparams.history_size,
+                        hparams.num_filters * len(hparams.filter_sizes),
+                    ],
+                )
 
-        click_field_embed_final_batch = []
-        news_field_embed_final_batch = []
+            avg_strategy = False
+            if avg_strategy:
+                click_field_embed_final = tf.reduce_mean(
+                    click_field_embed, axis=1, keepdims=True
+                )
+            else:
+                news_field_embed = tf.expand_dims(news_field_embed, 1)
+                news_field_embed_repeat = tf.add(
+                    tf.zeros_like(click_field_embed), news_field_embed
+                )
+                attention_x = tf.concat(
+                    axis=-1, values=[click_field_embed, news_field_embed_repeat]
+                )
+                attention_x = tf.reshape(
+                    attention_x, shape=[-1, self.num_filters_total * 2]
+                )
+                attention_w = tf.compat.v1.get_variable(
+                    name="attention_hidden_w",
+                    shape=[self.num_filters_total * 2, attention_hidden_sizes],
+                    dtype=tf.float32,
+                )
+                attention_b = tf.compat.v1.get_variable(
+                    name="attention_hidden_b",
+                    shape=[attention_hidden_sizes],
+                    dtype=tf.float32,
+                )
+                curr_attention_layer = tf.compat.v1.nn.xw_plus_b(
+                    attention_x, attention_w, attention_b
+                )
 
-        with tf.variable_scope("kims_cnn") as kcnn_scope:
-            pass
-
-        with tf.variable_scope("attention_net", initializer=self.initializer) as scope:
-            for index, news_word in enumerate(news_word_split):
-                click_word = click_word_split[index]
-                # get non-zero val
-                click_word = click_word.values
-                click_word = tf.reshape(click_word, [-1, doc_size])
-
-                news_entity = news_entity_split[index]
-                click_entity = click_entity_split[index]
-                click_entity = click_entity.values
-                click_entity = tf.reshape(click_entity, [-1, doc_size])
-
-                # use kims cnn to get conv embedding
-                with tf.variable_scope(
-                    kcnn_scope, initializer=self.initializer
-                ) as cnn_scope:
-                    if index > 0:
-                        cnn_scope.reuse_variables()
-                    news_field_embed = self._kims_cnn(news_word, news_entity, hparams)
-                    cnn_scope.reuse_variables()
-                    click_field_embed = self._kims_cnn(
-                        click_word, click_entity, hparams
+                if hparams.enable_BN is True:
+                    curr_attention_layer = tf.layers.batch_normalization(
+                        curr_attention_layer,
+                        momentum=0.95,
+                        epsilon=0.0001,
+                        training=self.is_train_stage,
                     )
 
-                avg_strategy = False
-                if avg_strategy:
-                    click_field_embed_final = tf.reduce_mean(
-                        click_field_embed, axis=0, keepdims=True
-                    )
-                else:
-                    news_field_embed_repeat = tf.add(
-                        tf.zeros_like(click_field_embed), news_field_embed
-                    )
-                    attention_x = tf.concat(
-                        axis=1, values=[click_field_embed, news_field_embed_repeat]
-                    )
-                    attention_w = tf.get_variable(
-                        name="attention_hidden_w",
-                        shape=[self.num_filters_total * 2, attention_hidden_sizes],
-                        dtype=tf.float32,
-                    )
-                    attention_b = tf.get_variable(
-                        name="attention_hidden_b",
-                        shape=[attention_hidden_sizes],
-                        dtype=tf.float32,
-                    )
-                    curr_attention_layer = tf.nn.xw_plus_b(
-                        attention_x, attention_w, attention_b
-                    )
+                activation = hparams.attention_activation
+                curr_attention_layer = self._active_layer(
+                    logit=curr_attention_layer, activation=activation
+                )
+                attention_output_w = tf.compat.v1.get_variable(
+                    name="attention_output_w",
+                    shape=[attention_hidden_sizes, 1],
+                    dtype=tf.float32,
+                )
+                attention_output_b = tf.compat.v1.get_variable(
+                    name="attention_output_b", shape=[1], dtype=tf.float32
+                )
+                attention_weight = tf.compat.v1.nn.xw_plus_b(
+                    curr_attention_layer, attention_output_w, attention_output_b
+                )
+                attention_weight = tf.reshape(
+                    attention_weight, shape=[-1, hparams.history_size, 1]
+                )
+                norm_attention_weight = tf.nn.softmax(attention_weight, axis=1)
+                click_field_embed_final = tf.reduce_sum(
+                    tf.multiply(click_field_embed, norm_attention_weight),
+                    axis=1,
+                    keepdims=True,
+                )
+                if attention_w not in self.layer_params:
+                    self.layer_params.append(attention_w)
+                if attention_b not in self.layer_params:
+                    self.layer_params.append(attention_b)
+                if attention_output_w not in self.layer_params:
+                    self.layer_params.append(attention_output_w)
+                if attention_output_b not in self.layer_params:
+                    self.layer_params.append(attention_output_b)
+            self.news_field_embed_final_batch = tf.squeeze(news_field_embed)
+            click_field_embed_final_batch = tf.squeeze(click_field_embed_final)
 
-                    activation = hparams.attention_activation
-                    curr_attention_layer = self._active_layer(
-                        logit=curr_attention_layer, activation=activation
-                    )
-                    attention_output_w = tf.get_variable(
-                        name="attention_output_w",
-                        shape=[attention_hidden_sizes, 1],
-                        dtype=tf.float32,
-                    )
-                    attention_output_b = tf.get_variable(
-                        name="attention_output_b", shape=[1], dtype=tf.float32
-                    )
-                    attention_weight = tf.nn.sigmoid(
-                        tf.nn.xw_plus_b(
-                            curr_attention_layer, attention_output_w, attention_output_b
-                        )
-                    )
-                    # normalization to the weight sum equal to 1
-                    weight_sum = tf.reduce_sum(attention_weight)
-                    norm_attention_weight = tf.div(attention_weight, weight_sum)
-                    click_field_embed_final = tf.reduce_sum(
-                        tf.multiply(click_field_embed, norm_attention_weight),
-                        axis=0,
-                        keepdims=True,
-                    )
-                    if attention_w not in self.layer_params:
-                        self.layer_params.append(attention_w)
-                    if attention_b not in self.layer_params:
-                        self.layer_params.append(attention_b)
-                    if attention_output_w not in self.layer_params:
-                        self.layer_params.append(attention_output_w)
-                    if attention_output_b not in self.layer_params:
-                        self.layer_params.append(attention_output_b)
-
-                news_field_embed_final_batch.append(news_field_embed)
-                click_field_embed_final_batch.append(click_field_embed_final)
-                scope.reuse_variables()
-
-        click_field_embed_final_batch = tf.concat(click_field_embed_final_batch, axis=0)
-        news_field_embed_final_batch = tf.concat(news_field_embed_final_batch, axis=0)
-
-        return click_field_embed_final_batch, news_field_embed_final_batch
+        return click_field_embed_final_batch, self.news_field_embed_final_batch
 
     def _kims_cnn(self, word, entity, hparams):
         """The KCNN module. KCNN is an extension of traditional CNN that incorporates symbolic knowledge from
@@ -326,26 +362,45 @@ class DKN(BaseModel):
 
         dim = hparams.dim
         embedded_chars = tf.nn.embedding_lookup(self.embedding, word)
-
-        entity_embedded_chars = tf.nn.embedding_lookup(self.entity_embedding, entity)
-        concat = tf.concat([embedded_chars, entity_embedded_chars], axis=-1)
+        if hparams.use_entity and hparams.use_context:
+            entity_embedded_chars = tf.nn.embedding_lookup(
+                self.entity_embedding, entity
+            )
+            context_embedded_chars = tf.nn.embedding_lookup(
+                self.context_embedding, entity
+            )
+            concat = tf.concat(
+                [embedded_chars, entity_embedded_chars, context_embedded_chars], axis=-1
+            )
+        elif hparams.use_entity:
+            entity_embedded_chars = tf.nn.embedding_lookup(
+                self.entity_embedding, entity
+            )
+            concat = tf.concat([embedded_chars, entity_embedded_chars], axis=-1)
+        else:
+            concat = embedded_chars
         concat_expanded = tf.expand_dims(concat, -1)
 
         # Create a convolution + maxpool layer for each filter size
         pooled_outputs = []
         for i, filter_size in enumerate(filter_sizes):
-            with tf.variable_scope(
+            with tf.compat.v1.variable_scope(
                 "conv-maxpool-%s" % filter_size, initializer=self.initializer
             ):
                 # Convolution Layer
-                filter_shape = [filter_size, dim * 2, 1, num_filters]
-                W = tf.get_variable(
+                if hparams.use_entity and hparams.use_context:
+                    filter_shape = [filter_size, dim * 3, 1, num_filters]
+                elif hparams.use_entity:
+                    filter_shape = [filter_size, dim * 2, 1, num_filters]
+                else:
+                    filter_shape = [filter_size, dim, 1, num_filters]
+                W = tf.compat.v1.get_variable(
                     name="W" + "_filter_size_" + str(filter_size),
                     shape=filter_shape,
                     dtype=tf.float32,
                     initializer=tf.contrib.layers.xavier_initializer(uniform=False),
                 )
-                b = tf.get_variable(
+                b = tf.compat.v1.get_variable(
                     name="b" + "_filter_size_" + str(filter_size),
                     shape=[num_filters],
                     dtype=tf.float32,
@@ -364,7 +419,7 @@ class DKN(BaseModel):
                 # Apply nonlinearity
                 h = tf.nn.relu(tf.nn.bias_add(conv, b), name="relu")
                 # Maxpooling over the outputs
-                pooled = tf.nn.max_pool(
+                pooled = tf.nn.max_pool2d(
                     h,
                     ksize=[1, hparams.doc_size - filter_size + 1, 1, 1],
                     strides=[1, 1, 1, 1],
@@ -375,6 +430,52 @@ class DKN(BaseModel):
         # Combine all the pooled features
         # self.num_filters_total is the kims cnn output dimension
         self.num_filters_total = num_filters * len(filter_sizes)
-        h_pool = tf.concat(pooled_outputs, 3)
+        h_pool = tf.concat(pooled_outputs, axis=-1)
         h_pool_flat = tf.reshape(h_pool, [-1, self.num_filters_total])
         return h_pool_flat
+
+    def infer_embedding(self, sess, feed_dict):
+        """Infer document embedding in feed_dict with current model.
+
+        Args:
+            sess (obj): The model session object.
+            feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
+
+        Returns:
+            list: news embedding in a batch
+        """
+        feed_dict[self.layer_keeps] = self.keep_prob_test
+        feed_dict[self.is_train_stage] = False
+        return sess.run([self.news_field_embed_final_batch], feed_dict=feed_dict)
+
+    def run_get_embedding(self, infile_name, outfile_name):
+        """infer document embedding with current model.
+
+        Args:
+            infile_name (str): Input file name, format is [Newsid] [w1,w2,w3...] [e1,e2,e3...]
+            outfile_name (str): Output file name, format is [Newsid] [embedding]
+
+        Returns:
+            obj: An instance of self.
+        """
+        load_sess = self.sess
+        with tf.io.gfile.GFile(outfile_name, "w") as wt:
+            for (
+                batch_data_input,
+                newsid_list,
+                data_size,
+            ) in self.iterator.load_infer_data_from_file(infile_name):
+                news_embedding = self.infer_embedding(load_sess, batch_data_input)[0]
+                for i in range(data_size):
+                    wt.write(
+                        newsid_list[i]
+                        + " "
+                        + ",".join(
+                            [
+                                str(embedding_value)
+                                for embedding_value in news_embedding[i]
+                            ]
+                        )
+                        + "\n"
+                    )
+        return self

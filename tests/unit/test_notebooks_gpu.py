@@ -80,37 +80,43 @@ def test_wide_deep(notebooks, tmp):
     model_dir = os.path.join(tmp, "wide_deep_0")
     os.mkdir(model_dir)
     params = {
-        'MOVIELENS_DATA_SIZE': '100k',
-        'STEPS': 1,
-        'EVALUATE_WHILE_TRAINING': False,
-        'MODEL_DIR': model_dir,
-        'EXPORT_DIR_BASE': model_dir,
-        'RATING_METRICS': ['rmse'],
-        'RANKING_METRICS': ['ndcg_at_k'],
+        "MOVIELENS_DATA_SIZE": "100k",
+        "STEPS": 1,
+        "EVALUATE_WHILE_TRAINING": False,
+        "MODEL_DIR": model_dir,
+        "EXPORT_DIR_BASE": model_dir,
+        "RATING_METRICS": ["rmse"],
+        "RANKING_METRICS": ["ndcg_at_k"],
     }
     pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=params,
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
 
     # Test with different parameters
     model_dir = os.path.join(tmp, "wide_deep_1")
     os.mkdir(model_dir)
     params = {
-        'MOVIELENS_DATA_SIZE': '100k',
-        'STEPS': 1,
-        'ITEM_FEAT_COL': None,
-        'EVALUATE_WHILE_TRAINING': True,
-        'MODEL_DIR': model_dir,
-        'EXPORT_DIR_BASE': model_dir,
-        'RATING_METRICS': ['rsquared'],
-        'RANKING_METRICS': ['map_at_k'],
+        "MOVIELENS_DATA_SIZE": "100k",
+        "STEPS": 1,
+        "ITEM_FEAT_COL": None,
+        "EVALUATE_WHILE_TRAINING": True,
+        "MODEL_DIR": model_dir,
+        "EXPORT_DIR_BASE": model_dir,
+        "RATING_METRICS": ["rsquared"],
+        "RANKING_METRICS": ["map_at_k"],
     }
+    pm.execute_notebook(
+        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+    )
+
+
+@pytest.mark.gpu
+def test_dkn_quickstart(notebooks):
+    notebook_path = notebooks["dkn_quickstart"]
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=params,
+        parameters=dict(epochs=1, batch_size=500),
     )
+
