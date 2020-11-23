@@ -1,6 +1,6 @@
 $schema: http://azureml/sdk-2-0/CommandComponent.json
 name: microsoft.com.cat.stratified_splitter
-version: 1.1.3
+version: 1.1.1
 display_name: Stratified Splitter
 type: CommandComponent
 description: 'Python stratified splitter from Recommenders repo: https://github.com/Microsoft/Recommenders.'
@@ -41,6 +41,8 @@ outputs:
   output_test_data:
     type: AnyDirectory
     description: The output directory contains a test dataframe.
+code:
+  ../../../../
 command: >-
   python reco_utils/azureml/azureml_designer_modules/entries/stratified_splitter_entry.py
   --input-path {inputs.input_path} --ratio {inputs.ratio} --col-user {inputs.user_column}
@@ -48,5 +50,5 @@ command: >-
   --output-test {outputs.output_test_data}
 environment:
   conda:
-    conda_dependencies_file: sar_conda.yaml
+    conda_dependencies_file: reco_utils/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
   os: Linux
