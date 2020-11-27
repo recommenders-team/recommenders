@@ -7,11 +7,13 @@ schedules:
   branches:
     include:
     - master
+  always: false # only run if there have been source code changes since the last successful scheduled run
 - cron: "7 20 * * *"
   displayName: Nightly build staging
   branches:
     include:
     - staging
+  always: true
 
 trigger: none
 

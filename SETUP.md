@@ -224,14 +224,14 @@ sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsof
 
 ## Setup guide for Azure Databricks
 
-### Requirements of Azure Databricks
+### Requirements
 
 * Databricks Runtime version >= 4.3 (Apache Spark 2.3.1, Scala 2.11) and <= 5.5 (Apache Spark 2.4.3, Scala 2.11)
 * Python 3
 
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
 
-### Repository installation
+### Dependencies setup
 
 You can setup the repository as a library on Databricks either manually or by running an [installation script](tools/databricks_install.py). Both options assume you have access to a provisioned Databricks workspace and cluster and that you have appropriate permissions to install libraries.
 
