@@ -438,7 +438,7 @@ def create_hparams(flags):
         need_sample=flags["need_sample"] if "need_sample" in flags else True,
         embedding_dropout=flags["embedding_dropout"]
         if "embedding_dropout" in flags
-        else 0.3,
+        else 0.0,
         user_vocab=flags["user_vocab"] if "user_vocab" in flags else None,
         item_vocab=flags["item_vocab"] if "item_vocab" in flags else None,
         cate_vocab=flags["cate_vocab"] if "cate_vocab" in flags else None,
