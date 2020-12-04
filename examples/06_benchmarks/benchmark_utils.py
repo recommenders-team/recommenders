@@ -90,7 +90,7 @@ def predict_als(model, test):
     return preds, t
 
 
-def recommend_k_als(model, test, train):
+def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         # Get the cross join of all user-item pairs and score them.
         users = train.select(DEFAULT_USER_COL).distinct()
@@ -98,7 +98,7 @@ def recommend_k_als(model, test, train):
         user_item = users.crossJoin(items)
         dfs_pred = model.transform(user_item)
 
-        # Remove seen items.
+        # Remove seen items
         dfs_pred_exclude_train = dfs_pred.alias("pred").join(
             train.alias("train"),
             (dfs_pred[DEFAULT_USER_COL] == train[DEFAULT_USER_COL])
@@ -141,7 +141,7 @@ def predict_svd(model, test):
     return preds, t
 
 
-def recommend_k_svd(model, test, train):
+def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         topk_scores = compute_ranking_predictions(
             model,
@@ -149,7 +149,7 @@ def recommend_k_svd(model, test, train):
             usercol=DEFAULT_USER_COL,
             itemcol=DEFAULT_ITEM_COL,
             predcol=DEFAULT_PREDICTION_COL,
-            remove_seen=True,
+            remove_seen=remove_seen,
         )
     return topk_scores, t
 
@@ -196,7 +196,7 @@ def predict_fastai(model, test):
     return preds, t
 
 
-def recommend_k_fastai(model, test, train):
+def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         total_users, total_items = model.data.train_ds.x.classes.values()
         total_items = total_items[1:]
@@ -222,7 +222,7 @@ def recommend_k_fastai(model, test, train):
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
             prediction_col=DEFAULT_PREDICTION_COL,
-            top_k=DEFAULT_K,
+            top_k=top_k,
         )
     return topk_scores, t
 
@@ -245,7 +245,7 @@ def train_ncf(params, data):
     return model, t
 
 
-def recommend_k_ncf(model, test, train):
+def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         users, items, preds = [], [], []
         item = list(train[DEFAULT_ITEM_COL].unique())
@@ -283,7 +283,7 @@ def train_bpr(params, data):
     return model, t
 
 
-def recommend_k_bpr(model, test, train):
+def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         topk_scores = predict_ranking(
             model,
@@ -291,7 +291,7 @@ def recommend_k_bpr(model, test, train):
             usercol=DEFAULT_USER_COL,
             itemcol=DEFAULT_ITEM_COL,
             predcol=DEFAULT_PREDICTION_COL,
-            remove_seen=True,
+            remove_seen=remove_seen,
         )
     return topk_scores, t
 
@@ -304,9 +304,11 @@ def train_sar(params, data):
     return model, t
 
 
-def recommend_k_sar(model, test, train):
+def recommend_k_sar(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
-        topk_scores = model.recommend_k_items(test, remove_seen=True)
+        topk_scores = model.recommend_k_items(
+            test, top_k=top_k, remove_seen=remove_seen
+        )
     return topk_scores, t
 
 
@@ -315,19 +317,19 @@ def prepare_training_lightgcn(train, test):
 
 
 def train_lightgcn(params, data):
-    hparams = prepare_hparams(
-        yaml_file,
-        n_layers=3,
-        batch_size=BATCH_SIZE,
-        epochs=EPOCHS,
-        learning_rate=0.005,
-        eval_epoch=5,
-        top_k=TOP_K,
-    )
+    hparams = prepare_hparams(**params)
+    model = LightGCN(hparams, data)
+    with Timer() as t:
+        model.fit()
+    return model, t
 
 
-def recommend_k_lightgcn(model, test, train):
-    pass
+def recommend_k_lightgcn(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+    with Timer() as t:
+        topk_scores = model.recommend_k_items(
+            test, top_k=top_k, remove_seen=remove_seen
+        )
+    return topk_scores, t
 
 
 def rating_metrics_pyspark(test, predictions):
