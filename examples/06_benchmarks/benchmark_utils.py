@@ -37,6 +37,7 @@ from reco_utils.recommender.fastai.fastai_utils import (
 from reco_utils.recommender.cornac.cornac_utils import predict_ranking
 from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
 from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
+from reco_utils.recommender.deeprec.deeprec_utils import prepare_hparams
 from reco_utils.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
     SparkRankingEvaluation,
@@ -310,11 +311,19 @@ def recommend_k_sar(model, test, train):
 
 
 def prepare_training_lightgcn(train, test):
-    pass
+    return ImplicitCF(train=train, test=test)
 
 
 def train_lightgcn(params, data):
-    pass
+    hparams = prepare_hparams(
+        yaml_file,
+        n_layers=3,
+        batch_size=BATCH_SIZE,
+        epochs=EPOCHS,
+        learning_rate=0.005,
+        eval_epoch=5,
+        top_k=TOP_K,
+    )
 
 
 def recommend_k_lightgcn(model, test, train):
