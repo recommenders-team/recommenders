@@ -81,7 +81,7 @@ def prepare_metrics_als(train, test):
         )
     )
     spark = start_or_get_spark()
-    return prepare_training_als(train), spark.createDataFrame(test, schema)
+    return spark.createDataFrame(train, schema), spark.createDataFrame(test, schema)
 
 
 def predict_als(model, test):
