@@ -296,6 +296,10 @@ def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     return topk_scores, t
 
 
+def prepare_training_sar(train, test):
+    return train
+
+
 def train_sar(params, data):
     model = SARSingleNode(**params)
     model.set_index(data)
