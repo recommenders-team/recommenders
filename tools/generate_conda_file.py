@@ -78,7 +78,7 @@ PIP_BASE = {
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
     "dataclasses": "dataclasses>=0.6",
-    "hyperopt": "hyperopt==0.1.1",
+    "hyperopt": "hyperopt==0.1.2",
     "idna": "idna==2.7",
     "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
