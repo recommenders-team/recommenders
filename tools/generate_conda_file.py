@@ -41,7 +41,7 @@ CONDA_BASE = {
     "fastparquet": "fastparquet>=0.1.6",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
-    "lightfm": "lightfm>=1.15",
+    "lightfm": "lightfm==1.15",
     "matplotlib": "matplotlib>=2.2.2",
     "mock": "mock==2.0.0",
     "nltk": "nltk>=3.4",
