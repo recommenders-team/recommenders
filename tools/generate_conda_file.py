@@ -58,7 +58,6 @@ CONDA_BASE = {
     "lightgbm": "lightgbm==2.2.1",
     "cornac": "cornac>=1.1.2",
     "papermill": "papermill>=2.2.0",
-    "nteract-scrapbook": "nteract-scrapbook>=0.4.0",
     "tqdm": "tqdm>=4.31.1",
 }
 
@@ -89,6 +88,7 @@ PIP_BASE = {
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
     "tensorflow": "tensorflow==1.15.2",
+    "nteract-scrapbook": "nteract-scrapbook>=0.4.0",
 }
 
 PIP_GPU = {
