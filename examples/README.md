@@ -69,4 +69,4 @@ cfg = NotebookRunConfig(source_directory='../',
                             run_config=run_config)
 ```
 
-All metrics and parameters logged with `pm.record` will be stored on the run as tracked metrics. The initial notebook that was submitted, will be stored as an output notebook ```out.ipynb``` in the outputs tab of the Azure Portal. 
+All metrics and parameters logged with `sb.glue` will be stored on the run as tracked metrics. The initial notebook that was submitted, will be stored as an output notebook ```out.ipynb``` in the outputs tab of the Azure Portal. 

@@ -41,7 +41,7 @@ CONDA_BASE = {
     "fastparquet": "fastparquet>=0.1.6",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
-    "lightfm": "lightfm>=1.15",
+    "lightfm": "lightfm==1.15",
     "matplotlib": "matplotlib>=2.2.2",
     "mock": "mock==2.0.0",
     "nltk": "nltk>=3.4",
@@ -57,7 +57,7 @@ CONDA_BASE = {
     "swig": "swig==3.0.12",
     "lightgbm": "lightgbm==2.2.1",
     "cornac": "cornac>=1.1.2",
-    "papermill": "papermill==0.19.1",
+    "papermill": "papermill>=2.2.0",
     "tqdm": "tqdm>=4.31.1",
 }
 
@@ -78,7 +78,7 @@ PIP_BASE = {
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
     "dataclasses": "dataclasses>=0.6",
-    "hyperopt": "hyperopt==0.1.1",
+    "hyperopt": "hyperopt==0.1.2",
     "idna": "idna==2.7",
     "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
@@ -88,6 +88,7 @@ PIP_BASE = {
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
     "tensorflow": "tensorflow==1.15.2",
+    "nteract-scrapbook": "nteract-scrapbook>=0.4.0",
 }
 
 PIP_GPU = {
