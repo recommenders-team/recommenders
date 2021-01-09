@@ -88,20 +88,6 @@ def test_wikidata_runs(notebooks, tmp):
     )
 
 @pytest.mark.notebooks
-def test_mind_utils(notebooks, tmp):
-    notebook_path = notebooks["mind_utils"]
-    MOVIELENS_SAMPLE_SIZE = 5
-    pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=dict(
-            mind_type="small", 
-            word_embedding_dim=300
-        ),
-    )
-
-@pytest.mark.notebooks
 def test_rlrmc_quickstart_runs(notebooks):
     notebook_path = notebooks["rlrmc_quickstart"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)

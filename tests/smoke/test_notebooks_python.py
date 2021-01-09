@@ -139,3 +139,17 @@ def test_cornac_bpr_smoke(notebooks):
     assert results["ndcg"] == pytest.approx(0.4034, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.3550, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.1802, rel=TOL, abs=ABS_TOL)
+
+@pytest.mark.smoke
+def test_mind_utils(notebooks, tmp):
+    notebook_path = notebooks["mind_utils"]
+    MOVIELENS_SAMPLE_SIZE = 5
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(
+            mind_type="small", 
+            word_embedding_dim=300
+        ),
+    )
