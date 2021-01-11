@@ -9,7 +9,7 @@ from reco_utils.dataset.download_utils import maybe_download, download_path
 
 
 def test_maybe_download():
-    file_url = "https://raw.githubusercontent.com/Microsoft/Recommenders/master/LICENSE"
+    file_url = "https://raw.githubusercontent.com/Microsoft/Recommenders/main/LICENSE"
     filepath = "license.txt"
     assert not os.path.exists(filepath)
     filepath = maybe_download(file_url, "license.txt", expected_bytes=1162)

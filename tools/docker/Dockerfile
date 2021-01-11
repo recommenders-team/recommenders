@@ -26,7 +26,7 @@ RUN curl ${ANACONDA} -o anaconda.sh && \
 ENV PATH="${HOME}/conda/bin:${PATH}"
 
 # Clone Recommenders repo
-ARG BRANCH="master"
+ARG BRANCH="main"
 RUN git clone --depth 1 --single-branch -b ${BRANCH} https://github.com/microsoft/recommenders
 
 # Setup Jupyter notebook configuration
