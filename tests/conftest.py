@@ -234,6 +234,9 @@ def notebooks():
         "wikidata_knowledge_graph": os.path.join(
             folder_notebooks, "01_prepare_data", "wikidata_knowledge_graph.ipynb"
         ),
+        "mind_utils": os.path.join(
+            folder_notebooks, "01_prepare_data", "mind_utils.ipynb"
+        ),
         "als_deep_dive": os.path.join(
             folder_notebooks, "02_model_collaborative_filtering", "als_deep_dive.ipynb"
         ),

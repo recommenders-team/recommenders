@@ -6,6 +6,8 @@ import random
 import logging
 import json
 import numpy as np
+import re
+from tqdm import tqdm
 from nltk.tokenize import RegexpTokenizer
 
 from reco_utils.dataset.download_utils import maybe_download, download_path, unzip_file
@@ -229,7 +231,7 @@ def get_words_and_entities(train_news, valid_news):
     return news_words, news_entities
 
 
-def _download_and_extract_globe(dest_path):
+def download_and_extract_globe(dest_path):
     url = "http://nlp.stanford.edu/data/glove.6B.zip"
     filepath = maybe_download(url=url, work_directory=dest_path)
     glove_path = os.path.join(dest_path, "glove")
@@ -267,7 +269,7 @@ def generate_embeddings(
         )
 
     logger.info("Downloading glove...")
-    glove_path = _download_and_extract_globe(data_path)
+    glove_path = download_and_extract_globe(data_path)
 
     word_set = set()
     word_embedding_dict = {}
@@ -370,3 +372,49 @@ def generate_embeddings(
     np.save(entity_embeddings_path, entity_embeddings)
 
     return news_feature_path, word_embeddings_path, entity_embeddings_path
+
+
+def load_glove_matrix(path_emb, word_dict, word_embedding_dim):
+    '''Load pretrained embedding metrics of words in word_dict
+    
+    Args: 
+        path_emb (string): Folder path of downloaded glove file
+        word_dict (dict): word dictionary
+        word_embedding_dim: dimention of word embedding vectors
+        
+    Returns:
+        numpy array, list: pretrained word embedding metrics, words can be found in glove files
+    '''
+    
+    embedding_matrix = np.zeros((len(word_dict)+1, word_embedding_dim))
+    exist_word=[]
+
+    with open(os.path.join(path_emb, f"glove.6B.{word_embedding_dim}d.txt"),'rb') as f:
+        for l in tqdm(f):
+            l=l.split()
+            word = l[0].decode()
+            if len(word) != 0:
+                if word in word_dict:
+                    wordvec = [float(x) for x in l[1:]]
+                    index = word_dict[word]
+                    embedding_matrix[index]=np.array(wordvec)
+                    exist_word.append(word)
+                    
+    return embedding_matrix, exist_word
+
+def word_tokenize(sent):
+    ''' Tokenize a sententence
+    
+    Args:
+        sent: the sentence need to be tokenized
+    
+    Returns:
+        list: words in the sentence   
+    '''
+    
+    #treat onsecutive words or special punctuation as words
+    pat = re.compile(r'[\w]+|[.,!?;|]')
+    if isinstance(sent, str):
+        return pat.findall(sent.lower())
+    else:
+        return []
