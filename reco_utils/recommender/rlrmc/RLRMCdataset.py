@@ -55,18 +55,18 @@ class RLRMCdataset(object):
         self._data_processing(train, validation, test, mean_center)
 
     def _data_processing(self, train, validation=None, test=None, mean_center=True):
-        """Process the dataset to reindex userID and itemID 
-        
+        """Process the dataset to reindex userID and itemID
+
         Args:
-            train (pd.DataFrame): training data with at least columns (col_user, col_item, col_rating) 
+            train (pd.DataFrame): training data with at least columns (col_user, col_item, col_rating)
             validation (pd.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
             mean_center (bool): flag to mean center the ratings in train (and validation) data
-        
+
         Returns:
             list: train and validation pd.DataFrame Dataset, which have been reindexed.
-        
+
         """
-        # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/master/reco_utils/recommender/ncf/dataset.py
+        # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/main/reco_utils/recommender/ncf/dataset.py
         # If validation dataset is None
         df = train if validation is None else train.append(validation)
         df = df if test is None else df.append(test)
@@ -129,13 +129,13 @@ class RLRMCdataset(object):
 
     def _reindex(self, df):
         """Process dataset to reindex userID and itemID
-        
+
         Args:
-            df (pd.DataFrame): dataframe with at least columns (col_user, col_item, col_rating) 
-        
+            df (pd.DataFrame): dataframe with at least columns (col_user, col_item, col_rating)
+
         Returns:
             list: train and validation pd.DataFrame Dataset, which have been reindexed.
-        
+
         """
 
         # If validation dataset is None
