@@ -28,7 +28,7 @@ def test_prepare_hparams(must_exist_attributes, tmp):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -49,7 +49,7 @@ def test_load_yaml_file(tmp):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            "https://recodatasets.blob.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -70,19 +70,19 @@ def test_news_iterator(tmp):
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -127,19 +127,19 @@ def test_naml_iterator(tmp):
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )

@@ -35,7 +35,7 @@ There are a couple of key optimizations:
 ** make sure to always just keep top-k items in-memory
 ** use standard join using binary search between users past seen items and the related items
 
-![Image of sarplus top-k recommendation optimization](https://recodatasets.blob.core.windows.net/images/sarplus_udf.svg)
+![Image of sarplus top-k recommendation optimization](https://recodatasets.z20.web.core.windows.net/images/sarplus_udf.svg)
 
 ## Usage
 

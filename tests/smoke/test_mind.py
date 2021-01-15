@@ -8,11 +8,11 @@ from reco_utils.dataset.mind import download_mind, extract_mind
 
 @pytest.mark.smoke
 @pytest.mark.parametrize("url, content_length, etag", 
-    [("https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_train.zip",
+    [("https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip",
     "17372879", "0x8D82C63E386D09C"),
-    ("https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_dev.zip",
+    ("https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip",
     "10080022", "0x8D82C6434EC3CEE"),
-    ("https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_utils.zip", 
+    ("https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip", 
     "97292694", "0x8D87F362FF7FB26"),
     ("https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip",
     "52952752","0x8D834F2EB31BDEC"),
