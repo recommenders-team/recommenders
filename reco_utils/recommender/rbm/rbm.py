@@ -108,8 +108,6 @@ class RBM:
         np.random.seed(self.seed)
         tf.set_random_seed(self.seed)
 
-        log.info("TensorFlow version: {}".format(tf.__version__))
-
     def time(self):
         """Time a particular section of the code - call this once to set the state somewhere
         in the code, then call it again to return the elapsed time since last call.
