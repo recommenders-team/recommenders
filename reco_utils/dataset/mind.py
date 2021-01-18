@@ -26,13 +26,13 @@ URL_MIND_SMALL_VALID = (
     "https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip"
 )
 URL_MIND_DEMO_TRAIN = (
-    "https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_train.zip"
+    "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip"
 )
 URL_MIND_DEMO_VALID = (
-      "https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_dev.zip"
+      "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip"
 )
 URL_MIND_DEMO_UTILS = (
-      "https://recodatasets.blob.core.windows.net/newsrec/MINDdemo_utils.zip"
+      "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip"
 )
 
 URL_MIND = {

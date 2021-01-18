@@ -14,7 +14,7 @@ We use Conda to install packages and manage the virtual environment. Type ``` co
 1. Download the dataset
     1. Download the dataset for hands on experiments and unzip to data_folder:
     ```bash
-    wget https://recodatasets.blob.core.windows.net/kdd2020/data_folder.zip
+    wget https://recodatasets.z20.web.core.windows.net/kdd2020/data_folder.zip
     unzip data_folder.zip -d data_folder
     ```
     After you unzip the file, there are two folders under data_folder, i.e. 'raw' and 'my_cached'.   'raw' folder contains original txt files from the COVID MAG dataset. 'my_cached' folder contains processed data files, if you miss some steps during the hands-on tutorial, you can make it up by copying corresponding files into experiment folders.

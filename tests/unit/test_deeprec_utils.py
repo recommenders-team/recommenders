@@ -31,7 +31,7 @@ def test_prepare_hparams(must_exist_attributes, resource_path):
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            "https://recodatasets.blob.core.windows.net/deeprec/",
+            "https://recodatasets.z20.web.core.windows.net/deeprec/",
             data_path,
             "xdeepfmresources.zip",
         )
@@ -46,7 +46,7 @@ def test_load_yaml_file(resource_path):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            "https://recodatasets.blob.core.windows.net/deeprec/",
+            "https://recodatasets.z20.web.core.windows.net/deeprec/",
             data_path,
             "xdeepfmresources.zip",
         )
@@ -63,7 +63,7 @@ def test_FFM_iterator(resource_path):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            "https://recodatasets.blob.core.windows.net/deeprec/",
+            "https://recodatasets.z20.web.core.windows.net/deeprec/",
             data_path,
             "xdeepfmresources.zip",
         )
@@ -86,7 +86,7 @@ def test_DKN_iterator(resource_path):
     contextEmb_file = os.path.join(data_path, "TransE_context2vec_100.npy")
     yaml_file = os.path.join(data_path, "dkn.yaml")
     download_deeprec_resources(
-        "https://recodatasets.blob.core.windows.net/deeprec/",
+        "https://recodatasets.z20.web.core.windows.net/deeprec/",
         data_path,
         "mind-demo.zip",
     )
