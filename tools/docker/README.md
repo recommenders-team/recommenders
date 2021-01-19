@@ -65,7 +65,7 @@ There are several build arguments which can change how the image is built. Simil
 Build Arg|Description|
 ---------|-----------|
 ENV|Environment to use, options: cpu, psypark, gpu, full|
-BRANCH|Git branch of the repo to use (defaults to `master`)
+BRANCH|Git branch of the repo to use (defaults to `main`)
 ANACONDA|Anaconda installation script (defaults to miniconda3 4.6.14)|
 SPARK|Spark installation tarball (defaults to Spark 2.3.1)|
 

@@ -412,7 +412,7 @@ def word_tokenize(sent):
         list: words in the sentence   
     '''
     
-    #treat onsecutive words or special punctuation as words
+    #treat consecutive words or special punctuation as words
     pat = re.compile(r'[\w]+|[.,!?;|]')
     if isinstance(sent, str):
         return pat.findall(sent.lower())

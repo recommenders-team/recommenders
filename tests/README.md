@@ -24,7 +24,7 @@ Note: Spark tests are not currently run on AzureML and may be set up in the futu
 <details>
 <summary><strong><em>Unit tests</em></strong></summary>
 
-Unit tests ensure that each class or function behaves as it should. Every time a developer makes a pull request to staging or master branch, a battery of unit tests is executed.
+Unit tests ensure that each class or function behaves as it should. Every time a developer makes a pull request to staging or main branch, a battery of unit tests is executed.
 
 **Note that the next instructions execute the tests from the root folder.**
 
