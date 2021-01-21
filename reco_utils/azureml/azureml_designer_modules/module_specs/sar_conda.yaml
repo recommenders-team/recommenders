@@ -3,6 +3,7 @@ channels:
 - defaults
 dependencies:
 - python=3.7
+- pip=20.2
 - pip:
   - pandas>=0.23.4,<1.0.0
   - pyarrow>=0.13.0
