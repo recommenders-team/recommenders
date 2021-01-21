@@ -4,12 +4,12 @@
 # Pull request against these branches will trigger this build
 pr:
 - staging
-- master
+- main
 
 # Any commit to this branch will trigger the build.
 trigger:
 - staging
-- master
+- main
 
 variables:
 - group: WindowsAgentPool
