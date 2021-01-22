@@ -13,6 +13,7 @@ We use Conda to install packages and manage the virtual environment. Type ``` co
     ```bash
     cd recommenders/examples/07_tutorials/KDD2020-tutorial
     ```
+    
 1. Download the dataset
 
     Download the dataset for hands on experiments and unzip to data_folder:
@@ -20,8 +21,11 @@ We use Conda to install packages and manage the virtual environment. Type ``` co
     wget https://recodatasets.z20.web.core.windows.net/kdd2020/data_folder.zip
     unzip data_folder.zip -d data_folder
     ```
+    
     After you unzip the file, there are two folders under data_folder, i.e. 'raw' and 'my_cached'.   'raw' folder contains original txt files from the COVID MAG dataset. 'my_cached' folder contains processed data files, if you miss some steps during the hands-on tutorial, you can make it up by copying corresponding files into experiment folders.
+    
 1. Install the dependencies
+
     1. The model pre-training will use a tool for converting the original data into embeddings. Use of the tool will require `g++`. The following installs `g++` on a Linux system.
         ```bash
         sudo apt-get install g++
