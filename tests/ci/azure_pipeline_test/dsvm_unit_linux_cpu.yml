@@ -3,13 +3,13 @@
 
 # Pull request against these branches will trigger this build
 pr:
-- master
+- main
 - staging
 
 # Any commit to this branch will trigger the build.
 trigger:
 - staging
-- master
+- main
 
 variables:
 - group: LinuxAgentPool
