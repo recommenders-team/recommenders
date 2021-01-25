@@ -30,8 +30,10 @@ def test_ncf_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=256),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
-
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+    
     assert results["map"] == pytest.approx(0.0409234, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.1773, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.160127, rel=TOL, abs=ABS_TOL)

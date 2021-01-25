@@ -3,6 +3,8 @@
 
 import pytest
 import papermill as pm
+import scrapbook as sb
+
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
@@ -20,7 +22,9 @@ def test_sar_single_node_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["map"] == pytest.approx(0.110591, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.382461, rel=TOL, abs=ABS_TOL)
@@ -38,7 +42,9 @@ def test_baseline_deep_dive_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["rmse"] == pytest.approx(1.054252, rel=TOL, abs=ABS_TOL)
     assert results["mae"] == pytest.approx(0.846033, rel=TOL, abs=ABS_TOL)
@@ -60,7 +66,9 @@ def test_surprise_svd_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["rmse"] == pytest.approx(0.96, rel=TOL, abs=ABS_TOL)
     assert results["mae"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)
@@ -82,7 +90,9 @@ def test_vw_deep_dive_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["rmse"] == pytest.approx(0.985920, rel=TOL, abs=ABS_TOL)
     assert results["mae"] == pytest.approx(0.71292, rel=TOL, abs=ABS_TOL)
@@ -111,7 +121,9 @@ def test_lightgbm_quickstart_smoke(notebooks):
             METRIC="auc",
         ),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["res_basic"]["auc"] == pytest.approx(0.7674, rel=TOL, abs=ABS_TOL)
     assert results["res_basic"]["logloss"] == pytest.approx(
@@ -133,12 +145,15 @@ def test_cornac_bpr_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["map"] == pytest.approx(0.1091, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.4034, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.3550, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.1802, rel=TOL, abs=ABS_TOL)
+
 
 @pytest.mark.smoke
 def test_mind_utils(notebooks, tmp):
@@ -148,8 +163,5 @@ def test_mind_utils(notebooks, tmp):
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
-        parameters=dict(
-            mind_type="small", 
-            word_embedding_dim=300
-        ),
+        parameters=dict(mind_type="small", word_embedding_dim=300),
     )
