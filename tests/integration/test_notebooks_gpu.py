@@ -1,12 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import papermill as pm
+import os
 import pytest
+import papermill as pm
+import scrapbook as sb
 
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
-import os
 
 
 TOL = 0.5
@@ -48,7 +49,9 @@ def test_ncf_integration(notebooks, size, epochs, expected_values, seed):
             TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=512, SEED=seed
         ),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -93,7 +96,9 @@ def test_ncf_deep_dive_integration(
             SEED=seed,
         ),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -123,14 +128,15 @@ def test_ncf_deep_dive_integration(
 )
 def test_fastai_integration(notebooks, size, epochs, expected_values):
     notebook_path = notebooks["fastai"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
         kernel_name=KERNEL_NAME,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -168,7 +174,9 @@ def test_xdeepfm_integration(
             RANDOM_SEED=seed,
         ),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     for key, value in expected_values.items():
         assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
@@ -215,7 +223,10 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
@@ -250,7 +261,10 @@ def test_slirec_quickstart_integration(
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+
     for key, value in expected_values.items():
         assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
         assert results[key]["logloss"] == pytest.approx(
@@ -278,14 +292,19 @@ def test_slirec_quickstart_integration(
         )
     ],
 )
-def test_nrms_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
+def test_nrms_quickstart_integration(
+    notebooks, epochs, seed, MIND_type, expected_values
+):
     notebook_path = notebooks["nrms_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+
     for key, value in expected_values.items():
         assert results[key]["group_auc"] == pytest.approx(
             value["group_auc"], rel=TOL, abs=ABS_TOL
@@ -321,14 +340,19 @@ def test_nrms_quickstart_integration(notebooks, epochs, seed, MIND_type, expecte
         )
     ],
 )
-def test_naml_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
+def test_naml_quickstart_integration(
+    notebooks, epochs, seed, MIND_type, expected_values
+):
     notebook_path = notebooks["naml_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+
     for key, value in expected_values.items():
         assert results[key]["group_auc"] == pytest.approx(
             value["group_auc"], rel=TOL, abs=ABS_TOL
@@ -364,14 +388,19 @@ def test_naml_quickstart_integration(notebooks, epochs, seed, MIND_type, expecte
         )
     ],
 )
-def test_lstur_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
+def test_lstur_quickstart_integration(
+    notebooks, epochs, seed, MIND_type, expected_values
+):
     notebook_path = notebooks["lstur_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+
     for key, value in expected_values.items():
         assert results[key]["group_auc"] == pytest.approx(
             value["group_auc"], rel=TOL, abs=ABS_TOL
@@ -407,14 +436,19 @@ def test_lstur_quickstart_integration(notebooks, epochs, seed, MIND_type, expect
         )
     ],
 )
-def test_npa_quickstart_integration(notebooks, epochs, seed, MIND_type, expected_values):
+def test_npa_quickstart_integration(
+    notebooks, epochs, seed, MIND_type, expected_values
+):
     notebook_path = notebooks["npa_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+
     for key, value in expected_values.items():
         assert results[key]["group_auc"] == pytest.approx(
             value["group_auc"], rel=TOL, abs=ABS_TOL
@@ -470,7 +504,9 @@ def test_lightgcn_deep_dive_integration(
             item_file=os.path.join(data_path, r"item_embeddings"),
         ),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -486,7 +522,9 @@ def test_dkn_quickstart_integration(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(epochs=5, batch_size=500),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
     assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
