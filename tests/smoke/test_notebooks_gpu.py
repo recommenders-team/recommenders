@@ -1,8 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import papermill as pm
+
 import pytest
+import papermill as pm
+import scrapbook as sb
 
 from reco_utils.common.gpu_utils import get_number_gpus
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
@@ -48,7 +50,9 @@ def test_ncf_deep_dive_smoke(notebooks):
             TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=1024
         ),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     # There is too much variability to do an approx equal, just adding top values
     assert results["map"] == pytest.approx(0.0370396, rel=TOL, abs=ABS_TOL)
@@ -71,7 +75,9 @@ def test_fastai_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["rmse"] == pytest.approx(0.959352, rel=TOL, abs=ABS_TOL)
     assert results["mae"] == pytest.approx(0.766504, rel=TOL, abs=ABS_TOL)
@@ -99,7 +105,9 @@ def test_xdeepfm_smoke(notebooks):
             RANDOM_SEED=42,
         ),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["res_syn"]["auc"] == pytest.approx(0.5043, rel=TOL, abs=ABS_TOL)
     assert results["res_syn"]["logloss"] == pytest.approx(0.7046, rel=TOL, abs=ABS_TOL)
@@ -125,7 +133,10 @@ def test_wide_deep_smoke(notebooks, tmp):
     pm.execute_notebook(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
+
     assert results["rmse"] == pytest.approx(1.06034, rel=TOL, abs=ABS_TOL)
     assert results["mae"] == pytest.approx(0.876228, rel=TOL, abs=ABS_TOL)
     assert results["ndcg_at_k"] == pytest.approx(0.181513, rel=TOL, abs=ABS_TOL)
@@ -142,7 +153,9 @@ def test_naml_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(
         0.5801, rel=TOL, abs=ABS_TOL
@@ -160,7 +173,9 @@ def test_nrms_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(
         0.5768, rel=TOL, abs=ABS_TOL
@@ -178,7 +193,9 @@ def test_npa_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(
         0.5861, rel=TOL, abs=ABS_TOL
@@ -196,7 +213,9 @@ def test_lstur_smoke(notebooks):
         kernel_name=KERNEL_NAME,
         parameters=dict(epochs=1, seed=40, MIND_type="demo"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "value"
+    ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(
         0.5977, rel=TOL, abs=ABS_TOL
