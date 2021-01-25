@@ -15,7 +15,6 @@ ABS_TOL = 0.05
 @pytest.mark.smoke
 def test_sar_single_node_smoke(notebooks):
     notebook_path = notebooks["sar_single_node"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
@@ -35,7 +34,6 @@ def test_sar_single_node_smoke(notebooks):
 @pytest.mark.smoke
 def test_baseline_deep_dive_smoke(notebooks):
     notebook_path = notebooks["baseline_deep_dive"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
@@ -59,7 +57,6 @@ def test_baseline_deep_dive_smoke(notebooks):
 @pytest.mark.smoke
 def test_surprise_svd_smoke(notebooks):
     notebook_path = notebooks["surprise_svd_deep_dive"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
@@ -83,7 +80,6 @@ def test_surprise_svd_smoke(notebooks):
 @pytest.mark.smoke
 def test_vw_deep_dive_smoke(notebooks):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
@@ -107,7 +103,6 @@ def test_vw_deep_dive_smoke(notebooks):
 @pytest.mark.smoke
 def test_lightgbm_quickstart_smoke(notebooks):
     notebook_path = notebooks["lightgbm_quickstart"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
@@ -138,7 +133,6 @@ def test_lightgbm_quickstart_smoke(notebooks):
 @pytest.mark.smoke
 def test_cornac_bpr_smoke(notebooks):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     pm.execute_notebook(
         notebook_path,
         OUTPUT_NOTEBOOK,
