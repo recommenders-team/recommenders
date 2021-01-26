@@ -120,18 +120,21 @@ You also need to find where Spark is installed and set `SPARK_HOME` variable, on
 
 Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 
-    #!/bin/sh
-    RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
-    export PYSPARK_PYTHON=$RECO_ENV/bin/python
-    export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
-    export SPARK_HOME=/dsvm/tools/spark/current
+```bash
+#!/bin/sh
+RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
+export PYSPARK_PYTHON=$RECO_ENV/bin/python
+export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
+export SPARK_HOME=/dsvm/tools/spark/current
+```
 
 This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
 
-    #!/bin/sh
-    unset PYSPARK_PYTHON
-    unset PYSPARK_DRIVER_PYTHON
-
+```bash
+#!/bin/sh
+unset PYSPARK_PYTHON
+unset PYSPARK_DRIVER_PYTHON
+```
 
 </details>
 
