@@ -197,28 +197,6 @@ def test_wikidata_integration(notebooks, tmp):
 
 
 @pytest.mark.integration
-def test_mind_utils_integration(notebooks, tmp):
-    notebook_path = notebooks["mind_utils"]
-    pm.execute_notebook(
-        notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
-        parameters=dict(mind_type="small", word_embedding_dim=300),
-    )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "data"
-    ]
-
-    assert results["utils_state"]["vert_num"] == 17
-    assert results["utils_state"]["subvert_num"] == 17
-    assert results["utils_state"]["word_num"] == 31029
-    assert results["utils_state"]["word_num_all"] == 55028
-    assert results["utils_state"]["embedding_exist_num"] == 29081
-    assert results["utils_state"]["embedding_exist_num_all"] == 48422
-    assert results["utils_state"]["uid2index"] == 50000
-
-
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
