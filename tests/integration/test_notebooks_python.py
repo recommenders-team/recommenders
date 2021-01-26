@@ -47,7 +47,7 @@ def test_sar_single_node_integration(notebooks, size, expected_values):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -79,7 +79,7 @@ def test_baseline_deep_dive_integration(notebooks, size, expected_values):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -115,7 +115,7 @@ def test_surprise_svd_integration(notebooks, size, expected_values):
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -150,7 +150,7 @@ def test_vw_deep_dive_integration(notebooks, size, expected_values):
         parameters=dict(MOVIELENS_DATA_SIZE=size, TOP_K=10),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -189,7 +189,7 @@ def test_wikidata_integration(notebooks, tmp):
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     # NOTE: The return number should be always 5, but sometimes we get less because wikidata is unstable
@@ -206,7 +206,7 @@ def test_mind_utils_integration(notebooks, tmp):
         parameters=dict(mind_type="small", word_embedding_dim=300),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["utils_state"]["vert_num"] == 17
@@ -235,7 +235,7 @@ def test_cornac_bpr_integration(notebooks, size, expected_values):
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -251,7 +251,7 @@ def test_xlearn_fm_integration(notebooks):
         parameters=dict(LEARNING_RATE=0.2, EPOCH=10),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["auc_score"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)
@@ -265,7 +265,7 @@ def test_geoimc_integration(notebooks, expected_values):
     notebook_path = notebooks["geoimc_quickstart"]
     pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():

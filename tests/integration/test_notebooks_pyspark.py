@@ -24,7 +24,7 @@ def test_als_pyspark_integration(notebooks):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="1m"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["map"] == pytest.approx(0.00201, rel=TOL, abs=ABS_TOL)
@@ -50,7 +50,7 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks):
         parameters=dict(DATA_SIZE="full", NUM_ITERATIONS=50, EARLY_STOPPING_ROUND=10),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)

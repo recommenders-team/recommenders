@@ -50,7 +50,7 @@ def test_ncf_integration(notebooks, size, epochs, expected_values, seed):
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -97,7 +97,7 @@ def test_ncf_deep_dive_integration(
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -135,7 +135,7 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -175,7 +175,7 @@ def test_xdeepfm_integration(
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -224,7 +224,7 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -262,7 +262,7 @@ def test_slirec_quickstart_integration(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -302,7 +302,7 @@ def test_nrms_quickstart_integration(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -350,7 +350,7 @@ def test_naml_quickstart_integration(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -398,7 +398,7 @@ def test_lstur_quickstart_integration(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -446,7 +446,7 @@ def test_npa_quickstart_integration(
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -505,7 +505,7 @@ def test_lightgcn_deep_dive_integration(
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     for key, value in expected_values.items():
@@ -523,7 +523,7 @@ def test_dkn_quickstart_integration(notebooks):
         parameters=dict(epochs=5, batch_size=500),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)

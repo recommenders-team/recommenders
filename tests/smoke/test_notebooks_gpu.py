@@ -31,7 +31,7 @@ def test_ncf_smoke(notebooks):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=256),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
     
     assert results["map"] == pytest.approx(0.0409234, rel=TOL, abs=ABS_TOL)
@@ -53,7 +53,7 @@ def test_ncf_deep_dive_smoke(notebooks):
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     # There is too much variability to do an approx equal, just adding top values
@@ -78,7 +78,7 @@ def test_fastai_smoke(notebooks):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["rmse"] == pytest.approx(0.959352, rel=TOL, abs=ABS_TOL)
@@ -108,7 +108,7 @@ def test_xdeepfm_smoke(notebooks):
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["res_syn"]["auc"] == pytest.approx(0.5043, rel=TOL, abs=ABS_TOL)
@@ -136,7 +136,7 @@ def test_wide_deep_smoke(notebooks, tmp):
         notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["rmse"] == pytest.approx(1.06034, rel=TOL, abs=ABS_TOL)
@@ -156,7 +156,7 @@ def test_naml_smoke(notebooks):
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(
@@ -176,7 +176,7 @@ def test_nrms_smoke(notebooks):
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(
@@ -196,7 +196,7 @@ def test_npa_smoke(notebooks):
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(
@@ -216,7 +216,7 @@ def test_lstur_smoke(notebooks):
         parameters=dict(epochs=1, seed=40, MIND_type="demo"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["res_syn"]["group_auc"] == pytest.approx(

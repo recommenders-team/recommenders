@@ -25,7 +25,7 @@ def test_als_pyspark_smoke(notebooks):
     )
 
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["map"] == pytest.approx(0.0052, rel=TOL, abs=ABS_TOL)
@@ -51,6 +51,6 @@ def test_mmlspark_lightgbm_criteo_smoke(notebooks):
     )
 
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
     assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)

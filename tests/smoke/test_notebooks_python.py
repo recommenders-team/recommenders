@@ -22,7 +22,7 @@ def test_sar_single_node_smoke(notebooks):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["map"] == pytest.approx(0.110591, rel=TOL, abs=ABS_TOL)
@@ -41,7 +41,7 @@ def test_baseline_deep_dive_smoke(notebooks):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["rmse"] == pytest.approx(1.054252, rel=TOL, abs=ABS_TOL)
@@ -64,7 +64,7 @@ def test_surprise_svd_smoke(notebooks):
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["rmse"] == pytest.approx(0.96, rel=TOL, abs=ABS_TOL)
@@ -87,7 +87,7 @@ def test_vw_deep_dive_smoke(notebooks):
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["rmse"] == pytest.approx(0.985920, rel=TOL, abs=ABS_TOL)
@@ -117,7 +117,7 @@ def test_lightgbm_quickstart_smoke(notebooks):
         ),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["res_basic"]["auc"] == pytest.approx(0.7674, rel=TOL, abs=ABS_TOL)
@@ -140,7 +140,7 @@ def test_cornac_bpr_smoke(notebooks):
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
     results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
-        "value"
+        "data"
     ]
 
     assert results["map"] == pytest.approx(0.1091, rel=TOL, abs=ABS_TOL)
