@@ -59,7 +59,7 @@ def test_mind_utils_integration(notebooks, tmp):
     assert results["utils_state"]["vert_num"] == 17
     assert results["utils_state"]["subvert_num"] == 17
     assert results["utils_state"]["word_num"] == 23404
-    assert results["utils_state"]["word_num_all"] == 55028
-    assert results["utils_state"]["embedding_exist_num"] == 29081
-    assert results["utils_state"]["embedding_exist_num_all"] == 48422
-    assert results["utils_state"]["uid2index"] == 50000
+    assert results["utils_state"]["word_num_all"] == 41074
+    assert results["utils_state"]["embedding_exist_num"] == 22408
+    assert results["utils_state"]["embedding_exist_num_all"] == 37634
+    assert results["utils_state"]["uid2index"] == 5000
