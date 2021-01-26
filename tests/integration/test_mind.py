@@ -7,6 +7,7 @@ import papermill as pm
 import scrapbook as sb
 
 from reco_utils.dataset.mind import download_mind, extract_mind
+from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 @pytest.mark.integration
