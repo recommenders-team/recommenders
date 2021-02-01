@@ -88,7 +88,7 @@ PIP_BASE = {
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
     "tensorflow": "tensorflow==1.15.2",
-    "nteract-scrapbook": "nteract-scrapbook>=0.4.0",
+    "scrapbook": "scrapbook>=0.5.0",
 }
 
 PIP_GPU = {
