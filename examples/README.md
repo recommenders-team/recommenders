@@ -4,7 +4,7 @@ This folder contains examples and best practices, written in Jupyter notebooks, 
 
 The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
 
-![workflow](https://recodatasets.blob.core.windows.net/images/reco_workflow.png)
+![workflow](https://recodatasets.z20.web.core.windows.net/images/reco_workflow.png)
 
 
 ## Summary

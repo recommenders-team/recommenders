@@ -3,10 +3,10 @@
 
 schedules:
 - cron: "7 8 * * *"
-  displayName: Nightly build master
+  displayName: Nightly build main
   branches:
     include:
-    - master
+    - main
   always: false # only run if there have been source code changes since the last successful scheduled run
 - cron: "7 20 * * *"
   displayName: Nightly build staging

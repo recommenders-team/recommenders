@@ -1,7 +1,10 @@
-r"""
-This script contains functions that appear in the tutorial jupyter notebooks (step_1 to step_5).
-You can find their usage in the corresponding cells from notebooks.
-"""
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+#
+# This script contains functions that appear in the tutorial jupyter notebooks (step_1 to step_5).
+# You can find their usage in the corresponding cells from notebooks.
+
+
 import codecs
 import pickle
 import time

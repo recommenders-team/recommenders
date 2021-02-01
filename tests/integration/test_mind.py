@@ -1,9 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
 import os
+import pytest
+import papermill as pm
+import scrapbook as sb
+
 from reco_utils.dataset.mind import download_mind, extract_mind
+from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 @pytest.mark.integration
@@ -37,3 +41,25 @@ def test_extract_mind(tmp):
     assert statinfo.st_size == 59055351
     statinfo = os.stat(os.path.join(valid_path, "relation_embedding.vec"))
     assert statinfo.st_size == 1044588
+
+
+@pytest.mark.integration
+def test_mind_utils_integration(notebooks, tmp):
+    notebook_path = notebooks["mind_utils"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(mind_type="small", word_embedding_dim=300),
+    )
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    assert results["utils_state"]["vert_num"] == 17
+    assert results["utils_state"]["subvert_num"] == 17
+    assert results["utils_state"]["word_num"] == 23404
+    assert results["utils_state"]["word_num_all"] == 41074
+    assert results["utils_state"]["embedding_exist_num"] == 22408
+    assert results["utils_state"]["embedding_exist_num_all"] == 37634
+    assert results["utils_state"]["uid2index"] == 5000
