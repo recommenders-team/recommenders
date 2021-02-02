@@ -2,15 +2,13 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (October 19, 2020)
+## What's New (February 4, 2021)
 
-[Microsoft News Recommendation Competition Winners Announced, Leaderboard Reopen!](https://msnews.github.io/competition.html)
+We have a new relase [Recommenders 2021.2](https://github.com/microsoft/recommenders/releases/tag/2021.2)!
 
-Congratulations to all participants and [winners](https://msnews.github.io/competition.html#winner) of the Microsoft News Recommendation Competition!  In the last two months, over 200 participants from more than 90 institutions in 19 countries and regions joined the competition and collectively advanced the state of the art of news recommendation.
+It comes with lots of bug fixes, optimizations and 3 new algorithms, GeoIMC, Standard VAE and Multinomial VAE. We also added tools to facilitate the use of Microsoft News dataset (MIND). In addition, we publised our KDD2020 tutorial where we built a recommender of COVID papers using Microsoft Academic Graph.
 
-The competition is based on the recently released [MIND dataset](https://msnews.github.io/), an open, large-scale English news dataset with impression logs.  Details of the dataset are available in this [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf).
-
-With the competition successfully closed, the [leaderboard](https://msnews.github.io/competition.html#leaderboard) is now reopen.  Want to see if you can grab the top spot? Get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/main/scenarios/news).  Then dive into some baselines such as [DKN](examples/00_quick_start/dkn_MIND.ipynb), [LSTUR](examples/00_quick_start/lstur_MIND.ipynb), [NAML](examples/00_quick_start/naml_MIND.ipynb), [NPA](examples/00_quick_start/npa_MIND.ipynb) and [NRMS](examples/00_quick_start/nrms_MIND.ipynb) and start hacking!
+We also changed the default branch from master to main. Now when you download the repo, you will get main branch.
 
 See past announcements in [NEWS.md](NEWS.md).
 
@@ -118,11 +116,13 @@ We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to ill
 | Algo | MAP | nDCG@k | Precision@k | Recall@k | RMSE | MAE | R<sup>2</sup> | Explained Variance |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [ALS](examples/00_quick_start/als_movielens.ipynb) | 0.004732 |	0.044239 |	0.048462 |	0.017796 | 0.965038 |	0.753001 |	0.255647 |	0.251648 |
-| [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
-| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
-| [NCF](examples/02_model_hybrid/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A |	N/A |	N/A |	N/A |
 | [BPR](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | 0.105365	| 0.389948 |	0.349841 |	0.181807 | N/A |	N/A |	N/A |	N/A |
 | [FastAI](examples/00_quick_start/fastai_movielens.ipynb) | 0.025503 |	0.147866 |	0.130329 |	0.053824 | 0.943084 |	0.744337 |	0.285308 |	0.287671 |
+| [LightGCN](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | 0.088526 | 0.419846 | 0.379626 | 0.144336 | N/A | N/A | N/A | N/A |
+| [NCF](examples/02_model_hybrid/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A | N/A | N/A | N/A |
+| [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
+| [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
+
 
 ## Contributing
 

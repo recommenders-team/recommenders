@@ -242,7 +242,7 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
             10,
             400,
             {"res_syn": {"auc": 0.7183, "logloss": 0.6045}},
-            2019,
+            42,
         )
     ],
 )
