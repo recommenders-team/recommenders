@@ -2,15 +2,13 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (October 19, 2020)
+## What's New (February 4, 2021)
 
-[Microsoft News Recommendation Competition Winners Announced, Leaderboard Reopen!](https://msnews.github.io/competition.html)
+We have a new relase [Recommenders 2021.2](https://github.com/microsoft/recommenders/releases/tag/2021.2)!
 
-Congratulations to all participants and [winners](https://msnews.github.io/competition.html#winner) of the Microsoft News Recommendation Competition!  In the last two months, over 200 participants from more than 90 institutions in 19 countries and regions joined the competition and collectively advanced the state of the art of news recommendation.
+It comes with lots of bug fixes, optimizations and 3 new algorithms, GeoIMC, Standard VAE and Multinomial VAE. We also added tools to facilitate the use of Microsoft News dataset (MIND). In addition, we publised our KDD2020 tutorial where we built a recommender of COVID papers using Microsoft Academic Graph.
 
-The competition is based on the recently released [MIND dataset](https://msnews.github.io/), an open, large-scale English news dataset with impression logs.  Details of the dataset are available in this [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf).
-
-With the competition successfully closed, the [leaderboard](https://msnews.github.io/competition.html#leaderboard) is now reopen.  Want to see if you can grab the top spot? Get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/main/scenarios/news).  Then dive into some baselines such as [DKN](examples/00_quick_start/dkn_MIND.ipynb), [LSTUR](examples/00_quick_start/lstur_MIND.ipynb), [NAML](examples/00_quick_start/naml_MIND.ipynb), [NPA](examples/00_quick_start/npa_MIND.ipynb) and [NRMS](examples/00_quick_start/nrms_MIND.ipynb) and start hacking!
+We also changed the default branch from master to main. Now when you download the repo, you will get main branch.
 
 See past announcements in [NEWS.md](NEWS.md).
 
