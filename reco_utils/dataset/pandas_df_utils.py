@@ -266,9 +266,9 @@ class LibffmConverter:
 
 def negative_feedback_sampler(
     df,
-    col_user="CustomerId",
-    col_item="ProductId",
-    col_label="Label",
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_label=DEFAULT_LABEL_COL,
     ratio_neg_per_user=1,
     seed=42,
 ):
