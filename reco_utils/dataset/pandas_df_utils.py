@@ -266,21 +266,18 @@ class LibffmConverter:
 
 def negative_feedback_sampler(
     df,
-    col_user=DEFAULT_USER_COL,
-    col_item=DEFAULT_ITEM_COL,
-    col_label=DEFAULT_LABEL_COL,
+    col_user="CustomerId",
+    col_item="ProductId",
+    col_label="Label",
     ratio_neg_per_user=1,
     seed=42,
 ):
     """Utility function to sample negative feedback from user-item interaction dataset.
-
     This negative sampling function will take the user-item interaction data to create 
     binarized feedback, i.e., 1 and 0 indicate positive and negative feedback, 
     respectively. 
-
     Negative sampling is used in the literature frequently to generate negative samples 
     from a user-item interaction data.
-
     See for example the `neural collaborative filtering paper <https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf>`_.
     
     Args:
@@ -293,10 +290,8 @@ def negative_feedback_sampler(
         If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
         of all the possible samples.
         seed (int): seed for the random state of the sampling function.
-
     Returns:
         pandas.DataFrame: data with negative feedback 
-
     Examples:
         >>> import pandas as pd
         >>> df = pd.DataFrame({
@@ -353,8 +348,6 @@ def negative_feedback_sampler(
                         random_state=seed,
                         replace=False,
                     )
-                    if len(x[x[col_label] == 0] > 0)
-                    else pd.DataFrame({}, columns=[col_user, col_item, col_label]),
                 ],
                 ignore_index=True,
                 sort=True,
