@@ -4,11 +4,11 @@
 
 ## What's New (February 4, 2021)
 
-We have a new relase [Recommenders 2021.2](https://github.com/microsoft/recommenders/releases/tag/2021.2)!
+We have a new release [Recommenders 2021.2](https://github.com/microsoft/recommenders/releases/tag/2021.2)!
 
-It comes with lots of bug fixes, optimizations and 3 new algorithms, GeoIMC, Standard VAE and Multinomial VAE. We also added tools to facilitate the use of Microsoft News dataset (MIND). In addition, we publised our KDD2020 tutorial where we built a recommender of COVID papers using Microsoft Academic Graph.
+It comes with lots of bug fixes, optimizations and 3 new algorithms, GeoIMC, Standard VAE and Multinomial VAE. We also added tools to facilitate the use of Microsoft News dataset (MIND). In addition, we published our KDD2020 tutorial where we built a recommender of COVID papers using Microsoft Academic Graph.
 
-We also changed the default branch from master to main. Now when you download the repo, you will get main branch.
+We also changed the default branch from master to main. Now when you download the repo, you will get the main branch.
 
 See past announcements in [NEWS.md](NEWS.md).
 
