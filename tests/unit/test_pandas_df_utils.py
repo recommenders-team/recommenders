@@ -14,6 +14,7 @@ from reco_utils.dataset.pandas_df_utils import (
     has_same_base_dtype,
     has_columns,
     lru_cache_df,
+    negative_feedback_sampler
 )
 
 
@@ -31,64 +32,68 @@ def user_item_dataset():
     return user_df, item_df
 
 
-def test_user_item_pairs(user_item_dataset):
-    user_df, item_df = user_item_dataset
+def test_negative_feedback_sampler():
+    df = pd.DataFrame(data={
+        'userID': [1, 2, 3],
+        'itemID': [1, 2, 3],
+        'rating': [5, 5, 5]
+    })
 
-    user_item = user_item_pairs(
-        user_df=user_df,
-        item_df=item_df,
-        user_col="user_id",
-        item_col="item_id",
-        shuffle=False,
-    )
-    # Validate cross-join
-    assert len(user_df) * len(item_df) == len(user_item)
-    assert user_item.loc[
-        (user_item["user_id"] == 3) & (user_item["item_id"] == 7)
-    ].values.tolist()[0] == [3, 25, 7, [0.2, 0.2]]
-
-    # Check if result is deterministic
-    assert user_item.iloc[0].values.tolist() == [1, 23, 6, [0.1, 0.1]]
-
-    # Check shuffle
-    user_item_shuffled = user_item_pairs(
-        user_df=user_df,
-        item_df=item_df,
-        user_col="user_id",
-        item_col="item_id",
-        shuffle=True,
-    )
-    # Check shuffled result is still valid
-    assert len(user_df) * len(item_df) == len(user_item_shuffled)
-    row = user_item.loc[(user_item["user_id"] == 2) & (user_item["item_id"] == 6)]
-    assert row["user_age"].iloc[0] == 24
-    assert row["item_feat"].iloc[0] == [0.1, 0.1]
-    # Check shuffled result is different from not-shuffled dataframe
-    assert [*user_item_shuffled["user_id"].values] != [*user_item["user_id"].values]
-
-    # Check filter
-    seen_df = pd.DataFrame(
-        {"user_id": [1, 9, 3, 5, 5, 1], "item_id": [1, 6, 7, 6, 8, 9]}
-    )
-    user_item_filtered = user_item_pairs(
-        user_df=user_df,
-        item_df=item_df,
-        user_col="user_id",
-        item_col="item_id",
-        user_item_filter_df=seen_df,
-        shuffle=False,
-    )
-    # Check filtered out number
-    assert len(user_item_filtered) == len(user_item) - 3
-    # Check filtered out record
-    assert (
-        len(
-            user_item_filtered.loc[
-                (user_item["user_id"] == 3) & (user_item["item_id"] == 7)
-            ]
+    # Test ratio < 1
+    sample_df = negative_feedback_sampler(
+        df, 
+        col_user='userID', 
+        col_item='itemID', 
+        col_label='rating', 
+        ratio_neg_per_user=0.5
         )
-        == 0
-    )
+    assert sample_df.shape == (6, 3)
+    assert sample_df.feedback.value_counts().to_dict() == {0: 3, 1: 3}
+    for i in [1, 2, 3]:
+        assert sample_df[(sample_df.userID == i) & (sample_df.itemID == i)].feedback.values[0] == 1
+
+    # Test ratio == 1
+    sample_df = negative_feedback_sampler(
+        df, 
+        col_user='userID', 
+        col_item='itemID', 
+        col_label='rating', 
+        ratio_neg_per_user=1
+        )
+    assert sample_df.shape == (6, 3)
+    assert sample_df.feedback.value_counts().to_dict() == {0: 3, 1: 3}
+    for i in [1, 2, 3]:
+        assert sample_df[(sample_df.userID == i) & (sample_df.itemID == i)].feedback.values[0] == 1
+
+    res_df = pd.DataFrame(data={
+        'userID': [1, 2, 3, 1, 1, 2, 2, 3, 3],
+        'itemID': [1, 2, 3, 2, 3, 1, 3, 1, 2],
+        'feedback': [1, 1, 1, 0, 0, 0, 0, 0, 0]
+    })
+
+    # Test ratio > 1
+    sample_df = negative_feedback_sampler(
+        df, 
+        col_user='userID', 
+        col_item='itemID',
+        col_label='rating',
+        ratio_neg_per_user=2
+        )
+    assert sample_df.shape == (9, 3)
+    assert sample_df.feedback.value_counts().to_dict() == {0: 6, 1: 3}
+    assert np.all(sample_df.sort_values(['userID', 'itemID']).values == res_df.sort_values(['userID', 'itemID']).values)
+
+    # Test too large ratio
+    sample_df = negative_feedback_sampler(
+        df, 
+        col_user='userID', 
+        col_item='itemID',
+        col_label='rating',
+        ratio_neg_per_user=3
+        )
+    assert sample_df.shape == (9, 3)
+    assert sample_df.feedback.value_counts().to_dict() == {0: 6, 1: 3}
+    assert np.all(sample_df.sort_values(['userID', 'itemID']).values == res_df.sort_values(['userID', 'itemID']).values)
 
 
 def test_filter_by():

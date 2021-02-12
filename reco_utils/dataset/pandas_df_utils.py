@@ -316,53 +316,39 @@ def negative_feedback_sampler(
         3   1   0
     """
     # Get all of the users and items.
-    users = df[col_user].unique()
     items = df[col_item].unique()
+    rng = np.random.default_rng(seed=seed)
 
-    # Create a dataframe for all user-item pairs
-    df_neg = user_item_pairs(
-        pd.DataFrame(users, columns=[col_user]),
-        pd.DataFrame(items, columns=[col_item]),
-        col_user,
-        col_item,
-        user_item_filter_df=df,
-    )
-    df_neg[col_label] = 0
-
-    df_pos = df.copy()
-    df_pos[col_label] = 1
-
-    df_all = pd.concat([df_pos, df_neg], ignore_index=True, sort=True)
-    df_all = df_all[[col_user, col_item, col_label]]
-
-    # Sample negative feedback from the combined dataframe.
-    df_sample = (
-        df_all.groupby(col_user)
-        .apply(
-            lambda x: pd.concat(
-                [
-                    x[x[col_label] == 1],
-                    x[x[col_label] == 0].sample(
-                        min(
-                            max(
-                                round(len(x[x[col_label] == 1]) * ratio_neg_per_user), 1
-                            ),
-                            len(x[x[col_label] == 0]),
-                        ),
-                        random_state=seed,
-                        replace=False,
-                    )
-                ],
-                ignore_index=True,
-                sort=True,
+    def sample_items(user_df):
+        # Sample negative items for the data frame restricted to a specific user
+        unseen_items = np.setdiff1d(items, user_df[col_item])     
+        sample_size = min(
+            max(round(len(user_df) * ratio_neg_per_user), 1),
+            len(unseen_items)
             )
+
+        new_df = pd.DataFrame(data={
+            col_user: np.repeat(user_df[col_user][0], sample_size),
+            col_item: rng.choice(
+                unseen_items,
+                sample_size,
+                replace=False),
+            col_label: np.repeat(0, sample_size)
+            })
+
+        return pd.concat(
+            [user_df, new_df],
+            ignore_index=True
         )
+
+    res_df = df.copy()
+    res_df[col_label] = 1
+    return (res_df.groupby(col_user)
+        .apply(sample_items)
         .reset_index(drop=True)
         .sort_values(col_user)
+        .rename(columns={col_label: 'feedback'})
     )
-
-    return df_sample
-
 
 def has_columns(df, columns):
     """Check if DataFrame has necessary columns
