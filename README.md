@@ -1,3 +1,5 @@
+# NOTE: Master branch has been deprecated and now the default branch is [main](https://github.com/microsoft/recommenders/tree/main). Please use main going forward
+
 # Recommenders
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
