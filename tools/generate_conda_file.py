@@ -87,7 +87,7 @@ PIP_BASE = {
     "pymanopt": "pymanopt==0.2.5",
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
-    "tensorflow": "tensorflow==1.15.2",
+    "tensorflow": "tensorflow>=2.2.2,<2.4",
     "scrapbook": "scrapbook>=0.5.0",
 }
 
