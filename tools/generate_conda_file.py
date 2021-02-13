@@ -71,7 +71,7 @@ CONDA_GPU = {
 }
 
 PIP_BASE = {
-    "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.69",
+    "azureml-sdk[notebooks,fboard]": "azureml-sdk[notebooks,tensorboard]==1.0.69",
     "azure-storage-blob": "azure-storage-blob<=2.1.0",
     "azure-cli-core": "azure-cli-core==2.0.75",
     "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb==0.8.0",
@@ -87,7 +87,7 @@ PIP_BASE = {
     "pymanopt": "pymanopt==0.2.5",
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
-    "tensorflow": "tensorflow>=2.2.2,<2.4",
+    "tensorflow": "tensorflow==1.15.2",
     "scrapbook": "scrapbook>=0.5.0",
 }
 
