@@ -93,7 +93,7 @@ PIP_BASE = {
 
 PIP_GPU = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
-    "tensorflow": "tensorflow==1.15.2",
+    "tensorflow": "tensorflow-gpu==1.15.2",
 }
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
