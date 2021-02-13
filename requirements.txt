@@ -14,5 +14,5 @@ pydocumentdb>=2.3.3
 pymanopt==0.2.5
 xlearn==0.40a1
 transformers==2.5.0
-tensorflow==1.15.2
+tensorflow==2.4.1
 scrapbook>=0.5.0
