@@ -14,7 +14,7 @@ from reco_utils.dataset.pandas_df_utils import (
     has_same_base_dtype,
     has_columns,
     lru_cache_df,
-    negative_feedback_sampler
+    negative_feedback_sampler,
 )
 
 
@@ -33,67 +33,83 @@ def user_item_dataset():
 
 
 def test_negative_feedback_sampler():
-    df = pd.DataFrame(data={
-        'userID': [1, 2, 3],
-        'itemID': [1, 2, 3],
-        'rating': [5, 5, 5]
-    })
+    df = pd.DataFrame(
+        data={"userID": [1, 2, 3], "itemID": [1, 2, 3], "rating": [5, 5, 5]}
+    )
 
     # Test ratio < 1
     sample_df = negative_feedback_sampler(
-        df, 
-        col_user='userID', 
-        col_item='itemID', 
-        col_label='rating', 
-        ratio_neg_per_user=0.5
-        )
+        df,
+        col_user="userID",
+        col_item="itemID",
+        col_label="rating",
+        ratio_neg_per_user=0.5,
+    )
     assert sample_df.shape == (6, 3)
     assert sample_df.feedback.value_counts().to_dict() == {0: 3, 1: 3}
     for i in [1, 2, 3]:
-        assert sample_df[(sample_df.userID == i) & (sample_df.itemID == i)].feedback.values[0] == 1
+        assert (
+            sample_df[
+                (sample_df.userID == i) & (sample_df.itemID == i)
+            ].feedback.values[0]
+            == 1
+        )
 
     # Test ratio == 1
     sample_df = negative_feedback_sampler(
-        df, 
-        col_user='userID', 
-        col_item='itemID', 
-        col_label='rating', 
-        ratio_neg_per_user=1
-        )
+        df,
+        col_user="userID",
+        col_item="itemID",
+        col_label="rating",
+        ratio_neg_per_user=1,
+    )
     assert sample_df.shape == (6, 3)
     assert sample_df.feedback.value_counts().to_dict() == {0: 3, 1: 3}
     for i in [1, 2, 3]:
-        assert sample_df[(sample_df.userID == i) & (sample_df.itemID == i)].feedback.values[0] == 1
+        assert (
+            sample_df[
+                (sample_df.userID == i) & (sample_df.itemID == i)
+            ].feedback.values[0]
+            == 1
+        )
 
-    res_df = pd.DataFrame(data={
-        'userID': [1, 2, 3, 1, 1, 2, 2, 3, 3],
-        'itemID': [1, 2, 3, 2, 3, 1, 3, 1, 2],
-        'feedback': [1, 1, 1, 0, 0, 0, 0, 0, 0]
-    })
+    res_df = pd.DataFrame(
+        data={
+            "userID": [1, 2, 3, 1, 1, 2, 2, 3, 3],
+            "itemID": [1, 2, 3, 2, 3, 1, 3, 1, 2],
+            "feedback": [1, 1, 1, 0, 0, 0, 0, 0, 0],
+        }
+    )
 
     # Test ratio > 1
     sample_df = negative_feedback_sampler(
-        df, 
-        col_user='userID', 
-        col_item='itemID',
-        col_label='rating',
-        ratio_neg_per_user=2
-        )
+        df,
+        col_user="userID",
+        col_item="itemID",
+        col_label="rating",
+        ratio_neg_per_user=2,
+    )
     assert sample_df.shape == (9, 3)
     assert sample_df.feedback.value_counts().to_dict() == {0: 6, 1: 3}
-    assert np.all(sample_df.sort_values(['userID', 'itemID']).values == res_df.sort_values(['userID', 'itemID']).values)
+    assert np.all(
+        sample_df.sort_values(["userID", "itemID"]).values
+        == res_df.sort_values(["userID", "itemID"]).values
+    )
 
     # Test too large ratio
     sample_df = negative_feedback_sampler(
-        df, 
-        col_user='userID', 
-        col_item='itemID',
-        col_label='rating',
-        ratio_neg_per_user=3
-        )
+        df,
+        col_user="userID",
+        col_item="itemID",
+        col_label="rating",
+        ratio_neg_per_user=3,
+    )
     assert sample_df.shape == (9, 3)
     assert sample_df.feedback.value_counts().to_dict() == {0: 6, 1: 3}
-    assert np.all(sample_df.sort_values(['userID', 'itemID']).values == res_df.sort_values(['userID', 'itemID']).values)
+    assert np.all(
+        sample_df.sort_values(["userID", "itemID"]).values
+        == res_df.sort_values(["userID", "itemID"]).values
+    )
 
 
 def test_filter_by():
@@ -101,7 +117,11 @@ def test_filter_by():
         {"user_id": [1, 9, 3, 5, 5, 1], "item_id": [1, 6, 7, 6, 8, 9]}
     )
 
-    seen_df = pd.DataFrame({"user_id": [1, 2, 4],})
+    seen_df = pd.DataFrame(
+        {
+            "user_id": [1, 2, 4],
+        }
+    )
 
     filtered_df = filter_by(user_df, seen_df, ["user_id"])
 

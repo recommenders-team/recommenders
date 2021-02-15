@@ -180,10 +180,10 @@ class LibffmConverter:
         return self
 
     def transform(self, df):
-        """Tranform an input dataset with the same schema (column names and dtypes) to libffm format 
+        """Tranform an input dataset with the same schema (column names and dtypes) to libffm format
         by using the fitted converter.
 
-        Args: 
+        Args:
             df (pd.DataFrame): input Pandas dataframe.
 
         Return:
@@ -273,29 +273,29 @@ def negative_feedback_sampler(
     seed=42,
 ):
     """Utility function to sample negative feedback from user-item interaction dataset.
-    This negative sampling function will take the user-item interaction data to create 
-    binarized feedback, i.e., 1 and 0 indicate positive and negative feedback, 
-    respectively. 
-    
-    Negative sampling is used in the literature frequently to generate negative samples 
+    This negative sampling function will take the user-item interaction data to create
+    binarized feedback, i.e., 1 and 0 indicate positive and negative feedback,
+    respectively.
+
+    Negative sampling is used in the literature frequently to generate negative samples
     from a user-item interaction data.
-    
+
     See for example the `neural collaborative filtering paper <https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf>`_.
-    
+
     Args:
         df (pd.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
         col_label (str): label column name. It is used for the generated columns where labels
         of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
-        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user. 
+        ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user.
         If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
         of all the possible samples.
         seed (int): seed for the random state of the sampling function.
-        
+
     Returns:
-        pd.DataFrame: data with negative feedback 
-        
+        pd.DataFrame: data with negative feedback
+
     Examples:
         >>> import pandas as pd
         >>> df = pd.DataFrame({
@@ -321,34 +321,33 @@ def negative_feedback_sampler(
 
     def sample_items(user_df):
         # Sample negative items for the data frame restricted to a specific user
-        unseen_items = np.setdiff1d(items, user_df[col_item])     
-        sample_size = min(
-            max(round(len(user_df) * ratio_neg_per_user), 1),
-            len(unseen_items)
-            )
-
-        new_df = pd.DataFrame(data={
-            col_user: np.repeat(user_df[col_user][0], sample_size),
-            col_item: rng.choice(
-                unseen_items,
-                sample_size,
-                replace=False),
-            col_label: np.repeat(0, sample_size)
-            })
-
-        return pd.concat(
-            [user_df, new_df],
-            ignore_index=True
+        n_u = len(user_df)
+        neg_sample_size = max(round(n_u * ratio_neg_per_user), 1)
+        # Draw (n_u + neg_sample_size) items and keep neg_sample_size of these
+        # that are not already in user_df. This requires a set difference from items_sample
+        # instead of items, which is more efficient when len(items) is large.
+        sample_size = min(n_u + neg_sample_size, len(items))
+        items_sample = rng.choice(items, sample_size, replace=False)
+        new_items = np.setdiff1d(items_sample, user_df[col_item])[:neg_sample_size]
+        new_df = pd.DataFrame(
+            data={
+                col_user: user_df[col_user][0],
+                col_item: new_items,
+                col_label: 0,
+            }
         )
+        return pd.concat([user_df, new_df], ignore_index=True)
 
     res_df = df.copy()
     res_df[col_label] = 1
-    return (res_df.groupby(col_user)
+    return (
+        res_df.groupby(col_user)
         .apply(sample_items)
         .reset_index(drop=True)
         .sort_values(col_user)
-        .rename(columns={col_label: 'feedback'})
+        .rename(columns={col_label: "feedback"})
     )
+
 
 def has_columns(df, columns):
     """Check if DataFrame has necessary columns
@@ -412,7 +411,7 @@ class PandasHash:
 
     def __init__(self, pandas_object):
         """Initialize class
-        
+
         Args:
             pandas_object (pd.DataFrame|pd.Series): pandas object
         """
@@ -423,7 +422,7 @@ class PandasHash:
 
     def __eq__(self, other):
         """Overwrite equality comparison
-        
+
         Args:
             other (pd.DataFrame|pd.Series): pandas object to compare
 
@@ -449,9 +448,9 @@ class PandasHash:
 
 
 def lru_cache_df(maxsize, typed=False):
-    """Least-recently-used cache decorator for pandas Dataframes. 
-    
-    Decorator to wrap a function with a memoizing callable that saves up to the maxsize most recent calls. It can 
+    """Least-recently-used cache decorator for pandas Dataframes.
+
+    Decorator to wrap a function with a memoizing callable that saves up to the maxsize most recent calls. It can
     save time when an expensive or I/O bound function is periodically called with the same arguments.
 
     Inspired in the `lru_cache function <https://docs.python.org/3/library/functools.html#functools.lru_cache>`_.
