@@ -9,7 +9,7 @@ hyperopt==0.2.5
 idna==2.7
 locustio==0.11.0
 memory-profiler>=0.54.0
-nbconvert==5.5.0
+nbconvert==6.0.7
 pydocumentdb>=2.3.3
 pymanopt==0.2.5
 xlearn==0.40a1
