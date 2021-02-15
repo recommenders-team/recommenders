@@ -7,7 +7,7 @@ category_encoders>=1.3.0
 dataclasses>=0.6
 hyperopt==0.2.5
 idna==2.7
-locustio==0.11.0
+locustio==0.999
 memory-profiler>=0.54.0
 nbconvert==5.5.0
 pydocumentdb>=2.3.3
