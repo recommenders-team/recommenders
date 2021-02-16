@@ -8,6 +8,10 @@ from os import chdir, path, environ
 chdir(path.abspath(path.dirname(__file__)))
 version = __import__("reco_utils.__init__").VERSION
 
+# Use requirements.txt to set the install_requires
+with open('requirements.txt') as f:
+    install_requires = [line.strip() for line in f]
+
 # Get the long description from the README file
 with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
@@ -37,6 +41,7 @@ setup(
         "Programming Language :: Python :: 3.6",
     ],
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
+    install_requires=install_requires,
     package_dir={"reco_utils": "reco_utils"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
     python_requires=">=3.6, <4",
