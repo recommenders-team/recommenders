@@ -355,12 +355,12 @@ def get_mind_data_set(type):
             "https://mind201910small.blob.core.windows.net/release/",
             "MINDsmall_train.zip",
             "MINDsmall_dev.zip",
-            "MINDsma_utils.zip",
+            "MINDsmall_utils.zip",
         )
 
     elif type == "demo":
         return (
-            "https://recodatasets.blob.core.windows.net/newsrec/",
+            "https://recodatasets.z20.web.core.windows.net/newsrec/",
             "MINDdemo_train.zip",
             "MINDdemo_dev.zip",
             "MINDdemo_utils.zip",

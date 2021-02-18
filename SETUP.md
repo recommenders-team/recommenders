@@ -51,13 +51,28 @@ conda update anaconda        # use 'conda install anaconda' if the package is no
 We provide a script, [generate_conda_file.py](tools/generate_conda_file.py), to generate a conda-environment yaml file
 which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
 
-**NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/). 
+**NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
+
+**NOTE** PySpark v2.4.x requires Java version 8. 
+
+<details> 
+<summary><strong><em>Install Java 8 on MacOS</em></strong></summary>
+  
+To install Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
+
+    brew install asdf
+    asdf plugin add Java
+    asdf install java adoptopenjdk-8.0.265+1
+    asdf global java adoptopenjdk-8.0.265+1
+    . ~/.asdf/plugins/java/set-java-home.zsh
+
+</details>
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
     cd Recommenders
     python tools/generate_conda_file.py
-    conda env create -f reco_base.yaml 
+    conda env create -f reco_base.yaml
 
 You can specify the environment name as well with the flag `-n`.
 
@@ -70,7 +85,7 @@ Assuming that you have a GPU machine, to install the Python GPU environment:
 
     cd Recommenders
     python tools/generate_conda_file.py --gpu
-    conda env create -f reco_gpu.yaml 
+    conda env create -f reco_gpu.yaml
 
 </details>
 
@@ -85,7 +100,7 @@ To install the PySpark environment:
 
 > Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
 >
->     python tools/generate_conda_file.py --pyspark-version 2.4.0
+>     python tools/generate_conda_file.py --pyspark-version 2.4.5
 
 Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
 
@@ -94,29 +109,32 @@ Click on the following menus to see details:
 <summary><strong><em>Set PySpark environment variables on Linux or MacOS</em></strong></summary>
 
 To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
+
 First, get the path of the environment `reco_pyspark` is installed:
 
     RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
     mkdir -p $RECO_ENV/etc/conda/activate.d
     mkdir -p $RECO_ENV/etc/conda/deactivate.d
 
+You also need to find where Spark is installed and set `SPARK_HOME` variable, on the DSVM, `SPARK_HOME=/dsvm/tools/spark/current`.
+
 Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 
-    #!/bin/sh
-    RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
-    export PYSPARK_PYTHON=$RECO_ENV/bin/python
-    export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
-    export SPARK_HOME_BACKUP=$SPARK_HOME
-    unset SPARK_HOME
+```bash
+#!/bin/sh
+RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
+export PYSPARK_PYTHON=$RECO_ENV/bin/python
+export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
+export SPARK_HOME=/dsvm/tools/spark/current
+```
 
-This will export the variables every time we do `conda activate reco_pyspark`.
-To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
+This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
 
-    #!/bin/sh
-    unset PYSPARK_PYTHON
-    unset PYSPARK_DRIVER_PYTHON
-    export SPARK_HOME=$SPARK_HOME_BACKUP
-    unset SPARK_HOME_BACKUP
+```bash
+#!/bin/sh
+unset PYSPARK_PYTHON
+unset PYSPARK_DRIVER_PYTHON
+```
 
 </details>
 
@@ -128,7 +146,7 @@ First, get the path of the environment `reco_pyspark` is installed:
     for /f "delims=" %A in ('conda env list ^| grep reco_pyspark ^| awk "{print $NF}"') do set "RECO_ENV=%A"
 
 Then, create the file `%RECO_ENV%\etc\conda\activate.d\env_vars.bat` and add:
- 
+
     @echo off
     for /f "delims=" %%A in ('conda env list ^| grep reco_pyspark ^| awk "{print $NF}"') do set "RECO_ENV=%%A"
     set PYSPARK_PYTHON=%RECO_ENV%\python.exe
@@ -149,7 +167,7 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
     set SPARK_HOME_BACKUP=
     set PYTHONPATH=%PYTHONPATH_BACKUP%
     set PYTHONPATH_BACKUP=
- 
+
 </details>
 
 </details>
@@ -176,7 +194,7 @@ We can register our created conda environment to appear as a kernel in the Jupyt
 
     conda activate my_env_name
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
-    
+
 If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
 
 ### Troubleshooting for the DSVM
@@ -200,16 +218,23 @@ sudo apt install openjdk-8-jdk
 sudo update-alternatives --config java
 ```
 
+* We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
+
+```
+cd /dsvm/tools/spark/current/jars
+sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsoft.ml.lightgbm_lightgbmlib-2.0.120.jar
+```
+
 ## Setup guide for Azure Databricks
 
-### Requirements of Azure Databricks
+### Requirements
 
-* Databricks Runtime version 4.3 (Apache Spark 2.3.1, Scala 2.11) or greater
+* Databricks Runtime version >= 4.3 (Apache Spark 2.3.1, Scala 2.11) and <= 5.5 (Apache Spark 2.4.3, Scala 2.11)
 * Python 3
 
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
 
-### Repository installation
+### Dependencies setup
 
 You can setup the repository as a library on Databricks either manually or by running an [installation script](tools/databricks_install.py). Both options assume you have access to a provisioned Databricks workspace and cluster and that you have appropriate permissions to install libraries.
 
@@ -242,7 +267,7 @@ The installation script has a number of options that can also deal with differen
 python tools/databricks_install.py -h
 ```
 
-Once you have confirmed the databricks cluster is *RUNNING*, install the modules within this repository with the following commands. 
+Once you have confirmed the databricks cluster is *RUNNING*, install the modules within this repository with the following commands.
 
 ```{shell}
 cd Recommenders
@@ -339,7 +364,7 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
 
 ## Install the utilities via PIP
 
-A [setup.py](setup.py) file is provided in order to simplify the installation of the utilities in this repo from the main directory. 
+A [setup.py](setup.py) file is provided in order to simplify the installation of the utilities in this repo from the main directory.
 
 This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed, you can use the following command to install `reco_utils` as a python package.
 

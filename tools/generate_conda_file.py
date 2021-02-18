@@ -13,7 +13,7 @@
 # For generating a conda file for running python gpu and pyspark:
 # $ python generate_conda_file.py --gpu --pyspark
 # For generating a conda file for running python gpu and pyspark with a particular version:
-# $ python generate_conda_file.py --gpu --pyspark-version 2.4.0
+# $ python generate_conda_file.py --gpu --pyspark-version 2.4.5
 
 import argparse
 import textwrap
@@ -35,13 +35,13 @@ $ python -m ipykernel install --user --name {conda_env} --display-name "Python (
 CHANNELS = ["defaults", "conda-forge", "pytorch", "fastai"]
 
 CONDA_BASE = {
-    "python": "python==3.6.10",
+    "python": "python==3.6.11",
     "bottleneck": "bottleneck==1.2.1",
     "dask": "dask>=0.17.1",
     "fastparquet": "fastparquet>=0.1.6",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
-    "lightfm": "lightfm>=1.15",
+    "lightfm": "lightfm==1.15",
     "matplotlib": "matplotlib>=2.2.2",
     "mock": "mock==2.0.0",
     "nltk": "nltk>=3.4",
@@ -57,11 +57,11 @@ CONDA_BASE = {
     "swig": "swig==3.0.12",
     "lightgbm": "lightgbm==2.2.1",
     "cornac": "cornac>=1.1.2",
-    "papermill": "papermill==0.19.1",
+    "papermill": "papermill>=2.2.0",
     "tqdm": "tqdm>=4.31.1",
 }
 
-CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.4.3"}
+CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.4.5"}
 
 CONDA_GPU = {
     "fastai": "fastai==1.0.46",
@@ -73,12 +73,12 @@ CONDA_GPU = {
 PIP_BASE = {
     "azureml-sdk[notebooks,tensorboard]": "azureml-sdk[notebooks,tensorboard]==1.0.69",
     "azure-storage-blob": "azure-storage-blob<=2.1.0",
-    "azure-cli-core": "azure-cli-core>=2.0.75",
-    "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb>=0.8.0",
+    "azure-cli-core": "azure-cli-core==2.0.75",
+    "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb==0.8.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
     "dataclasses": "dataclasses>=0.6",
-    "hyperopt": "hyperopt==0.1.1",
+    "hyperopt": "hyperopt==0.1.2",
     "idna": "idna==2.7",
     "locustio": "locustio==0.11.0",
     "memory-profiler": "memory-profiler>=0.54.0",
@@ -88,6 +88,7 @@ PIP_BASE = {
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
     "tensorflow": "tensorflow==1.15.2",
+    "scrapbook": "scrapbook>=0.5.0",
 }
 
 PIP_GPU = {
@@ -134,7 +135,7 @@ if __name__ == "__main__":
                 "PySpark version input must be valid numeric format (e.g. --pyspark-version=2.3.1)"
             )
     else:
-        args.pyspark_version = "2.4.3"
+        args.pyspark_version = "2.4.5"
 
     # set name for environment and output yaml file
     conda_env = "reco_base"

@@ -94,7 +94,7 @@ def test_df_to_sparse(test_specs, python_dataset):
     am = AffinityMatrix(DF=python_dataset, **header)
 
     # obtain the sparse matrix representation of the input dataframe
-    X = am.gen_affinity_matrix()
+    X, _, _ = am.gen_affinity_matrix()
 
     # check that the generated matrix has the correct dimensions
     assert (X.shape[0] == python_dataset.userID.unique().shape[0]) & (
@@ -114,7 +114,7 @@ def test_sparse_to_df(test_specs, python_dataset):
     am = AffinityMatrix(DF=python_dataset, **header)
 
     # generate the sparse matrix representation
-    X = am.gen_affinity_matrix()
+    X, _, _ = am.gen_affinity_matrix()
 
     # use the inverse function to generate a pandas df from a sparse matrix ordered by userID
     DF = am.map_back_sparse(X, kind="ratings")

@@ -4,7 +4,7 @@ This folder contains examples and best practices, written in Jupyter notebooks, 
 
 The diagram below depicts how the best-practice examples help researchers / developers in the recommendation system development workflow.
 
-![workflow](https://recodatasets.blob.core.windows.net/images/reco_workflow.png)
+![workflow](https://recodatasets.z20.web.core.windows.net/images/reco_workflow.png)
 
 
 ## Summary
@@ -69,4 +69,4 @@ cfg = NotebookRunConfig(source_directory='../',
                             run_config=run_config)
 ```
 
-All metrics and parameters logged with `pm.record` will be stored on the run as tracked metrics. The initial notebook that was submitted, will be stored as an output notebook ```out.ipynb``` in the outputs tab of the Azure Portal. 
+All metrics and parameters logged with `sb.glue` will be stored on the run as tracked metrics. The initial notebook that was submitted, will be stored as an output notebook ```out.ipynb``` in the outputs tab of the Azure Portal. 

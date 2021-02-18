@@ -17,7 +17,7 @@ class CaserModel(SequentialBaseModel):
     Web Search and Data Mining, ACM, 2018.
     """
 
-    def __init__(self, hparams, iterator_creator):
+    def __init__(self, hparams, iterator_creator, seed=None):
         """Initialization of variables for caser 
 
         Args:
@@ -32,7 +32,7 @@ class CaserModel(SequentialBaseModel):
         self.lengths = [
             i + 1 for i in range(self.L)
         ]  # horizonal convolution filter shape
-        super().__init__(hparams, iterator_creator)
+        super().__init__(hparams, iterator_creator, seed=seed)
 
     def _build_seq_graph(self):
         """The main function to create caser model.

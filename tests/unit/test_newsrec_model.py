@@ -28,7 +28,7 @@ def test_nrms_component_definition(tmp):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -60,7 +60,7 @@ def test_naml_component_definition(tmp):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -92,7 +92,7 @@ def test_npa_component_definition(tmp):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )
@@ -122,7 +122,7 @@ def test_lstur_component_definition(tmp):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            r"https://recodatasets.blob.core.windows.net/newsrec/",
+            r"https://recodatasets.z20.web.core.windows.net/newsrec/",
             os.path.join(tmp, "utils"),
             "MINDdemo_utils.zip",
         )

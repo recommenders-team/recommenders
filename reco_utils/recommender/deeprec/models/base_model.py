@@ -16,7 +16,7 @@ __all__ = ["BaseModel"]
 
 class BaseModel:
     def __init__(self, hparams, iterator_creator, graph=None, seed=None):
-        """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function, 
+        """Initializing the model. Create common logics which are needed by all deeprec models, such as loss function,
         parameter set.
 
         Args:
@@ -63,7 +63,7 @@ class BaseModel:
             self.init_op = tf.compat.v1.global_variables_initializer()
             self.merged = self._add_summaries()
 
-        # set GPU use with demand growth
+        # set GPU use with on demand growth
         gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
         self.sess = tf.compat.v1.Session(
             graph=self.graph, config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
@@ -77,7 +77,7 @@ class BaseModel:
 
     def _get_loss(self):
         """Make loss function, consists of data loss and regularization loss
-        
+
         Returns:
             obj: Loss value
         """
@@ -88,11 +88,11 @@ class BaseModel:
 
     def _get_pred(self, logit, task):
         """Make final output as prediction score, according to different tasks.
-        
+
         Args:
             logit (obj): Base prediction value.
             task (str): A task (values: regression/classification)
-        
+
         Returns:
             obj: Transformed score
         """
@@ -106,6 +106,7 @@ class BaseModel:
                     task
                 )
             )
+        pred = tf.identity(pred, name='pred')
         return pred
 
     def _add_summaries(self):
@@ -298,12 +299,12 @@ class BaseModel:
 
     def _active_layer(self, logit, activation, layer_idx=-1):
         """Transform the input value with an activation. May use dropout.
-        
+
         Args:
             logit (obj): Input value.
             activation (str): A string indicating the type of activation function.
             layer_idx (int): Index of current layer. Used to retrieve corresponding parameters
-        
+
         Returns:
             obj: A tensor after applying activation function on logit.
         """
@@ -410,7 +411,7 @@ class BaseModel:
     def fit(self, train_file, valid_file, test_file=None):
         """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
         If test_file is not None, evaluate it too.
-        
+
         Args:
             train_file (str): training data set.
             valid_file (str): validation set.
@@ -569,7 +570,7 @@ class BaseModel:
 
     def predict(self, infile_name, outfile_name):
         """Make predictions on the given data, and output predicted scores to a file.
-        
+
         Args:
             infile_name (str): Input file name, format is same as train/val/test file.
             outfile_name (str): Output file name, each line is the predict score.
@@ -592,7 +593,7 @@ class BaseModel:
 
     def _attention(self, inputs, attention_size):
         """Soft alignment attention implement.
-        
+
         Args:
             inputs (obj): Sequences ready to apply attention.
             attention_size (int): The dimension of attention operation.
@@ -703,5 +704,4 @@ class BaseModel:
                     + b_nn_output
                 )
                 self.logit = nn_output
-                return nn_output
-
+        return nn_output

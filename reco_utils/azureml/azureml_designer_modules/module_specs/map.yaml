@@ -1,76 +1,69 @@
-amlModuleIdentifier: 
-  namespace: microsoft.com/cat
-  moduleName: MAP
-  moduleVersion: 1.1.1
-description: "Mean Average Precision at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders."
-metadata:
-  annotations:
-    tags: ["Recommenders", "Metrics"]
+$schema: http://azureml/sdk-2-0/CommandComponent.json
+name: microsoft.com.cat.map
+version: 1.1.1
+display_name: MAP
+type: CommandComponent
+description: 'Mean Average Precision at K metric from Recommenders repo: https://github.com/Microsoft/Recommenders.'
+tags:
+  Recommenders:
+  Metrics:
 inputs:
-- name: Rating true
-  type: AnyDirectory
-  description: True DataFrame.
-- name: Rating pred
-  type: AnyDirectory
-  description: Predicted DataFrame.
-- name: User column
-  type: String
-  default: UserId
-  description: Column name of user IDs.
-- name: Item column
-  type: String
-  default: MovieId
-  description: Column name of item IDs.
-- name: Rating column
-  type: String
-  default: Rating
-  description: Column name of ratings.
-- name: Prediction column
-  type: String
-  default: prediction
-  description: Column name of predictions.
-- name: Relevancy method
-  type: String
-  default: top_k
-  description: method for determining relevancy ['top_k', 'by_threshold'].
-- name: Top k
-  type: Integer
-  default: 10
-  description: Number of top k items per user.
-- name: Threshold
-  type: Float
-  default: 10.0
-  description: Threshold of top items per user.
+  rating_true:
+    type: AnyDirectory
+    description: True DataFrame.
+    optional: false
+  rating_pred:
+    type: AnyDirectory
+    description: Predicted DataFrame.
+    optional: false
+  user_column:
+    type: String
+    description: Column name of user IDs.
+    default: UserId
+    optional: false
+  item_column:
+    type: String
+    description: Column name of item IDs.
+    default: MovieId
+    optional: false
+  rating_column:
+    type: String
+    description: Column name of ratings.
+    default: Rating
+    optional: false
+  prediction_column:
+    type: String
+    description: Column name of predictions.
+    default: prediction
+    optional: false
+  relevancy_method:
+    type: String
+    description: method for determining relevancy ['top_k', 'by_threshold'].
+    default: top_k
+    optional: false
+  top_k:
+    type: Integer
+    description: Number of top k items per user.
+    default: 10
+    optional: false
+  threshold:
+    type: Float
+    description: Threshold of top items per user.
+    default: 10.0
+    optional: false
 outputs:
-- name: Score
-  type: AnyDirectory
-  description: MAP at k (min=0, max=1).
-implementation:
-  container:
-    amlEnvironment:
-      python:
-        condaDependenciesFile: sar_conda.yaml
-    additionalIncludes:
-      - ../../../
-    command: [python, reco_utils/azureml/azureml_designer_modules/entries/map_entry.py]
-    args:
-    - --rating-true
-    - inputPath: Rating true
-    - --rating-pred
-    - inputPath: Rating pred
-    - --col-user
-    - inputValue: User column
-    - --col-item
-    - inputValue: Item column
-    - --col-rating
-    - inputValue: Rating column
-    - --col-prediction
-    - inputValue: Prediction column
-    - --relevancy-method
-    - inputValue: Relevancy method
-    - --k
-    - inputValue: Top k
-    - --threshold
-    - inputValue: Threshold
-    - --score-result
-    - outputPath: Score
+  score:
+    type: AnyDirectory
+    description: MAP at k (min=0, max=1).
+code:
+  ../../../../
+command: >-
+  python reco_utils/azureml/azureml_designer_modules/entries/map_entry.py --rating-true
+  {inputs.rating_true} --rating-pred {inputs.rating_pred} --col-user {inputs.user_column}
+  --col-item {inputs.item_column} --col-rating {inputs.rating_column} --col-prediction
+  {inputs.prediction_column} --relevancy-method {inputs.relevancy_method} --k {inputs.top_k}
+  --threshold {inputs.threshold} --score-result {outputs.score}
+environment:
+  conda:
+    conda_dependencies_file: reco_utils/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
+  os: Linux

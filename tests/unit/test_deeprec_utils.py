@@ -11,6 +11,7 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
 )
 from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
 from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
+from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import DKNItem2itemTextIterator
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
@@ -30,7 +31,7 @@ def test_prepare_hparams(must_exist_attributes, resource_path):
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            "https://recodatasets.blob.core.windows.net/deeprec/",
+            "https://recodatasets.z20.web.core.windows.net/deeprec/",
             data_path,
             "xdeepfmresources.zip",
         )
@@ -45,7 +46,7 @@ def test_load_yaml_file(resource_path):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            "https://recodatasets.blob.core.windows.net/deeprec/",
+            "https://recodatasets.z20.web.core.windows.net/deeprec/",
             data_path,
             "xdeepfmresources.zip",
         )
@@ -62,7 +63,7 @@ def test_FFM_iterator(resource_path):
 
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
-            "https://recodatasets.blob.core.windows.net/deeprec/",
+            "https://recodatasets.z20.web.core.windows.net/deeprec/",
             data_path,
             "xdeepfmresources.zip",
         )
@@ -80,9 +81,12 @@ def test_DKN_iterator(resource_path):
     data_file = os.path.join(data_path, r"train_mind_demo.txt")
     news_feature_file = os.path.join(data_path, r"doc_feature.txt")
     user_history_file = os.path.join(data_path, r"user_history.txt")
+    wordEmb_file = os.path.join(data_path, "word_embeddings_100.npy")
+    entityEmb_file = os.path.join(data_path, "TransE_entity2vec_100.npy")
+    contextEmb_file = os.path.join(data_path, "TransE_context2vec_100.npy")
     yaml_file = os.path.join(data_path, "dkn.yaml")
     download_deeprec_resources(
-        "https://recodatasets.blob.core.windows.net/deeprec/",
+        "https://recodatasets.z20.web.core.windows.net/deeprec/",
         data_path,
         "mind-demo.zip",
     )
@@ -94,11 +98,37 @@ def test_DKN_iterator(resource_path):
         wordEmb_file="",
         entityEmb_file="",
         contextEmb_file="",
-    )
+    )        
     iterator = DKNTextIterator(hparams, tf.Graph())
     assert iterator is not None
     for res, impression, data_size in iterator.load_data_from_file(data_file):
         assert isinstance(res, dict)
+
+    ###  test DKN item2item iterator
+    hparams = prepare_hparams(
+        yaml_file,
+        news_feature_file=news_feature_file,
+        wordEmb_file=wordEmb_file,
+        entityEmb_file=entityEmb_file,
+        contextEmb_file=contextEmb_file,
+        epochs=1,
+        is_clip_norm=True,
+        max_grad_norm=0.5,
+        his_size=20,
+        MODEL_DIR=os.path.join(data_path, 'save_models'),
+        use_entity=True,
+        use_context=True
+    )    
+    hparams.neg_num=9
+
+    iterator_item2item = DKNItem2itemTextIterator(hparams, tf.Graph()) 
+    assert iterator_item2item is not None
+    test_round = 3
+    for res, impression, data_size in iterator_item2item.load_data_from_file(os.path.join(data_path, 'doc_list.txt')):
+        assert isinstance(res, dict)
+        test_round -= 1
+        if test_round <= 0:
+            break
 
 
 @pytest.mark.gpu

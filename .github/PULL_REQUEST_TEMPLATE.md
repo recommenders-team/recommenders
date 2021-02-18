@@ -13,4 +13,4 @@
 - [ ] I have followed the [contribution guidelines](../CONTRIBUTING.md) and code style for this project.
 - [ ] I have added tests covering my contributions.
 - [ ] I have updated the documentation accordingly.
-- [ ] This PR is being made to `staging` and not `master`.
+- [ ] This PR is being made to `staging branch` and not to `main branch`.

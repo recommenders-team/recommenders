@@ -3,6 +3,7 @@
 
 import pytest
 import papermill as pm
+import scrapbook as sb
 
 from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
@@ -16,8 +17,8 @@ def test_template_runs(notebooks):
         parameters=dict(PM_VERSION=pm.__version__),
         kernel_name=KERNEL_NAME,
     )
-    nb = pm.read_notebook(OUTPUT_NOTEBOOK)
-    df = nb.dataframe
+    nb = sb.read_notebook(OUTPUT_NOTEBOOK)
+    df = nb.papermill_dataframe
     assert df.shape[0] == 2
     check_version = df.loc[df["name"] == "checked_version", "value"].values[0]
     assert check_version is True
@@ -86,7 +87,6 @@ def test_wikidata_runs(notebooks, tmp):
             MOVIELENS_SAMPLE_SIZE=MOVIELENS_SAMPLE_SIZE,
         ),
     )
-
 
 @pytest.mark.notebooks
 def test_rlrmc_quickstart_runs(notebooks):
