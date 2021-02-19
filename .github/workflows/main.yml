@@ -1,36 +1,45 @@
-# This is a basic workflow to help you get started with Actions
+name: Upload Python Package
 
-name: CI
-
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  release:
+    types: [created]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
+  deploy:
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*      
+    - name: Update version for next release
+      run: |
+        var=$(sed -ne "s/version=['\"]\([^'\"]*\)['\"] *,.*/\1/p" ./setup.py)
+        IFS='.' read -r -a array <<<"$var"
 
-      # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: echo Hello, world!
+        major="${array[1]}"
+        minor="${array[2]}"
 
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+        if [ "${array[2]}" -eq 9 ]; then
+          echo $major
+          major=$((major + 1))
+          echo $major
+        else
+          minor=$((minor + 1))
+        fi
+
+        version=0.$major.$minor
+
+        sed -i "s/version=['\"]\([^'\"]*\)['\"] *,.*/version=\"$version\",/" ./setup.py        
