@@ -1,9 +1,15 @@
 name: Upload Python Package
 
-on:
-  release:
-    types: [created]
+# on:
+#   release:
+#     types: [created]
 
+on:
+  commit_comment: 
+    branches:
+    - dciborow-patch-1
+    - release/*
+    
 jobs:
   deploy:
     runs-on: ubuntu-latest
