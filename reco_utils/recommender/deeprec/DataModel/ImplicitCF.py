@@ -138,7 +138,7 @@ class ImplicitCF(object):
             .rename(columns={self.col_item: self.col_item + "_interacted"})
         )
         self.R = sp.dok_matrix((self.n_users, self.n_items), dtype=np.float32)
-        self.R[list(self.train[self.col_user]), list(self.train[self.col_item])] = 1.0
+        self.R[self.train[self.col_user], self.train[self.col_item]] = 1.0
 
     def get_norm_adj_mat(self):
         """Load normalized adjacency matrix if it exists, otherwise create (and save) it.
