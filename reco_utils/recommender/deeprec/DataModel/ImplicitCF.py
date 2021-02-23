@@ -18,7 +18,7 @@ class ImplicitCF(object):
     """Data processing class for GCN models which use implicit feedback.
 
     Initialize train and test set, create normalized adjacency matrix and sample data for training epochs.
-    
+
     """
 
     def __init__(
@@ -32,8 +32,8 @@ class ImplicitCF(object):
         col_prediction=DEFAULT_PREDICTION_COL,
         seed=None,
     ):
-        """Constructor 
-        
+        """Constructor
+
         Args:
             adj_dir (str): Directory to save / load adjacency matrices. If it is None, adjacency
                 matrices will be created and will not be saved.
@@ -42,9 +42,9 @@ class ImplicitCF(object):
                 test can be None, if so, we only process the training data.
             col_user (str): User column name.
             col_item (str): Item column name.
-            col_rating (str): Rating column name. 
+            col_rating (str): Rating column name.
             seed (int): Seed.
-        
+
         """
         self.user_idx = None
         self.item_idx = None
@@ -62,13 +62,13 @@ class ImplicitCF(object):
         """Process the dataset to reindex userID and itemID and only keep records with ratings greater than 0.
 
         Args:
-            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating). 
+            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
             test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating).
                 test can be None, if so, we only process the training data.
 
         Returns:
             list: train and test pd.DataFrame Dataset, which have been reindexed and filtered.
-        
+
         """
         df = train if test is None else train.append(test)
 
@@ -108,7 +108,7 @@ class ImplicitCF(object):
 
         Returns:
             list: train and test pandas.DataFrame Dataset, which have been reindexed and filtered.
-        
+
         """
 
         if df is None:
@@ -129,7 +129,7 @@ class ImplicitCF(object):
     def _init_train_data(self):
         """Record items interated with each user in a dataframe self.interact_status, and create adjacency
         matrix self.R.
-        
+
         """
         self.interact_status = (
             self.train.groupby(self.col_user)[self.col_item]
@@ -148,10 +148,12 @@ class ImplicitCF(object):
 
         """
         try:
-            norm_adj_mat = sp.load_npz(self.norm_adj_dir + "/norm_adj_mat.npz")
+            if self.adj_dir is None:
+                raise FileNotFoundError
+            norm_adj_mat = sp.load_npz(self.adj_dir + "/norm_adj_mat.npz")
             print("Already load norm adj matrix.")
 
-        except Exception:
+        except FileNotFoundError:
             norm_adj_mat = self.create_norm_adj_mat()
             if self.adj_dir is not None:
                 sp.save_npz(self.adj_dir + "/norm_adj_mat.npz", norm_adj_mat)
@@ -162,7 +164,7 @@ class ImplicitCF(object):
 
         Returns:
             scipy.sparse.csr_matrix: Normalized adjacency matrix.
-            
+
         """
         adj_mat = sp.dok_matrix(
             (self.n_users + self.n_items, self.n_users + self.n_items), dtype=np.float32
