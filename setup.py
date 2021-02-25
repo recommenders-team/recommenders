@@ -16,7 +16,7 @@ HASH = environ.get("HASH", None)
 if HASH is not None:
     version += ".post" + str(int(time.time()))
 
-name = environ.get("LIBRARY_NAME", "reco_utils")
+name = environ.get("LIBRARY_NAME", "pre_reco_utils")
 
 setup(
     name=name,
