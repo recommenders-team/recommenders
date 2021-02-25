@@ -9,7 +9,7 @@ chdir(path.abspath(path.dirname(__file__)))
 version = __import__("reco_utils.__init__").VERSION
 
 # Get the long description from the README file
-with open(path.join("reco_utils", "README.md"), encoding="utf-8") as f:
+with open("README.md", encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
 HASH = environ.get("HASH", None)
