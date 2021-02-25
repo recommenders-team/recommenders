@@ -49,7 +49,7 @@ DEPENDENCIES = [
     'mock==2.0.0',
     'nltk>=3.4',
     'numpy>=1.13.3',
-    'pytorch-cpu>=1.0.0',
+    'pytorch>=1.0.0',
     'seaborn>=0.8.1',
     'scikit-learn>=0.19.1',
     'scipy>=1.0.0',
@@ -65,7 +65,7 @@ name = environ.get("LIBRARY_NAME", "pre_reco_utils")
 
 setup(
     name=name,
-    version=version,
+    version="2021.2.10",
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
