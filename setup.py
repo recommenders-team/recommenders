@@ -55,7 +55,7 @@ DEPENDENCIES = [
     'scipy>=1.0.0',
     'scikit-surprise>=1.0.6',
     'swig==3.0.12',
-    'lightgbm==2.2.1',
+    'lightgbm>=2.2.1,<3.0',
     'cornac>=1.1.2',
     'papermill>=2.2.0',
     'tqdm>=4.31.1',
