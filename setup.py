@@ -18,7 +18,7 @@ if HASH is not None:
 
 DEPENDENCIES = [
     'flask==1.1.1',
-    'requests==2.24.0',
+    'requests',
     'pandas==1.1.3',
     'azureml-sdk[notebooks,tensorboard]==1.22.0',
     'azure-storage-blob<12.8.0',
@@ -28,7 +28,7 @@ DEPENDENCIES = [
     'category_encoders>=1.3.0',
     'dataclasses>=0.6',
     'hyperopt==0.2.5',
-    'idna==3.1',
+    'idna',
     'locustio==0.999',
     'memory-profiler>=0.54.0',
     'nbconvert==6.0.7',
