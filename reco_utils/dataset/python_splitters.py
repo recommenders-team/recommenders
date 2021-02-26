@@ -17,19 +17,19 @@ from reco_utils.dataset.split_utils import (
 
 
 def python_random_split(data, ratio=0.75, seed=42):
-    """Pandas random splitter. 
+    """Pandas random splitter.
 
     The splitter randomly splits the input data.
 
     Args:
         data (pd.DataFrame): Pandas DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halves and the ratio argument indicates the ratio 
-            of training data set; if it is a list of float numbers, the splitter splits 
-            data into several portions corresponding to the split ratios. If a list is 
+            it splits data into two halves and the ratio argument indicates the ratio
+            of training data set; if it is a list of float numbers, the splitter splits
+            data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
         seed (int): Seed.
-        
+
     Returns:
         list: Splits of the input data as pd.DataFrame.
     """
@@ -97,9 +97,9 @@ def _do_stratification(
         else data.groupby(split_by_column)
     )
 
-    for name, group in df_grouped:
+    for _, group in df_grouped:
         group_splits = split_pandas_data_with_ratios(
-            df_grouped.get_group(name), ratio, shuffle=is_random, seed=seed
+            group, ratio, shuffle=is_random, seed=seed
         )
 
         # Concatenate the list of split dataframes.
@@ -137,13 +137,13 @@ def python_chrono_split(
     Args:
         data (pd.DataFrame): Pandas DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halves and the ratio argument indicates the ratio of 
-            training data set; if it is a list of float numbers, the splitter splits 
-            data into several portions corresponding to the split ratios. If a list is 
+            it splits data into two halves and the ratio argument indicates the ratio of
+            training data set; if it is a list of float numbers, the splitter splits
+            data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
         seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
-        filter_by (str): either "user" or "item", depending on which of the two is to 
+        filter_by (str): either "user" or "item", depending on which of the two is to
             filter with min_rating.
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
@@ -174,7 +174,7 @@ def python_stratified_split(
     seed=42,
 ):
     """Pandas stratified splitter.
-    
+
     For each user / item, the split function takes proportions of ratings which is
     specified by the split ratio(s). The split is stratified.
 
@@ -238,15 +238,15 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
     from the original dataset X. We first create two copies of X; for each user we select a random
     sample of local size ratio (point 1) and erase the remaining ratings, obtaining in this way the
     train set matrix Xtst. The train set matrix is obtained in the opposite way.
-    
+
     Args:
         X (np.array, int): a sparse matrix to be split
         ratio (float): fraction of the entire dataset to constitute the train set
         seed (int): random seed
 
     Returns:
-        np.array, np.array: Xtr is the train set user/item affinity matrix. Xtst is the test set user/item affinity 
-            matrix. 
+        np.array, np.array: Xtr is the train set user/item affinity matrix. Xtst is the test set user/item affinity
+            matrix.
     """
 
     np.random.seed(seed)  # set the random seed
