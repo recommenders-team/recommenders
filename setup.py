@@ -21,7 +21,7 @@ DEPENDENCIES = {
         'flask==1.1.1',
         'requests',
         'pandas==1.1.3',
-        'azureml-sdk[notebooks]==1.22.0',
+        'azureml-sdk==1.22.0',
         'azure-storage-blob<12.8.0',
         'azure-cli-core==2.19.1',
         'azure-mgmt-cosmosdb==6.0.0',
@@ -59,9 +59,10 @@ DEPENDENCIES = {
         'pytorch>=1.0.0',
     ],
     "jupyter": [
+        'azureml-sdk[notebooks]==1.22.0',
         'ipykernel>=4.6.1',
         'jupyter>=1.0.0',        
-        'nbconvert==6.0.7',        
+        'nbconvert==6.0.7',             
     ],
     "test": [
         'black>=18.6b4',        
