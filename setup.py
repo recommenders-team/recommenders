@@ -52,22 +52,22 @@ DEPENDENCIES = {
         'tqdm>=4.31.1',
     ],
     "tensorflow": [
-        'tensorflow>=2.2.0,<2.4',
         'azureml-sdk[notebooks,tensorboard]==1.22.0',
+        'tensorflow>=2.2.0,<2.4',
     ],
     "pytorch": [
         'pytorch>=1.0.0',
     ],
     "jupyter": [
         'ipykernel>=4.6.1',
-        'jupyter>=1.0.0',
-        'scrapbook>=0.5.0',
+        'jupyter>=1.0.0',        
         'nbconvert==6.0.7',        
     ],
     "test": [
+        'black>=18.6b4',        
+        'mock==2.0.0',
         'papermill>=2.2.0',
-        'black>=18.6b4',
-        'mock==2.0.0',        
+        'scrapbook>=0.5.0',
     ]
 }
 
@@ -75,7 +75,7 @@ name = environ.get("LIBRARY_NAME", "pre_reco_utils")
 
 setup(
     name=name,
-    version="2021.2.13",
+    version="2021.2.14",
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
@@ -98,5 +98,6 @@ setup(
     package_dir={"reco_utils": "reco_utils"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
     extras_require=DEPENDENCIES,
+    install_requires[],
     python_requires=">=3.6, <4",
 )
