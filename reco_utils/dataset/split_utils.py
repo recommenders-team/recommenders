@@ -8,7 +8,7 @@ import math
 from reco_utils.common.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
 try:
-    from pyspark.sql.functions import col, broadcast
+    from pyspark.sql import functions as F, Window
 except ImportError:
     pass  # so the environment without spark doesn't break
 
@@ -74,13 +74,19 @@ def min_rating_filter_pandas(
         pd.DataFrame: DataFrame with at least columns of user and item that has been 
             filtered by the given specifications.
     """
-    split_by_column, _ = _check_min_rating_filter(
-        filter_by, min_rating, col_user, col_item
+    split_by_column = _get_column_name(
+        filter_by, col_user, col_item
     )
-    rating_filtered = data.groupby(split_by_column).filter(
-        lambda x: len(x) >= min_rating
+
+    if min_rating < 1:
+        raise ValueError("min_rating should be integer and larger than or equal to 1.")
+
+    return (
+        data
+        .groupby(split_by_column)
+        .filter(lambda x: len(x) >= min_rating)
     )
-    return rating_filtered
+    
 
 
 def min_rating_filter_spark(
@@ -110,32 +116,33 @@ def min_rating_filter_spark(
         spark.DataFrame: DataFrame with at least columns of user and item that has been 
             filtered by the given specifications.
     """
-    split_by_column, split_with_column = _check_min_rating_filter(
-        filter_by, min_rating, col_user, col_item
-    )
-    rating_temp = (
-        data.groupBy(split_by_column)
-        .agg({split_with_column: "count"})
-        .withColumnRenamed("count(" + split_with_column + ")", "n" + split_with_column)
-        .where(col("n" + split_with_column) >= min_rating)
-    )
 
-    rating_filtered = data.join(broadcast(rating_temp), split_by_column).drop(
-        "n" + split_with_column
+    split_by_column = _get_column_name(
+        filter_by, col_user, col_item
     )
-    return rating_filtered
-
-
-def _check_min_rating_filter(filter_by, min_rating, col_user, col_item):
-    if not (filter_by == "user" or filter_by == "item"):
-        raise ValueError("filter_by should be either 'user' or 'item'.")
 
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
 
-    split_by_column = col_user if filter_by == "user" else col_item
-    split_with_column = col_item if filter_by == "user" else col_user
-    return split_by_column, split_with_column
+    if min_rating > 1:
+        e = Window.partitionBy(split_by_column)
+        data = (
+            data
+            .withColumn("_count", F.count(split_by_column).over(window))
+            .where(F.col("_count") >= min_rating)
+            .drop("_count")
+        )
+    
+    return data
+
+
+def _get_column_name(name, col_user, col_item):
+    if name == "user":
+        return col_user
+    elif name == "item":
+        return col_item
+    else:
+        raise ValueError("name should be either 'user' or 'item'.")
 
 
 def split_pandas_data_with_ratios(data, ratios, seed=42, shuffle=False):
