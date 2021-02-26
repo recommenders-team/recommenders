@@ -21,7 +21,7 @@ DEPENDENCIES = {
         'flask==1.1.1',
         'requests',
         'pandas==1.1.3',
-        'azureml-sdk[notebooks,tensorboard]==1.22.0',
+        'azureml-sdk[notebooks]==1.22.0',
         'azure-storage-blob<12.8.0',
         'azure-cli-core==2.19.1',
         'azure-mgmt-cosmosdb==6.0.0',
@@ -60,7 +60,8 @@ DEPENDENCIES = {
         'tqdm>=4.31.1',
     ],
     "tensorflow": [
-        'tensorflow>=2.2.0,<2.4'
+        'tensorflow>=2.2.0,<2.4',
+        'azureml-sdk[notebooks,tensorboard]==1.22.0',
     ]
 }
 
