@@ -76,7 +76,7 @@ name = environ.get("LIBRARY_NAME", "pre_reco_utils")
 
 setup(
     name=name,
-    version="2021.2.16",
+    version="2021.2.17",
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
