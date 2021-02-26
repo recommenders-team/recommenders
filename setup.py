@@ -17,7 +17,7 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 DEPENDENCIES = {
-    "required" = [
+    "required": [
         'flask==1.1.1',
         'requests',
         'pandas==1.1.3',
