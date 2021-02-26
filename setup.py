@@ -55,9 +55,6 @@ DEPENDENCIES = {
         'tensorflow>=2.2.0,<2.4',
         'azureml-sdk[notebooks,tensorboard]==1.22.0',
     ],
-    "pyspark": [
-        'pyspark<3.0',
-    ],
     "pytorch": [
         'pytorch>=1.0.0',
     ],
@@ -78,7 +75,7 @@ name = environ.get("LIBRARY_NAME", "pre_reco_utils")
 
 setup(
     name=name,
-    version="2021.2.12",
+    version="2021.2.13",
     description="Recommender System Utilities",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
