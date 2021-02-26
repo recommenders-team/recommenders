@@ -99,6 +99,6 @@ setup(
     package_dir={"reco_utils": "reco_utils"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
     extras_require=DEPENDENCIES,
-    install_requires[],
+    install_requires=[],
     python_requires=">=3.6, <4",
 )
