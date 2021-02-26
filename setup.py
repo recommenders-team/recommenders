@@ -53,7 +53,7 @@ DEPENDENCIES = {
     ],
     "tensorflow": [
         'azureml-sdk[notebooks,tensorboard]==1.22.0',
-        'tensorflow>=2.2.0,<2.4',
+        'tensorflow==1.15.4',
     ],
     "pytorch": [
         'pytorch>=1.0.0',
