@@ -4,15 +4,7 @@
 import numpy as np
 
 try:
-    from pyspark.sql import Window
-    from pyspark.sql.functions import (
-        col,
-        row_number,
-        broadcast,
-        rand,
-        collect_list,
-        size,
-    )
+    from pyspark.sql import functions as F, Window
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -50,6 +42,100 @@ def spark_random_split(data, ratio=0.75, seed=42):
         return data.randomSplit([ratio, 1 - ratio], seed=seed)
 
 
+def _do_stratification_spark(
+    data,
+    ratio=0.75,
+    min_rating=1,
+    filter_by="user",
+    is_partitioned=True,
+    is_random=True,
+    seed=42,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_timestamp=DEFAULT_TIMESTAMP_COL,
+):
+    """Helper function to perform stratified splits.
+
+        This function splits data in a stratified manner. That is, the same values for the
+        filter_by column are retained in each split, but the corresponding set of entries
+        are divided according to the ratio provided.
+
+        Args:
+            data (spark.DataFrame): Spark DataFrame to be split.
+            ratio (float or list): Ratio for splitting data. If it is a single float number
+                it splits data into two sets and the ratio argument indicates the ratio of
+                training data set; if it is a list of float numbers, the splitter splits 
+                data into several portions corresponding to the split ratios. If a list is 
+                provided and the ratios are not summed to 1, they will be normalized.
+            min_rating (int): minimum number of ratings for user or item.
+            filter_by (str): either "user" or "item", depending on which of the two is to filter
+                with min_rating.
+            is_partitioned (bool): flag to partition data by filter_by column
+            is_random (bool): flag to make split randomly or use timestamp column
+            seed (int): Seed.
+            col_user (str): column name of user IDs.
+            col_item (str): column name of item IDs.
+            col_timestamp (str): column name of timestamps.
+
+        Args:
+
+        Returns:
+    """
+    # A few preliminary checks.
+    if filter_by not in ["user", "item"]:
+        raise ValueError("filter_by should be either 'user' or 'item'.")
+
+    if min_rating < 1:
+        raise ValueError("min_rating should be integer and larger than or equal to 1.")
+
+    if col_user not in data.columns:
+        raise ValueError("Schema of data not valid. Missing User Col")
+
+    if col_item not in data.columns:
+        raise ValueError("Schema of data not valid. Missing Item Col")
+
+    if not is_random:
+        if col_timestamp not in data.columns:
+            raise ValueError("Schema of data not valid. Missing Timestamp Col")
+
+    if min_rating > 1:
+        data = min_rating_filter_spark(
+            data=data,
+            min_rating=min_rating,
+            filter_by=filter_by,
+            col_user=col_user,
+            col_item=col_item,
+        )
+
+    split_by = col_user if filter_by == "user" else col_item
+    partition_by = split_by if is_partitioned else []
+    order_by = F.rand(seed=seed) if is_random else F.col(col_timestamp)
+
+    window_count = Window.partitionBy(partition_by)
+    window_spec = Window.partitionBy(partition_by).orderBy(order_by)
+
+    data = (
+      data
+      .withColumn("_count", F.count(split_by).over(window_count))
+      .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
+      .drop("_count")
+    )
+
+    multi_split, ratio = process_split_ratio(ratio)
+    ratio = ratio if multi_split else [ratio, 1 - ratio]
+
+    splits = []
+    prev_split = None 
+    for split in np.cumsum(ratio):
+        condition = F.col("_rank") <= split
+        if prev_split is not None:
+            condition &= F.col("_rank") > prev_split
+        splits.append(data.filter(condition).drop("_rank"))
+        prev_split = split
+
+    return splits
+
+
 def spark_chrono_split(
     data,
     ratio=0.75,
@@ -58,6 +144,7 @@ def spark_chrono_split(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_timestamp=DEFAULT_TIMESTAMP_COL,
+    no_partition=False,
 ):
     """Spark chronological splitter.
 
@@ -79,56 +166,22 @@ def spark_chrono_split(
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
         col_timestamp (str): column name of timestamps.
+        no_partition (bool): set to enable more accurate and less efficient splitting.
 
     Returns:
         list: Splits of the input data as spark.DataFrame.
     """
-    if not (filter_by == "user" or filter_by == "item"):
-        raise ValueError("filter_by should be either 'user' or 'item'.")
 
-    if min_rating < 1:
-        raise ValueError("min_rating should be integer and larger than or equal to 1.")
-
-    multi_split, ratio = process_split_ratio(ratio)
-
-    split_by_column = col_user if filter_by == "user" else col_item
-
-    if min_rating > 1:
-        data = min_rating_filter_spark(
-            data,
-            min_rating=min_rating,
-            filter_by=filter_by,
-            col_user=col_user,
-            col_item=col_item,
-        )
-
-    ratio = ratio if multi_split else [ratio, 1 - ratio]
-    ratio_index = np.cumsum(ratio)
-
-    window_count = Window.partitionBy(split_by_column)
-    window_spec = Window.partitionBy(split_by_column).orderBy(col(col_timestamp))
-
-    rating_all = data.withColumn(
-        "count", size(collect_list(col_timestamp).over(window_count))
+    return _do_stratification_spark(
+        data=data,
+        ratio=ratio,
+        min_rating=min_rating,
+        filter_by=filter_by,
+        is_random=False,
+        col_user=col_user,
+        col_item=col_item,
+        col_timestamp=col_timestamp,
     )
-
-    rating_rank = rating_all.withColumn(
-        "rank", row_number().over(window_spec) / col("count")
-    )
-
-    splits = []
-    for i, _ in enumerate(ratio_index):
-        if i == 0:
-            rating_split = rating_rank.filter(col("rank") <= ratio_index[i])
-        else:
-            rating_split = rating_rank.filter(
-                (col("rank") <= ratio_index[i]) & (col("rank") > ratio_index[i - 1])
-            )
-
-        splits.append(rating_split)
-
-    return splits
-
 
 def spark_stratified_split(
     data,
@@ -165,51 +218,15 @@ def spark_stratified_split(
     Returns:
         list: Splits of the input data as spark.DataFrame.
     """
-    if not (filter_by == "user" or filter_by == "item"):
-        raise ValueError("filter_by should be either 'user' or 'item'.")
-
-    if min_rating < 1:
-        raise ValueError("min_rating should be integer and larger than or equal to 1.")
-
-    multi_split, ratio = process_split_ratio(ratio)
-
-    split_by_column = col_user if filter_by == "user" else col_item
-
-    if min_rating > 1:
-        data = min_rating_filter_spark(
-            data,
-            min_rating=min_rating,
-            filter_by=filter_by,
-            col_user=col_user,
-            col_item=col_item,
-        )
-
-    ratio = ratio if multi_split else [ratio, 1 - ratio]
-    ratio_index = np.cumsum(ratio)
-
-    window_count = Window.partitionBy(split_by_column)
-    window_spec = Window.partitionBy(split_by_column).orderBy(rand(seed=seed))
-
-    rating_all = data.withColumn(
-        "count", size(collect_list(col_rating).over(window_count))
+    return _do_stratification_spark(
+        data=data,
+        ratio=ratio,
+        min_rating=min_rating,
+        filter_by=filter_by,
+        seed=seed,
+        col_user=col_user,
+        col_item=col_item,
     )
-    rating_rank = rating_all.withColumn(
-        "rank", row_number().over(window_spec) / col("count")
-    )
-
-    splits = []
-    for i, _ in enumerate(ratio_index):
-        if i == 0:
-            rating_split = rating_rank.filter(col("rank") <= ratio_index[i])
-        else:
-            rating_split = rating_rank.filter(
-                (col("rank") <= ratio_index[i]) & (col("rank") > ratio_index[i - 1])
-            )
-
-        splits.append(rating_split)
-
-    return splits
-
 
 def spark_timestamp_split(
     data,
@@ -240,28 +257,12 @@ def spark_timestamp_split(
     Returns:
         list: Splits of the input data as spark.DataFrame.
     """
-    multi_split, ratio = process_split_ratio(ratio)
-
-    ratio = ratio if multi_split else [ratio, 1 - ratio]
-    ratio_index = np.cumsum(ratio)
-
-    window_spec = Window.orderBy(col(col_timestamp))
-    rating = data.withColumn("rank", row_number().over(window_spec))
-
-    data_count = rating.count()
-    rating_rank = rating.withColumn("rank", row_number().over(window_spec) / data_count)
-
-    splits = []
-    for i, _ in enumerate(ratio_index):
-        if i == 0:
-            rating_split = rating_rank.filter(col("rank") <= ratio_index[i]).drop(
-                "rank"
-            )
-        else:
-            rating_split = rating_rank.filter(
-                (col("rank") <= ratio_index[i]) & (col("rank") > ratio_index[i - 1])
-            ).drop("rank")
-
-        splits.append(rating_split)
-
-    return splits
+    return _do_stratification_spark(
+        data=data,
+        ratio=ratio,
+        is_random=False,
+        is_partitioned=False,
+        col_user=col_user,
+        col_item=col_item,
+        col_timestamp=col_timestamp,
+    )
