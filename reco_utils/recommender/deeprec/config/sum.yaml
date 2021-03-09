@@ -8,14 +8,17 @@ data:
 #model
 model:
     method : classification # classification or regression
-    model_type : GRU4Rec
+    model_type : SUM
     layer_sizes : [100, 64]  # layers' size of DNN. In this example, DNN has two layers, and each layer has 100 hidden nodes.
     activation : [relu, relu] # activation function for DNN
     user_dropout: True 
-    dropout : [0.0, 0.0]  #drop out values for DNN layer
+    dropout : [0., 0.]  #drop out values for DNN layer
     item_embedding_dim : 32 # the embedding dimension of items
     cate_embedding_dim : 8  # the embedding dimension of categories
     user_embedding_dim : 16 # the embedding dimension of users
+    slots: 3 # number of momory channels
+    attention_size: 32 # size of hidden layers in attention network
+    cell: SUM
 
 #train
 #init_method: normal,tnormal,uniform,he_normal,he_uniform,xavier_normal,xavier_uniform

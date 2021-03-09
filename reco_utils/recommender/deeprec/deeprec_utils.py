@@ -469,6 +469,9 @@ def create_hparams(flags):
         decay=flags["decay"] if "decay" in flags else None,
         eval_epoch=flags["eval_epoch"] if "eval_epoch" in flags else None,
         top_k=flags["top_k"] if "top_k" in flags else None,
+        # sum
+        slots=flags["slots"] if "slots" in flags else 5,
+        cell=flags["cell"] if "cell" in flags else "SUM",
     )
 
 
