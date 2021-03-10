@@ -12,7 +12,7 @@ model:
     layer_sizes : [100, 64]  # layers' size of DNN. In this example, DNN has two layers, and each layer has 100 hidden nodes.
     activation : [relu, relu] # activation function for DNN
     user_dropout: True 
-    dropout : [0.0, 0.0]  #drop out values for DNN layer
+    dropout : [0.3, 0.3]  #drop out values for DNN layer
     item_embedding_dim : 32 # the embedding dimension of items
     cate_embedding_dim : 8  # the embedding dimension of categories
     user_embedding_dim : 16 # the embedding dimension of users

@@ -16,9 +16,9 @@ model:
     item_embedding_dim : 32 # the embedding dimension of items
     cate_embedding_dim : 8  # the embedding dimension of categories
     user_embedding_dim : 16 # the embedding dimension of users
-    slots: 3 # number of momory channels
+    slots: 4 # number of momory channels
     attention_size: 32 # size of hidden layers in attention network
-    cell: SUM
+    cell: SUM  ## which type of cell to use in SUM model.  Supported values are ['SUM', 'SUMV2']
 
 #train
 #init_method: normal,tnormal,uniform,he_normal,he_uniform,xavier_normal,xavier_uniform

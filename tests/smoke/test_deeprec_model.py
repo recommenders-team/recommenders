@@ -159,7 +159,7 @@ def test_model_slirec(resource_path):
 
     input_creator = SequentialIterator
     model = SLI_RECModel(hparams, input_creator)
-    assert model.run_eval(test_file, num_ngs=test_num_ngs) is not None
+    assert model.run_eval(valid_file, num_ngs=valid_num_ngs) is not None
     assert isinstance(
         model.fit(train_file, valid_file, valid_num_ngs=valid_num_ngs), BaseModel
     )
@@ -234,11 +234,11 @@ def test_model_sum(resource_path):
 
     input_creator = SequentialIterator
     model = SUMModel(hparams, input_creator)
-    assert model.run_eval(test_file, num_ngs=test_num_ngs) is not None
+    assert model.run_eval(valid_file, num_ngs=valid_num_ngs) is not None
     assert isinstance(
         model.fit(train_file, valid_file, valid_num_ngs=valid_num_ngs), BaseModel
     )
-    assert model.predict(test_file, output_file) is not None
+    assert model.predict(valid_file, output_file) is not None
 
 
 @pytest.mark.smoke
