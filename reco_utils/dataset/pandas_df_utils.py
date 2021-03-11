@@ -269,7 +269,10 @@ def negative_feedback_sampler(
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
     col_label=DEFAULT_LABEL_COL,
+    col_feedback="feedback",
     ratio_neg_per_user=1,
+    pos_value=1,
+    neg_value=0,
     seed=42,
 ):
     """Utility function to sample negative feedback from user-item interaction dataset.
@@ -286,11 +289,15 @@ def negative_feedback_sampler(
         df (pd.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
-        col_label (str): label column name. It is used for the generated columns where labels
-        of positive and negative feedback, i.e., 1 and 0, respectively, in the output dataframe.
+        col_label (str): label column name in df. 
+        col_feedback (str): feedback column name in the returned data frame; it is used for the generated column 
+            of positive and negative feedback.
         ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user.
-        If the samples exceed the number of total possible negative feedback samples, it will be reduced to the number
-        of all the possible samples.
+            If the samples exceed the number of total possible negative feedback samples, it will be reduced to the 
+            number of all the possible samples.
+        pos_value (float): value of positive feedback.
+        neg_value (float): value of negative feedback.
+        inplace (bool): 
         seed (int): seed for the random state of the sampling function.
 
     Returns:
@@ -333,19 +340,18 @@ def negative_feedback_sampler(
             data={
                 col_user: user_df[col_user][0],
                 col_item: new_items,
-                col_label: 0,
+                col_label: neg_value,
             }
         )
         return pd.concat([user_df, new_df], ignore_index=True)
 
     res_df = df.copy()
-    res_df[col_label] = 1
+    res_df[col_label] = pos_value
     return (
         res_df.groupby(col_user)
         .apply(sample_items)
         .reset_index(drop=True)
-        .sort_values(col_user)
-        .rename(columns={col_label: "feedback"})
+        .rename(columns={col_label: col_feedback})
     )
 
 

@@ -111,6 +111,20 @@ def test_negative_feedback_sampler():
         == res_df.sort_values(["userID", "itemID"]).values
     )
 
+    # Test other options
+    sample_df = negative_feedback_sampler(
+        df,
+        col_user="userID",
+        col_item="itemID",
+        col_label="rating",
+        col_feedback="test_feedback",
+        pos_value = 2.4,
+        neg_value = 0.2,
+        ratio_neg_per_user=3,
+    )
+    assert sample_df.columns[2] == "test_feedback"
+    assert set(sample_df["test_feedback"].unique()) == set([2.4, 0.2])
+
 
 def test_filter_by():
     user_df = pd.DataFrame(
