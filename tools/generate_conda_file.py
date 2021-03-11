@@ -46,7 +46,7 @@ CONDA_BASE = {
     "mock": "mock==2.0.0",
     "nltk": "nltk>=3.4",
     "numpy": "numpy>=1.13.3",
-    "pandas": "pandas>=0.23.4,<1.0.0",
+    "pandas": "pandas>1.0.3,<=1.2.2",
     "pip": "pip>=19.2",
     "pytest": "pytest>=3.6.4",
     "pytorch": "pytorch-cpu>=1.0.0",
@@ -87,13 +87,13 @@ PIP_BASE = {
     "pymanopt": "pymanopt==0.2.5",
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
-    "tensorflow": "tensorflow==1.15.2",
+    "tensorflow": "tensorflow==1.15.4",
     "scrapbook": "scrapbook>=0.5.0",
 }
 
 PIP_GPU = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
-    "tensorflow": "tensorflow-gpu==1.15.2",
+    "tensorflow": "tensorflow-gpu==1.15.4",
 }
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
