@@ -125,7 +125,7 @@ def min_rating_filter_spark(
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
 
     if min_rating > 1:
-        e = Window.partitionBy(split_by_column)
+        window = Window.partitionBy(split_by_column)
         data = (
             data
             .withColumn("_count", F.count(split_by_column).over(window))
