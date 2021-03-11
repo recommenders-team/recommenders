@@ -267,9 +267,11 @@ def test_slirec_quickstart_integration(
 
     for key, value in expected_values.items():
         assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
-        assert results[key]["logloss"] == pytest.approx(
-            value["logloss"], rel=TOL, abs=ABS_TOL
-        )
+
+        ## disable logloss check, because so far SLi-Rec uses ranking loss, not a point-wise loss
+        # assert results[key]["logloss"] == pytest.approx(
+        #     value["logloss"], rel=TOL, abs=ABS_TOL
+        # )
 
 
 @pytest.mark.gpu
