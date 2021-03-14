@@ -10,9 +10,12 @@ import gzip
 import random
 import logging
 import _pickle as cPickle
+
+from reco_utils.common.constants import SEED
 from reco_utils.dataset.download_utils import maybe_download, download_path
 
 
+random.seed(SEED)
 logger = logging.getLogger()
 
 

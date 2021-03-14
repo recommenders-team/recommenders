@@ -16,6 +16,7 @@ from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import DKNItem2ite
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.recommender.deeprec.models.sequential.nextitnet import NextItNetModel
+from reco_utils.recommender.deeprec.models.sequential.sum import SUMModel
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.io.nextitnet_iterator import NextItNetIterator
 from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
@@ -128,6 +129,16 @@ def test_slirec_component_definition(resource_path):
         "config",
         "nextitnet.yaml",
     )
+    yaml_file_sum = os.path.join(
+        resource_path,
+        "..",
+        "..",
+        "reco_utils",
+        "recommender",
+        "deeprec",
+        "config",
+        "sum.yaml",
+    )
     train_file = os.path.join(data_path, r"train_data")
 
     if not os.path.exists(train_file):
@@ -178,6 +189,11 @@ def test_slirec_component_definition(resource_path):
     # nextitnet model
     hparams_nextitnet = prepare_hparams(yaml_file_nextitnet, train_num_ngs=4)
     model_nextitnet = NextItNetModel(hparams_nextitnet, NextItNetIterator)
+    # sum model
+    hparams_sum = prepare_hparams(
+        yaml_file_sum, train_num_ngs=4
+    )  # confirm the train_num_ngs when initializing a SLi_Rec model.
+    model_sum = SUMModel(hparams_sum, SequentialIterator)
 
     assert model.logit is not None
     assert model.update is not None
