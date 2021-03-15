@@ -39,7 +39,7 @@ install_requires = [
 ]
 
 extras_require = {
-    "recommender": [
+    "recommenders": [
         "bottleneck>=1.2.1,<2",
         "category_encoders>=1.3.0,<2",
         "cornac>=1.1.2,<2",
@@ -58,7 +58,7 @@ extras_require = {
         "locust>=1,>2",
         "papermill>=2.1.2,<3",
         "scrapbook>=0.5.0,<1.0.0",        
-    ]
+    ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
         "tensorflow==1.15.4",
@@ -83,7 +83,7 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 # the following dependencies need additional testing
 extras_require["beta"] = [
     "azureml-sdk[notebooks,tensorboard]>=1.0.69,<2",
-    "xlearn=0.40a1",
+    "xlearn==0.40a1",
     "vowpal_wabbit>=8.9.0,<9",
 ]
 
