@@ -4,6 +4,7 @@
 import pytest
 import os
 import papermill as pm
+import tensorflow as tf
 from reco_utils.recommender.deeprec.deeprec_utils import (
     download_deeprec_resources,
     prepare_hparams,
@@ -23,16 +24,33 @@ from reco_utils.dataset import movielens
 from reco_utils.dataset.python_splitters import python_stratified_split
 
 
-@pytest.fixture
-def resource_path():
-    return os.path.dirname(os.path.realpath(__file__))
+@pytest.mark.smoke
+@pytest.mark.gpu
+@pytest.mark.deeprec
+def test_FFM_iterator(deeprec_resource_path):
+    data_path = os.path.join(deeprec_resource_path, "xdeepfm")
+    yaml_file = os.path.join(data_path, "xDeepFM.yaml")
+    data_file = os.path.join(data_path, "sample_FFM_data.txt")
+
+    if not os.path.exists(yaml_file):
+        download_deeprec_resources(
+            "https://recodatasets.z20.web.core.windows.net/deeprec/",
+            data_path,
+            "xdeepfmresources.zip",
+        )
+
+    hparams = prepare_hparams(yaml_file)
+    iterator = FFMTextIterator(hparams, tf.Graph())
+    assert iterator is not None
+    for res in iterator.load_data_from_file(data_file):
+        assert isinstance(res, tuple)
 
 
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.deeprec
-def test_model_xdeepfm(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "xdeepfm")
+def test_model_xdeepfm(deeprec_resource_path):
+    data_path = os.path.join(deeprec_resource_path, "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
     data_file = os.path.join(data_path, "sample_FFM_data.txt")
     output_file = os.path.join(data_path, "output.txt")
@@ -58,8 +76,8 @@ def test_model_xdeepfm(resource_path):
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.deeprec
-def test_model_dkn(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
+def test_model_dkn(deeprec_resource_path):
+    data_path = os.path.join(deeprec_resource_path, "dkn")
     yaml_file = os.path.join(data_path, r'dkn.yaml')
     train_file = os.path.join(data_path, r'train_mind_demo.txt')
     valid_file = os.path.join(data_path, r'valid_mind_demo.txt')
@@ -95,18 +113,9 @@ def test_model_dkn(resource_path):
 @pytest.mark.gpu
 @pytest.mark.deeprec
 @pytest.mark.sequential
-def test_model_slirec(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "slirec")
-    yaml_file = os.path.join(
-        resource_path,
-        "..",
-        "..",
-        "reco_utils",
-        "recommender",
-        "deeprec",
-        "config",
-        "sli_rec.yaml",
-    )
+def test_model_slirec(deeprec_resource_path, deeprec_config_path):
+    data_path = os.path.join(deeprec_resource_path, "slirec")
+    yaml_file = os.path.join(deeprec_config_path, "sli_rec.yaml")
     train_file = os.path.join(data_path, r"train_data")
     valid_file = os.path.join(data_path, r"valid_data")
     test_file = os.path.join(data_path, r"test_data")
@@ -170,18 +179,9 @@ def test_model_slirec(resource_path):
 @pytest.mark.gpu
 @pytest.mark.deeprec
 @pytest.mark.sequential
-def test_model_sum(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "slirec")
-    yaml_file = os.path.join(
-        resource_path,
-        "..",
-        "..",
-        "reco_utils",
-        "recommender",
-        "deeprec",
-        "config",
-        "sum.yaml",
-    )
+def test_model_sum(deeprec_resource_path, deeprec_config_path):
+    data_path = os.path.join(deeprec_resource_path, "slirec")
+    yaml_file = os.path.join(deeprec_config_path, "sum.yaml")
     train_file = os.path.join(data_path, r"train_data")
     valid_file = os.path.join(data_path, r"valid_data")
     test_file = os.path.join(data_path, r"test_data")
@@ -244,18 +244,9 @@ def test_model_sum(resource_path):
 @pytest.mark.smoke
 @pytest.mark.gpu
 @pytest.mark.deeprec
-def test_model_lightgcn(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
-    yaml_file = os.path.join(
-        resource_path,
-        "..",
-        "..",
-        "reco_utils",
-        "recommender",
-        "deeprec",
-        "config",
-        "lightgcn.yaml",
-    )
+def test_model_lightgcn(deeprec_resource_path, deeprec_config_path):
+    data_path = os.path.join(deeprec_resource_path, "dkn")
+    yaml_file = os.path.join(deeprec_config_path, "lightgcn.yaml")
     user_file = os.path.join(data_path, r"user_embeddings.csv")
     item_file = os.path.join(data_path, r"item_embeddings.csv")
 

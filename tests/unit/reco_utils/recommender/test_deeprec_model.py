@@ -25,14 +25,9 @@ from reco_utils.dataset import movielens
 from reco_utils.dataset.python_splitters import python_stratified_split
 
 
-@pytest.fixture
-def resource_path():
-    return os.path.dirname(os.path.realpath(__file__))
-
-
 @pytest.mark.gpu
-def test_xdeepfm_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "resources", "deeprec", "xdeepfm")
+def test_xdeepfm_component_definition(deeprec_resource_path):
+    data_path = os.path.join(deeprec_resource_path, "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
 
     if not os.path.exists(yaml_file):
@@ -51,8 +46,8 @@ def test_xdeepfm_component_definition(resource_path):
 
 
 @pytest.mark.gpu
-def test_dkn_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "resources", "deeprec", "dkn")
+def test_dkn_component_definition(deeprec_resource_path):
+    data_path = os.path.join(deeprec_resource_path, "dkn")
     yaml_file = os.path.join(data_path, "dkn.yaml")
     news_feature_file = os.path.join(data_path, r'doc_feature.txt')
     user_history_file = os.path.join(data_path, r'user_history.txt')
@@ -107,44 +102,11 @@ def test_dkn_component_definition(resource_path):
 
 
 @pytest.mark.gpu
-def test_slirec_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "resources", "deeprec", "slirec")
-    yaml_file = os.path.join(
-        resource_path,
-        "..",
-        "..",
-        "..",
-        "..",
-        "reco_utils",
-        "recommender",
-        "deeprec",
-        "config",
-        "sli_rec.yaml",
-    )
-    yaml_file_nextitnet = os.path.join(
-        resource_path,
-        "..",
-        "..",
-        "..",
-        "..",
-        "reco_utils",
-        "recommender",
-        "deeprec",
-        "config",
-        "nextitnet.yaml",
-    )
-    yaml_file_sum = os.path.join(
-        resource_path,
-        "..",
-        "..",
-        "..",
-        "..",
-        "reco_utils",
-        "recommender",
-        "deeprec",
-        "config",
-        "sum.yaml",
-    )
+def test_slirec_component_definition(deeprec_resource_path, deeprec_config_path):
+    data_path = os.path.join(deeprec_resource_path, "slirec")
+    yaml_file = os.path.join(deeprec_config_path, "sli_rec.yaml")
+    yaml_file_nextitnet = os.path.join(deeprec_config_path, "nextitnet.yaml")
+    yaml_file_sum = os.path.join(deeprec_config_path, "sum.yaml")
     train_file = os.path.join(data_path, r"train_data")
 
     if not os.path.exists(train_file):
@@ -209,20 +171,10 @@ def test_slirec_component_definition(resource_path):
     assert model_nextitnet.update is not None
     assert model_nextitnet.iterator is not None
 
+
 @pytest.mark.gpu
-def test_lightgcn_component_definition(resource_path):
-    yaml_file = os.path.join(
-        resource_path,
-        "..",
-        "..",
-        "..",
-        "..",
-        "reco_utils",
-        "recommender",
-        "deeprec",
-        "config",
-        "lightgcn.yaml",
-    )
+def test_lightgcn_component_definition(deeprec_config_path):
+    yaml_file = os.path.join(deeprec_config_path, "lightgcn.yaml")
 
     df = movielens.load_pandas_df(size="100k")
     train, test = python_stratified_split(df, ratio=0.75)

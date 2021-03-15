@@ -17,32 +17,32 @@ from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_model_nrms(tmp):
-    train_news_file = os.path.join(tmp, "train", r"news.tsv")
-    train_behaviors_file = os.path.join(tmp, "train", r"behaviors.tsv")
-    valid_news_file = os.path.join(tmp, "valid", r"news.tsv")
-    valid_behaviors_file = os.path.join(tmp, "valid", r"behaviors.tsv")
-    wordEmb_file = os.path.join(tmp, "utils", "embedding.npy")
-    userDict_file = os.path.join(tmp, "utils", "uid2index.pkl")
-    wordDict_file = os.path.join(tmp, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(tmp, "utils", r"nrms.yaml")
+def test_model_nrms(mind_resource_path):
+    train_news_file = os.path.join(mind_resource_path, "train", r"news.tsv")
+    train_behaviors_file = os.path.join(mind_resource_path, "train", r"behaviors.tsv")
+    valid_news_file = os.path.join(mind_resource_path, "valid", r"news.tsv")
+    valid_behaviors_file = os.path.join(mind_resource_path, "valid", r"behaviors.tsv")
+    wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
+    userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
+    wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
+    yaml_file = os.path.join(mind_resource_path, "utils", r"nrms.yaml")
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "train"),
+            os.path.join(mind_resource_path, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "valid"),
+            os.path.join(mind_resource_path, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "utils"),
+            os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
 
@@ -69,34 +69,34 @@ def test_model_nrms(tmp):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_model_naml(tmp):
-    train_news_file = os.path.join(tmp, "train", r"news.tsv")
-    train_behaviors_file = os.path.join(tmp, "train", r"behaviors.tsv")
-    valid_news_file = os.path.join(tmp, "valid", r"news.tsv")
-    valid_behaviors_file = os.path.join(tmp, "valid", r"behaviors.tsv")
-    wordEmb_file = os.path.join(tmp, "utils", "embedding_all.npy")
-    userDict_file = os.path.join(tmp, "utils", "uid2index.pkl")
-    wordDict_file = os.path.join(tmp, "utils", "word_dict_all.pkl")
-    vertDict_file = os.path.join(tmp, "utils", "vert_dict.pkl")
-    subvertDict_file = os.path.join(tmp, "utils", "subvert_dict.pkl")
-    yaml_file = os.path.join(tmp, "utils", r"naml.yaml")
+def test_model_naml(mind_resource_path):
+    train_news_file = os.path.join(mind_resource_path, "train", r"news.tsv")
+    train_behaviors_file = os.path.join(mind_resource_path, "train", r"behaviors.tsv")
+    valid_news_file = os.path.join(mind_resource_path, "valid", r"news.tsv")
+    valid_behaviors_file = os.path.join(mind_resource_path, "valid", r"behaviors.tsv")
+    wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding_all.npy")
+    userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
+    wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict_all.pkl")
+    vertDict_file = os.path.join(mind_resource_path, "utils", "vert_dict.pkl")
+    subvertDict_file = os.path.join(mind_resource_path, "utils", "subvert_dict.pkl")
+    yaml_file = os.path.join(mind_resource_path, "utils", r"naml.yaml")
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "train"),
+            os.path.join(mind_resource_path, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "valid"),
+            os.path.join(mind_resource_path, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "utils"),
+            os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
 
@@ -123,32 +123,32 @@ def test_model_naml(tmp):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_model_lstur(tmp):
-    train_news_file = os.path.join(tmp, "train", r"news.tsv")
-    train_behaviors_file = os.path.join(tmp, "train", r"behaviors.tsv")
-    valid_news_file = os.path.join(tmp, "valid", r"news.tsv")
-    valid_behaviors_file = os.path.join(tmp, "valid", r"behaviors.tsv")
-    wordEmb_file = os.path.join(tmp, "utils", "embedding.npy")
-    userDict_file = os.path.join(tmp, "utils", "uid2index.pkl")
-    wordDict_file = os.path.join(tmp, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(tmp, "utils", r"lstur.yaml")
+def test_model_lstur(mind_resource_path):
+    train_news_file = os.path.join(mind_resource_path, "train", r"news.tsv")
+    train_behaviors_file = os.path.join(mind_resource_path, "train", r"behaviors.tsv")
+    valid_news_file = os.path.join(mind_resource_path, "valid", r"news.tsv")
+    valid_behaviors_file = os.path.join(mind_resource_path, "valid", r"behaviors.tsv")
+    wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
+    userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
+    wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
+    yaml_file = os.path.join(mind_resource_path, "utils", r"lstur.yaml")
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "train"),
+            os.path.join(mind_resource_path, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "valid"),
+            os.path.join(mind_resource_path, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "utils"),
+            os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
 
@@ -175,32 +175,32 @@ def test_model_lstur(tmp):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_model_npa(tmp):
-    train_news_file = os.path.join(tmp, "train", r"news.tsv")
-    train_behaviors_file = os.path.join(tmp, "train", r"behaviors.tsv")
-    valid_news_file = os.path.join(tmp, "valid", r"news.tsv")
-    valid_behaviors_file = os.path.join(tmp, "valid", r"behaviors.tsv")
-    wordEmb_file = os.path.join(tmp, "utils", "embedding.npy")
-    userDict_file = os.path.join(tmp, "utils", "uid2index.pkl")
-    wordDict_file = os.path.join(tmp, "utils", "word_dict.pkl")
-    yaml_file = os.path.join(tmp, "utils", r"lstur.yaml")
+def test_model_npa(mind_resource_path):
+    train_news_file = os.path.join(mind_resource_path, "train", r"news.tsv")
+    train_behaviors_file = os.path.join(mind_resource_path, "train", r"behaviors.tsv")
+    valid_news_file = os.path.join(mind_resource_path, "valid", r"news.tsv")
+    valid_behaviors_file = os.path.join(mind_resource_path, "valid", r"behaviors.tsv")
+    wordEmb_file = os.path.join(mind_resource_path, "utils", "embedding.npy")
+    userDict_file = os.path.join(mind_resource_path, "utils", "uid2index.pkl")
+    wordDict_file = os.path.join(mind_resource_path, "utils", "word_dict.pkl")
+    yaml_file = os.path.join(mind_resource_path, "utils", r"lstur.yaml")
 
     if not os.path.exists(train_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "train"),
+            os.path.join(mind_resource_path, "train"),
             "MINDdemo_train.zip",
         )
     if not os.path.exists(valid_news_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "valid"),
+            os.path.join(mind_resource_path, "valid"),
             "MINDdemo_dev.zip",
         )
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(tmp, "utils"),
+            os.path.join(mind_resource_path, "utils"),
             "MINDdemo_utils.zip",
         )
 

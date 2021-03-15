@@ -19,6 +19,7 @@ def test_gpu_vm():
     assert get_number_gpus() >= 1
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_ncf_smoke(notebooks, output_notebook, kernel_name):
@@ -39,6 +40,7 @@ def test_ncf_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.0879193, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
@@ -66,6 +68,7 @@ def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall2"] == pytest.approx(0.0584491, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_fastai_smoke(notebooks, output_notebook, kernel_name):
@@ -90,6 +93,7 @@ def test_fastai_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.058747, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
@@ -116,6 +120,7 @@ def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
     assert results["res_real"]["logloss"] == pytest.approx(0.508, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_wide_deep_smoke(notebooks, output_notebook, kernel_name, tmp):
@@ -144,6 +149,7 @@ def test_wide_deep_smoke(notebooks, output_notebook, kernel_name, tmp):
     assert results["precision_at_k"] == pytest.approx(0.158961, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_naml_smoke(notebooks, output_notebook, kernel_name):
@@ -164,6 +170,7 @@ def test_naml_smoke(notebooks, output_notebook, kernel_name):
     assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2512, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_nrms_smoke(notebooks, output_notebook, kernel_name):
@@ -184,6 +191,7 @@ def test_nrms_smoke(notebooks, output_notebook, kernel_name):
     assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2457, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_npa_smoke(notebooks, output_notebook, kernel_name):
@@ -204,6 +212,7 @@ def test_npa_smoke(notebooks, output_notebook, kernel_name):
     assert results["res_syn"]["mean_mrr"] == pytest.approx(0.255, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
 def test_lstur_smoke(notebooks, output_notebook, kernel_name):

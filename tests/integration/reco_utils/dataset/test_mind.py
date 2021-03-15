@@ -43,6 +43,7 @@ def test_extract_mind(tmp):
     assert statinfo.st_size == 1044588
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 def test_mind_utils_integration(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["mind_utils"]

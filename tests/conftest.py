@@ -13,6 +13,7 @@ import csv
 import codecs
 import datetime
 import os
+from pathlib import Path
 from tempfile import TemporaryDirectory
 import urllib.request
 
@@ -379,7 +380,6 @@ def python_dataset_ncf(test_specs_ncf):
 
 ### RBM Fixtures
 
-
 @pytest.fixture(scope="module")
 def test_specs():
     return {
@@ -426,3 +426,20 @@ def affinity_matrix(test_specs):
     )
 
     return (Xtr, Xtst)
+
+
+### DeepRec Fixtures
+
+@pytest.fixture(scope="session")
+def deeprec_resource_path():
+    return Path(__file__).absolute().parent.joinpath("resources", "deeprec")
+
+
+@pytest.fixture(scope="session")
+def mind_resource_path(deeprec_resource_path):
+    return Path(__file__).absolute().parent.joinpath("resources", "mind")
+
+
+@pytest.fixture(scope="module")
+def deeprec_config_path():
+    return Path(__file__).absolute().parents[1].joinpath("reco_utils", "recommender", "deeprec", "config")

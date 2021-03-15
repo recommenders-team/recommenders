@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import os
+from pathlib import Path
 import pytest
 import papermill as pm
 import scrapbook as sb
@@ -15,7 +15,7 @@ def test_is_jupyter(output_notebook, kernel_name):
     assert is_databricks() is False
 
     # Test on Jupyter notebook
-    path = os.path.join("tests", "unit", "test_notebook_utils.ipynb")
+    path = Path(__file__).absolute().parent.joinpath("test_notebook_utils.ipynb")
     pm.execute_notebook(
         path, output_notebook, kernel_name=kernel_name,
     )
