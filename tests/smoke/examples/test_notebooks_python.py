@@ -5,23 +5,21 @@ import pytest
 import papermill as pm
 import scrapbook as sb
 
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
-
 
 TOL = 0.05
 ABS_TOL = 0.05
 
 
 @pytest.mark.smoke
-def test_sar_single_node_smoke(notebooks):
+def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["sar_single_node"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -32,15 +30,15 @@ def test_sar_single_node_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_baseline_deep_dive_smoke(notebooks):
+def test_baseline_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["baseline_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -55,15 +53,15 @@ def test_baseline_deep_dive_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_surprise_svd_smoke(notebooks):
+def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -78,15 +76,15 @@ def test_surprise_svd_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_vw_deep_dive_smoke(notebooks):
+def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -101,12 +99,12 @@ def test_vw_deep_dive_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_lightgbm_quickstart_smoke(notebooks):
+def test_lightgbm_quickstart_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["lightgbm_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             MAX_LEAF=64,
             MIN_DATA=20,
@@ -116,7 +114,7 @@ def test_lightgbm_quickstart_smoke(notebooks):
             METRIC="auc",
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -131,15 +129,15 @@ def test_lightgbm_quickstart_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_cornac_bpr_smoke(notebooks):
+def test_cornac_bpr_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -150,12 +148,12 @@ def test_cornac_bpr_smoke(notebooks):
 
 
 @pytest.mark.smoke
-def test_mind_utils(notebooks, tmp):
+def test_mind_utils(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["mind_utils"]
     MOVIELENS_SAMPLE_SIZE = 5
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(mind_type="small", word_embedding_dim=300),
     )

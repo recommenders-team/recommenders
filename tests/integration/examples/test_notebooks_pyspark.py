@@ -6,8 +6,6 @@ import pytest
 import papermill as pm
 import scrapbook as sb
 
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
-
 
 TOL = 0.05
 ABS_TOL = 0.05
@@ -15,15 +13,15 @@ ABS_TOL = 0.05
 
 @pytest.mark.spark
 @pytest.mark.integration
-def test_als_pyspark_integration(notebooks):
+def test_als_pyspark_integration(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_pyspark"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="1m"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -41,15 +39,15 @@ def test_als_pyspark_integration(notebooks):
 @pytest.mark.integration
 @pytest.mark.skip(reason="It takes too long in the current test machine")
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
-def test_mmlspark_lightgbm_criteo_integration(notebooks):
+def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(DATA_SIZE="full", NUM_ITERATIONS=50, EARLY_STOPPING_ROUND=10),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 

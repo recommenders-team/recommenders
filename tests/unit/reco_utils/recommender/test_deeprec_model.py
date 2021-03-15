@@ -32,7 +32,7 @@ def resource_path():
 
 @pytest.mark.gpu
 def test_xdeepfm_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "xdeepfm")
+    data_path = os.path.join(resource_path, "resources", "deeprec", "xdeepfm")
     yaml_file = os.path.join(data_path, "xDeepFM.yaml")
 
     if not os.path.exists(yaml_file):
@@ -52,7 +52,7 @@ def test_xdeepfm_component_definition(resource_path):
 
 @pytest.mark.gpu
 def test_dkn_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "dkn")
+    data_path = os.path.join(resource_path, "resources", "deeprec", "dkn")
     yaml_file = os.path.join(data_path, "dkn.yaml")
     news_feature_file = os.path.join(data_path, r'doc_feature.txt')
     user_history_file = os.path.join(data_path, r'user_history.txt')
@@ -108,9 +108,11 @@ def test_dkn_component_definition(resource_path):
 
 @pytest.mark.gpu
 def test_slirec_component_definition(resource_path):
-    data_path = os.path.join(resource_path, "..", "resources", "deeprec", "slirec")
+    data_path = os.path.join(resource_path, "resources", "deeprec", "slirec")
     yaml_file = os.path.join(
         resource_path,
+        "..",
+        "..",
         "..",
         "..",
         "reco_utils",
@@ -123,6 +125,8 @@ def test_slirec_component_definition(resource_path):
         resource_path,
         "..",
         "..",
+        "..",
+        "..",
         "reco_utils",
         "recommender",
         "deeprec",
@@ -131,6 +135,8 @@ def test_slirec_component_definition(resource_path):
     )
     yaml_file_sum = os.path.join(
         resource_path,
+        "..",
+        "..",
         "..",
         "..",
         "reco_utils",
@@ -207,6 +213,8 @@ def test_slirec_component_definition(resource_path):
 def test_lightgcn_component_definition(resource_path):
     yaml_file = os.path.join(
         resource_path,
+        "..",
+        "..",
         "..",
         "..",
         "reco_utils",

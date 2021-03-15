@@ -12,7 +12,6 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     SEED,
 )
-from tests.ncf_common import python_dataset_ncf, test_specs_ncf
 
 
 N_NEG = 5

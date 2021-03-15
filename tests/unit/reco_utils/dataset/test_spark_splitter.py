@@ -12,17 +12,14 @@ from reco_utils.common.constants import (
     DEFAULT_TIMESTAMP_COL,
 )
 
-try:
-    from pyspark.sql import functions as F
-    from pyspark.sql.functions import col
-    from reco_utils.dataset.spark_splitters import (
-        spark_chrono_split,
-        spark_random_split,
-        spark_stratified_split,
-        spark_timestamp_split,
-    )
-except ImportError:
-    pass  # skip this import if we are in pure python environment
+from pyspark.sql import functions as F
+from pyspark.sql.functions import col
+from reco_utils.dataset.spark_splitters import (
+    spark_chrono_split,
+    spark_random_split,
+    spark_stratified_split,
+    spark_timestamp_split,
+)
 
 
 NUM_ROWS = 1000

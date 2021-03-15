@@ -4,7 +4,6 @@
 import pytest
 import numpy as np
 from reco_utils.recommender.rbm.rbm import RBM
-from tests.rbm_common import test_specs, affinity_matrix
 
 
 @pytest.fixture(scope="module")

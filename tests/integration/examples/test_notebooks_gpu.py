@@ -7,7 +7,6 @@ import papermill as pm
 import scrapbook as sb
 
 from reco_utils.common.gpu_utils import get_number_gpus
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 TOL = 0.5
@@ -39,17 +38,17 @@ def test_gpu_vm():
         # ("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})# takes too long
     ],
 )
-def test_ncf_integration(notebooks, size, epochs, expected_values, seed):
+def test_ncf_integration(notebooks, output_notebook, kernel_name, size, epochs, expected_values, seed):
     notebook_path = notebooks["ncf"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs, BATCH_SIZE=512, SEED=seed
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -81,13 +80,13 @@ def test_ncf_integration(notebooks, size, epochs, expected_values, seed):
     ],
 )
 def test_ncf_deep_dive_integration(
-    notebooks, size, epochs, batch_size, expected_values, seed
+    notebooks, output_notebook, kernel_name, size, epochs, batch_size, expected_values, seed
 ):
     notebook_path = notebooks["ncf_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             TOP_K=10,
             MOVIELENS_DATA_SIZE=size,
@@ -96,7 +95,7 @@ def test_ncf_deep_dive_integration(
             SEED=seed,
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -126,15 +125,15 @@ def test_ncf_deep_dive_integration(
         # ("10m", 5, ), # it gets an OOM on pred = learner.model.forward(u, m)
     ],
 )
-def test_fastai_integration(notebooks, size, epochs, expected_values):
+def test_fastai_integration(notebooks, output_notebook, kernel_name, size, epochs, expected_values):
     notebook_path = notebooks["fastai"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size, EPOCHS=epochs),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -159,13 +158,13 @@ def test_fastai_integration(notebooks, size, epochs, expected_values):
     ],
 )
 def test_xdeepfm_integration(
-    notebooks, syn_epochs, criteo_epochs, expected_values, seed
+    notebooks, output_notebook, kernel_name, syn_epochs, criteo_epochs, expected_values, seed
 ):
     notebook_path = notebooks["xdeepfm_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             EPOCHS_FOR_SYNTHETIC_RUN=syn_epochs,
             EPOCHS_FOR_CRITEO_RUN=criteo_epochs,
@@ -174,7 +173,7 @@ def test_xdeepfm_integration(
             RANDOM_SEED=seed,
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -207,7 +206,7 @@ def test_xdeepfm_integration(
         )
     ],
 )
-def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tmp):
+def test_wide_deep_integration(notebooks, output_notebook, kernel_name, size, steps, expected_values, seed, tmp):
     notebook_path = notebooks["wide_deep"]
 
     params = {
@@ -221,9 +220,9 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
         "RANDOM_SEED": seed,
     }
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+        notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -247,7 +246,7 @@ def test_wide_deep_integration(notebooks, size, steps, expected_values, seed, tm
     ],
 )
 def test_slirec_quickstart_integration(
-    notebooks, yaml_file, data_path, epochs, batch_size, expected_values, seed
+    notebooks, output_notebook, kernel_name, yaml_file, data_path, epochs, batch_size, expected_values, seed
 ):
     notebook_path = notebooks["slirec_quickstart"]
 
@@ -259,9 +258,9 @@ def test_slirec_quickstart_integration(
         "RANDOM_SEED": seed,
     }
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+        notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -295,15 +294,15 @@ def test_slirec_quickstart_integration(
     ],
 )
 def test_nrms_quickstart_integration(
-    notebooks, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["nrms_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+        notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -343,15 +342,15 @@ def test_nrms_quickstart_integration(
     ],
 )
 def test_naml_quickstart_integration(
-    notebooks, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["naml_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+        notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -391,15 +390,15 @@ def test_naml_quickstart_integration(
     ],
 )
 def test_lstur_quickstart_integration(
-    notebooks, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["lstur_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+        notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -439,15 +438,15 @@ def test_lstur_quickstart_integration(
     ],
 )
 def test_npa_quickstart_integration(
-    notebooks, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["npa_quickstart"]
 
     params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+        notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -488,13 +487,13 @@ def test_npa_quickstart_integration(
     ],
 )
 def test_lightgcn_deep_dive_integration(
-    notebooks, yaml_file, data_path, size, epochs, batch_size, expected_values, seed
+    notebooks, output_notebook, kernel_name, yaml_file, data_path, size, epochs, batch_size, expected_values, seed
 ):
     notebook_path = notebooks["lightgcn_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             TOP_K=10,
             MOVIELENS_DATA_SIZE=size,
@@ -506,7 +505,7 @@ def test_lightgcn_deep_dive_integration(
             item_file=os.path.join(data_path, r"item_embeddings"),
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -516,15 +515,15 @@ def test_lightgcn_deep_dive_integration(
 
 @pytest.mark.gpu
 @pytest.mark.integration
-def test_dkn_quickstart_integration(notebooks):
+def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["dkn_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(epochs=5, batch_size=500),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 

@@ -5,12 +5,11 @@ import os
 import pytest
 import papermill as pm
 import scrapbook as sb
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 from reco_utils.common.notebook_utils import is_jupyter, is_databricks
 
 
 @pytest.mark.notebooks
-def test_is_jupyter():
+def test_is_jupyter(output_notebook, kernel_name):
     # Test on the terminal
     assert is_jupyter() is False
     assert is_databricks() is False
@@ -18,9 +17,9 @@ def test_is_jupyter():
     # Test on Jupyter notebook
     path = os.path.join("tests", "unit", "test_notebook_utils.ipynb")
     pm.execute_notebook(
-        path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME,
+        path, output_notebook, kernel_name=kernel_name,
     )
-    nb = sb.read_notebook(OUTPUT_NOTEBOOK)
+    nb = sb.read_notebook(output_notebook)
     df = nb.scraps.dataframe
     result_is_jupyter = df.loc[df["name"] == "is_jupyter", "data"].values[0]
     assert result_is_jupyter == True # is True not allowed

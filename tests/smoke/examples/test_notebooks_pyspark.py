@@ -6,8 +6,6 @@ import pytest
 import papermill as pm
 import scrapbook as sb
 
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
-
 
 TOL = 0.05
 ABS_TOL = 0.05
@@ -15,16 +13,16 @@ ABS_TOL = 0.05
 
 @pytest.mark.smoke
 @pytest.mark.spark
-def test_als_pyspark_smoke(notebooks):
+def test_als_pyspark_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_pyspark"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
 
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -41,16 +39,16 @@ def test_als_pyspark_smoke(notebooks):
 @pytest.mark.smoke
 @pytest.mark.spark
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
-def test_mmlspark_lightgbm_criteo_smoke(notebooks):
+def test_mmlspark_lightgbm_criteo_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=50, EARLY_STOPPING_ROUND=10),
     )
 
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
     assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)

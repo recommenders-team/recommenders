@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from mock import Mock
+from unittest.mock import Mock
 from sklearn.preprocessing import minmax_scale
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,

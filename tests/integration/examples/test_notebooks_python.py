@@ -7,7 +7,6 @@ import papermill as pm
 import scrapbook as sb
 
 from reco_utils.tuning.nni.nni_utils import check_experiment_status, NNI_STATUS_URL
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 TOL = 0.05
@@ -38,15 +37,15 @@ ABS_TOL = 0.05
         ),
     ],
 )
-def test_sar_single_node_integration(notebooks, size, expected_values):
+def test_sar_single_node_integration(notebooks, output_notebook, kernel_name, size, expected_values):
     notebook_path = notebooks["sar_single_node"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -70,15 +69,15 @@ def test_sar_single_node_integration(notebooks, size, expected_values):
         # ("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
     ],
 )
-def test_baseline_deep_dive_integration(notebooks, size, expected_values):
+def test_baseline_deep_dive_integration(notebooks, output_notebook, kernel_name, size, expected_values):
     notebook_path = notebooks["baseline_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -106,15 +105,15 @@ def test_baseline_deep_dive_integration(notebooks, size, expected_values):
         # 10m works but takes too long
     ],
 )
-def test_surprise_svd_integration(notebooks, size, expected_values):
+def test_surprise_svd_integration(notebooks, output_notebook, kernel_name, size, expected_values):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -141,15 +140,15 @@ def test_surprise_svd_integration(notebooks, size, expected_values):
         )
     ],
 )
-def test_vw_deep_dive_integration(notebooks, size, expected_values):
+def test_vw_deep_dive_integration(notebooks, output_notebook, kernel_name, size, expected_values):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size, TOP_K=10),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -159,12 +158,12 @@ def test_vw_deep_dive_integration(notebooks, size, expected_values):
 
 @pytest.mark.integration
 @pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
-def test_nni_tuning_svd(notebooks, tmp):
+def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             MOVIELENS_DATA_SIZE="100k",
             SURPRISE_READER="ml-100k",
@@ -178,17 +177,17 @@ def test_nni_tuning_svd(notebooks, tmp):
 
 
 @pytest.mark.integration
-def test_wikidata_integration(notebooks, tmp):
+def test_wikidata_integration(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["wikidata_knowledge_graph"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             MOVIELENS_DATA_SIZE="100k", MOVIELENS_SAMPLE=True, MOVIELENS_SAMPLE_SIZE=5
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -204,15 +203,15 @@ def test_wikidata_integration(notebooks, tmp):
         # 10m works but takes too long
     ],
 )
-def test_cornac_bpr_integration(notebooks, size, expected_values):
+def test_cornac_bpr_integration(notebooks, output_notebook, kernel_name, size, expected_values):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -220,15 +219,16 @@ def test_cornac_bpr_integration(notebooks, size, expected_values):
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
-def test_xlearn_fm_integration(notebooks):
+@pytest.mark.integration
+def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xlearn_fm_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(LEARNING_RATE=0.2, EPOCH=10),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -239,10 +239,10 @@ def test_xlearn_fm_integration(notebooks):
 @pytest.mark.parametrize(
     "expected_values", [({"rmse": 0.4969, "mae": 0.4761})],
 )
-def test_geoimc_integration(notebooks, expected_values):
+def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_values):
     notebook_path = notebooks["geoimc_quickstart"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 

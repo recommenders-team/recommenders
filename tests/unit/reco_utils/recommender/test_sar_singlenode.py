@@ -9,7 +9,52 @@ from pandas.util.testing import assert_frame_equal
 
 from reco_utils.common.constants import DEFAULT_PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
-from tests.sar_common import read_matrix, load_userpred, load_affinity
+
+
+def _csv_reader_url(url, delimiter=",", encoding="utf-8"):
+    ftpstream = urllib.request.urlopen(url)
+    csvfile = csv.reader(codecs.iterdecode(ftpstream, encoding), delimiter=delimiter)
+    return csvfile
+
+
+def load_affinity(file):
+    """Loads user affinities from test dataset"""
+    reader = _csv_reader_url(file)
+    items = next(reader)[1:]
+    affinities = np.array(next(reader)[1:])
+    return affinities, items
+
+
+def load_userpred(file, k=10):
+    """Loads test predicted items and their SAR scores"""
+    reader = _csv_reader_url(file)
+    next(reader)
+    values = next(reader)
+    items = values[1 : (k + 1)]
+    scores = np.array([float(x) for x in values[(k + 1) :]])
+    return items, scores
+
+
+def read_matrix(file, row_map=None, col_map=None):
+    """read in test matrix and hash it"""
+    reader = _csv_reader_url(file)
+
+    # skip the header
+    col_ids = next(reader)[1:]
+    row_ids = []
+    rows = []
+    for row in reader:
+        rows += [row[1:]]
+        row_ids += [row[0]]
+    array = np.array(rows)
+
+    # now map the rows and columns to the right values
+    if row_map is not None and col_map is not None:
+        row_index = [row_map[x] for x in row_ids]
+        col_index = [col_map[x] for x in col_ids]
+        array = array[row_index, :]
+        array = array[:, col_index]
+    return array, row_ids, col_ids
 
 
 def _rearrange_to_test(array, row_ids, col_ids, row_map, col_map):

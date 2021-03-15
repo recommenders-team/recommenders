@@ -8,7 +8,7 @@ from reco_utils.common.constants import (
     SEED,
 )
 from reco_utils.recommender.ncf.dataset import Dataset
-from tests.ncf_common import python_dataset_ncf, test_specs_ncf
+
 
 N_NEG = 5
 N_NEG_TEST = 10

@@ -7,7 +7,6 @@ import papermill as pm
 import scrapbook as sb
 
 from reco_utils.common.gpu_utils import get_number_gpus
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 
 TOL = 0.5
@@ -22,15 +21,15 @@ def test_gpu_vm():
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_ncf_smoke(notebooks):
+def test_ncf_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["ncf"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=256),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
     
@@ -42,17 +41,17 @@ def test_ncf_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_ncf_deep_dive_smoke(notebooks):
+def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["ncf_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=1024
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -69,15 +68,15 @@ def test_ncf_deep_dive_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_fastai_smoke(notebooks):
+def test_fastai_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["fastai"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -93,12 +92,12 @@ def test_fastai_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_xdeepfm_smoke(notebooks):
+def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xdeepfm_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(
             EPOCHS_FOR_SYNTHETIC_RUN=1,
             EPOCHS_FOR_CRITEO_RUN=1,
@@ -107,7 +106,7 @@ def test_xdeepfm_smoke(notebooks):
             RANDOM_SEED=42,
         ),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -119,7 +118,7 @@ def test_xdeepfm_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_wide_deep_smoke(notebooks, tmp):
+def test_wide_deep_smoke(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["wide_deep"]
 
     params = {
@@ -133,9 +132,9 @@ def test_wide_deep_smoke(notebooks, tmp):
         "RANDOM_SEED": 42,
     }
     pm.execute_notebook(
-        notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME, parameters=params
+        notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -147,15 +146,15 @@ def test_wide_deep_smoke(notebooks, tmp):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_naml_smoke(notebooks):
+def test_naml_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["naml_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -167,15 +166,15 @@ def test_naml_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_nrms_smoke(notebooks):
+def test_nrms_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["nrms_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -187,15 +186,15 @@ def test_nrms_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_npa_smoke(notebooks):
+def test_npa_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["npa_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(epochs=1, seed=42, MIND_type="demo"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
@@ -207,15 +206,15 @@ def test_npa_smoke(notebooks):
 
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_lstur_smoke(notebooks):
+def test_lstur_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["lstur_quickstart"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(epochs=1, seed=40, MIND_type="demo"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 

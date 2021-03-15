@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from unittest.mock import patch, MagicMock
 import pytest
 from reco_utils.dataset.covid_utils import (
     remove_duplicates,
@@ -59,13 +60,32 @@ def test_clean_dataframe(df):
     assert len(df) > len(output)
 
 
-@pytest.mark.skip(reason="TODO: Implement this")
 def test_retrieve_text():
-    # TODO
-    pass
+    def mock_get(uri, headers):
+        class MockResponse:
+            def json(self):
+                return dict(body_text=[dict(text="test")])
+        return MockResponse()
 
+    with patch("reco_utils.dataset.covid_utils.requests.get", side_effect=mock_get):
+        result = retrieve_text(entry=dict(pdf_json_files="a"), container_name="test")
+    assert "test" == result
 
-@pytest.mark.skip(reason="TODO: Implement this")
-def test_get_public_domain_text():
-    # TODO
-    pass
+def test_get_public_domain_text(df):
+    df["publish_time"] = ""
+    df["authors"] = ""
+    df["journal"] = ""
+    df["abstract"] = ""
+
+    def mock_retrieve_text(
+        row,
+        container_name,
+        azure_storage_account_name,
+        azure_storage_sas_token
+    ):
+        return "full text"
+
+    with patch("reco_utils.dataset.covid_utils.retrieve_text", side_effect=mock_retrieve_text):
+        full = get_public_domain_text(df, container_name="test")
+
+    assert all(full["full_text"] == ["full text"]*5)

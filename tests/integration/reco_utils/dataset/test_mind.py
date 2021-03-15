@@ -44,15 +44,15 @@ def test_extract_mind(tmp):
 
 
 @pytest.mark.integration
-def test_mind_utils_integration(notebooks, tmp):
+def test_mind_utils_integration(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["mind_utils"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(mind_type="small", word_embedding_dim=300),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 

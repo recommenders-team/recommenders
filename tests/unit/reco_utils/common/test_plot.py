@@ -1,8 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+import pytest
 from reco_utils.common.plot import line_graph
 
 
