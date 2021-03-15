@@ -61,7 +61,7 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow==1.15.4",
+        "tensorflow-gpu==1.15.4",
         "fastai>=1.0.46,<2",
         "torch>=1.0.0,<2",
     ],

@@ -4,6 +4,34 @@ This package (reco_utils) contains functions to simplify common tasks used when 
 
 See the [online documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
+# Installation
+
+## Pre-requisites
+Some dependencies require compilation during pip installation, on linux this can be supported by add build-essential dependencies:
+```bash
+sudo apt-get install -y build-essential
+```
+
+On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+
+Install core utilities and dependencies
+```bash
+pip install reco-utils
+```
+
+When installing with gpu support
+
+`pip install reco-utils[gpu]`
+
+You will need CUDA Toolkit v10.0 to enable Tensorflow to use the gpu. This can be installed with conda if your are using a conda enviroment:
+```bash
+conda install cudatoolkit=10.0
+```
+
+See instructions for direct installation the (CUDA Toolkit)[https://developer.nvidia.com/cuda-10.0-download-archive].
+
+# Contents
+
 ## [AzureML](azureml)
 
 The AzureML submodule contains utilities to train, tune and operationalize recommendation systems at scale using AzureML.
@@ -54,17 +82,39 @@ Currently available metrics include:
 The recommender submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). Next a list of the algorithm utilities:
 
 * Cornac
-* DeepRec (includes xDeepFM and DKN)
+* DeepRec
+  *  Convolutional Sequence Embedding Recommendation (CASER)
+  *  Deep Knowledge-Aware Network (DKN)
+  *  Extreme Deep Factorization Machine (xDeepFM)
+  *  GRU4Rec
+  *  LightGCN
+  *  Next Item Recommendation (NextItNet)
+  *  Short-term and Long-term Preference Integrated Recommender (SLi-Rec)
+  *  Multi-Interest-Aware Sequential User Modeling (SUM)
 * FastAI
+* GeoIMC
+* LightFM
 * LightGBM
 * NCF
-* NewsRec (includes LSTUR, NAML NPA and NRMS)
-* RBM
-* RLRMC
-* SAR
+* NewsRec
+  * Neural Recommendation with Long- and Short-term User Representations (LSTUR)
+  * Neural Recommendation with Attentive Multi-View Learning (NAML)
+  * Neural Recommendation with Personalized Attention (NPA)
+  * Neural Recommendation with Multi-Head Self-Attention (NRMS)
+  * (includes LSTUR, NAML NPA and NRMS)
+* Restricted Boltzmann Machines (RBM)
+* Riemannian Low-rank Matrix Completion (RLRMC)
+* Simple Algorithm for Recommendation (SAR)
 * Surprise
+* Term Frequency - Inverse Document Frequency (TF-IDF)
+* Variational Autoencoders (VAE)
+  * Multinomial
+  * Standard
 * Vowpal Wabbit (VW)
-* Wide&Deep
+* Wide and Deep
+* xLearn
+  * Factorization Machine (FM)
+  * Field-Aware FM (FFM)
 
 ## [Tuning](tuning)
 
