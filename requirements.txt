@@ -1,4 +1,4 @@
-azureml-sdk[notebooks,tensorboard]==1.23.0
+azureml-sdk[notebooks,tensorboard]==1.24.0
 azure-cli-core==2.20.0
 azure-storage-blob<12.9.0
 azure-mgmt-cosmosdb==6.1.0
