@@ -55,7 +55,7 @@ extras_require = {
         "hyperopt>=0.1.2,<1",
         "ipykernel>=4.6.1,<5",
         "jupyter>=1,<2",
-        "locust>=1,>2",
+        "locust>=1,<2",
         "papermill>=2.1.2,<3",
         "scrapbook>=0.5.0,<1.0.0",        
     ],
