@@ -26,7 +26,7 @@ DEPENDENCIES = {
         'azure-cli-core==2.19.1',
         'azure-mgmt-cosmosdb==6.0.0',
         'category_encoders>=1.3.0',
-        'dataclasses>=0.6' + ";python_version<'3.7'",
+        'dataclasses>=0.6' + ";python_version>='3.6';python_version<'3.7'",
         'hyperopt==0.2.5',
         'idna',
         'locustio==0.999',
