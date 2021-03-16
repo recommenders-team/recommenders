@@ -19,16 +19,39 @@ Install core utilities and dependencies
 pip install reco-utils
 ```
 
-When installing with gpu support
+## Optional Dependencies
 
-`pip install reco-utils[gpu]`
+By default reco-utils does not install all dependencies used throughout the code or in the notebook examples. Instead we require a bare minimum set of dependencies needed to execute functionality in reco_utils.common package (excluding Spark and GPU functionoality). We also allow the user to specify which group of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
-You will need CUDA Toolkit v10.0 to enable Tensorflow to use the gpu. This can be installed with conda if your are using a conda enviroment:
+- recommenders: all dependencies used in recommendation algorithms in reco_utils.recommender package (excluding GPU/Spark based algorithms)
+- examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
+- gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
+- spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation
+- test: developer dependencies to run unit tests
+- all: all of the above dependencies
+- beta: current dependencies being evaluated (e.g. libraries that require advanced build requirements or might conflicts with libraries from other options)
+
+These groups can be installed alone or in combination
 ```bash
-conda install cudatoolkit=10.0
+# install reco-utils with core requirements and support for all recommender algorithms
+pip install reco-utils[recommenders]
+
+# add support for running example notebooks and gpu functionality
+pip install reco-utils[examples,gpu]
 ```
 
-See instructions for direct installation the (CUDA Toolkit)[https://developer.nvidia.com/cuda-10.0-download-archive].
+## GPU Support
+
+You will need CUDA Toolkit v10.2 and CuDNN to enable Tensorflow and PyTorch to use the gpu. This can be installed with conda if your are using a conda enviroment:
+```bash
+conda install cudatoolkit=10.2 cudnn>=7.6
+```
+
+For manual installation of the necessary requirements see [TensorFlow](https://www.tensorflow.org/install/gpu#software_requirements) and [PyTorch](https://pytorch.org/get-started/locally/) installation pages.
+
+When installing with gpu support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
+
+`pip install reco-utils[gpu] -f https://download.pytorch.org/whl/cu102/torch_stable.html`
 
 # Contents
 

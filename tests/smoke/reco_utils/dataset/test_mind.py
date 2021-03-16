@@ -39,7 +39,7 @@ def test_mind_url(url, content_length, etag):
 @pytest.mark.parametrize("size",[("demo"),("small")])
 def test_extract_mind(size,tmp):
     train_zip, valid_zip = download_mind(size, dest_path=tmp)
-    train_path, valid_path = extract_mind(train_zip, valid_zip)
+    train_path, valid_path = extract_mind(train_zip, valid_zip, clean_zip_file=False)
 
     if size == "demo":
         statinfo = os.stat(os.path.join(train_path, "behaviors.tsv"))
