@@ -43,6 +43,7 @@ extras_require = {
         "bottleneck>=1.2.1,<2",
         "category_encoders>=1.3.0,<2",
         "cornac>=1.1.2,<2",
+        "jinja2">=1,<2
         "lightfm>=1.15,<2",
         "lightgbm>=2.2.1,<3",
         "nltk>=3.4,<4",
