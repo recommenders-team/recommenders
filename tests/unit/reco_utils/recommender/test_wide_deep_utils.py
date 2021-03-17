@@ -4,18 +4,21 @@
 import os
 import pytest
 import pandas as pd
-import tensorflow as tf
-
-from reco_utils.common.tf_utils import pandas_input_fn, MODEL_DIR
-from reco_utils.recommender.wide_deep.wide_deep_utils import (
-    build_model,
-    build_feature_columns,
-)
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
+try:
+    from reco_utils.common.tf_utils import pandas_input_fn, MODEL_DIR
+    from reco_utils.recommender.wide_deep.wide_deep_utils import (
+        build_model,
+        build_feature_columns,
+    )
+    import tensorflow as tf
+except ImportError:
+    pass  # skip this import if we are in cpu environment
+
 
 ITEM_FEAT_COL = "itemFeat"
 

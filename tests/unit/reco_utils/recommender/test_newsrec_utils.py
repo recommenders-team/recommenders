@@ -1,12 +1,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
 import os
 from pathlib import Path
-import tensorflow as tf
-from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams, load_yaml
-from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
+import pytest
+try:
+    from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
+    from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams, load_yaml
+    import tensorflow as tf
+except ImportError:
+    pass  # skip this import if we are in cpu environment
 
 
 @pytest.mark.parametrize(

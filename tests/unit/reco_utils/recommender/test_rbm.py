@@ -1,9 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
 import numpy as np
-from reco_utils.recommender.rbm.rbm import RBM
+import pytest
+try:
+    from reco_utils.recommender.rbm.rbm import RBM
+except ImportError:
+    pass  # skip this import if we are in cpu environment
 
 
 @pytest.fixture(scope="module")

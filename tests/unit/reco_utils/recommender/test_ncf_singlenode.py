@@ -1,17 +1,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
-import numpy as np
 import os
 import shutil
-from reco_utils.recommender.ncf.ncf_singlenode import NCF
-from reco_utils.recommender.ncf.dataset import Dataset
-from reco_utils.common.constants import (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    SEED,
-)
+import numpy as np
+import pytest
+try:
+    from reco_utils.recommender.ncf.ncf_singlenode import NCF
+    from reco_utils.recommender.ncf.dataset import Dataset
+    from reco_utils.common.constants import (
+        DEFAULT_USER_COL,
+        DEFAULT_ITEM_COL,
+        SEED,
+    )
+except ImportError:
+    pass  # skip this import if we are in cpu environment
 
 
 N_NEG = 5

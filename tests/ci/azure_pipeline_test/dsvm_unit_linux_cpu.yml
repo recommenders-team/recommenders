@@ -32,7 +32,6 @@ jobs:
       conda activate reco_unit_cpu
       pip install .[recommenders,test]
       pytest tests/unit -m "not notebooks and not spark and not gpu" \
-        --continue-on-collection-errors \
         --durations 0 \
         --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'

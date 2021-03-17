@@ -1,20 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
 import os
-import tensorflow as tf
-from reco_utils.recommender.deeprec.deeprec_utils import (
-    prepare_hparams,
-    download_deeprec_resources,
-    load_yaml,
-)
-from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
-from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
-from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import DKNItem2itemTextIterator
-from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
-from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
+import pytest
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
+try:
+    from reco_utils.recommender.deeprec.deeprec_utils import (
+        prepare_hparams,
+        download_deeprec_resources,
+        load_yaml,
+    )
+    from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
+    from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import DKNItem2itemTextIterator
+    from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
+    from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
+    from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
+    import tensorflow as tf
+except ImportError:
+    pass  # skip this import if we are in cpu environment
 
 
 @pytest.mark.parametrize(
