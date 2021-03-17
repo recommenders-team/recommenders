@@ -25,12 +25,12 @@ jobs:
   - bash: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
       conda create -fyn reco_unit_cpu python=3.6
-      source activate reco_tmp
-      pip install .[recommenders,test]
     displayName: Create Conda Env
   
   - script: |
-      source activate reco_tmp
+      eval "$(conda shell.bash hook)"
+      conda activate reco_unit_cpu
+      pip install .[recommenders,test]
       pytest tests/unit --durations 0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'
 
