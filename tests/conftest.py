@@ -59,7 +59,7 @@ def tmp(tmp_path_factory):
 
 
 @pytest.fixture(scope="session")
-def spark(app_name="Sample", url="local[*]"):
+def spark(tmp_path_factory, app_name="Sample", url="local[*]"):
     """Start Spark if not started.
 
     Other Spark settings which you might find useful:
@@ -79,10 +79,11 @@ def spark(app_name="Sample", url="local[*]"):
         SparkSession: new Spark session
     """
 
-    config = {"spark.local.dir": "/mnt", "spark.sql.shuffle.partitions": 1}
-    spark = start_or_get_spark(app_name=app_name, url=url, config=config)
-    yield spark
-    spark.stop()
+    with TemporaryDirectory(dir=tmp_path_factory.getbasetemp()) as td:
+        config = {"spark.local.dir": td, "spark.sql.shuffle.partitions": 1}
+        spark = start_or_get_spark(app_name=app_name, url=url, config=config)
+        yield spark
+        spark.stop()
 
 
 @pytest.fixture(scope="module")
