@@ -338,7 +338,7 @@ def negative_feedback_sampler(
         new_items = np.setdiff1d(items_sample, user_df[col_item])[:neg_sample_size]
         new_df = pd.DataFrame(
             data={
-                col_user: user_df[col_user][0],
+                col_user: user_df.name,
                 col_item: new_items,
                 col_label: neg_value,
             }

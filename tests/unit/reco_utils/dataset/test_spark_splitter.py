@@ -1,25 +1,27 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
-from reco_utils.dataset.split_utils import min_rating_filter_spark
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-
-from pyspark.sql import functions as F
-from pyspark.sql.functions import col
-from reco_utils.dataset.spark_splitters import (
-    spark_chrono_split,
-    spark_random_split,
-    spark_stratified_split,
-    spark_timestamp_split,
-)
+from reco_utils.dataset.split_utils import min_rating_filter_spark
+try:
+    from pyspark.sql import functions as F
+    from pyspark.sql.functions import col
+    from reco_utils.dataset.spark_splitters import (
+        spark_chrono_split,
+        spark_random_split,
+        spark_stratified_split,
+        spark_timestamp_split,
+    )
+except ImportError:
+    pass  # skip this import if we are not in a spark environment
 
 
 NUM_ROWS = 1000

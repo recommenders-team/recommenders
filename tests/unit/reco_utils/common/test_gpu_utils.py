@@ -3,8 +3,12 @@
 
 import sys
 import pytest
-import tensorflow as tf
-import torch
+try:
+    import tensorflow as tf
+    import torch
+except ImportError:
+    pass  # skip this import if we are in cpu environment
+
 
 from reco_utils.common.gpu_utils import (
     get_cuda_version,

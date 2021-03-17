@@ -3,24 +3,9 @@
 
 import itertools
 import os
-import pytest
-
 import numpy as np
 import pandas as pd
-import tensorflow as tf
-
-from reco_utils.common.tf_utils import (
-    build_optimizer,
-    evaluation_log_hook,
-    export_model,
-    MetricsLogger,
-    pandas_input_fn,
-    pandas_input_fn_for_saved_model,
-)
-from reco_utils.recommender.wide_deep.wide_deep_utils import (
-    build_model,
-    build_feature_columns,
-)
+import pytest
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -28,6 +13,23 @@ from reco_utils.common.constants import (
     SEED,
 )
 from reco_utils.evaluation.python_evaluation import rmse
+try:
+    from reco_utils.common.tf_utils import (
+        build_optimizer,
+        evaluation_log_hook,
+        export_model,
+        MetricsLogger,
+        pandas_input_fn,
+        pandas_input_fn_for_saved_model,
+    )
+    from reco_utils.recommender.wide_deep.wide_deep_utils import (
+        build_model,
+        build_feature_columns,
+    )
+    import tensorflow as tf
+except ImportError:
+    pass  # skip this import if we are in cpu environment
+
 
 ITEM_FEAT_COL = "itemFeat"
 
