@@ -24,33 +24,26 @@ jobs:
   steps:
   - bash: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda env list
-    displayName: Add Conda to PATH
+      conda create -fyn reco_unit_cpu python=3.6
+      conda activate reco_tmp
+      pip install .[recommenders,test]
+    displayName: Create Conda Env
   
-  # Uncomment if needed
-  # Conda creation can take around 10min
-  # - bash: |
-  #     python tools/generate_conda_file.py
-  #     conda env update -n reco_base -f reco_base.yaml
-  #   displayName: 'Creating Conda Environment with dependencies'
-
   - script: |
-      . /anaconda/etc/profile.d/conda.sh && \
-      conda activate reco_base && \
+      conda activate reco_tmp
       pytest tests/unit --durations 0 -m "not notebooks and not spark and not gpu" --junitxml=reports/test-unit.xml
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2
-    displayName: 'Publish Test Results **/test-*.xml'
+    displayName: 'Publish Test Results'
     inputs:
       testResultsFiles: '**/test-*.xml'
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
-  # Uncomment if needed
-  # - script: |
-  #     conda env remove -n reco_cpu -y   
-  #   workingDirectory: tests
-  #   displayName: 'Conda remove'
-  #   continueOnError: true
-  #   condition: succeededOrFailed()
+  - script: |
+      conda env remove -n reco_unit_cpu
+    workingDirectory: tests
+    displayName: 'Remove Conda Env'
+    continueOnError: true
+    condition: succeededOrFailed()
