@@ -14,27 +14,26 @@ sudo apt-get install -y build-essential
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
-Install core utilities and dependencies
+Install core utilities, cpu-based algorithms, and dependencies
 ```bash
 pip install reco-utils
 ```
 
 ## Optional Dependencies
 
-By default reco-utils does not install all dependencies used throughout the code or in the notebook examples. Instead we require a bare minimum set of dependencies needed to execute functionality in reco_utils.common package (excluding Spark and GPU functionoality). We also allow the user to specify which group of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default reco-utils does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the reco_utils package (excluding Spark and GPU functionoality). We also allow the user to specify which group of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
-- recommenders: all dependencies used in recommendation algorithms in reco_utils.recommender package (excluding GPU/Spark based algorithms)
 - examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
 - spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation
 - test: developer dependencies to run unit tests
 - all: all of the above dependencies
-- beta: current dependencies being evaluated (e.g. libraries that require advanced build requirements or might conflicts with libraries from other options)
+- experimental: current experimental dependencies that being evaluated (e.g. libraries that require advanced build requirements or might conflicts with libraries from other options)
 
 These groups can be installed alone or in combination
 ```bash
 # install reco-utils with core requirements and support for all recommender algorithms
-pip install reco-utils[recommenders]
+pip install reco-utils[examples]
 
 # add support for running example notebooks and gpu functionality
 pip install reco-utils[examples,gpu]
@@ -42,9 +41,9 @@ pip install reco-utils[examples,gpu]
 
 ## GPU Support
 
-You will need CUDA Toolkit v10.2 and CuDNN to enable Tensorflow and PyTorch to use the gpu. This can be installed with conda if your are using a conda enviroment:
+You will need CUDA Toolkit v10.2 and CuDNN >= 7.6 to enable Tensorflow and PyTorch to use the gpu. This can be installed with conda if your are using a conda enviroment:
 ```bash
-conda install cudatoolkit=10.2 cudnn>=7.6
+conda install "cudatoolkit=10.2" "cudnn>=7.6"
 ```
 
 For manual installation of the necessary requirements see [TensorFlow](https://www.tensorflow.org/install/gpu#software_requirements) and [PyTorch](https://pytorch.org/get-started/locally/) installation pages.

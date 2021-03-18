@@ -23,6 +23,13 @@ if HASH is not None:
 name = environ.get("LIBRARY_NAME", "reco_utils")
 
 install_requires = [
+    "bottleneck>=1.2.1,<2",
+    "category_encoders>=1.3.0,<2",
+    "cornac>=1.1.2,<2",
+    "jinja2>=2,<3",
+    "lightfm>=1.15,<2",
+    "lightgbm>=2.2.1,<3",
+    "nltk>=3.4,<4",
     "matplotlib>=2.2.2,<3",
     "memory_profiler>=0.54.0,<1",
     "nni==1.5",
@@ -30,27 +37,18 @@ install_requires = [
     "numpy>=1.13.3,<2",
     "pandas>1.0.3,<2",
     "pydocumentdb>=2.3.3<3",  # todo: replace with azure-cosmos
+    "pymanopt>=0.2.5,<1",
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "seaborn>=0.8.1,<1",
-    "scipy>=1.0.0,<2",
     "scikit-learn>=0.19.1,<1",
+    "scikit-surprise>=0.19.1,<2",
+    "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
+    "transformers>=2.5.0,<5",
 ]
 
 extras_require = {
-    "recommenders": [
-        "bottleneck>=1.2.1,<2",
-        "category_encoders>=1.3.0,<2",
-        "cornac>=1.1.2,<2",
-        "jinja2>=2,<3",
-        "lightfm>=1.15,<2",
-        "lightgbm>=2.2.1,<3",
-        "nltk>=3.4,<4",
-        "pymanopt>=0.2.5,<1",
-        "scikit-surprise>=0.19.1,<2",
-        "transformers>=2.5.0,<5",
-    ],
     "examples": [
         "azure.mgmt.cosmosdb>=0.8.0,<1",
         "hyperopt>=0.1.2,<1",
@@ -82,7 +80,7 @@ extras_require = {
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 
 # the following dependencies need additional testing
-extras_require["beta"] = [
+extras_require["experimental"] = [
     "azureml-sdk[notebooks,tensorboard]>=1.0.69,<2",
     "xlearn==0.40a1",
     "vowpal_wabbit>=8.9.0,<9",

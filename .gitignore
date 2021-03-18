@@ -165,3 +165,4 @@ examples/07_tutorials/KDD2020-tutorial/data_folder/
 *.sh
 
 tests/**/resources/
+reports/
