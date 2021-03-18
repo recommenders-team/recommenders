@@ -9,13 +9,10 @@
 # an input argument in the test."
 
 import calendar
-import csv
-import codecs
 import datetime
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
-import urllib.request
 
 import numpy as np
 import pandas as pd
@@ -379,7 +376,7 @@ def python_dataset_ncf(test_specs_ncf):
     return train, test
 
 
-### RBM Fixtures
+# RBM Fixtures
 
 @pytest.fixture(scope="module")
 def test_specs():
@@ -429,7 +426,7 @@ def affinity_matrix(test_specs):
     return (Xtr, Xtst)
 
 
-### DeepRec Fixtures
+# DeepRec Fixtures
 
 @pytest.fixture(scope="session")
 def deeprec_resource_path():
