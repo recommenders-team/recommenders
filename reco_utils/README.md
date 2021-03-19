@@ -41,16 +41,24 @@ pip install reco-utils[examples,gpu]
 
 ## GPU Support
 
-You will need CUDA Toolkit v10.2 and CuDNN >= 7.6 to enable Tensorflow and PyTorch to use the gpu. This can be installed with conda if your are using a conda enviroment:
+You will need CUDA Toolkit v10.0 and CuDNN >= 7.6 to enable both Tensorflow and PyTorch to use the gpu. This can be installed with conda if your are using a conda enviroment:
 ```bash
-conda install "cudatoolkit=10.2" "cudnn>=7.6"
+conda install cudatoolkit=10.0 "cudnn>=7.6"
 ```
 
 For manual installation of the necessary requirements see [TensorFlow](https://www.tensorflow.org/install/gpu#software_requirements) and [PyTorch](https://pytorch.org/get-started/locally/) installation pages.
 
 When installing with gpu support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
-`pip install reco-utils[gpu] -f https://download.pytorch.org/whl/cu102/torch_stable.html`
+`pip install reco-utils[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
+
+## Experimental dependencies
+
+We are currently evaluating inclusion of the following dependencies:
+
+ - vowpalwabbit: currently examples show how to use vowpal wabbit after it has been installed on the command line, using the PyPI package with the sklearn api will facilitate easier integration into python environments
+ - xlearn: currently this requires additional pre-requisites such as CMake, see [Setup Guide](https://github.com/microsoft/recommenders/blob/main/SETUP.md) for more information
+ - azureml: several example notebooks and utilities in reco_utils/azureml use functionality from this dependency, but it can cause version conflicts with other dependencies so work-arounds are under investigation 
 
 # Contents
 
