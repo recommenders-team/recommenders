@@ -30,7 +30,7 @@ jobs:
   - script: |
       eval "$(conda shell.bash hook)"
       conda activate reco_unit_gpu
-      pip install .[test,gpu]
+      pip install .[test,gpu] -f https://download.pytorch.org/whl/cu102/torch_stable.html
       pytest tests/unit -m "not notebooks and not spark and gpu" \
         --durations 0 \
         --junitxml=reports/test-unit-linux-gpu.xml

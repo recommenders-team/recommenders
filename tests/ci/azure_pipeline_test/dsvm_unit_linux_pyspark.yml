@@ -32,7 +32,7 @@ jobs:
       conda activate reco_unit_spark
       export PYSPARK_PYTHON=`which python`
       export PYSPARK_DRIVER_PYTHON=`which python`
-      pip install .[test,gpu]
+      pip install .[test,spark]
       pytest tests/unit -m "not notebooks and spark and not gpu" \
         --durations 0 \
         --junitxml=reports/test-unit-linux-spark.xml
