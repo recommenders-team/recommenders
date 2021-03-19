@@ -24,7 +24,7 @@ jobs:
   steps:
   - bash: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda create -fyn reco_unit_gpu python=3.6 cudatoolikit=10.2 "cudnn>=7.6"
+      conda create -fyn reco_unit_gpu python=3.6 cudatoolkit=10.2 "cudnn>=7.6"
     displayName: Create Conda Env
   
   - script: |

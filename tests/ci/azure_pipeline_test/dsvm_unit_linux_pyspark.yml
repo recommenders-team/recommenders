@@ -16,7 +16,7 @@ variables:
 
 jobs:
 - job: unit
-  displayName: "Unit Tests Linux GPU"
+  displayName: "Unit Tests Linux Spark"
   timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
     name: $(Agent_Pool)
@@ -30,6 +30,8 @@ jobs:
   - script: |
       eval "$(conda shell.bash hook)"
       conda activate reco_unit_spark
+      export PYSPARK_PYTHON=`which python`
+      export PYSPARK_DRIVER_PYTHON=`which python`
       pip install .[test,gpu]
       pytest tests/unit -m "not notebooks and spark and not gpu" \
         --durations 0 \
