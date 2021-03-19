@@ -3,6 +3,7 @@
 
 import os
 import pytest
+
 try:
     from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
     from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
@@ -120,7 +121,7 @@ def test_lstur_component_definition(mind_resource_path):
     if not os.path.exists(yaml_file):
         download_deeprec_resources(
             r"https://recodatasets.z20.web.core.windows.net/newsrec/",
-            os.path.join(mind_resource_path,"mind",  "utils"),
+            os.path.join(mind_resource_path, "mind", "utils"),
             "MINDdemo_utils.zip",
         )
     hparams = prepare_hparams(

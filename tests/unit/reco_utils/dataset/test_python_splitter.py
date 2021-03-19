@@ -144,7 +144,7 @@ def test_min_rating_filter():
 
 
 def test_random_splitter(test_specs, python_dataset):
-    """NOTE: some split results may not match exactly with the ratios, which may be owing to the  limited number of 
+    """NOTE: some split results may not match exactly with the ratios, which may be owing to the  limited number of
     rows in the testing data. A approximate match with certain level of tolerance is therefore used instead for tests.
     """
     splits = python_random_split(
@@ -380,20 +380,16 @@ def test_int_numpy_stratified_splitter(test_specs, python_int_dataset):
     # For this reason we allow a slightly bigger tolerance, as specified in the test_specs()
 
     assert (
-        (Xtr_rated / X_rated <= test_specs["ratio"] + test_specs["fluctuation"]).all()
-        & (Xtr_rated / X_rated >= test_specs["ratio"] - test_specs["fluctuation"]).all()
-    )
+        Xtr_rated / X_rated <= test_specs["ratio"] + test_specs["fluctuation"]
+    ).all() & (
+        Xtr_rated / X_rated >= test_specs["ratio"] - test_specs["fluctuation"]
+    ).all()
 
     assert (
-        (
-            Xtst_rated / X_rated
-            <= (1 - test_specs["ratio"]) + test_specs["fluctuation"]
-        ).all()
-        & (
-            Xtst_rated / X_rated
-            >= (1 - test_specs["ratio"]) - test_specs["fluctuation"]
-        ).all()
-    )
+        Xtst_rated / X_rated <= (1 - test_specs["ratio"]) + test_specs["fluctuation"]
+    ).all() & (
+        Xtst_rated / X_rated >= (1 - test_specs["ratio"]) - test_specs["fluctuation"]
+    ).all()
 
 
 def test_float_numpy_stratified_splitter(test_specs, python_float_dataset):

@@ -56,7 +56,7 @@ extras_require = {
         "jupyter>=1,<2",
         "locust>=1,<2",
         "papermill>=2.1.2,<3",
-        "scrapbook>=0.5.0,<1.0.0",        
+        "scrapbook>=0.5.0,<1.0.0",
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",

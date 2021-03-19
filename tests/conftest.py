@@ -38,7 +38,7 @@ def output_notebook():
 @pytest.fixture(scope="session")
 def kernel_name():
     """Unless manually modified, python3 should be the name of the current jupyter kernel
-       that runs on the activated conda environment"""
+    that runs on the activated conda environment"""
     return "python3"
 
 
@@ -323,6 +323,7 @@ def notebooks():
 
 ### NCF FIXTURES
 
+
 @pytest.fixture(scope="module")
 def test_specs_ncf():
     return {
@@ -378,6 +379,7 @@ def python_dataset_ncf(test_specs_ncf):
 
 # RBM Fixtures
 
+
 @pytest.fixture(scope="module")
 def test_specs():
     return {
@@ -428,6 +430,7 @@ def affinity_matrix(test_specs):
 
 # DeepRec Fixtures
 
+
 @pytest.fixture(scope="session")
 def deeprec_resource_path():
     return Path(__file__).absolute().parent.joinpath("resources", "deeprec")
@@ -440,4 +443,9 @@ def mind_resource_path(deeprec_resource_path):
 
 @pytest.fixture(scope="module")
 def deeprec_config_path():
-    return Path(__file__).absolute().parents[1].joinpath("reco_utils", "recommender", "deeprec", "config")
+    return (
+        Path(__file__)
+        .absolute()
+        .parents[1]
+        .joinpath("reco_utils", "recommender", "deeprec", "config")
+    )

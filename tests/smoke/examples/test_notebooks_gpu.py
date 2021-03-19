@@ -33,7 +33,7 @@ def test_ncf_smoke(notebooks, output_notebook, kernel_name):
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
-    
+
     assert results["map"] == pytest.approx(0.0409234, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.1773, rel=TOL, abs=ABS_TOL)
     assert results["precision"] == pytest.approx(0.160127, rel=TOL, abs=ABS_TOL)

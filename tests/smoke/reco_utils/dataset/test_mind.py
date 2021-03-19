@@ -8,27 +8,56 @@ from reco_utils.dataset.mind import download_mind, extract_mind
 
 
 @pytest.mark.smoke
-@pytest.mark.parametrize("url, content_length, etag", 
+@pytest.mark.parametrize(
+    "url, content_length, etag",
     [
-    ("https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip",
-    "17372879", '"0x8D8B8AD5B233930"'), # NOTE: the z20 blob returns the etag with ""
-    ("https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip",
-    "10080022", '"0x8D8B8AD5B188839"'),
-    ("https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip", 
-    "97292694", '"0x8D8B8AD5B126C3B"'),
-    ("https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip",
-    "52952752", "0x8D834F2EB31BDEC"),
-    ("https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip",
-    "30945572", "0x8D834F2EBA8D865"),
-    ("https://mind201910small.blob.core.windows.net/release/MINDsmall_utils.zip", 
-    "155178106", "0x8D87F67F4AEB960"),
-    ("https://mind201910small.blob.core.windows.net/release/MINDlarge_train.zip",
-    "530196631", "0x8D8244E90C15C07"),
-    ("https://mind201910small.blob.core.windows.net/release/MINDlarge_dev.zip",
-    "103456245", "0x8D8244E92005849"),
-    ("https://mind201910small.blob.core.windows.net/release/MINDlarge_utils.zip", 
-    "150359301", "0x8D87F67E6CA4364"),
-    ])
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip",
+            "17372879",
+            '"0x8D8B8AD5B233930"',
+        ),  # NOTE: the z20 blob returns the etag with ""
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip",
+            "10080022",
+            '"0x8D8B8AD5B188839"',
+        ),
+        (
+            "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip",
+            "97292694",
+            '"0x8D8B8AD5B126C3B"',
+        ),
+        (
+            "https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip",
+            "52952752",
+            "0x8D834F2EB31BDEC",
+        ),
+        (
+            "https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip",
+            "30945572",
+            "0x8D834F2EBA8D865",
+        ),
+        (
+            "https://mind201910small.blob.core.windows.net/release/MINDsmall_utils.zip",
+            "155178106",
+            "0x8D87F67F4AEB960",
+        ),
+        (
+            "https://mind201910small.blob.core.windows.net/release/MINDlarge_train.zip",
+            "530196631",
+            "0x8D8244E90C15C07",
+        ),
+        (
+            "https://mind201910small.blob.core.windows.net/release/MINDlarge_dev.zip",
+            "103456245",
+            "0x8D8244E92005849",
+        ),
+        (
+            "https://mind201910small.blob.core.windows.net/release/MINDlarge_utils.zip",
+            "150359301",
+            "0x8D87F67E6CA4364",
+        ),
+    ],
+)
 def test_mind_url(url, content_length, etag):
     url_headers = requests.head(url).headers
     assert url_headers["Content-Length"] == content_length
@@ -36,8 +65,8 @@ def test_mind_url(url, content_length, etag):
 
 
 @pytest.mark.smoke
-@pytest.mark.parametrize("size",[("demo"),("small")])
-def test_extract_mind(size,tmp):
+@pytest.mark.parametrize("size", [("demo"), ("small")])
+def test_extract_mind(size, tmp):
     train_zip, valid_zip = download_mind(size, dest_path=tmp)
     train_path, valid_path = extract_mind(train_zip, valid_zip, clean_zip_file=False)
 
@@ -77,4 +106,3 @@ def test_extract_mind(size,tmp):
         assert statinfo.st_size == 1044588
     else:
         assert False
-        

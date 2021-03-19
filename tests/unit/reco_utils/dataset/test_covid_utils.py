@@ -65,11 +65,13 @@ def test_retrieve_text():
         class MockResponse:
             def json(self):
                 return dict(body_text=[dict(text="test")])
+
         return MockResponse()
 
     with patch("reco_utils.dataset.covid_utils.requests.get", side_effect=mock_get):
         result = retrieve_text(entry=dict(pdf_json_files="a"), container_name="test")
     assert "test" == result
+
 
 def test_get_public_domain_text(df):
     df["publish_time"] = ""
@@ -78,14 +80,13 @@ def test_get_public_domain_text(df):
     df["abstract"] = ""
 
     def mock_retrieve_text(
-        row,
-        container_name,
-        azure_storage_account_name,
-        azure_storage_sas_token
+        row, container_name, azure_storage_account_name, azure_storage_sas_token
     ):
         return "full text"
 
-    with patch("reco_utils.dataset.covid_utils.retrieve_text", side_effect=mock_retrieve_text):
+    with patch(
+        "reco_utils.dataset.covid_utils.retrieve_text", side_effect=mock_retrieve_text
+    ):
         full = get_public_domain_text(df, container_name="test")
 
-    assert all(full["full_text"] == ["full text"]*5)
+    assert all(full["full_text"] == ["full text"] * 5)

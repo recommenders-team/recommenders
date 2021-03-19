@@ -13,6 +13,7 @@ from reco_utils.common.constants import (
     SEED,
 )
 from reco_utils.evaluation.python_evaluation import rmse
+
 try:
     from reco_utils.common.tf_utils import (
         build_optimizer,
@@ -190,7 +191,10 @@ def test_pandas_input_fn_for_saved_model(pd_df, tmp):
     _, deep_columns = build_feature_columns(users, items, model_type="deep")
 
     # Train a model
-    model = build_model(model_dir, deep_columns=deep_columns,)
+    model = build_model(
+        model_dir,
+        deep_columns=deep_columns,
+    )
     train_fn = pandas_input_fn(
         df=data, y_col=DEFAULT_RATING_COL, batch_size=1, num_epochs=None, shuffle=True
     )

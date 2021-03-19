@@ -5,6 +5,7 @@ import os
 import shutil
 import numpy as np
 import pytest
+
 try:
     from reco_utils.recommender.ncf.ncf_singlenode import NCF
     from reco_utils.recommender.ncf.dataset import Dataset

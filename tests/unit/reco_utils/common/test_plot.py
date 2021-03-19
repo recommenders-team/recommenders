@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pytest

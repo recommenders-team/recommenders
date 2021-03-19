@@ -78,30 +78,32 @@ def test_model_xdeepfm(deeprec_resource_path):
 @pytest.mark.deeprec
 def test_model_dkn(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
-    yaml_file = os.path.join(data_path, r'dkn.yaml')
-    train_file = os.path.join(data_path, r'train_mind_demo.txt')
-    valid_file = os.path.join(data_path, r'valid_mind_demo.txt')
-    test_file = os.path.join(data_path, r'test_mind_demo.txt')
-    news_feature_file = os.path.join(data_path, r'doc_feature.txt')
-    user_history_file = os.path.join(data_path, r'user_history.txt')
-    wordEmb_file = os.path.join(data_path, r'word_embeddings_100.npy')
-    entityEmb_file = os.path.join(data_path, r'TransE_entity2vec_100.npy')
-    contextEmb_file = os.path.join(data_path, r'TransE_context2vec_100.npy')
+    yaml_file = os.path.join(data_path, r"dkn.yaml")
+    train_file = os.path.join(data_path, r"train_mind_demo.txt")
+    valid_file = os.path.join(data_path, r"valid_mind_demo.txt")
+    test_file = os.path.join(data_path, r"test_mind_demo.txt")
+    news_feature_file = os.path.join(data_path, r"doc_feature.txt")
+    user_history_file = os.path.join(data_path, r"user_history.txt")
+    wordEmb_file = os.path.join(data_path, r"word_embeddings_100.npy")
+    entityEmb_file = os.path.join(data_path, r"TransE_entity2vec_100.npy")
+    contextEmb_file = os.path.join(data_path, r"TransE_context2vec_100.npy")
 
     download_deeprec_resources(
-            "https://recodatasets.z20.web.core.windows.net/deeprec/",
-            data_path,
-            "mind-demo.zip",
-        )
+        "https://recodatasets.z20.web.core.windows.net/deeprec/",
+        data_path,
+        "mind-demo.zip",
+    )
 
-    hparams = prepare_hparams(yaml_file,
-                              news_feature_file=news_feature_file,
-                              user_history_file=user_history_file,
-                              wordEmb_file=wordEmb_file,
-                              entityEmb_file=entityEmb_file,
-                              contextEmb_file=contextEmb_file,
-                              epochs=1,
-                              learning_rate=0.0001)
+    hparams = prepare_hparams(
+        yaml_file,
+        news_feature_file=news_feature_file,
+        user_history_file=user_history_file,
+        wordEmb_file=wordEmb_file,
+        entityEmb_file=entityEmb_file,
+        contextEmb_file=contextEmb_file,
+        epochs=1,
+        learning_rate=0.0001,
+    )
     input_creator = DKNTextIterator
     model = DKN(hparams, input_creator)
 
@@ -229,7 +231,7 @@ def test_model_sum(deeprec_resource_path, deeprec_config_path):
 
     hparams = prepare_hparams(
         yaml_file, learning_rate=0.01, epochs=1, train_num_ngs=train_num_ngs
-    )  
+    )
     assert hparams is not None
 
     input_creator = SequentialIterator

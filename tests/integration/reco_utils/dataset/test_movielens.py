@@ -68,8 +68,7 @@ def test_load_pandas_df(
     year_example,
     tmp,
 ):
-    """Test MovieLens dataset load as pd.DataFrame
-    """
+    """Test MovieLens dataset load as pd.DataFrame"""
     # Test if correct data are loaded
     header = ["a", "b", "c"]
     df = load_pandas_df(size=size, local_cache_path=tmp, header=header)
@@ -137,10 +136,15 @@ def test_load_pandas_df(
     ],
 )
 def test_load_item_df(
-    size, num_movies, movie_example, title_example, genres_example, year_example, tmp,
+    size,
+    num_movies,
+    movie_example,
+    title_example,
+    genres_example,
+    year_example,
+    tmp,
 ):
-    """Test movielens item data load (not rating data)
-    """
+    """Test movielens item data load (not rating data)"""
     df = load_item_df(size, local_cache_path=tmp, title_col="title")
     assert len(df) == num_movies
     # movie_col and title_col should be loaded
@@ -214,7 +218,10 @@ def test_load_spark_df(
     # Test if correct data are loaded
     header = ["1", "2", "3"]
     schema = StructType(
-        [StructField("u", IntegerType()), StructField("m", IntegerType()),]
+        [
+            StructField("u", IntegerType()),
+            StructField("m", IntegerType()),
+        ]
     )
     with pytest.warns(Warning):
         df = load_spark_df(
@@ -265,8 +272,7 @@ def test_load_spark_df(
 @pytest.mark.integration
 @pytest.mark.parametrize("size", ["1m", "10m", "20m"])
 def test_download_and_extract_movielens(size, tmp):
-    """Test movielens data download and extract
-    """
+    """Test movielens data download and extract"""
     zip_path = os.path.join(tmp, "ml.zip")
     download_movielens(size, dest_path=zip_path)
     assert len(os.listdir(tmp)) == 1

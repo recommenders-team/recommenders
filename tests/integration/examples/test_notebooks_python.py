@@ -37,7 +37,9 @@ ABS_TOL = 0.05
         ),
     ],
 )
-def test_sar_single_node_integration(notebooks, output_notebook, kernel_name, size, expected_values):
+def test_sar_single_node_integration(
+    notebooks, output_notebook, kernel_name, size, expected_values
+):
     notebook_path = notebooks["sar_single_node"]
     pm.execute_notebook(
         notebook_path,
@@ -69,7 +71,9 @@ def test_sar_single_node_integration(notebooks, output_notebook, kernel_name, si
         # ("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
     ],
 )
-def test_baseline_deep_dive_integration(notebooks, output_notebook, kernel_name, size, expected_values):
+def test_baseline_deep_dive_integration(
+    notebooks, output_notebook, kernel_name, size, expected_values
+):
     notebook_path = notebooks["baseline_deep_dive"]
     pm.execute_notebook(
         notebook_path,
@@ -105,7 +109,9 @@ def test_baseline_deep_dive_integration(notebooks, output_notebook, kernel_name,
         # 10m works but takes too long
     ],
 )
-def test_surprise_svd_integration(notebooks, output_notebook, kernel_name, size, expected_values):
+def test_surprise_svd_integration(
+    notebooks, output_notebook, kernel_name, size, expected_values
+):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(
         notebook_path,
@@ -140,7 +146,9 @@ def test_surprise_svd_integration(notebooks, output_notebook, kernel_name, size,
         )
     ],
 )
-def test_vw_deep_dive_integration(notebooks, output_notebook, kernel_name, size, expected_values):
+def test_vw_deep_dive_integration(
+    notebooks, output_notebook, kernel_name, size, expected_values
+):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     pm.execute_notebook(
         notebook_path,
@@ -203,7 +211,9 @@ def test_wikidata_integration(notebooks, output_notebook, kernel_name, tmp):
         # 10m works but takes too long
     ],
 )
-def test_cornac_bpr_integration(notebooks, output_notebook, kernel_name, size, expected_values):
+def test_cornac_bpr_integration(
+    notebooks, output_notebook, kernel_name, size, expected_values
+):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
     pm.execute_notebook(
         notebook_path,
@@ -237,7 +247,8 @@ def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "expected_values", [({"rmse": 0.4969, "mae": 0.4761})],
+    "expected_values",
+    [({"rmse": 0.4969, "mae": 0.4761})],
 )
 def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_values):
     notebook_path = notebooks["geoimc_quickstart"]
@@ -248,4 +259,3 @@ def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_va
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
-

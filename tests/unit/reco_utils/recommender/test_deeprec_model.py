@@ -6,6 +6,7 @@ import os
 from reco_utils.dataset import movielens
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
 from reco_utils.dataset.python_splitters import python_stratified_split
+
 try:
     from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
     from reco_utils.recommender.deeprec.deeprec_utils import (
@@ -13,14 +14,18 @@ try:
         download_deeprec_resources,
     )
     from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
-    from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import DKNItem2itemTextIterator
+    from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import (
+        DKNItem2itemTextIterator,
+    )
     from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
     from reco_utils.recommender.deeprec.io.nextitnet_iterator import NextItNetIterator
     from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
     from reco_utils.recommender.deeprec.models.dkn import DKN
     from reco_utils.recommender.deeprec.models.dkn_item2item import DKNItem2Item
     from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
-    from reco_utils.recommender.deeprec.models.sequential.nextitnet import NextItNetModel
+    from reco_utils.recommender.deeprec.models.sequential.nextitnet import (
+        NextItNetModel,
+    )
     from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
     from reco_utils.recommender.deeprec.models.sequential.sum import SUMModel
     from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
@@ -52,27 +57,28 @@ def test_xdeepfm_component_definition(deeprec_resource_path):
 def test_dkn_component_definition(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
     yaml_file = os.path.join(data_path, "dkn.yaml")
-    news_feature_file = os.path.join(data_path, r'doc_feature.txt')
-    user_history_file = os.path.join(data_path, r'user_history.txt')
-    wordEmb_file = os.path.join(data_path, r'word_embeddings_100.npy')
-    entityEmb_file = os.path.join(data_path, r'TransE_entity2vec_100.npy')
-    contextEmb_file = os.path.join(data_path, r'TransE_context2vec_100.npy')
+    news_feature_file = os.path.join(data_path, r"doc_feature.txt")
+    user_history_file = os.path.join(data_path, r"user_history.txt")
+    wordEmb_file = os.path.join(data_path, r"word_embeddings_100.npy")
+    entityEmb_file = os.path.join(data_path, r"TransE_entity2vec_100.npy")
+    contextEmb_file = os.path.join(data_path, r"TransE_context2vec_100.npy")
 
     download_deeprec_resources(
-            "https://recodatasets.z20.web.core.windows.net/deeprec/",
-            data_path,
-            "mind-demo.zip",
-        )
+        "https://recodatasets.z20.web.core.windows.net/deeprec/",
+        data_path,
+        "mind-demo.zip",
+    )
 
-    hparams = prepare_hparams(yaml_file,
-                              news_feature_file=news_feature_file,
-                              user_history_file=user_history_file,
-                              wordEmb_file=wordEmb_file,
-                              entityEmb_file=entityEmb_file,
-                              contextEmb_file=contextEmb_file,
-                              epochs=1,
-                              learning_rate = 0.0001
-                              )
+    hparams = prepare_hparams(
+        yaml_file,
+        news_feature_file=news_feature_file,
+        user_history_file=user_history_file,
+        wordEmb_file=wordEmb_file,
+        entityEmb_file=entityEmb_file,
+        contextEmb_file=contextEmb_file,
+        epochs=1,
+        learning_rate=0.0001,
+    )
     assert hparams is not None
     model = DKN(hparams, DKNTextIterator)
 
@@ -91,11 +97,11 @@ def test_dkn_component_definition(deeprec_resource_path):
         is_clip_norm=True,
         max_grad_norm=0.5,
         his_size=20,
-        MODEL_DIR=os.path.join(data_path, 'save_models'),
+        MODEL_DIR=os.path.join(data_path, "save_models"),
         use_entity=True,
-        use_context=True
-    )    
-    hparams.neg_num=9
+        use_context=True,
+    )
+    hparams.neg_num = 9
     assert hparams is not None
     model_item2item = DKNItem2Item(hparams, DKNItem2itemTextIterator)
 

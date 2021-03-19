@@ -108,6 +108,7 @@ def test_wide_deep(notebooks, output_notebook, kernel_name, tmp):
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
 
+
 @pytest.mark.notebooks
 @pytest.mark.gpu
 def test_dkn_quickstart(notebooks, output_notebook, kernel_name):
@@ -118,4 +119,3 @@ def test_dkn_quickstart(notebooks, output_notebook, kernel_name):
         kernel_name=kernel_name,
         parameters=dict(epochs=1, batch_size=500),
     )
-

@@ -38,7 +38,9 @@ def test_gpu_vm():
         # ("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})# takes too long
     ],
 )
-def test_ncf_integration(notebooks, output_notebook, kernel_name, size, epochs, expected_values, seed):
+def test_ncf_integration(
+    notebooks, output_notebook, kernel_name, size, epochs, expected_values, seed
+):
     notebook_path = notebooks["ncf"]
     pm.execute_notebook(
         notebook_path,
@@ -80,7 +82,14 @@ def test_ncf_integration(notebooks, output_notebook, kernel_name, size, epochs, 
     ],
 )
 def test_ncf_deep_dive_integration(
-    notebooks, output_notebook, kernel_name, size, epochs, batch_size, expected_values, seed
+    notebooks,
+    output_notebook,
+    kernel_name,
+    size,
+    epochs,
+    batch_size,
+    expected_values,
+    seed,
 ):
     notebook_path = notebooks["ncf_deep_dive"]
     pm.execute_notebook(
@@ -125,7 +134,9 @@ def test_ncf_deep_dive_integration(
         # ("10m", 5, ), # it gets an OOM on pred = learner.model.forward(u, m)
     ],
 )
-def test_fastai_integration(notebooks, output_notebook, kernel_name, size, epochs, expected_values):
+def test_fastai_integration(
+    notebooks, output_notebook, kernel_name, size, epochs, expected_values
+):
     notebook_path = notebooks["fastai"]
     pm.execute_notebook(
         notebook_path,
@@ -158,7 +169,13 @@ def test_fastai_integration(notebooks, output_notebook, kernel_name, size, epoch
     ],
 )
 def test_xdeepfm_integration(
-    notebooks, output_notebook, kernel_name, syn_epochs, criteo_epochs, expected_values, seed
+    notebooks,
+    output_notebook,
+    kernel_name,
+    syn_epochs,
+    criteo_epochs,
+    expected_values,
+    seed,
 ):
     notebook_path = notebooks["xdeepfm_quickstart"]
     pm.execute_notebook(
@@ -206,7 +223,9 @@ def test_xdeepfm_integration(
         )
     ],
 )
-def test_wide_deep_integration(notebooks, output_notebook, kernel_name, size, steps, expected_values, seed, tmp):
+def test_wide_deep_integration(
+    notebooks, output_notebook, kernel_name, size, steps, expected_values, seed, tmp
+):
     notebook_path = notebooks["wide_deep"]
 
     params = {
@@ -246,7 +265,15 @@ def test_wide_deep_integration(notebooks, output_notebook, kernel_name, size, st
     ],
 )
 def test_slirec_quickstart_integration(
-    notebooks, output_notebook, kernel_name, yaml_file, data_path, epochs, batch_size, expected_values, seed
+    notebooks,
+    output_notebook,
+    kernel_name,
+    yaml_file,
+    data_path,
+    epochs,
+    batch_size,
+    expected_values,
+    seed,
 ):
     notebook_path = notebooks["slirec_quickstart"]
 
@@ -487,7 +514,16 @@ def test_npa_quickstart_integration(
     ],
 )
 def test_lightgcn_deep_dive_integration(
-    notebooks, output_notebook, kernel_name, yaml_file, data_path, size, epochs, batch_size, expected_values, seed
+    notebooks,
+    output_notebook,
+    kernel_name,
+    yaml_file,
+    data_path,
+    size,
+    epochs,
+    batch_size,
+    expected_values,
+    seed,
 ):
     notebook_path = notebooks["lightgcn_deep_dive"]
     pm.execute_notebook(

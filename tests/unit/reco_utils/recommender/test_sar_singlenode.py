@@ -204,7 +204,9 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         np.array(
             _rearrange_to_test(
                 model.user_affinity, None, items, None, model.item2index
-            )[user_index,].todense()
+            )[
+                user_index,
+            ].todense()
         ),
         -1,
     )

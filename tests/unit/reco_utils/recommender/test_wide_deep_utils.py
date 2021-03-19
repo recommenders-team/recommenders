@@ -9,6 +9,7 @@ from reco_utils.common.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
+
 try:
     from reco_utils.common.tf_utils import pandas_input_fn, MODEL_DIR
     from reco_utils.recommender.wide_deep.wide_deep_utils import (

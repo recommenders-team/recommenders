@@ -3,6 +3,7 @@
 
 import sys
 import pytest
+
 try:
     import tensorflow as tf
     import torch
@@ -45,7 +46,7 @@ def test_get_cuda_version():
 def test_get_cudnn_version():
     assert get_cudnn_version() > "7.0.0"
 
-    
+
 @pytest.mark.gpu
 def test_tensorflow_gpu():
     assert tf.test.is_gpu_available()
@@ -54,4 +55,3 @@ def test_tensorflow_gpu():
 @pytest.mark.gpu
 def test_pytorch_gpu():
     assert torch.cuda.is_available()
-

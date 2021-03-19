@@ -166,14 +166,18 @@ def test_check_metrics_written_timeout():
 @pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
 def test_get_trials():
     with TemporaryDirectory() as tmp_dir1, TemporaryDirectory() as tmp_dir2:
-        
+
         mock_trials = [
             {
-                "finalMetricData":[{"data":"\"{\\\"rmse\\\": 0.8, \\\"default\\\": 0.3}\""}],
+                "finalMetricData": [
+                    {"data": '"{\\"rmse\\": 0.8, \\"default\\": 0.3}"'}
+                ],
                 "logPath": "file://localhost:{}".format(tmp_dir1),
             },
             {
-                "finalMetricData":[{"data":"\"{\\\"rmse\\\": 0.9, \\\"default\\\": 0.2}\""}],
+                "finalMetricData": [
+                    {"data": '"{\\"rmse\\": 0.9, \\"default\\": 0.2}"'}
+                ],
                 "logPath": "file://localhost:{}".format(tmp_dir2),
             },
         ]

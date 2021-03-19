@@ -118,8 +118,8 @@ def test_negative_feedback_sampler():
         col_item="itemID",
         col_label="rating",
         col_feedback="test_feedback",
-        pos_value = 2.4,
-        neg_value = 0.2,
+        pos_value=2.4,
+        neg_value=0.2,
         ratio_neg_per_user=3,
     )
     assert sample_df.columns[2] == "test_feedback"

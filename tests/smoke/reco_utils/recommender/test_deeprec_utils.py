@@ -11,7 +11,9 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
 )
 from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
 from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
-from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import DKNItem2itemTextIterator
+from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import (
+    DKNItem2itemTextIterator,
+)
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
@@ -41,7 +43,7 @@ def test_DKN_iterator(deeprec_resource_path):
         wordEmb_file="",
         entityEmb_file="",
         contextEmb_file="",
-    )        
+    )
     iterator = DKNTextIterator(hparams, tf.Graph())
     assert iterator is not None
     for res, impression, data_size in iterator.load_data_from_file(data_file):
@@ -58,16 +60,18 @@ def test_DKN_iterator(deeprec_resource_path):
         is_clip_norm=True,
         max_grad_norm=0.5,
         his_size=20,
-        MODEL_DIR=os.path.join(data_path, 'save_models'),
+        MODEL_DIR=os.path.join(data_path, "save_models"),
         use_entity=True,
-        use_context=True
-    )    
-    hparams.neg_num=9
+        use_context=True,
+    )
+    hparams.neg_num = 9
 
-    iterator_item2item = DKNItem2itemTextIterator(hparams, tf.Graph()) 
+    iterator_item2item = DKNItem2itemTextIterator(hparams, tf.Graph())
     assert iterator_item2item is not None
     test_round = 3
-    for res, impression, data_size in iterator_item2item.load_data_from_file(os.path.join(data_path, 'doc_list.txt')):
+    for res, impression, data_size in iterator_item2item.load_data_from_file(
+        os.path.join(data_path, "doc_list.txt")
+    ):
         assert isinstance(res, dict)
         test_round -= 1
         if test_round <= 0:

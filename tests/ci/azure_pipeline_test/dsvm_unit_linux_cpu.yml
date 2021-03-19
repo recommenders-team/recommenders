@@ -16,7 +16,7 @@ variables:
 
 jobs:
 - job: unit
-  displayName: "Unit tests Linux CPU"
+  displayName: "Unit Tests Linux CPU"
   timeoutInMinutes: 20 # how long to run the job before automatically cancelling
   pool:
     name: $(Agent_Pool)
@@ -33,7 +33,7 @@ jobs:
       pip install .[test]
       pytest tests/unit -m "not notebooks and not spark and not gpu" \
         --durations 0 \
-        --junitxml=reports/test-unit.xml
+        --junitxml=reports/test-unit-linux-cpu.xml
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2

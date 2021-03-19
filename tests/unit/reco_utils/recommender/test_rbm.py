@@ -3,6 +3,7 @@
 
 import numpy as np
 import pytest
+
 try:
     from reco_utils.recommender.rbm.rbm import RBM
 except ImportError:

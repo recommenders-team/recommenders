@@ -4,6 +4,7 @@
 import os
 from pathlib import Path
 import pytest
+
 try:
     from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
     from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams, load_yaml
@@ -18,8 +19,12 @@ except ImportError:
 @pytest.mark.gpu
 def test_prepare_hparams(must_exist_attributes, deeprec_resource_path):
     wordEmb_file = os.path.join(deeprec_resource_path, "mind", "utils", "embedding.npy")
-    userDict_file = os.path.join(deeprec_resource_path, "mind", "utils", "uid2index.pkl")
-    wordDict_file = os.path.join(deeprec_resource_path, "mind", "utils", "word_dict.pkl")
+    userDict_file = os.path.join(
+        deeprec_resource_path, "mind", "utils", "uid2index.pkl"
+    )
+    wordDict_file = os.path.join(
+        deeprec_resource_path, "mind", "utils", "word_dict.pkl"
+    )
     yaml_file = os.path.join(deeprec_resource_path, "mind", "utils", r"nrms.yaml")
 
     if not os.path.exists(yaml_file):

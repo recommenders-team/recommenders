@@ -104,17 +104,9 @@ def test_get_top_k_scored_items(scores):
 
 
 def test_binarize():
-    data = np.array(
-        [[2, 7, 0],
-         [8, 2, 9],
-         [9, 9, 4]]
-    )
+    data = np.array([[2, 7, 0], [8, 2, 9], [9, 9, 4]])
     threshold = 3
-    expected = np.array(
-        [[0, 1, 0],
-         [1, 0, 1],
-         [1, 1, 1]]
-    )
+    expected = np.array([[0, 1, 0], [1, 0, 1], [1, 1, 1]])
     assert np.array_equal(binarize(data, threshold), expected)
 
 
