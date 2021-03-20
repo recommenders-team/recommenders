@@ -15,7 +15,7 @@ variables:
 - group: LinuxAgentPool
 
 extends:
-  templae: dsvm_linux_template.yml
+  template: dsvm_linux_template.yml
     parameters:
       task_name: "Test - Unit Linux CPU"
       conda_env: "unit_linux_cpu"
