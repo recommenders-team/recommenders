@@ -14,38 +14,13 @@ trigger:
 variables:
 - group: LinuxAgentPool
 
-jobs:
-- job: unit
-  displayName: "Unit Tests for Linux CPU Notebooks"
-  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
-  pool:
-    name: $(Agent_Pool)
-
-  steps:
-  - bash: |
-      echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda create -fyn reco_unit_notebook_cpu python=3.6
-    displayName: Create Conda Env
-  
-  - script: |
-      eval "$(conda shell.bash hook)"
-      conda activate reco_unit_notebook_cpu
-      pip install .[test,examples]
-      pytest tests/unit -m "notebooks and not spark and not gpu" \
-        --durations 0 \
-        --junitxml=reports/test-unit-notebooks-linux-cpu.xml
-    displayName: 'Run Tests'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
-
-  - script: |
-      conda env remove -n reco_unit_notebook_cpu
-    workingDirectory: tests
-    displayName: 'Remove Conda Env'
-    continueOnError: true
-    condition: succeededOrFailed()
+extends:
+  template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux CPU"
+    conda_env: "unit_notebook_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: "[test,examples]"
+    pytest_markers: "notebooks and not spark and not gpu"

@@ -17,8 +17,10 @@ variables:
 extends:
   template: dsvm_linux_template.yml
   parameters:
+    test_types:
+    - unit
     task_name: "Test - Unit Linux CPU"
     conda_env: "unit_linux_cpu"
     conda_opts: "python=3.6"
     pip_opts: "[test]"
-    pytest_marker: "not notebooks and not spark and not gpu"
+    pytest_markers: "not notebooks and not spark and not gpu"

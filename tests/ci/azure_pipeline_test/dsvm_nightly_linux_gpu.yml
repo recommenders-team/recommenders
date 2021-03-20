@@ -22,45 +22,15 @@ pr: none
 variables:
 - group: LinuxAgentPool
 
-jobs:
-- job: nightly
-  displayName: 'Nightly tests Linux GPU'
-  timeoutInMinutes: 180 # how long to run the job before automatically cancelling
-  pool:
-    name: $(Agent_Pool)
-
-  steps:
-  - bash: |
-      echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda env list
-    displayName: 'Add Conda to PATH'
-
-  - script: |
-      conda env remove -n nightly_reco_gpu && \
-      python ./tools/generate_conda_file.py --gpu --name nightly_reco_gpu && \
-      conda env create --quiet -f nightly_reco_gpu.yaml 2> log
-    displayName: 'Setup Conda Env'
-
-  - script: |
-      . /anaconda/etc/profile.d/conda.sh && \
-      conda activate nightly_reco_gpu && \
-      echo "Smoke tests" && \
-      pytest tests/smoke --durations 0 -m "smoke and not spark and gpu" --junitxml=reports/test-smoke.xml && \
-      echo "Integration tests" && \
-      pytest tests/integration --durations 0 -m "integration and not spark and gpu" --junitxml=reports/test-integration.xml && \
-      conda deactivate    
-    displayName: 'Run Tests'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results '
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
-
-  - script: |
-      conda env remove -n nightly_reco_gpu -y   
-    workingDirectory: tests
-    displayName: 'Conda remove'
-    continueOnError: true
-    condition: always() # this step will always run, even if the pipeline is canceled
+extends:
+  template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - smoke
+    - integration
+    task_name: "Test - Nightly Linux GPU"
+    timeout: 180
+    conda_env: "nightly_linux_gpu"
+    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+    pip_opts: "[test,gpu]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
+    pytest_markers: "not spark and gpu"

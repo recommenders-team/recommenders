@@ -2,9 +2,12 @@
 # Licensed under the MIT License.
 
 parameters:
+- name: test_types
+  type: object
+  default: {}  # can include unit, smoke, and integration
 - name: task_name
   type: string
-- name: timeoutInMinutes
+- name: timeout
   type: number
   default: 20
 - name: conda_env
@@ -13,13 +16,12 @@ parameters:
   type: string
 - name: pip_opts
   type: string
-- name: pytest_marker
+- name: pytest_markers
   type: string
 
 jobs:
-- job: unit
-  displayName: "${{ parameters.task_name }}"
-  timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+- displayName: "${{ parameters.task_name }}"
+  timeoutInMinutes: ${{ parameters.timeout }}
   pool:
     name: $(Agent_Pool)
 
@@ -29,14 +31,19 @@ jobs:
       conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
     displayName: Create Conda Env
   
-  - script: |
-      eval "$(conda shell.bash hook)"
-      conda activate ${{ parameters.conda_env }}
-      pip install .${{ parameters.pip_opts }}
-      pytest tests/unit -m "${{ parameters.pytest_marker }}" \
-        --durations 0 \
-        --junitxml=reports/test-${{ parameters.conda_env }}.xml
-    displayName: 'Run Tests'
+  - ${{ each test in parameters.test_types }}:
+    - script: |
+        eval "$(conda shell.bash hook)"
+        conda activate ${{ parameters.conda_env }}
+        export PYSPARK_PYTHON=`which python`
+        export PYSPARK_DRIVER_PYTHON=`which python`
+        pip install .${{ parameters.pip_opts }}
+        pytest tests/${{ test }} \
+          --markers "${{ parameters.pytest_markers }}" \
+          --durations 0 \
+          --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml
+        conda deactivate
+      displayName: 'Run Tests'
 
   - task: PublishTestResults@2
     displayName: 'Publish Test Results'
@@ -47,7 +54,6 @@ jobs:
 
   - script: |
       conda env remove -n ${{ parameters.conda_env }}
-    workingDirectory: tests
     displayName: 'Remove Conda Env'
     continueOnError: true
     condition: succeededOrFailed()
