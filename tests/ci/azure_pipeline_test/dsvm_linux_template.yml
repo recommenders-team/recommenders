@@ -20,7 +20,8 @@ parameters:
   type: string
 
 jobs:
-- displayName: "${{ parameters.task_name }}"
+- job: test
+  displayName: "${{ parameters.task_name }}"
   timeoutInMinutes: ${{ parameters.timeout }}
   pool:
     name: $(Agent_Pool)
