@@ -11,29 +11,49 @@ trigger:
 - staging
 - main
 
+parameters:
+- name: task_name
+  type: string
+  default: "Test - Linux Unit CPU"
+- name: timeoutInMinutes
+  type: number
+  default: 20
+- name: conda_env
+  type: string
+  default: "linux_unit_cpu"
+- name: conda_opts
+  type: string
+  default: "python=3.6"
+- name: pip_opts
+  type: string
+  default: "[test]"
+- name: pytest_marker
+  type: string
+  default: "not notebooks and not spark and not gpu"
+
 variables:
 - group: LinuxAgentPool
 
 jobs:
 - job: unit
-  displayName: "Unit Tests Linux CPU"
-  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
+  displayName: "Test - ${{ parameters.task_name }}"
+  timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
   pool:
     name: $(Agent_Pool)
 
   steps:
   - bash: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda create -fyn reco_unit_cpu python=3.6
+      conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
     displayName: Create Conda Env
   
   - script: |
-      eval "$(conda shell.bash hook)"
-      conda activate reco_unit_cpu
-      pip install .[test]
-      pytest tests/unit -m "not notebooks and not spark and not gpu" \
+      eval "${{ parameters.conda shell.bash hook)"
+      conda activate ${{ parameters.conda_env }}
+      pip install .${{ parameters.pip_opts }}
+      pytest tests/unit -m "${{ parameters.pytest_marker }}" \
         --durations 0 \
-        --junitxml=reports/test-unit-linux-cpu.xml
+        --junitxml=reports/test-${{ parameters.conda_env }}.xml
     displayName: 'Run Tests'
 
   - task: PublishTestResults@2
@@ -44,7 +64,7 @@ jobs:
     condition: succeededOrFailed()
 
   - script: |
-      conda env remove -n reco_unit_cpu
+      conda env remove -n ${{ parameters.conda_env)}}
     workingDirectory: tests
     displayName: 'Remove Conda Env'
     continueOnError: true
