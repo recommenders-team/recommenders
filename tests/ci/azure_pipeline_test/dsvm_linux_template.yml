@@ -55,7 +55,7 @@ jobs:
 
         # run tests
         pytest tests/${{ test }} \
-          --markers "${TEST_MARKER}${{ parameters.pytest_markers }}" \
+          -m "${TEST_MARKER}${{ parameters.pytest_markers }}" \
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml
         
