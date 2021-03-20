@@ -48,7 +48,7 @@ jobs:
     displayName: Create Conda Env
   
   - script: |
-      eval "${{ parameters.conda shell.bash hook)"
+      eval "$(conda shell.bash hook)"
       conda activate ${{ parameters.conda_env }}
       pip install .${{ parameters.pip_opts }}
       pytest tests/unit -m "${{ parameters.pytest_marker }}" \
@@ -64,7 +64,7 @@ jobs:
     condition: succeededOrFailed()
 
   - script: |
-      conda env remove -n ${{ parameters.conda_env)}}
+      conda env remove -n ${{ parameters.conda_env }}
     workingDirectory: tests
     displayName: 'Remove Conda Env'
     continueOnError: true
