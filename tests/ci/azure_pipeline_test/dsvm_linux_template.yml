@@ -19,6 +19,13 @@ parameters:
 - name: pytest_markers
   type: string
 
+variables:
+- name: test_marker
+  ${{ if eq(parameters.test_type, 'unit') }}:
+    value: ""
+  ${{ if ne(parameters.test_type, 'unit') }}:
+    value: "and ${{ parameters.test_type }}"
+
 jobs:
 - job: test
   displayName: "${{ parameters.task_name }}"
@@ -27,28 +34,28 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
-  - bash: |
+  - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
+      eval "$(conda shell.bash hook)"
       conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
+      conda activate ${{ parameters.conda_env }}
+
+      # install reco-utils and needed dependencies
+      pip install .${{ parameters.pip_opts }}
+
+      # clean up previous test results        
+      rm -rf reports
     displayName: Create Conda Env
   
   - ${{ each test in parameters.test_types }}:
     - script: |
-        # activate conda env
-        eval "$(conda shell.bash hook)"
         conda activate ${{ parameters.conda_env }}
         export PYSPARK_PYTHON=`which python`
         export PYSPARK_DRIVER_PYTHON=`which python`
         
-        # install reco-utils and needed dependencies
-        pip install .${{ parameters.pip_opts }}
-
-        # clean up previous test results        
-        rm -rf reports
-
         # run tests
         pytest tests/${{ test }} \
-          --markers "${{ parameters.pytest_markers }}" \
+          --markers "${{ parameters.pytest_markers }} ${{ variables.test_marker }}" \
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml
         conda deactivate
@@ -57,12 +64,13 @@ jobs:
   - task: PublishTestResults@2
     displayName: 'Publish Test Results'
     inputs:
-      testResultsFiles: '**/test-*.xml'
+      testResultsFiles: 'reports/test-*.xml'
       failTaskOnFailedTests: true
     condition: succeededOrFailed()
 
   - script: |
       conda env remove -n ${{ parameters.conda_env }}
+      rm -rf reports
     displayName: 'Remove Conda Env'
     continueOnError: true
     condition: succeededOrFailed()
