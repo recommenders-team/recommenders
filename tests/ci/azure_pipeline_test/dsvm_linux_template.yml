@@ -1,0 +1,53 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+parameters:
+- name: task_name
+  type: string
+- name: timeoutInMinutes
+  type: number
+  default: 20
+- name: conda_env
+  type: string
+- name: conda_opts
+  type: string
+- name: pip_opts
+  type: string
+- name: pytest_marker
+  type: string
+
+jobs:
+- job: unit
+  displayName: "${{ parameters.task_name }}"
+  timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
+  pool:
+    name: $(Agent_Pool)
+
+  steps:
+  - bash: |
+      echo "##vso[task.prependpath]/data/anaconda/bin"
+      conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
+    displayName: Create Conda Env
+  
+  - script: |
+      eval "$(conda shell.bash hook)"
+      conda activate ${{ parameters.conda_env }}
+      pip install .${{ parameters.pip_opts }}
+      pytest tests/unit -m "${{ parameters.pytest_marker }}" \
+        --durations 0 \
+        --junitxml=reports/test-${{ parameters.conda_env }}.xml
+    displayName: 'Run Tests'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results'
+    inputs:
+      testResultsFiles: '**/test-*.xml'
+      failTaskOnFailedTests: true
+    condition: succeededOrFailed()
+
+  - script: |
+      conda env remove -n ${{ parameters.conda_env }}
+    workingDirectory: tests
+    displayName: 'Remove Conda Env'
+    continueOnError: true
+    condition: succeededOrFailed()

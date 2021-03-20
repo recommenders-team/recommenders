@@ -11,61 +11,14 @@ trigger:
 - staging
 - main
 
-parameters:
-- name: task_name
-  type: string
-  default: "Test - Linux Unit CPU"
-- name: timeoutInMinutes
-  type: number
-  default: 20
-- name: conda_env
-  type: string
-  default: "linux_unit_cpu"
-- name: conda_opts
-  type: string
-  default: "python=3.6"
-- name: pip_opts
-  type: string
-  default: "[test]"
-- name: pytest_marker
-  type: string
-  default: "not notebooks and not spark and not gpu"
-
 variables:
 - group: LinuxAgentPool
 
-jobs:
-- job: unit
-  displayName: "Test - ${{ parameters.task_name }}"
-  timeoutInMinutes: ${{ parameters.timeoutInMinutes }}
-  pool:
-    name: $(Agent_Pool)
-
-  steps:
-  - bash: |
-      echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
-    displayName: Create Conda Env
-  
-  - script: |
-      eval "$(conda shell.bash hook)"
-      conda activate ${{ parameters.conda_env }}
-      pip install .${{ parameters.pip_opts }}
-      pytest tests/unit -m "${{ parameters.pytest_marker }}" \
-        --durations 0 \
-        --junitxml=reports/test-${{ parameters.conda_env }}.xml
-    displayName: 'Run Tests'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
-
-  - script: |
-      conda env remove -n ${{ parameters.conda_env }}
-    workingDirectory: tests
-    displayName: 'Remove Conda Env'
-    continueOnError: true
-    condition: succeededOrFailed()
+extends:
+  templae: dsvm_linux_template.yml
+    parameters:
+      task_name: "Test - Unit Linux CPU"
+      conda_env: "unit_linux_cpu"
+      conda_opts: "python=3.6"
+      pip_opts: "[test]"
+      pytest_marker: "not notebooks and not spark and not gpu"
