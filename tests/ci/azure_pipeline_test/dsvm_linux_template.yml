@@ -51,6 +51,7 @@ jobs:
             export TEST_MARKER=""
         else
             export TEST_MARKER="${{ test }} and "
+        fi
 
         # run tests
         pytest tests/${{ test }} \
