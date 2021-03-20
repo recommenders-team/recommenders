@@ -19,13 +19,6 @@ parameters:
 - name: pytest_markers
   type: string
 
-variables:
-- name: test_marker
-  ${{ if eq(parameters.test_type, 'unit') }}:
-    value: ""
-  ${{ if ne(parameters.test_type, 'unit') }}:
-    value: "and ${{ parameters.test_type }}"
-
 jobs:
 - job: test
   displayName: "${{ parameters.task_name }}"
@@ -53,11 +46,17 @@ jobs:
         export PYSPARK_PYTHON=`which python`
         export PYSPARK_DRIVER_PYTHON=`which python`
         
+        if [ "${{ test }}" == "unit" ]; then
+            export TEST_MARKER=""
+        else
+            export TEST_MARKER="${{ test }} and "
+
         # run tests
         pytest tests/${{ test }} \
-          --markers "${{ parameters.pytest_markers }} ${{ variables.test_marker }}" \
+          --markers "${TEST_MARKER}${{ parameters.pytest_markers }}" \
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml
+        
         conda deactivate
       displayName: 'Run Tests'
 
