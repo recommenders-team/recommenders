@@ -203,6 +203,23 @@ def test_xdeepfm_integration(
 
 @pytest.mark.gpu
 @pytest.mark.integration
+def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["xlearn_fm_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(LEARNING_RATE=0.2, EPOCH=10),
+    )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    assert results["auc_score"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, steps, expected_values, seed",
     [
