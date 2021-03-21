@@ -46,6 +46,7 @@ install_requires = [
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
     "transformers>=2.5.0,<5",
+    "xlearn==0.40a1",
 ]
 
 extras_require = {
@@ -82,7 +83,6 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 # the following dependencies need additional testing
 extras_require["experimental"] = [
     "azureml-sdk[notebooks,tensorboard]>=1.0.69,<2",
-    "xlearn==0.40a1",
     "vowpal_wabbit>=8.9.0,<9",
 ]
 

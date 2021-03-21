@@ -1,18 +1,21 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
 import os
 import papermill as pm
-from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams
-from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
-from reco_utils.recommender.newsrec.models.base_model import BaseModel
-from reco_utils.recommender.newsrec.models.nrms import NRMSModel
-from reco_utils.recommender.newsrec.models.naml import NAMLModel
-from reco_utils.recommender.newsrec.models.lstur import LSTURModel
-from reco_utils.recommender.newsrec.models.npa import NPAModel
-from reco_utils.recommender.newsrec.io.mind_iterator import MINDIterator
-from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
+import pytest
+try:
+    from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams
+    from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
+    from reco_utils.recommender.newsrec.models.base_model import BaseModel
+    from reco_utils.recommender.newsrec.models.nrms import NRMSModel
+    from reco_utils.recommender.newsrec.models.naml import NAMLModel
+    from reco_utils.recommender.newsrec.models.lstur import LSTURModel
+    from reco_utils.recommender.newsrec.models.npa import NPAModel
+    from reco_utils.recommender.newsrec.io.mind_iterator import MINDIterator
+    from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
+except ImportError:
+    pass  # disable error if while collecting tests for non-gpu environments
 
 
 @pytest.mark.smoke

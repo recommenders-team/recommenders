@@ -57,7 +57,6 @@ When installing with gpu support you will need to point to the PyTorch index to 
 We are currently evaluating inclusion of the following dependencies:
 
  - vowpalwabbit: currently examples show how to use vowpal wabbit after it has been installed on the command line, using the PyPI package with the sklearn api will facilitate easier integration into python environments
- - xlearn: currently this requires additional pre-requisites such as CMake, see [Setup Guide](https://github.com/microsoft/recommenders/blob/main/SETUP.md) for more information
  - azureml: several example notebooks and utilities in reco_utils/azureml use functionality from this dependency, but it can cause version conflicts with other dependencies so work-arounds are under investigation 
 
 # Contents

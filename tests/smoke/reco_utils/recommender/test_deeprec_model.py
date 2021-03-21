@@ -1,27 +1,30 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
 import os
 import papermill as pm
-import tensorflow as tf
-from reco_utils.recommender.deeprec.deeprec_utils import (
-    download_deeprec_resources,
-    prepare_hparams,
-)
-from reco_utils.recommender.deeprec.models.base_model import BaseModel
-from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
-from reco_utils.recommender.deeprec.models.dkn import DKN
-from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
-from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
-from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
-from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
-from reco_utils.recommender.deeprec.models.sequential.sum import SUMModel
-from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
-from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
-from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
-from reco_utils.dataset import movielens
-from reco_utils.dataset.python_splitters import python_stratified_split
+import pytest
+try:
+    import tensorflow as tf
+    from reco_utils.recommender.deeprec.deeprec_utils import (
+        download_deeprec_resources,
+        prepare_hparams,
+    )
+    from reco_utils.recommender.deeprec.models.base_model import BaseModel
+    from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
+    from reco_utils.recommender.deeprec.models.dkn import DKN
+    from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
+    from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
+    from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
+    from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
+    from reco_utils.recommender.deeprec.models.sequential.sum import SUMModel
+    from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
+    from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
+    from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
+    from reco_utils.dataset import movielens
+    from reco_utils.dataset.python_splitters import python_stratified_split
+except ImportError:
+    pass  # disable error if while collecting tests for non-gpu environments
 
 
 @pytest.mark.smoke

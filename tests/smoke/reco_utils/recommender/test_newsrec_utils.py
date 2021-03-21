@@ -1,14 +1,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import pytest
 import os
-import tensorflow as tf
-from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams, load_yaml
-from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
-
-from reco_utils.recommender.newsrec.io.mind_iterator import MINDIterator
-from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
+import pytest
+try:
+    import tensorflow as tf
+    from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams, load_yaml
+    from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
+    from reco_utils.recommender.newsrec.io.mind_iterator import MINDIterator
+    from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
+except ImportError:
+    pass  # disable error if while collecting tests for non-gpu environments
 
 
 @pytest.mark.smoke
