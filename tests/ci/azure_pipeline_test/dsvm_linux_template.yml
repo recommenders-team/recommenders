@@ -35,6 +35,7 @@ jobs:
       eval "$(conda shell.bash hook)"
       conda activate ${{ parameters.conda_env }}
       pip install .${{ parameters.pip_opts }}
+      pip install -r dev-requirements.txt
 
       # clean up any previous test results        
       rm -rf reports

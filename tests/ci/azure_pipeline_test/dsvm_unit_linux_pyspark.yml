@@ -22,5 +22,5 @@ extends:
     task_name: "Test - Unit Linux Spark"
     conda_env: "unit_linux_spark"
     conda_opts: "python=3.6"
-    pip_opts: "[test,spark]"
+    pip_opts: "[spark]"
     pytest_markers: "not notebooks and spark and not gpu"

@@ -22,5 +22,5 @@ extends:
     task_name: "Test - Unit Linux CPU"
     conda_env: "unit_linux_cpu"
     conda_opts: "python=3.6"
-    pip_opts: "[test]"
+    pip_opts: ""
     pytest_markers: "not notebooks and not spark and not gpu"
