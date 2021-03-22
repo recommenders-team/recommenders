@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import os
-from pathlib import Path
 import pytest
 
 try:

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from reco_utils.azureml.aks_utils import (
+from reco_utils.common.k8s_utils import (
     qps_to_replicas,
     replicas_to_qps,
     nodes_to_replicas,

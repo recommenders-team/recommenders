@@ -50,8 +50,6 @@ install_requires = [
 ]
 
 # shared dependencies
-PAPERMILL = "papermill>=2.1.2,<3"
-SCRAPBOOK = "scrapbook>=0.5.0,<1.0.0"
 
 extras_require = {
     "examples": [
@@ -60,25 +58,19 @@ extras_require = {
         "ipykernel>=4.6.1,<5",
         "jupyter>=1,<2",
         "locust>=1,<2",
-        PAPERMILL,
-        SCRAPBOOK,
+        "papermill>=2.1.2,<3"
+        "scrapbook>=0.5.0,<1.0.0",
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow-gpu==1.15.4",
+        "tensorflow-gpu==1.15.4",  # compiled with cuda 10.0
         "fastai>=1.0.46,<2",
-        "torch>=1.0.0,<2",
+        "torch==1.2.0",  # last os-common version with cuda 10.0 support
     ],
     "spark": [
         "databricks_cli>=0.8.6,<1",
         "pyarrow>=0.8.0,<1.0.0",
         "pyspark>=2.4.5,<3.0.0",
-    ],
-    "test": [
-        "black>=18.6b4,<21",
-        PAPERMILL,
-        "pytest>=3.6.4",
-        SCRAPBOOK,
     ],
 }
 # for the brave of heart
