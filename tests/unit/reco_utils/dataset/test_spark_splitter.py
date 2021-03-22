@@ -10,9 +10,9 @@ from reco_utils.common.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from reco_utils.dataset.split_utils import min_rating_filter_spark
 
 try:
+    from reco_utils.dataset.split_utils import min_rating_filter_spark
     from pyspark.sql import functions as F
     from pyspark.sql.functions import col
     from reco_utils.dataset.spark_splitters import (

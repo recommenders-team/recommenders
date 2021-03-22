@@ -130,7 +130,6 @@ The recommender submodule contains implementations of various algorithms that ca
   * Neural Recommendation with Attentive Multi-View Learning (NAML)
   * Neural Recommendation with Personalized Attention (NPA)
   * Neural Recommendation with Multi-Head Self-Attention (NRMS)
-  * (includes LSTUR, NAML NPA and NRMS)
 * Restricted Boltzmann Machines (RBM)
 * Riemannian Low-rank Matrix Completion (RLRMC)
 * Simple Algorithm for Recommendation (SAR)
