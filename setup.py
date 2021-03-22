@@ -49,6 +49,10 @@ install_requires = [
     "xlearn==0.40a1",
 ]
 
+# shared dependencies
+PAPERMILL = "papermill>=2.1.2,<3"
+SCRAPBOOK = "scrapbook>=0.5.0,<1.0.0"
+
 extras_require = {
     "examples": [
         "azure.mgmt.cosmosdb>=0.8.0,<1",
@@ -56,8 +60,8 @@ extras_require = {
         "ipykernel>=4.6.1,<5",
         "jupyter>=1,<2",
         "locust>=1,<2",
-        "papermill>=2.1.2,<3",
-        "scrapbook>=0.5.0,<1.0.0",
+        PAPERMILL,
+        SCRAPBOOK,
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
@@ -72,9 +76,9 @@ extras_require = {
     ],
     "test": [
         "black>=18.6b4,<21",
-        "papermill>=2.1.2,<3",
+        PAPERMILL,
         "pytest>=3.6.4",
-        "scrapbook>=0.5.0,<1.0.0",
+        SCRAPBOOK,
     ],
 }
 # for the brave of heart
@@ -83,7 +87,7 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 # the following dependencies need additional testing
 extras_require["experimental"] = [
     "azureml-sdk[notebooks,tensorboard]>=1.0.69,<2",
-    "vowpal_wabbit>=8.9.0,<9",
+    "vowpalwabbit>=8.9.0,<9",
 ]
 
 
