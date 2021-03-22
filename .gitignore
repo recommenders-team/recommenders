@@ -144,7 +144,6 @@ ml-20m/
 *.jar
 *.item
 *.pkl
-*.txt
 *.pdf
 .pretrain
 *.npy
