@@ -3,7 +3,10 @@
 
 import sys
 import pytest
-import papermill as pm
+try:
+    import papermill as pm
+except ImportError:
+    pass  # disable error while collecting tests for non-notebook environments
 
 
 @pytest.mark.notebooks

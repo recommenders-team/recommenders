@@ -24,7 +24,7 @@ try:
     from reco_utils.dataset import movielens
     from reco_utils.dataset.python_splitters import python_stratified_split
 except ImportError:
-    pass  # disable error if while collecting tests for non-gpu environments
+    pass  # disable error while collecting tests for non-gpu environments
 
 
 @pytest.mark.smoke

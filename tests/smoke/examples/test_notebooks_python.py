@@ -2,8 +2,11 @@
 # Licensed under the MIT License.
 
 import pytest
-import papermill as pm
-import scrapbook as sb
+try:
+    import papermill as pm
+    import scrapbook as sb
+except ImportError:
+    pass  # disable error while collecting tests for non-notebook environments
 
 
 TOL = 0.05

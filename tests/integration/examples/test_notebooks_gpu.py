@@ -3,8 +3,12 @@
 
 import os
 import pytest
-import papermill as pm
-import scrapbook as sb
+try:
+    import papermill as pm
+    import scrapbook as sb
+except ImportError:
+    pass  # disable error while collecting tests for non-notebook environments
+    
 
 from reco_utils.common.gpu_utils import get_number_gpus
 

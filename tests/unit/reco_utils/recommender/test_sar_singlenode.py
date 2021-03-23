@@ -267,7 +267,7 @@ def test_get_item_based_topk(header, pandas_dummy):
     )
     items = pd.DataFrame({header["col_item"]: [1, 5, 10]})
     actual = sar.get_item_based_topk(items, top_k=3)
-    assert_frame_equal(expected, actual)
+    assert_frame_equal(expected, actual, check_dtype=False)
 
     # test with items and users
     expected = pd.DataFrame(

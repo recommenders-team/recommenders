@@ -15,7 +15,7 @@ try:
     from reco_utils.recommender.newsrec.io.mind_iterator import MINDIterator
     from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
 except ImportError:
-    pass  # disable error if while collecting tests for non-gpu environments
+    pass  # disable error while collecting tests for non-gpu environments
 
 
 @pytest.mark.smoke

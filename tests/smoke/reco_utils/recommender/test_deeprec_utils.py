@@ -19,7 +19,7 @@ try:
     from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
     from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
 except ImportError:
-    pass  # disable error if while collecting tests for non-gpu environments
+    pass  # disable error while collecting tests for non-gpu environments
 
 
 @pytest.mark.smoke

@@ -3,8 +3,12 @@
 
 import os
 import pytest
+try:
+    import papermill as pm
+except ImportError:
+    pass  # disable error while collecting tests for non-notebook environments
+
 from reco_utils.common.gpu_utils import get_number_gpus
-import papermill as pm
 
 
 @pytest.mark.notebooks

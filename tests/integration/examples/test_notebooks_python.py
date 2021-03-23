@@ -3,8 +3,11 @@
 
 import sys
 import pytest
-import papermill as pm
-import scrapbook as sb
+try:
+    import papermill as pm
+    import scrapbook as sb
+except ImportError:
+    pass  # disable error while collecting tests for non-notebook environments
 
 from reco_utils.tuning.nni.nni_utils import check_experiment_status, NNI_STATUS_URL
 
