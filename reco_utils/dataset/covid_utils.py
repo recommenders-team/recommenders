@@ -9,7 +9,7 @@ import requests
 
 def load_pandas_df(
     azure_storage_account_name="azureopendatastorage",
-    azure_storage_sas_token="sv=2019-02-02&ss=bfqt&srt=sco&sp=rlcup&se=2025-04-14T00:21:16Z&st=2020-04-13T16:21:16Z&spr=https&sig=JgwLYbdGruHxRYTpr5dxfJqobKbhGap8WUtKFadcivQ%3D",
+    azure_storage_sas_token="",
     container_name="covid19temp",
     metadata_filename="metadata.csv",
 ):
@@ -19,7 +19,7 @@ def load_pandas_df(
 
     Args:
         azure_storage_account_name (str): Azure storage account name.
-        azure_storage_sas_token (str): Azure storage SaS token.
+        azure_storage_sas_token (str): Azure storage SAS token.
         container_name (str): Azure storage container name.
         metadata_filename (str): Name of file containing top-level metadata for the dataset.
     
@@ -28,7 +28,7 @@ def load_pandas_df(
     """
 
     # Load into dataframe
-    uri = "https://{acct}.blob.core.windows.net/{container}/{filename}?{sas}".format(
+    uri = "https://{acct}.blob.core.windows.net/{container}/{filename}{sas}".format(
         acct=azure_storage_account_name,
         container=container_name,
         filename=metadata_filename,
@@ -107,7 +107,7 @@ def retrieve_text(
         entry, 
         container_name,
         azure_storage_account_name="azureopendatastorage",
-        azure_storage_sas_token="sv=2019-02-02&ss=bfqt&srt=sco&sp=rlcup&se=2025-04-14T00:21:16Z&st=2020-04-13T16:21:16Z&spr=https&sig=JgwLYbdGruHxRYTpr5dxfJqobKbhGap8WUtKFadcivQ%3D",
+        azure_storage_sas_token="",
 ):
     """ Retrieve body text from article of interest.
     
@@ -115,7 +115,7 @@ def retrieve_text(
         entry (pd.Series): A single row from the dataframe (df.iloc[n]).
         container_name (str): Azure storage container name.
         azure_storage_account_name (str): Azure storage account name.
-        azure_storage_sas_token (str): Azure storage SaS token.
+        azure_storage_sas_token (str): Azure storage SAS token.
 
     Results:
         text (str): Full text of the blob as a single string.
@@ -125,7 +125,7 @@ def retrieve_text(
         filename = entry["pdf_json_files"] or entry["pmc_json_files"]
 
         # Extract text
-        uri = "https://{acct}.blob.core.windows.net/{container}/{filename}?{sas}".format(
+        uri = "https://{acct}.blob.core.windows.net/{container}/{filename}{sas}".format(
             acct=azure_storage_account_name,
             container=container_name,
             filename=filename,
@@ -145,7 +145,7 @@ def get_public_domain_text(
     df, 
     container_name,
     azure_storage_account_name="azureopendatastorage",
-    azure_storage_sas_token="sv=2019-02-02&ss=bfqt&srt=sco&sp=rlcup&se=2025-04-14T00:21:16Z&st=2020-04-13T16:21:16Z&spr=https&sig=JgwLYbdGruHxRYTpr5dxfJqobKbhGap8WUtKFadcivQ%3D",
+    azure_storage_sas_token="",
 ):
     """ Get all public domain text.
     
@@ -153,7 +153,7 @@ def get_public_domain_text(
         df (pd.DataFrame): Metadata dataframe for public domain text.
         container_name (str): Azure storage container name.
         azure_storage_account_name (str): Azure storage account name.
-        azure_storage_sas_token (str): Azure storage SaS token.
+        azure_storage_sas_token (str): Azure storage SAS token.
 
     Returns:
         df_full (pd.DataFrame): Dataframe with select metadata and full article text.
