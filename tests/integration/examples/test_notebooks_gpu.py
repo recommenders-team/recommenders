@@ -205,6 +205,7 @@ def test_xdeepfm_integration(
         )
 
 
+# TODO: remove tf dependency in this notebook and drop gpu marker
 @pytest.mark.gpu
 @pytest.mark.integration
 def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
