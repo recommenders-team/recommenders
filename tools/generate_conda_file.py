@@ -56,7 +56,7 @@ CONDA_BASE = {
     "scikit-surprise": "scikit-surprise>=1.0.6",
     "swig": "swig==3.0.12",
     "lightgbm": "lightgbm==2.2.1",
-    "cornac": "cornac>=1.1.2",
+    "cornac": "cornac>=1.11.0",
     "papermill": "papermill>=2.2.0",
     "tqdm": "tqdm>=4.31.1",
 }
