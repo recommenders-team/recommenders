@@ -7,7 +7,7 @@ See the [online documentation](https://readthedocs.org/projects/microsoft-recomm
 # Installation
 
 ## Pre-requisites
-Some dependencies require compilation during pip installation, on linux this can be supported by add build-essential dependencies:
+Some dependencies require compilation during pip installation, on linux this can be supported by adding build-essential dependencies:
 ```bash
 sudo apt-get install -y build-essential
 ```
@@ -21,16 +21,16 @@ pip install reco-utils
 
 ## Optional Dependencies
 
-By default reco-utils does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the reco_utils package (excluding Spark and GPU functionoality). We also allow the user to specify which group of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default reco-utils does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the reco_utils package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
 - examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
 - spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation
 - test: developer dependencies to run unit tests
 - all: all of the above dependencies
-- experimental: current experimental dependencies that being evaluated (e.g. libraries that require advanced build requirements or might conflicts with libraries from other options)
+- experimental: current experimental dependencies that are being evaluated (e.g. libraries that require advanced build requirements or might conflict with libraries from other options)
 
-These groups can be installed alone or in combination
+These groups can be installed alone or in combination:
 ```bash
 # install reco-utils with core requirements and support for all recommender algorithms
 pip install reco-utils[examples]
@@ -41,14 +41,14 @@ pip install reco-utils[examples,gpu]
 
 ## GPU Support
 
-You will need CUDA Toolkit v10.0 and CuDNN >= 7.6 to enable both Tensorflow and PyTorch to use the gpu. This can be installed with conda if your are using a conda enviroment:
+You will need CUDA Toolkit v10.0 and CuDNN >= 7.6 to enable both Tensorflow and PyTorch to use the GPU. This can be installed with conda if you are using a conda enviroment:
 ```bash
 conda install cudatoolkit=10.0 "cudnn>=7.6"
 ```
 
 For manual installation of the necessary requirements see [TensorFlow](https://www.tensorflow.org/install/gpu#software_requirements) and [PyTorch](https://pytorch.org/get-started/locally/) installation pages.
 
-When installing with gpu support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
+When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
 `pip install reco-utils[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
 
@@ -56,8 +56,8 @@ When installing with gpu support you will need to point to the PyTorch index to 
 
 We are currently evaluating inclusion of the following dependencies:
 
- - vowpalwabbit: currently examples show how to use vowpal wabbit after it has been installed on the command line, using the PyPI package with the sklearn api will facilitate easier integration into python environments
- - azureml: several example notebooks and utilities in reco_utils/azureml use functionality from this dependency, but it can cause version conflicts with other dependencies so work-arounds are under investigation 
+ - vowpalwabbit: currently examples show how to use vowpal wabbit after it has been installed on the command line; using the PyPI package with the sklearn api will facilitate easier integration into python environments
+ - azureml: several example notebooks and utilities in reco_utils/azureml use functionality from this dependency, but it can cause version conflicts with other dependencies so work-arounds are under investigation. 
 
 # Contents
 
@@ -67,7 +67,7 @@ The AzureML submodule contains utilities to train, tune and operationalize recom
 
 ## [Common](common)
 
-This submodule contains high-level utilities for defining constants used in most algorithms as well as helper functions for managing aspects of different frameworks: gpu, spark, jupyter notebook.
+This submodule contains high-level utilities for defining constants used in most algorithms as well as helper functions for managing aspects of different frameworks: GPU, Spark, Jupyter notebook.
 
 ## [Dataset](dataset)
 
@@ -83,7 +83,7 @@ df = movielens.load_pandas_df(size="100k")
 
 ### Splitting Techniques
 
-Currently three methods are available for splitting datasets. All of them support splitting by user or item and filtering out minimal samples (for instance users that have not rated enough item, or items that have not been rated by enough users).
+Currently three methods are available for splitting datasets. All of them support splitting by user or item and filtering out minimal samples (for instance users that have not rated enough items, or items that have not been rated by enough users).
 
 - Random: this is the basic approach where entries are randomly assigned to each group based on the ratio desired
 - Chronological: this uses provided timestamps to order the data and selects a cut-off time that will split the desired ratio of data to train before that time and test after that time
