@@ -78,7 +78,6 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 
 # the following dependencies need additional testing
 extras_require["experimental"] = [
-    "azureml-sdk[notebooks,tensorboard]>=1.0.69,<2",
     "vowpalwabbit>=8.9.0,<9",
 ]
 
