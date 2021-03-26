@@ -3,12 +3,13 @@
 
 import os
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
 except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
-    
+
 
 from reco_utils.common.gpu_utils import get_number_gpus
 
@@ -600,7 +601,9 @@ def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
         # 10m works but takes too long
     ],
 )
-def test_cornac_bivae_integration(notebooks, size, expected_values):
+def test_cornac_bivae_integration(
+    notebooks, output_notebook, kernel_name, size, expected_values
+):
     notebook_path = notebooks["cornac_bivae_deep_dive"]
     pm.execute_notebook(
         notebook_path,
@@ -614,4 +617,3 @@ def test_cornac_bivae_integration(notebooks, size, expected_values):
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
-        

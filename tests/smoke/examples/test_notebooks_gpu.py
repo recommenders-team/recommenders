@@ -239,7 +239,7 @@ def test_lstur_smoke(notebooks, output_notebook, kernel_name):
 @pytest.mark.notebooks
 @pytest.mark.smoke
 @pytest.mark.gpu
-def test_cornac_bivae_smoke(notebooks):
+def test_cornac_bivae_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["cornac_bivae_deep_dive"]
     pm.execute_notebook(
         notebook_path,
