@@ -9,12 +9,10 @@ from reco_utils.evaluation.python_evaluation import ndcg_at_k
 
 import tensorflow as tf
 import bottleneck as bn
-import keras
-from keras.layers import *
-from keras.models import Model
-from keras import objectives
-from keras import backend as K
-from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
+from tensorflow.keras.layers import *
+from tensorflow.keras.models import Model
+from tensorflow.keras import backend as K
+from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
 
 
 class LossHistory(Callback):

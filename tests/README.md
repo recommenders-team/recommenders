@@ -161,12 +161,11 @@ Executing a notebook with Papermill is easy, this is what we mostly do in the un
 ```python
 import pytest
 import papermill as pm
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 @pytest.mark.notebooks
-def test_sar_single_node_runs(notebooks):
+def test_sar_single_node_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["sar_single_node"]
-    pm.execute_notebook(notebook_path, OUTPUT_NOTEBOOK, kernel_name=KERNEL_NAME)
+    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
 ```
 
 Notice that the input of the function is a fixture defined in [conftest.py](conftest.py). For more information, please see the [definition of fixtures in PyTest](https://docs.pytest.org/en/latest/fixture.html).
@@ -194,20 +193,19 @@ This is an example on how we do a smoke test. The complete code can be found in 
 ```python
 import pytest
 import papermill as pm
-from tests.notebooks_common import OUTPUT_NOTEBOOK, KERNEL_NAME
 
 TOL = 0.05
 
 @pytest.mark.smoke
-def test_sar_single_node_smoke(notebooks):
+def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["sar_single_node"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
-    results = pm.read_notebook(OUTPUT_NOTEBOOK).dataframe.set_index("name")["value"]
+    results = pm.read_notebook(output_notebook).dataframe.set_index("name")["value"]
     assert results["precision"] == pytest.approx(0.326617179, TOL)
     assert results["recall"] == pytest.approx(0.175956743, TOL)
 ```

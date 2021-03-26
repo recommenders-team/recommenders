@@ -8,12 +8,11 @@ import seaborn as sns
 from reco_utils.evaluation.python_evaluation import ndcg_at_k
 
 import bottleneck as bn
-import keras
-from keras.layers import *
-from keras.models import Model
-from keras import objectives
-from keras import backend as K
-from keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
+from tensorflow.keras.layers import *
+from tensorflow.keras.models import Model
+from tensorflow.keras.losses import binary_crossentropy
+from tensorflow.keras import backend as K
+from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
 
 
 class LossHistory(Callback):
@@ -304,7 +303,7 @@ class StandardVAE:
     def _get_vae_loss(self, x, x_bar): 
         """Calculate negative ELBO (NELBO)."""
         # Reconstruction error: logistic log likelihood 
-        reconst_loss = self.original_dim * objectives.binary_crossentropy(x, x_bar)
+        reconst_loss = self.original_dim * binary_crossentropy(x, x_bar)
 
         # Kullback–Leibler divergence 
         kl_loss = 0.5 * K.sum(-1 - self.z_log_var + K.square(self.z_mean) + K.exp(self.z_log_var), axis=-1)

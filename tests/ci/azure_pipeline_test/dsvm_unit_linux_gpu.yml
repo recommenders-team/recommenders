@@ -6,7 +6,7 @@ pr:
 - main
 - staging
 
-#Any commit to this branch will trigger the build.
+# Any commit to this branch will trigger the build.
 trigger:
 - staging
 - main
@@ -14,43 +14,13 @@ trigger:
 variables:
 - group: LinuxAgentPool
 
-jobs:
-- job: unit
-  displayName: "Unit tests Linux GPU"
-  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
-  pool:
-    name: $(Agent_Pool)
-
-  steps:
-  - bash: |
-      echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda env list
-    displayName: Add Conda to PATH
-  
-  # Uncomment if needed
-  # Conda creation can take around 10min
-  # - bash: |
-  #     python tools/generate_conda_file.py  --gpu
-  #     conda env update -n reco_gpu -f reco_gpu.yaml
-  #   displayName: 'Creating Conda Environment with dependencies'
-
-  - script: |
-      . /anaconda/etc/profile.d/conda.sh && \
-      conda activate reco_gpu && \
-      pytest tests/unit --durations 0 -m "not notebooks and not spark and gpu" --junitxml=reports/test-unit.xml
-    displayName: 'Run Tests'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results **/test-*.xml'
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
-
-  # Uncomment if needed
-  # - script: |
-  #     conda env remove -n reco_gpu -y   
-  #   workingDirectory: tests
-  #   displayName: 'Conda remove'
-  #   continueOnError: true
-  #   condition: succeededOrFailed()
+extends:
+  template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux GPU"
+    conda_env: "unit_linux_gpu"
+    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+    pip_opts: "[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html"
+    pytest_markers: "not notebooks and not spark and gpu"

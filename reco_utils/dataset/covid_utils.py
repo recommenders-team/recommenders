@@ -1,17 +1,15 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from reco_utils.dataset import blob_utils
-from azure.storage.blob import BlockBlobService
-from io import StringIO
-import pandas as pd
-import numpy as np
 import json
+import numpy as np
+import pandas as pd
+import requests
 
 
 def load_pandas_df(
     azure_storage_account_name="azureopendatastorage",
-    azure_storage_sas_token="sv=2019-02-02&ss=bfqt&srt=sco&sp=rlcup&se=2025-04-14T00:21:16Z&st=2020-04-13T16:21:16Z&spr=https&sig=JgwLYbdGruHxRYTpr5dxfJqobKbhGap8WUtKFadcivQ%3D",
+    azure_storage_sas_token="",
     container_name="covid19temp",
     metadata_filename="metadata.csv",
 ):
@@ -21,24 +19,22 @@ def load_pandas_df(
 
     Args:
         azure_storage_account_name (str): Azure storage account name.
-        azure_storage_sas_token (str): Azure storage SaS token.
+        azure_storage_sas_token (str): Azure storage SAS token.
         container_name (str): Azure storage container name.
         metadata_filename (str): Name of file containing top-level metadata for the dataset.
     
     Returns:
         metadata (pd.DataFrame): Metadata dataframe.
-        blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
     """
 
-    # Get metadata (may take around 1-2 min)
-    blob_service = BlockBlobService(
-        account_name=azure_storage_account_name, sas_token=azure_storage_sas_token
+    # Load into dataframe
+    uri = "https://{acct}.blob.core.windows.net/{container}/{filename}{sas}".format(
+        acct=azure_storage_account_name,
+        container=container_name,
+        filename=metadata_filename,
+        sas=azure_storage_sas_token
     )
-    metadata = blob_utils.load_csv_from_blob(
-        blob_service, container_name, metadata_filename
-    )
-
-    return metadata, blob_service
+    return pd.read_csv(uri)
 
 
 def remove_duplicates(df, cols):
@@ -107,38 +103,36 @@ def clean_dataframe(df):
     return df
 
 
-def retrieve_text(entry, blob_service, container_name):
+def retrieve_text(
+        entry, 
+        container_name,
+        azure_storage_account_name="azureopendatastorage",
+        azure_storage_sas_token="",
+):
     """ Retrieve body text from article of interest.
     
     Args:
         entry (pd.Series): A single row from the dataframe (df.iloc[n]).
-        blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
         container_name (str): Azure storage container name.
-    
+        azure_storage_account_name (str): Azure storage account name.
+        azure_storage_sas_token (str): Azure storage SAS token.
+
     Results:
         text (str): Full text of the blob as a single string.
     """
 
     try:
-        # select based on whether it's pdf or pmc_xml
-        if entry["has_pdf_parse"] == True:
-            blob_name = "{0}/pdf_json/{1}.json".format(
-                entry["full_text_file"], entry["sha"]
-            )
-        else:
-            if entry["has_pmc_xml_parse"] == True:
-                blob_name = "{0}/pmc_json/{1}.xml.json".format(
-                    entry["full_text_file"], entry["pmcid"]
-                )
-            else:
-                print("Neither PDF or PMC_XML data is available for this file")
+        filename = entry["pdf_json_files"] or entry["pmc_json_files"]
 
         # Extract text
-        data = json.loads(
-            blob_service.get_blob_to_text(
-                container_name=container_name, blob_name=blob_name
-            ).content
+        uri = "https://{acct}.blob.core.windows.net/{container}/{filename}{sas}".format(
+            acct=azure_storage_account_name,
+            container=container_name,
+            filename=filename,
+            sas=azure_storage_sas_token
         )
+
+        data = requests.get(uri, headers={"Content-type": "application/json"}).json()
         text = " ".join([paragraph["text"] for paragraph in data["body_text"]])
 
     except:
@@ -147,14 +141,20 @@ def retrieve_text(entry, blob_service, container_name):
     return text
 
 
-def get_public_domain_text(df, blob_service, container_name):
+def get_public_domain_text(
+    df, 
+    container_name,
+    azure_storage_account_name="azureopendatastorage",
+    azure_storage_sas_token="",
+):
     """ Get all public domain text.
     
     Args:
         df (pd.DataFrame): Metadata dataframe for public domain text.
-        blob_service (azure.storage.blob.BlockBlobService): Azure BlockBlobService for dataset.
         container_name (str): Azure storage container name.
-    
+        azure_storage_account_name (str): Azure storage account name.
+        azure_storage_sas_token (str): Azure storage SAS token.
+
     Returns:
         df_full (pd.DataFrame): Dataframe with select metadata and full article text.
     """
@@ -163,7 +163,12 @@ def get_public_domain_text(df, blob_service, container_name):
 
     # Add in full_text
     df["full_text"] = df.apply(
-        lambda row: retrieve_text(row, blob_service, container_name), axis=1
+        lambda row: retrieve_text(
+            row, 
+            container_name, 
+            azure_storage_account_name, 
+            azure_storage_sas_token
+        ), axis=1
     )
 
     # Remove rows with empty full_text

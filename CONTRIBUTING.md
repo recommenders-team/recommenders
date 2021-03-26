@@ -2,10 +2,14 @@
 
 Contributions are welcomed! Here's a few things to know:
 
-* [Steps to Contributing](#steps-to-contributing)
-* [Coding Guidelines](#recommenders-team-contribution-guidelines)
-* [Microsoft Contributor License Agreement](#microsoft-contributor-license-agreement)
-* [Code of Conduct](#code-of-conduct)
+- [Contribution Guidelines](#contribution-guidelines)
+  - [Steps to Contributing](#steps-to-contributing)
+  - [Coding Guidelines](#coding-guidelines)
+  - [Microsoft Contributor License Agreement](#microsoft-contributor-license-agreement)
+  - [Code of Conduct](#code-of-conduct)
+      - [Do not point fingers](#do-not-point-fingers)
+      - [Provide code feedback based on evidence](#provide-code-feedback-based-on-evidence)
+      - [Ask questions do not give answers](#ask-questions-do-not-give-answers)
 
 ## Steps to Contributing
 
@@ -15,10 +19,12 @@ Here are the basic steps to get started with your first contribution. Please rea
 1. Use [open issues](https://github.com/Microsoft/Recommenders/issues) to discuss the proposed changes. Create an issue describing changes if necessary to collect feedback. Also, please use provided labels to tag issues so everyone can easily sort issues of interest.
 2. [Fork the repo](https://help.github.com/articles/fork-a-repo/) so you can make and test local changes.
 3. Create a new branch **from staging branch** for the issue (please do not create a branch from main). We suggest prefixing the branch with your username and then a descriptive title: (e.g. gramhagen/update_contributing_docs)
-4. Create a test that replicates the issue.
-5. Make code changes.
-6. Ensure unit tests pass and code style / formatting is consistent (see [wiki](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details).
-7. Create a pull request against **staging** branch.
+4. Install reco-utils package locally using the right optional dependency for your test. (e.g. gpu test: `pip install -e .[gpu]`
+5. Install development requirements. `pip install -r dev-requirements.txt`
+6. Create a test that replicates the issue.
+7. Make code changes.
+8. Ensure unit tests pass and code style / formatting is consistent (see [wiki](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details).
+9. Create a pull request against **staging** branch.
 
 Once the features included in a [milestone](https://github.com/microsoft/recommenders/milestones) are completed, we will merge staging into main. See the wiki for more detail about our [merge strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).
 
