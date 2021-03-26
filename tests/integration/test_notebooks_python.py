@@ -200,6 +200,30 @@ def test_wikidata_integration(notebooks, tmp):
 @pytest.mark.parametrize(
     "size, expected_values",
     [
+        ("1m", dict(map=0.081794, ndcg=0.400983, precision=0.367997, recall=0.138352)),
+        # 10m works but takes too long
+    ],
+)
+def test_cornac_bpr_integration(notebooks, size, expected_values):
+    notebook_path = notebooks["cornac_bivae_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(MOVIELENS_DATA_SIZE=size),
+    )
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+        
+
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
         ("1m", dict(map=0.081390, ndcg=0.406627, precision=0.373228, recall=0.132444)),
         # 10m works but takes too long
     ],
