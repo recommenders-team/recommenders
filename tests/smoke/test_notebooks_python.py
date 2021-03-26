@@ -132,6 +132,25 @@ def test_lightgbm_quickstart_smoke(notebooks):
 
 @pytest.mark.smoke
 def test_cornac_bpr_smoke(notebooks):
+    notebook_path = notebooks["cornac_bivae_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(MOVIELENS_DATA_SIZE="100k"),
+    )
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    assert results["map"] == pytest.approx(0.146552, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.474124, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.412527, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.225064, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.smoke
+def test_cornac_bpr_smoke(notebooks):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
     pm.execute_notebook(
         notebook_path,
