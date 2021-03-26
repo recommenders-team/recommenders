@@ -3,7 +3,6 @@
 
 
 import os
-import six
 from sklearn.metrics import (
     roc_auc_score,
     log_loss,
@@ -491,7 +490,7 @@ def prepare_hparams(yaml_file=None, **kwargs):
         config = {}
 
     if kwargs:
-        for name, value in six.iteritems(kwargs):
+        for name, value in kwargs.items():
             config[name] = value
 
     check_nn_config(config)

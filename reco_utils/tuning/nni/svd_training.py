@@ -4,14 +4,12 @@
 import argparse
 import json
 import logging
-import numpy as np
 import os
+import numpy as np
 import pandas as pd
 import nni
 import surprise
-import sys
 
-sys.path.append("../../../")
 
 import reco_utils.evaluation.python_evaluation as evaluation
 from reco_utils.recommender.surprise.surprise_utils import (
@@ -29,10 +27,10 @@ def svd_training(params):
     """
     logger.debug("Start training...")
     train_data = pd.read_pickle(
-        path=os.path.join(params["datastore"], params["train_datapath"])
+        os.path.join(params["datastore"], params["train_datapath"])
     )
     validation_data = pd.read_pickle(
-        path=os.path.join(params["datastore"], params["validation_datapath"])
+        os.path.join(params["datastore"], params["validation_datapath"])
     )
 
     svd_params = {

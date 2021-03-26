@@ -17,8 +17,6 @@ from pymanopt.manifolds import Stiefel, Product, PositiveDefinite, Euclidean
 from pymanopt.solvers import ConjugateGradient
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 
-from IPython import embed
-
 
 class IMCProblem(object):
     """

@@ -6,7 +6,7 @@ pr:
 - main
 - staging
 
-#Any commit to this branch will trigger the build.
+# Any commit to this branch will trigger the build.
 trigger:
 - staging
 - main
@@ -14,48 +14,13 @@ trigger:
 variables:
 - group: LinuxAgentPool
 
-jobs:
-- job: unit
-  displayName: 'Unit tests Linux PySpark on notebooks'
-  timeoutInMinutes: 20 # how long to run the job before automatically cancelling
-  pool:
-    name: $(Agent_Pool)
-
-  steps:
-  - bash: |
-      echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda env list
-    displayName: Add Conda to PATH
-  
-  # Uncomment if needed
-  # Conda creation can take around 10min
-  # - bash: |
-  #     python tools/generate_conda_file.py  --pyspark
-  #     conda env update -n reco_pyspark -f reco_pyspark.yaml
-  #   displayName: 'Creating Conda Environment with dependencies'
-
-  - script: |
-      . /anaconda/etc/profile.d/conda.sh && \
-      conda activate reco_pyspark && \
-      pytest tests/unit --durations 0 -m "notebooks and spark and not gpu" --junitxml=reports/test-unit.xml
-    displayName: 'Run Tests'
-    env:
-      PYSPARK_PYTHON: /anaconda/envs/reco_pyspark/bin/python
-      PYSPARK_DRIVER_PYTHON: /anaconda/envs/reco_pyspark/bin/python
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results **/test-*.xml'
-    inputs:
-      testResultsFiles: '**/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
-
-  # Uncomment if needed
-  # - script: |
-  #     conda env remove -n reco_pyspark -y   
-  #   workingDirectory: tests
-  #   displayName: 'Conda remove'
-  #   continueOnError: true
-  #   condition: succeededOrFailed()
-  
-  
+extends:
+  template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux Spark"
+    conda_env: "unit_notebook_linux_spark"
+    conda_opts: "python=3.6"
+    pip_opts: "[spark,examples]"
+    pytest_markers: "notebooks and spark and not gpu"
