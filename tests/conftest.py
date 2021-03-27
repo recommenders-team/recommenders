@@ -307,6 +307,11 @@ def notebooks():
             "02_model_collaborative_filtering",
             "cornac_bpr_deep_dive.ipynb",
         ),
+        "cornac_bivae_deep_dive": os.path.join(
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "cornac_bivae_deep_dive.ipynb",
+        ),
         "xlearn_fm_deep_dive": os.path.join(
             folder_notebooks, "02_model_hybrid", "fm_deep_dive.ipynb"
         ),
