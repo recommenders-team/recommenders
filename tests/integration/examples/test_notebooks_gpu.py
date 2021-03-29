@@ -3,12 +3,13 @@
 
 import os
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
 except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
-    
+
 
 from reco_utils.common.gpu_utils import get_number_gpus
 
@@ -589,3 +590,30 @@ def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
     assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
     assert results["res"]["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
     assert results["res"]["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, expected_values",
+    [
+        ("1m", dict(map=0.081794, ndcg=0.400983, precision=0.367997, recall=0.138352)),
+        # 10m works but takes too long
+    ],
+)
+def test_cornac_bivae_integration(
+    notebooks, output_notebook, kernel_name, size, expected_values
+):
+    notebook_path = notebooks["cornac_bivae_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        OUTPUT_NOTEBOOK,
+        kernel_name=KERNEL_NAME,
+        parameters=dict(MOVIELENS_DATA_SIZE=size),
+    )
+    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)

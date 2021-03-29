@@ -95,6 +95,7 @@ To contributors: please add your name to the list when you submit a patch to the
    * Deep dive notebook demonstrating the use of LightGCN
 * **[Quoc-Tuan Truong](https://github.com/tqtg)**
    * BPR notebook using [Cornac](https://github.com/PreferredAI/cornac) framework
+   * BiVAE notebook using [Cornac](https://github.com/PreferredAI/cornac) framework
 * **[Robert Alexander](https://github.com/roalexan)**
    * Windows test pipelines
 * **[Satyadev Ntv](https://github.com/satyadevntv)**
