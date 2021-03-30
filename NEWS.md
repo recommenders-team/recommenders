@@ -32,7 +32,7 @@ With the competition successfully closed, the [leaderboard](https://msnews.githu
 
 ## Update July 20, 2020
 
-Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/main/scenarios/news), and dive into the [quick start example](examples/00_quick_start/dkn_MIND_dataset.ipynb) using the DKN algorithm. Then try some other algorithms (NAML, NPA, NRMS, LSTUR) and tools in recommenders and submit your entry!
+Microsoft is hosting a News Recommendation competition based on the [MIND dataset](https://msnews.github.io/), a large-scale English news dataset with impression logs. Check out the [ACL paper](https://msnews.github.io/assets/doc/ACL2020_MIND.pdf), get familiar with the [news recommendation scenario](https://github.com/microsoft/recommenders/tree/main/scenarios/news), and dive into the [quick start example](examples/00_quick_start/dkn_MIND.ipynb) using the DKN algorithm. Then try some other algorithms (NAML, NPA, NRMS, LSTUR) and tools in recommenders and submit your entry!
 
 ## Update August 20, 2020
 
