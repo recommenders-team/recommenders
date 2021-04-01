@@ -23,30 +23,30 @@ if HASH is not None:
 name = environ.get("LIBRARY_NAME", "reco_utils")
 
 install_requires = [
-    "bottleneck>=1.2.1,<2",
-    "category_encoders>=1.3.0,<2",
-    "cornac>=1.1.2,<2",
-    "jinja2>=2,<3",
-    "lightfm>=1.15,<2",
-    "lightgbm>=2.2.1,<3",
-    "nltk>=3.4,<4",
-    "matplotlib>=2.2.2,<3",
-    "memory_profiler>=0.54.0,<1",
-    "nni==1.5",
-    "numba>=0.38.1,<1",
     "numpy>=1.13.3,<2",
     "pandas>1.0.3,<2",
-    "pydocumentdb>=2.3.3<3",  # todo: replace with azure-cosmos
-    "pymanopt>=0.2.5,<1",
-    "pyyaml>=5.4.1,<6",
-    "requests>=2.0.0,<3",
-    "seaborn>=0.8.1,<1",
-    "scikit-learn>=0.19.1,<1",
-    "scikit-surprise>=0.19.1,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
+    "matplotlib>=2.2.2,<3",
+    "scikit-learn>=0.19.1,<1",
+    "cornac>=1.1.2,<2",
+    "lightfm>=1.15,<2",
+    "lightgbm>=2.2.1,<3",
+    "memory_profiler>=0.54.0,<1",
+    "nltk>=3.4,<4",
+    "nni==1.5",
+    "pydocumentdb>=2.3.3<3",  # todo: replace with azure-cosmos
+    "pymanopt>=0.2.5,<1",
+    "scikit-surprise>=0.19.1,<2",
+    "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "xlearn==0.40a1",
+    "bottleneck>=1.2.1,<2",
+    "category_encoders>=1.3.0,<2",
+    "jinja2>=2,<3",
+    "numba>=0.38.1,<1",
+    "pyyaml>=5.4.1,<6",
+    "requests>=2.0.0,<3"
 ]
 
 # shared dependencies
@@ -111,7 +111,7 @@ setup(
     extras_require=extras_require,
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
     install_requires=install_requires,
-    package_dir={"reco_utils": "reco_utils"},
+    package_dir={"": "reco_utils"},
     packages=find_packages(where="reco_utils"),
     python_requires=">=3.6, <4",
 )
