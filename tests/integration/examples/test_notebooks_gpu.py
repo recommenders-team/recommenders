@@ -608,7 +608,7 @@ def test_cornac_bivae_integration(
     pm.execute_notebook(
         notebook_path,
         output_notebook,
-        kernel_name=KERNEL_NAME,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
