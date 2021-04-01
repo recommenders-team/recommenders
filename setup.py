@@ -89,21 +89,29 @@ setup(
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/microsoft/recommenders",
+    project_urls={
+        "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
+        "Wiki": "https://github.com/microsoft/recommenders/wiki"
+    },
     author="RecoDev Team at Microsoft",
     author_email="RecoDevTeam@service.microsoft.com",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
         "Intended Audience :: Science/Research",
-        "Topic :: Scientific/Engineering",
+        "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
+        "Operating System :: Microsoft :: Windows",
+        "Operating System :: POSIX :: Linux",
+        "Operating System :: MacOS"
     ],
     extras_require=extras_require,
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"reco_utils": "reco_utils"},
-    packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
+    packages=find_packages(where="reco_utils"),
     python_requires=">=3.6, <4",
 )
