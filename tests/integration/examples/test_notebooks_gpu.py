@@ -607,11 +607,11 @@ def test_cornac_bivae_integration(
     notebook_path = notebooks["cornac_bivae_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
+        output_notebook,
         kernel_name=KERNEL_NAME,
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
