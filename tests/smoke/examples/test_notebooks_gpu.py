@@ -243,11 +243,11 @@ def test_cornac_bivae_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["cornac_bivae_deep_dive"]
     pm.execute_notebook(
         notebook_path,
-        OUTPUT_NOTEBOOK,
-        kernel_name=KERNEL_NAME,
+        output_notebook,
+        kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE="100k"),
     )
-    results = sb.read_notebook(OUTPUT_NOTEBOOK).scraps.dataframe.set_index("name")[
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
 
