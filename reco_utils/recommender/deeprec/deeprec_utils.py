@@ -3,7 +3,6 @@
 
 
 import os
-import six
 from sklearn.metrics import (
     roc_auc_score,
     log_loss,
@@ -469,6 +468,9 @@ def create_hparams(flags):
         decay=flags["decay"] if "decay" in flags else None,
         eval_epoch=flags["eval_epoch"] if "eval_epoch" in flags else None,
         top_k=flags["top_k"] if "top_k" in flags else None,
+        # sum
+        slots=flags["slots"] if "slots" in flags else 5,
+        cell=flags["cell"] if "cell" in flags else "SUM",
     )
 
 
@@ -488,7 +490,7 @@ def prepare_hparams(yaml_file=None, **kwargs):
         config = {}
 
     if kwargs:
-        for name, value in six.iteritems(kwargs):
+        for name, value in kwargs.items():
             config[name] = value
 
     check_nn_config(config)

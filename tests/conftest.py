@@ -11,12 +11,42 @@
 import calendar
 import datetime
 import os
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+import numpy as np
 import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
-from tempfile import TemporaryDirectory
-from tests.notebooks_common import path_notebooks
+
+from reco_utils.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+    DEFAULT_TIMESTAMP_COL,
+)
+from reco_utils.dataset.python_splitters import numpy_stratified_split
+from reco_utils.dataset.python_splitters import python_chrono_split
 from reco_utils.common.spark_utils import start_or_get_spark
+
+
+@pytest.fixture(scope="session")
+def output_notebook():
+    return "output.ipynb"
+
+
+@pytest.fixture(scope="session")
+def kernel_name():
+    """Unless manually modified, python3 should be the name of the current jupyter kernel
+    that runs on the activated conda environment"""
+    return "python3"
+
+
+def path_notebooks():
+    """Returns the path of the notebooks folder"""
+    return os.path.abspath(
+        os.path.join(os.path.dirname(__file__), os.path.pardir, "examples")
+    )
 
 
 @pytest.fixture
@@ -26,7 +56,7 @@ def tmp(tmp_path_factory):
 
 
 @pytest.fixture(scope="session")
-def spark(app_name="Sample", url="local[*]"):
+def spark(tmp_path_factory, app_name="Sample", url="local[*]"):
     """Start Spark if not started.
 
     Other Spark settings which you might find useful:
@@ -46,10 +76,11 @@ def spark(app_name="Sample", url="local[*]"):
         SparkSession: new Spark session
     """
 
-    config = {"spark.local.dir": "/mnt", "spark.sql.shuffle.partitions": 1}
-    spark = start_or_get_spark(app_name=app_name, url=url, config=config)
-    yield spark
-    spark.stop()
+    with TemporaryDirectory(dir=tmp_path_factory.getbasetemp()) as td:
+        config = {"spark.local.dir": td, "spark.sql.shuffle.partitions": 1}
+        spark = start_or_get_spark(app_name=app_name, url=url, config=config)
+        yield spark
+        spark.stop()
 
 
 @pytest.fixture(scope="module")
@@ -276,6 +307,11 @@ def notebooks():
             "02_model_collaborative_filtering",
             "cornac_bpr_deep_dive.ipynb",
         ),
+        "cornac_bivae_deep_dive": os.path.join(
+            folder_notebooks,
+            "02_model_collaborative_filtering",
+            "cornac_bivae_deep_dive.ipynb",
+        ),
         "xlearn_fm_deep_dive": os.path.join(
             folder_notebooks, "02_model_hybrid", "fm_deep_dive.ipynb"
         ),
@@ -288,3 +324,133 @@ def notebooks():
         ),
     }
     return paths
+
+
+### NCF FIXTURES
+
+
+@pytest.fixture(scope="module")
+def test_specs_ncf():
+    return {
+        "number_of_rows": 1000,
+        "user_ids": [1, 2, 3, 4, 5],
+        "seed": 123,
+        "ratio": 0.6,
+        "split_numbers": [2, 3, 5],
+        "tolerance": 0.01,
+    }
+
+
+@pytest.fixture(scope="module")
+def python_dataset_ncf(test_specs_ncf):
+    """Get Python labels"""
+
+    def random_date_generator(start_date, range_in_days):
+        """Helper function to generate random timestamps.
+
+        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a-range-in-numpy
+        """
+        days_to_add = np.arange(0, range_in_days)
+        random_dates = []
+        for i in range(range_in_days):
+            random_date = np.datetime64(start_date) + np.random.choice(days_to_add)
+            random_dates.append(random_date)
+
+        return random_dates
+
+    np.random.seed(test_specs_ncf["seed"])
+
+    rating = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: np.random.randint(
+                1, 100, test_specs_ncf["number_of_rows"]
+            ),
+            DEFAULT_ITEM_COL: np.random.randint(
+                1, 100, test_specs_ncf["number_of_rows"]
+            ),
+            DEFAULT_RATING_COL: np.random.randint(
+                1, 5, test_specs_ncf["number_of_rows"]
+            ),
+            DEFAULT_TIMESTAMP_COL: random_date_generator(
+                "2018-01-01", test_specs_ncf["number_of_rows"]
+            ),
+        }
+    )
+
+    train, test = python_chrono_split(rating, ratio=test_specs_ncf["ratio"])
+
+    return train, test
+
+
+# RBM Fixtures
+
+
+@pytest.fixture(scope="module")
+def test_specs():
+    return {
+        "users": 30,
+        "items": 53,
+        "ratings": 5,
+        "seed": 123,
+        "spars": 0.8,
+        "ratio": 0.7,
+    }
+
+
+@pytest.fixture(scope="module")
+def affinity_matrix(test_specs):
+    """Generate a random user/item affinity matrix. By increasing the likehood of 0 elements we simulate
+    a typical recommending situation where the input matrix is highly sparse.
+
+    Args:
+        users (int): number of users (rows).
+        items (int): number of items (columns).
+        ratings (int): rating scale, e.g. 5 meaning rates are from 1 to 5.
+        spars: probability of obtaining zero. This roughly corresponds to the sparseness.
+               of the generated matrix. If spars = 0 then the affinity matrix is dense.
+
+    Returns:
+        np.array: sparse user/affinity matrix of integers.
+
+    """
+
+    np.random.seed(test_specs["seed"])
+
+    # uniform probability for the 5 ratings
+    s = [(1 - test_specs["spars"]) / test_specs["ratings"]] * test_specs["ratings"]
+    s.append(test_specs["spars"])
+    P = s[::-1]
+
+    # generates the user/item affinity matrix. Ratings are from 1 to 5, with 0s denoting unrated items
+    X = np.random.choice(
+        test_specs["ratings"] + 1, (test_specs["users"], test_specs["items"]), p=P
+    )
+
+    Xtr, Xtst = numpy_stratified_split(
+        X, ratio=test_specs["ratio"], seed=test_specs["seed"]
+    )
+
+    return (Xtr, Xtst)
+
+
+# DeepRec Fixtures
+
+
+@pytest.fixture(scope="session")
+def deeprec_resource_path():
+    return Path(__file__).absolute().parent.joinpath("resources", "deeprec")
+
+
+@pytest.fixture(scope="session")
+def mind_resource_path(deeprec_resource_path):
+    return Path(__file__).absolute().parent.joinpath("resources", "mind")
+
+
+@pytest.fixture(scope="module")
+def deeprec_config_path():
+    return (
+        Path(__file__)
+        .absolute()
+        .parents[1]
+        .joinpath("reco_utils", "recommender", "deeprec", "config")
+    )

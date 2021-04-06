@@ -144,7 +144,6 @@ ml-20m/
 *.jar
 *.item
 *.pkl
-*.txt
 *.pdf
 .pretrain
 *.npy
@@ -164,4 +163,5 @@ examples/07_tutorials/KDD2020-tutorial/data_folder/
 *.tsv
 *.sh
 
-tests/resources/
+tests/**/resources/
+reports/

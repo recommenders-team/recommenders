@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 
 from reco_utils.dataset.download_utils import maybe_download
-from IPython import embed
+
 
 def length_normalize(matrix):
     """Length normalize the matrix

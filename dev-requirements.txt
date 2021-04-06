@@ -1,0 +1,6 @@
+# to run tests ensure you have installed reco-utils with necessary optional dependencies
+#   notebooks: reco-utils[examples]
+#   gpu: reco-utils[gpu]
+#   spark: reco-utils[spark]
+black>=18.6b4,<21
+pytest>=3.6.4

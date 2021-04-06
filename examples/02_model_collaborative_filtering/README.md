@@ -6,6 +6,7 @@ In this directory, notebooks are provided to give a deep dive of collaborative f
 | --- | --- | --- |
 | [als_deep_dive](als_deep_dive.ipynb) | PySpark | Deep dive on the ALS algorithm and implementation.
 | [baseline_deep_dive](baseline_deep_dive.ipynb) | --- | Deep dive on baseline performance estimation.
+| [cornac_bivae_deep_dive](cornac_bivae_deep_dive.ipynb) | Python CPU, GPU | Deep dive on the BiVAE algorithm and implementation.
 | [cornac_bpr_deep_dive](cornac_bpr_deep_dive.ipynb) | Python CPU | Deep dive on the BPR algorithm and implementation.
 | [lightgcn_deep_dive](lightgcn_deep_dive.ipynb) | Python CPU, GPU | Deep dive on a LightGCN algorithm and implementation.
 | [multi_vae_deep_dive](multi_vae_deep_dive.ipynb) | Python CPU, GPU | Deep dive on the Multinomial VAE algorithm and implementation.

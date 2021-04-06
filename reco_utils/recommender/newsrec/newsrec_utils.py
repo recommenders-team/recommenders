@@ -3,7 +3,6 @@
 
 
 import tensorflow as tf
-import six
 import os
 from sklearn.metrics import (
     roc_auc_score,

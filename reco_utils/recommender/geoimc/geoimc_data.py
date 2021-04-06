@@ -14,7 +14,7 @@ from numba import jit, prange
 
 from reco_utils.common.python_utils import binarize
 from .geoimc_utils import length_normalize, reduce_dims
-from IPython import embed
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("geoimc")
