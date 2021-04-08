@@ -92,7 +92,6 @@ def test_load_pandas_df(
     assert len(df) == num_samples
     # user, item, rating and timestamp
     assert len(df.columns) == 4
-    assert False == True  # testing pipeline failure
 
 
 @pytest.mark.smoke
