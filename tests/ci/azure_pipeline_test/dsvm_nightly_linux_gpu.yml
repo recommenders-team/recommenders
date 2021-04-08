@@ -34,3 +34,4 @@ extends:
     conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
     pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
     pytest_markers: "not spark and gpu"
+    pytest_params: "-x"
