@@ -23,6 +23,7 @@ def test_criteo_load_spark_df(spark, criteo_first_row):
     assert len(df.columns) == 40
     first_row = df.limit(1).collect()[0].asDict()
     assert first_row == criteo_first_row
+    assert False == True  # testing smoke failure
 
 
 @pytest.mark.smoke
