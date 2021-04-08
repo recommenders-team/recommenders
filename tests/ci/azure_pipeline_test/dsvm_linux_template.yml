@@ -63,12 +63,12 @@ jobs:
         conda deactivate
       displayName: 'Run Tests'
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
-    inputs:
-      testResultsFiles: 'reports/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      inputs:
+        testResultsFiles: 'reports/test-${{ test }}*.xml'
+        failTaskOnFailedTests: true
+      condition: succeededOrFailed()
 
   - script: |
       conda env remove -n ${{ parameters.conda_env }}
