@@ -3,6 +3,7 @@
 
 # To build the package, copy reco_utils/ directory under a src/ directory
 # (see package_dir below). This is needed in order to get the package name correctly. 
+# For pypi, replace README.md with reco_utils/README.md
 
 from pathlib import Path
 from setuptools import setup, find_packages
