@@ -1,6 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+# To build the package, copy reco_utils/ directory under a src/ directory
+# (see package_dir below). This is needed in order to get the package name correctly. 
+
 from pathlib import Path
 from setuptools import setup, find_packages
 import time
@@ -20,16 +23,16 @@ HASH = environ.get("HASH", None)
 if HASH is not None:
     version += ".post" + str(int(time.time()))
 
-name = environ.get("LIBRARY_NAME", "reco_utils")
+name = environ.get("LIBRARY_NAME", "recommender_utils")
 
 install_requires = [
-    "numpy>=1.13.3,<2",
+    "numpy>=1.14,<2",
     "pandas>1.0.3,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<3",
     "scikit-learn>=0.19.1,<1",
-    "cornac>=1.1.2,<2",
+    "numba>=0.38.1,<1",
     "lightfm>=1.15,<2",
     "lightgbm>=2.2.1,<3",
     "memory_profiler>=0.54.0,<1",
@@ -44,9 +47,9 @@ install_requires = [
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3",
-    "numba>=0.38.1,<1",
     "pyyaml>=5.4.1,<6",
-    "requests>=2.0.0,<3"
+    "requests>=2.0.0,<3",
+    "cornac>=1.1.2,<2",
 ]
 
 # shared dependencies
@@ -64,8 +67,8 @@ extras_require = {
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
         "tensorflow-gpu==1.15.4",  # compiled with cuda 10.0
-        "fastai>=1.0.46,<2",
         "torch==1.2.0",  # last os-common version with cuda 10.0 support
+        "fastai>=1.0.46,<2",
     ],
     "spark": [
         "databricks_cli>=0.8.6,<1",
@@ -111,7 +114,7 @@ setup(
     extras_require=extras_require,
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
     install_requires=install_requires,
-    package_dir={"": "reco_utils"},
-    packages=find_packages(where="reco_utils"),
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
     python_requires=">=3.6, <4",
 )
