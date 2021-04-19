@@ -24,7 +24,7 @@ HASH = environ.get("HASH", None)
 if HASH is not None:
     version += ".post" + str(int(time.time()))
 
-name = environ.get("LIBRARY_NAME", "recommender_utils")
+name = environ.get("LIBRARY_NAME", "reco_utils")
 
 install_requires = [
     "numpy>=1.14,<2",
@@ -44,7 +44,6 @@ install_requires = [
     "scikit-surprise>=0.19.1,<2",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
-    "xlearn==0.40a1",
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3",
@@ -76,6 +75,10 @@ extras_require = {
         "pyarrow>=0.8.0,<1.0.0",
         "pyspark>=2.4.5,<3.0.0",
     ],
+    "xlearn": [
+        "cmake>=3.18.4.post1",
+        "xlearn==0.40a1",
+    ]
 }
 # for the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
