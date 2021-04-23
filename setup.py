@@ -24,7 +24,7 @@ HASH = environ.get("HASH", None)
 if HASH is not None:
     version += ".post" + str(int(time.time()))
 
-name = environ.get("LIBRARY_NAME", "reco_utils")
+name = environ.get("LIBRARY_NAME", "recommenders")
 
 install_requires = [
     "numpy>=1.14,<2",
