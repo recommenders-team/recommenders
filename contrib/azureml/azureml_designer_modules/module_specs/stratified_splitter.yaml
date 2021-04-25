@@ -1,0 +1,54 @@
+$schema: http://azureml/sdk-2-0/CommandComponent.json
+name: microsoft.com.cat.stratified_splitter
+version: 1.1.1
+display_name: Stratified Splitter
+type: CommandComponent
+description: 'Python stratified splitter from Recommenders repo: https://github.com/Microsoft/Recommenders.'
+tags:
+  Recommenders:
+inputs:
+  input_path:
+    type: AnyDirectory
+    description: The directory contains dataframe.
+    optional: false
+  ratio:
+    type: Float
+    description: |
+      Ratio for splitting data. If it is a single float number, it splits data into two halves and the ratio argument indicates the ratio of  training data set; if it is a list of float numbers, the splitter splits  data into several portions corresponding to the split ratios. If a list is  provided and the ratios are not summed to 1, they will be normalized.
+    min: 0.0
+    max: 1.0
+    default: 0.75
+    optional: false
+  user_column:
+    type: String
+    description: Column name of user IDs.
+    default: UserId
+    optional: false
+  item_column:
+    type: String
+    description: Column name of item IDs.
+    default: MovieId
+    optional: false
+  seed:
+    type: Integer
+    description: Seed.
+    default: 42
+    optional: false
+outputs:
+  output_train_data:
+    type: AnyDirectory
+    description: The output directory contains a training dataframe.
+  output_test_data:
+    type: AnyDirectory
+    description: The output directory contains a test dataframe.
+code:
+  ../../../../
+command: >-
+  python reco_utils/azureml/azureml_designer_modules/entries/stratified_splitter_entry.py
+  --input-path {inputs.input_path} --ratio {inputs.ratio} --col-user {inputs.user_column}
+  --col-item {inputs.item_column} --seed {inputs.seed} --output-train {outputs.output_train_data}
+  --output-test {outputs.output_test_data}
+environment:
+  conda:
+    conda_dependencies_file: reco_utils/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
+  os: Linux
