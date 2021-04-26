@@ -58,12 +58,12 @@ outputs:
 code:
   ../../../../
 command: >-
-  python reco_utils/azureml/azureml_designer_modules/entries/recall_at_k_entry.py
+  python contrib/azureml/azureml_designer_modules/entries/recall_at_k_entry.py
   --rating-true {inputs.rating_true} --rating-pred {inputs.rating_pred} --col-user
   {inputs.user_column} --col-item {inputs.item_column} --col-rating {inputs.rating_column}
   --col-prediction {inputs.prediction_column} --relevancy-method {inputs.relevancy_method}
   --k {inputs.top_k} --threshold {inputs.threshold} --score-result {outputs.score}
 environment:
   conda:
-    conda_dependencies_file: reco_utils/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
+    conda_dependencies_file: contrib/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
   os: Linux
