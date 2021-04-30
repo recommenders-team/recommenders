@@ -2,16 +2,9 @@
 # Licensed under the MIT License.
 
 
-import numpy as np
 import pandas as pd
 import logging
 
-from reco_utils.common.python_utils import (
-    get_top_k_scored_items,
-    rescale,
-    jaccard,
-    lift
-)
 from reco_utils.common import constants
 
 
