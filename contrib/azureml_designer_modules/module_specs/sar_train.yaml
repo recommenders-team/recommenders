@@ -48,7 +48,7 @@ outputs:
 code:
   ../../
 command: >-
-  python reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py --input-path
+  python contrib/azureml_designer_modules/entries/train_sar_entry.py --input-path
   {inputs.input_path} --col-user {inputs.user_column} --col-item {inputs.item_column}
   --col-rating {inputs.rating_column} --col-timestamp {inputs.timestamp_column} --normalize
   {inputs.normalize} --time-decay {inputs.time_decay} --output-model {outputs.output_model}

@@ -58,7 +58,7 @@ outputs:
 code:
   ../../
 command: >-
-  python reco_utils/azureml/azureml_designer_modules/entries/precision_at_k_entry.py
+  python contrib/azureml_designer_modules/entries/precision_at_k_entry.py
   --rating-true {inputs.rating_true} --rating-pred {inputs.rating_pred} --col-user
   {inputs.user_column} --col-item {inputs.item_column} --col-rating {inputs.rating_column}
   --col-prediction {inputs.prediction_column} --relevancy-method {inputs.relevancy_method}

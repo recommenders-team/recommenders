@@ -58,7 +58,7 @@ outputs:
 code:
   ../../
 command: >-
-  python reco_utils/azureml/azureml_designer_modules/entries/map_entry.py --rating-true
+  python contrib/azureml_designer_modules/entries/map_entry.py --rating-true
   {inputs.rating_true} --rating-pred {inputs.rating_pred} --col-user {inputs.user_column}
   --col-item {inputs.item_column} --col-rating {inputs.rating_column} --col-prediction
   {inputs.prediction_column} --relevancy-method {inputs.relevancy_method} --k {inputs.top_k}
