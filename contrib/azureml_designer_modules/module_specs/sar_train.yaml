@@ -46,7 +46,7 @@ outputs:
     type: AnyDirectory
     description: The output directory contains a trained model
 code:
-  ../../../../
+  ../../
 command: >-
   python reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py --input-path
   {inputs.input_path} --col-user {inputs.user_column} --col-item {inputs.item_column}

@@ -42,7 +42,7 @@ outputs:
     type: AnyDirectory
     description: The output directory contains a test dataframe.
 code:
-  ../../../../
+  ../../
 command: >-
   python reco_utils/azureml/azureml_designer_modules/entries/stratified_splitter_entry.py
   --input-path {inputs.input_path} --ratio {inputs.ratio} --col-user {inputs.user_column}

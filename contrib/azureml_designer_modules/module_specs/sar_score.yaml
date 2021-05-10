@@ -68,7 +68,7 @@ outputs:
     type: AnyDirectory
     description: Ratings or items to output
 code:
-  ../../../../
+  ../../
 command: >-
   python reco_utils/azureml/azureml_designer_modules/entries/score_sar_entry.py --trained-model
   {inputs.trained_model} --dataset-to-score {inputs.dataset_to_score} --score-type
