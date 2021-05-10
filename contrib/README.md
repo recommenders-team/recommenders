@@ -4,6 +4,7 @@ Independent or incubating algorithms and utilities are candidates for the `contr
 
 | Name | Description |
 |------|-------------|
+| [AzureML Designer Modeules](azureml_designer_modules/README.md) | Implementation of Recommenders algorithm on AzureML Designer |
 | [SARplus](sarplus/README.md) | Optimized implementation of SAR for Spark |
 
 ## Contrib Build status
