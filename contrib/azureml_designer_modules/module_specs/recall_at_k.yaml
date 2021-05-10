@@ -65,5 +65,5 @@ command: >-
   --k {inputs.top_k} --threshold {inputs.threshold} --score-result {outputs.score}
 environment:
   conda:
-    conda_dependencies_file: reco_utils/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
+    conda_dependencies_file: contrib/azureml_designer_modules/module_specs/sar_conda.yaml
   os: Linux
