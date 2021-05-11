@@ -35,3 +35,4 @@ extends:
     conda_opts: "python=3.6"
     pip_opts: "[examples]"
     pytest_markers: "not spark and not gpu"
+    pytest_params: "-x"
