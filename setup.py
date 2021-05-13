@@ -99,6 +99,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     extras_require=extras_require,
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
