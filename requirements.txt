@@ -15,5 +15,5 @@ pymanopt==0.2.5
 xlearn==0.40a1
 tensorflow==2.4.1
 transformers==4.3.3
-tensorflow==2.4.0
+tensorflow==2.5.0
 scrapbook>=0.5.0
