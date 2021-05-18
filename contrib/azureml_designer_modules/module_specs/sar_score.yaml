@@ -68,9 +68,9 @@ outputs:
     type: AnyDirectory
     description: Ratings or items to output
 code:
-  ../../../../
+  ../../
 command: >-
-  python reco_utils/azureml/azureml_designer_modules/entries/score_sar_entry.py --trained-model
+  python contrib/azureml_designer_modules/entries/score_sar_entry.py --trained-model
   {inputs.trained_model} --dataset-to-score {inputs.dataset_to_score} --score-type
   {inputs.score_type} [--items-to-predict {inputs.items_to_predict}] --normalize {inputs.normalize}
   [--ranking-metric {inputs.ranking_metric}] [--top-k {inputs.top_k}] [--sort-top-k
@@ -78,5 +78,5 @@ command: >-
   {outputs.score_result}
 environment:
   conda:
-    conda_dependencies_file: reco_utils/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
+    conda_dependencies_file: contrib/azureml_designer_modules/module_specs/sar_conda.yaml
   os: Linux

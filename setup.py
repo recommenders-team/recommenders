@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 # To build the package, copy reco_utils/ directory under a src/ directory
-# (see package_dir below). This is needed in order to get the package name correctly. 
+# (see package_dir below). This is needed in order to get the package name
+# correctly.
 # For pypi, replace README.md with reco_utils/README.md
 
 from pathlib import Path
@@ -31,7 +32,7 @@ install_requires = [
     "pandas>1.0.3,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
-    "matplotlib>=2.2.2,<3",
+    "matplotlib>=2.2.2,<4",
     "scikit-learn>=0.22.1,<1",
     "numba>=0.38.1,<1",
     "lightfm>=1.15,<2",
@@ -118,7 +119,8 @@ setup(
         "Operating System :: MacOS"
     ],
     extras_require=extras_require,
-    keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
+    keywords="recommendations recommenders recommender system engine "
+             "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"": "src"},
     packages=find_packages(where="src"),

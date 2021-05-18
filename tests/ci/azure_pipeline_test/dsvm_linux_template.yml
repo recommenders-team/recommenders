@@ -18,6 +18,9 @@ parameters:
   type: string
 - name: pytest_markers
   type: string
+- name: pytest_params
+  type: string
+  default: ""
 
 jobs:
 - job: test
@@ -56,6 +59,7 @@ jobs:
 
         # run tests
         pytest tests/${{ test }} \
+          ${{ parameters.pytest_params }} \
           -m "${TEST_MARKER}${{ parameters.pytest_markers }}" \
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml
@@ -63,12 +67,12 @@ jobs:
         conda deactivate
       displayName: 'Run Tests'
 
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results'
-    inputs:
-      testResultsFiles: 'reports/test-*.xml'
-      failTaskOnFailedTests: true
-    condition: succeededOrFailed()
+    - task: PublishTestResults@2
+      displayName: 'Publish Test Results'
+      inputs:
+        testResultsFiles: 'reports/test-${{ test }}*.xml'
+        failTaskOnFailedTests: true
+      condition: succeededOrFailed()
 
   - script: |
       conda env remove -n ${{ parameters.conda_env }}

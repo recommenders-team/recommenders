@@ -270,20 +270,13 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     return topk_scores, t
 
 
-def prepare_training_bpr(train, test):
+def prepare_training_cornac(train, test):
     return cornac.data.Dataset.from_uir(
         train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False), seed=SEED
     )
 
 
-def train_bpr(params, data):
-    model = cornac.models.BPR(**params)
-    with Timer() as t:
-        model.fit(data)
-    return model, t
-
-
-def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_cornac(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     with Timer() as t:
         topk_scores = predict_ranking(
             model,
@@ -294,6 +287,20 @@ def recommend_k_bpr(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             remove_seen=remove_seen,
         )
     return topk_scores, t
+
+
+def train_bpr(params, data):
+    model = cornac.models.BPR(**params)
+    with Timer() as t:
+        model.fit(data)
+    return model, t
+
+
+def train_bivae(params, data):
+    model = cornac.models.BiVAECF(**params)
+    with Timer() as t:
+        model.fit(data)
+    return model, t
 
 
 def prepare_training_sar(train, test):

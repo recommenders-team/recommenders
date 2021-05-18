@@ -234,3 +234,24 @@ def test_lstur_smoke(notebooks, output_notebook, kernel_name):
         0.5977, rel=TOL, abs=ABS_TOL
     )
     assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2618, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.notebooks
+@pytest.mark.smoke
+@pytest.mark.gpu
+def test_cornac_bivae_smoke(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["cornac_bivae_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(MOVIELENS_DATA_SIZE="100k"),
+    )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    assert results["map"] == pytest.approx(0.146552, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg"] == pytest.approx(0.474124, rel=TOL, abs=ABS_TOL)
+    assert results["precision"] == pytest.approx(0.412527, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.225064, rel=TOL, abs=ABS_TOL)
