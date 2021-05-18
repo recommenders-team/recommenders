@@ -30,7 +30,7 @@ install_requires = [
     "lightfm>=1.15,<2",
     "lightgbm>=2.2.1,<3",
     "nltk>=3.4,<4",
-    "matplotlib>=2.2.2,<3",
+    "matplotlib>=2.2.2,<4",
     "memory_profiler>=0.54.0,<1",
     "nni==1.5",
     "numba>=0.38.1,<1",
