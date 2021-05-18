@@ -24,7 +24,7 @@ HASH = environ.get("HASH", None)
 if HASH is not None:
     version += ".post" + str(int(time.time()))
 
-name = environ.get("LIBRARY_NAME", "recommenders")
+name = environ.get("LIBRARY_NAME", "ms-recommenders")
 
 install_requires = [
     "numpy>=1.14,<2",
@@ -32,13 +32,12 @@ install_requires = [
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<3",
-    "scikit-learn>=0.19.1,<1",
+    "scikit-learn>=0.22.1,<1",
     "numba>=0.38.1,<1",
     "lightfm>=1.15,<2",
     "lightgbm>=2.2.1,<3",
     "memory_profiler>=0.54.0,<1",
     "nltk>=3.4,<4",
-    "nni==1.5",
     "pydocumentdb>=2.3.3<3",  # todo: replace with azure-cosmos
     "pymanopt>=0.2.5,<1",
     "scikit-surprise>=0.19.1,<2",
@@ -78,6 +77,9 @@ extras_require = {
     "xlearn": [
         "cmake>=3.18.4.post1",
         "xlearn==0.40a1",
+    ],
+    "nni": [
+        "nni==1.5"
     ]
 }
 # for the brave of heart
