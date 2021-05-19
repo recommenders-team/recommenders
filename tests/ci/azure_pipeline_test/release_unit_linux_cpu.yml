@@ -12,7 +12,7 @@ variables:
 - group: LinuxAgentPool
 
 jobs:
-  template: dsvm_linux_template.yml
+- template: dsvm_linux_template.yml
   parameters:
     test_types:
     - unit
