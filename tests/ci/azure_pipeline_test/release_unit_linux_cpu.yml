@@ -2,14 +2,11 @@
 # Licensed under the MIT License.
 
 # Pull request against these branches will trigger this build
-pr:
-- main
-- staging
+pr: none
 
 # Any commit to this branch will trigger the build.
 trigger:
-- staging
-- main
+- pipeline_release
 
 variables:
 - group: LinuxAgentPool
