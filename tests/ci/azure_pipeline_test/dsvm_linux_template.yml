@@ -45,6 +45,7 @@ jobs:
       else
         echo "Installing latest code"
       fi
+      echo "PARAMETER RELEASE=${{ parameters.release }}\n"
       pip install .${{ parameters.pip_opts }}
       pip install -r dev-requirements.txt
 
