@@ -22,7 +22,7 @@ parameters:
   type: string
   default: ""
 - name: release
-  type: bolean
+  type: boolean
   default: false
 
 jobs:
