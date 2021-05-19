@@ -11,7 +11,7 @@ trigger:
 variables:
 - group: LinuxAgentPool
 
-extends:
+jobs:
   template: dsvm_linux_template.yml
   parameters:
     test_types:
