@@ -21,4 +21,4 @@ extends:
     conda_opts: "python=3.6"
     pip_opts: ""
     pytest_markers: "not notebooks and not spark and not gpu"
-    release: true
+    install: "release"
