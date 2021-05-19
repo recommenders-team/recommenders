@@ -1,0 +1,27 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+# Pull request against these branches will trigger this build
+pr:
+- main
+- staging
+
+# Any commit to this branch will trigger the build.
+trigger:
+- staging
+- main
+
+variables:
+- group: LinuxAgentPool
+
+extends:
+  template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux CPU"
+    conda_env: "unit_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: ""
+    pytest_markers: "not notebooks and not spark and not gpu"
+    release: true

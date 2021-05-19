@@ -21,6 +21,9 @@ parameters:
 - name: pytest_params
   type: string
   default: ""
+- name: release
+  type: bolean
+  default: false
 
 jobs:
 - job: test
@@ -37,6 +40,11 @@ jobs:
       # install reco-utils and needed dependencies
       eval "$(conda shell.bash hook)"
       conda activate ${{ parameters.conda_env }}
+      if ${{ parameters.release }}; then
+        echo "Building package"
+      else
+        echo "Installing latest code"
+      fi
       pip install .${{ parameters.pip_opts }}
       pip install -r dev-requirements.txt
 
