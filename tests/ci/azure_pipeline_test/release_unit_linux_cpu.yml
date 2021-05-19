@@ -22,3 +22,13 @@ jobs:
     pip_opts: ""
     pytest_markers: "not notebooks and not spark and not gpu"
     install: "release"
+
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux CPU"
+    conda_env: "unit_notebook_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: "[examples]"
+    pytest_markers: "notebooks and not spark and not gpu"
