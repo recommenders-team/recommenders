@@ -13,16 +13,16 @@ variables:
 
 jobs:
 - jobs: relase_unit_linux_cpu
-    template: dsvm_linux_template.yml
-    parameters:
-      test_types:
-      - unit
-      task_name: "Test - Unit Linux CPU"
-      conda_env: "relase_unit_linux_cpu"
-      conda_opts: "python=3.6"
-      pip_opts: ""
-      pytest_markers: "not notebooks and not spark and not gpu"
-      install: "release"
+  template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux CPU"
+    conda_env: "relase_unit_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: ""
+    pytest_markers: "not notebooks and not spark and not gpu"
+    install: "release"
 
 # - template: dsvm_linux_template.yml
 #   parameters:
