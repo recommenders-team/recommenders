@@ -41,11 +41,8 @@ jobs:
 
       # Create a clean conda environment
       conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
-
       eval "$(conda shell.bash hook)"
       conda activate ${{ parameters.conda_env }}
-      which python
-      pip list
 
       # install reco-utils and needed dependencies
       pip install pytest>=3.6.4 || exit -1
