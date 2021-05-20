@@ -23,53 +23,53 @@ jobs:
     pytest_markers: "not notebooks and not spark and not gpu"
     install: "release"
 
-- template: dsvm_linux_template.yml
-  parameters:
-    test_types:
-    - unit
-    task_name: "Test - Unit Notebook Linux CPU"
-    conda_env: "unit_notebook_linux_cpu"
-    conda_opts: "python=3.6"
-    pip_opts: "[examples]"
-    pytest_markers: "notebooks and not spark and not gpu"
+# - template: dsvm_linux_template.yml
+#   parameters:
+#     test_types:
+#     - unit
+#     task_name: "Test - Unit Notebook Linux CPU"
+#     conda_env: "unit_notebook_linux_cpu"
+#     conda_opts: "python=3.6"
+#     pip_opts: "[examples]"
+#     pytest_markers: "notebooks and not spark and not gpu"
 
-- template: dsvm_linux_template.yml
-  parameters:
-    test_types:
-    - unit
-    task_name: "Test - Unit Linux GPU"
-    conda_env: "unit_linux_gpu"
-    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
-    pip_opts: "[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html"
-    pytest_markers: "not notebooks and not spark and gpu"
+# - template: dsvm_linux_template.yml
+#   parameters:
+#     test_types:
+#     - unit
+#     task_name: "Test - Unit Linux GPU"
+#     conda_env: "unit_linux_gpu"
+#     conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+#     pip_opts: "[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html"
+#     pytest_markers: "not notebooks and not spark and gpu"
 
-- template: dsvm_linux_template.yml
-  parameters:
-    test_types:
-    - unit
-    task_name: "Test - Unit Notebook Linux GPU"
-    conda_env: "unit_notebook_linux_gpu"
-    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
-    pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
-    pytest_markers: "notebooks and not spark and gpu"
+# - template: dsvm_linux_template.yml
+#   parameters:
+#     test_types:
+#     - unit
+#     task_name: "Test - Unit Notebook Linux GPU"
+#     conda_env: "unit_notebook_linux_gpu"
+#     conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+#     pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
+#     pytest_markers: "notebooks and not spark and gpu"
 
-- template: dsvm_linux_template.yml
-  parameters:
-    test_types:
-    - unit
-    task_name: "Test - Unit Linux Spark"
-    conda_env: "unit_linux_spark"
-    conda_opts: "python=3.6"
-    pip_opts: "[spark]"
-    pytest_markers: "not notebooks and spark and not gpu"
+# - template: dsvm_linux_template.yml
+#   parameters:
+#     test_types:
+#     - unit
+#     task_name: "Test - Unit Linux Spark"
+#     conda_env: "unit_linux_spark"
+#     conda_opts: "python=3.6"
+#     pip_opts: "[spark]"
+#     pytest_markers: "not notebooks and spark and not gpu"
 
-- template: dsvm_linux_template.yml
-  parameters:
-    test_types:
-    - unit
-    task_name: "Test - Unit Notebook Linux Spark"
-    conda_env: "unit_notebook_linux_spark"
-    conda_opts: "python=3.6"
-    pip_opts: "[spark,examples]"
-    pytest_markers: "notebooks and spark and not gpu"
+# - template: dsvm_linux_template.yml
+#   parameters:
+#     test_types:
+#     - unit
+#     task_name: "Test - Unit Notebook Linux Spark"
+#     conda_env: "unit_notebook_linux_spark"
+#     conda_opts: "python=3.6"
+#     pip_opts: "[spark,examples]"
+#     pytest_markers: "notebooks and spark and not gpu"
 

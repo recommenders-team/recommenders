@@ -42,6 +42,9 @@ jobs:
       conda activate ${{ parameters.conda_env }}
       if [ "${{ parameters.install }}" = "release" ]; then
         echo "Building package"
+        pip install setuptools wheel twine
+        python setup.py sdist bdist_wheel || exit -1
+        ls -lha
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }}
