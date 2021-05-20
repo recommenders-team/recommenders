@@ -4,9 +4,12 @@
 # Pull request against these branches will trigger this build
 pr: none
 
-# Any commit to this branch will trigger the build.
+# A new tag will trigger the build.
 trigger:
 - pipeline_release
+  tags:
+    include:
+    - *
 
 variables:
 - group: LinuxAgentPool
