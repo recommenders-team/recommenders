@@ -28,7 +28,7 @@ if HASH is not None:
 name = environ.get("LIBRARY_NAME", "ms-recommenders")
 
 install_requires = [
-    "numpy>=1.14,<2",
+    "numpy>=1.14,<=1.20",
     "pandas>1.0.3,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
