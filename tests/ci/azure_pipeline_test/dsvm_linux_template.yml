@@ -35,10 +35,6 @@ jobs:
   steps:
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
-      conda env list
-      conda env remove -n reco_unit_gpu || exit -1
-      conda env remove -n reco_unit_notebooks_spark || exit -1
-      conda env remove -n unit_notebook_linux_cpu || exit -1
 
       # Make sure there is no conda environment
       conda env remove -n ${{ parameters.conda_env }} || exit -1
@@ -46,10 +42,12 @@ jobs:
       # Create a clean conda environment
       conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
 
-      # install reco-utils and needed dependencies
       eval "$(conda shell.bash hook)"
       conda activate ${{ parameters.conda_env }}
+      which python
       pip list
+
+      # install reco-utils and needed dependencies
       pip install pytest>=3.6.4 || exit -1
       if [ "${{ parameters.install }}" = "release" ]; then
         rm -rf dist
