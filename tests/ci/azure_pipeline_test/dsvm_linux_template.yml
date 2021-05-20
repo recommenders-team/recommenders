@@ -40,6 +40,7 @@ jobs:
       # install reco-utils and needed dependencies
       eval "$(conda shell.bash hook)"
       conda activate ${{ parameters.conda_env }}
+      pip list
       pip install pytest>=3.6.4 || exit -1
       if [ "${{ parameters.install }}" = "release" ]; then
         rm -rf dist
@@ -88,8 +89,8 @@ jobs:
       condition: succeededOrFailed()
 
   - script: |
-      conda env remove -n ${{ parameters.conda_env }}
-      rm -rf reports
+      conda env remove -n ${{ parameters.conda_env }} || exit -1
+      rm -rf reports || exit -1
     displayName: 'Remove Conda Env'
     continueOnError: true
     condition: succeededOrFailed()
