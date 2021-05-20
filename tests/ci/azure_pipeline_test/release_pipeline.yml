@@ -76,6 +76,11 @@ jobs:
 - job: Package
   dependsOn:
   - relase_unit_linux_cpu
+  - relase_unit_notebook_linux_cpu
+  - relase_unit_linux_gpu
+  - relase_unit_notebook_linux_gpu
+  - relase_unit_linux_spark
+  - relase_unit_notebook_linux_spark
   condition: succeeded()
   steps:
   - script: echo "IT WORKS!!!"
