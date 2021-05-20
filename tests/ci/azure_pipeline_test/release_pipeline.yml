@@ -12,7 +12,7 @@ variables:
 - group: LinuxAgentPool
 
 jobs:
-- jobs: relase_unit_linux_cpu
+- job: relase_unit_linux_cpu
   template: dsvm_linux_template.yml
   parameters:
     test_types:
