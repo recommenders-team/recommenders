@@ -75,7 +75,7 @@ jobs:
 
 - job: Package
   dependsOn:
-  - dsvm_linux_template.yml
+  - relase_unit_linux_cpu
   condition: succeeded()
   steps:
   - script: echo "IT WORKS!!!"
