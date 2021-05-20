@@ -1,11 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# To build the package, copy reco_utils/ directory under a src/ directory
-# (see package_dir below). This is needed in order to get the package name
-# correctly.
-# For pypi, replace README.md with reco_utils/README.md
-
 from pathlib import Path
 from setuptools import setup, find_packages
 import time
@@ -122,7 +117,7 @@ setup(
     keywords="recommendations recommenders recommender system engine "
              "machine learning python spark gpu",
     install_requires=install_requires,
-    package_dir={"": "src"},
-    packages=find_packages(where="src"),
+    package_dir={"reco_utils": "reco_utils"},
+    packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
     python_requires=">=3.6, <4",
 )
