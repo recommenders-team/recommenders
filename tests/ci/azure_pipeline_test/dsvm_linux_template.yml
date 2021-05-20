@@ -35,7 +35,6 @@ jobs:
   steps:
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
-      echo "##vso[task.setvariable variable=INIT]$(cat reco_utils/__init__.py)"
       conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
 
       # install reco-utils and needed dependencies
@@ -44,10 +43,11 @@ jobs:
       pip install pytest>=3.6.4 || exit -1
       if [ "${{ parameters.install }}" = "release" ]; then
         rm -rf dist
-        echo "Building package"
+        echo "   --- BUILDING PACKAGE ---"
         pip install setuptools wheel twine || exit -1
         python setup.py sdist bdist_wheel || exit -1
-        pip install --user dist/reco_utils*.whl -v || exit -1
+        echo "   --- INSTALLING WHEEL ---"
+        pip install --user dist/reco_utils*.whl || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
@@ -55,7 +55,7 @@ jobs:
       
       # clean up any previous test results        
       rm -rf reports
-    displayName: Create Conda Env
+    displayName: 'Install Dependencies'
   
   - ${{ each test in parameters.test_types }}:
     - script: |
