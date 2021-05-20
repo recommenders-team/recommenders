@@ -35,6 +35,7 @@ jobs:
   steps:
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
+      conda env list
       conda create -fyn ${{ parameters.conda_env }} ${{ parameters.conda_opts }}
 
       # install reco-utils and needed dependencies
