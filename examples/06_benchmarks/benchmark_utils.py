@@ -1,11 +1,8 @@
-import sys
-
-sys.path.append("../")
 import pandas as pd
 import numpy as np
 from pyspark.ml.recommendation import ALS
 from pyspark.sql.types import StructType, StructField
-from pyspark.sql.types import StringType, FloatType, IntegerType, LongType
+from pyspark.sql.types import FloatType, IntegerType, LongType
 from fastai.collab import collab_learner, CollabDataBunch
 import surprise
 import cornac
@@ -32,7 +29,6 @@ from reco_utils.recommender.surprise.surprise_utils import (
 from reco_utils.recommender.fastai.fastai_utils import (
     cartesian_product,
     score,
-    hide_fastai_progress_bar,
 )
 from reco_utils.recommender.cornac.cornac_utils import predict_ranking
 from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
@@ -48,7 +44,12 @@ from reco_utils.evaluation.python_evaluation import (
     precision_at_k,
     recall_at_k,
 )
-from reco_utils.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
+from reco_utils.evaluation.python_evaluation import (
+    rmse,
+    mae,
+    rsquared,
+    exp_var
+)
 
 
 def prepare_training_als(train, test):
@@ -81,7 +82,8 @@ def prepare_metrics_als(train, test):
         )
     )
     spark = start_or_get_spark()
-    return spark.createDataFrame(train, schema), spark.createDataFrame(test, schema)
+    return spark.createDataFrame(train, schema), spark.createDataFrame(test,
+                                                                       schema)
 
 
 def predict_als(model, test):
@@ -170,7 +172,10 @@ def prepare_training_fastai(train, test):
 
 def train_fastai(params, data):
     model = collab_learner(
-        data, n_factors=params["n_factors"], y_range=params["y_range"], wd=params["wd"]
+        data,
+        n_factors=params["n_factors"],
+        y_range=params["y_range"],
+        wd=params["wd"]
     )
     with Timer() as t:
         model.fit_one_cycle(cyc_len=params["epochs"], max_lr=params["max_lr"])
@@ -262,7 +267,10 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             }
         )
         merged = pd.merge(
-            train, topk_scores, on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL], how="outer"
+            train,
+            topk_scores,
+            on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
+            how="outer"
         )
         topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(
             DEFAULT_RATING_COL, axis=1
@@ -272,7 +280,8 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
 
 def prepare_training_cornac(train, test):
     return cornac.data.Dataset.from_uir(
-        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False), seed=SEED
+        train.drop(DEFAULT_TIMESTAMP_COL, axis=1).itertuples(index=False),
+        seed=SEED
     )
 
 
@@ -335,7 +344,11 @@ def train_lightgcn(params, data):
     return model, t
 
 
-def recommend_k_lightgcn(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_lightgcn(model,
+                         test,
+                         train,
+                         top_k=DEFAULT_K,
+                         remove_seen=True):
     with Timer() as t:
         topk_scores = model.recommend_k_items(
             test, top_k=top_k, remove_seen=remove_seen
