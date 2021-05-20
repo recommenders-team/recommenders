@@ -12,8 +12,7 @@ variables:
 - group: LinuxAgentPool
 
 jobs:
-- job: relase_unit_linux_cpu
-  template: dsvm_linux_template.yml
+- template: dsvm_linux_template.yml
   parameters:
     test_types:
     - unit
@@ -74,3 +73,9 @@ jobs:
 #     pip_opts: "[spark,examples]"
 #     pytest_markers: "notebooks and spark and not gpu"
 
+- job: Package
+  dependsOn:
+  - dsvm_linux_template.yml
+  condition: succeeded()
+  steps:
+  - script: echo "IT WORKS!!!"
