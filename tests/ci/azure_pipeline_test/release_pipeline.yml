@@ -115,7 +115,7 @@ jobs:
     displayName: 'Create GitHub Release'
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     inputs:
-      gitHubConnection: recommenders
+      gitHubConnection: recommenders_release
       repositoryName: '$(Build.Repository.Name)'
       action: 'create'
       target: '$(Build.SourceVersion)'
