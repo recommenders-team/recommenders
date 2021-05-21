@@ -86,4 +86,45 @@ jobs:
   - relase_unit_notebook_linux_spark
   condition: succeeded()
   steps:
-  - script: echo "IT WORKS!!!"
+    # Create archives with complete source code included
+  - task: ArchiveFiles@2
+    displayName: Create zip archive
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    inputs:
+      rootFolderOrFile: $(Build.SourcesDirectory)
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-complete_source_code_zip.zip'
+      replaceExistingArchive: true
+  - task: ArchiveFiles@2
+    displayName: Create tar.gz archive
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    inputs:
+      rootFolderOrFile: $(Build.SourcesDirectory)
+      includeRootFolder: false
+      archiveType: tar
+      tarCompression: gz
+      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-complete_source_code_tar_gz.tar.gz'
+      replaceExistingArchive: true
+  - script: |
+      echo "   --- LIST OF ARTIFACTS ---"
+      echo $BUILD_ARTIFACTSTAGINGDIRECTORY
+      ls -lha $BUILD_ARTIFACTSTAGINGDIRECTORY
+    displayName: 'Iist artifacts'
+  - task: GitHubRelease@0
+    displayName: 'Create GitHub Release'
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    inputs:
+      gitHubConnection: recommenders
+      repositoryName: '$(Build.Repository.Name)'
+      action: 'create'
+      target: '$(Build.SourceVersion)'
+      tagSource: 'auto'
+      title: '$(Build.SourceBranchName)'
+      assets: |
+        $(Build.SourcesDirectory)/binaries/PackageAssets/*
+        $(Build.ArtifactStagingDirectory)/archives/*
+      assetUploadMode: 'delete'
+      isDraft: true
+      isPreRelease: false
+      addChangeLog: false

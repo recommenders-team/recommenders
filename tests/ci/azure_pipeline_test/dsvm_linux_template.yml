@@ -53,6 +53,7 @@ jobs:
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
         pip install --user dist/reco_utils*.whl || exit -1
+        cp dist/reco_utils*.whl $BUILD_ARTIFACTSTAGINGDIRECTORY || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
