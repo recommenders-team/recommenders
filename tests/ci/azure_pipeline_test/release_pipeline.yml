@@ -110,7 +110,9 @@ jobs:
       echo "   --- LIST OF ARTIFACTS ---"
       echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
       du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
-    displayName: 'Iist artifacts'
+      echo "   --- TARGET TAG ---"
+      echo $BUILD_SOURCEVERSION
+    displayName: 'List artifacts'
   - task: GitHubRelease@0
     displayName: 'Create GitHub Release'
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
