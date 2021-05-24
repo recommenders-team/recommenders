@@ -57,6 +57,7 @@ jobs:
         mkdir -p $ARTIFACTS_DIRECTORY || exit -1
         rm -rf $ARTIFACTS_DIRECTORY/*.whl || exit -1
         cp dist/reco_utils*.whl $ARTIFACTS_DIRECTORY || exit -1
+        du -a $ARTIFACTS_DIRECTORY
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
