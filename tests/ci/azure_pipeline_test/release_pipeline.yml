@@ -86,17 +86,12 @@ jobs:
   # - relase_unit_notebook_linux_spark
   condition: succeeded()
   steps:
-  - script: |
-      RELEASE_VERSION=$(awk '/__version__ =/ {print $3}' reco_utils/__init__.py)
-      echo "##vso[task.setvariable variable=RELEASE_VERSION]$RELEASE_VERSION"
-      echo "Release version: $RELEASE_VERSION"
-    displayName: Get release version
     # Create archives with complete source code included
   - task: ArchiveFiles@2
     displayName: Create zip archive
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)
+      rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
       includeRootFolder: false
       archiveType: zip
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-complete_source_code.zip'
@@ -105,7 +100,7 @@ jobs:
     displayName: Create tar.gz archive
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)
+      rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
       includeRootFolder: false
       archiveType: tar
       tarCompression: gz
@@ -125,8 +120,8 @@ jobs:
       action: 'create'
       target: '$(Build.SourceVersion)'
       tagSource: 'manual'
-      tag: '$RELEASE_VERSION'
-      title: 'Recommenders $RELEASE_VERSION'
+      tag: ''
+      title: 'Recommenders'
       assets: |
         $(Build.SourcesDirectory)/binaries/PackageAssets/*
         $(Build.ArtifactStagingDirectory)/archives/*
