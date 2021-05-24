@@ -109,7 +109,7 @@ jobs:
   - script: |
       echo "   --- LIST OF ARTIFACTS ---"
       echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
-      ls -lha $BUILD_ARTIFACTSTAGINGDIRECTORY
+      du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
     displayName: 'Iist artifacts'
   - task: GitHubRelease@0
     displayName: 'Create GitHub Release'
