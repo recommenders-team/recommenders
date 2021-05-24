@@ -14,14 +14,6 @@ trigger:
 variables:
 - group: LinuxAgentPool
 
-jobs:
-- job: Version
-  steps:
-  - script: |
-      echo "##vso[task.setvariable variable=RELEASE_VERSION]$(awk '/__version__ =/ {print $3}' reco_utils/__init__.py)"
-      echo "Release version: $RELEASE_VERSION"
-    displayName: Get release version
-
 - template: dsvm_linux_template.yml
   parameters:
     test_types:
@@ -93,6 +85,11 @@ jobs:
   # - relase_unit_notebook_linux_spark
   condition: succeeded()
   steps:
+  - script: |
+      RELEASE_VERSION=$(awk '/__version__ =/ {print $3}' reco_utils/__init__.py)
+      echo "##vso[task.setvariable variable=RELEASE_VERSION]$RELEASE_VERSION"
+      echo "Release version: $RELEASE_VERSION"
+    displayName: Get release version
     # Create archives with complete source code included
   - task: ArchiveFiles@2
     displayName: Create zip archive
@@ -128,7 +125,7 @@ jobs:
       target: '$(Build.SourceVersion)'
       tagSource: 'manual'
       tag: '$RELEASE_VERSION'
-      title: 'Recommenders'
+      title: 'Recommenders $RELEASE_VERSION'
       assets: |
         $(Build.SourcesDirectory)/binaries/PackageAssets/*
         $(Build.ArtifactStagingDirectory)/archives/*
