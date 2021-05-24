@@ -94,7 +94,7 @@ jobs:
       rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
       includeRootFolder: false
       archiveType: zip
-      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-complete_source_code.zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-reco_utils_code.zip'
       replaceExistingArchive: true
   - task: ArchiveFiles@2
     displayName: Create tar.gz archive
@@ -104,7 +104,26 @@ jobs:
       includeRootFolder: false
       archiveType: tar
       tarCompression: gz
-      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-complete_source_code.tar.gz'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-reco_utils_code.tar.gz'
+      replaceExistingArchive: true
+  - task: ArchiveFiles@2
+    displayName: Create zip archive
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    inputs:
+      rootFolderOrFile: $(Build.SourcesDirectory)/examples
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.zip'
+      replaceExistingArchive: true
+  - task: ArchiveFiles@2
+    displayName: Create tar.gz archive
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    inputs:
+      rootFolderOrFile: $(Build.SourcesDirectory)/examples
+      includeRootFolder: false
+      archiveType: tar
+      tarCompression: gz
+      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.tar.gz'
       replaceExistingArchive: true
   - script: |
       echo "   --- LIST OF ARTIFACTS ---"
@@ -120,7 +139,7 @@ jobs:
       action: 'create'
       target: '$(Build.SourceVersion)'
       tagSource: 'manual'
-      tag: ' '
+      tag: '$(tagName)'
       title: 'Recommenders'
       assets: |
         $(Build.SourcesDirectory)/binaries/PackageAssets/*
