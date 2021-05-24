@@ -53,7 +53,7 @@ jobs:
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
         pip install --user dist/reco_utils*.whl || exit -1
-        ARTIFACTS_DIRECTORY=/home/vsts/work/artifacts
+        ARTIFACTS_DIRECTORY=/tmp/artifacts
         mkdir -p $ARTIFACTS_DIRECTORY || exit -1
         rm -rf $ARTIFACTS_DIRECTORY/*.whl || exit -1
         cp dist/reco_utils*.whl $ARTIFACTS_DIRECTORY || exit -1

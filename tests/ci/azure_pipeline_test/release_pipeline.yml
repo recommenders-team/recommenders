@@ -126,14 +126,14 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.tar.gz'
       replaceExistingArchive: true
   - script: |
-      ARTIFACTS_DIRECTORY=/home/vsts/work/artifacts
+      ARTIFACTS_DIRECTORY=/tmp/artifacts
       echo "   --- COPY ARTIFACTS ---"
       mkdir -p $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
       cp $ARTIFACTS_DIRECTORY/reco_utils*.whl $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
       echo "   --- LIST OF ARTIFACTS ---"
       echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
       du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
-    displayName: 'List artifacts'
+    displayName: 'Copy artifacts'
   - task: GitHubRelease@0 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
     displayName: 'Create GitHub Release'
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
