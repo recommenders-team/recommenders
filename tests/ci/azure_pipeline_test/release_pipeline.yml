@@ -126,11 +126,6 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.tar.gz'
       replaceExistingArchive: true
   - script: |
-# ARTIFACTS_DIRECTORY=/tmp/artifacts
-# du -a $ARTIFACTS_DIRECTORY
-# echo "   --- COPY ARTIFACTS ---"
-# mkdir -p $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
-# cp $ARTIFACTS_DIRECTORY/reco_utils*.whl $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
       echo "   --- LIST OF ARTIFACTS ---"
       echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
       du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
