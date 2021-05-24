@@ -35,7 +35,6 @@ jobs:
   steps:
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
-      echo "##vso[task.setvariable variable=ARTIFACTS_DIRECTORY]/home/vsts/work/artifacts"
 
       # Make sure there is no conda environment
       conda env remove -n ${{ parameters.conda_env }} || exit -1
@@ -54,7 +53,8 @@ jobs:
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
         pip install --user dist/reco_utils*.whl || exit -1
-        mkdir $ARTIFACTS_DIRECTORY || exit -1
+        ARTIFACTS_DIRECTORY=/home/vsts/work/artifacts
+        mkdir -p $ARTIFACTS_DIRECTORY || exit -1
         rm -rf $ARTIFACTS_DIRECTORY/*.whl || exit -1
         cp dist/reco_utils*.whl $ARTIFACTS_DIRECTORY || exit -1
       else
