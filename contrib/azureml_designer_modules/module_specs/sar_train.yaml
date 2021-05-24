@@ -46,13 +46,13 @@ outputs:
     type: AnyDirectory
     description: The output directory contains a trained model
 code:
-  ../../../../
+  ../../
 command: >-
-  python reco_utils/azureml/azureml_designer_modules/entries/train_sar_entry.py --input-path
+  python contrib/azureml_designer_modules/entries/train_sar_entry.py --input-path
   {inputs.input_path} --col-user {inputs.user_column} --col-item {inputs.item_column}
   --col-rating {inputs.rating_column} --col-timestamp {inputs.timestamp_column} --normalize
   {inputs.normalize} --time-decay {inputs.time_decay} --output-model {outputs.output_model}
 environment:
   conda:
-    conda_dependencies_file: reco_utils/azureml/azureml_designer_modules/module_specs/sar_conda.yaml
+    conda_dependencies_file: contrib/azureml_designer_modules/module_specs/sar_conda.yaml
   os: Linux
