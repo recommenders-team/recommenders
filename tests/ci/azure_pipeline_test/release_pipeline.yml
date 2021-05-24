@@ -142,7 +142,7 @@ jobs:
       tag: '$(tagName)'
       title: 'Recommenders'
       assets: |
-        $(Build.SourcesDirectory)/binaries/PackageAssets/*
+        $(Build.ArtifactStagingDirectory)/binaries/*
         $(Build.ArtifactStagingDirectory)/archives/*
       assetUploadMode: 'delete'
       isDraft: true
