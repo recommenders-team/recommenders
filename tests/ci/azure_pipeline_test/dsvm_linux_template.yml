@@ -53,11 +53,9 @@ jobs:
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
         pip install --user dist/reco_utils*.whl --force-reinstall || exit -1
-        ARTIFACTS_DIRECTORY=/tmp/artifacts
-        mkdir -p $ARTIFACTS_DIRECTORY || exit -1
-        rm -rf $ARTIFACTS_DIRECTORY/*.whl || exit -1
-        cp dist/reco_utils*.whl $ARTIFACTS_DIRECTORY || exit -1
-        du -a $ARTIFACTS_DIRECTORY
+        rm -rf $BUILD_ARTIFACTSTAGINGDIRECTORY/*.whl || exit -1
+        cp dist/reco_utils*.whl $$BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
+        du -a $$BUILD_ARTIFACTSTAGINGDIRECTORY
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
@@ -66,14 +64,6 @@ jobs:
       # clean up any previous test results        
       rm -rf reports
     displayName: 'Install Dependencies'
-  
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      Contents: |
-        dist/reco_utils*.whl
-      TargetFolder: '$(Build.ArtifactStagingDirectory)/binaries'
-      preserveTimestamp: true
 
   - ${{ each test in parameters.test_types }}:
     - script: |
