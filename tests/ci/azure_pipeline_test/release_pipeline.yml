@@ -89,7 +89,7 @@ jobs:
     # Create archives with complete source code included
   - task: ArchiveFiles@2
     displayName: Create zip archive
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)
       includeRootFolder: false
@@ -98,7 +98,7 @@ jobs:
       replaceExistingArchive: true
   - task: ArchiveFiles@2
     displayName: Create tar.gz archive
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)
       includeRootFolder: false
@@ -108,12 +108,12 @@ jobs:
       replaceExistingArchive: true
   - script: |
       echo "   --- LIST OF ARTIFACTS ---"
-      echo $BUILD_ARTIFACTSTAGINGDIRECTORY
+      echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
       ls -lha $BUILD_ARTIFACTSTAGINGDIRECTORY
     displayName: 'Iist artifacts'
   - task: GitHubRelease@0
     displayName: 'Create GitHub Release'
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
     inputs:
       gitHubConnection: recommenders_release
       repositoryName: '$(Build.Repository.Name)'
