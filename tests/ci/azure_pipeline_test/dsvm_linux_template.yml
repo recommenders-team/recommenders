@@ -54,6 +54,8 @@ jobs:
         echo "   --- INSTALLING WHEEL ---"
         pip install --user dist/reco_utils*.whl || exit -1
         cp dist/reco_utils*.whl $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
+        echo "   --- LISTING FILES ---"
+        du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
