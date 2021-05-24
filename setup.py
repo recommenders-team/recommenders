@@ -23,7 +23,7 @@ if HASH is not None:
 name = environ.get("LIBRARY_NAME", "ms-recommenders")
 
 install_requires = [
-    "numpy>=1.14,<=1.20",
+    "numpy>=1.14",
     "pandas>1.0.3,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
@@ -36,7 +36,7 @@ install_requires = [
     "nltk>=3.4,<4",
     "pydocumentdb>=2.3.3<3",  # todo: replace with azure-cosmos
     "pymanopt>=0.2.5,<1",
-    "scikit-surprise>=0.19.1,<2",
+    "scikit-surprise>=0.19.1,<=1.0.6",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
@@ -73,9 +73,6 @@ extras_require = {
     "xlearn": [
         "cmake>=3.18.4.post1",
         "xlearn==0.40a1",
-    ],
-    "nni": [
-        "nni==1.5"
     ]
 }
 # for the brave of heart
@@ -84,6 +81,7 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 # the following dependencies need additional testing
 extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
+    "nni==1.5"
 ]
 
 
