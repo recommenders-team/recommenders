@@ -120,7 +120,7 @@ jobs:
       action: 'create'
       target: '$(Build.SourceVersion)'
       tagSource: 'manual'
-      tag: ''
+      tag: ' '
       title: 'Recommenders'
       assets: |
         $(Build.SourcesDirectory)/binaries/PackageAssets/*
