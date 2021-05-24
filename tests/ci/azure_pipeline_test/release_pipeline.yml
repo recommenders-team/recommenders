@@ -15,6 +15,13 @@ variables:
 - group: LinuxAgentPool
 
 jobs:
+- job: Version
+  steps:
+  - script: |
+      echo "##vso[task.setvariable variable=RELEASE_VERSION]$(awk '/__version__ =/ {print $3}' reco_utils/__init__.py)"
+      echo "Release version: $RELEASE_VERSION"
+    displayName: Get release version
+
 - template: dsvm_linux_template.yml
   parameters:
     test_types:
@@ -89,7 +96,7 @@ jobs:
     # Create archives with complete source code included
   - task: ArchiveFiles@2
     displayName: Create zip archive
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)
       includeRootFolder: false
@@ -98,7 +105,7 @@ jobs:
       replaceExistingArchive: true
   - task: ArchiveFiles@2
     displayName: Create tar.gz archive
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)
       includeRootFolder: false
@@ -110,20 +117,17 @@ jobs:
       echo "   --- LIST OF ARTIFACTS ---"
       echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
       du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
-      echo "   --- TARGET TAG ---"
-      echo $BUILD_SOURCEVERSION
-      echo $ENV
     displayName: 'List artifacts'
   - task: GitHubRelease@0 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
     displayName: 'Create GitHub Release'
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/v'))
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       gitHubConnection: recommenders_release
       repositoryName: '$(Build.Repository.Name)'
       action: 'create'
       target: '$(Build.SourceVersion)'
       tagSource: 'manual'
-      tag: $(tagName)
+      tag: '$RELEASE_VERSION'
       title: 'Recommenders'
       assets: |
         $(Build.SourcesDirectory)/binaries/PackageAssets/*
