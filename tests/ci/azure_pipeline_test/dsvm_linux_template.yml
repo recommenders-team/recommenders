@@ -52,7 +52,7 @@ jobs:
         pip install setuptools wheel twine || exit -1
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
-        pip install --user dist/reco_utils*.whl || exit -1
+        pip install --user dist/reco_utils*.whl --force-reinstall || exit -1
         ARTIFACTS_DIRECTORY=/tmp/artifacts
         mkdir -p $ARTIFACTS_DIRECTORY || exit -1
         rm -rf $ARTIFACTS_DIRECTORY/*.whl || exit -1
@@ -67,6 +67,14 @@ jobs:
       rm -rf reports
     displayName: 'Install Dependencies'
   
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      Contents: |
+        dist/reco_utils*.whl
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/binaries'
+      preserveTimestamp: true
+
   - ${{ each test in parameters.test_types }}:
     - script: |
         eval "$(conda shell.bash hook)"
