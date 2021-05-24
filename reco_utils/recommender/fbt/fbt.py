@@ -2,21 +2,23 @@
 # Licensed under the MIT License.
 
 
-from math import exp
+from reco_utils.evaluation.python_evaluation import get_top_k_items
 import pandas as pd
 import logging
-import numpy as np
 
 from reco_utils.common import constants
 
 logger = logging.getLogger()
 
-class FBT(object):
-    """Frequently Bought Together Algorithm for Recommendations (FBT) implementation
 
-    FBT is a fast scalable adaptive algorithm for personalized recommendations based
-    on user-item interaction history. The core idea behind FBT: Given that a user has
-    interacted with an item, what other items were most frequently bought together
+class FBT(object):
+    """Frequently Bought Together Algorithm for Recommendations
+    (FBT) implementation
+
+    FBT is a fast scalable adaptive algorithm for personalized
+    recommendations based on user-item interaction history.
+    The core idea behind FBT: Given that a user has interacted
+    with an item, what other items were most frequently interacted with
     by other users? Lets recommend these other items to our current user!
     """
 
@@ -24,8 +26,7 @@ class FBT(object):
         self,
         col_user=constants.DEFAULT_USER_COL,
         col_item=constants.DEFAULT_ITEM_COL,
-        col_prediction=constants.DEFAULT_PREDICTION_COL,
-        col_rating=constants.DEFAULT_RATING_COL,
+        col_score=constants.DEFAULT_PREDICTION_COL,
         num_recos=10
     ):
         """Initialize model parameters
@@ -33,12 +34,11 @@ class FBT(object):
         Args:
             col_user (str): user column name
             col_item (str): item column name
-            col_prediction (str): prediction column name
+            col_score (str): score column name
         """
         self.col_item = col_item
         self.col_user = col_user
-        self.col_prediction = col_prediction
-        self.col_rating = col_rating
+        self.col_score = col_score
         self.num_recos = num_recos
 
         self._model_df = None
@@ -52,7 +52,8 @@ class FBT(object):
         return (
             f"{self.__class__.__name__}(user_colname={self.col_user}, "
             f"item_colname={self.col_item}, "
-            f"prediction_colname={self.col_prediction}, "
+            f"score_colname={self.col_score}, "
+            f"num_recos={self.num_recos}, "
         )
 
     def _check_dataframe(self, df,
@@ -77,7 +78,7 @@ class FBT(object):
 
         # check there are no duplicate rows in dataframe
         if df.groupby(expected_columns).size().max() > 1:
-                raise ValueError("Duplicate rows found!!")
+            raise ValueError("Duplicate rows found!!")
 
     def fit(self, df):
         """Fit the FBT recommender using an input DataFrame.
@@ -92,12 +93,10 @@ class FBT(object):
         self
             Fitted estimator.
         """
-
         logger.info("Check dataframe is of the type, schema we expect")
         expected_cols_df = [self.col_user,
                             self.col_item,
-                            self.col_rating,
-                            'Title']
+                            f'{self.col_item}_name']
         self._check_dataframe(df, expected_columns=expected_cols_df)
 
         # copy the DataFrame to avoid modification of the input
@@ -123,8 +122,19 @@ class FBT(object):
                      f'{self.col_item}_paired'])[self.col_user]
             .nunique()
             .reset_index(drop=False)
-            .rename(columns={self.col_user: self.col_prediction})
+            .rename(columns={self.col_user: self.col_score})
         )
+
+        # Retaining item-pairs where item isn't paired with itself
+        fbt_df = (
+            sim_df
+            .loc[sim_df
+                 [self.col_item] !=
+                 sim_df[f'{self.col_item}_paired']]
+        )
+
+        self._model_df = fbt_df
+
         # Item frequencies can be obtained by looking at the
         # number of distinct users who interacted with a specific
         # item: can be extracted from items paired with itself
@@ -136,18 +146,7 @@ class FBT(object):
             .drop(columns=[f'{self.col_item}_paired'])
         )
 
-        # When excluding rows where course is paired with itself,
-        # we get pairwise item co-occurence matrix
-        fbt_df = (
-            sim_df
-            .loc[sim_df
-                 [self.col_item] !=
-                 sim_df[f'{self.col_item}_paired']]
-        )
-
-        self._model_df = fbt_df
         self._is_fit = True
-
         logger.info("Done training")
 
     def predict(self, test):
@@ -157,12 +156,13 @@ class FBT(object):
         ----------
         test : DataFrame
             DataFrame of users who need to get recommendations
-        remove_seen (bool): flag to remove items seen in training from recommendation
+        remove_seen (bool): flag to remove items seen in training
+        from recommendation
 
         Returns
         -------
         R : DataFrame
-            DataFrame with up to `num_recos_to_return` rows per user in X.
+            DataFrame with up to `num_recos` rows per user in X.
         """
         if not self._is_fit:
             raise ValueError(("fit() must be called before predict()!"))
@@ -177,12 +177,13 @@ class FBT(object):
             on=self.col_item,
             how='left'
         )
-        # same course may be recommended for multiple courses
-        # that learner already viewed, will average such scores
+        # Give user may interact with multiple items A, B, C, a
+        # item D may be recommended as a popular paired choice for
+        # each of A, B, C. Will average such scores
         all_recommendations_df = (
             all_test_item_matches_df
             .groupby([self.col_user,
-                     f'{self.col_item}_paired'])[self.col_prediction]
+                     f'{self.col_item}_paired'])[self.col_score]
             .mean()
             .reset_index(drop=False)
             .rename(columns={f'{self.col_item}_paired': self.col_item})
@@ -193,7 +194,11 @@ class FBT(object):
 
         return all_recommendations_df
 
-    def recommend_k_items(self, test, remove_seen=False, top_k=None):
+    def recommend_k_items(self,
+                          test,
+                          remove_seen=False,
+                          train=None,
+                          top_k=None):
         """Recommend top K items for all users which are in the test set
 
         Args:
@@ -209,18 +214,21 @@ class FBT(object):
         all_recommendations_df = self.predict(test)
 
         if remove_seen:
+            if train is None:
+                raise ValueError("Please provide the training data to "
+                                 "remove seen items!")
             # copy the DataFrame to avoid modification of the input
             select_columns = [self.col_user, self.col_item]
-            temp_test_df = test[select_columns].copy()
+            temp_df = train[select_columns].copy()
 
             logger.info("De-duplicating the user-item counts")
-            temp_test_df = temp_test_df.drop_duplicates(
+            temp_df = temp_df.drop_duplicates(
                 select_columns, keep="last"
             )
 
             seen_item_indicator = (
                 all_recommendations_df
-                .merge(temp_test_df,
+                .merge(temp_df,
                        on=select_columns,
                        how='left',
                        indicator=True)
@@ -230,32 +238,21 @@ class FBT(object):
                 seen_item_indicator
                 .loc[seen_item_indicator['_merge'] == 'left_only']
             )
-            recommendations_df = (
-                recommendations_df
-                .drop(columns=['_merge'], inplace=True)
-            )
 
+            recommendations_df.drop(columns=['_merge'], inplace=True)
             # remove dataframe to save memory
-            del temp_test_df
+            del temp_df
         else:
             recommendations_df = all_recommendations_df
-
-        # For each user, rank items
-        recommendations_df['rank'] = (
-            recommendations_df
-            .groupby(self.col_user)[self.col_prediction]
-            .rank('dense', ascending=False)
-            .astype('int64')
-        )
 
         # now only keep top_k
         if not top_k:
             top_k = self.num_recos
 
-        topk_recommendations_df = (
-            recommendations_df
-            .loc[recommendations_df['rank'] <= top_k]
-        )
+        topk_recommendations_df = get_top_k_items(recommendations_df,
+                                                  col_user=self.col_user,
+                                                  col_rating=self.col_score,
+                                                  k=top_k)
         return topk_recommendations_df
 
     def eval_map_at_k(self, df_true, df_pred):  # noqa: N803
@@ -281,7 +278,7 @@ class FBT(object):
         self._check_dataframe(df_true)
         expected_columns_x_pred = [self.col_user,
                                    self.col_item,
-                                   self.col_prediction]
+                                   self.col_score]
         self._check_dataframe(df_pred, expected_columns_x_pred)
 
         preds_df = df_true.merge(
@@ -302,4 +299,3 @@ class FBT(object):
         map_at_k = user_level_preds_df.mean()[0]
 
         return map_at_k
-
