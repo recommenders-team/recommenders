@@ -112,7 +112,7 @@ jobs:
       du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
       echo "   --- TARGET TAG ---"
       echo $BUILD_SOURCEVERSION
-      echo $TAGNAME
+      echo $ENV
     displayName: 'List artifacts'
   - task: GitHubRelease@0 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
     displayName: 'Create GitHub Release'
@@ -124,7 +124,7 @@ jobs:
       target: '$(Build.SourceVersion)'
       tagSource: 'manual'
       tag: $(tagName)
-      title: '$(Build.SourceBranchName)'
+      title: 'Recommenders'
       assets: |
         $(Build.SourcesDirectory)/binaries/PackageAssets/*
         $(Build.ArtifactStagingDirectory)/archives/*
