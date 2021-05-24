@@ -25,7 +25,7 @@ parameters:
   type: string
   default: ""
 
-
+jobs:
 - job: "${{ parameters.conda_env }}" # Job name can't have spaces
   displayName: "${{ parameters.task_name }}"
   timeoutInMinutes: ${{ parameters.timeout }}
@@ -35,6 +35,7 @@ parameters:
   steps:
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
+      echo "##vso[task.setvariable variable=ARTIFACTS_DIRECTORY]/home/vsts/work/artifacts"
 
       # Make sure there is no conda environment
       conda env remove -n ${{ parameters.conda_env }} || exit -1
@@ -53,9 +54,9 @@ parameters:
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
         pip install --user dist/reco_utils*.whl || exit -1
-        cp dist/reco_utils*.whl $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
-        echo "   --- LISTING FILES ---"
-        du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
+        mkdir $ARTIFACTS_DIRECTORY || exit -1
+        rm -rf $ARTIFACTS_DIRECTORY/*.whl || exit -1
+        cp dist/reco_utils*.whl $ARTIFACTS_DIRECTORY || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1

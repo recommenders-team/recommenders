@@ -126,9 +126,12 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.tar.gz'
       replaceExistingArchive: true
   - script: |
+      echo "##vso[task.setvariable variable=ARTIFACTS_DIRECTORY]/home/vsts/work/artifacts
+      echo "   --- COPY ARTIFACTS ---"
+      cp $BUILD_ARTIFACTSTAGINGDIRECTORY/archives/*.zip $BUILD_ARTIFACTSTAGINGDIRECTORY/archives/*.tar.gz $ARTIFACTS_DIRECTORY || exit -1
       echo "   --- LIST OF ARTIFACTS ---"
-      echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
-      du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
+      echo "Artifact folder: $ARTIFACTS_DIRECTORY"
+      du -a $ARTIFACTS_DIRECTORY
     displayName: 'List artifacts'
   - task: GitHubRelease@0 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
     displayName: 'Create GitHub Release'
@@ -142,8 +145,9 @@ jobs:
       tag: '$(tagName)'
       title: 'Recommenders'
       assets: |
-        $(Build.ArtifactStagingDirectory)/binaries/*
-        $(Build.ArtifactStagingDirectory)/archives/*
+        $ARTIFACTS_DIRECTORY/*     
+      # $(Build.ArtifactStagingDirectory)/binaries/*
+      # $(Build.ArtifactStagingDirectory)/archives/*
       assetUploadMode: 'delete'
       isDraft: true
       isPreRelease: false
