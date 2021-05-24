@@ -77,6 +77,8 @@ jobs:
 #     pytest_markers: "notebooks and spark and not gpu"
 
 - job: Package
+  pool:
+    name: $(Agent_Pool)
   dependsOn:
   - relase_unit_linux_cpu
   # - relase_unit_notebook_linux_cpu
