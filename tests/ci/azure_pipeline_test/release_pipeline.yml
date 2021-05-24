@@ -88,7 +88,7 @@ jobs:
   steps:
     # Create archives with complete source code included
   - task: ArchiveFiles@2
-    displayName: Create zip archive
+    displayName: Create zip archive of reco_utils
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
@@ -97,7 +97,7 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-reco_utils_code.zip'
       replaceExistingArchive: true
   - task: ArchiveFiles@2
-    displayName: Create tar.gz archive
+    displayName: Create tar.gz archive of reco_utils
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
@@ -107,7 +107,7 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-reco_utils_code.tar.gz'
       replaceExistingArchive: true
   - task: ArchiveFiles@2
-    displayName: Create zip archive
+    displayName: Create zip archive of examples
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/examples
@@ -116,7 +116,7 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.zip'
       replaceExistingArchive: true
   - task: ArchiveFiles@2
-    displayName: Create tar.gz archive
+    displayName: Create tar.gz archive of examples
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/examples
