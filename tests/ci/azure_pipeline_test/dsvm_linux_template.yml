@@ -25,7 +25,7 @@ parameters:
   type: string
   default: ""
 
-jobs:
+
 - job: "${{ parameters.conda_env }}" # Job name can't have spaces
   displayName: "${{ parameters.task_name }}"
   timeoutInMinutes: ${{ parameters.timeout }}
