@@ -36,7 +36,6 @@ install_requires = [
     "nltk>=3.4,<4",
     "pydocumentdb>=2.3.3<3",  # todo: replace with azure-cosmos
     "pymanopt>=0.2.5,<1",
-    "scikit-surprise>=0.19.1,<=1.0.6",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
@@ -73,7 +72,7 @@ extras_require = {
     "xlearn": [
         "cmake>=3.18.4.post1",
         "xlearn==0.40a1",
-    ]
+    ],
 }
 # for the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
@@ -81,7 +80,8 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 # the following dependencies need additional testing
 extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
-    "nni==1.5"
+    "nni==1.5",
+    "scikit-surprise>=0.19.1,<=1.0.6"
 ]
 
 
