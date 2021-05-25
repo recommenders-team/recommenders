@@ -52,7 +52,7 @@ jobs:
         pip install setuptools wheel twine || exit -1
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
-        pip install --user dist/reco_utils*.whl --force-reinstall || exit -1
+        pip install --user dist/ms_recommenders*.whl --force-reinstall || exit -1
         mkdir -p $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
         rm -rf $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries/*.whl || exit -1
         cp dist/ms_recommenders*.whl $BUILD_ARTIFACTSTAGINGDIRECTORY/binaries || exit -1
