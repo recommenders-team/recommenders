@@ -131,21 +131,15 @@ jobs:
       archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.tar.gz'
       replaceExistingArchive: true
 
-  - task: DownloadPipelineArtifact@2
+  - task: DownloadPipelineArtifact@2 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
+    displayName: 'Download Artifacts from Shared Storage'
+    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
     inputs:
       artifact: PackageAssets
       path: $(Build.SourcesDirectory)/binaries
-
-  - script: |
-      echo "   --- LIST OF ARTIFACTS ---"
-      echo "Artifact folder: $BUILD_ARTIFACTSTAGINGDIRECTORY"
-      du -a $BUILD_ARTIFACTSTAGINGDIRECTORY
-      echo "   $(Build.SourcesDirectory) "
-      du -a $BUILD_SOURCESDIRECTORY
-    displayName: 'Copy artifacts'
   
   - task: GitHubRelease@0 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
-    displayName: 'Create GitHub Release'
+    displayName: 'Create GitHub Draft Release'
     condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       gitHubConnection: recommenders_release
