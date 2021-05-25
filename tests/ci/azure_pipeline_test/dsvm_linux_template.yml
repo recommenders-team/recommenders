@@ -94,7 +94,7 @@ jobs:
 
   - task: PublishPipelineArtifact@1 # https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
     displayName: 'Publish Artifacts to Shared Repository'
-    condition: and(succeeded(), eq(variables['install'], 'release'))
+    condition: succeeded() ## and(succeeded(), eq(variables['install'], 'release')) #TODO: only execute when install eq release
     inputs:
       targetPath: $(System.DefaultWorkingDirectory)/dist
       patterns: 'ms_recommenders*.whl'
