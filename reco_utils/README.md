@@ -1,6 +1,6 @@
 # Recommender Utilities
 
-This package (reco_utils) contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the sub-modules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code.
+This package contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the sub-modules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code.
 
 See the [online documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
@@ -16,32 +16,32 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 
 Install core utilities, cpu-based algorithms, and dependencies
 ```bash
-pip install reco-utils
+pip install recommenders
 ```
 
 ## Optional Dependencies
 
-By default reco-utils does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the reco_utils package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default recommenders does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the recommenders package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
 - examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
 - spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation
-- test: developer dependencies to run unit tests
+- xlearn: xLearn package (on some platforms it requires pre-installation of cmake)
 - all: all of the above dependencies
 - experimental: current experimental dependencies that are being evaluated (e.g. libraries that require advanced build requirements or might conflict with libraries from other options)
 
 These groups can be installed alone or in combination:
 ```bash
-# install reco-utils with core requirements and support for all recommender algorithms
-pip install reco-utils[examples]
+# install recommenders with core requirements and support for all recommender algorithms
+pip install recommenders[examples]
 
 # add support for running example notebooks and gpu functionality
-pip install reco-utils[examples,gpu]
+pip install recommenders[examples,gpu]
 ```
 
 ## GPU Support
 
-You will need CUDA Toolkit v10.0 and CuDNN >= 7.6 to enable both Tensorflow and PyTorch to use the GPU. This can be installed with conda if you are using a conda enviroment:
+You will need CUDA Toolkit v10.0 and CuDNN >= 7.6 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda enviroment, this can be installed with
 ```bash
 conda install cudatoolkit=10.0 "cudnn>=7.6"
 ```
@@ -50,20 +50,15 @@ For manual installation of the necessary requirements see [TensorFlow](https://w
 
 When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
-`pip install reco-utils[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
+`pip install recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
 
 ## Experimental dependencies
 
 We are currently evaluating inclusion of the following dependencies:
 
- - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the PyPI package with the sklearn api will facilitate easier integration into python environments
- - azureml: several example notebooks and utilities in reco_utils/azureml use functionality from this dependency, but it can cause version conflicts with other dependencies so work-arounds are under investigation. 
+ - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the [PyPI package](https://pypi.org/project/vowpalwabbit/) with the scikit-learn interface will facilitate easier integration into python environments
 
 # Contents
-
-## [AzureML](azureml)
-
-The AzureML submodule contains utilities to train, tune and operationalize recommendation systems at scale using AzureML.
 
 ## [Common](common)
 
@@ -71,7 +66,7 @@ This submodule contains high-level utilities for defining constants used in most
 
 ## [Dataset](dataset)
 
-Dataset includes helper functions for interacting with Azure Cosmos databases, pulling different datasets and formatting them appropriately as well as utilities for splitting data for training / testing.
+Dataset includes helper functions for pulling different datasets and formatting them appropriately as well as utilities for splitting data for training / testing.
 
 ### Data Loading
 
@@ -91,7 +86,7 @@ Currently three methods are available for splitting datasets. All of them suppor
 
 ## [Evaluation](evaluation)
 
-The evaluation submodule includes functionality for performing hyperparameter sweeps as well as calculating common recommender metrics directly in python or in a Spark environment using pyspark.
+The evaluation submodule includes functionality for calculating common recommender metrics directly in python or in a Spark environment using pyspark.
 
 Currently available metrics include:
 
