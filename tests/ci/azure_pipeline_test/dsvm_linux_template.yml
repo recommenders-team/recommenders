@@ -74,7 +74,7 @@ jobs:
           mkdir -p $SPARK_DIR || exit -1
           wget https://mirrors.ukfast.co.uk/sites/ftp.apache.org/spark/spark-2.4.8/spark-2.4.8-bin-hadoop2.7.tgz -O $SPARK_DIR/spark.tgz || exit -1
           tar -xvzf $SPARK_DIR/spark.tgz -C $SPARK_DIR --strip-components=1 || exit -1
-          SPRAK_HOME=$SPARK_DIR
+          SPARK_HOME=$SPARK_DIR
         fi
         
         if [ "${{ test }}" == "unit" ]; then
@@ -90,7 +90,7 @@ jobs:
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml || exit -1
         
-        rm -rf $SPARK_DIR || exit -1
+        # rm -rf $SPARK_DIR || exit -1
         conda deactivate
       displayName: 'Run Tests'
 
