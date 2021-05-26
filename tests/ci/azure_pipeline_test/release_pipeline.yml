@@ -56,15 +56,15 @@ jobs:
 #     pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
 #     pytest_markers: "notebooks and not spark and gpu"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Linux Spark"
-#     conda_env: "relase_unit_linux_spark"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[spark]"
-#     pytest_markers: "not notebooks and spark and not gpu"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux Spark"
+    conda_env: "relase_unit_linux_spark"
+    conda_opts: "python=3.6"
+    pip_opts: "[spark]"
+    pytest_markers: "not notebooks and spark and not gpu"
 
 # - template: dsvm_linux_template.yml
 #   parameters:
@@ -84,7 +84,7 @@ jobs:
   # - relase_unit_notebook_linux_cpu
   # - relase_unit_linux_gpu
   # - relase_unit_notebook_linux_gpu
-  # - relase_unit_linux_spark
+  - relase_unit_linux_spark
   # - relase_unit_notebook_linux_spark
   condition: succeeded()
   steps:
