@@ -65,7 +65,7 @@ jobs:
     test_types:
     - unit
     task_name: "Test - Unit Linux Spark"
-    conda_env: "relase_unit_linux_spark"
+    conda_env: "release_unit_linux_spark"
     conda_opts: "python=3.6"
     pip_opts: "[spark]"
     pytest_markers: "not notebooks and spark and not gpu"
@@ -76,7 +76,7 @@ jobs:
     test_types:
     - unit
     task_name: "Test - Unit Notebook Linux Spark"
-    conda_env: "relase_unit_notebook_linux_spark"
+    conda_env: "release_unit_notebook_linux_spark"
     conda_opts: "python=3.6"
     pip_opts: "[spark,examples]"
     pytest_markers: "notebooks and spark and not gpu"
@@ -86,12 +86,12 @@ jobs:
   pool:
     name: $(Agent_Pool)
   dependsOn:
-  - relase_unit_linux_cpu
-  - relase_unit_notebook_linux_cpu
-  - relase_unit_linux_gpu
-  - relase_unit_notebook_linux_gpu
-  - relase_unit_linux_spark
-  - relase_unit_notebook_linux_spark
+  - release_unit_linux_cpu
+  - release_unit_notebook_linux_cpu
+  - release_unit_linux_gpu
+  - release_unit_notebook_linux_gpu
+  - release_unit_linux_spark
+  - release_unit_notebook_linux_spark
   condition: succeeded()
   steps:
     # Create archives with complete source code included
