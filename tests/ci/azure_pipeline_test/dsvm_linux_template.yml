@@ -66,10 +66,10 @@ jobs:
     - script: |
         eval "$(conda shell.bash hook)"
         conda activate ${{ parameters.conda_env }}
-        if [ "${{ parameters.pip_opts }}" == *"spark"* ]; then
+        if [ "${{ parameters.conda_env }}" == *"spark"* ]; then
           export PYSPARK_PYTHON=`which python`
           export PYSPARK_DRIVER_PYTHON=`which python`
-          echo "pip options: ${{ parameters.pip_opts }}"
+          echo "pip options: ${{ parameters.conda_env }}"
         fi
         echo "PYSPARK_PYTHON=$PYSPARK_PYTHON"
         
