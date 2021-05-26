@@ -69,6 +69,7 @@ jobs:
         if [[ "spark" == *"${{ parameters.pip_opts }}"* ]]; then
           export PYSPARK_PYTHON=`which python`
           export PYSPARK_DRIVER_PYTHON=`which python`
+          echo "pip options: ${{ parameters.pip_opts }}"
         fi
         echo "PYSPARK_PYTHON=$PYSPARK_PYTHON"
         
