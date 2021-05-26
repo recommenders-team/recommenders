@@ -52,7 +52,7 @@ jobs:
         pip install setuptools wheel twine || exit -1
         python setup.py sdist bdist_wheel || exit -1
         echo "   --- INSTALLING WHEEL ---"
-        pip install --user dist/ms_recommenders*.whl --force-reinstall || exit -1
+        pip install --user dist/ms_recommenders*.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
