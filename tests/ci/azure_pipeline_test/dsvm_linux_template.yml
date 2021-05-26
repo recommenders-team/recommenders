@@ -90,7 +90,7 @@ jobs:
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml || exit -1
         
-        # rm -rf $SPARK_DIR || exit -1
+        rm -rf $SPARK_DIR || exit -1
         conda deactivate
       displayName: 'Run Tests'
 
