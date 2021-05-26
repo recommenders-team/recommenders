@@ -1,6 +1,6 @@
 # Recommender Utilities
 
-This package contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the sub-modules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code.
+This package contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the submodules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code.
 
 See the [online documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
@@ -16,12 +16,12 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 
 Install core utilities, cpu-based algorithms, and dependencies
 ```bash
-pip install recommenders
+pip install ms-recommenders
 ```
 
 ## Optional Dependencies
 
-By default recommenders does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the recommenders package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default ms-recommenders does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the ms-recommenders package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
 - examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
@@ -30,13 +30,15 @@ By default recommenders does not install all dependencies used throughout the co
 - all: all of the above dependencies
 - experimental: current experimental dependencies that are being evaluated (e.g. libraries that require advanced build requirements or might conflict with libraries from other options)
 
+Note that, currently, Surprise, NNI and Vowpal Wabbit are in the experimental group.
+
 These groups can be installed alone or in combination:
 ```bash
-# install recommenders with core requirements and support for all recommender algorithms
-pip install recommenders[examples]
+# install recommenders with core requirements and support for all recommender algorithms and notebooks
+pip install ms-recommenders[examples]
 
 # add support for running example notebooks and gpu functionality
-pip install recommenders[examples,gpu]
+pip install ms-recommenders[examples,gpu]
 ```
 
 ## GPU Support
@@ -50,13 +52,15 @@ For manual installation of the necessary requirements see [TensorFlow](https://w
 
 When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
-`pip install recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
+`pip install ms-recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
 
 ## Experimental dependencies
 
 We are currently evaluating inclusion of the following dependencies:
 
  - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the [PyPI package](https://pypi.org/project/vowpalwabbit/) with the scikit-learn interface will facilitate easier integration into python environments
+ - scikit-surprise: successful installation can be done after ms-recommenders either using `conda install` or by upgrading numpy to version 1.20 (which, however, is not consistent with the version of tensorflow-gpu we install)
+ - nni: a more recent version can be installed but is untested (and requires a higher numpy version as above).
 
 # Contents
 
@@ -82,11 +86,11 @@ Currently three methods are available for splitting datasets. All of them suppor
 
 - Random: this is the basic approach where entries are randomly assigned to each group based on the ratio desired
 - Chronological: this uses provided timestamps to order the data and selects a cut-off time that will split the desired ratio of data to train before that time and test after that time
-- Stratified: this is similar to random sampling, but the splits are stratified, for example if the datasets are split by user, the splitting approach will attempt to maintain the same set of items used in both training and test splits. The converse is true if splitting by item.
+- Stratified: this is similar to random sampling, but the splits are stratified, for example if the datasets are split by user, the splitting approach will attempt to maintain the same ratio of items used in both training and test splits. The converse is true if splitting by item.
 
 ## [Evaluation](evaluation)
 
-The evaluation submodule includes functionality for calculating common recommender metrics directly in python or in a Spark environment using pyspark.
+The evaluation submodule includes functionality for calculating common recommendation metrics directly in Python or in a Spark environment using PySpark.
 
 Currently available metrics include:
 
