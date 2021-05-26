@@ -16,12 +16,12 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 
 Install core utilities, cpu-based algorithms, and dependencies
 ```bash
-pip install recommenders
+pip install ms-recommenders
 ```
 
 ## Optional Dependencies
 
-By default recommenders does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the recommenders package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default ms-recommenders does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the ms-recommenders package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
 - examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
@@ -33,10 +33,10 @@ By default recommenders does not install all dependencies used throughout the co
 These groups can be installed alone or in combination:
 ```bash
 # install recommenders with core requirements and support for all recommender algorithms
-pip install recommenders[examples]
+pip install ms-recommenders[examples]
 
 # add support for running example notebooks and gpu functionality
-pip install recommenders[examples,gpu]
+pip install ms-recommenders[examples,gpu]
 ```
 
 ## GPU Support
@@ -50,7 +50,7 @@ For manual installation of the necessary requirements see [TensorFlow](https://w
 
 When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
-`pip install recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
+`pip install ms-recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
 
 ## Experimental dependencies
 
