@@ -146,14 +146,14 @@ SAR
     :members:
 
 
-TFIDF
+TF-IDF
 ===============================
 
 .. automodule:: reco_utils.recommender.tfidf.tfidf_utils
     :members:
 
 
-Vae
+VAE
 ===============================
 
 .. automodule:: reco_utils.recommender.vae.multinomial_vae
