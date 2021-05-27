@@ -9,8 +9,6 @@ try:
 except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
 
-from reco_utils.tuning.nni.nni_utils import check_experiment_status, NNI_STATUS_URL
-
 
 TOL = 0.05
 ABS_TOL = 0.05
@@ -112,6 +110,7 @@ def test_baseline_deep_dive_integration(
         # 10m works but takes too long
     ],
 )
+@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
 def test_surprise_svd_integration(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
@@ -149,6 +148,7 @@ def test_surprise_svd_integration(
         )
     ],
 )
+@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
 def test_vw_deep_dive_integration(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
@@ -167,8 +167,9 @@ def test_vw_deep_dive_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+#@pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
 @pytest.mark.integration
-@pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
+@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
 def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
     pm.execute_notebook(

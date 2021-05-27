@@ -110,6 +110,7 @@ jobs:
         rm -rf $SPARK_DIR || exit -1
         conda deactivate
       displayName: 'Run ${{ test }} tests'
+      condition: succeeded()
 
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
