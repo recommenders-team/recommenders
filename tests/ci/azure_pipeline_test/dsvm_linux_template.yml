@@ -71,6 +71,9 @@ jobs:
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
       
+      echo "   --- LIST INSTALLED DEPENDENCIES ---"
+      pip list
+      
       # clean up any previous test results        
       rm -rf reports
     displayName: 'Install Dependencies'
@@ -114,7 +117,9 @@ jobs:
         failTaskOnFailedTests: true
       condition: succeededOrFailed()
 
-  - task: PublishPipelineArtifact@1 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
+  # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
+  # Can't overwrite files https://developercommunity.visualstudio.com/t/cannot-overwrite-published-artifact-from-azure-dev/1078688
+  - task: PublishPipelineArtifact@1 
     displayName: 'Publish Artifacts to Shared Storage'
     condition: and(succeeded(), eq('${{ parameters.install }}', 'release'), eq('${{ parameters.package }}', 'publish'))
     inputs:

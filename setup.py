@@ -60,7 +60,7 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow-gpu==1.15.4",  # compiled with cuda 10.0
+        "tensorflow-gpu>=1.15.0,<2",  # compiled with cuda 10.0
         "torch==1.2.0",  # last os-common version with cuda 10.0 support
         "fastai>=1.0.46,<2",
     ],
