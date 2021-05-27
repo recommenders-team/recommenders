@@ -12,7 +12,7 @@ def generate_param_grid(params):
     .. code-block:: python
         {
             "param1": [value1, value2],
-            "param2": [value1, vaslue2]
+            "param2": [value1, value2]
         }
     to:
     .. code-block:: python
