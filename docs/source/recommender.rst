@@ -146,6 +146,13 @@ SAR
     :members:
 
 
+Surprise
+===============================
+
+.. automodule:: reco_utils.recommender.surprise.surprise_utils
+    :members:
+
+
 TF-IDF
 ===============================
 
