@@ -44,6 +44,7 @@ install_requires = [
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
+    "scikit-surprise>=0.19.1,<=1.0.6"
 ]
 
 # shared dependencies
@@ -81,7 +82,6 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
     "nni==1.5",
-    "scikit-surprise>=0.19.1,<=1.0.6"
 ]
 
 

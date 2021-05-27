@@ -110,7 +110,6 @@ def test_baseline_deep_dive_integration(
         # 10m works but takes too long
     ],
 )
-@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
 def test_surprise_svd_integration(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):

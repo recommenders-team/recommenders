@@ -49,7 +49,6 @@ def test_baseline_deep_dive_runs(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
 def test_surprise_deep_dive_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
