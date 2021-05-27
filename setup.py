@@ -44,7 +44,7 @@ install_requires = [
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
-    "scikit-surprise>=0.19.1,<=1.0.6"
+    "scikit-surprise>=0.19.1,<=1.1.1"
 ]
 
 # shared dependencies
