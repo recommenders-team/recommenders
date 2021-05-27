@@ -81,6 +81,7 @@ jobs:
     pip_opts: "[spark,examples]"
     pytest_markers: "notebooks and spark and not gpu"
     install: "release"
+    package: "publish" # We want to publish to the package limbo the latest wheel
 
 - job: Package
   pool:

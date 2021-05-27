@@ -24,6 +24,9 @@ parameters:
 - name: install
   type: string
   default: ""
+- name: package
+  type: string
+  default: ""
 
 jobs:
 - job: "${{ parameters.conda_env }}" # Job name can't have spaces
@@ -113,7 +116,7 @@ jobs:
 
   - task: PublishPipelineArtifact@1 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
     displayName: 'Publish Artifacts to Shared Storage'
-    condition: and(succeeded(), eq('${{ parameters.install }}', 'release'))
+    condition: and(succeeded(), eq('${{ parameters.install }}', 'release', eq('${{ parameters.package }}', 'publish'))
     inputs:
       targetPath: $(System.DefaultWorkingDirectory)/dist
       patterns: 'ms_recommenders*.whl'
