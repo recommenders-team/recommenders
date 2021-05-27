@@ -61,7 +61,7 @@ jobs:
         pip install setuptools wheel twine || exit -1
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
         echo "   --- INSTALLING WHEEL ---"
-        pip install --user dist/ms_recommenders-$LGB_VER-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
+        pip install --user dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
