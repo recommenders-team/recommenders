@@ -47,12 +47,21 @@ jobs:
       # install reco-utils and needed dependencies
       pip install pytest>=3.6.4 || exit -1
       if [ "${{ parameters.install }}" = "release" ]; then
+        echo "   --- SET UP PARAMETERS ---"
         rm -rf dist
+        ARCH=$(uname -m)
+        if [[ $ARCH == "x86_64" ]]; then
+            PLATFORM="manylinux1_x86_64"
+        else
+            PLATFORM="manylinux2014_$ARCH"
+        fi
+        RELEASE_VERSION=$(awk '/__version__ =/ {print $3}' reco_utils/__init__.py) 
+
         echo "   --- BUILDING PACKAGE ---"
         pip install setuptools wheel twine || exit -1
-        python setup.py sdist bdist_wheel || exit -1
+        python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
         echo "   --- INSTALLING WHEEL ---"
-        pip install --user dist/ms_recommenders*.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
+        pip install --user dist/ms_recommenders-$LGB_VER-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
