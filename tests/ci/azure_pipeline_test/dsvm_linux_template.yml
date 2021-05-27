@@ -48,7 +48,6 @@ jobs:
       conda activate ${{ parameters.conda_env }}
 
       # install reco-utils and needed dependencies
-      pip install pytest>=3.6.4 || exit -1
       if [ "${{ parameters.install }}" = "release" ]; then
         echo "   --- SET UP PARAMETERS ---"
         ARCH=$(uname -m)
@@ -73,7 +72,7 @@ jobs:
       
       echo "   --- LIST INSTALLED DEPENDENCIES ---"
       pip list
-      
+
       # clean up any previous test results        
       rm -rf reports
     displayName: 'Install Dependencies'
@@ -82,6 +81,8 @@ jobs:
     - script: |
         eval "$(conda shell.bash hook)"
         conda activate ${{ parameters.conda_env }}
+        pip install pytest>=3.6.4 || exit -1
+
         if [[ "${{ parameters.conda_env }}" == *"spark"* ]]; then
           export PYSPARK_PYTHON=`which python`
           export PYSPARK_DRIVER_PYTHON=`which python`
@@ -108,7 +109,7 @@ jobs:
         
         rm -rf $SPARK_DIR || exit -1
         conda deactivate
-      displayName: 'Run Tests'
+      displayName: 'Run ${{ test }} tests'
 
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
