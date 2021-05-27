@@ -44,6 +44,7 @@ install_requires = [
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
+    "scikit-surprise>=0.19.1,<=1.1.1"
 ]
 
 # shared dependencies
@@ -60,7 +61,7 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow-gpu==1.15.4",  # compiled with cuda 10.0
+        "tensorflow-gpu>=1.15.0,<2",  # compiled with cuda 10.0
         "torch==1.2.0",  # last os-common version with cuda 10.0 support
         "fastai>=1.0.46,<2",
     ],
@@ -81,7 +82,6 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
     "nni==1.5",
-    "scikit-surprise>=0.19.1,<=1.0.6"
 ]
 
 

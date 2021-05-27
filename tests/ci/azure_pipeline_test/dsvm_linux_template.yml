@@ -24,6 +24,9 @@ parameters:
 - name: install
   type: string
   default: ""
+- name: package
+  type: string
+  default: ""
 
 jobs:
 - job: "${{ parameters.conda_env }}" # Job name can't have spaces
@@ -45,19 +48,31 @@ jobs:
       conda activate ${{ parameters.conda_env }}
 
       # install reco-utils and needed dependencies
-      pip install pytest>=3.6.4 || exit -1
       if [ "${{ parameters.install }}" = "release" ]; then
-        rm -rf dist
+        echo "   --- SET UP PARAMETERS ---"
+        ARCH=$(uname -m)
+        if [[ $ARCH == "x86_64" ]]; then
+            PLATFORM="manylinux1_x86_64"
+        else
+            PLATFORM="manylinux2014_$ARCH"
+        fi
+        RELEASE_VERSION=$(awk '/__version__ = / {print $3}' reco_utils/__init__.py | sed 's/"//g')
+
         echo "   --- BUILDING PACKAGE ---"
+        rm -rf dist
         pip install setuptools wheel twine || exit -1
-        python setup.py sdist bdist_wheel || exit -1
+        python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
+        ls -lha dist
         echo "   --- INSTALLING WHEEL ---"
-        pip install --user dist/ms_recommenders*.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
+        pip install --user dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
       
+      echo "   --- LIST INSTALLED DEPENDENCIES ---"
+      pip list
+
       # clean up any previous test results        
       rm -rf reports
     displayName: 'Install Dependencies'
@@ -66,13 +81,18 @@ jobs:
     - script: |
         eval "$(conda shell.bash hook)"
         conda activate ${{ parameters.conda_env }}
+        pip install pytest>=3.6.4 || exit -1
+
         if [[ "${{ parameters.conda_env }}" == *"spark"* ]]; then
           export PYSPARK_PYTHON=`which python`
           export PYSPARK_DRIVER_PYTHON=`which python`
-          echo "pip options: ${{ parameters.conda_env }}"
+          export SPARK_DIR=$PWD/build/spark
+          rm -rf $SPARK_DIR || exit -1
+          mkdir -p $SPARK_DIR || exit -1
+          wget https://mirrors.ukfast.co.uk/sites/ftp.apache.org/spark/spark-2.4.8/spark-2.4.8-bin-hadoop2.7.tgz -O $SPARK_DIR/spark.tgz || exit -1
+          tar -xvzf $SPARK_DIR/spark.tgz -C $SPARK_DIR --strip-components=1 || exit -1
+          SPARK_HOME=$SPARK_DIR
         fi
-        echo $SHELL
-        echo "PYSPARK_PYTHON=$PYSPARK_PYTHON"
         
         if [ "${{ test }}" == "unit" ]; then
             export TEST_MARKER=""
@@ -87,8 +107,10 @@ jobs:
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml || exit -1
         
+        rm -rf $SPARK_DIR || exit -1
         conda deactivate
-      displayName: 'Run Tests'
+      displayName: 'Run ${{ test }} tests'
+      condition: succeeded()
 
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
@@ -97,9 +119,11 @@ jobs:
         failTaskOnFailedTests: true
       condition: succeededOrFailed()
 
-  - task: PublishPipelineArtifact@1 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
+  # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
+  # Can't overwrite files https://developercommunity.visualstudio.com/t/cannot-overwrite-published-artifact-from-azure-dev/1078688
+  - task: PublishPipelineArtifact@1 
     displayName: 'Publish Artifacts to Shared Storage'
-    condition: and(succeeded(), eq('${{ parameters.install }}', 'release'))
+    condition: and(succeeded(), eq('${{ parameters.install }}', 'release'), eq('${{ parameters.package }}', 'publish'))
     inputs:
       targetPath: $(System.DefaultWorkingDirectory)/dist
       patterns: 'ms_recommenders*.whl'
