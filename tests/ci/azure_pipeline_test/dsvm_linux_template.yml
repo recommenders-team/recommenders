@@ -48,7 +48,6 @@ jobs:
       pip install pytest>=3.6.4 || exit -1
       if [ "${{ parameters.install }}" = "release" ]; then
         echo "   --- SET UP PARAMETERS ---"
-        rm -rf dist
         ARCH=$(uname -m)
         if [[ $ARCH == "x86_64" ]]; then
             PLATFORM="manylinux1_x86_64"
@@ -58,6 +57,7 @@ jobs:
         RELEASE_VERSION=$(awk '/__version__ = / {print $3}' reco_utils/__init__.py | sed 's/"//g')
 
         echo "   --- BUILDING PACKAGE ---"
+        rm -rf dist
         pip install setuptools wheel twine || exit -1
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
         ls -lha dist
