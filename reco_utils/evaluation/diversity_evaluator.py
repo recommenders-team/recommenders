@@ -12,7 +12,7 @@ from pyspark.sql import functions as F
 
 class DiversityEvaluator:  
     def __init__(self, train_df, reco_df,
-                 user_col='UserId', item_col='ItemId', relevence_col=None):
+                 user_col='UserId', item_col='ItemId', relevance_col=None):
         """Diversity evaluator.
         train (train_df) and recommendation (reco_df) dataframes should already be groupped by user-item pair.
         
@@ -27,10 +27,10 @@ class DiversityEvaluator:
             train_df (pySpark DataFrame): Training set used for the recommender,
                 containing user_col, item_col.
             reco_df (pySpark DataFrame): Recommender's prediction output,
-                containing user_col, item_col, relevence_col (optional).
+                containing user_col, item_col, relevance_col (optional).
             user_col (str): User id column name.
             item_col (str): Item id column name.  
-            relevence_col (str): this column indicates whether the recommended item is actually relevent to the user or not. 
+            relevance_col (str): this column indicates whether the recommended item is actually relevent to the user or not. 
         """
 
         self.train_df = train_df.select(user_col,item_col)
@@ -41,13 +41,13 @@ class DiversityEvaluator:
         self.df_item_novelty = None
         self.df_intralist_similarity = None
         
-        if relevence_col == None:
-            self.relevence_col = 'relevence'
-            # relevence term, default is 1 (relevent) for all
-            self.reco_df = reco_df.select(user_col, item_col, F.lit(1.0).alias(self.relevence_col))
+        if relevance_col == None:
+            self.relevance_col = 'relevance'
+            # relevance term, default is 1 (relevent) for all
+            self.reco_df = reco_df.select(user_col, item_col, F.lit(1.0).alias(self.relevance_col))
         else:
-            self.relevence_col = relevence_col
-            self.reco_df = reco_df.select(user_col, item_col, F.col(self.relevence_col).cast(DoubleType()))
+            self.relevance_col = relevance_col
+            self.reco_df = reco_df.select(user_col, item_col, F.col(self.relevance_col).cast(DoubleType()))
             
         # check if reco_df contain any user_item pairs that are already shown train_df
         count_intersection = (
@@ -180,7 +180,7 @@ class DiversityEvaluator:
         
     # serendipity metrics    
     def get_user_item_serendipity(self):
-        # TODO: add relevence term as input parameter
+        # TODO: add relevance term as input parameter
         
         # for every user_col, item_col in reco_df, join all interacted items from train_df. 
         # These interacted items are reapeated for each item in reco_df for a specific user.
@@ -198,7 +198,7 @@ class DiversityEvaluator:
                    )
         return (
             join_sim.join(self.reco_df, on=[self.user_col, self.item_col]) 
-            .withColumn("user_item_serendipity",(1-F.col("avg_item2interactedHistory_sim"))*F.col(self.relevence_col)) 
+            .withColumn("user_item_serendipity",(1-F.col("avg_item2interactedHistory_sim"))*F.col(self.relevance_col)) 
         )
       
    
