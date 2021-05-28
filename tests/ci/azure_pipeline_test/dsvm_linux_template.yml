@@ -60,11 +60,10 @@ jobs:
 
         echo "   --- BUILDING PACKAGE ---"
         rm -rf dist
-        pip install setuptools wheel twine || exit -1
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
-        ls -lha dist
+        
         echo "   --- INSTALLING WHEEL ---"
-        pip install --user dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
+        pip install dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} --force-reinstall || exit -1
       else
         echo "Installing latest code"
         pip install .${{ parameters.pip_opts }} || exit -1
@@ -99,6 +98,9 @@ jobs:
         else
             export TEST_MARKER="${{ test }} and "
         fi
+
+        # Remove reco_utils folder to make sure it is using the package to run the tests
+        rm -rf reco_utils || exit -1
 
         # run tests
         pytest tests/${{ test }} \
