@@ -129,14 +129,14 @@ jobs:
     name: $(Agent_Pool)
   dependsOn:
   - release_unit_linux_cpu
-  - release_unit_notebook_linux_cpu
-  - release_unit_linux_gpu
-  - release_unit_notebook_linux_gpu
-  - release_unit_linux_spark
-  - release_unit_notebook_linux_spark
-  - release_nightly_linux_cpu
-  - release_nightly_linux_gpu
-  - release_nightly_linux_spark
+  # - release_unit_notebook_linux_cpu
+  # - release_unit_linux_gpu
+  # - release_unit_notebook_linux_gpu
+  # - release_unit_linux_spark
+  # - release_unit_notebook_linux_spark
+  # - release_nightly_linux_cpu
+  # - release_nightly_linux_gpu
+  # - release_nightly_linux_spark
   condition: succeeded()
   steps:
     # Create archives with complete source code included
