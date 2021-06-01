@@ -45,6 +45,8 @@ install_requires = [
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
     "scikit-surprise>=0.19.1,<=1.1.1",
+    "cmake>=3.18.4.post1",
+    "xlearn==0.40a1",
 ]
 
 # shared dependencies
@@ -69,10 +71,6 @@ extras_require = {
         "databricks_cli>=0.8.6,<1",
         "pyarrow>=0.8.0,<1.0.0",
         "pyspark>=2.4.5,<3.0.0",
-    ],
-    "xlearn": [
-        "cmake>=3.18.4.post1",
-        "xlearn==0.40a1",
     ],
 }
 # for the brave of heart

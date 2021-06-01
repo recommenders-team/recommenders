@@ -6,10 +6,12 @@ pr: none
 
 # A new tag will trigger the build
 trigger:
-- pipeline_release
-  # tags:
-  #   include:
-  #   - *
+  branches:
+    include:
+    - pipeline_release
+  tags:
+    include:
+    - *
 
 variables:
 - group: LinuxAgentPool
@@ -27,101 +29,101 @@ jobs:
     pytest_markers: "not notebooks and not spark and not gpu"
     install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Notebook Linux CPU"
-#     conda_env: "release_unit_notebook_linux_cpu"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[examples]"
-#     pytest_markers: "notebooks and not spark and not gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux CPU"
+    conda_env: "release_unit_notebook_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: "[examples]"
+    pytest_markers: "notebooks and not spark and not gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Linux GPU"
-#     conda_env: "release_unit_linux_gpu"
-#     conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
-#     pip_opts: "[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html"
-#     pytest_markers: "not notebooks and not spark and gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux GPU"
+    conda_env: "release_unit_linux_gpu"
+    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+    pip_opts: "[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html"
+    pytest_markers: "not notebooks and not spark and gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Notebook Linux GPU"
-#     conda_env: "release_unit_notebook_linux_gpu"
-#     conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
-#     pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
-#     pytest_markers: "notebooks and not spark and gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux GPU"
+    conda_env: "release_unit_notebook_linux_gpu"
+    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+    pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
+    pytest_markers: "notebooks and not spark and gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Linux Spark"
-#     conda_env: "release_unit_linux_spark"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[spark]"
-#     pytest_markers: "not notebooks and spark and not gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux Spark"
+    conda_env: "release_unit_linux_spark"
+    conda_opts: "python=3.6"
+    pip_opts: "[spark]"
+    pytest_markers: "not notebooks and spark and not gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Notebook Linux Spark"
-#     conda_env: "release_unit_notebook_linux_spark"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[spark,examples]"
-#     pytest_markers: "notebooks and spark and not gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux Spark"
+    conda_env: "release_unit_notebook_linux_spark"
+    conda_opts: "python=3.6"
+    pip_opts: "[spark,examples]"
+    pytest_markers: "notebooks and spark and not gpu"
+    install: "release"
 
-# # ====== Nightly tests ======
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - smoke
-#     - integration
-#     task_name: "Test - Nightly Linux CPU"
-#     timeout: 180 
-#     conda_env: "release_nightly_linux_cpu"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[examples]"
-#     pytest_markers: "not spark and not gpu"
-#     install: "release"
+# ====== Nightly tests ======
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - smoke
+    - integration
+    task_name: "Test - Nightly Linux CPU"
+    timeout: 180 
+    conda_env: "release_nightly_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: "[examples]"
+    pytest_markers: "not spark and not gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - smoke
-#     - integration
-#     task_name: "Test - Nightly Linux GPU"
-#     timeout: 240
-#     conda_env: "release_nightly_linux_gpu"
-#     conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
-#     pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
-#     pytest_markers: "not spark and gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - smoke
+    - integration
+    task_name: "Test - Nightly Linux GPU"
+    timeout: 240
+    conda_env: "release_nightly_linux_gpu"
+    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+    pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
+    pytest_markers: "not spark and gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - smoke
-#     - integration
-#     task_name: "Test - Nightly Linux Spark"
-#     timeout: 180
-#     conda_env: "release_nightly_linux_spark"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[spark,examples]"
-#     pytest_markers: "spark and not gpu"
-#     install: "release"
-#     package: "publish" # We want to publish to the package limbo the latest wheel
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - smoke
+    - integration
+    task_name: "Test - Nightly Linux Spark"
+    timeout: 180
+    conda_env: "release_nightly_linux_spark"
+    conda_opts: "python=3.6"
+    pip_opts: "[spark,examples]"
+    pytest_markers: "spark and not gpu"
+    install: "release"
+    package: "publish" # We want to publish to the package limbo the latest wheel
 
 # ====== Publish release ======
 - job: Package
@@ -129,14 +131,14 @@ jobs:
     name: $(Agent_Pool)
   dependsOn:
   - release_unit_linux_cpu
-  # - release_unit_notebook_linux_cpu
-  # - release_unit_linux_gpu
-  # - release_unit_notebook_linux_gpu
-  # - release_unit_linux_spark
-  # - release_unit_notebook_linux_spark
-  # - release_nightly_linux_cpu
-  # - release_nightly_linux_gpu
-  # - release_nightly_linux_spark
+  - release_unit_notebook_linux_cpu
+  - release_unit_linux_gpu
+  - release_unit_notebook_linux_gpu
+  - release_unit_linux_spark
+  - release_unit_notebook_linux_spark
+  - release_nightly_linux_cpu
+  - release_nightly_linux_gpu
+  - release_nightly_linux_spark
   condition: succeeded()
   steps:
     # Create archives with complete source code included
