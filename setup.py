@@ -47,6 +47,7 @@ install_requires = [
     "tqdm>=4.31.1,<5",
     "transformers>=2.5.0,<5",
     "xlearn==0.40a1",
+    "backoff>=1.8.0",
 ]
 
 # shared dependencies
