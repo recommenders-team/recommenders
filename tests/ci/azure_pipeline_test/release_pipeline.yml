@@ -7,9 +7,9 @@ pr: none
 # A new tag will trigger the build
 trigger:
 - pipeline_release
-  # tags:
-  #   include:
-  #   - *
+  tags:
+    include:
+    - *
 
 variables:
 - group: LinuxAgentPool
