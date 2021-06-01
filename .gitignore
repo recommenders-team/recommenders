@@ -155,6 +155,14 @@ ml-20m/
 *.model
 *.mml
 nohup.out
+*.svg
+*.html
+*.js
+*.css
+*.tff
+*.woff
+*.woff2
+*.eot
 
 #####  kdd 2020 tutorial data folder
 examples/07_tutorials/KDD2020-tutorial/data_folder/
