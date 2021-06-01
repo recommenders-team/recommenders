@@ -80,7 +80,6 @@ jobs:
     - script: |
         eval "$(conda shell.bash hook)"
         echo "##vso[task.setvariable variable=shellopts]errexit"
-        set -e
 
         conda activate ${{ parameters.conda_env }}
         pip install pytest>=3.6.4 || exit -1
