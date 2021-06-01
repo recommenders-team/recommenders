@@ -11,7 +11,6 @@ evaluating recommender systems.
    :maxdepth: 1
    :caption: Contents:
 
-    AzureML <azureml>
     Common <common>
     Dataset <dataset>
     Evaluation <evaluation>

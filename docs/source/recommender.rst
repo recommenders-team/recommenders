@@ -20,6 +20,9 @@ DeepRec
 .. automodule:: reco_utils.recommender.deeprec.models.dkn
     :members:
 
+.. automodule:: reco_utils.recommender.deeprec.models.dkn_item2item
+    :members:
+
 .. automodule:: reco_utils.recommender.deeprec.models.xDeepFM
     :members:
 
@@ -29,6 +32,18 @@ DeepRec
 .. automodule:: reco_utils.recommender.deeprec.io.dkn_iterator
     :members:
 
+.. automodule:: reco_utils.recommender.deeprec.io.dkn_item2item_iterator
+    :members:
+
+.. automodule:: reco_utils.recommender.deeprec.io.nextitnet_iterator
+    :members:
+
+.. automodule:: reco_utils.recommender.deeprec.io.sequential_iterator
+    :members:
+
+.. automodule:: reco_utils.recommender.deeprec.DataModel.ImplicitCF
+    :members:
+
 .. automodule:: reco_utils.recommender.deeprec.deeprec_utils
     :members:
 
@@ -36,6 +51,27 @@ FastAI
 ===============================
 
 .. automodule:: reco_utils.recommender.fastai.fastai_utils
+    :members:
+
+Geoimc
+===============================
+
+.. automodule:: reco_utils.recommender.geoimc.geoimc_algorithm
+    :members:
+
+.. automodule:: reco_utils.recommender.geoimc.geoimc_data
+    :members:
+
+.. automodule:: reco_utils.recommender.geoimc.geoimc_predict
+    :members:
+
+.. automodule:: reco_utils.recommender.geoimc.geoimc_utils
+    :members:
+
+LightFM
+===============================
+
+.. automodule:: reco_utils.recommender.lightfm.lightfm_utils
     :members:
 
 LightGBM
@@ -53,6 +89,35 @@ NCF
 .. automodule:: reco_utils.recommender.ncf.ncf_singlenode
     :members:
 
+Newsrec
+===============================
+
+.. automodule:: reco_utils.recommender.newsrec.io.mind_all_iterator
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.io.mind_iterator
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.models.base_model
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.models.layers
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.models.lstur
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.models.naml
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.models.npa
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.models.nrms
+    :members:
+
+.. automodule:: reco_utils.recommender.newsrec.newsrec_utils
+    :members:
 
 RBM
 ===============================
@@ -80,6 +145,7 @@ SAR
 .. automodule:: reco_utils.recommender.sar.sar_singlenode
     :members:
 
+
 Surprise
 ===============================
 
@@ -87,11 +153,22 @@ Surprise
     :members:
 
 
-Vowpal Wabbit
+TF-IDF
 ===============================
 
-.. automodule:: reco_utils.recommender.vowpal_wabbit.vw
+.. automodule:: reco_utils.recommender.tfidf.tfidf_utils
     :members:
+
+
+VAE
+===============================
+
+.. automodule:: reco_utils.recommender.vae.multinomial_vae
+    :members:
+
+.. automodule:: reco_utils.recommender.vae.standard_vae
+    :members:
+
 
 Wide & Deep
 ===============================
