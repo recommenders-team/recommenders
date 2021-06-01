@@ -34,7 +34,7 @@ install_requires = [
     "lightgbm>=2.2.1,<3",
     "memory_profiler>=0.54.0,<1",
     "nltk>=3.4,<4",
-    "pydocumentdb>=2.3.3<3",  # todo: replace with azure-cosmos
+    "pydocumentdb>=2.3.3<3",  # TODO: replace with azure-cosmos
     "pymanopt>=0.2.5,<1",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
@@ -44,7 +44,7 @@ install_requires = [
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
-    "scikit-surprise>=0.19.1,<=1.1.1"
+    "scikit-surprise>=0.19.1,<=1.1.1",
 ]
 
 # shared dependencies
@@ -61,8 +61,8 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow-gpu>=1.15.0,<2",  # compiled with cuda 10.0
-        "torch==1.2.0",  # last os-common version with cuda 10.0 support
+        "tensorflow-gpu>=1.15.0,<2",  # compiled with CUDA 10.0
+        "torch==1.2.0",  # last os-common version with CUDA 10.0 support
         "fastai>=1.0.46,<2",
     ],
     "spark": [
@@ -94,7 +94,7 @@ setup(
     url="https://github.com/microsoft/recommenders",
     project_urls={
         "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
-        "Wiki": "https://github.com/microsoft/recommenders/wiki"
+        "Wiki": "https://github.com/microsoft/recommenders/wiki",
     },
     author="RecoDev Team at Microsoft",
     author_email="RecoDevTeam@service.microsoft.com",
@@ -109,11 +109,11 @@ setup(
         "Programming Language :: Python :: 3.6",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS"
+        "Operating System :: MacOS",
     ],
     extras_require=extras_require,
     keywords="recommendations recommenders recommender system engine "
-             "machine learning python spark gpu",
+    "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"reco_utils": "reco_utils"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
