@@ -79,7 +79,6 @@ jobs:
   - ${{ each test in parameters.test_types }}:
     - script: |
         eval "$(conda shell.bash hook)"
-        set -e  # Force exit on error (bash)
 
         conda activate ${{ parameters.conda_env }}
         pip install pytest>=3.6.4 || exit -1
@@ -117,6 +116,7 @@ jobs:
         conda deactivate
       displayName: 'Run ${{ test }} tests'
       condition: succeeded()
+      failOnStderr: true
 
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
