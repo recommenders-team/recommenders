@@ -13,7 +13,3 @@ def test_invert_dictionary():
 
 def test_get_number_processors():
     assert get_number_processors() >= 1
-
-
-def test_fail():
-    assert True is False

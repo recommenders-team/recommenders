@@ -11,7 +11,8 @@ trigger:
     - pipeline_release
   tags:
     include:
-    - *
+    - 0.*
+    - 1.*
 
 variables:
 - group: LinuxAgentPool
