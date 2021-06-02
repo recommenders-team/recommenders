@@ -6,9 +6,6 @@ pr: none
 
 # A new tag will trigger the build
 trigger:
-  branches:
-    include:
-    - pipeline_release
   tags:
     include:
     - 0.*
@@ -145,7 +142,7 @@ jobs:
     # Create archives with complete source code included
   - task: ArchiveFiles@2
     displayName: Create zip archive of reco_utils
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
       includeRootFolder: false
@@ -155,7 +152,7 @@ jobs:
 
   - task: ArchiveFiles@2
     displayName: Create tar.gz archive of reco_utils
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
       includeRootFolder: false
@@ -166,7 +163,7 @@ jobs:
 
   - task: ArchiveFiles@2
     displayName: Create zip archive of examples
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/examples
       includeRootFolder: false
@@ -176,7 +173,7 @@ jobs:
 
   - task: ArchiveFiles@2
     displayName: Create tar.gz archive of examples
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       rootFolderOrFile: $(Build.SourcesDirectory)/examples
       includeRootFolder: false
@@ -187,14 +184,14 @@ jobs:
 
   - task: DownloadPipelineArtifact@2 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
     displayName: 'Download Artifacts from Shared Storage'
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
     inputs:
       artifact: PackageAssets
       path: $(Build.SourcesDirectory)/binaries
   
   - task: GitHubRelease@0 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
     displayName: 'Create GitHub Draft Release'
-    condition: succeeded() #and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       gitHubConnection: recommenders_release
       repositoryName: '$(Build.Repository.Name)'
