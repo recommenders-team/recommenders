@@ -169,33 +169,36 @@ class DiversityEvaluator:
     def diversity(self):
         if self.df_user_diversity is None:
             self.df_user_diversity = self.user_diversity()
-        return self.df_user_diversity.select(F.mean("user_diversity").alias("diversity"))
+        return self.df_user_diversity.select(
+            F.mean("user_diversity").alias("diversity")
+        )
 
     # novelty metrics
     def item_novelty(self):
         if self.df_item_novelty is None:
             train_pairs = self._get_all_user_item_pairs(df=self.train_df)
             self.df_item_novelty = (
-            train_pairs.join(
-                self.train_df.withColumn("seen", F.lit(1)),
-                on=[self.user_col, self.item_col],
-                how="left",
+                train_pairs.join(
+                    self.train_df.withColumn("seen", F.lit(1)),
+                    on=[self.user_col, self.item_col],
+                    how="left",
+                )
+                .filter(F.col("seen").isNull())
+                .groupBy(self.item_col)
+                .count()
+                .join(
+                    self.reco_df.groupBy(self.item_col).agg(
+                        F.count(self.user_col).alias("reco_count")
+                    ),
+                    on=self.item_col,
+                )
+                .withColumn(
+                    "item_novelty", -F.log2(F.col("reco_count") / F.col("count"))
+                )
+                .select(self.item_col, "item_novelty")
+                .orderBy(self.item_col)
             )
-            .filter(F.col("seen").isNull())
-            .groupBy(self.item_col)
-            .count()
-            .join(
-                self.reco_df.groupBy(self.item_col).agg(
-                    F.count(self.user_col).alias("reco_count")
-                ),
-                on=self.item_col,
-            )
-            .withColumn("item_novelty", -F.log2(F.col("reco_count") / F.col("count")))
-            .select(self.item_col, "item_novelty")
-            .orderBy(self.item_col)
-        )
         return self.df_item_novelty
-        
 
     def user_novelty(self):
         if self.df_item_novelty is None:
@@ -210,9 +213,7 @@ class DiversityEvaluator:
     def novelty(self):
         if self.df_user_novelty is None:
             self.df_user_novelty = self.user_novelty()
-        return self.df_user_novelty.agg(
-            F.mean("user_novelty").alias("novelty")
-        )
+        return self.df_user_novelty.agg(F.mean("user_novelty").alias("novelty"))
 
     # serendipity metrics
     def get_user_item_serendipity(self):
