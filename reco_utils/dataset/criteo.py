@@ -27,7 +27,7 @@ DEFAULT_HEADER = (
 
 
 def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
-    """Loads the Criteo DAC dataset as `pandas.DataFrame. This function download, untar, and load the dataset.
+    """Loads the Criteo DAC dataset as `pandas.DataFrame`. This function download, untar, and load the dataset.
 
     The dataset consists of a portion of Criteo’s traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
