@@ -47,6 +47,7 @@ install_requires = [
     "scikit-surprise>=0.19.1,<=1.1.1",
     "cmake>=3.18.4.post1",
     "xlearn==0.40a1",
+    "backoff>=1.8.0",
 ]
 
 # shared dependencies
