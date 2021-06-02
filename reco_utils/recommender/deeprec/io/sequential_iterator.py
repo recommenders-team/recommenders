@@ -19,11 +19,11 @@ __all__ = ["SequentialIterator"]
 class SequentialIterator(BaseIterator):
     def __init__(self, hparams, graph, col_spliter="\t"):
         """Initialize an iterator. Create necessary placeholders for the model.
-        
+
         Args:
             hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): the running graph. All created placeholder will be added to this graph.
-            col_spliter (str): column spliter in one line.
+            graph (obj): The running graph. All created placeholder will be added to this graph.
+            col_spliter (str): Column splitter in one line.
         """
         self.col_spliter = col_spliter
         user_vocab, item_vocab, cate_vocab = (
@@ -68,13 +68,13 @@ class SequentialIterator(BaseIterator):
             )
 
     def parse_file(self, input_file):
-        """Parse the file to a list ready to be used for downstream tasks
-        
+        """Parse the file to a list ready to be used for downstream tasks.
+
         Args:
             input_file: One of train, valid or test file which has never been parsed.
-        
-        Returns: 
-            list: A list with parsing result
+
+        Returns:
+            list: A list with parsing result.
         """
         with open(input_file, "r") as f:
             lines = f.readlines()
@@ -94,8 +94,8 @@ class SequentialIterator(BaseIterator):
             line (str): a string indicating one instance
 
         Returns:
-            tuple/list: Parsed results including label, user_id, target_item_id, target_category, item_history, cate_history(, timeinterval_history,
-            timelast_history, timenow_history, mid_mask, seq_len, learning_rate)
+            tuple/list: Parsed results including `label`, `user_id`, `target_item_id`, `target_category`, `item_history`, `cate_history`,
+            `timeinterval_history`, `timelast_history`, `timenow_history`, `mid_mask`, `seq_len`, `learning_rate`.
 
         """
         words = line.strip().split(self.col_spliter)
@@ -169,12 +169,12 @@ class SequentialIterator(BaseIterator):
 
     def load_data_from_file(self, infile, batch_num_ngs=0, min_seq_length=1):
         """Read and parse data from a file.
-        
+
         Args:
             infile (str): Text input file. Each line in this file is an instance.
-            batch_num_ngs (int): The number of negative sampling here in batch. 
+            batch_num_ngs (int): The number of negative sampling here in batch.
                 0 represents that there is no need to do negative sampling here.
-            min_seq_length (int): The minimum number of a sequence length. 
+            min_seq_length (int): The minimum number of a sequence length.
                 Sequences with length lower than min_seq_length will be ignored.
 
         Returns:
@@ -292,7 +292,7 @@ class SequentialIterator(BaseIterator):
         batch_num_ngs,
     ):
         """Convert data into numpy arrays that are good for further model operation.
-        
+
         Args:
             label_list (list): a list of ground-truth labels.
             user_list (list): a list of user indexes.
@@ -453,7 +453,7 @@ class SequentialIterator(BaseIterator):
 
     def gen_feed_dict(self, data_dict):
         """Construct a dictionary that maps graph elements to values.
-        
+
         Args:
             data_dict (dict): a dictionary that maps string name to numpy arrays.
 
