@@ -23,6 +23,7 @@ if HASH is not None:
 name = environ.get("LIBRARY_NAME", "reco_utils")
 
 install_requires = [
+    "backoff>=1.8.0",
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
     "cornac>=1.11.0,<2",
