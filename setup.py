@@ -5,14 +5,13 @@ from pathlib import Path
 from setuptools import setup, find_packages
 import time
 from os import environ
+from reco_utils import VERSION
 
-here = Path(__file__).absolute().parent
-version_data = {}
-with open(here.joinpath("reco_utils", "__init__.py"), "r") as f:
-    exec(f.read(), version_data)
-version = version_data.get("__version__", "0.0")
+
+version = VERSION
 
 # Get the long description from the README file
+here = Path(__file__).absolute().parent
 with open(here.joinpath("reco_utils", "README.md"), encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
@@ -23,6 +22,7 @@ if HASH is not None:
 name = environ.get("LIBRARY_NAME", "reco_utils")
 
 install_requires = [
+    "backoff>=1.8.0",
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
     "cornac>=1.11.0,<2",
@@ -30,7 +30,7 @@ install_requires = [
     "lightfm>=1.15,<2",
     "lightgbm>=2.2.1,<3",
     "nltk>=3.4,<4",
-    "matplotlib>=2.2.2,<3",
+    "matplotlib>=2.2.2,<4",
     "memory_profiler>=0.54.0,<1",
     "nni==1.5",
     "numba>=0.38.1,<1",
@@ -99,6 +99,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     extras_require=extras_require,
     keywords="recommendations recommenders recommender system engine machine learning python spark gpu",
