@@ -42,7 +42,7 @@ class DiversityEvaluator:
         self.df_item_novelty = None
         self.df_intralist_similarity = None
 
-        if relevance_col == None:
+        if relevance_col is None:
             self.relevance_col = "relevance"
             # relevance term, default is 1 (relevent) for all
             self.reco_df = reco_df.select(
@@ -150,7 +150,7 @@ class DiversityEvaluator:
         )
 
     def user_diversity(self):
-        if self.df_intralist_similarity == None:
+        if self.df_intralist_similarity is None:
             cossim = self.get_cosine_similarity().orderBy("i1", "i2")
             self.df_intralist_similarity = self.get_intralist_similarity(
                 df=self.reco_df, similarity_df=cossim
@@ -165,7 +165,7 @@ class DiversityEvaluator:
 
     def diversity(self):
         # TODO: add error handling logic for conditions where user_id is not valid
-        if self.df_intralist_similarity == None:
+        if self.df_intralist_similarity is None:
             cossim = self.get_cosine_similarity().orderBy("i1", "i2")
             self.df_intralist_similarity = self.get_intralist_similarity(
                 df=self.reco_df, similarity_df=cossim
@@ -196,14 +196,14 @@ class DiversityEvaluator:
         )
 
     def item_novelty(self):
-        if self.df_item_novelty == None:
+        if self.df_item_novelty is None:
             self.df_item_novelty = self.get_item_novelty()
         return self.df_item_novelty.select(self.item_col, "item_novelty").orderBy(
             self.item_col
         )
 
     def user_novelty(self):
-        if self.df_item_novelty == None:
+        if self.df_item_novelty is None:
             self.df_item_novelty = self.get_item_novelty()
         return (
             self.reco_df.join(self.df_item_novelty, on=self.item_col)
@@ -214,7 +214,7 @@ class DiversityEvaluator:
 
     def novelty(self):
         # TODO: add error handling logic for any other conditions
-        if self.df_item_novelty == None:
+        if self.df_item_novelty is None:
             self.df_item_novelty = self.get_item_novelty()
         return self.reco_df.join(self.df_item_novelty, on=self.item_col).agg(
             F.mean("item_novelty").alias("novelty")
@@ -250,7 +250,7 @@ class DiversityEvaluator:
         )
 
     def user_item_serendipity(self):
-        if self.df_user_item_serendipity == None:
+        if self.df_user_item_serendipity is None:
             self.df_user_item_serendipity = self.get_user_item_serendipity()
 
         return self.df_user_item_serendipity.select(
@@ -258,7 +258,7 @@ class DiversityEvaluator:
         ).orderBy(self.user_col, self.item_col)
 
     def user_serendipity(self):
-        if self.df_user_item_serendipity == None:
+        if self.df_user_item_serendipity is None:
             self.df_user_item_serendipity = self.get_user_item_serendipity()
 
         return (
@@ -269,7 +269,7 @@ class DiversityEvaluator:
 
     def serendipity(self):
         # TODO: add error handling logic for any other conditions
-        if self.df_user_item_serendipity == None:
+        if self.df_user_item_serendipity is None:
             self.df_user_item_serendipity = self.get_user_item_serendipity()
 
         return self.df_user_item_serendipity.agg(
