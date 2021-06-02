@@ -39,8 +39,11 @@ class DiversityEvaluator:
         self.item_col = item_col
         self.sim_col = "sim"
         self.df_user_item_serendipity = None
+        self.df_user_serendipity = None
         self.df_item_novelty = None
+        self.df_user_novelty = None
         self.df_intralist_similarity = None
+        self.df_user_diversity = None
 
         if relevance_col is None:
             self.relevance_col = "relevance"
@@ -66,14 +69,14 @@ class DiversityEvaluator:
                 "reco_df should not contain any user_item pairs that are already shown train_df"
             )
 
-    def get_all_user_item_pairs(self, df):
+    def _get_all_user_item_pairs(self, df):
         return (
             df.select(self.user_col)
             .distinct()
             .join(df.select(self.item_col).distinct())
         )
 
-    def get_pairwise_items(self, df, full_matrix=False):
+    def _get_pairwise_items(self, df, full_matrix=False):
         if full_matrix == False:
             return (
                 df.select(self.user_col, F.col(self.item_col).alias("i1"))
@@ -100,11 +103,11 @@ class DiversityEvaluator:
                 ).select(self.user_col, "i1", "i2")
             )
 
-    def get_cosine_similarity(self, full_matrix=False, n_partitions=200):
+    def _get_cosine_similarity(self, full_matrix=False, n_partitions=200):
         # TODO: make sure there are no null values in user or item columns
         # TODO: make sure temporary column names don't match existing user or item column names
 
-        pairs = self.get_pairwise_items(df=self.train_df, full_matrix=full_matrix)
+        pairs = self._get_pairwise_items(df=self.train_df, full_matrix=full_matrix)
         item_count = self.train_df.groupBy(self.item_col).count()
 
         return (
@@ -136,8 +139,8 @@ class DiversityEvaluator:
         )
 
     # diversity metrics
-    def get_intralist_similarity(self, df, similarity_df):
-        pairs = self.get_pairwise_items(df=df)
+    def _get_intralist_similarity(self, df, similarity_df):
+        pairs = self._get_pairwise_items(df=df)
         return (
             pairs.join(similarity_df, on=["i1", "i2"], how="left")
             .fillna(
@@ -151,33 +154,28 @@ class DiversityEvaluator:
 
     def user_diversity(self):
         if self.df_intralist_similarity is None:
-            cossim = self.get_cosine_similarity().orderBy("i1", "i2")
-            self.df_intralist_similarity = self.get_intralist_similarity(
+            cossim = self._get_cosine_similarity().orderBy("i1", "i2")
+            self.df_intralist_similarity = self._get_intralist_similarity(
                 df=self.reco_df, similarity_df=cossim
             )
         return (
             self.df_intralist_similarity.withColumn(
-                "diversity", 1 - F.col("avg_il_sim")
+                "user_diversity", 1 - F.col("avg_il_sim")
             )
-            .select(self.user_col, "diversity")
+            .select(self.user_col, "user_diversity")
             .orderBy(self.user_col)
         )
 
     def diversity(self):
-        # TODO: add error handling logic for conditions where user_id is not valid
-        if self.df_intralist_similarity is None:
-            cossim = self.get_cosine_similarity().orderBy("i1", "i2")
-            self.df_intralist_similarity = self.get_intralist_similarity(
-                df=self.reco_df, similarity_df=cossim
-            )
-        return self.df_intralist_similarity.withColumn(
-            "diversity", 1 - F.col("avg_il_sim")
-        ).select(F.mean("diversity").alias("diversity"))
+        if self.df_user_diversity is None:
+            self.df_user_diversity = self.user_diversity()
+        return self.df_user_diversity.select(F.mean("user_diversity").alias("diversity"))
 
     # novelty metrics
-    def get_item_novelty(self):
-        train_pairs = self.get_all_user_item_pairs(df=self.train_df)
-        return (
+    def item_novelty(self):
+        if self.df_item_novelty is None:
+            train_pairs = self._get_all_user_item_pairs(df=self.train_df)
+            self.df_item_novelty = (
             train_pairs.join(
                 self.train_df.withColumn("seen", F.lit(1)),
                 on=[self.user_col, self.item_col],
@@ -193,18 +191,15 @@ class DiversityEvaluator:
                 on=self.item_col,
             )
             .withColumn("item_novelty", -F.log2(F.col("reco_count") / F.col("count")))
+            .select(self.item_col, "item_novelty")
+            .orderBy(self.item_col)
         )
-
-    def item_novelty(self):
-        if self.df_item_novelty is None:
-            self.df_item_novelty = self.get_item_novelty()
-        return self.df_item_novelty.select(self.item_col, "item_novelty").orderBy(
-            self.item_col
-        )
+        return self.df_item_novelty
+        
 
     def user_novelty(self):
         if self.df_item_novelty is None:
-            self.df_item_novelty = self.get_item_novelty()
+            self.df_item_novelty = self.item_novelty()
         return (
             self.reco_df.join(self.df_item_novelty, on=self.item_col)
             .groupBy(self.user_col)
@@ -213,17 +208,14 @@ class DiversityEvaluator:
         )
 
     def novelty(self):
-        # TODO: add error handling logic for any other conditions
-        if self.df_item_novelty is None:
-            self.df_item_novelty = self.get_item_novelty()
-        return self.reco_df.join(self.df_item_novelty, on=self.item_col).agg(
-            F.mean("item_novelty").alias("novelty")
+        if self.df_user_novelty is None:
+            self.df_user_novelty = self.user_novelty()
+        return self.df_user_novelty.agg(
+            F.mean("user_novelty").alias("novelty")
         )
 
     # serendipity metrics
     def get_user_item_serendipity(self):
-        # TODO: add relevance term as input parameter
-
         # for every user_col, item_col in reco_df, join all interacted items from train_df.
         # These interacted items are reapeated for each item in reco_df for a specific user.
         reco_item_interacted_history = (
@@ -233,7 +225,7 @@ class DiversityEvaluator:
             )
             .select(self.user_col, "i1", "i2")
         )
-        cossim_full = self.get_cosine_similarity(full_matrix=True).orderBy("i1", "i2")
+        cossim_full = self._get_cosine_similarity(full_matrix=True).orderBy("i1", "i2")
         join_sim = (
             reco_item_interacted_history.join(cossim_full, on=["i1", "i2"], how="left")
             .fillna(0)
@@ -268,12 +260,11 @@ class DiversityEvaluator:
         )
 
     def serendipity(self):
-        # TODO: add error handling logic for any other conditions
-        if self.df_user_item_serendipity is None:
-            self.df_user_item_serendipity = self.get_user_item_serendipity()
+        if self.df_user_serendipity is None:
+            self.df_user_serendipity = self.user_serendipity()
 
-        return self.df_user_item_serendipity.agg(
-            F.mean("user_item_serendipity").alias("serendipity")
+        return self.df_user_serendipity.agg(
+            F.mean("user_serendipity").alias("serendipity")
         )
 
     # coverage metrics
