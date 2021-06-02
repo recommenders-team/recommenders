@@ -4,11 +4,11 @@
 
 ## What's New (June 1, 2021)
 
-We surpassed 10k stars!
+We have surpassed 10k stars!
 
-Microsoft Recommenders repository has got 10k stars on GitHub and it has become definitely the most starred open-source recommender system project on GitHub.
+Microsoft Recommenders repository has got 10k stars and has become the most starred open-source recommender systems project on GitHub.
 
-Truly thanks and congratulations to all the contributors to the repository. More advanced algorithms and their best practices are yet to come!
+Truly thanks and congratulations to all the contributors to this repository! More advanced algorithms and their best practices are yet to come!
 
 See past announcements in [NEWS.md](NEWS.md).
 
