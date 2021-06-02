@@ -1,5 +1,14 @@
 # What's New
 
+## Update June 1, 2021
+
+We surpassed 10k stars!
+
+Microsoft Recommenders repository has got 10k stars on GitHub and it has become definitely the most starred open-source recommender system project on GitHub.
+
+Truly thanks and congratulations to all the contributors to the repository. More advanced algorithms and their best practices are yet to come!
+
+
 ## Update February 4, 2021
 
 We have a new release [Recommenders 0.5.0](https://github.com/microsoft/recommenders/releases/tag/0.5.0)!

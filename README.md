@@ -2,13 +2,13 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (February 4, 2021)
+## What's New (June 1, 2021)
 
-We have a new release [Recommenders 0.5.0](https://github.com/microsoft/recommenders/releases/tag/0.5.0)!
+We surpassed 10k stars!
 
-It comes with lots of bug fixes, optimizations and 3 new algorithms, GeoIMC, Standard VAE and Multinomial VAE. We also added tools to facilitate the use of Microsoft News dataset (MIND). In addition, we published our KDD2020 tutorial where we built a recommender of COVID papers using Microsoft Academic Graph.
+Microsoft Recommenders repository has got 10k stars on GitHub and it has become definitely the most starred open-source recommender system project on GitHub.
 
-We also changed the default branch from master to main. Now when you download the repo, you will get the main branch.
+Truly thanks and congratulations to all the contributors to the repository. More advanced algorithms and their best practices are yet to come!
 
 See past announcements in [NEWS.md](NEWS.md).
 
