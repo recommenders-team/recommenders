@@ -22,13 +22,13 @@ def predict(
     Can be used for computing rating metrics like RMSE.
 
     Args:
-        model (cornac.models.Recommender): a recommender model from Cornac
-        data (pd.DataFrame): the data on which to predict
-        usercol (str): name of the user column
-        itemcol (str): name of the item column
+        model (cornac.models.Recommender): A recommender model from Cornac
+        data (pd.DataFrame): The data on which to predict
+        usercol (str): Name of the user column
+        itemcol (str): Name of the item column
 
     Returns:
-        pd.DataFrame: dataframe with usercol, itemcol, predcol
+        pd.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     uid_map = model.train_set.uid_map
     iid_map = model.train_set.iid_map
@@ -59,14 +59,14 @@ def predict_ranking(
     It can be used for computing ranking metrics like NDCG.
 
     Args:
-        model (cornac.models.Recommender): a recommender model from Cornac
-        data (pd.DataFrame): the data from which to get the users and items
-        usercol (str): name of the user column
-        itemcol (str): name of the item column
-        remove_seen (bool): flag to remove (user, item) pairs seen in the training data
+        model (cornac.models.Recommender): A recommender model from Cornac
+        data (pd.DataFrame): The data from which to get the users and items
+        usercol (str): Name of the user column
+        itemcol (str): Name of the item column
+        remove_seen (bool): Flag to remove (user, item) pairs seen in the training data
 
     Returns:
-        pd.DataFrame: dataframe with usercol, itemcol, predcol
+        pd.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     users, items, preds = [], [], []
     item = list(model.train_set.iid_map.keys())
