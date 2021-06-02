@@ -17,17 +17,20 @@ __all__ = ["NextItNetIterator"]
 
 class NextItNetIterator(SequentialIterator):
     """Data loader for the NextItNet model.
-    NextItNet requires a special type of data format. In training stage, each instance will produce (sequence_length * train_num_ngs) target items and labels, to let NextItNet output predictions of every item in a sequence except only of the last item.
+
+    NextItNet requires a special type of data format. In training stage, each instance will
+    produce `(sequence_length * train_num_ngs)` target items and labels, to let NextItNet
+    output predictions of every item in a sequence except only of the last item.
     """
 
     def __init__(self, hparams, graph, col_spliter="\t"):
         """Initialize an iterator. Create necessary placeholders for the model.
-        * different from sequential iterator
-        
+        Different from sequential iterator
+
         Args:
             hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): the running graph. All created placeholder will be added to this graph.
-            col_spliter (str): column spliter in one line.
+            graph (obj): The running graph. All created placeholder will be added to this graph.
+            col_spliter (str): Column splitter in one line.
         """
         self.col_spliter = col_spliter
 
@@ -83,7 +86,7 @@ class NextItNetIterator(SequentialIterator):
     ):
         """Convert data into numpy arrays that are good for further model operation.
         * different from sequential_iterator
-        
+
         Args:
             label_list (list): a list of ground-truth labels.
             user_list (list): a list of user indexes.
