@@ -6,8 +6,7 @@ We have surpassed 10k stars!
 
 Microsoft Recommenders repository has got 10k stars and has become the most starred open-source recommender system project on GitHub.
 
-Truly thanks and congratulations to all the contributors to this repository! More advanced algorithms and their best practices are yet to come!
-
+Many thanks and congratulations to all the contributors to this repository! More advanced algorithms and their best practices are yet to come!
 
 ## Update February 4, 2021
 
