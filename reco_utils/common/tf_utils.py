@@ -22,15 +22,15 @@ OPTIMIZERS = dict(
 
 def pandas_input_fn_for_saved_model(df, feat_name_type):
     """Pandas input function for TensorFlow SavedModel.
-    
+
     Args:
         df (pd.DataFrame): Data containing features.
         feat_name_type (dict): Feature name and type spec. E.g.
             `{'userID': int, 'itemID': int, 'rating': float}`
-        
+
     Returns:
-        func: Input function 
-    
+        func: Input function
+
     """
     for feat_type in feat_name_type.values():
         assert feat_type in (int, float, list)
@@ -60,7 +60,7 @@ def pandas_input_fn(
     This function returns a `tf.data.Dataset` function.
 
     .. note::
-    
+
         `tf.estimator.inputs.pandas_input_fn` cannot handle array/list column properly.
         For more information, see https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn
 
@@ -68,12 +68,12 @@ def pandas_input_fn(
         df (pd.DataFrame): Data containing features.
         y_col (str): Label column name if df has it.
         batch_size (int): Batch size for the input function.
-        num_epochs (int): Number of epochs to iterate over data. If None will run forever.
+        num_epochs (int): Number of epochs to iterate over data. If `None`, it will run forever.
         shuffle (bool): If True, shuffles the data queue.
         seed (int): Random seed for shuffle.
 
     Returns:
-        tf.data.Dataset function
+        tf.data.Dataset: Function.
     """
 
     X_df = df.copy()
@@ -120,13 +120,15 @@ def _dataset(x, y=None, batch_size=128, num_epochs=1, shuffle=False, seed=None):
 def build_optimizer(name, lr=0.001, **kwargs):
     """Get an optimizer for TensorFlow high-level API Estimator.
 
+    Available options are: `adadelta`, `adagrad`, `adam`, `ftrl`, `momentum`, `rmsprop` or `sgd`.
+
     Args:
-        name (str): Optimizer name. Note, to use 'Momentum', should specify
+        name (str): Optimizer name.
         lr (float): Learning rate
         kwargs: Optimizer arguments as key-value pairs
 
     Returns:
-        tf.train.Optimizer
+        tf.train.Optimizer: Tensorflow optimizer.
     """
     name = name.lower()
 
@@ -152,23 +154,27 @@ def build_optimizer(name, lr=0.001, **kwargs):
 
 def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
     """Export TensorFlow estimator (model).
-    
+
     Args:
         model (tf.estimator.Estimator): Model to export.
         train_input_fn (function): Training input function to create data receiver spec.
-        eval_input_fn (function): Evaluation input function to create data receiver spec. 
+        eval_input_fn (function): Evaluation input function to create data receiver spec.
         tf_feat_cols (list(tf.feature_column)): Feature columns.
         base_dir (str): Base directory to export the model.
-    
+
     Returns:
         str: Exported model path
     """
     tf.logging.set_verbosity(tf.logging.ERROR)
-    train_rcvr_fn = tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
-        train_input_fn
+    train_rcvr_fn = (
+        tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
+            train_input_fn
+        )
     )
-    eval_rcvr_fn = tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
-        eval_input_fn
+    eval_rcvr_fn = (
+        tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
+            eval_input_fn
+        )
     )
     serve_rcvr_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(
         tf.feature_column.make_parse_example_spec(tf_feat_cols)
@@ -198,10 +204,10 @@ def evaluation_log_hook(
     **eval_kwargs
 ):
     """Evaluation log hook for TensorFlow high-level API Estimator.
-    
+
     .. note::
 
-        Note, TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.
+        TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.
         In order to get the most up-to-date evaluation results while training,
         set model's `save_checkpoints_steps` to be equal or greater than hook's `every_n_iter`.
 
@@ -350,7 +356,7 @@ class MetricsLogger:
 
     def get_log(self):
         """Getter
-        
+
         Returns:
             dict: Log metrics.
         """
