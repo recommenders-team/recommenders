@@ -32,11 +32,15 @@ def check_column_dtypes(func):
     """Checks columns of DataFrame inputs
 
     This includes the checks on: 
-    1. whether the input columns exist in the input DataFrames
-    2. whether the data types of col_user as well as col_item are matched in the two input DataFrames.
+
+    * whether the input columns exist in the input DataFrames
+    * whether the data types of col_user as well as col_item are matched in the two input DataFrames.
 
     Args:
         func (function): function that will be wrapped
+    
+    Returns:
+        function: Wrapper function for checking dtypes.
     """
 
     @wraps(func)

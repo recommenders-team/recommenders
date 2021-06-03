@@ -231,7 +231,15 @@ def get_words_and_entities(train_news, valid_news):
     return news_words, news_entities
 
 
-def download_and_extract_globe(dest_path):
+def download_and_extract_glove(dest_path):
+    """Download and extract the Glove embedding
+    
+    Args:
+        dest_path (str): Destination directory path for the downloaded file
+
+    Returns:
+        str: File path where Glove was extracted.  
+    """
     url = "http://nlp.stanford.edu/data/glove.6B.zip"
     filepath = maybe_download(url=url, work_directory=dest_path)
     glove_path = os.path.join(dest_path, "glove")
@@ -269,7 +277,7 @@ def generate_embeddings(
         )
 
     logger.info("Downloading glove...")
-    glove_path = download_and_extract_globe(data_path)
+    glove_path = download_and_extract_glove(data_path)
 
     word_set = set()
     word_embedding_dict = {}

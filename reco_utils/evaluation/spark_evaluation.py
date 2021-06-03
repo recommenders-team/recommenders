@@ -132,17 +132,17 @@ class SparkRatingEvaluation:
         return self.metrics.meanAbsoluteError
 
     def rsquared(self):
-        """Calculate R squared
+        """Calculate R squared.
+
         Returns:
-            float: R squared
+            float: R squared.
         """
         return self.metrics.r2
 
     def exp_var(self):
         """Calculate explained variance.
 
-        NOTE: 
-            Spark MLLib's implementation is buggy (can lead to values > 1), hence we use var().
+        :note: Spark MLLib's implementation is buggy (can lead to values > 1), hence we use var().
 
         Returns:
             float: Explained variance (min=0, max=1).

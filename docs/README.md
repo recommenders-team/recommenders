@@ -13,4 +13,4 @@ To build the documentation as HTML:
     cd docs
     make html
 
-To contribute to this repository, please follow these [guidelines](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines).
+To contribute to this repository, please follow these [guidelines](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines). See also the [Sphinx documentation](https://sublime-and-sphinx-guide.readthedocs.io/en/latest/index.html) for the syntax of docstrings.

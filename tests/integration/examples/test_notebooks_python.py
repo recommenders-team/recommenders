@@ -3,6 +3,7 @@
 
 import sys
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
@@ -166,7 +167,7 @@ def test_vw_deep_dive_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
-#@pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
+# @pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
 @pytest.mark.integration
 @pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
 def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
@@ -246,3 +247,19 @@ def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_va
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.integration
+def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["xlearn_fm_deep_dive"]
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(LEARNING_RATE=0.2, EPOCH=10),
+    )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    assert results["auc_score"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)

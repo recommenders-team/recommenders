@@ -482,7 +482,15 @@ def _data_processing(input_file):
 
 
 def download_and_extract(name, dest_path):
-    """Downloads and extracts Amazon reviews and meta datafiles if they don’t already exist"""
+    """Downloads and extracts Amazon reviews and meta datafiles if they don’t already exist
+    
+    Args:
+        name (str): Category of reviews
+        dest_path (str): File path for the downloaded file
+    
+    Returns:
+        str: File path for the extracted file
+    """
     dirs, _ = os.path.split(dest_path)
     if not os.path.exists(dirs):
         os.makedirs(dirs)
@@ -499,6 +507,7 @@ def _download_reviews(name, dest_path):
     """Downloads Amazon reviews datafile.
 
     Args:
+        name (str): Category of reviews
         dest_path (str): File path for the downloaded file
     """
 
