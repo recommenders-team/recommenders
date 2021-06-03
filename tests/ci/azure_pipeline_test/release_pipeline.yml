@@ -26,6 +26,7 @@ jobs:
     pip_opts: ""
     pytest_markers: "not notebooks and not spark and not gpu"
     install: "release"
+    package: "publish" 
 
 # - template: dsvm_linux_template.yml
 #   parameters:
@@ -121,7 +122,6 @@ jobs:
 #     pip_opts: "[spark,examples]"
 #     pytest_markers: "spark and not gpu"
 #     install: "release"
-#     package: "publish" # We want to publish to the package limbo the latest wheel
 
 # ====== Publish release ======
 - job: Package
