@@ -14,15 +14,23 @@ Cornac
 DeepRec
 ===============================
 
+base_model
+-------------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.base_model
     :members:
 
+dkn
+-------------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.dkn
     :members:
 
+dkn_item2item
+-------------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.dkn_item2item
     :members:
 
+xDeepFM
+-------------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.xDeepFM
     :members:
 
