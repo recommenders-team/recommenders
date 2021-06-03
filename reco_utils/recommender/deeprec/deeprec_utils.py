@@ -22,7 +22,7 @@ from reco_utils.dataset.download_utils import maybe_download
 
 def flat_config(config):
     """Flat config loaded from a yaml file to a flat dict.
-    
+
     Args:
         config (dict): Configuration loaded from a yaml file.
 
@@ -39,7 +39,7 @@ def flat_config(config):
 
 def check_type(config):
     """Check that the config parameters are the correct type
-    
+
     Args:
         config (dict): Configuration dictionary.
 
@@ -135,10 +135,10 @@ def check_type(config):
 
 def check_nn_config(f_config):
     """Check neural networks configuration.
-    
+
     Args:
         f_config (dict): Neural network configuration.
-    
+
     Raises:
         ValueError: If the parameters are not correct.
     """
@@ -311,7 +311,7 @@ def create_hparams(flags):
         flags (dict): Dictionary with the model requirements.
 
     Returns:
-        obj: Hyperparameter object in TF (tf.contrib.training.HParams).
+        tf.contrib.training.HParams: Hyperparameter object in TF.
     """
     return tf.contrib.training.HParams(
         # data
@@ -481,7 +481,7 @@ def prepare_hparams(yaml_file=None, **kwargs):
         yaml_file (str): YAML file as configuration.
 
     Returns:
-        obj: Hyperparameter object in TF (tf.contrib.training.HParams).
+        tf.contrib.training.HParams: Hyperparameter object in TF.
     """
     if yaml_file is not None:
         config = load_yaml(yaml_file)
@@ -520,7 +520,7 @@ def mrr_score(y_true, y_score):
     Args:
         y_true (np.ndarray): ground-truth labels.
         y_score (np.ndarray): predicted labels.
-    
+
     Returns:
         np.ndarray: mrr scores.
     """
@@ -582,10 +582,23 @@ def dcg_score(y_true, y_score, k=10):
 
 
 def cal_metric(labels, preds, metrics):
-    """Calculate metrics,such as auc, logloss.
-    
-    FIXME: 
-        refactor this with the reco metrics and make it explicit.
+    """Calculate metrics.
+
+    Available options are: `auc`, `rmse`, `logloss`, `acc` (accurary), `f1`, `mean_mrr`,
+    `ndcg` (format like: ndcg@2;4;6;8), `hit` (format like: hit@2;4;6;8), `group_auc`.
+
+    Args:
+        labels (array-like): Labels.
+        preds (array-like): Predictions.
+        metrics (list): List of metric names.
+
+    Return:
+        dict: Metrics.
+
+    Examples:
+        >>> cal_metric(labels, preds, ["ndcg@2;4;6", "group_auc"])
+        {'ndcg@2': 0.4026, 'ndcg@4': 0.4953, 'ndcg@6': 0.5346, 'group_auc': 0.8096}
+
     """
     res = {}
     for metric in metrics:
@@ -655,7 +668,7 @@ def cal_metric(labels, preds, metrics):
             )
             res["group_auc"] = round(group_auc, 4)
         else:
-            raise ValueError("not define this metric {0}".format(metric))
+            raise ValueError("Metric {0} not defined".format(metric))
     return res
 
 
