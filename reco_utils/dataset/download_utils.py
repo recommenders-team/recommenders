@@ -17,7 +17,11 @@ log = logging.getLogger(__name__)
 
 @backoff.on_exception(
     backoff.expo,
-    (requests.exceptions.HTTPError, requests.exceptions.ChunkedEncodingError),
+    (
+        requests.exceptions.HTTPError,
+        requests.exceptions.ChunkedEncodingError,
+        requests.exceptions.ConnectionError,
+    ),
     max_tries=5,
 )
 def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
