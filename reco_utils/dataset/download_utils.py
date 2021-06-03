@@ -9,10 +9,31 @@ import zipfile
 from contextlib import contextmanager
 from tempfile import TemporaryDirectory
 from tqdm import tqdm
+import backoff
+import logging
+
 
 log = logging.getLogger(__name__)
 
 
+def _retry_logger(details):
+    log.info(
+        "Backing off {wait:0.1f} seconds after {tries} tries "
+        "calling function {target} with args {args} and kwargs "
+        "{kwargs}".format(**details)
+    )
+
+
+@backoff.on_exception(
+    backoff.expo,
+    (
+        requests.exceptions.HTTPError,
+        requests.exceptions.ChunkedEncodingError,
+        requests.exceptions.ConnectionError,
+    ),
+    max_tries=5,
+    on_backoff=_retry_logger,
+)
 def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
     """Download a file if it is not already downloaded.
 
@@ -21,7 +42,7 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
         work_directory (str): Working directory.
         url (str): URL of the file to download.
         expected_bytes (int): Expected file size in bytes.
-        
+
     Returns:
         str: File path of the file downloaded.
     """
@@ -57,8 +78,8 @@ def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
 
 @contextmanager
 def download_path(path=None):
-    """Return a path to download data. If `path=None`, then it yields a temporal path that is eventually deleted, 
-    otherwise the real path of the input. 
+    """Return a path to download data. If `path=None`, then it yields a temporal path that is eventually deleted,
+    otherwise the real path of the input.
 
     Args:
         path (str): Path to download data.
