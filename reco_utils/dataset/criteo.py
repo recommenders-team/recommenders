@@ -164,6 +164,14 @@ def extract_criteo(size, compressed_file, path=None):
 
 
 def get_spark_schema(header=DEFAULT_HEADER):
+    """Get Spark schema from header.
+
+    Args:
+        header (list): Dataset header names.
+
+    Returns:
+        pyspark.sql.types.StructType: Spark schema.
+    """
     ## create schema
     schema = StructType()
     ## do label + ints
