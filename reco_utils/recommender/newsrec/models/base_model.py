@@ -19,8 +19,8 @@ class BaseModel:
 
     Attributes:
         hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-        iterator_creator_train (obj): An iterator to load the data in training steps.
-        iterator_creator_train (obj): An iterator to load the data in testing steps.
+        train_iterator (obj): An iterator to load the data in training steps.
+        test_iterator (obj): An iterator to load the data in testing steps.
         graph (obj): An optional graph.
         seed (int): Random seed.
     """
@@ -36,8 +36,7 @@ class BaseModel:
 
         Args:
             hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-            iterator_creator_train (obj): An iterator to load the data in training steps.
-            iterator_creator_train (obj): An iterator to load the data in testing steps.
+            iterator_creator (obj): An iterator to load the data.
             graph (obj): An optional graph.
             seed (int): Random seed.
         """
