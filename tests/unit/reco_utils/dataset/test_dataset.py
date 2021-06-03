@@ -8,9 +8,6 @@ import logging
 from reco_utils.dataset.download_utils import maybe_download, download_path
 
 
-log = logging.getLogger(__name__)
-
-
 @pytest.fixture
 def files_fixtures():
     file_url = "https://raw.githubusercontent.com/Microsoft/Recommenders/main/LICENSE"
@@ -29,6 +26,7 @@ def test_maybe_download(files_fixtures):
 
 
 def test_maybe_download_wrong_bytes(caplog, files_fixtures):
+    caplog.clear()
     caplog.set_level(logging.INFO)
 
     file_url, filepath = files_fixtures
@@ -41,6 +39,7 @@ def test_maybe_download_wrong_bytes(caplog, files_fixtures):
 
 
 def test_maybe_download_maybe(caplog, files_fixtures):
+    caplog.clear()
     caplog.set_level(logging.INFO)
 
     file_url, filepath = files_fixtures
@@ -51,6 +50,17 @@ def test_maybe_download_maybe(caplog, files_fixtures):
     assert os.path.exists(downloaded_filepath)
     maybe_download(file_url, "license.txt")
     assert "File ./license.txt already downloaded" in caplog.text
+
+
+# def test_maybe_download_retry(caplog):
+#     TODO: consider https://github.com/rholder/retrying/blob/master/retrying.py
+#     caplog.clear()
+#     caplog.set_level(logging.INFO)
+
+#     maybe_download(
+#         "https://raw.githubusercontent.com/Microsoft/Recommenders/main/non_existing_file.zip"
+#     )
+#     assert "Backing off" in caplog.text
 
 
 def test_download_path():
