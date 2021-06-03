@@ -8,7 +8,7 @@ The module `reco_utils <https://github.com/microsoft/recommenders/tree/main/reco
 evaluating recommender systems. 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
     Common <common>
