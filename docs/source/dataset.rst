@@ -3,6 +3,8 @@
 Dataset module
 ##############
 
+Recommendation datasets and related utilities
+
 Recommendation datasets 
 ***********************
 
@@ -43,15 +45,15 @@ Download utilities
     :members:
 
 
-Cosmos CLI 
-**********
+Cosmos CLI utilities
+*********************
 
 .. automodule:: reco_utils.dataset.cosmos_cli
     :members:
 
 
-Pandas dataframe utils
-**********************
+Pandas dataframe utilities
+***************************
 
 .. automodule:: reco_utils.dataset.pandas_df_utils
     :members:
