@@ -10,9 +10,18 @@ from contextlib import contextmanager
 from tempfile import TemporaryDirectory
 from tqdm import tqdm
 import backoff
+import logging
 
 
 log = logging.getLogger(__name__)
+
+
+def _retry_logger(details):
+    log.info(
+        "Backing off {wait:0.1f} seconds after {tries} tries "
+        "calling function {target} with args {args} and kwargs "
+        "{kwargs}".format(**details)
+    )
 
 
 @backoff.on_exception(
@@ -23,6 +32,7 @@ log = logging.getLogger(__name__)
         requests.exceptions.ConnectionError,
     ),
     max_tries=5,
+    on_backoff=_retry_logger,
 )
 def maybe_download(url, filename=None, work_directory=".", expected_bytes=None):
     """Download a file if it is not already downloaded.
