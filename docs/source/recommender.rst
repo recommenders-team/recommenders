@@ -34,6 +34,57 @@ xDeepFM
 .. automodule:: reco_utils.recommender.deeprec.models.xDeepFM
     :members:
 
+graphrec
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.graphrec.lightgcn
+    :members:
+
+sequential_base_model
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.sequential_base_model
+    :members:
+
+asvd
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.asvd
+    :members:
+
+caser
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.caser
+    :members:
+
+gru4rec
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.gru4rec
+    :members:
+
+nextitnet
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.nextitnet
+    :members:
+
+rnn_cell_implement
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.rnn_cell_implement
+    :members:
+
+sli_rec
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.sli_rec
+    :members:
+
+sum_cells
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.sum_cells
+    :members:
+
+sum
+-------------------------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.sum
+    :members:
+
+
 .. automodule:: reco_utils.recommender.deeprec.io.iterator
     :members:
 
