@@ -1,89 +1,94 @@
 .. _recommender:
 
 Recommender algorithms module
-*******************************
+##############################
 
 Recommender system algorithms and utilities.
 
 Cornac
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.cornac.cornac_utils
     :members:
 
 DeepRec
-===============================
+******************************
 
-base_model
--------------------------------
+Base model
+==================
 .. automodule:: reco_utils.recommender.deeprec.models.base_model
     :members:
 
-dkn
--------------------------------
+DKN
+==================
 .. automodule:: reco_utils.recommender.deeprec.models.dkn
     :members:
 
-dkn_item2item
--------------------------------
+DKN item-to-item
+==================
 .. automodule:: reco_utils.recommender.deeprec.models.dkn_item2item
     :members:
 
-xDeepFM
--------------------------------
-.. automodule:: reco_utils.recommender.deeprec.models.xDeepFM
-    :members:
-
-graphrec
--------------------------------
+LightGCN
+==================
 .. automodule:: reco_utils.recommender.deeprec.models.graphrec.lightgcn
     :members:
 
-sequential_base_model
--------------------------------
+xDeepFM
+==============
+.. automodule:: reco_utils.recommender.deeprec.models.xDeepFM
+    :members:
+
+Sequential models
+==================
+
+Sequential base model
+---------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.sequential_base_model
     :members:
 
-asvd
--------------------------------
+A2SVD
+-------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.asvd
     :members:
 
-caser
--------------------------------
+Caser
+----------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.caser
     :members:
 
-gru4rec
--------------------------------
+GRU4Rec
+--------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.gru4rec
     :members:
 
-nextitnet
--------------------------------
+NextItNet
+--------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.nextitnet
     :members:
 
-rnn_cell_implement
--------------------------------
+RNN Cells
+------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.rnn_cell_implement
     :members:
 
-sli_rec
--------------------------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.sli_rec
-    :members:
-
-sum_cells
--------------------------------
+Cell for Sequential User Matrix
+---------------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.sum_cells
     :members:
 
-sum
--------------------------------
+Sequential User Matrix
+-------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.sum
     :members:
 
+SLI Rec
+-------------
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.sli_rec
+    :members:
+
+Iterators
+===========
 
 .. automodule:: reco_utils.recommender.deeprec.io.iterator
     :members:
@@ -100,20 +105,26 @@ sum
 .. automodule:: reco_utils.recommender.deeprec.io.sequential_iterator
     :members:
 
+Data processing utilities
+===========================
+
 .. automodule:: reco_utils.recommender.deeprec.DataModel.ImplicitCF
     :members:
+
+Utilities
+============
 
 .. automodule:: reco_utils.recommender.deeprec.deeprec_utils
     :members:
 
 FastAI
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.fastai.fastai_utils
     :members:
 
 Geoimc
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.geoimc.geoimc_algorithm
     :members:
@@ -128,19 +139,19 @@ Geoimc
     :members:
 
 LightFM
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.lightfm.lightfm_utils
     :members:
 
 LightGBM
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.lightgbm.lightgbm_utils
     :members:
 
 NCF
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.ncf.dataset
     :members:
@@ -149,7 +160,7 @@ NCF
     :members:
 
 Newsrec
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.newsrec.io.mind_all_iterator
     :members:
@@ -179,14 +190,14 @@ Newsrec
     :members:
 
 RBM
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.rbm.rbm
     :members:
 
 
 RLRMC
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.rlrmc.RLRMCalgorithm
     :members:
@@ -199,28 +210,28 @@ RLRMC
 
 
 SAR
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.sar.sar_singlenode
     :members:
 
 
 Surprise
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.surprise.surprise_utils
     :members:
 
 
 TF-IDF
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.tfidf.tfidf_utils
     :members:
 
 
 VAE
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.vae.multinomial_vae
     :members:
@@ -230,7 +241,7 @@ VAE
 
 
 Wide & Deep
-===============================
+******************************
 
 .. automodule:: reco_utils.recommender.wide_deep.wide_deep_utils
     :members:
