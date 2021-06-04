@@ -40,10 +40,13 @@ class DiversityEvaluator:
         self.sim_col = "sim"
         self.df_user_item_serendipity = None
         self.df_user_serendipity = None
+        self.df_serendipity = None
         self.df_item_novelty = None
         self.df_user_novelty = None
+        self.df_novelty = None
         self.df_intralist_similarity = None
         self.df_user_diversity = None
+        self.df_diversity = None
 
         if relevance_col is None:
             self.relevance_col = "relevance"
@@ -139,39 +142,39 @@ class DiversityEvaluator:
         )
 
     # diversity metrics
-    def _get_intralist_similarity(self, df, similarity_df):
-        pairs = self._get_pairwise_items(df=df)
-        return (
-            pairs.join(similarity_df, on=["i1", "i2"], how="left")
-            .fillna(
-                0
-            )  # Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items. e.g. i1 and i2 have never occurred together.
-            .filter(F.col("i1") != F.col("i2"))
-            .groupBy(self.user_col)
-            .agg(F.mean(self.sim_col).alias("avg_il_sim"))
-            .select(self.user_col, "avg_il_sim")
-        )
+    def _get_intralist_similarity(self, df):
+        if self.df_intralist_similarity is None:
+            pairs = self._get_pairwise_items(df=df)
+            similarity_df = self._get_cosine_similarity().orderBy("i1", "i2")
+            self.df_intralist_similarity = (
+                pairs.join(similarity_df, on=["i1", "i2"], how="left")
+                .fillna(0)  # Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items. e.g. i1 and i2 have never occurred together.
+                .filter(F.col("i1") != F.col("i2"))
+                .groupBy(self.user_col)
+                .agg(F.mean(self.sim_col).alias("avg_il_sim"))
+                .select(self.user_col, "avg_il_sim")
+            )
+        return self.df_intralist_similarity
 
     def user_diversity(self):
-        if self.df_intralist_similarity is None:
-            cossim = self._get_cosine_similarity().orderBy("i1", "i2")
-            self.df_intralist_similarity = self._get_intralist_similarity(
-                df=self.reco_df, similarity_df=cossim
+        if self.df_user_diversity is None:
+            self.df_intralist_similarity = self._get_intralist_similarity(self.reco_df)        
+            self.df_user_diversity = (
+                self.df_intralist_similarity.withColumn(
+                    "user_diversity", 1 - F.col("avg_il_sim")
+                )
+                .select(self.user_col, "user_diversity")
+                .orderBy(self.user_col)
             )
-        return (
-            self.df_intralist_similarity.withColumn(
-                "user_diversity", 1 - F.col("avg_il_sim")
-            )
-            .select(self.user_col, "user_diversity")
-            .orderBy(self.user_col)
-        )
+        return self.df_user_diversity
 
     def diversity(self):
-        if self.df_user_diversity is None:
-            self.df_user_diversity = self.user_diversity()
-        return self.df_user_diversity.select(
-            F.mean("user_diversity").alias("diversity")
-        )
+        if self.df_diversity is None:
+           self.df_user_diversity = self.user_diversity()
+           self.df_diversity = self.df_user_diversity.select(
+                F.mean("user_diversity").alias("diversity")
+            )
+        return self.df_diversity
 
     # novelty metrics
     def item_novelty(self):
@@ -201,72 +204,71 @@ class DiversityEvaluator:
         return self.df_item_novelty
 
     def user_novelty(self):
-        if self.df_item_novelty is None:
-            self.df_item_novelty = self.item_novelty()
-        return (
-            self.reco_df.join(self.df_item_novelty, on=self.item_col)
-            .groupBy(self.user_col)
-            .agg(F.mean("item_novelty").alias("user_novelty"))
-            .orderBy(self.user_col)
-        )
+        if self.df_user_novelty is None:   
+            self.df_item_novelty = self.item_novelty()          
+            self.df_user_novelty = (
+                self.reco_df.join(self.df_item_novelty, on=self.item_col)
+                .groupBy(self.user_col)
+                .agg(F.mean("item_novelty").alias("user_novelty"))
+                .orderBy(self.user_col)
+            )
+        return self.df_user_novelty 
 
     def novelty(self):
-        if self.df_user_novelty is None:
+        if self.df_novelty is None:
             self.df_user_novelty = self.user_novelty()
-        return self.df_user_novelty.agg(F.mean("user_novelty").alias("novelty"))
+            self.df_novelty = self.df_user_novelty.agg(F.mean("user_novelty").alias("novelty"))
+        return self.df_novelty
 
     # serendipity metrics
-    def get_user_item_serendipity(self):
+    def user_item_serendipity(self):
         # for every user_col, item_col in reco_df, join all interacted items from train_df.
         # These interacted items are reapeated for each item in reco_df for a specific user.
-        reco_item_interacted_history = (
-            self.reco_df.withColumn("i1", F.col(self.item_col))
-            .join(
-                self.train_df.withColumn("i2", F.col(self.item_col)), on=[self.user_col]
-            )
-            .select(self.user_col, "i1", "i2")
-        )
-        cossim_full = self._get_cosine_similarity(full_matrix=True).orderBy("i1", "i2")
-        join_sim = (
-            reco_item_interacted_history.join(cossim_full, on=["i1", "i2"], how="left")
-            .fillna(0)
-            .groupBy(self.user_col, "i1")
-            .agg(F.mean(self.sim_col).alias("avg_item2interactedHistory_sim"))
-            .withColumn(self.item_col, F.col("i1"))
-            .drop("i1")
-        )
-        return join_sim.join(
-            self.reco_df, on=[self.user_col, self.item_col]
-        ).withColumn(
-            "user_item_serendipity",
-            (1 - F.col("avg_item2interactedHistory_sim")) * F.col(self.relevance_col),
-        )
-
-    def user_item_serendipity(self):
         if self.df_user_item_serendipity is None:
-            self.df_user_item_serendipity = self.get_user_item_serendipity()
+            reco_item_interacted_history = (
+                self.reco_df.withColumn("i1", F.col(self.item_col))
+                .join(
+                    self.train_df.withColumn("i2", F.col(self.item_col)), on=[self.user_col]
+                )
+                .select(self.user_col, "i1", "i2")
+            )
+            cossim_full = self._get_cosine_similarity(full_matrix=True).orderBy("i1", "i2")
+            join_sim = (
+                reco_item_interacted_history.join(cossim_full, on=["i1", "i2"], how="left")
+                .fillna(0)
+                .groupBy(self.user_col, "i1")
+                .agg(F.mean(self.sim_col).alias("avg_item2interactedHistory_sim"))
+                .withColumn(self.item_col, F.col("i1"))
+                .drop("i1")
+            )
+            self.df_user_item_serendipity = join_sim.join(
+                self.reco_df, on=[self.user_col, self.item_col]
+            ).withColumn(
+                "user_item_serendipity",
+                (1 - F.col("avg_item2interactedHistory_sim")) * F.col(self.relevance_col),
+            ).select(
+                self.user_col, self.item_col, "user_item_serendipity"
+            ).orderBy(self.user_col, self.item_col)
+        return self.df_user_item_serendipity
 
-        return self.df_user_item_serendipity.select(
-            self.user_col, self.item_col, "user_item_serendipity"
-        ).orderBy(self.user_col, self.item_col)
 
     def user_serendipity(self):
-        if self.df_user_item_serendipity is None:
-            self.df_user_item_serendipity = self.get_user_item_serendipity()
-
-        return (
-            self.df_user_item_serendipity.groupBy(self.user_col)
-            .agg(F.mean("user_item_serendipity").alias("user_serendipity"))
-            .orderBy(self.user_col)
-        )
+        if self.df_user_serendipity is None:
+            self.df_user_item_serendipity = self.user_item_serendipity()
+            self.df_user_serendipity = (
+                self.df_user_item_serendipity.groupBy(self.user_col)
+                .agg(F.mean("user_item_serendipity").alias("user_serendipity"))
+                .orderBy(self.user_col)
+            )
+        return self.df_user_serendipity
 
     def serendipity(self):
-        if self.df_user_serendipity is None:
+        if self.df_serendipity is None:
             self.df_user_serendipity = self.user_serendipity()
-
-        return self.df_user_serendipity.agg(
-            F.mean("user_serendipity").alias("serendipity")
-        )
+            self.df_serendipity = self.df_user_serendipity.agg(
+                F.mean("user_serendipity").alias("serendipity")
+            )
+        return self.df_serendipity
 
     # coverage metrics
     def catalog_coverage(self):
