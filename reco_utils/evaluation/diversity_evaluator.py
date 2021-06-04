@@ -38,6 +38,7 @@ class DiversityEvaluator:
         self.user_col = user_col
         self.item_col = item_col
         self.sim_col = "sim"
+        self.df_cosine_similariy = None
         self.df_user_item_serendipity = None
         self.df_user_serendipity = None
         self.df_serendipity = None
@@ -79,8 +80,8 @@ class DiversityEvaluator:
             .join(df.select(self.item_col).distinct())
         )
 
-    def _get_pairwise_items(self, df, full_matrix=False):
-        if full_matrix == False:
+    def _get_pairwise_items(self, df):
+        
             return (
                 df.select(self.user_col, F.col(self.item_col).alias("i1"))
                 # get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])
@@ -93,53 +94,41 @@ class DiversityEvaluator:
                     & (F.col("i1") <= F.col("i2")),
                 ).select(self.user_col, "i1", "i2")
             )
-        else:
-            return (
-                df.select(self.user_col, F.col(self.item_col).alias("i1"))
-                # get pairwise combinations of items per user (including both pairs [1,2] and [2,1])
+        
+
+    def _get_cosine_similarity(self, n_partitions=200):
+        if self.df_cosine_similariy is None:
+            pairs = self._get_pairwise_items(df=self.train_df)
+            item_count = self.train_df.groupBy(self.item_col).count()
+
+            self.df_cosine_similariy = (
+                pairs.groupBy("i1", "i2")
+                .count()
                 .join(
-                    df.select(
-                        F.col(self.user_col).alias("_user"),
-                        F.col(self.item_col).alias("i2"),
+                    item_count.select(
+                        F.col(self.item_col).alias("i1"),
+                        F.pow(F.col("count"), 0.5).alias("i1_sqrt_count"),
                     ),
-                    (F.col(self.user_col) == F.col("_user")),
-                ).select(self.user_col, "i1", "i2")
+                    on="i1",
+                )
+                .join(
+                    item_count.select(
+                        F.col(self.item_col).alias("i2"),
+                        F.pow(F.col("count"), 0.5).alias("i2_sqrt_count"),
+                    ),
+                    on="i2",
+                )
+                .select(
+                    "i1",
+                    "i2",
+                    (
+                        F.col("count") / (F.col("i1_sqrt_count") * F.col("i2_sqrt_count"))
+                    ).alias("sim"),
+                )
+                .repartition(n_partitions, "i1", "i2")
+                .sortWithinPartitions("i1", "i2")
             )
-
-    def _get_cosine_similarity(self, full_matrix=False, n_partitions=200):
-        # TODO: make sure there are no null values in user or item columns
-        # TODO: make sure temporary column names don't match existing user or item column names
-
-        pairs = self._get_pairwise_items(df=self.train_df, full_matrix=full_matrix)
-        item_count = self.train_df.groupBy(self.item_col).count()
-
-        return (
-            pairs.groupBy("i1", "i2")
-            .count()
-            .join(
-                item_count.select(
-                    F.col(self.item_col).alias("i1"),
-                    F.pow(F.col("count"), 0.5).alias("i1_sqrt_count"),
-                ),
-                on="i1",
-            )
-            .join(
-                item_count.select(
-                    F.col(self.item_col).alias("i2"),
-                    F.pow(F.col("count"), 0.5).alias("i2_sqrt_count"),
-                ),
-                on="i2",
-            )
-            .select(
-                "i1",
-                "i2",
-                (
-                    F.col("count") / (F.col("i1_sqrt_count") * F.col("i2_sqrt_count"))
-                ).alias("sim"),
-            )
-            .repartition(n_partitions, "i1", "i2")
-            .sortWithinPartitions("i1", "i2")
-        )
+        return self.df_cosine_similariy
 
     # diversity metrics
     def _get_intralist_similarity(self, df):
@@ -223,34 +212,23 @@ class DiversityEvaluator:
     # serendipity metrics
     def user_item_serendipity(self):
         # for every user_col, item_col in reco_df, join all interacted items from train_df.
-        # These interacted items are reapeated for each item in reco_df for a specific user.
+        # These interacted items are repeated for each item in reco_df for a specific user.
         if self.df_user_item_serendipity is None:
-            reco_item_interacted_history = (
-                self.reco_df.withColumn("i1", F.col(self.item_col))
-                .join(
-                    self.train_df.withColumn("i2", F.col(self.item_col)), on=[self.user_col]
-                )
-                .select(self.user_col, "i1", "i2")
+            self.df_cosine_similariy = self._get_cosine_similarity().orderBy("i1", "i2")
+            self.df_user_item_serendipity = (self.reco_df
+                    .withColumn("reco_item", F.col(self.item_col)) # duplicate item_col to keep
+                    .select(self.user_col, "reco_item", F.col(self.item_col).alias("reco_item_tmp"))
+                    .join(self.train_df.select(self.user_col, F.col(self.item_col).alias("train_item_tmp")), on=[self.user_col])
+                    .select(self.user_col, "reco_item", F.least(F.col("reco_item_tmp"), F.col("train_item_tmp")).alias("i1"), F.greatest(F.col("reco_item_tmp"), F.col("train_item_tmp")).alias("i2"))
+                    .join(self.df_cosine_similariy, on=["i1", "i2"], how="left").fillna(0)
+                    .groupBy(self.user_col,F.col("reco_item").alias(self.item_col))
+                    .agg(F.mean(self.sim_col).alias("avg_item2interactedHistory_sim"))
+                    .join(self.reco_df, on=[self.user_col, self.item_col]) 
+                    .withColumn("user_item_serendipity",(1-F.col("avg_item2interactedHistory_sim"))*F.col(self.relevance_col)) 
+                    .select(self.user_col, self.item_col, "user_item_serendipity")
+                    .orderBy(self.user_col, self.item_col)
             )
-            cossim_full = self._get_cosine_similarity(full_matrix=True).orderBy("i1", "i2")
-            join_sim = (
-                reco_item_interacted_history.join(cossim_full, on=["i1", "i2"], how="left")
-                .fillna(0)
-                .groupBy(self.user_col, "i1")
-                .agg(F.mean(self.sim_col).alias("avg_item2interactedHistory_sim"))
-                .withColumn(self.item_col, F.col("i1"))
-                .drop("i1")
-            )
-            self.df_user_item_serendipity = join_sim.join(
-                self.reco_df, on=[self.user_col, self.item_col]
-            ).withColumn(
-                "user_item_serendipity",
-                (1 - F.col("avg_item2interactedHistory_sim")) * F.col(self.relevance_col),
-            ).select(
-                self.user_col, self.item_col, "user_item_serendipity"
-            ).orderBy(self.user_col, self.item_col)
         return self.df_user_item_serendipity
-
 
     def user_serendipity(self):
         if self.df_user_serendipity is None:
