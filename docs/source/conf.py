@@ -29,7 +29,7 @@ MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'reco_utils.dataset.amazon_revie
 , 'reco_utils.dataset.mind', 'reco_utils.dataset.movielens', 'reco_utils.dataset.download_utils'
 , 'reco_utils.recommender.deeprec.models.base_model']
 for mod_name in MOCK_MODULES:
-sys.modules[mod_name] = mock.Mock()
+    sys.modules[mod_name] = mock.Mock()
 
 # -- Project information -----------------------------------------------------
 
