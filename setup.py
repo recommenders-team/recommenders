@@ -45,7 +45,7 @@ install_requires = [
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
     "scikit-surprise>=0.19.1,<=1.1.1",
-    "backoff>=1.8.0",
+    "retrying>=1.3.3",
 ]
 
 # shared dependencies
