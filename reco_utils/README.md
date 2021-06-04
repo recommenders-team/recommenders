@@ -14,6 +14,10 @@ sudo apt-get install -y build-essential
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
+For more details about the software requirements that must be pre-installed on each supported platform, see the [setup guide](https://github.com/microsoft/recommenders/blob/main/SETUP.md).   
+
+## Basic installation
+
 To install core utilities, CPU-based algorithms, and dependencies
 ```bash
 pip install --upgrade pip
@@ -62,9 +66,6 @@ We are currently evaluating inclusion of the following dependencies:
  - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the [PyPI package](https://pypi.org/project/vowpalwabbit/) with the scikit-learn interface will facilitate easier integration into python environments
  - nni: a more recent version can be installed but is untested (and requires a higher numpy version as above).
 
-## Requirements
-
-For more details about the software requirements that must be pre-installed on each supported platform, see the [setup guide](https://github.com/microsoft/recommenders/blob/main/SETUP.md).   
 
 # Contents
 
