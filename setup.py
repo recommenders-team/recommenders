@@ -112,7 +112,7 @@ setup(
         "Operating System :: MacOS",
     ],
     extras_require=extras_require,
-    keywords="recommendations recommenders recommender system engine "
+    keywords="recommendations recommendation recommenders recommender system engine "
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"reco_utils": "reco_utils"},
