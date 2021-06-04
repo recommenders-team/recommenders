@@ -6,9 +6,12 @@ import pytest
 import numpy as np
 import pandas as pd
 from pandas.util.testing import assert_frame_equal
-from pyspark.sql import Row
-from reco_utils.evaluation.diversity_evaluator import DiversityEvaluator
 
+try:
+    from pyspark.sql import Row
+    from reco_utils.evaluation.spark_diversity_evaluator import DiversityEvaluator
+except ImportError:    
+    pass  # skip this import if we are in pure python environment
 
 TOL = 0.0001
 
