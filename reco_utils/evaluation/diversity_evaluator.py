@@ -273,13 +273,10 @@ class DiversityEvaluator:
     # coverage metrics
     def catalog_coverage(self):
         # distinct item count in reco_df
-        count_distinct_item_reco = self.reco_df.select(
-            F.countDistinct(self.item_col)
-        ).collect()[0][0]
+        count_distinct_item_reco = self.reco_df.select(self.item_col).distinct().count()
         # distinct item count in train_df
-        count_distinct_item_train = self.train_df.select(
-            F.countDistinct(self.item_col)
-        ).collect()[0][0]
+        count_distinct_item_train = self.train_df.select(self.item_col).distinct().count()
+        
 
         # cagalog coverage
         c_coverage = count_distinct_item_reco / count_distinct_item_train
@@ -289,9 +286,7 @@ class DiversityEvaluator:
         # In reco_df, how  many times each item_col is being recommended
         df_itemcnt_reco = self.reco_df.groupBy(self.item_col).count()
         # distinct item count in train_df
-        count_distinct_item_train = self.train_df.select(
-            F.countDistinct(self.item_col)
-        ).collect()[0][0]
+        count_distinct_item_train = self.train_df.select(self.item_col).distinct().count()
         # the number of total recommendations
         count_row_reco = self.reco_df.count()
         df_entropy = df_itemcnt_reco.withColumn(
