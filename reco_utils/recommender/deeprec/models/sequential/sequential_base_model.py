@@ -15,6 +15,8 @@ __all__ = ["SequentialBaseModel"]
 
 
 class SequentialBaseModel(BaseModel):
+    """Base class for sequential models"""
+    
     def __init__(self, hparams, iterator_creator, graph=None, seed=None):
         """Initializing the model. Create common logics which are needed by all sequential models, such as loss function, 
         parameter set.

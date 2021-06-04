@@ -13,6 +13,9 @@ The tutorial can be found at: https://github.com/microsoft/recommenders/blob/kdd
 
 
 class DKNItem2Item(DKN):
+    """Class for item-to-item recommendations using DKN.
+    See https://github.com/microsoft/recommenders/blob/kdd2020_tutorial/scenarios/academic/KDD2020-tutorial/step4_run_dkn_item2item.ipynb"""
+
     def _compute_data_loss(self):
         logits = self.pred
         data_loss = -1 * tf.reduce_sum(tf.math.log(logits[:, 0] + 1e-10))
