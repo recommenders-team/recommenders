@@ -33,10 +33,10 @@ def target_metrics():
         dict(diversity=[0.43096])
         ),
         "user_diversity": pd.DataFrame(
-        dict(UserId=[1, 2, 3], diversity=[0.29289, 1.0, 0.0])
+        dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
         ),
         "user_item_serendipity": pd.DataFrame(
-        dict(UserId=[1, 1, 2, 2, 3, 3], reco_item= [3, 5, 2, 5, 1, 2], user_item_serendipity=[0.72783, 0.80755, 0.71132, 0.35777, 0.80755, 0.80755])
+        dict(UserId=[1, 1, 2, 2, 3, 3], ItemId= [3, 5, 2, 5, 1, 2], user_item_serendipity=[0.72783, 0.80755, 0.71132, 0.35777, 0.80755, 0.80755])
         ),
         "user_serendipity": pd.DataFrame(
         dict(UserId=[1, 2, 3], user_serendipity=[0.76770, 0.53455, 0.80755])
