@@ -23,6 +23,14 @@ sys.setrecursionlimit(1500)
 
 from reco_utils import TITLE, VERSION, COPYRIGHT, AUTHOR
 
+import mock
+ 
+MOCK_MODULES = ['numpy', 'scipy', 'matplotlib', 'reco_utils.dataset.amazon_reviews', 'reco_utils.dataset.criteo'
+, 'reco_utils.dataset.mind', 'reco_utils.dataset.movielens', 'reco_utils.dataset.download_utils'
+, 'reco_utils.recommender.deeprec.models.base_model']
+for mod_name in MOCK_MODULES:
+sys.modules[mod_name] = mock.Mock()
+
 # -- Project information -----------------------------------------------------
 
 project = TITLE
