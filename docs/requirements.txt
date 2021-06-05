@@ -28,6 +28,7 @@ locust>=1,<2
 papermill>=2.1.2,<3
 scrapbook>=0.5.0,<1.0.0
 nvidia-ml-py3>=7.352.0
+tensorflow
 tensorflow-gpu>=1.15.0,<2
 torch==1.2.0
 fastai>=1.0.46,<2
