@@ -5,7 +5,7 @@ from pyspark.sql.types import *
 from pyspark.sql import functions as F
 
 
-class DiversityEvaluator:
+class DiversityEvaluation:
     def __init__(
         self,
         train_df,
@@ -81,7 +81,6 @@ class DiversityEvaluator:
         )
 
     def _get_pairwise_items(self, df):
-
         return (
             df.select(self.user_col, F.col(self.item_col).alias("i1"))
             # get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])
