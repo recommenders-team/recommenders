@@ -7,7 +7,7 @@ from pandas.util.testing import assert_frame_equal
 
 try:
     from pyspark.sql import Row
-    from reco_utils.evaluation.spark_diversity_evaluator import DiversityEvaluator
+    from reco_utils.evaluation.spark_diversity_evaluation import DiversityEvaluation
 except ImportError:    
     pass  # skip this import if we are in pure python environment
 
@@ -72,7 +72,7 @@ def data(spark):
 @pytest.fixture()
 def evaluator(data):
     train_df, reco_df = data
-    div = DiversityEvaluator(train_df=train_df, reco_df=reco_df,
+    div = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
                          user_col='UserId', item_col='ItemId')
     print("init evaluator")
     return div
