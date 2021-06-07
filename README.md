@@ -41,7 +41,7 @@ sudo apt-get install -y build-essential
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
   
 
-2. Install the package from pypi.org:
+2. Install the package from [PyPI](https://pypi.org):
 
 ```bash
 pip install --upgrade pip

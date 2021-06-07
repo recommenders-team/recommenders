@@ -13,15 +13,15 @@ This document describes how to setup all the dependencies to run the notebooks i
   - [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
     - [Requirements](#requirements)
     - [Dependencies setup](#dependencies-setup)
-    - [Register the conda environment as a kernel in Jupyter](#register-the-conda-environment-as-a-kernel-in-jupyter)
+    - [Register the environment as a kernel in Jupyter](#register-the-environment-as-a-kernel-in-jupyter)
     - [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
   - [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
-    - [Requirements of Azure Databricks](#requirements-of-azure-databricks)
-    - [Repository installation](#repository-installation)
+    - [Requirements of Azure Databricks](#requirements-1)
+    - [Installation from PyPI](#installation-from-pypi)
+    - [Dependencies setup](#dependencies-setup-1)
     - [Confirm Installation](#confirm-installation)
     - [Troubleshooting Installation on Azure Databricks](#troubleshooting-installation-on-azure-databricks)
     - [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
-  - [Install the utilities via PIP](#install-the-utilities-via-pip)
   - [Setup guide for Docker](#setup-guide-for-docker)
 
 ## Compute environments
@@ -35,21 +35,24 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 ### Requirements
 
 * A machine running Linux, MacOS or Windows
-* Anaconda with Python version >= 3.6
+* An optional requirement is Anaconda with Python version >= 3.6
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
+  
+  Alternatively a [virtual environment](https://docs.python.org/3/library/venv.html) can be used instead of Anaconda.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
 
-As a pre-requisite to install the dependencies with Conda, make sure that Anaconda and the package manager Conda are both up to date:
+As a pre-requisite to installing the dependencies, if using Conda, make sure that Anaconda and the package manager Conda are both up to date:
 
 ```{shell}
 conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-We provide a script, [generate_conda_file.py](tools/generate_conda_file.py), to generate a conda-environment yaml file
-which you can use to create the target environment using the Python version 3.6 with all the correct dependencies.
+There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `ms-recommenders` package from [PyPI](https://pypi.org). Another option is to install from a local copy of the code. For instructions on how to do these, see [this guide](reco_utils/README.md).
+
+An alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md)
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
 
@@ -68,39 +71,6 @@ To install Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
 
 </details>
 
-Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
-
-    cd Recommenders
-    python tools/generate_conda_file.py
-    conda env create -f reco_base.yaml
-
-You can specify the environment name as well with the flag `-n`.
-
-Click on the following menus to see how to install Python GPU and PySpark environments:
-
-<details>
-<summary><strong><em>Python GPU environment</em></strong></summary>
-
-Assuming that you have a GPU machine, to install the Python GPU environment:
-
-    cd Recommenders
-    python tools/generate_conda_file.py --gpu
-    conda env create -f reco_gpu.yaml
-
-</details>
-
-<details>
-<summary><strong><em>PySpark environment</em></strong></summary>
-
-To install the PySpark environment:
-
-    cd Recommenders
-    python tools/generate_conda_file.py --pyspark
-    conda env create -f reco_pyspark.yaml
-
-> Additionally, if you want to test a particular version of spark, you may pass the --pyspark-version argument:
->
->     python tools/generate_conda_file.py --pyspark-version 2.4.5
 
 Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
 
@@ -108,9 +78,9 @@ Click on the following menus to see details:
 <details>
 <summary><strong><em>Set PySpark environment variables on Linux or MacOS</em></strong></summary>
 
-To set these variables every time the environment is activated, we can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
+If you use conda, to set these variables every time the environment is activated, you can follow the steps of this [guide](https://conda.io/docs/user-guide/tasks/manage-environments.html#macos-and-linux).
 
-First, get the path of the environment `reco_pyspark` is installed:
+First, assuming that the environment is called `reco_pyspark`, get the path where the environment is installed:
 
     RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
     mkdir -p $RECO_ENV/etc/conda/activate.d
@@ -170,36 +140,18 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 
 </details>
 
-</details>
 
-<details>
-<summary><strong><em>Full (PySpark & Python GPU) environment</em></strong></summary>
+### Register the environment as a kernel in Jupyter
 
-With this environment, you can run both PySpark and Python GPU notebooks in this repository.
-To install the environment:
+We can register our conda or virtual environment to appear as a kernel in the Jupyter notebooks. After activating the environment (`my_env_name`) do
 
-    cd Recommenders
-    python tools/generate_conda_file.py --gpu --pyspark
-    conda env create -f reco_full.yaml
-
-Then, we need to set the environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` to point to the conda python executable.
-See **PySpark environment** setup section for the details about how to setup those variables.
-where you will need to change `reco_pyspark` string in the commands to `reco_full`.
-</details>
-
-
-### Register the conda environment as a kernel in Jupyter
-
-We can register our created conda environment to appear as a kernel in the Jupyter notebooks.
-
-    conda activate my_env_name
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 
 If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
 
 ### Troubleshooting for the DSVM
 
-* We found that there can be problems if the Spark version of the machine is not the same as the one in the conda file. You can use the option `--pyspark-version` to address this issue.
+* We found that there can be problems if the Spark version of the machine is not the same as the one in the [conda file](conda.md). You can use the option `--pyspark-version` to address this issue.
 
 * When running Spark on a single local node it is possible to run out of disk space as temporary files are written to the user's home directory. To avoid this on a DSVM, we attached an additional disk to the DSVM and made modifications to the Spark configuration. This is done by including the following lines in the file at `/dsvm/tools/spark/current/conf/spark-env.sh`.
 
@@ -233,6 +185,12 @@ sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsof
 * Python 3
 
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
+
+### Installation from PyPI
+
+The `ms-recommenders` package can be installed with core dependencies for utilities and CPU-based algorithms.
+This is done from the _Libraries_ link at the cluster, selecting the option to import a library and selecting _PyPI_ in the menu.  
+For installations with more dependencies, see the steps below.
 
 ### Dependencies setup
 
@@ -362,20 +320,6 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
 
 </details>
 
-## Install the utilities via PIP
-
-A [setup.py](setup.py) file is provided in order to simplify the installation of the utilities in this repo from the main directory.
-
-This still requires the conda environment to be installed as described above. Once the necessary dependencies are installed, you can use the following command to install `reco_utils` as a python package.
-
-    pip install -e .
-
-It is also possible to install directly from GitHub. Or from a specific branch as well.
-
-    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg
-    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg
-
-**NOTE** - The pip installation does not install any of the necessary package dependencies, it is expected that conda will be used as shown above to setup the environment for the utilities being used.
 
 ## Setup guide for Docker
 
