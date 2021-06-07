@@ -19,14 +19,14 @@ from reco_utils.common.python_utils import get_top_k_scored_items
 class LightGCN(object):
     """LightGCN model
 
-    SIGIR 2020. He, Xiangnan, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, and Meng Wang.
+    He, Xiangnan, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, and Meng Wang.
     "LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation." arXiv
-    preprint arXiv:2002.02126 (2020).
+    preprint arXiv:2002.02126, 2020.
     """
 
     def __init__(self, hparams, data, seed=None):
         """Initializing the model. Create parameters, placeholders, embeddings and loss function.
-        
+
         Args:
             hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
             data (obj): A reco_utils.recommender.deeprec.DataModel.ImplicitCF object, load and process data.
@@ -112,7 +112,7 @@ class LightGCN(object):
         """Initialize user and item embeddings.
 
         Returns:
-            dict: With keys "user_embedding" and "item_embedding", embeddings of all users and items.
+            dict: With keys `user_embedding` and `item_embedding`, embeddings of all users and items.
 
         """
         all_weights = dict()
@@ -132,8 +132,7 @@ class LightGCN(object):
         """Calculate the average embeddings of users and items after every layer of the model.
 
         Returns:
-            tf.Tensor: average user embeddings
-            tf.Tensor: average item embeddings
+            tf.Tensor, tf.Tensor: Average user embeddings. Average item embeddings.
 
         """
         A_hat = self._convert_sp_mat_to_sp_tensor(self.norm_adj)
@@ -163,8 +162,7 @@ class LightGCN(object):
             neg_items (tf.Tensor): Negative item embeddings to calculate loss.
 
         Returns:
-            tf.Tensor: Matrix factorization loss.
-            tf.Tensor: Embedding regularization loss.
+            tf.Tensor, tf.Tensor: Matrix factorization loss. Embedding regularization loss.
 
         """
         pos_scores = tf.reduce_sum(tf.multiply(users, pos_items), axis=1)
@@ -185,15 +183,15 @@ class LightGCN(object):
 
         Returns:
             tf.SparseTensor: SparseTensor after conversion.
-            
+
         """
         coo = X.tocoo().astype(np.float32)
         indices = np.mat([coo.row, coo.col]).transpose()
         return tf.SparseTensor(indices, coo.data, coo.shape)
 
     def fit(self):
-        """Fit the model on self.data.train. If eval_epoch is not -1, evaluate the model on self.data.test
-            every "eval_epoch" epoch to observe the training status.
+        """Fit the model on self.data.train. If eval_epoch is not -1, evaluate the model on `self.data.test`
+        every `eval_epoch` epoch to observe the training status.
 
         """
         for epoch in range(1, self.epochs + 1):
@@ -227,7 +225,7 @@ class LightGCN(object):
                 checkpoint_path = self.saver.save(
                     sess=self.sess, save_path=save_path_str
                 )
-                print('Save model to path {0}'.format(os.path.abspath(save_path_str)))
+                print("Save model to path {0}".format(os.path.abspath(save_path_str)))
 
             if self.eval_epoch == -1 or epoch % self.eval_epoch != 0:
                 print(
@@ -277,7 +275,7 @@ class LightGCN(object):
         """Run evaluation on self.data.test.
 
         Returns:
-            dict: Results of all metrics in self.metrics.
+            dict: Results of all metrics in `self.metrics`.
         """
         topk_scores = self.recommend_k_items(
             self.data.test, top_k=self.top_k, use_id=True
@@ -385,10 +383,13 @@ class LightGCN(object):
 
     def output_embeddings(self, idmapper, n, target, user_file):
         embeddings = list(target.eval(session=self.sess))
-        with open(user_file, 'w') as wt:
+        with open(user_file, "w") as wt:
             for i in range(n):
-                wt.write('{0}\t{1}\n'.format(idmapper[i], ' '.join([str(a) for a in embeddings[i]])))
-
+                wt.write(
+                    "{0}\t{1}\n".format(
+                        idmapper[i], " ".join([str(a) for a in embeddings[i]])
+                    )
+                )
 
     def infer_embedding(self, user_file, item_file):
         """Export user and item embeddings to csv files.
@@ -408,5 +409,9 @@ class LightGCN(object):
 
         data = self.data
 
-        self.output_embeddings(data.id2user, self.n_users, self.ua_embeddings, user_file)
-        self.output_embeddings(data.id2item, self.n_items, self.ia_embeddings, item_file)
+        self.output_embeddings(
+            data.id2user, self.n_users, self.ua_embeddings, user_file
+        )
+        self.output_embeddings(
+            data.id2item, self.n_items, self.ia_embeddings, item_file
+        )

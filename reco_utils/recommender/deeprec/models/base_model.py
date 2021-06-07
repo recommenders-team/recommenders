@@ -555,7 +555,7 @@ class BaseModel:
             filename (str): A file name that will be evaluated.
 
         Returns:
-            dict: A dictionary contains evaluation metrics.
+            dict: A dictionary containing evaluation metrics.
         """
         load_sess = self.sess
         preds = []
