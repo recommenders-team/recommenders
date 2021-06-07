@@ -22,7 +22,7 @@ class BaseModel:
         parameter set.
 
         Args:
-            hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+            hparams (obj): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
             iterator_creator (obj): An iterator to load the data.
             graph (obj): An optional graph.
             seed (int): Random seed.
@@ -108,7 +108,7 @@ class BaseModel:
                     task
                 )
             )
-        pred = tf.identity(pred, name='pred')
+        pred = tf.identity(pred, name="pred")
         return pred
 
     def _add_summaries(self):
@@ -148,6 +148,7 @@ class BaseModel:
 
     def _cross_l_loss(self):
         """Construct L1-norm and L2-norm on cross network parameters for loss function.
+
         Returns:
             obj: Regular loss value on cross network parameters.
         """
@@ -243,6 +244,7 @@ class BaseModel:
     def _compute_regular_loss(self):
         """Construct regular loss. Usually it's comprised of l1 and l2 norm.
         Users can designate which norm to be included via config file.
+
         Returns:
             obj: Regular loss.
         """
@@ -251,6 +253,7 @@ class BaseModel:
 
     def _train_opt(self):
         """Get the optimizer according to configuration. Usually we will use Adam.
+
         Returns:
             obj: An optimizer.
         """
@@ -285,6 +288,7 @@ class BaseModel:
         """Construct gradient descent based optimization step
         In this step, we provide gradient clipping option. Sometimes we what to clip the gradients
         when their absolute values are too large to avoid gradient explosion.
+
         Returns:
             obj: An operation that applies the specified optimization step.
         """
@@ -332,6 +336,7 @@ class BaseModel:
 
     def _dropout(self, logit, keep_prob):
         """Apply drops upon the input value.
+
         Args:
             logit (obj): The input value.
             keep_prob (float): The probability of keeping each element.
@@ -342,7 +347,7 @@ class BaseModel:
         return tf.nn.dropout(x=logit, keep_prob=keep_prob)
 
     def train(self, sess, feed_dict):
-        """Go through the optimization step once with training data in feed_dict.
+        """Go through the optimization step once with training data in `feed_dict`.
 
         Args:
             sess (obj): The model session object.
@@ -365,7 +370,7 @@ class BaseModel:
         )
 
     def eval(self, sess, feed_dict):
-        """Evaluate the data in feed_dict with current model.
+        """Evaluate the data in `feed_dict` with current model.
 
         Args:
             sess (obj): The model session object.
@@ -380,7 +385,8 @@ class BaseModel:
         return sess.run([self.pred, self.iterator.labels], feed_dict=feed_dict)
 
     def infer(self, sess, feed_dict):
-        """Given feature data (in feed_dict), get predicted scores with current model.
+        """Given feature data (in `feed_dict`), get predicted scores with current model.
+
         Args:
             sess (obj): The model session object.
             feed_dict (dict): Instances to predict. This is a dictionary that maps graph elements to values.
@@ -411,8 +417,8 @@ class BaseModel:
             raise IOError("Failed to find any matching files for {0}".format(act_path))
 
     def fit(self, train_file, valid_file, test_file=None):
-        """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
-        If test_file is not None, evaluate it too.
+        """Fit the model with `train_file`. Evaluate the model on valid_file per epoch to observe the training status.
+        If `test_file` is not None, evaluate it too.
 
         Args:
             train_file (str): training data set.
@@ -519,14 +525,15 @@ class BaseModel:
         return self
 
     def group_labels(self, labels, preds, group_keys):
-        """Devide labels and preds into several group according to values in group keys.
+        """Devide `labels` and `preds` into several group according to values in group keys.
+
         Args:
             labels (list): ground truth label list.
             preds (list): prediction score list.
             group_keys (list): group key list.
+
         Returns:
-            all_labels: labels after group.
-            all_preds: preds after group.
+            list, list: Labels after group. Predictions after group.
         """
         all_keys = list(set(group_keys))
         group_labels = {k: [] for k in all_keys}
