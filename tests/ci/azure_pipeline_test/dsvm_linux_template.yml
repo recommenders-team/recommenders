@@ -44,7 +44,7 @@ jobs:
       echo "##vso[task.prependpath]/data/anaconda/bin"
 
       du -sh *
-      
+
       # Make sure there is no conda environment
       conda env remove -n ${{ parameters.conda_env }} || exit -1
 
@@ -65,7 +65,10 @@ jobs:
         RELEASE_VERSION=$(awk '/__version__ = / {print $3}' reco_utils/__init__.py | sed 's/"//g')
 
         echo "   --- BUILDING PACKAGE ---"
-        rm -rf dist
+        rm -rf dist || exit -1
+
+        du -sh *
+        
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
 
         echo "   --- INSTALLING WHEEL ---"
