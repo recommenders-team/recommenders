@@ -44,10 +44,8 @@ def target_metrics():
         ),
     }
 
-
-
 @pytest.fixture(scope="module")
-def data(spark):
+def spark_data(spark):
     train_df = spark.createDataFrame([
       Row(UserId=1, ItemId=1),
       Row(UserId=1, ItemId=2),
@@ -68,68 +66,82 @@ def data(spark):
     ])
     return train_df, reco_df
     
-@pytest.mark.spark    
-@pytest.fixture()
-def evaluator(data):
-    train_df, reco_df = data
-    div = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+@pytest.mark.spark
+def test_catalog_coverage(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
                          user_col='UserId', item_col='ItemId')
-    print("init evaluator")
-    return div
-
-
-@pytest.mark.spark
-def test_init_spark(spark):
-    assert spark is not None
-
-@pytest.mark.spark
-def test_catalog_coverage(evaluator, target_metrics):
-      
     c_coverage = evaluator.catalog_coverage()
     assert c_coverage == target_metrics["c_coverage"]
     
 @pytest.mark.spark
-def test_distributional_coverage(evaluator, target_metrics):
-      
+def test_distributional_coverage(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     d_coverage = evaluator.distributional_coverage()
     assert d_coverage == target_metrics["d_coverage"]
 
 @pytest.mark.spark
-def test_item_novelty(evaluator, target_metrics):
+def test_item_novelty(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     actual = evaluator.item_novelty().toPandas()
     assert_frame_equal(target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4)
 
 @pytest.mark.spark    
-def test_user_novelty(evaluator, target_metrics):
+def test_user_novelty(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     actual = evaluator.user_novelty().toPandas()
     assert_frame_equal(target_metrics["user_novelty"], actual, check_exact=False, check_less_precise=4)
 
 @pytest.mark.spark    
-def test_novelty(evaluator, target_metrics):
+def test_novelty(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     actual = evaluator.novelty().toPandas()
     assert_frame_equal(target_metrics["novelty"], actual, check_exact=False, check_less_precise=4)
 
 @pytest.mark.spark    
-def test_user_diversity(evaluator, target_metrics):
+def test_user_diversity(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     actual = evaluator.user_diversity().toPandas()
     assert_frame_equal(target_metrics["user_diversity"], actual, check_exact=False, check_less_precise=4)
 
 @pytest.mark.spark    
-def test_diversity(evaluator, target_metrics):    
+def test_diversity(spark_data, target_metrics):   
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId') 
     actual = evaluator.diversity().toPandas()
     assert_frame_equal(target_metrics["diversity"], actual,check_exact=False, check_less_precise=4)   
 
 @pytest.mark.spark    
-def test_user_item_serendipity(evaluator, target_metrics):
+def test_user_item_serendipity(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     actual = evaluator.user_item_serendipity().toPandas()
     assert_frame_equal(target_metrics["user_item_serendipity"], actual, check_exact=False, check_less_precise=4)
 
 @pytest.mark.spark    
-def test_user_serendipity(evaluator, target_metrics):
+def test_user_serendipity(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     actual = evaluator.user_serendipity().toPandas()
     assert_frame_equal(target_metrics["user_serendipity"], actual, check_exact=False, check_less_precise=4)
 
 @pytest.mark.spark    
-def test_serendipity(evaluator, target_metrics):
+def test_serendipity(spark_data, target_metrics):
+    train_df, reco_df = spark_data  
+    evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
+                         user_col='UserId', item_col='ItemId')
     actual = evaluator.serendipity().toPandas()
     assert_frame_equal(target_metrics["serendipity"], actual, check_exact=False, check_less_precise=4)
