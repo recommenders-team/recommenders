@@ -72,17 +72,15 @@ RNN Cells
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.rnn_cell_implement
     :members:
 
-Cell for Sequential User Matrix
----------------------------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.sum_cells
-    :members:
-
-Sequential User Matrix
+SUM
 -------------------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.sum
     :members:
 
-SLI Rec
+.. automodule:: reco_utils.recommender.deeprec.models.sequential.sum_cells
+    :members:
+
+SLIRec
 -------------
 .. automodule:: reco_utils.recommender.deeprec.models.sequential.sli_rec
     :members:

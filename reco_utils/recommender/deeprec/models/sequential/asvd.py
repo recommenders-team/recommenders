@@ -13,22 +13,22 @@ class A2SVDModel(SequentialBaseModel):
     """A2SVD Model (Attentive Asynchronous Singular Value Decomposition)
 
     It extends ASVD with an attention module.
-    
-    ASVD: Y. Koren, "Factorization Meets the Neighborhood: a Multifaceted Collaborative 
+
+    ASVD: Y. Koren, "Factorization Meets the Neighborhood: a Multifaceted Collaborative
     Filtering Model", in Proceedings of the 14th ACM SIGKDD international conference on
     Knowledge discovery and data mining, pages 426–434, ACM, 2008.
 
-    A2SVD:  Z. Yu, J. Lian, A. Mahmoody, G. Liu and X. Xie, "Adaptive User Modeling with
-    Long and Short-Term Preferences for Personailzed Recommendation", in Proceedings of 
-    the 28th International Joint Conferences on Artificial Intelligence, IJCAI’19, 
+    A2SVD: Z. Yu, J. Lian, A. Mahmoody, G. Liu and X. Xie, "Adaptive User Modeling with
+    Long and Short-Term Preferences for Personailzed Recommendation", in Proceedings of
+    the 28th International Joint Conferences on Artificial Intelligence, IJCAI’19,
     Pages 4213-4219, AAAI Press, 2019.
     """
 
     def _build_seq_graph(self):
         """The main function to create A2SVD model.
-        
+
         Returns:
-            obj:the output of A2SVD section.
+            obj: The output of A2SVD section.
         """
         hparams = self.hparams
         with tf.variable_scope("a2svd"):
