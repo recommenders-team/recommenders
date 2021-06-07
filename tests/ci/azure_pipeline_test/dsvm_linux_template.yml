@@ -36,6 +36,10 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
+  - checkout: self
+    clean: true
+    displayName: 'Get clean repository'
+
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
 
