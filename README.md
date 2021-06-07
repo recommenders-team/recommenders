@@ -30,7 +30,9 @@ For a more detailed overview of the repository, please see the documents on the 
 
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
-To setup on your local machine:
+The installation of the recommenders package has been tested with Python versions 3.6 and 3.7. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
+
+To set up on your local machine:
 
 To install core utilities, CPU-based algorithms, and dependencies
 
@@ -48,19 +50,19 @@ pip install --upgrade pip
 pip install ms-recommenders[examples]
 ```
 
-4. Register your (conda or virtual) environment with Jupyter:
+3. Register your (conda or virtual) environment with Jupyter:
 
 ```bash
 python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
 ```
 
-5. Start the Jupyter notebook server
+4. Start the Jupyter notebook server
 
 ```bash
 jupyter notebook
 ```
 
-6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
+5. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
 
 For additional options of installing the package (support for GPU, Spark etc.) see [this guide](reco_utils/README.md).
 

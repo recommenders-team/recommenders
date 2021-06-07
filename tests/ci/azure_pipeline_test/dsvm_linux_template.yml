@@ -36,6 +36,10 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
+  - checkout: self
+    clean: true
+    displayName: 'Get clean repository'
+
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
 
@@ -59,13 +63,15 @@ jobs:
         RELEASE_VERSION=$(awk '/__version__ = / {print $3}' reco_utils/__init__.py | sed 's/"//g')
 
         echo "   --- BUILDING PACKAGE ---"
-        rm -rf dist
+        rm -rf dist || exit -1
+
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
 
         echo "   --- INSTALLING WHEEL ---"
         pip install dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} || exit -1
       else
-        echo "Installing latest code"
+        echo "   --- INSTALLING LATEST CODE ---"
+        du -sh *
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
       
