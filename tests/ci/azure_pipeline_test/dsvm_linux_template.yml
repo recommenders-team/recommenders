@@ -43,6 +43,8 @@ jobs:
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
 
+      du -sh *
+      
       # Make sure there is no conda environment
       conda env remove -n ${{ parameters.conda_env }} || exit -1
 
