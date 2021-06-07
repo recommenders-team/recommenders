@@ -13,16 +13,16 @@ class NextItNetModel(SequentialBaseModel):
     """NextItNet Model
 
     Yuan, Fajie, et al. "A Simple Convolutional Generative Network
-    for Next Item Recommendation." web search and data mining (2019): 582-590.
+    for Next Item Recommendation", in Web Search and Data Mining, 2019.
 
     It requires strong sequence with dataset.
     """
 
     def _build_seq_graph(self):
         """The main function to create nextitnet model.
-        
+
         Returns:
-            obj:the output of nextitnet section.
+            obj: The output of nextitnet section.
         """
         hparams = self.hparams
         is_training = tf.equal(self.is_train_stage, True)
@@ -120,7 +120,7 @@ class NextItNetModel(SequentialBaseModel):
             train (bool): is in training stage
 
         Returns:
-            obj:the output of residual layers.
+            obj: The output of residual layers.
         """
         resblock_type = "decoder"
         resblock_name = "nextitnet_residual_block_one_{}_layer_{}_{}".format(
@@ -163,7 +163,7 @@ class NextItNetModel(SequentialBaseModel):
         """Call a dilated CNN layer
 
         Returns:
-            obj:the output of dilated CNN layers.
+            obj: The output of dilated CNN layers.
         """
         with tf.variable_scope(name):
             weight = tf.get_variable(

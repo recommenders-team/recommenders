@@ -1,28 +1,28 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+
+import os
 import abc
-import time
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
-import os
 
 from reco_utils.recommender.deeprec.models.base_model import BaseModel
 from reco_utils.recommender.deeprec.deeprec_utils import cal_metric, load_dict
+
 
 __all__ = ["SequentialBaseModel"]
 
 
 class SequentialBaseModel(BaseModel):
     """Base class for sequential models"""
-    
+
     def __init__(self, hparams, iterator_creator, graph=None, seed=None):
-        """Initializing the model. Create common logics which are needed by all sequential models, such as loss function, 
+        """Initializing the model. Create common logics which are needed by all sequential models, such as loss function,
         parameter set.
 
         Args:
-            hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+            hparams (obj): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
             iterator_creator (obj): An iterator to load the data.
             graph (obj): An optional graph.
             seed (int): Random seed.
@@ -55,7 +55,7 @@ class SequentialBaseModel(BaseModel):
 
     def _build_graph(self):
         """The main function to create sequential models.
-        
+
         Returns:
             obj:the prediction score make by the model.
         """
@@ -72,11 +72,15 @@ class SequentialBaseModel(BaseModel):
             return logit
 
     def fit(
-        self, train_file, valid_file, valid_num_ngs, eval_metric="group_auc",
+        self,
+        train_file,
+        valid_file,
+        valid_num_ngs,
+        eval_metric="group_auc",
     ):
-        """Fit the model with train_file. Evaluate the model on valid_file per epoch to observe the training status.
-        If test_file is not None, evaluate it too.
-        
+        """Fit the model with `train_file`. Evaluate the model on `valid_file` per epoch to observe the training status.
+        If `test_file` is not None, evaluate it too.
+
         Args:
             train_file (str): training data set.
             valid_file (str): validation set.
@@ -173,7 +177,7 @@ class SequentialBaseModel(BaseModel):
                     )
                     checkpoint_path = self.saver.save(
                         sess=train_sess,
-                        save_path=os.path.join(self.hparams.MODEL_DIR, "best_model")  
+                        save_path=os.path.join(self.hparams.MODEL_DIR, "best_model"),
                     )
 
         if self.hparams.write_tfevents:
@@ -185,7 +189,7 @@ class SequentialBaseModel(BaseModel):
 
     def run_eval(self, filename, num_ngs):
         """Evaluate the given file and returns some evaluation metrics.
-        
+
         Args:
             filename (str): A file name that will be evaluated.
             num_ngs (int): The number of negative sampling for a positive instance.
@@ -220,7 +224,7 @@ class SequentialBaseModel(BaseModel):
 
     def predict(self, infile_name, outfile_name):
         """Make predictions on the given data, and output predicted scores to a file.
-        
+
         Args:
             infile_name (str): Input file name.
             outfile_name (str): Output file name.
@@ -269,8 +273,7 @@ class SequentialBaseModel(BaseModel):
             )
 
     def _lookup_from_embedding(self):
-        """Lookup from embedding variables. A dropout layer follows lookup operations.
-        """
+        """Lookup from embedding variables. A dropout layer follows lookup operations."""
         self.user_embedding = tf.nn.embedding_lookup(
             self.user_lookup, self.iterator.users
         )
@@ -327,13 +330,12 @@ class SequentialBaseModel(BaseModel):
         )
         tf.summary.histogram("target_item_embedding_output", self.target_item_embedding)
 
-
     def _add_norm(self):
         """Regularization for embedding variables and other variables."""
         all_variables, embed_variables = (
             tf.trainable_variables(),
             tf.trainable_variables(self.sequential_scope._name + "/embedding"),
         )
-        layer_params = list(set(all_variables) - set(embed_variables)) 
-        layer_params = [a for a in layer_params if '_no_reg' not in a.name] 
+        layer_params = list(set(all_variables) - set(embed_variables))
+        layer_params = [a for a in layer_params if "_no_reg" not in a.name]
         self.layer_params.extend(layer_params)
