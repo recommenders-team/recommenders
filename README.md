@@ -50,19 +50,19 @@ pip install --upgrade pip
 pip install ms-recommenders[examples]
 ```
 
-4. Register your (conda or virtual) environment with Jupyter:
+3. Register your (conda or virtual) environment with Jupyter:
 
 ```bash
 python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
 ```
 
-5. Start the Jupyter notebook server
+4. Start the Jupyter notebook server
 
 ```bash
 jupyter notebook
 ```
 
-6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
+5. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
 
 For additional options of installing the package (support for GPU, Spark etc.) see [this guide](reco_utils/README.md).
 
