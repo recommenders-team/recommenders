@@ -1,31 +1,28 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+import numpy as np
 import tensorflow as tf
-from tensorflow.contrib.rnn import GRUCell, LSTMCell
-from tensorflow.nn import dynamic_rnn, static_rnn
 from tensorflow.python.eager import context
 from tensorflow.python.keras import activations
 from tensorflow.python.keras import initializers
 from tensorflow.python.keras.utils import tf_utils
-from tensorflow.python.ops import math_ops, array_ops, nn_ops
+from tensorflow.python.ops import math_ops
 from tensorflow.python.ops import variable_scope as vs
 from tensorflow.python.platform import tf_logging as logging
 from tensorflow.python.util.deprecation import deprecated
 from tensorflow.contrib.rnn import LayerRNNCell
 from tensorflow.python.ops import init_ops
-from tensorflow.python.ops import gen_array_ops
 from tensorflow.python.framework import dtypes
 from tensorflow.python.util import nest
-import pickle as pkl
-import numpy as np
-import sys
+
 
 _BIAS_VARIABLE_NAME = "bias"
 _WEIGHTS_VARIABLE_NAME = "kernel"
 
 
 class SUMCell(LayerRNNCell):
-    """
-    Cell for Sequential User Matrix
-    """
+    """Cell for Sequential User Matrix"""
 
     def __init__(
         self,
@@ -72,8 +69,8 @@ class SUMCell(LayerRNNCell):
         return self._num_units
 
     def _basic_build(self, inputs_shape):
-        """common initialization operations for SUM cell and its variants.
-        this function creates parameters for the cell.
+        """Common initialization operations for SUM cell and its variants.
+        This function creates parameters for the cell.
         """
 
         d = inputs_shape[-1]
@@ -135,7 +132,7 @@ class SUMCell(LayerRNNCell):
 
     @tf_utils.shape_type_conversion
     def build(self, inputs_shape):
-        """initialization operations for SUM cell.
+        """Initialization operations for SUM cell.
         this function creates all the parameters for the cell.
         """
         if inputs_shape[-1] is None:
@@ -238,13 +235,11 @@ class SUMCell(LayerRNNCell):
 
 
 class SUMV2Cell(SUMCell):
-    """
-    A variant of SUM cell, which upgrades the writing attention
-    """
+    """A variant of SUM cell, which upgrades the writing attention"""
 
     @tf_utils.shape_type_conversion
     def build(self, inputs_shape):
-        """initialization operations for SUMV2 cell.
+        """Initialization operations for SUMV2 cell.
         this function creates all the parameters for the cell.
         """
         if inputs_shape[-1] is None:
@@ -293,11 +288,11 @@ class SUMV2Cell(SUMCell):
     def call(self, inputs, state):
         """The real operations for SUMV2 cell to process user behaviors.
 
-        params:
+        Args:
             inputs: (a batch of) user behaviors at time T
             state:  (a batch of) user states at time T-1
 
-        returns:
+        Returns:
             state: after process the user behavior at time T, returns (a batch of) new user states at time T
             state: after process the user behavior at time T, returns (a batch of) new user states at time T
         """
