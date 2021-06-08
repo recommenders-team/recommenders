@@ -196,8 +196,8 @@ class RBM:
             r (float): rating scale, corresponding to the number of classes
 
         Returns:
-            tf.Tensor: a tensor of shape (r, m, Nv). This needs to be reshaped as (m, Nv, r) in the last step
-            to allow for faster sampling when used in the multinomial function.
+            tf.Tensor: 
+            - A tensor of shape (r, m, Nv): This needs to be reshaped as (m, Nv, r) in the last step to allow for faster sampling when used in the multinomial function.
 
         """
 
@@ -391,8 +391,7 @@ class RBM:
 
         Returns:
             obj: 
-            - Objective function of Contrastive divergence: the difference
-            between the free energy clamped on the data (v) and the model Free energy (v_k).
+            - Objective function of Contrastive divergence: the difference between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
         with tf.variable_scope("losses"):
@@ -761,8 +760,9 @@ class RBM:
             top_k (scalar, int32): the number of items to recommend.
 
         Returns:
-            np.array, float: A sparse matrix containing the top_k elements ordered by their score and the time taken 
-            to recommend k items.
+            np.array, float: 
+            - A sparse matrix containing the top_k elements ordered by their score.
+            - The time taken to recommend k items.
         """
 
         self.time()
@@ -818,7 +818,9 @@ class RBM:
             the ratings of a single user.
 
         Returns:
-            np.array, float: A matrix with the inferred ratings and the elapsed time for predediction.
+            np.array, float: 
+            - A matrix with the inferred ratings.
+            - The elapsed time for predediction.
         """
 
         self.time()
