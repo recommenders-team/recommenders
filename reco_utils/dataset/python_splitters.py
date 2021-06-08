@@ -245,8 +245,9 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
         seed (int): random seed
 
     Returns:
-        np.array, np.array: Xtr is the train set user/item affinity matrix. Xtst is the test set user/item affinity
-            matrix.
+        np.array, np.array: 
+        - Xtr: The train set user/item affinity matrix. 
+        - Xtst: The test set user/item affinity matrix.
     """
 
     np.random.seed(seed)  # set the random seed

@@ -39,7 +39,7 @@ def user_item_pairs(
         seed (int): Random seed for shuffle
 
     Returns:
-        pd.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df
+        pd.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df.
     """
 
     # Get all user-item pairs
@@ -187,7 +187,7 @@ class LibffmConverter:
             df (pd.DataFrame): input Pandas dataframe.
 
         Return:
-            pd.DataFrame: output libffm format dataframe.
+            pd.DataFrame: Output libffm format dataframe.
         """
         if self.col_rating not in df.columns:
             raise ValueError(
@@ -247,7 +247,7 @@ class LibffmConverter:
             col_rating (str): rating of the data.
 
         Return:
-            pd.DataFrame: output libffm format dataframe.
+            pd.DataFrame: Output libffm format dataframe.
         """
         return self.fit(df, col_rating=col_rating).transform(df)
 
@@ -255,7 +255,7 @@ class LibffmConverter:
         """Get parameters (attributes) of the libffm converter
 
         Return:
-            dict: parameters field count, feature count, and file path.
+            dict: A dictionary that contains parameters field count, feature count, and file path.
         """
         return {
             "field count": self.field_count,
@@ -301,7 +301,7 @@ def negative_feedback_sampler(
         seed (int): seed for the random state of the sampling function.
 
     Returns:
-        pd.DataFrame: data with negative feedback
+        pd.DataFrame: Data with negative feedback.
 
     Examples:
         >>> import pandas as pd
@@ -363,7 +363,7 @@ def has_columns(df, columns):
         columns (list(str): columns to check for
 
     Returns:
-        bool: True if DataFrame has specified columns
+        bool: True if DataFrame has specified columns.
     """
 
     result = True
@@ -384,7 +384,7 @@ def has_same_base_dtype(df_1, df_2, columns=None):
         columns (list(str)): columns to check, None checks all columns
 
     Returns:
-        bool: True if DataFrames columns have the same base dtypes
+        bool: True if DataFrames columns have the same base dtypes.
     """
 
     if columns is None:
