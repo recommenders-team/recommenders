@@ -518,8 +518,8 @@ def mrr_score(y_true, y_score):
     """Computing mrr score metric.
 
     Args:
-        y_true (np.ndarray): ground-truth labels.
-        y_score (np.ndarray): predicted labels.
+        y_true (np.ndarray): Ground-truth labels.
+        y_score (np.ndarray): Predicted labels.
 
     Returns:
         np.ndarray: mrr scores.
@@ -534,8 +534,8 @@ def ndcg_score(y_true, y_score, k=10):
     """Computing ndcg score metric at k.
 
     Args:
-        y_true (np.ndarray): ground-truth labels.
-        y_score (np.ndarray): predicted labels.
+        y_true (np.ndarray): Ground-truth labels.
+        y_score (np.ndarray): Predicted labels.
 
     Returns:
         np.ndarray: ndcg scores.
@@ -567,8 +567,8 @@ def dcg_score(y_true, y_score, k=10):
     """Computing dcg score metric at k.
 
     Args:
-        y_true (np.ndarray): ground-truth labels.
-        y_score (np.ndarray): predicted labels.
+        y_true (np.ndarray): Ground-truth labels.
+        y_score (np.ndarray): Predicted labels.
 
     Returns:
         np.ndarray: dcg scores.

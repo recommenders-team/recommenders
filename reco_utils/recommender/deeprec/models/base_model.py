@@ -81,7 +81,7 @@ class BaseModel:
         """Make loss function, consists of data loss and regularization loss
 
         Returns:
-            obj: Loss value
+            obj: Loss value.
         """
         self.data_loss = self._compute_data_loss()
         self.regular_loss = self._compute_regular_loss()
@@ -96,7 +96,7 @@ class BaseModel:
             task (str): A task (values: regression/classification)
 
         Returns:
-            obj: Transformed score
+            obj: Transformed score.
         """
         if task == "regression":
             pred = tf.identity(logit)
@@ -377,8 +377,7 @@ class BaseModel:
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:
-            list: A list of evaluated results, including total loss value, data loss value,
-                predicted scores, and ground-truth labels.
+            list: A list of evaluated results, including total loss value, data loss value, predicted scores, and ground-truth labels.
         """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False
@@ -555,7 +554,7 @@ class BaseModel:
             filename (str): A file name that will be evaluated.
 
         Returns:
-            dict: A dictionary containing evaluation metrics.
+            dict: A dictionary that contains evaluation metrics.
         """
         load_sess = self.sess
         preds = []
@@ -641,7 +640,7 @@ class BaseModel:
             scope (obj): The scope of MLP part
 
         Returns:s
-            obj: prediction logit after fully connected layer
+            obj: Prediction logit after fully connected layer.
         """
         hparams = self.hparams
         with tf.variable_scope(scope):

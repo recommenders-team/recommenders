@@ -442,7 +442,7 @@ class DKN(BaseModel):
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:
-            list: news embedding in a batch
+            list: News embedding in a batch.
         """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False

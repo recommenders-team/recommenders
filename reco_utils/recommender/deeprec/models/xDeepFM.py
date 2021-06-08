@@ -23,7 +23,7 @@ class XDeepFMModel(BaseModel):
         """The main function to create xdeepfm's logic.
         
         Returns:
-            obj:the prediction score make by the model.
+            obj: The prediction score made by the model.
         """
         hparams = self.hparams
         self.keep_prob_train = 1 - np.array(hparams.dropout)
@@ -71,7 +71,7 @@ class XDeepFMModel(BaseModel):
         This function makes sum pooling of feature embeddings for each field.
         
         Returns:
-            embedding:  the result of field embedding layer, with size of #_fields * #_dim
+            embedding:  The result of field embedding layer, with size of #_fields * #_dim.
             embedding_size: #_fields * #_dim
         """
         hparams = self.hparams
@@ -99,7 +99,7 @@ class XDeepFMModel(BaseModel):
         This is a linear regression.
         
         Returns:
-            obj: prediction score made by linear regression.
+            obj: Prediction score made by linear regression.
         """
         with tf.variable_scope("linear_part", initializer=self.initializer) as scope:
             w = tf.get_variable(
@@ -128,7 +128,7 @@ class XDeepFMModel(BaseModel):
         This is a traditional 2-order FM module.
         
         Returns:
-            obj: prediction score made by factorization machine.
+            obj: Prediction score made by factorization machine.
         """
         with tf.variable_scope("fm_part") as scope:
             x = tf.SparseTensor(
@@ -164,7 +164,7 @@ class XDeepFMModel(BaseModel):
             is_masked (bool): Controls whether to remove self-interaction in the first layer of CIN.
         
         Returns:
-            obj: prediction score made by CIN.
+            obj: Prediction score made by CIN.
         """
         hparams = self.hparams
         hidden_nn_layers = []
@@ -291,7 +291,7 @@ class XDeepFMModel(BaseModel):
             bias (bool): Whether to add bias term when calculating the feature maps.
 
         Returns:
-            obj: prediction score made by fast CIN.
+            obj: Prediction score made by fast CIN.
         """
         hparams = self.hparams
         hidden_nn_layers = []
@@ -432,10 +432,10 @@ class XDeepFMModel(BaseModel):
         
         Args:
             embed_out (obj): The output of field-embedding layer. This is the input for DNN.
-            embed_layer_size (obj): shape of the embed_out
+            embed_layer_size (obj): Shape of the embed_out
 
         Returns:
-            obj: prediction score made by fast CIN.
+            obj: Prediction score made by fast CIN.
         """
         hparams = self.hparams
         w_fm_nn_input = embed_out
