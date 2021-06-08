@@ -258,7 +258,7 @@ class MINDAllIterator(BaseIterator):
             beahaviros_file (str): A file contains information of user impressions.
 
         Returns:
-            obj: An iterator that will yields parsed results, in the format of graph feed_dict.
+            obj: An iterator that yields parsed results, in the format of graph feed_dict.
         """
 
         if not hasattr(self, "news_title_index"):
@@ -369,7 +369,7 @@ class MINDAllIterator(BaseIterator):
             click_subvert_indexes (list):indices for user's clicked news subverts.
             
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
 
         labels = np.asarray(label_list, dtype=np.float32)
@@ -409,7 +409,7 @@ class MINDAllIterator(BaseIterator):
             beahaviros_file (str): A file contains information of user impressions.
 
         Returns:
-            obj: An iterator that will yields parsed user feature, in the format of dict.
+            obj: An iterator that yields parsed user feature, in the format of dict.
         """
 
         if not hasattr(self, "news_title_index"):
@@ -470,7 +470,7 @@ class MINDAllIterator(BaseIterator):
             click_subvert_indexes (list): words indices for user's clicked news subverts.
 
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
 
         user_indexes = np.asarray(user_indexes, dtype=np.int32)
@@ -496,7 +496,7 @@ class MINDAllIterator(BaseIterator):
             news_file (str): A file contains several informations of news.
             
         Returns:
-            obj: An iterator that will yields parsed news feature, in the format of dict.
+            obj: An iterator that yields parsed news feature, in the format of dict.
         """
         if not hasattr(self, "news_title_index"):
             self.init_news(news_file)
@@ -548,7 +548,7 @@ class MINDAllIterator(BaseIterator):
             candidate_subvert_indexes (list): the candidate news subverts' words indices.
             
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
 
         news_indexes_batch = np.asarray(news_indexes, dtype=np.int32)
@@ -576,7 +576,7 @@ class MINDAllIterator(BaseIterator):
             behaivors_file (str): A file contains several informations of behaviros.
             
         Returns:
-            obj: An iterator that will yields parsed impression data, in the format of dict.
+            obj: An iterator that yields parsed impression data, in the format of dict.
         """
 
         if not hasattr(self, "histories"):

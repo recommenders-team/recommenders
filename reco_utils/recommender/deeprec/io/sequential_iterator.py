@@ -178,7 +178,7 @@ class SequentialIterator(BaseIterator):
                 Sequences with length lower than min_seq_length will be ignored.
 
         Returns:
-            obj: An iterator that will yields parsed results, in the format of graph feed_dict.
+            obj: An iterator that yields parsed results, in the format of graph feed_dict.
         """
         label_list = []
         user_list = []
@@ -307,7 +307,7 @@ class SequentialIterator(BaseIterator):
             batch_num_ngs (int): The number of negative sampling while training in mini-batch.
 
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
         if batch_num_ngs:
             instance_cnt = len(label_list)
