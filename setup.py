@@ -5,15 +5,17 @@ from pathlib import Path
 from setuptools import setup, find_packages
 import time
 from os import environ
+from reco_utils import VERSION
 
-# from reco_utils import VERSION
-# version = VERSION
 
-here = Path(__file__).absolute().parent
-version_data = {}
-with open(here.joinpath("reco_utils", "__init__.py"), "r") as f:
-    exec(f.read(), version_data)
-version = version_data.get("__version__", "0.0")
+version = VERSION
+
+
+# here = Path(__file__).absolute().parent
+# version_data = {}
+# with open(here.joinpath("reco_utils", "__init__.py"), "r") as f:
+#     exec(f.read(), version_data)
+# version = version_data.get("__version__", "0.0")
 
 # Get the long description from the README file
 here = Path(__file__).absolute().parent
