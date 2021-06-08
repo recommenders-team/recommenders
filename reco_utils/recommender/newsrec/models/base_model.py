@@ -168,8 +168,7 @@ class BaseModel:
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:
-            list: A list of evaluated results, including total loss value, data loss value,
-                predicted scores, and ground-truth labels.
+            list: A list of evaluated results, including total loss value, data loss value, predicted scores, and ground-truth labels.
         """
         eval_input, eval_label = self._get_input_label_from_iter(eval_batch_data)
         imp_index = eval_batch_data["impression_index_batch"]
@@ -290,8 +289,10 @@ class BaseModel:
             group_keys (list): group key list.
 
         Returns:
-            all_labels: labels after group.
-            all_preds: preds after group.
+            list, list, list:
+            - Keys after group.
+            - Labels after group.
+            - Preds after group.
 
         """
 
@@ -319,7 +320,7 @@ class BaseModel:
             filename (str): A file name that will be evaluated.
 
         Returns:
-            dict: A dictionary contains evaluation metrics.
+            dict: A dictionary that contains evaluation metrics.
         """
 
         if self.support_quick_scoring:

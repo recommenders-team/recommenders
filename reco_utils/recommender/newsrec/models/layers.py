@@ -282,7 +282,7 @@ def PersonalizedAttentivePooling(dim1, dim2, dim3, seed=0):
         dim3 (int): shape of query
     
     Returns:
-        weighted summary of inputs value.
+        obj: weighted summary of inputs value.
     """
     vecs_input = keras.Input(shape=(dim1, dim2), dtype="float32")
     query_input = keras.Input(shape=(dim3,), dtype="float32")
