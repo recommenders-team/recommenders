@@ -34,13 +34,8 @@ jobs:
   timeoutInMinutes: ${{ parameters.timeout }}
   pool:
     name: $(Agent_Pool)
-  # workspace:
-  #   clean: all
 
   steps:
-  # - checkout: self
-  #   clean: true
-  #   displayName: 'Get clean repository'
 
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
@@ -73,10 +68,6 @@ jobs:
         pip install dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} || exit -1
       else
         echo "   --- INSTALLING LATEST CODE ---"
-        du -sh *
-        cat reco_utils/__init__.py
-        cat setup.py
-        python -c "from reco_utils import VERSION; print(VERSION)"
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
       
