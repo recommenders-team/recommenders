@@ -113,7 +113,7 @@ jobs:
 
         # Remove reco_utils folder to make sure it is using the package to run the tests
         # We leave the yaml files from DeepRec that are used in the tests
-        find reco_utils ! -name "*.yaml" -delete 2>/dev/null || exit -1
+        find reco_utils ! -name "*.yaml" -delete 2>/dev/null 
         du -a reco_utils
 
         # run tests
