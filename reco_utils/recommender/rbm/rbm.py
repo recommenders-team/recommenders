@@ -247,7 +247,10 @@ class RBM:
             Nh (int): number of hidden units (latent variables of the model)
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor: `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv. `bv` of size (1, Nvisible): visible units' bias, initialized to zero. `bh` of size (1, Nhidden)L hidden units' bias, initiliazed to zero.
+            tf.Tensor, tf.Tensor, tf.Tensor: 
+            - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv. 
+            - `bv` of size (1, Nvisible): visible units' bias, initialized to zero. 
+            - `bh` of size (1, Nhidden)L hidden units' bias, initiliazed to zero.
         """
         with tf.variable_scope("Network_parameters"):
 
