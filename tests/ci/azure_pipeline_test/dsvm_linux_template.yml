@@ -34,8 +34,8 @@ jobs:
   timeoutInMinutes: ${{ parameters.timeout }}
   pool:
     name: $(Agent_Pool)
-  workspace:
-    clean: all
+  # workspace:
+  #   clean: all
 
   steps:
   # - checkout: self
