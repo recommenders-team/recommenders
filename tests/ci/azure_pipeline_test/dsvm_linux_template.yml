@@ -75,6 +75,7 @@ jobs:
         echo "   --- INSTALLING LATEST CODE ---"
         du -sh *
         cat reco_utils/__init__.py
+        python -c "from reco_utils import VERSION; print(VERSION)"
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
       
@@ -111,7 +112,7 @@ jobs:
 
         # Remove reco_utils folder to make sure it is using the package to run the tests
         # We leave the yaml files from DeepRec that are used in the tests
-        find reco_utils ! -name "*.yaml" -delete 2>/dev/null
+        find reco_utils ! -name "*.yaml" -delete 2>/dev/null || exit -1
         du -a reco_utils
 
         # run tests
