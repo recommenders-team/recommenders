@@ -27,7 +27,7 @@ def surprise_trainset_to_df(
         col_rating (str): Rating column name.
     
     Returns:
-        pd.DataFrame: A dataframe. The user and item columns are strings and the rating columns are floats.
+        pd.DataFrame: A dataframe with user column (str), item column (str), and rating column (float).
     """
     df = pd.DataFrame(trainset.all_ratings(), columns=[col_user, col_item, col_rating])
     map_user = (
@@ -61,7 +61,7 @@ def predict(
         itemcol (str): name of the item column
     
     Returns:
-        pd.DataFrame: dataframe with usercol, itemcol, predcol
+        pd.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     predictions = [
         algo.predict(getattr(row, usercol), getattr(row, itemcol))
@@ -93,7 +93,7 @@ def compute_ranking_predictions(
         remove_seen (bool): flag to remove (user, item) pairs seen in the training data
     
     Returns:
-        pd.DataFrame: dataframe with usercol, itemcol, predcol
+        pd.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     preds_lst = []
     users = data[usercol].unique()
