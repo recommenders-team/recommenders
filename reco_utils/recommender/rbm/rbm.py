@@ -291,8 +291,9 @@ class RBM:
             vv (tf.Tensor, float32): visible units
 
         Returns:
-            tf.Tensor, tf.Tensor: Two tensors. `phv` is the activation probability of the hidden unit. `h_` is the
-            sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
+            tf.Tensor, tf.Tensor: 
+            - `phv`: The activation probability of the hidden unit. 
+            - `h_`: The sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
         """
 
         with tf.name_scope("sample_hidden_units"):
@@ -328,9 +329,9 @@ class RBM:
             h (tf.Tensor, float32): visible units.
 
         Returns:
-            tf.Tensor, tf.Tensor: Two tensors. `pvh` is the activation probability of the visible unit given the hidden.
-            `v_` is the sampled value of the visible unit from a Multinomial distributions having success probability 
-            `pvh`.
+            tf.Tensor, tf.Tensor: 
+            - `pvh`: The activation probability of the visible unit given the hidden.
+            - `v_`: The sampled value of the visible unit from a Multinomial distributions having success probability `pvh`.
         """
 
         with tf.name_scope("sample_visible_units"):
@@ -363,8 +364,9 @@ class RBM:
             v (tf.Tensor, float32): visible units.
 
         Returns:
-            tf.Tensor, tf.Tensor: Two tensors of float32. `h_k` is the sampled value of the hidden unit at step k. `v_k`
-            is the sampled value of the visible unit at step k.
+            tf.Tensor, tf.Tensor:
+            - `h_k`: The sampled value of the hidden unit at step k, float32.
+            - `v_k`: The sampled value of the visible unit at step k, float32.
         """
 
         with tf.name_scope("gibbs_sampling"):
