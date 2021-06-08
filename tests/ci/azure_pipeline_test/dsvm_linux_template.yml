@@ -75,6 +75,7 @@ jobs:
         echo "   --- INSTALLING LATEST CODE ---"
         du -sh *
         cat reco_utils/__init__.py
+        cat setup.py
         python -c "from reco_utils import VERSION; print(VERSION)"
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
