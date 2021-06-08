@@ -72,6 +72,7 @@ jobs:
       else
         echo "   --- INSTALLING LATEST CODE ---"
         du -sh *
+        cat reco_utils/__init__.py
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
       
