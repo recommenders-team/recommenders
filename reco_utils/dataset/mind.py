@@ -91,8 +91,9 @@ def read_clickhistory(path, filename):
         filename (str): Filename
 
     Returns:
-        list, dict: List of user session with user_id, clicks, positive and negative interactions. Dictionary
-            with user_id click history
+        list, dict: 
+        - A list of user session with user_id, clicks, positive and negative interactions. 
+        - A dictionary with user_id click history.
     """
     userid_history = {}
     with open(os.path.join(path, filename)) as f:
