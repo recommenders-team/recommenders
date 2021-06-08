@@ -319,8 +319,8 @@ class TfidfRecommender:
             metadata (pd.DataFrame): Dataframe containing item info.
             rec_id (str): Identifier for recommended item.
 
-        Results:
-            rec_info (pd.Series): Single row from dataframe containing recommended item info.
+        Returns:
+            pd.Series: Single row from dataframe containing recommended item info.
         """
 
         # Return row
@@ -347,8 +347,8 @@ class TfidfRecommender:
             cols_to_keep (list of str): List of columns from the metadata dataframe to include (e.g., ['title','authors','journal','publish_time','url']). By default, all columns are kept.
             verbose (boolean): Set to True if you want to print the table.
         
-        Results:
-            df (pd.Styler): Stylized dataframe holding recommendations and associated metadata just for the item of interest (can access as normal dataframe by using df.data).
+        Returns:
+            pd.Styler: Stylized dataframe holding recommendations and associated metadata just for the item of interest (can access as normal dataframe by using df.data).
         """
 
         # Create subset of dataframe with just recommendations for the item of interest

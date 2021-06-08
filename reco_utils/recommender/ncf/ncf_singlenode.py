@@ -395,7 +395,7 @@ class NCF:
                 noting that list-wise type prediction is faster than element-wise's.
         
         Returns:
-            list or float: list of predicted rating or predicted rating score. 
+            list or float: A list of predicted rating or predicted rating score. 
         """
 
         if is_list:

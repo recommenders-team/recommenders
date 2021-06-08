@@ -56,7 +56,7 @@ class MINDIterator(BaseIterator):
             file path (str): file path
         
         Returns:
-            (obj): pickle load obj
+            obj: pickle loaded object
         """
         with open(file_path, "rb") as f:
             return pickle.load(f)
