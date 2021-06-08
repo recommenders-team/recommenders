@@ -37,8 +37,9 @@ def build_feature_columns(
             'wide_deep' for a combination of linear model and neural networks.
 
     Returns:
-        list of tf.feature_column, list of tf.feature_column: Two lists. One with the wide feature columns and a second
-        with the deep feature columns. If only the wide model is selected, the deep column list is empty and viceversa. 
+        list, list: 
+        - The wide feature columns 
+        - The deep feature columns. If only the wide model is selected, the deep column list is empty and viceversa. 
     """
     if model_type not in ["wide", "deep", "wide_deep"]:
         raise ValueError("Model type should be either 'wide', 'deep', or 'wide_deep'")
@@ -77,7 +78,7 @@ def _build_wide_columns(user_ids, item_ids, hash_bucket_size=1000):
         hash_bucket_size (int): Hash bucket size.
 
     Returns:
-        list of tf.feature_column: Wide feature columns.
+        list: Wide feature columns.
     """
     # Including the original features in addition to the crossed one is recommended to address hash collision problem.
     return [
@@ -103,7 +104,7 @@ def _build_deep_columns(
         item_feat_shape (int or an iterable of integers): Item feature array shape.
     
     Returns:
-        list of tf.feature_column: Deep feature columns.
+        list: Deep feature columns.
     """
     deep_columns = [
         # User embedding

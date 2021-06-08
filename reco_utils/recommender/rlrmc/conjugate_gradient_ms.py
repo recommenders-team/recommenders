@@ -72,8 +72,7 @@ class ConjugateGradientMS(Solver):
                 use information from a previous solve run.
         
         Returns:
-            np.array: Local minimum of obj, or if algorithm terminated before
-                convergence x will be the point at which it terminated.
+            np.array: Local minimum of obj, or if algorithm terminated before convergence x will be the point at which it terminated.
         """
         man = problem.manifold
         verbosity = problem.verbosity
