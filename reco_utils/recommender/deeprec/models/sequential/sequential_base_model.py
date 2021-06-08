@@ -195,7 +195,7 @@ class SequentialBaseModel(BaseModel):
             num_ngs (int): The number of negative sampling for a positive instance.
 
         Returns:
-            dict: A dictionary contains evaluation metrics.
+            dict: A dictionary that contains evaluation metrics.
         """
 
         load_sess = self.sess

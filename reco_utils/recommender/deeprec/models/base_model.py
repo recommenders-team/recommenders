@@ -532,7 +532,9 @@ class BaseModel:
             group_keys (list): group key list.
 
         Returns:
-            list, list: Labels after group. Predictions after group.
+            list, list: 
+            - Labels after group. 
+            - Predictions after group.
         """
         all_keys = list(set(group_keys))
         group_labels = {k: [] for k in all_keys}
@@ -639,7 +641,7 @@ class BaseModel:
             layer_sizes (list): The shape of each layer of MLP part
             scope (obj): The scope of MLP part
 
-        Returns:s
+        Returns:
             obj: Prediction logit after fully connected layer.
         """
         hparams = self.hparams

@@ -70,9 +70,10 @@ def track_model_metrics(
         **kwargs: other keyword arguments to be passed down
     
     Returns:
-        pd.DataFrame: performance traces of the fitted model
-        LightFM model: fitted model
-        matplotlib axes: side effect of the method
+        pd.DataFrame, LightFM model, matplotlib axes: 
+        - Performance traces of the fitted model
+        - Fitted model
+        - Side effect of the method
     """
     # initialising temp data storage
     model_prec_train = [0] * no_epochs
@@ -234,7 +235,7 @@ def prepare_all_predictions(
         item_features (np.float32 csr_matrix):  Item weights over features
 
     Returns:
-        pd.DataFrame of all predictions
+        pd.DataFrame: all predictions
     """
     users, items, preds = [], [], []
     item = list(data.itemID.unique())

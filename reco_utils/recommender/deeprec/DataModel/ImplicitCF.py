@@ -194,7 +194,10 @@ class ImplicitCF(object):
             batch_size (int): Batch size of users.
 
         Returns:
-            np.array, np.array, np.array: Sampled users, sampled positive items, sampled negative items.
+            np.array, np.array, np.array: 
+            - Sampled users.
+            - Sampled positive items.
+            - Sampled negative items.
         """
 
         def sample_neg(x):
