@@ -138,8 +138,8 @@ class RBM:
         the relu function.
 
         Args:
-            pr (tf.Tensor, float32): input conditional probability
-            g  (np.array, float32):  uniform probability used for comparison
+            pr (tf.Tensor, float32): Input conditional probability.
+            g  (np.array, float32):  Uniform probability used for comparison.
 
         Returns:
             tf.Tensor: Float32 tensor of sampled units. The value is 1 if pr>g and 0 otherwise.
@@ -169,9 +169,9 @@ class RBM:
         from a common distribution.
 
         Args:
-            pr (tf.Tensor, float32): a distributions of shape (m, n, r), where m is the number of examples, n the number
+            pr (tf.Tensor, float32): A distributions of shape (m, n, r), where m is the number of examples, n the number
                  of features and r the number of classes. pr needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
-            f (tf.Tensor, float32): normalized, uniform probability used for comparison.
+            f (tf.Tensor, float32): Normalized, uniform probability used for comparison.
 
         Returns:
             tf.Tensor: An (m,n) float32 tensor of sampled rankings from 1 to r.
@@ -247,9 +247,12 @@ class RBM:
             Nh (int): number of hidden units (latent variables of the model)
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor: It returns 3 tensors. `w` of size (Nv, Nh): correlation matrix initialized 
-            by sampling from a normal distribution with zero mean and given variance init_stdv. `bv` of size 
-            (1, Nvisible): visible units' bias, initialized to zero. `bh` of size (1, Nhidden)L hidden units' bias, 
+            tf.Tensor, tf.Tensor, tf.Tensor: It returns 3 tensors. 
+                - `w` of size (Nv, Nh): correlation matrix initialized 
+            by sampling from a normal distribution with zero mean and given variance init_stdv. 
+                - `bv` of size 
+            (1, Nvisible): visible units' bias, initialized to zero. 
+                - `bh` of size (1, Nhidden)L hidden units' bias, 
             initiliazed to zero.
         """
         with tf.variable_scope("Network_parameters"):
