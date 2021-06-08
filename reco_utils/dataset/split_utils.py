@@ -21,9 +21,9 @@ def process_split_ratio(ratio):
         numbers that indicate split ratios (if it is a multi-split).
 
     Returns:
-        tuple: a tuple containing
-            bool: A boolean variable multi that indicates if the splitting is multi or single.
-            list: A list of normalized split ratios.
+        tuple:
+        - bool: A boolean variable multi that indicates if the splitting is multi or single.
+        - list: A list of normalized split ratios.
     """
     if isinstance(ratio, float):
         if ratio <= 0 or ratio >= 1:
@@ -71,8 +71,7 @@ def min_rating_filter_pandas(
         col_item (str): column name of item ID.
 
     Returns:
-        pd.DataFrame: DataFrame with at least columns of user and item that has been 
-            filtered by the given specifications.
+        pd.DataFrame: DataFrame with at least columns of user and item that has been filtered by the given specifications.
     """
     split_by_column = _get_column_name(
         filter_by, col_user, col_item
@@ -113,8 +112,7 @@ def min_rating_filter_spark(
         col_item (str): column name of item ID.
 
     Returns:
-        spark.DataFrame: DataFrame with at least columns of user and item that has been 
-            filtered by the given specifications.
+        spark.DataFrame: DataFrame with at least columns of user and item that has been filtered by the given specifications.
     """
 
     split_by_column = _get_column_name(
