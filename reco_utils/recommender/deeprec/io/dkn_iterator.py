@@ -131,7 +131,7 @@ class DKNTextIterator(BaseIterator):
             infile (str): text input file. Each line in this file is an instance.
 
         Yields:
-            obj, list, int: An iterator that will yields parsed results, in the format of graph `feed_dict`. Impression id list.
+            obj, list, int: An iterator that yields parsed results, in the format of graph `feed_dict`. Impression id list.
             Size of the data in a batch.
         """
         candidate_news_index_batch = []
@@ -214,7 +214,7 @@ class DKNTextIterator(BaseIterator):
             infile (str): text input file. Each line in this file is an instance.
 
         Yields:
-            obj, list, int: An iterator that will yields parsed results, in the format of graph `feed_dict`. Impression id list.
+            obj, list, int: An iterator that yields parsed results, in the format of graph `feed_dict`. Impression id list.
             Size of the data in a batch.
         """
         newsid_list = []
@@ -282,7 +282,7 @@ class DKNTextIterator(BaseIterator):
             impression_id_list (list) : the session's impression indices
 
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
         res = {}
         res["labels"] = np.asarray([[label] for label in label_list], dtype=np.float32)
@@ -310,7 +310,7 @@ class DKNTextIterator(BaseIterator):
             candidate_news_index_batch (list): the candidate news article's words indices
             candidate_news_entity_index_batch (list): the candidate news article's entities indices
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
         res = {}
         res["candidate_news_index_batch"] = np.asarray(
@@ -328,7 +328,7 @@ class DKNTextIterator(BaseIterator):
             data_dict (dict): a dictionary that maps string name to numpy arrays.
 
         Returns:
-            dict: a dictionary that maps graph elements to numpy arrays.
+            dict: A dictionary that maps graph elements to numpy arrays.
 
         """
         feed_dict = {
@@ -355,7 +355,7 @@ class DKNTextIterator(BaseIterator):
             data_dict (dict): a dictionary that maps string name to numpy arrays.
 
         Returns:
-            dict: a dictionary that maps graph elements to numpy arrays.
+            dict: A dictionary that maps graph elements to numpy arrays.
 
         """
         feed_dict = {

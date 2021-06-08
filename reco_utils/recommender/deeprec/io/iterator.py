@@ -105,7 +105,7 @@ class FFMTextIterator(BaseIterator):
             infile (str): Text input file. Each line in this file is an instance.
 
         Returns:
-            obj: An iterator that will yields parsed results, in the format of graph `feed_dict`.
+            obj: An iterator that yields parsed results, in the format of graph `feed_dict`.
         """
         label_list = []
         features_list = []
@@ -141,7 +141,7 @@ class FFMTextIterator(BaseIterator):
                     where each feature array is a list of [field_idx, feature_idx, feature_value] tuple.
 
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
         dim = self.feature_cnt
         FIELD_COUNT = self.field_cnt
@@ -203,6 +203,7 @@ class FFMTextIterator(BaseIterator):
 
     def gen_feed_dict(self, data_dict):
         """Construct a dictionary that maps graph elements to values.
+
         Args:
             data_dict (dict): A dictionary that maps string name to numpy arrays.
 
