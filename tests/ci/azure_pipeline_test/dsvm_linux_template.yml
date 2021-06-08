@@ -34,11 +34,13 @@ jobs:
   timeoutInMinutes: ${{ parameters.timeout }}
   pool:
     name: $(Agent_Pool)
+  workspace:
+    clean: all
 
   steps:
-  - checkout: self
-    clean: true
-    displayName: 'Get clean repository'
+  # - checkout: self
+  #   clean: true
+  #   displayName: 'Get clean repository'
 
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
