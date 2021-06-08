@@ -250,7 +250,7 @@ class RBM:
             tf.Tensor, tf.Tensor, tf.Tensor: 
             - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv. 
             - `bv` of size (1, Nvisible): visible units' bias, initialized to zero. 
-            - `bh` of size (1, Nhidden)L hidden units' bias, initiliazed to zero.
+            - `bh` of size (1, Nhidden): hidden units' bias, initiliazed to zero.
         """
         with tf.variable_scope("Network_parameters"):
 
@@ -388,7 +388,8 @@ class RBM:
             v_k (tf.Tensor, float32): sampled visible units at step k
 
         Returns:
-            obj: objective function of Contrastive divergence, that is the difference
+            obj: 
+            - Objective function of Contrastive divergence: the difference
             between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
@@ -407,7 +408,7 @@ class RBM:
         accordingly.
 
         Args:
-            i (int): current epoch in the loop
+            i (int): Current epoch in the loop
         """
 
         with tf.name_scope("gibbs_protocol"):
@@ -440,7 +441,7 @@ class RBM:
         per row.
 
         Args:
-            vp (tf.Tensor, float32): inferred output (Network prediction)
+            vp (tf.Tensor, float32): Inferred output (Network prediction)
 
         Returns:
             tf.Tensor: accuracy.
@@ -473,7 +474,7 @@ class RBM:
         Note that this needs to be evaluated on the rated items only
 
         Args:
-            vp (tf.Tensor, float32): inferred output (Network prediction)
+            vp (tf.Tensor, float32): Inferred output (Network prediction)
 
         Returns:
             tf.Tensor: root mean square error.
@@ -529,10 +530,10 @@ class RBM:
         """Evaluates precision on the train and test set
 
         Args:
-            xtst (np.array, integer32): the user/affinity matrix for the test set
+            xtst (np.array, integer32): The user/affinity matrix for the test set
 
         Returns:
-            float, float: precision on the train and test sets.
+            float, float: Precision on the train and test sets.
         """
 
         if self.with_metrics:
@@ -557,9 +558,9 @@ class RBM:
         of the training epochs
 
         Args:
-            Rmse_train (list, float32): per epoch rmse on the train set
-            precision_train (float): precision on the train set
-            precision_test  (float): precision on the test set
+            Rmse_train (list, float32): Per epoch rmse on the train set.
+            precision_train (float): Precision on the train set.
+            precision_test  (float): Precision on the test set.
         """
 
         if self.with_metrics:
@@ -612,7 +613,7 @@ class RBM:
         """Initialize the TF session on training data
 
         Args:
-            xtr (np.array, int32): the user/affinity matrix for the train set
+            xtr (np.array, int32): The user/affinity matrix for the train set.
         """
 
         init_graph = tf.global_variables_initializer()
@@ -631,10 +632,10 @@ class RBM:
         no online metrics are evaluated.
 
         Args:
-            num_minibatches (scalar, int32): number of training minibatches
+            num_minibatches (scalar, int32): Number of training minibatches.
 
         Returns:
-            float: training error per single epoch. If `self.with_metrics` is False, this is zero.
+            float: Training error per single epoch. If `self.with_metrics` is False, this is zero.
         """
 
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
@@ -811,7 +812,7 @@ class RBM:
         of rows (users).
 
         Args:
-            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e.
+            x (np.array, int32): Input user/affinity matrix. Note that this can be a single vector, i.e.
             the ratings of a single user.
 
         Returns:
