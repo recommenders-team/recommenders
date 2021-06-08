@@ -5,7 +5,7 @@ from pathlib import Path
 from setuptools import setup, find_packages
 import time
 from os import environ
-from reco_utils import VERSION
+from .reco_utils import VERSION
 
 
 version = VERSION
