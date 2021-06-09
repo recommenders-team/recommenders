@@ -23,10 +23,10 @@ class DiversityEvaluation:
         train (train_df) and recommendation (reco_df) dataframes should already be groupped by user-item pair.
 
         Metrics includes:
-            Coverage - The proportion of items that can be recommended. It includes two metrics: catalog_coverage and distributional_coverage.
-            Novelty - A more novel item indicates it is less popular.
+            Coverage - The proportion of items that can be recommended. It includes two metrics: (1) catalog_coverage, which measures the proportion of items that get recommended from the item catalog; (2) distributional_coverage, which measures how unequally different items are recommended in the recommendations to all users.
+            Novelty - A more novel item indicates it is less popular, i.e., it gets recommended less frequently.
             Diversity - The dissimilarity of items being recommended.
-            Serendipity - The “unusualness” or “surprise” of recommendations to a user.
+            Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used, it indicates how "pleasant surprise" of recommendations is to a user. 
 
 
         Args:
