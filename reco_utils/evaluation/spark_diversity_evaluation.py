@@ -253,13 +253,10 @@ class DiversityEvaluation:
         if self.df_user_item_serendipity is None:
             self.df_cosine_similariy = self._get_cosine_similarity().orderBy("i1", "i2")
             self.df_user_item_serendipity = (
-                self.reco_df.withColumn(
-                    "reco_item", F.col(self.col_item)
-                )  # duplicate col_item to keep
-                .select(
+                self.reco_df.select(
                     self.col_user,
-                    "reco_item",
-                    F.col(self.col_item).alias("reco_item_tmp"),
+                    self.col_item,
+                    F.col(self.col_item).alias("reco_item_tmp"),  # duplicate col_item to keep
                 )
                 .join(
                     self.train_df.select(
@@ -269,7 +266,7 @@ class DiversityEvaluation:
                 )
                 .select(
                     self.col_user,
-                    "reco_item",
+                    self.col_item,
                     F.least(F.col("reco_item_tmp"), F.col("train_item_tmp")).alias(
                         "i1"
                     ),
@@ -279,7 +276,7 @@ class DiversityEvaluation:
                 )
                 .join(self.df_cosine_similariy, on=["i1", "i2"], how="left")
                 .fillna(0)
-                .groupBy(self.col_user, F.col("reco_item").alias(self.col_item))
+                .groupBy(self.col_user, self.col_item)
                 .agg(F.mean(self.sim_col).alias("avg_item2interactedHistory_sim"))
                 .join(self.reco_df, on=[self.col_user, self.col_item])
                 .withColumn(
