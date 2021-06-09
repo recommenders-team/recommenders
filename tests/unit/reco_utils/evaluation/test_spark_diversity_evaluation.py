@@ -70,7 +70,7 @@ def spark_data(spark):
 def test_catalog_coverage(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     c_coverage = evaluator.catalog_coverage()
     assert c_coverage == target_metrics["c_coverage"]
     
@@ -78,7 +78,7 @@ def test_catalog_coverage(spark_data, target_metrics):
 def test_distributional_coverage(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     d_coverage = evaluator.distributional_coverage()
     assert d_coverage == target_metrics["d_coverage"]
 
@@ -86,7 +86,7 @@ def test_distributional_coverage(spark_data, target_metrics):
 def test_item_novelty(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     actual = evaluator.item_novelty().toPandas()
     assert_frame_equal(target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4)
 
@@ -94,7 +94,7 @@ def test_item_novelty(spark_data, target_metrics):
 def test_user_novelty(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     actual = evaluator.user_novelty().toPandas()
     assert_frame_equal(target_metrics["user_novelty"], actual, check_exact=False, check_less_precise=4)
 
@@ -102,7 +102,7 @@ def test_user_novelty(spark_data, target_metrics):
 def test_novelty(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     actual = evaluator.novelty().toPandas()
     assert_frame_equal(target_metrics["novelty"], actual, check_exact=False, check_less_precise=4)
 
@@ -110,7 +110,7 @@ def test_novelty(spark_data, target_metrics):
 def test_user_diversity(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     actual = evaluator.user_diversity().toPandas()
     assert_frame_equal(target_metrics["user_diversity"], actual, check_exact=False, check_less_precise=4)
 
@@ -118,7 +118,7 @@ def test_user_diversity(spark_data, target_metrics):
 def test_diversity(spark_data, target_metrics):   
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId') 
+                         col_user='UserId', col_item='ItemId') 
     actual = evaluator.diversity().toPandas()
     assert_frame_equal(target_metrics["diversity"], actual,check_exact=False, check_less_precise=4)   
 
@@ -126,7 +126,7 @@ def test_diversity(spark_data, target_metrics):
 def test_user_item_serendipity(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     actual = evaluator.user_item_serendipity().toPandas()
     assert_frame_equal(target_metrics["user_item_serendipity"], actual, check_exact=False, check_less_precise=4)
 
@@ -134,7 +134,7 @@ def test_user_item_serendipity(spark_data, target_metrics):
 def test_user_serendipity(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     actual = evaluator.user_serendipity().toPandas()
     assert_frame_equal(target_metrics["user_serendipity"], actual, check_exact=False, check_less_precise=4)
 
@@ -142,6 +142,6 @@ def test_user_serendipity(spark_data, target_metrics):
 def test_serendipity(spark_data, target_metrics):
     train_df, reco_df = spark_data  
     evaluator = DiversityEvaluation(train_df=train_df, reco_df=reco_df,
-                         user_col='UserId', item_col='ItemId')
+                         col_user='UserId', col_item='ItemId')
     actual = evaluator.serendipity().toPandas()
     assert_frame_equal(target_metrics["serendipity"], actual, check_exact=False, check_less_precise=4)

@@ -4,15 +4,20 @@
 from pyspark.sql.types import *
 from pyspark.sql import functions as F
 
+from reco_utils.common.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+)
+
 
 class DiversityEvaluation:
     def __init__(
         self,
         train_df,
         reco_df,
-        user_col="UserId",
-        item_col="ItemId",
-        relevance_col=None,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_relevance=None,
     ):
         """Diversity evaluator.
         train (train_df) and recommendation (reco_df) dataframes should already be groupped by user-item pair.
@@ -26,17 +31,17 @@ class DiversityEvaluation:
 
         Args:
             train_df (pySpark DataFrame): Training set used for the recommender,
-                containing user_col, item_col.
+                containing col_user, col_item.
             reco_df (pySpark DataFrame): Recommender's prediction output,
-                containing user_col, item_col, relevance_col (optional).
-            user_col (str): User id column name.
-            item_col (str): Item id column name.
-            relevance_col (str): this column indicates whether the recommended item is actually relevent to the user or not.
+                containing col_user, col_item, col_relevance (optional).
+            col_user (str): User id column name.
+            col_item (str): Item id column name.
+            col_relevance (str): this column indicates whether the recommended item is actually relevent to the user or not.
         """
 
-        self.train_df = train_df.select(user_col, item_col)
-        self.user_col = user_col
-        self.item_col = item_col
+        self.train_df = train_df.select(col_user, col_item)
+        self.col_user = col_user
+        self.col_item = col_item
         self.sim_col = "sim"
         self.df_cosine_similariy = None
         self.df_user_item_serendipity = None
@@ -49,22 +54,22 @@ class DiversityEvaluation:
         self.df_user_diversity = None
         self.df_diversity = None
 
-        if relevance_col is None:
-            self.relevance_col = "relevance"
+        if col_relevance is None:
+            self.col_relevance = "relevance"
             # relevance term, default is 1 (relevent) for all
             self.reco_df = reco_df.select(
-                user_col, item_col, F.lit(1.0).alias(self.relevance_col)
+                col_user, col_item, F.lit(1.0).alias(self.col_relevance)
             )
         else:
-            self.relevance_col = relevance_col
+            self.col_relevance = col_relevance
             self.reco_df = reco_df.select(
-                user_col, item_col, F.col(self.relevance_col).cast(DoubleType())
+                col_user, col_item, F.col(self.col_relevance).cast(DoubleType())
             )
 
         # check if reco_df contain any user_item pairs that are already shown train_df
         count_intersection = (
-            self.train_df.select(self.user_col, self.item_col)
-            .intersect(self.reco_df.select(self.user_col, self.item_col))
+            self.train_df.select(self.col_user, self.col_item)
+            .intersect(self.reco_df.select(self.col_user, self.col_item))
             .count()
         )
 
@@ -75,42 +80,42 @@ class DiversityEvaluation:
 
     def _get_all_user_item_pairs(self, df):
         return (
-            df.select(self.user_col)
+            df.select(self.col_user)
             .distinct()
-            .join(df.select(self.item_col).distinct())
+            .join(df.select(self.col_item).distinct())
         )
 
     def _get_pairwise_items(self, df):
         return (
-            df.select(self.user_col, F.col(self.item_col).alias("i1"))
+            df.select(self.col_user, F.col(self.col_item).alias("i1"))
             # get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])
             .join(
                 df.select(
-                    F.col(self.user_col).alias("_user"),
-                    F.col(self.item_col).alias("i2"),
+                    F.col(self.col_user).alias("_user"),
+                    F.col(self.col_item).alias("i2"),
                 ),
-                (F.col(self.user_col) == F.col("_user")) & (F.col("i1") <= F.col("i2")),
-            ).select(self.user_col, "i1", "i2")
+                (F.col(self.col_user) == F.col("_user")) & (F.col("i1") <= F.col("i2")),
+            ).select(self.col_user, "i1", "i2")
         )
 
     def _get_cosine_similarity(self, n_partitions=200):
         if self.df_cosine_similariy is None:
             pairs = self._get_pairwise_items(df=self.train_df)
-            item_count = self.train_df.groupBy(self.item_col).count()
+            item_count = self.train_df.groupBy(self.col_item).count()
 
             self.df_cosine_similariy = (
                 pairs.groupBy("i1", "i2")
                 .count()
                 .join(
                     item_count.select(
-                        F.col(self.item_col).alias("i1"),
+                        F.col(self.col_item).alias("i1"),
                         F.pow(F.col("count"), 0.5).alias("i1_sqrt_count"),
                     ),
                     on="i1",
                 )
                 .join(
                     item_count.select(
-                        F.col(self.item_col).alias("i2"),
+                        F.col(self.col_item).alias("i2"),
                         F.pow(F.col("count"), 0.5).alias("i2_sqrt_count"),
                     ),
                     on="i2",
@@ -139,9 +144,9 @@ class DiversityEvaluation:
                     0
                 )  # Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items. e.g. i1 and i2 have never occurred together.
                 .filter(F.col("i1") != F.col("i2"))
-                .groupBy(self.user_col)
+                .groupBy(self.col_user)
                 .agg(F.mean(self.sim_col).alias("avg_il_sim"))
-                .select(self.user_col, "avg_il_sim")
+                .select(self.col_user, "avg_il_sim")
             )
         return self.df_intralist_similarity
 
@@ -149,7 +154,7 @@ class DiversityEvaluation:
         """Calculate average diversity for recommendations for each user.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: user_col, user_diversity
+            pyspark.sql.dataframe.DataFrame: col_user, user_diversity
         """
         if self.df_user_diversity is None:
             self.df_intralist_similarity = self._get_intralist_similarity(self.reco_df)
@@ -157,8 +162,8 @@ class DiversityEvaluation:
                 self.df_intralist_similarity.withColumn(
                     "user_diversity", 1 - F.col("avg_il_sim")
                 )
-                .select(self.user_col, "user_diversity")
-                .orderBy(self.user_col)
+                .select(self.col_user, "user_diversity")
+                .orderBy(self.col_user)
             )
         return self.df_user_diversity
 
@@ -180,30 +185,30 @@ class DiversityEvaluation:
         """Calculate novelty for each item in the recommendations.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: item_col, item_novelty
+            pyspark.sql.dataframe.DataFrame: col_item, item_novelty
         """
         if self.df_item_novelty is None:
             train_pairs = self._get_all_user_item_pairs(df=self.train_df)
             self.df_item_novelty = (
                 train_pairs.join(
                     self.train_df.withColumn("seen", F.lit(1)),
-                    on=[self.user_col, self.item_col],
+                    on=[self.col_user, self.col_item],
                     how="left",
                 )
                 .filter(F.col("seen").isNull())
-                .groupBy(self.item_col)
+                .groupBy(self.col_item)
                 .count()
                 .join(
-                    self.reco_df.groupBy(self.item_col).agg(
-                        F.count(self.user_col).alias("reco_count")
+                    self.reco_df.groupBy(self.col_item).agg(
+                        F.count(self.col_user).alias("reco_count")
                     ),
-                    on=self.item_col,
+                    on=self.col_item,
                 )
                 .withColumn(
                     "item_novelty", -F.log2(F.col("reco_count") / F.col("count"))
                 )
-                .select(self.item_col, "item_novelty")
-                .orderBy(self.item_col)
+                .select(self.col_item, "item_novelty")
+                .orderBy(self.col_item)
             )
         return self.df_item_novelty
 
@@ -211,15 +216,15 @@ class DiversityEvaluation:
         """Calculate average item novelty for each user's recommendations.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: user_col, user_novelty
+            pyspark.sql.dataframe.DataFrame: col_user, user_novelty
         """
         if self.df_user_novelty is None:
             self.df_item_novelty = self.item_novelty()
             self.df_user_novelty = (
-                self.reco_df.join(self.df_item_novelty, on=self.item_col)
-                .groupBy(self.user_col)
+                self.reco_df.join(self.df_item_novelty, on=self.col_item)
+                .groupBy(self.col_user)
                 .agg(F.mean("item_novelty").alias("user_novelty"))
-                .orderBy(self.user_col)
+                .orderBy(self.col_user)
             )
         return self.df_user_novelty
 
@@ -241,29 +246,29 @@ class DiversityEvaluation:
         """Calculate serendipity of each item in the recommendations for each user.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: user_col, item_col, user_item_serendipity
+            pyspark.sql.dataframe.DataFrame: col_user, col_item, user_item_serendipity
         """
-        # for every user_col, item_col in reco_df, join all interacted items from train_df.
+        # for every col_user, col_item in reco_df, join all interacted items from train_df.
         # These interacted items are repeated for each item in reco_df for a specific user.
         if self.df_user_item_serendipity is None:
             self.df_cosine_similariy = self._get_cosine_similarity().orderBy("i1", "i2")
             self.df_user_item_serendipity = (
                 self.reco_df.withColumn(
-                    "reco_item", F.col(self.item_col)
-                )  # duplicate item_col to keep
+                    "reco_item", F.col(self.col_item)
+                )  # duplicate col_item to keep
                 .select(
-                    self.user_col,
+                    self.col_user,
                     "reco_item",
-                    F.col(self.item_col).alias("reco_item_tmp"),
+                    F.col(self.col_item).alias("reco_item_tmp"),
                 )
                 .join(
                     self.train_df.select(
-                        self.user_col, F.col(self.item_col).alias("train_item_tmp")
+                        self.col_user, F.col(self.col_item).alias("train_item_tmp")
                     ),
-                    on=[self.user_col],
+                    on=[self.col_user],
                 )
                 .select(
-                    self.user_col,
+                    self.col_user,
                     "reco_item",
                     F.least(F.col("reco_item_tmp"), F.col("train_item_tmp")).alias(
                         "i1"
@@ -274,16 +279,16 @@ class DiversityEvaluation:
                 )
                 .join(self.df_cosine_similariy, on=["i1", "i2"], how="left")
                 .fillna(0)
-                .groupBy(self.user_col, F.col("reco_item").alias(self.item_col))
+                .groupBy(self.col_user, F.col("reco_item").alias(self.col_item))
                 .agg(F.mean(self.sim_col).alias("avg_item2interactedHistory_sim"))
-                .join(self.reco_df, on=[self.user_col, self.item_col])
+                .join(self.reco_df, on=[self.col_user, self.col_item])
                 .withColumn(
                     "user_item_serendipity",
                     (1 - F.col("avg_item2interactedHistory_sim"))
-                    * F.col(self.relevance_col),
+                    * F.col(self.col_relevance),
                 )
-                .select(self.user_col, self.item_col, "user_item_serendipity")
-                .orderBy(self.user_col, self.item_col)
+                .select(self.col_user, self.col_item, "user_item_serendipity")
+                .orderBy(self.col_user, self.col_item)
             )
         return self.df_user_item_serendipity
 
@@ -291,14 +296,14 @@ class DiversityEvaluation:
         """Calculate average serendipity for each user's recommendations.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: user_col, user_serendipity
+            pyspark.sql.dataframe.DataFrame: col_user, user_serendipity
         """
         if self.df_user_serendipity is None:
             self.df_user_item_serendipity = self.user_item_serendipity()
             self.df_user_serendipity = (
-                self.df_user_item_serendipity.groupBy(self.user_col)
+                self.df_user_item_serendipity.groupBy(self.col_user)
                 .agg(F.mean("user_item_serendipity").alias("user_serendipity"))
-                .orderBy(self.user_col)
+                .orderBy(self.col_user)
             )
         return self.df_user_serendipity
 
@@ -326,10 +331,10 @@ class DiversityEvaluation:
             float: catalog coverage
         """
         # distinct item count in reco_df
-        count_distinct_item_reco = self.reco_df.select(self.item_col).distinct().count()
+        count_distinct_item_reco = self.reco_df.select(self.col_item).distinct().count()
         # distinct item count in train_df
         count_distinct_item_train = (
-            self.train_df.select(self.item_col).distinct().count()
+            self.train_df.select(self.col_item).distinct().count()
         )
 
         # cagalog coverage
@@ -342,11 +347,11 @@ class DiversityEvaluation:
         Returns:
             float: distributional coverage
         """
-        # In reco_df, how  many times each item_col is being recommended
-        df_itemcnt_reco = self.reco_df.groupBy(self.item_col).count()
+        # In reco_df, how  many times each col_item is being recommended
+        df_itemcnt_reco = self.reco_df.groupBy(self.col_item).count()
         # distinct item count in train_df
         count_distinct_item_train = (
-            self.train_df.select(self.item_col).distinct().count()
+            self.train_df.select(self.col_item).distinct().count()
         )
         # the number of total recommendations
         count_row_reco = self.reco_df.count()
