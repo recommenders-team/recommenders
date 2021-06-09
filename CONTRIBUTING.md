@@ -23,7 +23,7 @@ Here are the basic steps to get started with your first contribution. Please rea
 5. Install development requirements. `pip install -r dev-requirements.txt`
 6. Create a test that replicates the issue.
 7. Make code changes.
-8. Ensure that unit tests pass and code style / formatting is consistent (see [wiki](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details). In particular, make sure that there is a docstring for every function you add and that it conforms to the Google style. 
+8. Ensure that unit tests pass and code style / formatting is consistent (see the [coding guidelines](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details). In particular, make sure that there is a docstring for every function and class you add and that it conforms to the Google style. 
 9. Create a pull request against **staging** branch.
 
 Once the features included in a [milestone](https://github.com/microsoft/recommenders/milestones) are completed, we will merge staging into main. See the wiki for more detail about our [merge strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).
