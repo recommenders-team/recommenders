@@ -36,7 +36,7 @@ class DiversityEvaluation:
                 containing col_user, col_item, col_relevance (optional).
             col_user (str): User id column name.
             col_item (str): Item id column name.
-            col_relevance (str): this column indicates whether the recommended item is actually relevent to the user or not.
+            col_relevance (str): This column indicates whether the recommended item is actually relevant to the user or not.
         """
 
         self.train_df = train_df.select(col_user, col_item)
