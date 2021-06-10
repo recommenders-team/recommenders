@@ -160,7 +160,7 @@ class MINDAllIterator(BaseIterator):
         Args:
             line (str): a string indicating one instance.
 
-        Returns:
+        Yields:
             list: Parsed results including label, impression id , user id, 
             candidate_title_index, clicked_title_index, 
             candidate_ab_index, clicked_ab_index,
@@ -257,7 +257,7 @@ class MINDAllIterator(BaseIterator):
             news_file (str): A file contains several informations of news.
             beahaviros_file (str): A file contains information of user impressions.
 
-        Returns:
+        Yields:
             obj: An iterator that yields parsed results, in the format of graph feed_dict.
         """
 
@@ -408,7 +408,7 @@ class MINDAllIterator(BaseIterator):
             news_file (str): A file contains several informations of news.
             beahaviros_file (str): A file contains information of user impressions.
 
-        Returns:
+        Yields:
             obj: An iterator that yields parsed user feature, in the format of dict.
         """
 
@@ -495,7 +495,7 @@ class MINDAllIterator(BaseIterator):
         Args:
             news_file (str): A file contains several informations of news.
             
-        Returns:
+        Yields:
             obj: An iterator that yields parsed news feature, in the format of dict.
         """
         if not hasattr(self, "news_title_index"):
@@ -575,7 +575,7 @@ class MINDAllIterator(BaseIterator):
         Args:
             behaivors_file (str): A file contains several informations of behaviros.
             
-        Returns:
+        Yields:
             obj: An iterator that yields parsed impression data, in the format of dict.
         """
 
