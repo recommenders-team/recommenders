@@ -88,12 +88,9 @@ class SequentialIterator(BaseIterator):
     def parser_one_line(self, line):
         """Parse one string line into feature values.
 
-        A line was saved as the following format::
-
-            label \\t user_hash \\t item_hash \\t item_cate \\t operation_time \\t item_history_sequence \\t item_cate_history_sequence \\t time_history_sequence
-
         Args:
-            line (str): a string indicating one instance
+            line (str): a string indicating one instance. This string contains tab-separated values in the following format:: 
+            label \\t user_hash \\t item_hash \\t item_cate \\t operation_time \\t item_history_sequence \\t item_cate_history_sequence \\t time_history_sequence
 
         Returns:
             list: Parsed results including `label`, `user_id`, `item_id`, `item_cate`, `item_history_sequence`, `cate_history_sequence`,

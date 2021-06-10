@@ -216,8 +216,10 @@ class DKNTextIterator(BaseIterator):
             infile (str): text input file. Each line in this file is an instance.
 
         Yields:
-            obj, list, int: An iterator that yields parsed results, in the format of graph `feed_dict`. Impression id list.
-            Size of the data in a batch.
+            obj, list, int: 
+            - An iterator that yields parsed results, in the format of graph `feed_dict`. 
+            - Impression id list.
+            - Size of the data in a batch.
         """
         newsid_list = []
         candidate_news_index_batch = []
