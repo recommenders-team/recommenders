@@ -1,13 +1,11 @@
 # Recommender Utilities
 
-This package contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the submodules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code.
-
-See the [online documentation](https://readthedocs.org/projects/microsoft-recommenders/).
+This package contains functions to simplify common tasks used when developing and evaluating recommender systems. A short description of the submodules is provided below. For more details about what functions are available and how to use them, please review the doc-strings provided with the code or the [online documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
 # Installation
 
 ## Pre-requisites
-Some dependencies require compilation during pip installation, on Linux this can be supported by adding build-essential dependencies:
+Some dependencies require compilation during pip installation. On Linux this can be supported by adding build-essential dependencies:
 ```bash
 sudo apt-get install -y build-essential
 ```
@@ -26,11 +24,11 @@ pip install ms-recommenders
 
 ## Optional Dependencies
 
-By default `ms-recommenders` does not install all dependencies used throughout the code or the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the `ms-recommenders` package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default `ms-recommenders` does not install all dependencies used throughout the code and the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the `ms-recommenders` package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
 - examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
-- spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation
+- spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation and certain algorithms
 - xlearn: xLearn package (on some platforms it requires pre-installation of cmake)
 - all: all of the above dependencies
 - experimental: current experimental dependencies that are being evaluated (e.g. libraries that require advanced build requirements or might conflict with libraries from other options)
@@ -64,7 +62,7 @@ When installing with GPU support you will need to point to the PyTorch index to 
 We are currently evaluating inclusion of the following dependencies:
 
  - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the [PyPI package](https://pypi.org/project/vowpalwabbit/) with the scikit-learn interface will facilitate easier integration into python environments
- - nni: a more recent version can be installed but is untested (and requires a higher numpy version as above).
+ - nni: a more recent version can be installed but is untested (and requires a higher numpy version).
 
 
 # Contents
@@ -112,7 +110,7 @@ Currently available metrics include:
 
 ## [Recommender](recommender)
 
-The recommender submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). Next a list of the algorithm utilities:
+The recommender submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). The following is a list of the algorithm utilities:
 
 * Cornac
 * DeepRec
