@@ -87,8 +87,8 @@ class SequentialIterator(BaseIterator):
 
     def parser_one_line(self, line):
         """Parse one string line into feature values.
-            a line was saved as the following format:
-            label \t user_hash \t item_hash \t item_cate \t operation_time \t item_history_sequence \t item_cate_history_sequence \t time_history_sequence
+        A line was saved as the following format:
+        `label \t user_hash \t item_hash \t item_cate \t operation_time \t item_history_sequence \t item_cate_history_sequence \t time_history_sequence`.
 
         Args:
             line (str): a string indicating one instance
@@ -177,7 +177,7 @@ class SequentialIterator(BaseIterator):
             min_seq_length (int): The minimum number of a sequence length.
                 Sequences with length lower than min_seq_length will be ignored.
 
-        Returns:
+        Yields:
             obj: An iterator that yields parsed results, in the format of graph `feed_dict`.
         """
         label_list = []
