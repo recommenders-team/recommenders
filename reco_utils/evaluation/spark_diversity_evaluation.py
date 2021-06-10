@@ -154,7 +154,7 @@ class DiversityEvaluation:
         """Calculate average diversity for recommendations for each user.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: col_user, user_diversity
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, user_diversity.
         """
         if self.df_user_diversity is None:
             self.df_intralist_similarity = self._get_intralist_similarity(self.reco_df)
@@ -171,7 +171,7 @@ class DiversityEvaluation:
         """Calculate average diversity for recommendations across all users.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: diversity
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: diversity.
         """
         if self.df_diversity is None:
             self.df_user_diversity = self.user_diversity()
@@ -185,7 +185,7 @@ class DiversityEvaluation:
         """Calculate novelty for each item in the recommendations.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: col_item, item_novelty
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_item, item_novelty.
         """
         if self.df_item_novelty is None:
             train_pairs = self._get_all_user_item_pairs(df=self.train_df)
@@ -216,7 +216,7 @@ class DiversityEvaluation:
         """Calculate average item novelty for each user's recommendations.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: col_user, user_novelty
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, user_novelty.
         """
         if self.df_user_novelty is None:
             self.df_item_novelty = self.item_novelty()
@@ -232,7 +232,7 @@ class DiversityEvaluation:
         """Calculate average novelty for recommendations across all users.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: novelty
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: novelty.
         """
         if self.df_novelty is None:
             self.df_user_novelty = self.user_novelty()
@@ -246,7 +246,7 @@ class DiversityEvaluation:
         """Calculate serendipity of each item in the recommendations for each user.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: col_user, col_item, user_item_serendipity
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, col_item, user_item_serendipity.
         """
         # for every col_user, col_item in reco_df, join all interacted items from train_df.
         # These interacted items are repeated for each item in reco_df for a specific user.
@@ -293,7 +293,7 @@ class DiversityEvaluation:
         """Calculate average serendipity for each user's recommendations.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: col_user, user_serendipity
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, user_serendipity.
         """
         if self.df_user_serendipity is None:
             self.df_user_item_serendipity = self.user_item_serendipity()
@@ -308,7 +308,7 @@ class DiversityEvaluation:
         """Calculate average serentipity for recommendations across all users.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: serendipity
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: serendipity.
         """
         if self.df_serendipity is None:
             self.df_user_serendipity = self.user_serendipity()
