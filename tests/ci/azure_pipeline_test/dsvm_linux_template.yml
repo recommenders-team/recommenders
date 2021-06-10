@@ -36,6 +36,7 @@ jobs:
     name: $(Agent_Pool)
 
   steps:
+
   - script: |
       echo "##vso[task.prependpath]/data/anaconda/bin"
 
@@ -59,13 +60,14 @@ jobs:
         RELEASE_VERSION=$(awk '/__version__ = / {print $3}' reco_utils/__init__.py | sed 's/"//g')
 
         echo "   --- BUILDING PACKAGE ---"
-        rm -rf dist
+        rm -rf dist || exit -1
+
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
 
         echo "   --- INSTALLING WHEEL ---"
         pip install dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} || exit -1
       else
-        echo "Installing latest code"
+        echo "   --- INSTALLING LATEST CODE ---"
         pip install .${{ parameters.pip_opts }} || exit -1
       fi
       
@@ -102,7 +104,7 @@ jobs:
 
         # Remove reco_utils folder to make sure it is using the package to run the tests
         # We leave the yaml files from DeepRec that are used in the tests
-        find reco_utils ! -name "*.yaml" -delete 2>/dev/null
+        find reco_utils ! -name "*.yaml" -delete 2>/dev/null 
         du -a reco_utils
 
         # run tests
