@@ -1,14 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+
 import tensorflow as tf
-import numpy as np
-
 from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
-
-r"""
-
- """
 
 
 class DKNItem2itemTextIterator(DKNTextIterator):
