@@ -26,8 +26,19 @@ class DiversityEvaluation:
             Coverage - The proportion of items that can be recommended. It includes two metrics: (1) catalog_coverage, which measures the proportion of items that get recommended from the item catalog; (2) distributional_coverage, which measures how unequally different items are recommended in the recommendations to all users.
             Novelty - A more novel item indicates it is less popular, i.e., it gets recommended less frequently.
             Diversity - The dissimilarity of items being recommended.
-            Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used, it indicates how "pleasant surprise" of recommendations is to a user. 
+            Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used, it indicates how "pleasant surprise" of recommendations is to a user.
 
+        Info:
+            The metric definitions/formulations are based on following reference with modification:
+            - G. Shani and A. Gunawardana, Evaluating Recommendation Systems, Recommender Systems Handbook pp. 257-297, 2010.
+
+            - Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing serendipity into music recommendation, WSDM 2012
+
+            - P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: choice, discovery and relevance, ECIR 2011
+
+                - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, towards data science, April 2020
+
+            - N. Hurley and M. Zhang, Novelty and diversity in top-n recommendation--analysis and evaluation, ACM Transactions, 2011
 
         Args:
             train_df (pySpark DataFrame): Training set used for the recommender,
@@ -256,7 +267,9 @@ class DiversityEvaluation:
                 self.reco_df.select(
                     self.col_user,
                     self.col_item,
-                    F.col(self.col_item).alias("reco_item_tmp"),  # duplicate col_item to keep
+                    F.col(self.col_item).alias(
+                        "reco_item_tmp"
+                    ),  # duplicate col_item to keep
                 )
                 .join(
                     self.train_df.select(
@@ -320,9 +333,6 @@ class DiversityEvaluation:
     # coverage metrics
     def catalog_coverage(self):
         """Calculate catalog coverage for recommendations across all users.
-
-        Info:
-            G. Shani and A. Gunawardana, Evaluating Recommendation Systems, Recommender Systems Handbook pp. 257-297, 2010.
 
         Returns:
             float: catalog coverage
