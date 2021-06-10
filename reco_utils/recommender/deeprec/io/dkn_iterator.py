@@ -95,8 +95,8 @@ class DKNTextIterator(BaseIterator):
             line (str): a string indicating one instance
 
         Returns:
-            tuple/list: Parsed results including `label`, `candidate_news_index`, `candidate_news_val`, `click_news_index`,
-            `click_news_val`, `candidate_news_entity_index`, `click_news_entity_index`, `impression_id`.
+            list: Parsed results including `label`, `candidate_news_index`, `click_news_index`,
+            `candidate_news_entity_index`, `click_news_entity_index`, `impression_id`.
 
         """
         impression_id = 0
@@ -131,8 +131,10 @@ class DKNTextIterator(BaseIterator):
             infile (str): text input file. Each line in this file is an instance.
 
         Yields:
-            obj, list, int: An iterator that yields parsed results, in the format of graph `feed_dict`. Impression id list.
-            Size of the data in a batch.
+            obj, list, int:
+            - An iterator that yields parsed results, in the format of graph `feed_dict`.
+            - Impression id list.
+            - Size of the data in a batch.
         """
         candidate_news_index_batch = []
         click_news_index_batch = []
