@@ -87,8 +87,10 @@ class SequentialIterator(BaseIterator):
 
     def parser_one_line(self, line):
         """Parse one string line into feature values.
-        A line was saved as the following format:
-        `label \t user_hash \t item_hash \t item_cate \t operation_time \t item_history_sequence \t item_cate_history_sequence \t time_history_sequence`.
+
+        A line was saved as the following format::
+
+            label \\t user_hash \\t item_hash \\t item_cate \\t operation_time \\t item_history_sequence \\t item_cate_history_sequence \\t time_history_sequence
 
         Args:
             line (str): a string indicating one instance
