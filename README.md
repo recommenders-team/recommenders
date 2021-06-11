@@ -30,40 +30,43 @@ For a more detailed overview of the repository, please see the documents on the 
 
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
-To setup on your local machine:
+The installation of the recommenders package has been tested with Python versions 3.6 and 3.7. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
 
-1. Install Anaconda with Python >= 3.6. [Miniconda](https://conda.io/miniconda.html) is a quick way to get started.
+To set up on your local machine:
 
-2. Clone the repository
+To install core utilities, CPU-based algorithms, and dependencies
+
+1. Ensure software required for compilation is installed. On Linux this can be supported by adding build-essential dependencies:
+```bash
+sudo apt-get install -y build-essential
+```
+On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+  
+
+2. Install the package from pypi.org:
 
 ```bash
-git clone https://github.com/Microsoft/Recommenders
+pip install --upgrade pip
+pip install ms-recommenders[examples]
 ```
 
-3. Run the generate conda file script to create a conda environment: (This is for a basic python environment, see [SETUP.md](SETUP.md) for PySpark and GPU environment setup)
+3. Register your (conda or virtual) environment with Jupyter:
 
 ```bash
-cd Recommenders
-python tools/generate_conda_file.py
-conda env create -f reco_base.yaml  
+python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
 ```
 
-4. Activate the conda environment and register it with Jupyter:
-
-```bash
-conda activate reco_base
-python -m ipykernel install --user --name reco_base --display-name "Python (reco)"
-```
-
-5. Start the Jupyter notebook server
+4. Start the Jupyter notebook server
 
 ```bash
 jupyter notebook
 ```
 
-6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
+5. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
 
-**NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine.
+For additional options to install the package (support for GPU, Spark etc.) see [this guide](reco_utils/README.md).
+
+**NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
 
 ## Algorithms
 
@@ -137,7 +140,7 @@ This project welcomes contributions and suggestions. Before contributing, please
 
 ## Build Status
 
-These tests are the nightly builds, which compute the smoke and integration tests. `main` is our principal branch and `staging` is our development branch. We use `pytest` for testing python utilities in [reco_utils](reco_utils) and `papermill` for the [notebooks](notebooks). For more information about the testing pipelines, please see the [test documentation](tests/README.md).
+These tests are the nightly builds, which compute the smoke and integration tests. `main` is our principal branch and `staging` is our development branch. We use `pytest` for testing python utilities in [reco_utils](reco_utils) and `papermill` for the [notebooks](examples). For more information about the testing pipelines, please see the [test documentation](tests/README.md).
 
 ### DSVM Build Status
 
