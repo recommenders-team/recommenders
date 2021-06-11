@@ -11,6 +11,8 @@ from reco_utils.common.constants import (
 
 
 class DiversityEvaluation:
+    """Spark Diversity Evaluator"""
+
     def __init__(
         self,
         train_df,
@@ -19,10 +21,10 @@ class DiversityEvaluation:
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
     ):
-        """Diversity evaluator.
-        train (train_df) and recommendation (reco_df) dataframes should already be groupped by user-item pair.
+        """Initializer. 
 
-        Metrics include:
+        This is the Spark version of diversity metrics evaluator.
+        The methods of this class calculate following diversity metrics:
             Coverage - The proportion of items that can be recommended. It includes two metrics: (1) catalog_coverage, which measures the proportion of items that get recommended from the item catalog; (2) distributional_coverage, which measures how unequally different items are recommended in the recommendations to all users.
             Novelty - A more novel item indicates it is less popular, i.e., it gets recommended less frequently.
             Diversity - The dissimilarity of items being recommended.
