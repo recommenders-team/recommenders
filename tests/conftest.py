@@ -77,7 +77,7 @@ def spark(tmp_path_factory, app_name="Sample", url="local[*]"):
     """
 
     with TemporaryDirectory(dir=tmp_path_factory.getbasetemp()) as td:
-        config = {"spark.local.dir": td, "spark.sql.shuffle.partitions": 1}
+        config = {"spark.local.dir": td, "spark.sql.shuffle.partitions": 1, "spark.sql.crossJoin.enabled": "true"}
         spark = start_or_get_spark(app_name=app_name, url=url, config=config)
         yield spark
         spark.stop()
