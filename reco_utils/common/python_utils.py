@@ -32,7 +32,7 @@ def jaccard(cooccurrence):
         cooccurrence (np.array): the symmetric matrix of co-occurrences of items.
 
     Returns:
-        np.array: The matrix of Jaccard similarities between any two items.
+        numpy.array: The matrix of Jaccard similarities between any two items.
     """
 
     diag = cooccurrence.diagonal()
@@ -74,7 +74,7 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
         sort_top_k (bool): Flag to sort top k results.
 
     Returns:
-        np.array, np.array:
+        numpy.array, numpy.array:
         - Indices into score matrix for each users top items.
         - Scores corresponding to top items.
 
@@ -109,11 +109,11 @@ def binarize(a, threshold):
     """Binarize the values.
 
     Args:
-        a (np.array): Input array that needs to be binarized.
+        a (numpy.array): Input array that needs to be binarized.
         threshold (float): Threshold below which all values are set to 0, else 1.
 
     Returns:
-        np.array: Binarized array.
+        numpy.array: Binarized array.
     """
     return np.where(a > threshold, 1.0, 0.0)
 
