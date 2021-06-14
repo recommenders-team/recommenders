@@ -35,6 +35,24 @@ MIND
 MovieLens
 =========
 
+The MovieLens datasets, first released in 1998, describe people’s expressed preferences
+for movies. These preferences take the form of `<user, item, rating, timestamp>` tuples, 
+each the result of a person expressing a preference (a 0-5 star rating) for a movie
+at a particular time.
+
+It comes with several sizes:
+
+* MovieLens 100k: 100,000 ratings from 1000 users on 1700 movies.
+* MovieLens 1M: 1 million ratings from 6000 users on 4000 movies.
+* MovieLens 10M: 10 million ratings from 72000 users on 10000 movies.
+* MovieLens 20M: 20 million ratings from 138000 users on 27000 movies
+
+Citation::
+
+    F. M. Harper and J. A. Konstan. "The MovieLens Datasets: History and Context". 
+    ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19, 
+    DOI=http://dx.doi.org/10.1145/2827872, 2015.
+
 .. automodule:: reco_utils.dataset.movielens
     :members:
 
