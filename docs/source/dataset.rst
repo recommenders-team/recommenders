@@ -11,11 +11,38 @@ Recommendation datasets
 Amazon Reviews
 ==============
 
+`Amazon Reviews dataset <https://snap.stanford.edu/data/web-Amazon.html>`_ consists of reviews from amazon. 
+The data span a period of 18 years, including ~35 million reviews up to March 2013. Reviews include product and user 
+information, ratings, and a plaintext review.
+
+:Citation:
+
+    J. McAuley and J. Leskovec, "Hidden factors and hidden topics: understanding rating dimensions with review text", 
+    RecSys, 2013.
+
 .. automodule:: reco_utils.dataset.amazon_reviews
     :members:
 
-Azure COVID-19
+COVID-19 Open Research Dataset (CORD-19)
 ==============
+
+`CORD-19 <https://azure.microsoft.com/en-us/services/open-datasets/catalog/covid-19-open-research/>`_ is a full-text 
+and metadata dataset of COVID-19 and coronavirus-related scholarly articles optimized 
+for machine readability and made available for use by the global research community.
+
+In response to the COVID-19 pandemic, the Allen Institute for AI has partnered with leading research groups 
+to prepare and distribute the COVID-19 Open Research Dataset (CORD-19), a free resource of 
+over 47,000 scholarly articles, including over 36,000 with full text, about COVID-19 and the 
+coronavirus family of viruses for use by the global research community.
+
+This dataset is intended to mobilize researchers to apply recent advances in natural language processing 
+to generate new insights in support of the fight against this infectious disease.
+
+:Citation:
+
+    Wang, L.L., Lo, K., Chandrasekhar, Y., Reas, R., Yang, J., Eide, D., 
+    Funk, K., Kinney, R., Liu, Z., Merrill, W. and Mooney, P. "Cord-19: The COVID-19 Open Research Dataset.", 2020.
+
 
 .. automodule:: reco_utils.dataset.covid_utils
     :members:
@@ -35,7 +62,8 @@ MIND
 MovieLens
 =========
 
-The MovieLens datasets, first released in 1998, describe people’s expressed preferences
+The `MovieLens datasets <https://grouplens.org/datasets/movielens/>`_, first released in 1998, 
+describe people's expressed preferences
 for movies. These preferences take the form of `<user, item, rating, timestamp>` tuples, 
 each the result of a person expressing a preference (a 0-5 star rating) for a movie
 at a particular time.
@@ -47,7 +75,7 @@ It comes with several sizes:
 * MovieLens 10M: 10 million ratings from 72000 users on 10000 movies.
 * MovieLens 20M: 20 million ratings from 138000 users on 27000 movies
 
-Citation::
+:Citation:
 
     F. M. Harper and J. A. Konstan. "The MovieLens Datasets: History and Context". 
     ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19, 
