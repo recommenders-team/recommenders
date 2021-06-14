@@ -496,10 +496,10 @@ class Mult_VAE:
         Obtained probabilities are used as recommendation score.
 
         Args:
-            x (numpy.array, int32): input click matrix.
+            x (numpy.ndarray, int32): input click matrix.
             k (scalar, int32): the number of items to recommend.
         Returns:
-            numpy.array, float: A sparse matrix containing the top_k elements ordered by their score.
+            numpy.ndarray, float: A sparse matrix containing the top_k elements ordered by their score.
         """
         # return optimal model
         self.model.load_weights(self.save_path)

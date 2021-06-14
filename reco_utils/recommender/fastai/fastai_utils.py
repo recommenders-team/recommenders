@@ -18,7 +18,7 @@ def cartesian_product(*arrays):
         arrays (tuple of np.array): Input arrays
 
     Returns:
-        numpy.array: product
+        numpy.ndarray: product
 
     """
     la = len(arrays)

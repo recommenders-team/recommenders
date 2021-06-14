@@ -89,7 +89,7 @@ class DKNItem2Item(DKN):
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:
-            numpy.array, numpy.array: A tuple with predictions and labels arrays.
+            numpy.ndarray, numpy.ndarray: A tuple with predictions and labels arrays.
         """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False
