@@ -15,7 +15,7 @@ class MINDIterator(BaseIterator):
     """Train data loader for NAML model.
     The model require a special type of data format, where each instance contains a label, impresion id, user id,
     the candidate news articles and user's clicked news article. Articles are represented by title words,
-    body words, verts and subverts. 
+    body words, verts and subverts.
 
     Iterator will not load the whole data into memory. Instead, it loads data into memory
     per mini-batch, so that large files can be used as input data.
@@ -30,10 +30,14 @@ class MINDIterator(BaseIterator):
     """
 
     def __init__(
-        self, hparams, npratio=-1, col_spliter="\t", ID_spliter="%",
+        self,
+        hparams,
+        npratio=-1,
+        col_spliter="\t",
+        ID_spliter="%",
     ):
         """Initialize an iterator. Create necessary placeholders for the model.
-        
+
         Args:
             hparams (obj): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
             npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.
@@ -51,10 +55,11 @@ class MINDIterator(BaseIterator):
         self.uid2index = self.load_dict(hparams.userDict_file)
 
     def load_dict(self, file_path):
-        """ load pickle file
+        """load pickle file
+
         Args:
             file path (str): file path
-        
+
         Returns:
             obj: pickle loaded object
         """
@@ -62,7 +67,7 @@ class MINDIterator(BaseIterator):
             return pickle.load(f)
 
     def init_news(self, news_file):
-        """ init news information given news file, such as news_title_index and nid2index.
+        """init news information given news file, such as news_title_index and nid2index.
         Args:
             news_file: path of news file
         """
@@ -96,7 +101,7 @@ class MINDIterator(BaseIterator):
                     ]
 
     def init_behaviors(self, behaviors_file):
-        """ init behavior logs given behaviors file.
+        """init behavior logs given behaviors file.
 
         Args:
         behaviors_file: path of behaviors file
@@ -131,12 +136,12 @@ class MINDIterator(BaseIterator):
     def parser_one_line(self, line):
         """Parse one behavior sample into feature values.
         if npratio is larger than 0, return negtive sampled result.
-        
+
         Args:
             line (int): sample index.
 
         Yields:
-            list: Parsed results including label, impression id , user id, 
+            list: Parsed results including label, impression id , user id,
             candidate_title_index, clicked_title_index.
         """
         if self.npratio > 0:
@@ -197,7 +202,7 @@ class MINDIterator(BaseIterator):
 
     def load_data_from_file(self, news_file, behavior_file):
         """Read and parse data from news file and behavior file.
-        
+
         Args:
             news_file (str): A file contains several informations of news.
             beahaviros_file (str): A file contains information of user impressions.
@@ -272,14 +277,14 @@ class MINDIterator(BaseIterator):
         click_title_indexes,
     ):
         """Convert data into numpy arrays that are good for further model operation.
-        
+
         Args:
             label_list (list): a list of ground-truth labels.
             imp_indexes (list): a list of impression indexes.
             user_indexes (list): a list of user indexes.
             candidate_title_indexes (list): the candidate news titles' words indices.
             click_title_indexes (list): words indices for user's clicked news titles.
-            
+
         Returns:
             dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
@@ -301,7 +306,7 @@ class MINDIterator(BaseIterator):
 
     def load_user_from_file(self, news_file, behavior_file):
         """Read and parse user data from news file and behavior file.
-        
+
         Args:
             news_file (str): A file contains several informations of news.
             beahaviros_file (str): A file contains information of user impressions.
@@ -329,7 +334,9 @@ class MINDIterator(BaseIterator):
             cnt += 1
             if cnt >= self.batch_size:
                 yield self._convert_user_data(
-                    user_indexes, impr_indexes, click_title_indexes,
+                    user_indexes,
+                    impr_indexes,
+                    click_title_indexes,
                 )
                 user_indexes = []
                 impr_indexes = []
@@ -338,18 +345,23 @@ class MINDIterator(BaseIterator):
 
         if cnt > 0:
             yield self._convert_user_data(
-                user_indexes, impr_indexes, click_title_indexes,
+                user_indexes,
+                impr_indexes,
+                click_title_indexes,
             )
 
     def _convert_user_data(
-        self, user_indexes, impr_indexes, click_title_indexes,
+        self,
+        user_indexes,
+        impr_indexes,
+        click_title_indexes,
     ):
         """Convert data into numpy arrays that are good for further model operation.
-        
+
         Args:
             user_indexes (list): a list of user indexes.
             click_title_indexes (list): words indices for user's clicked news titles.
-            
+
         Returns:
             dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
@@ -366,10 +378,10 @@ class MINDIterator(BaseIterator):
 
     def load_news_from_file(self, news_file):
         """Read and parse user data from news file.
-        
+
         Args:
             news_file (str): A file contains several informations of news.
-            
+
         Yields:
             obj: An iterator that yields parsed news feature, in the format of dict.
         """
@@ -387,7 +399,8 @@ class MINDIterator(BaseIterator):
             cnt += 1
             if cnt >= self.batch_size:
                 yield self._convert_news_data(
-                    news_indexes, candidate_title_indexes,
+                    news_indexes,
+                    candidate_title_indexes,
                 )
                 news_indexes = []
                 candidate_title_indexes = []
@@ -395,18 +408,21 @@ class MINDIterator(BaseIterator):
 
         if cnt > 0:
             yield self._convert_news_data(
-                news_indexes, candidate_title_indexes,
+                news_indexes,
+                candidate_title_indexes,
             )
 
     def _convert_news_data(
-        self, news_indexes, candidate_title_indexes,
+        self,
+        news_indexes,
+        candidate_title_indexes,
     ):
         """Convert data into numpy arrays that are good for further model operation.
-        
+
         Args:
             news_indexes (list): a list of news indexes.
             candidate_title_indexes (list): the candidate news titles' words indices.
-            
+
         Returns:
             dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
@@ -423,10 +439,10 @@ class MINDIterator(BaseIterator):
 
     def load_impression_from_file(self, behaivors_file):
         """Read and parse impression data from behaivors file.
-        
+
         Args:
             behaivors_file (str): A file contains several informations of behaviros.
-            
+
         Yields:
             obj: An iterator that yields parsed impression data, in the format of dict.
         """
@@ -446,4 +462,3 @@ class MINDIterator(BaseIterator):
                 self.uindexes[index],
                 impr_label,
             )
-

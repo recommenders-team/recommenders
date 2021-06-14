@@ -121,7 +121,7 @@ FastAI
 .. automodule:: reco_utils.recommender.fastai.fastai_utils
     :members:
 
-Geoimc
+GeoIMC
 ******************************
 
 .. automodule:: reco_utils.recommender.geoimc.geoimc_algorithm
@@ -157,7 +157,7 @@ NCF
 .. automodule:: reco_utils.recommender.ncf.ncf_singlenode
     :members:
 
-Newsrec
+NewsRec
 ******************************
 
 .. automodule:: reco_utils.recommender.newsrec.io.mind_all_iterator

@@ -16,7 +16,9 @@ class NextItNetModel(SequentialBaseModel):
         Yuan, Fajie, et al. "A Simple Convolutional Generative Network
         for Next Item Recommendation", in Web Search and Data Mining, 2019.
 
-    It requires strong sequence with dataset.
+    .. note::
+
+        It requires strong sequence with dataset.
     """
 
     def _build_seq_graph(self):
