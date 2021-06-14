@@ -1,11 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from functools import lru_cache, wraps
 import logging
-
 import pandas as pd
 import numpy as np
+from functools import lru_cache, wraps
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -30,8 +29,8 @@ def user_item_pairs(
     """Get all pairs of users and items data.
 
     Args:
-        user_df (pd.DataFrame): User data containing unique user ids and maybe their features.
-        item_df (pd.DataFrame): Item data containing unique item ids and maybe their features.
+        user_df (pandas.DataFrame): User data containing unique user ids and maybe their features.
+        item_df (pandas.DataFrame): Item data containing unique item ids and maybe their features.
         user_col (str): User id column name.
         item_col (str): Item id column name.
         user_item_filter_df (pd.DataFrame): User-item pairs to be used as a filter.
@@ -64,8 +63,8 @@ def user_item_pairs(
 
 
 def filter_by(df, filter_by_df, filter_by_cols):
-    """From the input DataFrame (df), remove the records whose target column (filter_by_cols) values are
-    exist in the filter-by DataFrame (filter_by_df)
+    """From the input DataFrame `df`, remove the records whose target column `filter_by_cols` values are
+    exist in the filter-by DataFrame `filter_by_df`.
 
     Args:
         df (pandas.DataFrame): Source dataframe.
@@ -73,7 +72,8 @@ def filter_by(df, filter_by_df, filter_by_cols):
         filter_by_cols (iterable of str): Filter columns.
 
     Returns:
-        pandas.DataFrame: Dataframe filtered by filter_by_df on filter_by_cols
+        pandas.DataFrame: Dataframe filtered by `filter_by_df` on `filter_by_cols`.
+
     """
 
     return df.loc[
@@ -289,15 +289,15 @@ def negative_feedback_sampler(
         df (pandas.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
-        col_label (str): label column name in df. 
-        col_feedback (str): feedback column name in the returned data frame; it is used for the generated column 
+        col_label (str): label column name in df.
+        col_feedback (str): feedback column name in the returned data frame; it is used for the generated column
             of positive and negative feedback.
         ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user.
-            If the samples exceed the number of total possible negative feedback samples, it will be reduced to the 
+            If the samples exceed the number of total possible negative feedback samples, it will be reduced to the
             number of all the possible samples.
         pos_value (float): value of positive feedback.
         neg_value (float): value of negative feedback.
-        inplace (bool): 
+        inplace (bool):
         seed (int): seed for the random state of the sampling function.
 
     Returns:
@@ -419,7 +419,7 @@ class PandasHash:
         """Initialize class
 
         Args:
-            pandas_object (pd.DataFrame|pd.Series): pandas object
+            pandas_object (pandas.DataFrame|pandas.Series): pandas object
         """
 
         if not isinstance(pandas_object, (pd.DataFrame, pd.Series)):

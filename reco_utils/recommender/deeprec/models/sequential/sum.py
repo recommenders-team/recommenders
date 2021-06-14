@@ -15,8 +15,10 @@ from reco_utils.recommender.deeprec.models.sequential.sum_cells import (
 class SUMModel(SequentialBaseModel):
     """Sequential User Matrix Model
 
-    Lian, J., Batal, I., Liu, Z., Soni, A., Kang, E. Y., Wang, Y., & Xie, X.,
-    "Multi-Interest-Aware User Modeling for Large-Scale Sequential Recommendations", arXiv preprint arXiv:2102.09211, 2021.
+    :Citation:
+
+        Lian, J., Batal, I., Liu, Z., Soni, A., Kang, E. Y., Wang, Y., & Xie, X.,
+        "Multi-Interest-Aware User Modeling for Large-Scale Sequential Recommendations", arXiv preprint arXiv:2102.09211, 2021.
     """
 
     def _build_seq_graph(self):

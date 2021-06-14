@@ -17,11 +17,11 @@ MODEL_CHECKPOINT = "model.ckpt"
 
 class NCF:
     """Neural Collaborative Filtering (NCF) implementation
-    
-    Note:
 
-        He, Xiangnan, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua. "Neural collaborative filtering." 
-        In Proceedings of the 26th International Conference on World Wide Web, pp. 173-182. International World Wide Web 
+    :Citation:
+
+        He, Xiangnan, Lizi Liao, Hanwang Zhang, Liqiang Nie, Xia Hu, and Tat-Seng Chua. "Neural collaborative filtering."
+        In Proceedings of the 26th International Conference on World Wide Web, pp. 173-182. International World Wide Web
         Conferences Steering Committee, 2017. Link: https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
     """
 
@@ -39,7 +39,7 @@ class NCF:
         seed=None,
     ):
         """Constructor
-        
+
         Args:
             n_users (int): Number of users in the dataset.
             n_items (int): Number of items in the dataset.
@@ -51,7 +51,7 @@ class NCF:
             learning_rate (float): Learning rate.
             verbose (int): Whether to show the training output or not.
             seed (int): Seed.
-        
+
         """
 
         # seed
@@ -85,11 +85,15 @@ class NCF:
         # set GPU use with demand growth
         gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
         # set TF Session
-        self.sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
+        self.sess = tf.compat.v1.Session(
+            config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
+        )
         # parameters initialization
         self.sess.run(tf.compat.v1.global_variables_initializer())
 
-    def _create_model(self,):
+    def _create_model(
+        self,
+    ):
         # reset graph
         tf.compat.v1.reset_default_graph()
 
@@ -245,7 +249,7 @@ class NCF:
 
     def save(self, dir_name):
         """Save model parameters in `dir_name`
-        
+
         Args:
             dir_name (str): directory name, which should be a folder name instead of file name
                 we will create a new directory if not existing.
@@ -258,19 +262,19 @@ class NCF:
 
     def load(self, gmf_dir=None, mlp_dir=None, neumf_dir=None, alpha=0.5):
         """Load model parameters for further use.
-        
+
         GMF model --> load parameters in `gmf_dir`
-        
+
         MLP model --> load parameters in `mlp_dir`
-        
+
         NeuMF model --> load parameters in `neumf_dir` or in `gmf_dir` and `mlp_dir`
-        
+
         Args:
             gmf_dir (str): Directory name for GMF model.
             mlp_dir (str): Directory name for MLP model.
             neumf_dir (str): Directory name for neumf model.
             alpha (float): the concatenation hyper-parameter for gmf and mlp output layer.
-        
+
         Returns:
             obj: Load parameters in this model.
         """
@@ -297,7 +301,7 @@ class NCF:
 
     def _load_neumf(self, gmf_dir, mlp_dir, alpha):
         """Load gmf and mlp model parameters for further use in NeuMF.
-            NeuMF model --> load parameters in `gmf_dir` and `mlp_dir`
+        NeuMF model --> load parameters in `gmf_dir` and `mlp_dir`
         """
         # load gmf part
         variables = tf.compat.v1.global_variables()
@@ -339,8 +343,8 @@ class NCF:
 
     def fit(self, data):
         """Fit model with training data
-            
-        Args: 
+
+        Args:
             data (NCFDataset): initilized Dataset in ./dataset.py
         """
 
@@ -387,15 +391,15 @@ class NCF:
 
     def predict(self, user_input, item_input, is_list=False):
         """Predict function of this trained model
-            
+
         Args:
-            user_input (list or element of list): userID or userID list 
+            user_input (list or element of list): userID or userID list
             item_input (list or element of list): itemID or itemID list
             is_list (bool): if true, the input is list type
                 noting that list-wise type prediction is faster than element-wise's.
-        
+
         Returns:
-            list or float: A list of predicted rating or predicted rating score. 
+            list or float: A list of predicted rating or predicted rating score.
         """
 
         if is_list:
