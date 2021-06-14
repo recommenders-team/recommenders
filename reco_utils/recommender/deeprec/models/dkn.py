@@ -23,7 +23,7 @@ class DKN(BaseModel):
         """Initialization steps for DKN.
         Compared with the BaseModel, DKN requires two different pre-computed embeddings,
         i.e. word embedding and entity embedding.
-        After creating these two embedding variables, BaseModel's __init__ method will be called.
+        After creating these two embedding variables, BaseModel's `__init__` method will be called.
 
         Args:
             hparams (obj): Global hyper-parameters.
