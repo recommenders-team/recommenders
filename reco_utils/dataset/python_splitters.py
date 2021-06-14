@@ -31,7 +31,7 @@ def python_random_split(data, ratio=0.75, seed=42):
         seed (int): Seed.
 
     Returns:
-        list: Splits of the input data as pd.DataFrame.
+        list: Splits of the input data as pandas.DataFrame.
     """
     multi_split, ratio = process_split_ratio(ratio)
 
@@ -150,7 +150,7 @@ def python_chrono_split(
         col_timestamp (str): column name of timestamps.
 
     Returns:
-        list: Splits of the input data as pd.DataFrame.
+        list: Splits of the input data as pandas.DataFrame.
     """
     return _do_stratification(
         data,
@@ -179,7 +179,7 @@ def python_stratified_split(
     specified by the split ratio(s). The split is stratified.
 
     Args:
-        data (pd.DataFrame): Pandas DataFrame to be split.
+        data (pandas.DataFrame): Pandas DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two halves and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits
@@ -193,7 +193,7 @@ def python_stratified_split(
         col_item (str): column name of item IDs.
 
     Returns:
-        list: Splits of the input data as pd.DataFrame.
+        list: Splits of the input data as pandas.DataFrame.
     """
     return _do_stratification(
         data,
