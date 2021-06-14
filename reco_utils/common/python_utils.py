@@ -75,7 +75,9 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
         sort_top_k (bool): Flag to sort top k results.
 
     Returns:
-        np.array, np.array: Indices into score matrix for each users top items, scores corresponding to top items.
+        np.array, np.array:
+        - Indices into score matrix for each users top items.
+        - Scores corresponding to top items.
     """
 
     # ensure we're working with a dense ndarray
@@ -107,8 +109,11 @@ def binarize(a, threshold):
     """Binarize the values.
 
     Args:
-        a (np.ndarray): Input array that needs to be binarized.
+        a (np.array): Input array that needs to be binarized.
         threshold (float): Threshold below which all values are set to 0, else 1.
+
+    Returns:
+        np.array: Binarized array.
     """
     return np.where(a > threshold, 1.0, 0.0)
 
