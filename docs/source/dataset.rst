@@ -23,10 +23,10 @@ information, ratings, and a plaintext review.
 .. automodule:: reco_utils.dataset.amazon_reviews
     :members:
 
-COVID-19 Open Research Dataset (CORD-19)
-==============
+CORD-19
+=======
 
-`CORD-19 <https://azure.microsoft.com/en-us/services/open-datasets/catalog/covid-19-open-research/>`_ is a full-text 
+`COVID-19 Open Research Dataset (CORD-19 <https://azure.microsoft.com/en-us/services/open-datasets/catalog/covid-19-open-research/>`_ is a full-text 
 and metadata dataset of COVID-19 and coronavirus-related scholarly articles optimized 
 for machine readability and made available for use by the global research community.
 
