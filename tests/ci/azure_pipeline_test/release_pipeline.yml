@@ -141,7 +141,7 @@ jobs:
   steps:
   - task: DownloadPipelineArtifact@2 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
     displayName: 'Download Artifacts from Shared Storage'
-    condition: succeeded() # and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
     inputs:
       artifact: PackageAssets
       path: $(Build.SourcesDirectory)/binaries
