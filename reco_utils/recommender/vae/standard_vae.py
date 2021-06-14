@@ -73,11 +73,12 @@ class Metrics(Callback):
         Obtained probabilities are used as recommendation score.
 
         Args:
-            x (np.array, int32): input click matrix.
+            x (numpy.array, int32): input click matrix.
             k (scalar, int32): the number of items to recommend.
 
         Returns:
             np.array: A sparse matrix containing the top_k elements ordered by their score.
+
         """
         # obtain scores
         score = self.model.predict(x)
@@ -464,6 +465,7 @@ class StandardVAE:
 
         Returns:
             np.array: A sparse matrix containing the top_k elements ordered by their score.
+
         """
         # return optimal model
         self.model.load_weights(self.save_path)

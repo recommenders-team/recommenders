@@ -108,6 +108,7 @@ setup(
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS",
@@ -118,5 +119,5 @@ setup(
     install_requires=install_requires,
     package_dir={"reco_utils": "reco_utils"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
-    python_requires=">=3.6, <4",
+    python_requires=">=3.6, <=3.7",
 )

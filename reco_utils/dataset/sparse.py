@@ -43,6 +43,7 @@ class AffinityMatrix:
             col_item (str): default name for item column
             col_rating (str): default name for rating columns
             save_path (str): default path to save item/user maps
+
         """
         self.df = DF  # dataframe
         self.items_list = items_list  # list of unique items
@@ -145,10 +146,10 @@ class AffinityMatrix:
     def map_back_sparse(self, X, kind):
         """Map back the user/affinity matrix to a pd dataframe
         Args:
-            X (np.array, int32): user/item affinity matrix
+            X (numpy.array, int32): user/item affinity matrix
             kind (string): specify if the output values are ratings or predictions
         Returns:
-            pd.DataFrame: the generated pandas dataframe
+            pandas.DataFrame: the generated pandas dataframe
         """
         m, n = X.shape
 

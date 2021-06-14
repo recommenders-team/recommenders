@@ -56,7 +56,7 @@ class DataPtr():
         Args:
             of (str): The entity, either 'row' or 'col'
         Returns:
-            ndarray: Entity matrix (based on the entity_indices filter)
+            numpy.ndarray: Entity matrix (based on the entity_indices filter)
         """
         idx = 0 if of=="row" else 1
         if self.entity_indices[idx] is None:
@@ -158,7 +158,7 @@ class ML_100K(Dataset):
         """Convert the input dataframe into a coo matrix
 
         Args:
-            df (pd.DataFrame): DataFrame containing the target matrix information.
+            df (pandas.DataFrame): DataFrame containing the target matrix information.
         """
         data = []
         row = list(df['user id']-1)

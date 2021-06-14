@@ -1,11 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from functools import lru_cache, wraps
 import logging
-
 import pandas as pd
 import numpy as np
+from functools import lru_cache, wraps
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -39,7 +38,7 @@ def user_item_pairs(
         seed (int): Random seed for shuffle
 
     Returns:
-        pd.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df.
+        pandas.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df.
     """
 
     # Get all user-item pairs
@@ -68,12 +67,13 @@ def filter_by(df, filter_by_df, filter_by_cols):
     exist in the filter-by DataFrame `filter_by_df`.
 
     Args:
-        df (pd.DataFrame): Source dataframe.
-        filter_by_df (pd.DataFrame): Filter dataframe.
+        df (pandas.DataFrame): Source dataframe.
+        filter_by_df (pandas.DataFrame): Filter dataframe.
         filter_by_cols (iterable of str): Filter columns.
 
     Returns:
         pd.DataFrame: Dataframe filtered by `filter_by_df` on `filter_by_cols`.
+
     """
 
     return df.loc[
@@ -152,7 +152,7 @@ class LibffmConverter:
         This method does nothing but check the validity of the input columns
 
         Args:
-            df (pd.DataFrame): input Pandas dataframe.
+            df (pandas.DataFrame): input Pandas dataframe.
             col_rating (str): rating of the data.
 
         Return:
@@ -184,10 +184,10 @@ class LibffmConverter:
         by using the fitted converter.
 
         Args:
-            df (pd.DataFrame): input Pandas dataframe.
+            df (pandas.DataFrame): input Pandas dataframe.
 
         Return:
-            pd.DataFrame: Output libffm format dataframe.
+            pandas.DataFrame: Output libffm format dataframe.
         """
         if self.col_rating not in df.columns:
             raise ValueError(
@@ -243,11 +243,11 @@ class LibffmConverter:
         """Do fit and transform in a row
 
         Args:
-            df (pd.DataFrame): input Pandas dataframe.
+            df (pandas.DataFrame): input Pandas dataframe.
             col_rating (str): rating of the data.
 
         Return:
-            pd.DataFrame: Output libffm format dataframe.
+            pandas.DataFrame: Output libffm format dataframe.
         """
         return self.fit(df, col_rating=col_rating).transform(df)
 
@@ -286,7 +286,7 @@ def negative_feedback_sampler(
     See for example the `neural collaborative filtering paper <https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf>`_.
 
     Args:
-        df (pd.DataFrame): input data that contains user-item tuples.
+        df (pandas.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
         col_label (str): label column name in df.
@@ -301,7 +301,7 @@ def negative_feedback_sampler(
         seed (int): seed for the random state of the sampling function.
 
     Returns:
-        pd.DataFrame: Data with negative feedback.
+        pandas.DataFrame: Data with negative feedback.
 
     Examples:
         >>> import pandas as pd
@@ -359,7 +359,7 @@ def has_columns(df, columns):
     """Check if DataFrame has necessary columns
 
     Args:
-        df (pd.DataFrame): DataFrame
+        df (pandas.DataFrame): DataFrame
         columns (list(str): columns to check for
 
     Returns:
@@ -379,8 +379,8 @@ def has_same_base_dtype(df_1, df_2, columns=None):
     """Check if specified columns have the same base dtypes across both DataFrames
 
     Args:
-        df_1 (pd.DataFrame): first DataFrame
-        df_2 (pd.DataFrame): second DataFrame
+        df_1 (pandas.DataFrame): first DataFrame
+        df_2 (pandas.DataFrame): second DataFrame
         columns (list(str)): columns to check, None checks all columns
 
     Returns:
@@ -430,7 +430,7 @@ class PandasHash:
         """Overwrite equality comparison
 
         Args:
-            other (pd.DataFrame|pd.Series): pandas object to compare
+            other (pandas.DataFrame|pandas.Series): pandas object to compare
 
         Returns:
             bool: whether other object is the same as this one

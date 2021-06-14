@@ -23,12 +23,12 @@ def predict(
 
     Args:
         model (cornac.models.Recommender): A recommender model from Cornac
-        data (pd.DataFrame): The data on which to predict
+        data (pandas.DataFrame): The data on which to predict
         usercol (str): Name of the user column
         itemcol (str): Name of the item column
 
     Returns:
-        pd.DataFrame: Dataframe with usercol, itemcol, predcol
+        pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     uid_map = model.train_set.uid_map
     iid_map = model.train_set.iid_map
@@ -60,13 +60,13 @@ def predict_ranking(
 
     Args:
         model (cornac.models.Recommender): A recommender model from Cornac
-        data (pd.DataFrame): The data from which to get the users and items
+        data (pandas.DataFrame): The data from which to get the users and items
         usercol (str): Name of the user column
         itemcol (str): Name of the item column
         remove_seen (bool): Flag to remove (user, item) pairs seen in the training data
 
     Returns:
-        pd.DataFrame: Dataframe with usercol, itemcol, predcol
+        pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     users, items, preds = [], [], []
     item = list(model.train_set.iid_map.keys())

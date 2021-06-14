@@ -24,7 +24,7 @@ def pandas_input_fn_for_saved_model(df, feat_name_type):
     """Pandas input function for TensorFlow SavedModel.
 
     Args:
-        df (pd.DataFrame): Data containing features.
+        df (pandas.DataFrame): Data containing features.
         feat_name_type (dict): Feature name and type spec. E.g.
             `{'userID': int, 'itemID': int, 'rating': float}`
 
@@ -65,7 +65,7 @@ def pandas_input_fn(
         For more information, see https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn
 
     Args:
-        df (pd.DataFrame): Data containing features.
+        df (pandas.DataFrame): Data containing features.
         y_col (str): Label column name if df has it.
         batch_size (int): Batch size for the input function.
         num_epochs (int): Number of epochs to iterate over data. If `None`, it will run forever.

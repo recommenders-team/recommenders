@@ -87,12 +87,12 @@ class TfidfRecommender:
         """Clean the text within the columns of interest and return a dataframe with cleaned and combined text.
 
         Args:
-            df (pd.DataFrame): Dataframe containing the text content to clean.
+            df (pandas.DataFrame): Dataframe containing the text content to clean.
             cols_to_clean (list of str): List of columns to clean by name (e.g., ['abstract','full_text']).
             new_col_name (str): Name of the new column that will contain the cleaned text.
 
         Returns:
-            pd.DataFrame: Dataframe with cleaned text in the new column.
+            pandas.DataFrame: Dataframe with cleaned text in the new column.
         """
         # Collapse the table such that all descriptive text is just in a single column
         df = df.replace(np.nan, "", regex=True)
@@ -118,7 +118,7 @@ class TfidfRecommender:
         For more details on the TfidfVectorizer, see https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
 
         Args:
-            df_clean (pd.DataFrame): Dataframe with cleaned text in the new column.
+            df_clean (pandas.DataFrame): Dataframe with cleaned text in the new column.
             text_col (str): Name of column containing the cleaned text.
             ngram_range (tuple of int): The lower and upper boundary of the range of n-values for different n-grams to be extracted.
             min_df (int): When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.
@@ -232,7 +232,7 @@ class TfidfRecommender:
         """Create the full recommendation dictionary containing all recommendations for all items.
 
         Args:
-            pd.DataFrame: Dataframe with cleaned text.
+            pandas.DataFrame: Dataframe with cleaned text.
         """
 
         # Similarity measure
@@ -253,7 +253,7 @@ class TfidfRecommender:
         """Restructures results dictionary into a table containing only the top k recommendations per item.
 
         Args:
-            df_clean (pd.DataFrame): Dataframe with cleaned text.
+            df_clean (pandas.DataFrame): Dataframe with cleaned text.
             k (int): Number of recommendations to return.
         """
         # Initialize new dataframe to hold recommendation output
@@ -298,11 +298,11 @@ class TfidfRecommender:
         """Recommend k number of items similar to the item of interest.
 
         Args:
-            df_clean (pd.DataFrame): Dataframe with cleaned text.
+            df_clean (pandas.DataFrame): Dataframe with cleaned text.
             k (int): Number of recommendations to return.
 
         Returns:
-            pd.DataFrame: Dataframe containing id of top k recommendations for all items.
+            pandas.DataFrame: Dataframe containing id of top k recommendations for all items.
         """
         if k > len(df_clean) - 1:
             raise ValueError(
@@ -317,11 +317,11 @@ class TfidfRecommender:
         """Get full information for a single recommended item.
 
         Args:
-            metadata (pd.DataFrame): Dataframe containing item info.
+            metadata (pandas.DataFrame): Dataframe containing item info.
             rec_id (str): Identifier for recommended item.
 
         Returns:
-            pd.Series: Single row from dataframe containing recommended item info.
+            pandas.Series: Single row from dataframe containing recommended item info.
         """
 
         # Return row
@@ -343,13 +343,13 @@ class TfidfRecommender:
         """Return the top k recommendations with useful metadata for each recommendation.
 
         Args:
-            metadata (pd.DataFrame): Dataframe holding metadata for all public domain papers.
+            metadata (pandas.DataFrame): Dataframe holding metadata for all public domain papers.
             query_id (str): ID of item of interest.
             cols_to_keep (list of str): List of columns from the metadata dataframe to include (e.g., ['title','authors','journal','publish_time','url']). By default, all columns are kept.
             verbose (boolean): Set to True if you want to print the table.
 
         Returns:
-            pd.Styler: Stylized dataframe holding recommendations and associated metadata just for the item of interest (can access as normal dataframe by using df.data).
+            pandas.Styler: Stylized dataframe holding recommendations and associated metadata just for the item of interest (can access as normal dataframe by using df.data).
         """
 
         # Create subset of dataframe with just recommendations for the item of interest

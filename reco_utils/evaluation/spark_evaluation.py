@@ -40,8 +40,8 @@ class SparkRatingEvaluation:
         R squared, and explained variance.
 
         Args:
-            rating_true (spark.DataFrame): True labels.
-            rating_pred (spark.DataFrame): Predicted labels.
+            rating_true (pyspark.sql.DataFrame): True labels.
+            rating_pred (pyspark.sql.DataFrame): Predicted labels.
             col_user (str): column name for user.
             col_item (str): column name for item.
             col_rating (str): column name for rating.
@@ -178,9 +178,9 @@ class SparkRankingEvaluation:
         can be found at `here <https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems>`_.
 
         Args:
-            rating_true (spark.DataFrame): DataFrame of true rating data (in the
+            rating_true (pyspark.sql.DataFrame): DataFrame of true rating data (in the
                 format of customerID-itemID-rating tuple).
-            rating_pred (spark.DataFrame): DataFrame of predicted rating data (in
+            rating_pred (pyspark.sql.DataFrame): DataFrame of predicted rating data (in
                 the format of customerID-itemID-rating tuple).
             col_user (str): column name for user.
             col_item (str): column name for item.
@@ -360,7 +360,7 @@ def _get_top_k_items(
         if it is implicit rating, just append a column of constants to be ratings.
 
     Args:
-        dataframe (spark.DataFrame): DataFrame of rating data (in the format of
+        dataframe (pyspark.sql.DataFrame): DataFrame of rating data (in the format of
         customerID-itemID-rating tuple).
         col_user (str): column name for user.
         col_item (str): column name for item.
@@ -369,7 +369,7 @@ def _get_top_k_items(
         k (int): number of items for each user.
 
     Return:
-        spark.DataFrame: DataFrame of top k items for each user.
+        pyspark.sql.DataFrame: DataFrame of top k items for each user.
     """
     window_spec = Window.partitionBy(col_user).orderBy(col(col_rating).desc())
 
@@ -411,7 +411,7 @@ def _get_relevant_items_by_threshold(
             distribution.
 
     Return:
-        spark.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant
+        pyspark.sql.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant
         items.
     """
     items_for_user = (
@@ -443,7 +443,7 @@ def _get_relevant_items_by_timestamp(
     according to timestamps.
 
     Args:
-        dataframe (spark.DataFrame): A Spark DataFrame of customerID-itemID-rating-timeStamp
+        dataframe (pyspark.sql.DataFrame): A Spark DataFrame of customerID-itemID-rating-timeStamp
             tuples.
         col_user (str): column name for user.
         col_item (str): column name for item.
@@ -453,7 +453,7 @@ def _get_relevant_items_by_timestamp(
         k: number of relevent items to be filtered by the function.
 
     Return:
-        spark.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant items.
+        pyspark.sql.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant items.
     """
     window_spec = Window.partitionBy(col_user).orderBy(col(col_timestamp).desc())
 

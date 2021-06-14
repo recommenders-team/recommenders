@@ -318,7 +318,7 @@ class LightGCN(object):
             remove_seen (bool): Flag to remove items seen in training from recommendation.
 
         Returns:
-            np.ndarray: Value of interest of all items for the users.
+            numpy.ndarray: Value of interest of all items for the users.
 
         """
         if any(np.isnan(user_ids)):
@@ -348,13 +348,13 @@ class LightGCN(object):
         """Recommend top K items for all users in the test set.
 
         Args:
-            test (pd.DataFrame): Test data.
+            test (pandas.DataFrame): Test data.
             top_k (int): Number of top items to recommend.
             sort_top_k (bool): Flag to sort top k results.
             remove_seen (bool): Flag to remove items seen in training from recommendation.
 
         Returns:
-            pd.DataFrame: Top k recommendation items for each user.
+            pandas.DataFrame: Top k recommendation items for each user.
 
         """
         data = self.data

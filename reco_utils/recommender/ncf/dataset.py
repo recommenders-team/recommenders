@@ -30,8 +30,8 @@ class Dataset(object):
         """Constructor 
         
         Args:
-            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
-            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None, 
+            train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
+            test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None, 
                 if so, we only process the training data.
             n_neg (int): Number of negative samples for training set.
             n_neg_test (int): Number of negative samples for test set.
@@ -66,13 +66,13 @@ class Dataset(object):
         """Process the dataset to reindex userID and itemID, also set rating as binary feedback
 
         Args:
-            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating). 
-            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating)
+            train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating). 
+            test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating)
                     test can be None, if so, we only process the training data.
             binary (bool): If true, set rating>0 to rating = 1.
 
         Returns:
-            list: train and test pd.DataFrame Dataset, which have been reindexed.
+            list: train and test pandas.DataFrame Dataset, which have been reindexed.
         
         """
         # If testing dataset is None
