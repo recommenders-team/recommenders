@@ -124,7 +124,7 @@ class TfidfRecommender:
             min_df (int): When building the vocabulary ignore terms that have a document frequency strictly lower than the given threshold.
 
         Returns:
-            TfidfVectorizer, pd.Series:
+            TfidfVectorizer, pandas.Series:
             - Scikit-learn TfidfVectorizer object defined in `.tokenize_text()`.
             - Each row contains tokens for respective documents separated by spaces.
         """
@@ -199,8 +199,8 @@ class TfidfRecommender:
         """Fit TF-IDF vectorizer to the cleaned and tokenized text.
 
         Args:
-            tf (TfidfVectorizer): Scikit-learn TfidfVectorizer object defined in .tokenize_text().
-            vectors_tokenized (pd.Series): Each row contains tokens for respective documents separated by spaces.
+            tf (TfidfVectorizer): sklearn.feature_extraction.text.TfidfVectorizer object defined in .tokenize_text().
+            vectors_tokenized (pandas.Series): Each row contains tokens for respective documents separated by spaces.
         """
         self.tfidf_matrix = tf.fit_transform(vectors_tokenized)
 
