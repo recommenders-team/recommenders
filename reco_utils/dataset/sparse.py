@@ -34,7 +34,7 @@ class AffinityMatrix:
         col_pred=DEFAULT_PREDICTION_COL,
         save_path=None,
     ):
-        """Initialize class parameters.
+        """Initialize class parameters
 
             Args:
                 DF (pandas.DataFrame): a dataframe containing the data
@@ -144,7 +144,7 @@ class AffinityMatrix:
 
     def map_back_sparse(self, X, kind):
         """Map back the user/affinity matrix to a pd dataframe
-        
+
         Args:
             X (numpy.array, int32): user/item affinity matrix
             kind (string): specify if the output values are ratings or predictions
