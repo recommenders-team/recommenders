@@ -164,7 +164,7 @@ def load_pandas_df(
         year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
-        pd.DataFrame: Movie rating dataset.
+        pandas.DataFrame: Movie rating dataset.
         
 
     **Examples**
@@ -249,7 +249,7 @@ def load_item_df(
         year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
-        pd.DataFrame: Movie information data, such as title, genres, and release year.
+        pandas.DataFrame: Movie information data, such as title, genres, and release year.
     """
     size = size.lower()
     if size not in DATA_FORMAT:
@@ -362,7 +362,7 @@ def load_spark_df(
         year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
-        pyspark.DataFrame: Movie rating dataset.
+        pyspark.sql.DataFrame: Movie rating dataset.
         
     **Examples**
 

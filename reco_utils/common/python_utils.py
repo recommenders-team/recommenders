@@ -50,10 +50,10 @@ def lift(cooccurrence):
     """Helper method to calculate the Lift of a matrix of co-occurrences.
 
     Args:
-        cooccurrence (np.array): The symmetric matrix of co-occurrences of items.
+        cooccurrence (numpy.array): The symmetric matrix of co-occurrences of items.
 
     Returns:
-        np.array: The matrix of Lifts between any two items.
+        numpy.array: The matrix of Lifts between any two items.
     """
 
     diag = cooccurrence.diagonal()
@@ -70,12 +70,12 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
     """Extract top K items from a matrix of scores for each user-item pair, optionally sort results per user.
 
     Args:
-        scores (np.array): Score matrix (users x items).
+        scores (numpy.array): Score matrix (users x items).
         top_k (int): Number of top items to recommend.
         sort_top_k (bool): Flag to sort top k results.
 
     Returns:
-        np.array, np.array: Indices into score matrix for each users top items, scores corresponding to top items.
+        numpy.array, numpy.array: Indices into score matrix for each users top items, scores corresponding to top items.
     """
 
     # ensure we're working with a dense ndarray
@@ -107,7 +107,7 @@ def binarize(a, threshold):
     """Binarize the values.
 
     Args:
-        a (np.ndarray): Input array that needs to be binarized.
+        a (numpy.ndarray): Input array that needs to be binarized.
         threshold (float): Threshold below which all values are set to 0, else 1.
     """
     return np.where(a > threshold, 1.0, 0.0)
@@ -123,14 +123,14 @@ def rescale(data, new_min=0, new_max=1, data_min=None, data_max=None):
           the min/max of the old scale.
 
     Args:
-        data (np.array): 1d scores vector or 2d score matrix (users x items).
+        data (numpy.array): 1d scores vector or 2d score matrix (users x items).
         new_min (int|float): The minimum of the newly scaled data.
         new_max (int|float): The maximum of the newly scaled data.
         data_min (None|number): The minimum of the passed data [if omitted it will be inferred].
         data_max (None|number): The maximum of the passed data [if omitted it will be inferred].
 
     Returns:
-        np.array: The newly scaled/normalized data.
+        numpy.array: The newly scaled/normalized data.
     """
     data_min = data.min() if data_min is None else data_min
     data_max = data.max() if data_max is None else data_max

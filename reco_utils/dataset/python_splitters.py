@@ -22,7 +22,7 @@ def python_random_split(data, ratio=0.75, seed=42):
     The splitter randomly splits the input data.
 
     Args:
-        data (pd.DataFrame): Pandas DataFrame to be split.
+        data (pandas.DataFrame): Pandas DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two halves and the ratio argument indicates the ratio
             of training data set; if it is a list of float numbers, the splitter splits
@@ -135,7 +135,7 @@ def python_chrono_split(
     The split is stratified.
 
     Args:
-        data (pd.DataFrame): Pandas DataFrame to be split.
+        data (pandas.DataFrame): Pandas DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two halves and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits
@@ -240,12 +240,12 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
     train set matrix Xtst. The train set matrix is obtained in the opposite way.
 
     Args:
-        X (np.array, int): a sparse matrix to be split
+        X (numpy.array, int): a sparse matrix to be split
         ratio (float): fraction of the entire dataset to constitute the train set
         seed (int): random seed
 
     Returns:
-        np.array, np.array: 
+        numpy.array, numpy.array: 
         - Xtr: The train set user/item affinity matrix. 
         - Xtst: The test set user/item affinity matrix.
     """

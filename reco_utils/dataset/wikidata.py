@@ -217,7 +217,7 @@ def search_wikidata(names, extras=None, describe=True, verbose=False):
         verbose (bool): optional flag to print out intermediate data
 
     Returns:
-        pd.DataFrame: wikipedia results for all names with found entities
+        pandas.DataFrame: wikipedia results for all names with found entities
 
     """
 

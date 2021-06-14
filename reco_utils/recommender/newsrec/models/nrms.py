@@ -52,7 +52,7 @@ class NRMSModel(BaseModel):
 
         Returns:
             list: input feature fed into model (clicked_title_batch & candidate_title_batch)
-            array: labels
+            numpy.array: labels
         """
         input_feat = [
             batch_data["clicked_title_batch"],
@@ -67,7 +67,7 @@ class NRMSModel(BaseModel):
             batch_data: input batch data from user iterator
         
         Returns:
-            array: input user feature (clicked title batch)
+            numpy.array: input user feature (clicked title batch)
         """
         return batch_data["clicked_title_batch"]
 
@@ -77,7 +77,7 @@ class NRMSModel(BaseModel):
             batch_data: input batch data from news iterator
         
         Returns:
-            array: input news feature (candidate title batch)
+            numpy.array: input news feature (candidate title batch)
         """
         return batch_data["candidate_title_batch"]
 

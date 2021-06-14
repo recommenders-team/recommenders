@@ -16,7 +16,7 @@ from reco_utils.common.general_utils import invert_dictionary
 def surprise_trainset_to_df(
     trainset, col_user="uid", col_item="iid", col_rating="rating"
 ):
-    """Converts a `surprise.Trainset` object to `pd.DataFrame`
+    """Converts a `surprise.Trainset` object to `pandas.DataFrame`
 
     More info: https://surprise.readthedocs.io/en/stable/trainset.html
 
@@ -27,7 +27,7 @@ def surprise_trainset_to_df(
         col_rating (str): Rating column name.
     
     Returns:
-        pd.DataFrame: A dataframe with user column (str), item column (str), and rating column (float).
+        pandas.DataFrame: A dataframe with user column (str), item column (str), and rating column (float).
     """
     df = pd.DataFrame(trainset.all_ratings(), columns=[col_user, col_item, col_rating])
     map_user = (
@@ -56,12 +56,12 @@ def predict(
     
     Args:
         algo (surprise.prediction_algorithms.algo_base.AlgoBase): an algorithm from Surprise
-        data (pd.DataFrame): the data on which to predict
+        data (pandas.DataFrame): the data on which to predict
         usercol (str): name of the user column
         itemcol (str): name of the item column
     
     Returns:
-        pd.DataFrame: Dataframe with usercol, itemcol, predcol
+        pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     predictions = [
         algo.predict(getattr(row, usercol), getattr(row, itemcol))
@@ -87,13 +87,13 @@ def compute_ranking_predictions(
     
     Args:
         algo (surprise.prediction_algorithms.algo_base.AlgoBase): an algorithm from Surprise
-        data (pd.DataFrame): the data from which to get the users and items
+        data (pandas.DataFrame): the data from which to get the users and items
         usercol (str): name of the user column
         itemcol (str): name of the item column
         remove_seen (bool): flag to remove (user, item) pairs seen in the training data
     
     Returns:
-        pd.DataFrame: Dataframe with usercol, itemcol, predcol
+        pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
     preds_lst = []
     users = data[usercol].unique()

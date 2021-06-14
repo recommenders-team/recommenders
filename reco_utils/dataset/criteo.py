@@ -52,7 +52,7 @@ def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
         header (list): Dataset header names.
 
     Returns:
-        pd.DataFrame: Criteo DAC sample dataset.
+        pandas.DataFrame: Criteo DAC sample dataset.
     """
     with download_path(local_cache_path) as path:
         filepath = download_criteo(size, path)
@@ -97,7 +97,7 @@ def load_spark_df(
         dbutils (Databricks.dbutils): Databricks utility object.
   
     Returns:
-        pySpark.DataFrame: Criteo DAC training dataset.
+        pyspark.sql.DataFrame: Criteo DAC training dataset.
     """
     with download_path(local_cache_path) as path:
         filepath = download_criteo(size, path)

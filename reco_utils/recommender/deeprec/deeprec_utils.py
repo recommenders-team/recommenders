@@ -522,7 +522,7 @@ def mrr_score(y_true, y_score):
         y_score (np.ndarray): Predicted labels.
 
     Returns:
-        np.ndarray: mrr scores.
+        numpy.ndarray: mrr scores.
     """
     order = np.argsort(y_score)[::-1]
     y_true = np.take(y_true, order)
@@ -538,7 +538,7 @@ def ndcg_score(y_true, y_score, k=10):
         y_score (np.ndarray): Predicted labels.
 
     Returns:
-        np.ndarray: ndcg scores.
+        numpy.ndarray: ndcg scores.
     """
     best = dcg_score(y_true, y_true, k)
     actual = dcg_score(y_true, y_score, k)

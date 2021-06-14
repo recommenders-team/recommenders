@@ -36,8 +36,8 @@ class AffinityMatrix:
     ):
         """Initialize class parameters
             Args:
-                DF (pd.DataFrame): a dataframe containing the data
-                items_list (np.array): a list of unique items to use (if provided)
+                DF (pandas.DataFrame): a dataframe containing the data
+                items_list (numpy.array): a list of unique items to use (if provided)
                 col_user (str): default name for user column
                 col_item (str): default name for item column
                 col_rating (str): default name for rating columns
@@ -142,10 +142,10 @@ class AffinityMatrix:
     def map_back_sparse(self, X, kind):
         """Map back the user/affinity matrix to a pd dataframe
         Args:
-            X (np.array, int32): user/item affinity matrix
+            X (numpy.array, int32): user/item affinity matrix
             kind (string): specify if the output values are ratings or predictions
         Returns:
-            pd.DataFrame: the generated pandas dataframe
+            pandas.DataFrame: the generated pandas dataframe
         """
         m, n = X.shape
 
