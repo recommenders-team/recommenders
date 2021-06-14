@@ -11,7 +11,7 @@ Recommendation datasets
 Amazon Reviews
 ==============
 
-`Amazon Reviews dataset <https://snap.stanford.edu/data/web-Amazon.html>`_ consists of reviews from amazon. 
+`Amazon Reviews dataset <https://snap.stanford.edu/data/web-Amazon.html>`_ consists of reviews from Amazon. 
 The data span a period of 18 years, including ~35 million reviews up to March 2013. Reviews include product and user 
 information, ratings, and a plaintext review.
 
