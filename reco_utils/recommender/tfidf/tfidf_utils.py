@@ -220,7 +220,7 @@ class TfidfRecommender:
         """Return the stop words excluded in the TF-IDF vectorizer.
 
         Returns:
-            obj: Frozenset of stop words used by the TF-IDF vectorizer (can be converted to list).
+            list: Frozenset of stop words used by the TF-IDF vectorizer (can be converted to list).
         """
         try:
             self.stop_words = self.tf.get_stop_words()
