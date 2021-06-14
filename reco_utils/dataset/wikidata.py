@@ -44,8 +44,8 @@ def find_wikidata_id(name, limit=1, session=None):
         session (requests.Session): requests session to reuse connections
 
     Returns:
-        str: wikidata entityID corresponding to the title string.
-                  'entityNotFound' will be returned if no page is found
+        str: wikidata entityID corresponding to the title string, `"entityNotFound"` will
+        be returned if no page is found.
     """
 
     session = get_session(session=session)
@@ -97,7 +97,7 @@ def query_entity_links(entity_id, session=None):
         session (requests.Session): requests session to reuse connections
 
     Returns:
-        json: dictionary with linked pages.
+        json: Dictionary with linked pages.
     """
     query = (
         """
@@ -153,8 +153,9 @@ def read_linked_entities(data):
         data (json): dictionary with linked pages
 
     Returns:
-        list: List of liked entityIDs
-        list: List of liked entity names
+        list, list:
+        - List of liked entityIDs.
+        - List of liked entity names.
     """
 
     return [
@@ -176,8 +177,7 @@ def query_entity_description(entity_id, session=None):
 
     Returns:
         str: Wikidata short description of the entityID
-               descriptionNotFound' will be returned if no
-               description is found
+        descriptionNotFound' will be returned if no description is found
     """
     query = (
         """
@@ -211,13 +211,13 @@ def search_wikidata(names, extras=None, describe=True, verbose=False):
     """Create DataFrame of Wikidata search results
 
     Args:
-        names (list[str]): list of names to search for
-        extras (dict(str: list)): optional extra items to assign to results for corresponding name
-        describe (bool): optional flag to include description of entity
-        verbose (bool): optional flag to print out intermediate data
+        names (list[str]): List of names to search for
+        extras (dict(str: list)): Optional extra items to assign to results for corresponding name
+        describe (bool): Optional flag to include description of entity
+        verbose (bool): Optional flag to print out intermediate data
 
     Returns:
-        pd.DataFrame: wikipedia results for all names with found entities
+        pd.DataFrame: Wikipedia results for all names with found entities
 
     """
 
