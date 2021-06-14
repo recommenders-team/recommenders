@@ -37,8 +37,8 @@ class AffinityMatrix:
         """Initialize class parameters
 
         Args:
-            DF (pd.DataFrame): a dataframe containing the data
-            items_list (np.array): a list of unique items to use (if provided)
+            DF (pandas.DataFrame): a dataframe containing the data
+            items_list (numpy.ndarray): a list of unique items to use (if provided)
             col_user (str): default name for user column
             col_item (str): default name for item column
             col_rating (str): default name for rating columns
