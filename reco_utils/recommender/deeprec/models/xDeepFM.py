@@ -13,15 +13,17 @@ __all__ = ["XDeepFMModel"]
 class XDeepFMModel(BaseModel):
     """xDeepFM model
 
-    J. Lian, X. Zhou, F. Zhang, Z. Chen, X. Xie, G. Sun, "xDeepFM: Combining Explicit 
-    and Implicit Feature Interactions for Recommender Systems", in Proceedings of the 
-    24th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining, 
-    KDD 2018, London, 2018.
+    :Citation:
+
+        J. Lian, X. Zhou, F. Zhang, Z. Chen, X. Xie, G. Sun, "xDeepFM: Combining Explicit
+        and Implicit Feature Interactions for Recommender Systems", in Proceedings of the
+        24th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining,
+        KDD 2018, London, 2018.
     """
 
     def _build_graph(self):
         """The main function to create xdeepfm's logic.
-        
+
         Returns:
             obj: The prediction score made by the model.
         """
@@ -69,7 +71,7 @@ class XDeepFMModel(BaseModel):
     def _build_embedding(self):
         """The field embedding layer. MLP requires fixed-length vectors as input.
         This function makes sum pooling of feature embeddings for each field.
-        
+
         Returns:
             embedding:  The result of field embedding layer, with size of #_fields * #_dim.
             embedding_size: #_fields * #_dim
@@ -97,7 +99,7 @@ class XDeepFMModel(BaseModel):
     def _build_linear(self):
         """Construct the linear part for the model.
         This is a linear regression.
-        
+
         Returns:
             obj: Prediction score made by linear regression.
         """
@@ -126,7 +128,7 @@ class XDeepFMModel(BaseModel):
     def _build_fm(self):
         """Construct the factorization machine part for the model.
         This is a traditional 2-order FM module.
-        
+
         Returns:
             obj: Prediction score made by factorization machine.
         """
@@ -154,7 +156,7 @@ class XDeepFMModel(BaseModel):
     ):
         """Construct the compressed interaction network.
         This component provides explicit and vector-wise higher-order feature interactions.
-        
+
         Args:
             nn_input (obj): The output of field-embedding layer. This is the input for CIN.
             res (bool): Whether use residual structure to fuse the results from each layer of CIN.
@@ -162,7 +164,7 @@ class XDeepFMModel(BaseModel):
                     otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
             bias (bool): Whether to add bias term when calculating the feature maps.
             is_masked (bool): Controls whether to remove self-interaction in the first layer of CIN.
-        
+
         Returns:
             obj: Prediction score made by CIN.
         """
@@ -282,7 +284,7 @@ class XDeepFMModel(BaseModel):
         This component provides explicit and vector-wise higher-order feature interactions.
         Parameters from the filters are reduced via a matrix decomposition method.
         Fast CIN is more space and time efficient than CIN.
-        
+
         Args:
             nn_input (obj): The output of field-embedding layer. This is the input for CIN.
             res (bool): Whether use residual structure to fuse the results from each layer of CIN.
@@ -429,7 +431,7 @@ class XDeepFMModel(BaseModel):
     def _build_dnn(self, embed_out, embed_layer_size):
         """Construct the MLP part for the model.
         This components provides implicit higher-order feature interactions.
-        
+
         Args:
             embed_out (obj): The output of field-embedding layer. This is the input for DNN.
             embed_layer_size (obj): Shape of the embed_out

@@ -12,9 +12,11 @@ __all__ = ["DKN"]
 class DKN(BaseModel):
     """DKN model (Deep Knowledge-Aware Network)
 
-    H. Wang, F. Zhang, X. Xie and M. Guo, "DKN: Deep Knowledge-Aware Network for News
-    Recommendation", in Proceedings of the 2018 World Wide Web Conference on World
-    Wide Web, 2018.
+    :Citation:
+
+        H. Wang, F. Zhang, X. Xie and M. Guo, "DKN: Deep Knowledge-Aware Network for News
+        Recommendation", in Proceedings of the 2018 World Wide Web Conference on World
+        Wide Web, 2018.
     """
 
     def __init__(self, hparams, iterator_creator):
