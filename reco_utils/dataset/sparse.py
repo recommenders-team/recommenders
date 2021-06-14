@@ -26,7 +26,7 @@ class AffinityMatrix:
 
     def __init__(
         self,
-        DF,
+        df,
         items_list=None,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
@@ -37,7 +37,7 @@ class AffinityMatrix:
         """Initialize class parameters
 
         Args:
-            DF (pandas.DataFrame): a dataframe containing the data
+            df (pandas.DataFrame): a dataframe containing the data
             items_list (numpy.ndarray): a list of unique items to use (if provided)
             col_user (str): default name for user column
             col_item (str): default name for item column
@@ -45,7 +45,7 @@ class AffinityMatrix:
             save_path (str): default path to save item/user maps
 
         """
-        self.df = DF  # dataframe
+        self.df = df  # dataframe
         self.items_list = items_list  # list of unique items
 
         # pandas DF parameters
