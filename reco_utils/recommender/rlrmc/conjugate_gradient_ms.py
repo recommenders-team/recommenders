@@ -66,13 +66,13 @@ class ConjugateGradientMS(Solver):
                 have a .manifold attribute specifying the manifold to optimize
                 over, as well as a cost and enough information to compute
                 the gradient of that cost.
-            x (numpy.array): Optional parameter. Starting point on the manifold. If none
+            x (numpy.ndarray): Optional parameter. Starting point on the manifold. If none
                 then a starting point will be randomly generated.
             reuselinesearch (bool): Whether to reuse the previous linesearch object. Allows to
                 use information from a previous solve run.
         
         Returns:
-            numpy.array: Local minimum of obj, or if algorithm terminated before convergence x will be the point at which it terminated.
+            numpy.ndarray: Local minimum of obj, or if algorithm terminated before convergence x will be the point at which it terminated.
         """
         man = problem.manifold
         verbosity = problem.verbosity

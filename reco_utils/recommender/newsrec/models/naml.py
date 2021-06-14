@@ -20,7 +20,7 @@ class NAMLModel(BaseModel):
     Neural News Recommendation with Attentive Multi-View Learning, IJCAI 2019
 
     Attributes:
-        word2vec_embedding (numpy.array): Pretrained word embedding matrix.
+        word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
         hparam (obj): Global hyper-parameters.
     """
 
@@ -60,7 +60,7 @@ class NAMLModel(BaseModel):
             batch_data: input batch data from user iterator
         
         Returns:
-            numpy.array: input user feature (clicked title batch)
+            numpy.ndarray: input user feature (clicked title batch)
         """
         input_feature = [
             batch_data["clicked_title_batch"],
@@ -77,7 +77,7 @@ class NAMLModel(BaseModel):
             batch_data: input batch data from news iterator
         
         Returns:
-            numpy.array: input news feature (candidate title batch)
+            numpy.ndarray: input news feature (candidate title batch)
         """
         input_feature = [
             batch_data["candidate_title_batch"],

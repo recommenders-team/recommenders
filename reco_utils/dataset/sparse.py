@@ -147,7 +147,7 @@ class AffinityMatrix:
         """Map back the user/affinity matrix to a pd dataframe
 
         Args:
-            X (numpy.array, int32): user/item affinity matrix
+            X (numpy.ndarray, int32): user/item affinity matrix
             kind (string): specify if the output values are ratings or predictions
         Returns:
             pandas.DataFrame: the generated pandas dataframe

@@ -15,10 +15,10 @@ def cartesian_product(*arrays):
     """Compute the Cartesian product in fastai algo. This is a helper function.
 
     Args:
-        arrays (tuple of np.array): Input arrays
+        arrays (tuple of numpy.ndarray): Input arrays
 
     Returns:
-        numpy.array: product
+        numpy.ndarray: product
 
     """
     la = len(arrays)

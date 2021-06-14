@@ -20,7 +20,7 @@ class NPAModel(BaseModel):
     NPA: Neural News Recommendation with Personalized Attention, KDD 2019, ADS track.
 
     Attributes:
-        word2vec_embedding (numpy.array): Pretrained word embedding matrix.
+        word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
         hparam (obj): Global hyper-parameters.
     """
 

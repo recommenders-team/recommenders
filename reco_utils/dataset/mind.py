@@ -392,7 +392,7 @@ def load_glove_matrix(path_emb, word_dict, word_embedding_dim):
         word_embedding_dim: dimention of word embedding vectors
         
     Returns:
-        numpy.array, list: pretrained word embedding metrics, words can be found in glove files
+        numpy.ndarray, list: pretrained word embedding metrics, words can be found in glove files
     '''
     
     embedding_matrix = np.zeros((len(word_dict)+1, word_embedding_dim))

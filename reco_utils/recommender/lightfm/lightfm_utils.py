@@ -187,8 +187,8 @@ def prepare_test_df(test_idx, uids, iids, uid_map, iid_map, weights):
 
     Args:
         test_idx (slice): slice of test indices
-        uids (numpy.array): Array of internal user indices
-        iids (numpy.array): Array of internal item indices
+        uids (numpy.ndarray): Array of internal user indices
+        iids (numpy.ndarray): Array of internal item indices
         uid_map (dict): Keys to map internal user indices to external ids.
         iid_map (dict): Keys to map internal item indices to external ids.
         weights (numpy.float32 coo_matrix): user-item interaction

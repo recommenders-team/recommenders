@@ -240,12 +240,12 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
     train set matrix Xtst. The train set matrix is obtained in the opposite way.
 
     Args:
-        X (numpy.array, int): a sparse matrix to be split
+        X (numpy.ndarray, int): a sparse matrix to be split
         ratio (float): fraction of the entire dataset to constitute the train set
         seed (int): random seed
 
     Returns:
-        numpy.array, numpy.array: 
+        numpy.ndarray, numpy.ndarray: 
         - Xtr: The train set user/item affinity matrix. 
         - Xtst: The test set user/item affinity matrix.
     """

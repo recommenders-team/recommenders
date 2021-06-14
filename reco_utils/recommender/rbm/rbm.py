@@ -139,7 +139,7 @@ class RBM:
 
         Args:
             pr (tf.Tensor, float32): Input conditional probability.
-            g  (numpy.array, float32):  Uniform probability used for comparison.
+            g  (numpy.ndarray, float32):  Uniform probability used for comparison.
 
         Returns:
             tf.Tensor: Float32 tensor of sampled units. The value is 1 if pr>g and 0 otherwise.
@@ -760,7 +760,7 @@ class RBM:
             top_k (scalar, int32): the number of items to recommend.
 
         Returns:
-            numpy.array, float: 
+            numpy.ndarray, float: 
             - A sparse matrix containing the top_k elements ordered by their score.
             - The time taken to recommend k items.
         """
@@ -818,7 +818,7 @@ class RBM:
             the ratings of a single user.
 
         Returns:
-            numpy.array, float: 
+            numpy.ndarray, float: 
             - A matrix with the inferred ratings.
             - The elapsed time for predediction.
         """

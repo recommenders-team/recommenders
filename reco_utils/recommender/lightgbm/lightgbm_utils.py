@@ -11,10 +11,10 @@ import gc
 
 
 def unpackbits(x, num_bits):
-    """Convert a decimal value numpy.array into multi-binary value numpy.arrays ([1,2]->[[0,1],[1,0]])
+    """Convert a decimal value numpy.ndarray into multi-binary value numpy.ndarray ([1,2]->[[0,1],[1,0]])
 
     Args:
-        x (numpy.array): Decimal array.
+        x (numpy.ndarray): Decimal array.
         num_bits (int): The max length of the converted binary value.
     """
     xshape = list(x.shape)
@@ -60,13 +60,13 @@ class NumEncoder(object):
         self.samples = 0
 
     def fit_transform(self, df):
-        """Input a training set (pandas.DataFrame) and return the converted 2 numpy.arrays (x,y).
+        """Input a training set (pandas.DataFrame) and return the converted 2 numpy.ndarray (x,y).
 
         Args:
             df (pandas.DataFrame): Input dataframe
 
         Returns:
-            numpy.array, numpy.array: New features and labels.
+            numpy.ndarray, numpy.ndarray: New features and labels.
         """
         df = df.astype(dtype=self.dtype_dict)
         self.samples = df.shape[0]
@@ -148,13 +148,13 @@ class NumEncoder(object):
 
     # for test dataset
     def transform(self, df):
-        """Input a testing / validation set (pandas.DataFrame) and return the converted 2 numpy.arrays (x,y).
+        """Input a testing / validation set (pandas.DataFrame) and return the converted 2 numpy.ndarray (x,y).
 
         Args:
             df (pandas.DataFrame): Input dataframe
 
         Returns:
-            numpy.array, numpy.array: New features and labels.
+            numpy.ndarray, numpy.ndarray: New features and labels.
         """
         df = df.astype(dtype=self.dtype_dict)
         samples = df.shape[0]
