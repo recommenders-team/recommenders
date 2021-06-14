@@ -26,8 +26,8 @@ class DKN(BaseModel):
         After creating these two embedding variables, BaseModel's `__init__` method will be called.
 
         Args:
-            hparams (obj): Global hyper-parameters.
-            iterator_creator (obj): DKN data loader class.
+            hparams (object): Global hyper-parameters.
+            iterator_creator (object): DKN data loader class.
         """
         self.graph = tf.Graph()
         with self.graph.as_default():
@@ -88,7 +88,7 @@ class DKN(BaseModel):
             file_path (str): the pre-trained embeddings filename.
 
         Returns:
-            obj: A constant tensor.
+            object: A constant tensor.
         """
         return tf.constant(np.load(file_path).astype(np.float32))
 
@@ -152,7 +152,7 @@ class DKN(BaseModel):
         """The main function to create DKN's logic.
 
         Returns:
-            obj: Prediction score made by the DKN model.
+            object: Prediction score made by the DKN model.
         """
         hparams = self.hparams
         # build attention model for clicked news and candidate news
@@ -233,11 +233,11 @@ class DKN(BaseModel):
         User embedding is generated from click history and also depends on the candidate news article via attention mechanism.
         Article embedding is generated via KCNN module.
         Args:
-            candidate_word_batch (obj): tensor word indices for constructing news article
-            candidate_entity_batch (obj): tensor entity values for constructing news article
-            click_word_batch (obj): tensor word indices for constructing user clicked history
-            click_entity_batch (obj): tensor entity indices for constructing user clicked history
-            hparams (obj): global hyper-parameters
+            candidate_word_batch (object): tensor word indices for constructing news article
+            candidate_entity_batch (object): tensor entity values for constructing news article
+            click_word_batch (object): tensor word indices for constructing user clicked history
+            click_entity_batch (object): tensor entity indices for constructing user clicked history
+            hparams (object): global hyper-parameters
         Returns:
             click_field_embed_final_batch: user embedding
             news_field_embed_final_batch: candidate news article embedding
@@ -351,12 +351,12 @@ class DKN(BaseModel):
         """The KCNN module. KCNN is an extension of traditional CNN that incorporates symbolic knowledge from
         a knowledge graph into sentence representation learning.
         Args:
-            word (obj): word indices for the sentence.
-            entity (obj): entity indices for the sentence. Entities are aligned with words in the sentence.
-            hparams (obj): global hyper-parameters.
+            word (object): word indices for the sentence.
+            entity (object): entity indices for the sentence. Entities are aligned with words in the sentence.
+            hparams (object): global hyper-parameters.
 
         Returns:
-            obj: Sentence representation.
+            object: Sentence representation.
         """
         # kims cnn parameter
         filter_sizes = hparams.filter_sizes
@@ -440,7 +440,7 @@ class DKN(BaseModel):
         """Infer document embedding in feed_dict with current model.
 
         Args:
-            sess (obj): The model session object.
+            sess (object): The model session object.
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:
@@ -458,7 +458,7 @@ class DKN(BaseModel):
             outfile_name (str): Output file name, format is [Newsid] [embedding]
 
         Returns:
-            obj: An instance of self.
+            object: An instance of self.
         """
         load_sess = self.sess
         with tf.io.gfile.GFile(outfile_name, "w") as wt:

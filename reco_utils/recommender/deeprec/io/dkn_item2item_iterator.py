@@ -15,8 +15,8 @@ class DKNItem2itemTextIterator(DKNTextIterator):
         So the placeholder can be simplified from the original DKNTextIterator.
 
         Args:
-            hparams (obj): Global hyper-parameters.
-            graph (obj): The running graph.
+            hparams (object): Global hyper-parameters.
+            graph (object): The running graph.
         """
         self.hparams = hparams
         self.graph = graph

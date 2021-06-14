@@ -25,7 +25,7 @@ class SUMModel(SequentialBaseModel):
         """The main function to create SUM model.
 
         Returns:
-            obj: The output of SUM section, which is a concatenation of user vector and target item vector.
+            object: The output of SUM section, which is a concatenation of user vector and target item vector.
         """
         hparams = self.hparams
         with tf.variable_scope("sum"):
@@ -100,7 +100,7 @@ class SUMModel(SequentialBaseModel):
         """Create a SUM cell
 
         Returns:
-            obj: An initialized SUM cell
+            object: An initialized SUM cell
         """
         hparams = self.hparams
         input_embedding_dim = self.history_embedding.shape[-1]
@@ -123,10 +123,10 @@ class SUMModel(SequentialBaseModel):
         """Generate  user memory states from behavior sequence
 
         Args:
-            obj: An initialied SUM cell.
+            object: An initialied SUM cell.
 
         Returns:
-            obj: A flatten representation of user memory states, in the shape of (BatchSize, SlotsNum x HiddenSize)
+            object: A flatten representation of user memory states, in the shape of (BatchSize, SlotsNum x HiddenSize)
         """
         hparams = self.hparams
         with tf.variable_scope("sum"):

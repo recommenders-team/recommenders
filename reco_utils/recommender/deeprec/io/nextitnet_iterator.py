@@ -25,8 +25,8 @@ class NextItNetIterator(SequentialIterator):
         Different from sequential iterator
 
         Args:
-            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): The running graph. All created placeholder will be added to this graph.
+            hparams (object): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
+            graph (object): The running graph. All created placeholder will be added to this graph.
             col_spliter (str): Column splitter in one line.
         """
         self.col_spliter = col_spliter

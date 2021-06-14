@@ -28,7 +28,7 @@ class SLI_RECModel(SequentialBaseModel):
         """The main function to create sli_rec model.
 
         Returns:
-            obj:the output of sli_rec section.
+            object: the output of sli_rec section.
         """
         hparams = self.hparams
         with tf.variable_scope("sli_rec"):
@@ -99,11 +99,11 @@ class SLI_RECModel(SequentialBaseModel):
         """Apply attention by fully connected layers.
 
         Args:
-            query (obj): The embedding of target item which is regarded as a query in attention operations.
-            user_embedding (obj): The output of RNN layers which is regarded as user modeling.
+            query (object): The embedding of target item which is regarded as a query in attention operations.
+            user_embedding (object): The output of RNN layers which is regarded as user modeling.
 
         Returns:
-            obj: Weighted sum of user modeling.
+            object: Weighted sum of user modeling.
         """
         hparams = self.hparams
         with tf.variable_scope("attention_fcn"):

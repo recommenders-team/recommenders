@@ -25,7 +25,7 @@ class LSTURModel(BaseModel):
 
     Attributes:
         word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
-        hparam (obj): Global hyper-parameters.
+        hparam (object): Global hyper-parameters.
     """
 
     def __init__(self, hparams, iterator_creator, seed=None):
@@ -34,9 +34,9 @@ class LSTURModel(BaseModel):
         After creating word embedding matrix, BaseModel's __init__ method will be called.
         
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as type and gru_unit are there.
-            iterator_creator_train(obj): LSTUR data loader class for train data.
-            iterator_creator_test(obj): LSTUR data loader class for test and validation data
+            hparams (object): Global hyper-parameters. Some key setttings such as type and gru_unit are there.
+            iterator_creator_train (object): LSTUR data loader class for train data.
+            iterator_creator_test (object): LSTUR data loader class for test and validation data
         """
 
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
@@ -63,8 +63,8 @@ class LSTURModel(BaseModel):
         """Build LSTUR model and scorer.
 
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and inference.
+            object: a model used to train.
+            object: a model used to evaluate and inference.
         """
 
         model, scorer = self._build_lstur()
@@ -74,10 +74,10 @@ class LSTURModel(BaseModel):
         """The main function to create user encoder of LSTUR.
 
         Args:
-            titleencoder(obj): the news encoder of LSTUR. 
+            titleencoder (object): the news encoder of LSTUR. 
 
         Return:
-            obj: the user encoder of LSTUR.
+            object: the user encoder of LSTUR.
         """
         hparams = self.hparams
         his_input_title = keras.Input(
@@ -131,10 +131,10 @@ class LSTURModel(BaseModel):
         """The main function to create news encoder of LSTUR.
 
         Args:
-            embedding_layer(obj): a word embedding layer.
+            embedding_layer (object): a word embedding layer.
         
         Return:
-            obj: the news encoder of LSTUR.
+            object: the news encoder of LSTUR.
         """
         hparams = self.hparams
         sequences_input_title = keras.Input(shape=(hparams.title_size,), dtype="int32")
@@ -164,8 +164,8 @@ class LSTURModel(BaseModel):
         is a user encoder and a news encoder.
         
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and inference.
+            object: a model used to train.
+            object: a model used to evaluate and inference.
         """
         hparams = self.hparams
 

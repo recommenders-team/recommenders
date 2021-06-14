@@ -276,7 +276,7 @@ class NCF:
             alpha (float): the concatenation hyper-parameter for gmf and mlp output layer.
 
         Returns:
-            obj: Load parameters in this model.
+            object: Load parameters in this model.
         """
 
         # load pre-trained model

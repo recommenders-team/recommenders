@@ -21,7 +21,7 @@ class NPAModel(BaseModel):
 
     Attributes:
         word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
-        hparam (obj): Global hyper-parameters.
+        hparam (object): Global hyper-parameters.
     """
 
     def __init__(self, hparams, iterator_creator, seed=None):
@@ -30,9 +30,9 @@ class NPAModel(BaseModel):
         After creating word embedding matrix, BaseModel's __init__ method will be called.
         
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as filter_num are there.
-            iterator_creator_train(obj): NPA data loader class for train data.
-            iterator_creator_test(obj): NPA data loader class for test and validation data
+            hparams (object): Global hyper-parameters. Some key setttings such as filter_num are there.
+            iterator_creator_train (object): NPA data loader class for train data.
+            iterator_creator_test (object): NPA data loader class for test and validation data
         """
 
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
@@ -53,8 +53,8 @@ class NPAModel(BaseModel):
         """Build NPA model and scorer.
 
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and inference.
+            object: a model used to train.
+            object: a model used to evaluate and inference.
         """
 
         model, scorer = self._build_npa()
@@ -64,10 +64,10 @@ class NPAModel(BaseModel):
         """The main function to create user encoder of NPA.
 
         Args:
-            titleencoder(obj): the news encoder of NPA. 
+            titleencoder (object): the news encoder of NPA. 
 
         Return:
-            obj: the user encoder of NPA.
+            object: the user encoder of NPA.
         """
         hparams = self.hparams
 
@@ -101,10 +101,10 @@ class NPAModel(BaseModel):
         """The main function to create news encoder of NPA.
 
         Args:
-            embedding_layer(obj): a word embedding layer.
+            embedding_layer (object): a word embedding layer.
         
         Return:
-            obj: the news encoder of NPA.
+            object: the news encoder of NPA.
         """
         hparams = self.hparams
         sequence_title_uindex = keras.Input(
@@ -150,8 +150,8 @@ class NPAModel(BaseModel):
         is a user encoder and a news encoder.
         
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and predict.
+            object: a model used to train.
+            object: a model used to evaluate and predict.
         """
         hparams = self.hparams
 

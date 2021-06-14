@@ -51,8 +51,8 @@ class FFMTextIterator(BaseIterator):
         """Initialize an iterator. Create the necessary placeholders for the model.
 
         Args:
-            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): The running graph. All created placeholder will be added to this graph.
+            hparams (object): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
+            graph (object): The running graph. All created placeholder will be added to this graph.
             col_spliter (str): column splitter in one line.
             ID_spliter (str): ID splitter in one line.
         """
@@ -120,7 +120,7 @@ class FFMTextIterator(BaseIterator):
             infile (str): Text input file. Each line in this file is an instance.
 
         Returns:
-            obj: An iterator that yields parsed results, in the format of graph `feed_dict`.
+            object: An iterator that yields parsed results, in the format of graph `feed_dict`.
         """
         label_list = []
         features_list = []

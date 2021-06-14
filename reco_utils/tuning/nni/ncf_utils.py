@@ -8,7 +8,7 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
     """Compute the test results using a trained NCF model.
     
     Args:
-        model (obj): TF model.
+        model (object): TF model.
         train (pandas.DataFrame): Train set.
         test (pandas.DataFrame): Test set.
         rating_metrics (list): List of rating metrics.

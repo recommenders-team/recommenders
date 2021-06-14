@@ -40,8 +40,8 @@ class MINDAllIterator(BaseIterator):
         """Initialize an iterator. Create necessary placeholders for the model.
 
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
-            graph (obj): the running graph. All created placeholder will be added to this graph.
+            hparams (object): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
+            graph (object): the running graph. All created placeholder will be added to this graph.
             col_spliter (str): column spliter in one line.
             ID_spliter (str): ID spliter in one line.
         """
@@ -65,7 +65,7 @@ class MINDAllIterator(BaseIterator):
             file path (str): File path
 
         Returns:
-            obj: pickle load obj
+            object: pickle load obj
         """
         with open(file_path, "rb") as f:
             return pickle.load(f)
@@ -264,7 +264,7 @@ class MINDAllIterator(BaseIterator):
             beahaviros_file (str): A file contains information of user impressions.
 
         Yields:
-            obj: An iterator that yields parsed results, in the format of graph feed_dict.
+            object: An iterator that yields parsed results, in the format of graph feed_dict.
         """
 
         if not hasattr(self, "news_title_index"):
@@ -415,7 +415,7 @@ class MINDAllIterator(BaseIterator):
             beahaviros_file (str): A file contains information of user impressions.
 
         Yields:
-            obj: An iterator that yields parsed user feature, in the format of dict.
+            object: An iterator that yields parsed user feature, in the format of dict.
         """
 
         if not hasattr(self, "news_title_index"):
@@ -502,7 +502,7 @@ class MINDAllIterator(BaseIterator):
             news_file (str): A file contains several informations of news.
 
         Yields:
-            obj: An iterator that yields parsed news feature, in the format of dict.
+            object: An iterator that yields parsed news feature, in the format of dict.
         """
         if not hasattr(self, "news_title_index"):
             self.init_news(news_file)
@@ -582,7 +582,7 @@ class MINDAllIterator(BaseIterator):
             behaivors_file (str): A file contains several informations of behaviros.
 
         Yields:
-            obj: An iterator that yields parsed impression data, in the format of dict.
+            object: An iterator that yields parsed impression data, in the format of dict.
         """
 
         if not hasattr(self, "histories"):

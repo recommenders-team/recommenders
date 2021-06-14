@@ -27,7 +27,7 @@ class DKNItem2Item(DKN):
         """The main function to create DKN's logic.
 
         Returns:
-            obj: Prediction of item2item relation scores made by the DKN model, in the shape of (`batch_size`, `num_negative` + 1).
+            object: Prediction of item2item relation scores made by the DKN model, in the shape of (`batch_size`, `num_negative` + 1).
         """
         news_field_embed_final_batch = self._build_doc_embedding(
             self.iterator.candidate_news_index_batch,
@@ -85,7 +85,7 @@ class DKNItem2Item(DKN):
         """Evaluate the data in `feed_dict` with current model.
 
         Args:
-            sess (obj): The model session object.
+            sess (object): The model session object.
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:

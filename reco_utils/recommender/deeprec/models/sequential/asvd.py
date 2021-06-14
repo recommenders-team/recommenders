@@ -30,7 +30,7 @@ class A2SVDModel(SequentialBaseModel):
         """The main function to create A2SVD model.
 
         Returns:
-            obj: The output of A2SVD section.
+            object: The output of A2SVD section.
         """
         hparams = self.hparams
         with tf.variable_scope("a2svd"):

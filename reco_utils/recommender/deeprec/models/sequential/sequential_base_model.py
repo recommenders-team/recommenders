@@ -22,9 +22,9 @@ class SequentialBaseModel(BaseModel):
         parameter set.
 
         Args:
-            hparams (obj): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
-            iterator_creator (obj): An iterator to load the data.
-            graph (obj): An optional graph.
+            hparams (object): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
+            iterator_creator (object): An iterator to load the data.
+            graph (object): An optional graph.
             seed (int): Random seed.
         """
         self.hparams = hparams
@@ -57,7 +57,7 @@ class SequentialBaseModel(BaseModel):
         """The main function to create sequential models.
 
         Returns:
-            obj:the prediction score make by the model.
+            object: the prediction score make by the model.
         """
         hparams = self.hparams
         self.keep_prob_train = 1 - np.array(hparams.dropout)
@@ -88,7 +88,7 @@ class SequentialBaseModel(BaseModel):
             eval_metric (str): the metric that control early stopping. e.g. "auc", "group_auc", etc.
 
         Returns:
-            obj: An instance of self.
+            object: An instance of self.
         """
 
         # check bad input.
@@ -230,7 +230,7 @@ class SequentialBaseModel(BaseModel):
             outfile_name (str): Output file name.
 
         Returns:
-            obj: An instance of self.
+            object: An instance of self.
         """
 
         load_sess = self.sess

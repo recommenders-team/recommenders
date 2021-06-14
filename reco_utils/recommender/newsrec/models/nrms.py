@@ -23,7 +23,7 @@ class NRMSModel(BaseModel):
 
     Attributes:
         word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
-        hparam (obj): Global hyper-parameters.
+        hparam (object): Global hyper-parameters.
     """
 
     def __init__(
@@ -34,9 +34,9 @@ class NRMSModel(BaseModel):
         After creating word embedding matrix, BaseModel's __init__ method will be called.
         
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
-            iterator_creator_train(obj): NRMS data loader class for train data.
-            iterator_creator_test(obj): NRMS data loader class for test and validation data
+            hparams (object): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
+            iterator_creator_train (object): NRMS data loader class for train data.
+            iterator_creator_test (object): NRMS data loader class for test and validation data
         """
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
 
@@ -85,8 +85,8 @@ class NRMSModel(BaseModel):
         """Build NRMS model and scorer.
 
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and inference.
+            object: a model used to train.
+            object: a model used to evaluate and inference.
         """
         hparams = self.hparams
         model, scorer = self._build_nrms()
@@ -96,10 +96,10 @@ class NRMSModel(BaseModel):
         """The main function to create user encoder of NRMS.
 
         Args:
-            titleencoder(obj): the news encoder of NRMS. 
+            titleencoder (object): the news encoder of NRMS. 
 
         Return:
-            obj: the user encoder of NRMS.
+            object: the user encoder of NRMS.
         """
         hparams = self.hparams
         his_input_title = keras.Input(
@@ -119,10 +119,10 @@ class NRMSModel(BaseModel):
         """The main function to create news encoder of NRMS.
 
         Args:
-            embedding_layer(obj): a word embedding layer.
+            embedding_layer (object): a word embedding layer.
         
         Return:
-            obj: the news encoder of NRMS.
+            object: the news encoder of NRMS.
         """
         hparams = self.hparams
         sequences_input_title = keras.Input(shape=(hparams.title_size,), dtype="int32")
@@ -142,8 +142,8 @@ class NRMSModel(BaseModel):
         is a user encoder and a news encoder.
         
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and inference.
+            object: a model used to train.
+            object: a model used to evaluate and inference.
         """
         hparams = self.hparams
 

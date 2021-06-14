@@ -397,7 +397,7 @@ class Mult_VAE:
             x_valid (numpy.ndarray): the click matrix for the validation set.
             x_val_tr (numpy.ndarray): the click matrix for the validation set training part.
             x_val_te (numpy.ndarray): the click matrix for the validation set testing part.
-            mapper (obj): the mapper for converting click matrix to dataframe. It can be AffinityMatrix.
+            mapper (object): the mapper for converting click matrix to dataframe. It can be AffinityMatrix.
         """
         # initialise LossHistory used for saving loss of validation and train set per epoch
         history = LossHistory()

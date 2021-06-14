@@ -17,7 +17,7 @@ def model_perf_plots(df):
         df (pandas.DataFrame): Dataframe in tidy format, with ['epoch','level','value'] columns
     
     Returns:
-        obj: matplotlib axes
+        object: matplotlib axes
     """
     g = sns.FacetGrid(df, col="metric", hue="stage", col_wrap=2, sharey=False)
     g = g.map(sns.scatterplot, "epoch", "value").add_legend()

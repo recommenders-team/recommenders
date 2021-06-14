@@ -21,7 +21,7 @@ def surprise_trainset_to_df(
     More info: https://surprise.readthedocs.io/en/stable/trainset.html
 
     Args:
-        trainset (obj): A surprise.Trainset object.
+        trainset (object): A surprise.Trainset object.
         col_user (str): User column name.
         col_item (str): Item column name.
         col_rating (str): Rating column name.

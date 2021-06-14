@@ -22,9 +22,9 @@ class BaseModel:
         parameter set.
 
         Args:
-            hparams (obj): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
-            iterator_creator (obj): An iterator to load the data.
-            graph (obj): An optional graph.
+            hparams (object): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
+            iterator_creator (object): An iterator to load the data.
+            graph (object): An optional graph.
             seed (int): Random seed.
         """
         self.seed = seed
@@ -81,7 +81,7 @@ class BaseModel:
         """Make loss function, consists of data loss and regularization loss
 
         Returns:
-            obj: Loss value.
+            object: Loss value.
         """
         self.data_loss = self._compute_data_loss()
         self.regular_loss = self._compute_regular_loss()
@@ -92,11 +92,11 @@ class BaseModel:
         """Make final output as prediction score, according to different tasks.
 
         Args:
-            logit (obj): Base prediction value.
+            logit (object): Base prediction value.
             task (str): A task (values: regression/classification)
 
         Returns:
-            obj: Transformed score.
+            object: Transformed score.
         """
         if task == "regression":
             pred = tf.identity(logit)
@@ -150,7 +150,7 @@ class BaseModel:
         """Construct L1-norm and L2-norm on cross network parameters for loss function.
 
         Returns:
-            obj: Regular loss value on cross network parameters.
+            object: Regular loss value on cross network parameters.
         """
         cross_l_loss = tf.zeros([1], dtype=tf.float32)
         for param in self.cross_params:
@@ -246,7 +246,7 @@ class BaseModel:
         Users can designate which norm to be included via config file.
 
         Returns:
-            obj: Regular loss.
+            object: Regular loss.
         """
         regular_loss = self._l2_loss() + self._l1_loss() + self._cross_l_loss()
         return tf.reduce_sum(regular_loss)
@@ -255,7 +255,7 @@ class BaseModel:
         """Get the optimizer according to configuration. Usually we will use Adam.
 
         Returns:
-            obj: An optimizer.
+            object: An optimizer.
         """
         lr = self.hparams.learning_rate
         optimizer = self.hparams.optimizer
@@ -290,7 +290,7 @@ class BaseModel:
         when their absolute values are too large to avoid gradient explosion.
 
         Returns:
-            obj: An operation that applies the specified optimization step.
+            object: An operation that applies the specified optimization step.
         """
         train_step = self._train_opt()
         gradients, variables = zip(*train_step.compute_gradients(self.loss))
@@ -307,12 +307,12 @@ class BaseModel:
         """Transform the input value with an activation. May use dropout.
 
         Args:
-            logit (obj): Input value.
+            logit (object): Input value.
             activation (str): A string indicating the type of activation function.
             layer_idx (int): Index of current layer. Used to retrieve corresponding parameters
 
         Returns:
-            obj: A tensor after applying activation function on logit.
+            object: A tensor after applying activation function on logit.
         """
         if layer_idx >= 0 and self.hparams.user_dropout:
             logit = self._dropout(logit, self.layer_keeps[layer_idx])
@@ -338,11 +338,11 @@ class BaseModel:
         """Apply drops upon the input value.
 
         Args:
-            logit (obj): The input value.
+            logit (object): The input value.
             keep_prob (float): The probability of keeping each element.
 
         Returns:
-            obj: A tensor of the same shape of logit.
+            object: A tensor of the same shape of logit.
         """
         return tf.nn.dropout(x=logit, keep_prob=keep_prob)
 
@@ -350,7 +350,7 @@ class BaseModel:
         """Go through the optimization step once with training data in `feed_dict`.
 
         Args:
-            sess (obj): The model session object.
+            sess (object): The model session object.
             feed_dict (dict): Feed values to train the model. This is a dictionary that maps graph elements to values.
 
         Returns:
@@ -373,7 +373,7 @@ class BaseModel:
         """Evaluate the data in `feed_dict` with current model.
 
         Args:
-            sess (obj): The model session object.
+            sess (object): The model session object.
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:
@@ -387,7 +387,7 @@ class BaseModel:
         """Given feature data (in `feed_dict`), get predicted scores with current model.
 
         Args:
-            sess (obj): The model session object.
+            sess (object): The model session object.
             feed_dict (dict): Instances to predict. This is a dictionary that maps graph elements to values.
 
         Returns:
@@ -425,7 +425,7 @@ class BaseModel:
             test_file (str): test set.
 
         Returns:
-            obj: An instance of self.
+            object: An instance of self.
         """
         if self.hparams.write_tfevents:
             self.writer = tf.summary.FileWriter(
@@ -586,7 +586,7 @@ class BaseModel:
             outfile_name (str): Output file name, each line is the predict score.
 
         Returns:
-            obj: An instance of self.
+            object: An instance of self.
         """
         load_sess = self.sess
         with tf.gfile.GFile(outfile_name, "w") as wt:
@@ -605,11 +605,11 @@ class BaseModel:
         """Soft alignment attention implement.
 
         Args:
-            inputs (obj): Sequences ready to apply attention.
+            inputs (object): Sequences ready to apply attention.
             attention_size (int): The dimension of attention operation.
 
         Returns:
-            obj: Weighted sum after attention.
+            object: Weighted sum after attention.
         """
         hidden_size = inputs.shape[2].value
         if not attention_size:
@@ -637,12 +637,12 @@ class BaseModel:
         """Construct the MLP part for the model.
 
         Args:
-            model_output (obj): The output of upper layers, input of MLP part
+            model_output (object): The output of upper layers, input of MLP part
             layer_sizes (list): The shape of each layer of MLP part
-            scope (obj): The scope of MLP part
+            scope (object): The scope of MLP part
 
         Returns:
-            obj: Prediction logit after fully connected layer.
+            object: Prediction logit after fully connected layer.
         """
         hparams = self.hparams
         with tf.variable_scope(scope):

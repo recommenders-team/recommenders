@@ -40,7 +40,7 @@ def score(
     """Score all users+items provided and reduce to top_k items per user if top_k>0
     
     Args:
-        learner (obj): Model.
+        learner (object): Model.
         test_df (pandas.DataFrame): Test dataframe.
         user_col (str): User column name.
         item_col (str): Item column name.

@@ -21,8 +21,8 @@ class SequentialIterator(BaseIterator):
         """Initialize an iterator. Create necessary placeholders for the model.
 
         Args:
-            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): The running graph. All created placeholder will be added to this graph.
+            hparams (object): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
+            graph (object): The running graph. All created placeholder will be added to this graph.
             col_spliter (str): Column splitter in one line.
         """
         self.col_spliter = col_spliter
@@ -176,7 +176,7 @@ class SequentialIterator(BaseIterator):
                 Sequences with length lower than min_seq_length will be ignored.
 
         Yields:
-            obj: An iterator that yields parsed results, in the format of graph `feed_dict`.
+            object: An iterator that yields parsed results, in the format of graph `feed_dict`.
         """
         label_list = []
         user_list = []

@@ -21,7 +21,7 @@ class NAMLModel(BaseModel):
 
     Attributes:
         word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
-        hparam (obj): Global hyper-parameters.
+        hparam (object): Global hyper-parameters.
     """
 
     def __init__(self, hparams, iterator_creator, seed=None):
@@ -30,9 +30,9 @@ class NAMLModel(BaseModel):
         After creating word embedding matrix, BaseModel's __init__ method will be called.
         
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as filter_num are there.
-            iterator_creator_train(obj): NAML data loader class for train data.
-            iterator_creator_test(obj): NAML data loader class for test and validation data
+            hparams (object): Global hyper-parameters. Some key setttings such as filter_num are there.
+            iterator_creator_train (object): NAML data loader class for train data.
+            iterator_creator_test (object): NAML data loader class for test and validation data
         """
 
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
@@ -92,8 +92,8 @@ class NAMLModel(BaseModel):
         """Build NAML model and scorer.
 
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and inference.
+            object: a model used to train.
+            object: a model used to evaluate and inference.
         """
 
         model, scorer = self._build_naml()
@@ -103,10 +103,10 @@ class NAMLModel(BaseModel):
         """The main function to create user encoder of NAML.
 
         Args:
-            newsencoder(obj): the news encoder of NAML. 
+            newsencoder (object): the news encoder of NAML. 
 
         Return:
-            obj: the user encoder of NAML.
+            object: the user encoder of NAML.
         """
         hparams = self.hparams
         his_input_title_body_verts = keras.Input(
@@ -131,10 +131,10 @@ class NAMLModel(BaseModel):
         news encoder in composed of title encoder, body encoder, vert encoder and subvert encoder
 
         Args:
-            embedding_layer(obj): a word embedding layer.
+            embedding_layer (object): a word embedding layer.
         
         Return:
-            obj: the news encoder of NAML.
+            object: the news encoder of NAML.
         """
         hparams = self.hparams
         input_title_body_verts = keras.Input(
@@ -179,10 +179,10 @@ class NAMLModel(BaseModel):
         """build title encoder of NAML news encoder.
 
         Args:
-            embedding_layer(obj): a word embedding layer.
+            embedding_layer (object): a word embedding layer.
         
         Return:
-            obj: the title encoder of NAML.
+            object: the title encoder of NAML.
         """
         hparams = self.hparams
         sequences_input_title = keras.Input(shape=(hparams.title_size,), dtype="int32")
@@ -208,10 +208,10 @@ class NAMLModel(BaseModel):
         """build body encoder of NAML news encoder.
 
         Args:
-            embedding_layer(obj): a word embedding layer.
+            embedding_layer (object): a word embedding layer.
         
         Return:
-            obj: the body encoder of NAML.
+            object: the body encoder of NAML.
         """
         hparams = self.hparams
         sequences_input_body = keras.Input(shape=(hparams.body_size,), dtype="int32")
@@ -237,7 +237,7 @@ class NAMLModel(BaseModel):
         """build vert encoder of NAML news encoder.
 
         Return:
-            obj: the vert encoder of NAML.
+            object: the vert encoder of NAML.
         """
         hparams = self.hparams
         input_vert = keras.Input(shape=(1,), dtype="int32")
@@ -262,7 +262,7 @@ class NAMLModel(BaseModel):
         """build subvert encoder of NAML news encoder.
 
         Return:
-            obj: the subvert encoder of NAML.
+            object: the subvert encoder of NAML.
         """
         hparams = self.hparams
         input_subvert = keras.Input(shape=(1,), dtype="int32")
@@ -288,8 +288,8 @@ class NAMLModel(BaseModel):
         is a user encoder and a news encoder.
         
         Returns:
-            obj: a model used to train.
-            obj: a model used to evaluate and predict.
+            object: a model used to train.
+            object: a model used to evaluate and predict.
         """
         hparams = self.hparams
 

@@ -24,8 +24,8 @@ class DKNTextIterator(BaseIterator):
         """Initialize an iterator. Create necessary placeholders for the model.
 
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
-            graph (obj): the running graph. All created placeholder will be added to this graph.
+            hparams (object): Global hyper-parameters. Some key setttings such as #_feature and #_field are there.
+            graph (object): the running graph. All created placeholder will be added to this graph.
             col_spliter (str): column spliter in one line.
             ID_spliter (str): ID spliter in one line.
         """

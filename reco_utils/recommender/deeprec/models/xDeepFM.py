@@ -25,7 +25,7 @@ class XDeepFMModel(BaseModel):
         """The main function to create xdeepfm's logic.
 
         Returns:
-            obj: The prediction score made by the model.
+            object: The prediction score made by the model.
         """
         hparams = self.hparams
         self.keep_prob_train = 1 - np.array(hparams.dropout)
@@ -101,7 +101,7 @@ class XDeepFMModel(BaseModel):
         This is a linear regression.
 
         Returns:
-            obj: Prediction score made by linear regression.
+            object: Prediction score made by linear regression.
         """
         with tf.variable_scope("linear_part", initializer=self.initializer) as scope:
             w = tf.get_variable(
@@ -130,7 +130,7 @@ class XDeepFMModel(BaseModel):
         This is a traditional 2-order FM module.
 
         Returns:
-            obj: Prediction score made by factorization machine.
+            object: Prediction score made by factorization machine.
         """
         with tf.variable_scope("fm_part") as scope:
             x = tf.SparseTensor(
@@ -158,7 +158,7 @@ class XDeepFMModel(BaseModel):
         This component provides explicit and vector-wise higher-order feature interactions.
 
         Args:
-            nn_input (obj): The output of field-embedding layer. This is the input for CIN.
+            nn_input (object): The output of field-embedding layer. This is the input for CIN.
             res (bool): Whether use residual structure to fuse the results from each layer of CIN.
             direct (bool): If true, then all hidden units are connected to both next layer and output layer;
                     otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
@@ -166,7 +166,7 @@ class XDeepFMModel(BaseModel):
             is_masked (bool): Controls whether to remove self-interaction in the first layer of CIN.
 
         Returns:
-            obj: Prediction score made by CIN.
+            object: Prediction score made by CIN.
         """
         hparams = self.hparams
         hidden_nn_layers = []
@@ -286,14 +286,14 @@ class XDeepFMModel(BaseModel):
         Fast CIN is more space and time efficient than CIN.
 
         Args:
-            nn_input (obj): The output of field-embedding layer. This is the input for CIN.
+            nn_input (object): The output of field-embedding layer. This is the input for CIN.
             res (bool): Whether use residual structure to fuse the results from each layer of CIN.
             direct (bool): If true, then all hidden units are connected to both next layer and output layer;
                     otherwise, half of hidden units are connected to next layer and the other half will be connected to output layer.
             bias (bool): Whether to add bias term when calculating the feature maps.
 
         Returns:
-            obj: Prediction score made by fast CIN.
+            object: Prediction score made by fast CIN.
         """
         hparams = self.hparams
         hidden_nn_layers = []
@@ -433,11 +433,11 @@ class XDeepFMModel(BaseModel):
         This components provides implicit higher-order feature interactions.
 
         Args:
-            embed_out (obj): The output of field-embedding layer. This is the input for DNN.
-            embed_layer_size (obj): Shape of the embed_out
+            embed_out (object): The output of field-embedding layer. This is the input for DNN.
+            embed_layer_size (object): Shape of the embed_out
 
         Returns:
-            obj: Prediction score made by fast CIN.
+            object: Prediction score made by fast CIN.
         """
         hparams = self.hparams
         w_fm_nn_input = embed_out

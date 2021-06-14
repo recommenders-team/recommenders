@@ -23,8 +23,8 @@ class CaserModel(SequentialBaseModel):
         """Initialization of variables for caser
 
         Args:
-            hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-            iterator_creator (obj): An iterator to load the data.
+            hparams (object): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+            iterator_creator (object): An iterator to load the data.
         """
         self.hparams = hparams
         self.L = hparams.L  # history sequence that involved in convolution shape
@@ -40,7 +40,7 @@ class CaserModel(SequentialBaseModel):
         """The main function to create caser model.
 
         Returns:
-            obj: The output of caser section.
+            object: The output of caser section.
         """
         with tf.variable_scope("caser"):
             cnn_output = self._caser_cnn()
@@ -52,12 +52,12 @@ class CaserModel(SequentialBaseModel):
         """The main function to use CNN at both vertical and horizonal aspects.
 
         Args:
-            hist_matrix (obj): The output of history sequential embeddings
+            hist_matrix (object): The output of history sequential embeddings
             vertical_dim (int): The shape of embeddings of input
-            scope (obj): The scope of CNN input.
+            scope (object): The scope of CNN input.
 
         Returns:
-            obj: The output of CNN layers.
+            object: The output of CNN layers.
         """
         with tf.variable_scope(scope):
             with tf.variable_scope("vertical"):
@@ -79,7 +79,7 @@ class CaserModel(SequentialBaseModel):
         """The main function to use CNN at both item and category aspects.
 
         Returns:
-            obj: The concatenated output of two parts of item and category.
+            object: The concatenated output of two parts of item and category.
         """
         item_out = self._add_cnn(
             self.item_history_embedding, self.item_embedding_dim, "item"
@@ -97,7 +97,7 @@ class CaserModel(SequentialBaseModel):
         """Call a CNN layer.
 
         Returns:
-            obj: The output of cnn section.
+            object: The output of cnn section.
         """
         return tf.layers.conv1d(
             history_matrix,

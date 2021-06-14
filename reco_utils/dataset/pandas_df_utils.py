@@ -156,7 +156,7 @@ class LibffmConverter:
             col_rating (str): rating of the data.
 
         Return:
-            obj: the instance of the converter
+            object: the instance of the converter
         """
 
         # Check column types.

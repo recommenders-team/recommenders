@@ -39,7 +39,7 @@ class MINDIterator(BaseIterator):
         """Initialize an iterator. Create necessary placeholders for the model.
 
         Args:
-            hparams (obj): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
+            hparams (object): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
             npratio (int): negaive and positive ratio used in negative sampling. -1 means no need of negtive sampling.
             col_spliter (str): column spliter in one line.
             ID_spliter (str): ID spliter in one line.
@@ -61,7 +61,7 @@ class MINDIterator(BaseIterator):
             file path (str): file path
 
         Returns:
-            obj: pickle loaded object
+            object: pickle loaded object
         """
         with open(file_path, "rb") as f:
             return pickle.load(f)
@@ -208,7 +208,7 @@ class MINDIterator(BaseIterator):
             beahaviros_file (str): A file contains information of user impressions.
 
         Yields:
-            obj: An iterator that yields parsed results, in the format of dict.
+            object: An iterator that yields parsed results, in the format of dict.
         """
 
         if not hasattr(self, "news_title_index"):
@@ -312,7 +312,7 @@ class MINDIterator(BaseIterator):
             beahaviros_file (str): A file contains information of user impressions.
 
         Yields:
-            obj: An iterator that yields parsed user feature, in the format of dict.
+            object: An iterator that yields parsed user feature, in the format of dict.
         """
 
         if not hasattr(self, "news_title_index"):
@@ -383,7 +383,7 @@ class MINDIterator(BaseIterator):
             news_file (str): A file contains several informations of news.
 
         Yields:
-            obj: An iterator that yields parsed news feature, in the format of dict.
+            object: An iterator that yields parsed news feature, in the format of dict.
         """
         if not hasattr(self, "news_title_index"):
             self.init_news(news_file)
@@ -444,7 +444,7 @@ class MINDIterator(BaseIterator):
             behaivors_file (str): A file contains several informations of behaviros.
 
         Yields:
-            obj: An iterator that yields parsed impression data, in the format of dict.
+            object: An iterator that yields parsed impression data, in the format of dict.
         """
 
         if not hasattr(self, "histories"):
