@@ -340,11 +340,11 @@ You can then open the Jupyter notebook server at http://localhost:8888
 
 ## Setup guide for making a release
 
-The process of making a new release and publish it to pypi is as follows:
+The process of making a new release and publishing it to pypi is as follows:
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 2. Update the version number in [reco_utils.py/__init__.py](reco_utils.py/__init__.py)
-3. Create a tag with the version number: `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
+3. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
 4. Push the tag to the remote server: `git push origin 0.6.0`.
 5. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (unit, smoke and integration), 
 generates a wheel and upload it to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
