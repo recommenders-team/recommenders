@@ -29,7 +29,7 @@ def jaccard(cooccurrence):
     """Helper method to calculate the Jaccard similarity of a matrix of co-occurrences.
 
     Args:
-        cooccurrence (np.array): the symmetric matrix of co-occurrences of items.
+        cooccurrence (numpy.array): the symmetric matrix of co-occurrences of items.
 
     Returns:
         numpy.ndarray: The matrix of Jaccard similarities between any two items.
