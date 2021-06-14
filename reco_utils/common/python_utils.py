@@ -119,13 +119,13 @@ def binarize(a, threshold):
 
 
 def rescale(data, new_min=0, new_max=1, data_min=None, data_max=None):
-    """
-    Rescale/normalize the data to be within the range `[new_min, new_max]`
+    """Rescale/normalize the data to be within the range `[new_min, new_max]`
     If data_min and data_max are explicitly provided, they will be used
     as the old min/max values instead of taken from the data.
 
-    Note: this is same as the `scipy.MinMaxScaler` with the exception that we can override
-          the min/max of the old scale.
+    .. note::
+        This is same as the `scipy.MinMaxScaler` with the exception that we can override
+        the min/max of the old scale.
 
     Args:
         data (np.array): 1d scores vector or 2d score matrix (users x items).
