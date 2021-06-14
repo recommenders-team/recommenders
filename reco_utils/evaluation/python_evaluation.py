@@ -110,8 +110,8 @@ def merge_rating_true_pred(
         col_prediction (str): column name for prediction
 
     Returns:
-        np.array: Array with the true ratings
-        np.array: Array with the predicted ratings
+        numpy.ndarray: Array with the true ratings
+        numpy.ndarray: Array with the predicted ratings
 
     """
 

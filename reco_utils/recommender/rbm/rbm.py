@@ -531,7 +531,7 @@ class RBM:
         """Evaluates precision on the train and test set
 
         Args:
-            xtst (np.array, integer32): The user/affinity matrix for the test set
+            xtst (numpy.ndarray, integer32): The user/affinity matrix for the test set
 
         Returns:
             float, float: Precision on the train and test sets.
@@ -614,7 +614,7 @@ class RBM:
         """Initialize the TF session on training data
 
         Args:
-            xtr (np.array, int32): The user/affinity matrix for the train set.
+            xtr (numpy.ndarray, int32): The user/affinity matrix for the train set.
         """
 
         init_graph = tf.global_variables_initializer()
@@ -670,8 +670,8 @@ class RBM:
         model training
 
         Args:
-            xtr (np.array, integers): the user/affinity matrix for the train set
-            xtst (np.array, integers): the user/affinity matrix for the test set
+            xtr (numpy.ndarray, integers): the user/affinity matrix for the train set
+            xtst (numpy.ndarray, integers): the user/affinity matrix for the test set
 
         Returns:
             float: elapsed time during training
@@ -755,7 +755,7 @@ class RBM:
         then item2 will be recommended.
 
         Args:
-            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
+            x (numpy.ndarray, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
             of a single user.
             top_k (scalar, int32): the number of items to recommend.
 
@@ -814,7 +814,7 @@ class RBM:
         of rows (users).
 
         Args:
-            x (np.array, int32): Input user/affinity matrix. Note that this can be a single vector, i.e.
+            x (numpy.ndarray, int32): Input user/affinity matrix. Note that this can be a single vector, i.e.
             the ratings of a single user.
 
         Returns:

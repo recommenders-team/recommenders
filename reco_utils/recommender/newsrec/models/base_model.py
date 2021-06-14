@@ -82,7 +82,7 @@ class BaseModel:
             file_path (str): the pre-trained glove embeddings file path.
 
         Returns:
-            np.array: A constant numpy array.
+            numpy.ndarray: A constant numpy array.
         """
 
         return np.load(file_path)

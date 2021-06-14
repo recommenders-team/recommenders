@@ -39,8 +39,8 @@ class Metrics(Callback):
 
         Args:
             model: trained model for validation.
-            val_tr (np.array, float): the click matrix for the validation set training part.
-            val_te (np.array, float): the click matrix for the validation set testing part.
+            val_tr (numpy.ndarray, float): the click matrix for the validation set training part.
+            val_te (numpy.ndarray, float): the click matrix for the validation set testing part.
             mapper (AffinityMatrix): the mapper for converting click matrix to dataframe.
             k (int): number of top k items per user (optional).
             save_path (str): Default path to save weights.
@@ -73,11 +73,11 @@ class Metrics(Callback):
         Obtained probabilities are used as recommendation score.
 
         Args:
-            x (np.array, int32): input click matrix.
+            x (numpy.ndarray, int32): input click matrix.
             k (scalar, int32): the number of items to recommend.
 
         Returns:
-            np.array: A sparse matrix containing the top_k elements ordered by their score.
+            numpy.ndarray: A sparse matrix containing the top_k elements ordered by their score.
 
         """
         # obtain scores
@@ -364,7 +364,7 @@ class Mult_VAE:
         """Used for splitting dataset in batches.
 
         Args:
-            x_train (np.array): The click matrix for the train set, with float values.
+            x_train (numpy.ndarray): The click matrix for the train set, with float values.
         """
         # Shuffle the batch
         np.random.seed(self.seed)
@@ -393,10 +393,10 @@ class Mult_VAE:
         """Fit model with the train sets and validate on the validation set.
 
         Args:
-            x_train (np.array): the click matrix for the train set.
-            x_valid (np.array): the click matrix for the validation set.
-            x_val_tr (np.array): the click matrix for the validation set training part.
-            x_val_te (np.array): the click matrix for the validation set testing part.
+            x_train (numpy.ndarray): the click matrix for the train set.
+            x_valid (numpy.ndarray): the click matrix for the validation set.
+            x_val_tr (numpy.ndarray): the click matrix for the validation set training part.
+            x_val_te (numpy.ndarray): the click matrix for the validation set testing part.
             mapper (obj): the mapper for converting click matrix to dataframe. It can be AffinityMatrix.
         """
         # initialise LossHistory used for saving loss of validation and train set per epoch
