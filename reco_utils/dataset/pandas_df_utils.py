@@ -29,8 +29,8 @@ def user_item_pairs(
     """Get all pairs of users and items data.
 
     Args:
-        user_df (pd.DataFrame): User data containing unique user ids and maybe their features.
-        item_df (pd.DataFrame): Item data containing unique item ids and maybe their features.
+        user_df (pandas.DataFrame): User data containing unique user ids and maybe their features.
+        item_df (pandas.DataFrame): Item data containing unique item ids and maybe their features.
         user_col (str): User id column name.
         item_col (str): Item id column name.
         user_item_filter_df (pd.DataFrame): User-item pairs to be used as a filter.
@@ -72,7 +72,7 @@ def filter_by(df, filter_by_df, filter_by_cols):
         filter_by_cols (iterable of str): Filter columns.
 
     Returns:
-        pd.DataFrame: Dataframe filtered by `filter_by_df` on `filter_by_cols`.
+        pandas.DataFrame: Dataframe filtered by `filter_by_df` on `filter_by_cols`.
 
     """
 
@@ -419,7 +419,7 @@ class PandasHash:
         """Initialize class
 
         Args:
-            pandas_object (pd.DataFrame|pd.Series): pandas object
+            pandas_object (pandas.DataFrame|pandas.Series): pandas object
         """
 
         if not isinstance(pandas_object, (pd.DataFrame, pd.Series)):
