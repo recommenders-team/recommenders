@@ -167,7 +167,7 @@ class SARSingleNode:
             df (pandas.DataFrame): DataFrame of users and items
 
         Returns:
-            numpy.array: Co-occurrence matrix
+            numpy.ndarray: Co-occurrence matrix
         """
 
         user_item_hits = sparse.coo_matrix(

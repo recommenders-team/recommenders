@@ -22,7 +22,7 @@ class NRMSModel(BaseModel):
     on Natural Language Processing (EMNLP-IJCNLP)
 
     Attributes:
-        word2vec_embedding (numpy.array): Pretrained word embedding matrix.
+        word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
         hparam (obj): Global hyper-parameters.
     """
 
@@ -52,7 +52,7 @@ class NRMSModel(BaseModel):
 
         Returns:
             list: input feature fed into model (clicked_title_batch & candidate_title_batch)
-            numpy.array: labels
+            numpy.ndarray: labels
         """
         input_feat = [
             batch_data["clicked_title_batch"],
@@ -67,7 +67,7 @@ class NRMSModel(BaseModel):
             batch_data: input batch data from user iterator
         
         Returns:
-            numpy.array: input user feature (clicked title batch)
+            numpy.ndarray: input user feature (clicked title batch)
         """
         return batch_data["clicked_title_batch"]
 
@@ -77,7 +77,7 @@ class NRMSModel(BaseModel):
             batch_data: input batch data from news iterator
         
         Returns:
-            numpy.array: input news feature (candidate title batch)
+            numpy.ndarray: input news feature (candidate title batch)
         """
         return batch_data["candidate_title_batch"]
 

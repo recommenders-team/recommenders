@@ -24,7 +24,7 @@ class LSTURModel(BaseModel):
     Neural News Recommendation with Long- and Short-term User Representations, ACL 2019
 
     Attributes:
-        word2vec_embedding (numpy.array): Pretrained word embedding matrix.
+        word2vec_embedding (numpy.ndarray): Pretrained word embedding matrix.
         hparam (obj): Global hyper-parameters.
     """
 
