@@ -130,7 +130,7 @@ jobs:
   # Can't overwrite files https://developercommunity.visualstudio.com/t/cannot-overwrite-published-artifact-from-azure-dev/1078688
   - task: PublishPipelineArtifact@1 
     displayName: 'Publish Artifacts to Shared Storage'
-    condition: succeeded() # and(succeeded(), eq('${{ parameters.install }}', 'release'), eq('${{ parameters.package }}', 'publish'))
+    condition: and(succeeded(), eq('${{ parameters.install }}', 'release'), eq('${{ parameters.package }}', 'publish'))
     inputs:
       targetPath: $(System.DefaultWorkingDirectory)/dist
       patterns: 'ms_recommenders*'
