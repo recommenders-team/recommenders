@@ -31,8 +31,8 @@ class RLRMCdataset(object):
         """Initialize parameters.
 
         Args:
-            train (pd.DataFrame: training data with at least columns (col_user, col_item, col_rating)
-            validation (pd.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
+            train (pandas.DataFrame: training data with at least columns (col_user, col_item, col_rating)
+            validation (pandas.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
             mean_center (bool): flag to mean center the ratings in train (and validation) data
             col_user (str): user column name
             col_item (str): item column name
