@@ -23,6 +23,7 @@ This document describes how to setup all the dependencies to run the notebooks i
     - [Troubleshooting Installation on Azure Databricks](#troubleshooting-installation-on-azure-databricks)
     - [Prepare Azure Databricks for Operationalization](#prepare-azure-databricks-for-operationalization)
   - [Setup guide for Docker](#setup-guide-for-docker)
+  - [Setup guide for making a release](#setup-guide-for-making-a-release)
 
 ## Compute environments
 
@@ -336,3 +337,17 @@ docker run -p 8888:8888 -d recommenders:cpu
 ```
 
 You can then open the Jupyter notebook server at http://localhost:8888
+
+## Setup guide for making a release
+
+The process of making a new release and publish it to pypi is as follows:
+
+1. Make sure that the code in main passes all the tests (unit and nightly tests).
+2. Update the version number in [reco_utils.py/__init__.py](reco_utils.py/__init__.py)
+3. Create a tag with the version number: `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
+4. Push the tag to the remote server: `git push origin 0.6.0`.
+5. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (unit, smoke and integration), 
+generates a wheel and upload it to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
+6. Fill up the draft release with all the recent changes in the code.
+7. Download the wheel locally, this is a wheel that shouldn't have any bug, since it passed all the tests.
+8. Publish the wheel to pypi: `twine upload ms-recommenders*.whl`
