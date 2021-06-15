@@ -88,12 +88,7 @@ jobs:
         if [[ "${{ parameters.conda_env }}" == *"spark"* ]]; then
           export PYSPARK_PYTHON=`which python`
           export PYSPARK_DRIVER_PYTHON=`which python`
-          export SPARK_DIR=$PWD/build/spark
-          rm -rf $SPARK_DIR || exit -1
-          mkdir -p $SPARK_DIR || exit -1
-          wget https://mirrors.ukfast.co.uk/sites/ftp.apache.org/spark/spark-2.4.8/spark-2.4.8-bin-hadoop2.7.tgz -O $SPARK_DIR/spark.tgz || exit -1
-          tar -xvzf $SPARK_DIR/spark.tgz -C $SPARK_DIR --strip-components=1 || exit -1
-          SPARK_HOME=$SPARK_DIR
+          unset SPARK_HOME # make sure we are taking the default spark from pyspark package
         fi
         
         if [ "${{ test }}" == "unit" ]; then
