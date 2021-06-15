@@ -89,7 +89,7 @@ extras_require["experimental"] = [
 setup(
     name=name,
     version=version,
-    description="Microsoft Recommenders, a library of best practices and utilities for building recommendation systems",
+    description="Microsoft Recommenders - Python utilities for building recommender systems",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/microsoft/recommenders",
