@@ -77,7 +77,11 @@ def spark(tmp_path_factory, app_name="Sample", url="local[*]"):
     """
 
     with TemporaryDirectory(dir=tmp_path_factory.getbasetemp()) as td:
-        config = {"spark.local.dir": td, "spark.sql.shuffle.partitions": 1, "spark.sql.crossJoin.enabled": "true"}
+        config = {
+            "spark.local.dir": td,
+            "spark.sql.shuffle.partitions": 1,
+            "spark.sql.crossJoin.enabled": "true",
+        }
         spark = start_or_get_spark(app_name=app_name, url=url, config=config)
         yield spark
         spark.stop()
@@ -89,7 +93,7 @@ def sar_settings():
         # absolute tolerance parameter for matrix equivalence in SAR tests
         "ATOL": 1e-8,
         # directory of the current file - used to link unit test data
-        "FILE_DIR": "http://recodatasets.blob.core.windows.net/sarunittest/",
+        "FILE_DIR": "https://recodatasets.z20.web.core.windows.net/sarunittest/",
         # user ID used in the test files (they are designed for this user ID, this is part of the test)
         "TEST_USER_ID": "0003000098E85347",
     }

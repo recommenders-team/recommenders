@@ -28,9 +28,7 @@ def python_dataset(test_specs):
     def random_date_generator(start_date, range_in_days):
         """Helper function to generate random timestamps.
 
-        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a
-        -range-in-numpy
-
+        Reference: https://stackoverflow.com/questions/41006182/generate-random-dates-within-a-range-in-numpy
         """
 
         days_to_add = np.arange(0, range_in_days)
