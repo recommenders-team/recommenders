@@ -91,8 +91,9 @@ def read_clickhistory(path, filename):
         filename (str): Filename
 
     Returns:
-        list, dict: List of user session with user_id, clicks, positive and negative interactions. Dictionary
-            with user_id click history
+        list, dict: 
+        - A list of user session with user_id, clicks, positive and negative interactions. 
+        - A dictionary with user_id click history.
     """
     userid_history = {}
     with open(os.path.join(path, filename)) as f:
@@ -231,7 +232,15 @@ def get_words_and_entities(train_news, valid_news):
     return news_words, news_entities
 
 
-def download_and_extract_globe(dest_path):
+def download_and_extract_glove(dest_path):
+    """Download and extract the Glove embedding
+    
+    Args:
+        dest_path (str): Destination directory path for the downloaded file
+
+    Returns:
+        str: File path where Glove was extracted.  
+    """
     url = "http://nlp.stanford.edu/data/glove.6B.zip"
     filepath = maybe_download(url=url, work_directory=dest_path)
     glove_path = os.path.join(dest_path, "glove")
@@ -269,7 +278,7 @@ def generate_embeddings(
         )
 
     logger.info("Downloading glove...")
-    glove_path = download_and_extract_globe(data_path)
+    glove_path = download_and_extract_glove(data_path)
 
     word_set = set()
     word_embedding_dict = {}
@@ -383,7 +392,7 @@ def load_glove_matrix(path_emb, word_dict, word_embedding_dim):
         word_embedding_dim: dimention of word embedding vectors
         
     Returns:
-        numpy array, list: pretrained word embedding metrics, words can be found in glove files
+        numpy.ndarray, list: pretrained word embedding metrics, words can be found in glove files
     '''
     
     embedding_matrix = np.zeros((len(word_dict)+1, word_embedding_dim))

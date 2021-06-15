@@ -1,11 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from functools import lru_cache, wraps
 import logging
-
 import pandas as pd
 import numpy as np
+from functools import lru_cache, wraps
 
 from reco_utils.common.constants import (
     DEFAULT_USER_COL,
@@ -30,8 +29,8 @@ def user_item_pairs(
     """Get all pairs of users and items data.
 
     Args:
-        user_df (pd.DataFrame): User data containing unique user ids and maybe their features.
-        item_df (pd.DataFrame): Item data containing unique item ids and maybe their features.
+        user_df (pandas.DataFrame): User data containing unique user ids and maybe their features.
+        item_df (pandas.DataFrame): Item data containing unique item ids and maybe their features.
         user_col (str): User id column name.
         item_col (str): Item id column name.
         user_item_filter_df (pd.DataFrame): User-item pairs to be used as a filter.
@@ -39,7 +38,7 @@ def user_item_pairs(
         seed (int): Random seed for shuffle
 
     Returns:
-        pd.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df
+        pandas.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df.
     """
 
     # Get all user-item pairs
@@ -64,16 +63,17 @@ def user_item_pairs(
 
 
 def filter_by(df, filter_by_df, filter_by_cols):
-    """From the input DataFrame (df), remove the records whose target column (filter_by_cols) values are
-    exist in the filter-by DataFrame (filter_by_df)
+    """From the input DataFrame `df`, remove the records whose target column `filter_by_cols` values are
+    exist in the filter-by DataFrame `filter_by_df`.
 
     Args:
-        df (pd.DataFrame): Source dataframe.
-        filter_by_df (pd.DataFrame): Filter dataframe.
+        df (pandas.DataFrame): Source dataframe.
+        filter_by_df (pandas.DataFrame): Filter dataframe.
         filter_by_cols (iterable of str): Filter columns.
 
     Returns:
-        pd.DataFrame: Dataframe filtered by filter_by_df on filter_by_cols
+        pandas.DataFrame: Dataframe filtered by `filter_by_df` on `filter_by_cols`.
+
     """
 
     return df.loc[
@@ -152,11 +152,11 @@ class LibffmConverter:
         This method does nothing but check the validity of the input columns
 
         Args:
-            df (pd.DataFrame): input Pandas dataframe.
+            df (pandas.DataFrame): input Pandas dataframe.
             col_rating (str): rating of the data.
 
         Return:
-            obj: the instance of the converter
+            object: the instance of the converter
         """
 
         # Check column types.
@@ -184,10 +184,10 @@ class LibffmConverter:
         by using the fitted converter.
 
         Args:
-            df (pd.DataFrame): input Pandas dataframe.
+            df (pandas.DataFrame): input Pandas dataframe.
 
         Return:
-            pd.DataFrame: output libffm format dataframe.
+            pandas.DataFrame: Output libffm format dataframe.
         """
         if self.col_rating not in df.columns:
             raise ValueError(
@@ -243,11 +243,11 @@ class LibffmConverter:
         """Do fit and transform in a row
 
         Args:
-            df (pd.DataFrame): input Pandas dataframe.
+            df (pandas.DataFrame): input Pandas dataframe.
             col_rating (str): rating of the data.
 
         Return:
-            pd.DataFrame: output libffm format dataframe.
+            pandas.DataFrame: Output libffm format dataframe.
         """
         return self.fit(df, col_rating=col_rating).transform(df)
 
@@ -255,7 +255,7 @@ class LibffmConverter:
         """Get parameters (attributes) of the libffm converter
 
         Return:
-            dict: parameters field count, feature count, and file path.
+            dict: A dictionary that contains parameters field count, feature count, and file path.
         """
         return {
             "field count": self.field_count,
@@ -286,22 +286,22 @@ def negative_feedback_sampler(
     See for example the `neural collaborative filtering paper <https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf>`_.
 
     Args:
-        df (pd.DataFrame): input data that contains user-item tuples.
+        df (pandas.DataFrame): input data that contains user-item tuples.
         col_user (str): user id column name.
         col_item (str): item id column name.
-        col_label (str): label column name in df. 
-        col_feedback (str): feedback column name in the returned data frame; it is used for the generated column 
+        col_label (str): label column name in df.
+        col_feedback (str): feedback column name in the returned data frame; it is used for the generated column
             of positive and negative feedback.
         ratio_neg_per_user (int): ratio of negative feedback w.r.t to the number of positive feedback for each user.
-            If the samples exceed the number of total possible negative feedback samples, it will be reduced to the 
+            If the samples exceed the number of total possible negative feedback samples, it will be reduced to the
             number of all the possible samples.
         pos_value (float): value of positive feedback.
         neg_value (float): value of negative feedback.
-        inplace (bool): 
+        inplace (bool):
         seed (int): seed for the random state of the sampling function.
 
     Returns:
-        pd.DataFrame: data with negative feedback
+        pandas.DataFrame: Data with negative feedback.
 
     Examples:
         >>> import pandas as pd
@@ -359,11 +359,11 @@ def has_columns(df, columns):
     """Check if DataFrame has necessary columns
 
     Args:
-        df (pd.DataFrame): DataFrame
+        df (pandas.DataFrame): DataFrame
         columns (list(str): columns to check for
 
     Returns:
-        bool: True if DataFrame has specified columns
+        bool: True if DataFrame has specified columns.
     """
 
     result = True
@@ -379,12 +379,12 @@ def has_same_base_dtype(df_1, df_2, columns=None):
     """Check if specified columns have the same base dtypes across both DataFrames
 
     Args:
-        df_1 (pd.DataFrame): first DataFrame
-        df_2 (pd.DataFrame): second DataFrame
+        df_1 (pandas.DataFrame): first DataFrame
+        df_2 (pandas.DataFrame): second DataFrame
         columns (list(str)): columns to check, None checks all columns
 
     Returns:
-        bool: True if DataFrames columns have the same base dtypes
+        bool: True if DataFrames columns have the same base dtypes.
     """
 
     if columns is None:
@@ -419,7 +419,7 @@ class PandasHash:
         """Initialize class
 
         Args:
-            pandas_object (pd.DataFrame|pd.Series): pandas object
+            pandas_object (pandas.DataFrame|pandas.Series): pandas object
         """
 
         if not isinstance(pandas_object, (pd.DataFrame, pd.Series)):
@@ -430,7 +430,7 @@ class PandasHash:
         """Overwrite equality comparison
 
         Args:
-            other (pd.DataFrame|pd.Series): pandas object to compare
+            other (pandas.DataFrame|pandas.Series): pandas object to compare
 
         Returns:
             bool: whether other object is the same as this one

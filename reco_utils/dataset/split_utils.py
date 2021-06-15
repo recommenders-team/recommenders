@@ -21,9 +21,9 @@ def process_split_ratio(ratio):
         numbers that indicate split ratios (if it is a multi-split).
 
     Returns:
-        tuple: a tuple containing
-            bool: A boolean variable multi that indicates if the splitting is multi or single.
-            list: A list of normalized split ratios.
+        tuple:
+        - bool: A boolean variable multi that indicates if the splitting is multi or single.
+        - list: A list of normalized split ratios.
     """
     if isinstance(ratio, float):
         if ratio <= 0 or ratio >= 1:
@@ -61,7 +61,7 @@ def min_rating_filter_pandas(
     example, a user is called warm if he has rated at least 4 items.
 
     Args:
-        data (pd.DataFrame): DataFrame of user-item tuples. Columns of user and item
+        data (pandas.DataFrame): DataFrame of user-item tuples. Columns of user and item
             should be present in the DataFrame while other columns like rating, 
             timestamp, etc. can be optional.
         min_rating (int): minimum number of ratings for user or item.
@@ -71,8 +71,7 @@ def min_rating_filter_pandas(
         col_item (str): column name of item ID.
 
     Returns:
-        pd.DataFrame: DataFrame with at least columns of user and item that has been 
-            filtered by the given specifications.
+        pandas.DataFrame: DataFrame with at least columns of user and item that has been filtered by the given specifications.
     """
     split_by_column = _get_column_name(
         filter_by, col_user, col_item
@@ -103,7 +102,7 @@ def min_rating_filter_spark(
     example, a user is called warm if he has rated at least 4 items.
 
     Args:
-        data (spark.DataFrame): DataFrame of user-item tuples. Columns of user and item
+        data (pyspark.sql.DataFrame): DataFrame of user-item tuples. Columns of user and item
             should be present in the DataFrame while other columns like rating, 
             timestamp, etc. can be optional.
         min_rating (int): minimum number of ratings for user or item.
@@ -113,8 +112,7 @@ def min_rating_filter_spark(
         col_item (str): column name of item ID.
 
     Returns:
-        spark.DataFrame: DataFrame with at least columns of user and item that has been 
-            filtered by the given specifications.
+        pyspark.sql.DataFrame: DataFrame with at least columns of user and item that has been filtered by the given specifications.
     """
 
     split_by_column = _get_column_name(
@@ -153,7 +151,7 @@ def split_pandas_data_with_ratios(data, ratios, seed=42, shuffle=False):
         Implementation referenced from `this source <https://stackoverflow.com/questions/38250710/how-to-split-data-into-3-sets-train-validation-and-test>`_.
 
     Args:
-        data (pd.DataFrame): Pandas data frame to be split.
+        data (pandas.DataFrame): Pandas data frame to be split.
         ratios (list of floats): list of ratios for split. The ratios have to sum to 1.
         seed (int): random seed.
         shuffle (bool): whether data will be shuffled when being split.

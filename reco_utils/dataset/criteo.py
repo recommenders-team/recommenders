@@ -27,7 +27,7 @@ DEFAULT_HEADER = (
 
 
 def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
-    """Loads the Criteo DAC dataset as `pandas.DataFrame. This function download, untar, and load the dataset.
+    """Loads the Criteo DAC dataset as `pandas.DataFrame`. This function download, untar, and load the dataset.
 
     The dataset consists of a portion of Criteo’s traffic over a period
     of 24 days. Each row corresponds to a display ad served by Criteo and the first
@@ -52,7 +52,7 @@ def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
         header (list): Dataset header names.
 
     Returns:
-        pd.DataFrame: Criteo DAC sample dataset.
+        pandas.DataFrame: Criteo DAC sample dataset.
     """
     with download_path(local_cache_path) as path:
         filepath = download_criteo(size, path)
@@ -97,7 +97,7 @@ def load_spark_df(
         dbutils (Databricks.dbutils): Databricks utility object.
   
     Returns:
-        pySpark.DataFrame: Criteo DAC training dataset.
+        pyspark.sql.DataFrame: Criteo DAC training dataset.
     """
     with download_path(local_cache_path) as path:
         filepath = download_criteo(size, path)
@@ -164,6 +164,14 @@ def extract_criteo(size, compressed_file, path=None):
 
 
 def get_spark_schema(header=DEFAULT_HEADER):
+    """Get Spark schema from header.
+
+    Args:
+        header (list): Dataset header names.
+
+    Returns:
+        pyspark.sql.types.StructType: Spark schema.
+    """
     ## create schema
     schema = StructType()
     ## do label + ints
