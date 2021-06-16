@@ -34,7 +34,7 @@ The installation of the recommenders package has been tested with Python version
 
 To set up on your local machine:
 
-To install core utilities, CPU-based algorithms, and dependencies
+To install core utilities, CPU-based algorithms, and dependencies:
 
 1. Ensure software required for compilation is installed. On Linux this can be supported by adding build-essential dependencies:
 ```bash
