@@ -19,7 +19,7 @@ trigger:
     - staging
   paths:
     exclude:
-    - '*.md'
+    - README.md
 
 variables:
 - group: LinuxAgentPool
