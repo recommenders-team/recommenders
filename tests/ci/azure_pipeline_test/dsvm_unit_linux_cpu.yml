@@ -1,15 +1,53 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# Pull request against these branches will trigger this build
+# Pull request against these branches will trigger this build, excluding some files
 pr:
-- main
-- staging
+  branches:
+    include:
+    - main
+    - staging
+  paths:
+    exclude:
+    - contrib/*
+    - scenarios/*
+    - tools/*
+    - README.md
+    - AUTHORS.md
+    - CODE_OF_CONDUCT.md
+    - CONTRIBUTING.md
+    - GLOSSARY.md
+    - NEWS.md
+    - SECURITY.md
+    - SETUP.md
+    - .gitignore
+    - examples/README.md
+    - reco_utils/README.md
+    - tests/README.md
 
-# Any commit to this branch will trigger the build.
+# Any commit to this branch will trigger the build, excluding some files
 trigger:
-- staging
-- main
+  branches:
+    include:
+    - main
+    - staging
+  paths:
+    exclude:
+    - contrib/*
+    - scenarios/*
+    - tools/*
+    - README.md
+    - AUTHORS.md
+    - CODE_OF_CONDUCT.md
+    - CONTRIBUTING.md
+    - GLOSSARY.md
+    - NEWS.md
+    - SECURITY.md
+    - SETUP.md
+    - .gitignore
+    - examples/README.md
+    - reco_utils/README.md
+    - tests/README.md
 
 variables:
 - group: LinuxAgentPool
