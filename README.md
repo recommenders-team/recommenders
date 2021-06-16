@@ -6,7 +6,7 @@
 
 We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)!
 
-Now you can install Recommenders using pip! In addition there are lots of bug fixes and utilities improvement.
+Recommenders is now on PyPI and can be installed using pip! In addition there are lots of bug fixes and utilities improvements.
 
 ## Introduction
 
