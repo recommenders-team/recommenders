@@ -3,13 +3,23 @@
 
 # Pull request against these branches will trigger this build
 pr:
-- main
-- staging
-
+  branches:
+    include:
+    - main
+    - staging
+  paths:
+    exclude:
+      - *.md
+      
 # Any commit to this branch will trigger the build.
 trigger:
-- staging
-- main
+  branches:
+    include:
+    - main
+    - staging
+  paths:
+    exclude:
+      - *.md
 
 variables:
 - group: LinuxAgentPool
