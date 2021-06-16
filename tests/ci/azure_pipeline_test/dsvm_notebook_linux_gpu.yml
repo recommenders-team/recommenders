@@ -9,8 +9,8 @@ pr:
     - staging
   paths:
     exclude:
-      - *.md
-      
+    - *.md
+
 # Any commit to this branch will trigger the build.
 trigger:
   branches:
@@ -19,7 +19,7 @@ trigger:
     - staging
   paths:
     exclude:
-      - *.md
+    - *.md
 
 variables:
 - group: LinuxAgentPool
