@@ -164,7 +164,7 @@ def load_pandas_df(
         year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
-        pd.DataFrame: Movie rating dataset.
+        pandas.DataFrame: Movie rating dataset.
         
 
     **Examples**
@@ -249,7 +249,7 @@ def load_item_df(
         year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
-        pd.DataFrame: Movie information data, such as title, genres, and release year.
+        pandas.DataFrame: Movie information data, such as title, genres, and release year.
     """
     size = size.lower()
     if size not in DATA_FORMAT:
@@ -341,9 +341,9 @@ def load_spark_df(
     genres_col=None,
     year_col=None,
 ):
-    """Loads the MovieLens dataset as `pyspark.DataFrame`.
+    """Loads the MovieLens dataset as `pyspark.sql.DataFrame`.
 
-    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.DataFrame`.
+    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.sql.DataFrame`.
 
     To load movie information only, you can use `load_item_df` function. 
 
@@ -362,7 +362,7 @@ def load_spark_df(
         year_col (str): Movie release year column name. If None, the column will not be loaded.
 
     Returns:
-        pyspark.DataFrame: Movie rating dataset.
+        pyspark.sql.DataFrame: Movie rating dataset.
         
     **Examples**
 
@@ -410,7 +410,7 @@ def load_spark_df(
 
         # Load movie features such as title, genres, and release year.
         # Since the file size is small, we directly load as pd.DataFrame from the driver node
-        # and then convert into spark.DataFrame
+        # and then convert into pyspark.sql.DataFrame
         item_pd_df = _load_item_df(
             size, item_datapath, movie_col, title_col, genres_col, year_col
         )
@@ -425,7 +425,7 @@ def load_spark_df(
                 """
                 )
 
-            # Move rating file to DBFS in order to load into spark.DataFrame
+            # Move rating file to DBFS in order to load into pyspark.sql.DataFrame
             dbfs_datapath = "dbfs:/tmp/" + datapath
             dbutils.fs.mv(spark_datapath, dbfs_datapath)
             spark_datapath = dbfs_datapath

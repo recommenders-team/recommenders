@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import logging
-
 import numpy as np
 from scipy import sparse
 
@@ -12,28 +11,28 @@ logger = logging.getLogger()
 
 def exponential_decay(value, max_val, half_life):
     """Compute decay factor for a given value based on an exponential decay.
-    
+
     Values greater than `max_val` will be set to 1.
-    
+
     Args:
-        value (numeric): value to calculate decay factor
-        max_val (numeric): value at which decay factor will be 1
-        half_life (numeric): value at which decay factor will be 0.5
-    
+        value (numeric): Value to calculate decay factor
+        max_val (numeric): Value at which decay factor will be 1
+        half_life (numeric): Value at which decay factor will be 0.5
+
     Returns:
-        float: decay factor
+        float: Decay factor
     """
     return np.minimum(1.0, np.power(0.5, (max_val - value) / half_life))
 
 
 def jaccard(cooccurrence):
     """Helper method to calculate the Jaccard similarity of a matrix of co-occurrences.
-    
+
     Args:
-        cooccurrence (np.array): the symmetric matrix of co-occurrences of items.
-    
+        cooccurrence (numpy.ndarray): the symmetric matrix of co-occurrences of items.
+
     Returns:
-        np.array: The matrix of Jaccard similarities between any two items.
+        numpy.ndarray: The matrix of Jaccard similarities between any two items.
     """
 
     diag = cooccurrence.diagonal()
@@ -48,12 +47,12 @@ def jaccard(cooccurrence):
 
 def lift(cooccurrence):
     """Helper method to calculate the Lift of a matrix of co-occurrences.
-    
+
     Args:
-        cooccurrence (np.array): the symmetric matrix of co-occurrences of items.
-    
+        cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
+
     Returns:
-        np.array: The matrix of Lifts between any two items.
+        numpy.ndarray: The matrix of Lifts between any two items.
     """
 
     diag = cooccurrence.diagonal()
@@ -70,12 +69,15 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
     """Extract top K items from a matrix of scores for each user-item pair, optionally sort results per user.
 
     Args:
-        scores (np.array): score matrix (users x items).
-        top_k (int): number of top items to recommend.
-        sort_top_k (bool): flag to sort top k results.
+        scores (numpy.ndarray): Score matrix (users x items).
+        top_k (int): Number of top items to recommend.
+        sort_top_k (bool): Flag to sort top k results.
 
     Returns:
-        np.array, np.array: indices into score matrix for each users top items, scores corresponding to top items.
+        numpy.ndarray, numpy.ndarray:
+        - Indices into score matrix for each users top items.
+        - Scores corresponding to top items.
+
     """
 
     # ensure we're working with a dense ndarray
@@ -107,34 +109,33 @@ def binarize(a, threshold):
     """Binarize the values.
 
     Args:
-        a (np.ndarray): Input array that needs to be binarized.
+        a (numpy.ndarray): Input array that needs to be binarized.
         threshold (float): Threshold below which all values are set to 0, else 1.
+
+    Returns:
+        numpy.ndarray: Binarized array.
     """
-    return np.where(
-        a > threshold,
-        1.0,
-        0.0
-    )
+    return np.where(a > threshold, 1.0, 0.0)
 
 
 def rescale(data, new_min=0, new_max=1, data_min=None, data_max=None):
-    """
-    Rescale/normalize the data to be within the range [new_min, new_max]
+    """Rescale/normalize the data to be within the range `[new_min, new_max]`
     If data_min and data_max are explicitly provided, they will be used
     as the old min/max values instead of taken from the data.
 
-    Note: this is same as the scipy.MinMaxScaler with the exception that we can override
-          the min/max of the old scale.
+    .. note::
+        This is same as the `scipy.MinMaxScaler` with the exception that we can override
+        the min/max of the old scale.
 
     Args:
-        data (np.array): 1d scores vector or 2d score matrix (users x items).
+        data (numpy.ndarray): 1d scores vector or 2d score matrix (users x items).
         new_min (int|float): The minimum of the newly scaled data.
         new_max (int|float): The maximum of the newly scaled data.
         data_min (None|number): The minimum of the passed data [if omitted it will be inferred].
         data_max (None|number): The maximum of the passed data [if omitted it will be inferred].
 
     Returns:
-        np.array: The newly scaled/normalized data.
+        numpy.ndarray: The newly scaled/normalized data.
     """
     data_min = data.min() if data_min is None else data_min
     data_max = data.max() if data_max is None else data_max

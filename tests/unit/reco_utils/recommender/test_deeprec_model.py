@@ -54,7 +54,8 @@ def test_xdeepfm_component_definition(deeprec_resource_path):
 
 
 @pytest.mark.gpu
-def test_dkn_component_definition(deeprec_resource_path):
+@pytest.fixture(scope="module")
+def dkn_files(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
     yaml_file = os.path.join(data_path, "dkn.yaml")
     news_feature_file = os.path.join(data_path, r"doc_feature.txt")
@@ -68,7 +69,31 @@ def test_dkn_component_definition(deeprec_resource_path):
         data_path,
         "mind-demo.zip",
     )
+    return (
+        data_path,
+        yaml_file,
+        news_feature_file,
+        user_history_file,
+        wordEmb_file,
+        entityEmb_file,
+        contextEmb_file,
+    )
 
+
+@pytest.mark.gpu
+def test_dkn_component_definition(dkn_files):
+    # Load params from fixture
+    (
+        _,
+        yaml_file,
+        news_feature_file,
+        user_history_file,
+        wordEmb_file,
+        entityEmb_file,
+        contextEmb_file,
+    ) = dkn_files
+
+    # Test DKN model
     hparams = prepare_hparams(
         yaml_file,
         news_feature_file=news_feature_file,
@@ -80,13 +105,27 @@ def test_dkn_component_definition(deeprec_resource_path):
         learning_rate=0.0001,
     )
     assert hparams is not None
-    model = DKN(hparams, DKNTextIterator)
 
+    model = DKN(hparams, DKNTextIterator)
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
 
-    ###  test DKN's item2item version
+
+@pytest.mark.gpu
+def test_dkn_item2item_component_definition(dkn_files):
+    # Load params from fixture
+    (
+        data_path,
+        yaml_file,
+        news_feature_file,
+        _,
+        wordEmb_file,
+        entityEmb_file,
+        contextEmb_file,
+    ) = dkn_files
+
+    # Test DKN's item2item version
     hparams = prepare_hparams(
         yaml_file,
         news_feature_file=news_feature_file,
@@ -101,84 +140,148 @@ def test_dkn_component_definition(deeprec_resource_path):
         use_entity=True,
         use_context=True,
     )
-    hparams.neg_num = 9
     assert hparams is not None
-    model_item2item = DKNItem2Item(hparams, DKNItem2itemTextIterator)
 
+    hparams.neg_num = 9
+    model_item2item = DKNItem2Item(hparams, DKNItem2itemTextIterator)
     assert model_item2item.pred_logits is not None
     assert model_item2item.update is not None
     assert model_item2item.iterator is not None
 
 
 @pytest.mark.gpu
-def test_slirec_component_definition(deeprec_resource_path, deeprec_config_path):
+@pytest.fixture(scope="module")
+def sequential_files(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "slirec")
-    yaml_file = os.path.join(deeprec_config_path, "sli_rec.yaml")
-    yaml_file_nextitnet = os.path.join(deeprec_config_path, "nextitnet.yaml")
-    yaml_file_sum = os.path.join(deeprec_config_path, "sum.yaml")
     train_file = os.path.join(data_path, r"train_data")
+    valid_file = os.path.join(data_path, r"valid_data")
+    test_file = os.path.join(data_path, r"test_data")
+    user_vocab = os.path.join(data_path, r"user_vocab.pkl")
+    item_vocab = os.path.join(data_path, r"item_vocab.pkl")
+    cate_vocab = os.path.join(data_path, r"category_vocab.pkl")
 
-    if not os.path.exists(train_file):
-        train_file = os.path.join(data_path, r"train_data")
-        valid_file = os.path.join(data_path, r"valid_data")
-        test_file = os.path.join(data_path, r"test_data")
-        user_vocab = os.path.join(data_path, r"user_vocab.pkl")
-        item_vocab = os.path.join(data_path, r"item_vocab.pkl")
-        cate_vocab = os.path.join(data_path, r"category_vocab.pkl")
+    reviews_name = "reviews_Movies_and_TV_5.json"
+    meta_name = "meta_Movies_and_TV.json"
+    reviews_file = os.path.join(data_path, reviews_name)
+    meta_file = os.path.join(data_path, meta_name)
+    valid_num_ngs = (
+        4  # number of negative instances with a positive instance for validation
+    )
+    test_num_ngs = (
+        9  # number of negative instances with a positive instance for testing
+    )
+    sample_rate = (
+        0.01  # sample a small item set for training and testing here for example
+    )
 
-        reviews_name = "reviews_Movies_and_TV_5.json"
-        meta_name = "meta_Movies_and_TV.json"
-        reviews_file = os.path.join(data_path, reviews_name)
-        meta_file = os.path.join(data_path, meta_name)
-        valid_num_ngs = (
-            4  # number of negative instances with a positive instance for validation
-        )
-        test_num_ngs = (
-            9  # number of negative instances with a positive instance for testing
-        )
-        sample_rate = (
-            0.01  # sample a small item set for training and testing here for example
-        )
+    input_files = [
+        reviews_file,
+        meta_file,
+        train_file,
+        valid_file,
+        test_file,
+        user_vocab,
+        item_vocab,
+        cate_vocab,
+    ]
+    download_and_extract(reviews_name, reviews_file)
+    download_and_extract(meta_name, meta_file)
+    data_preprocessing(
+        *input_files,
+        sample_rate=sample_rate,
+        valid_num_ngs=valid_num_ngs,
+        test_num_ngs=test_num_ngs
+    )
 
-        input_files = [
-            reviews_file,
-            meta_file,
-            train_file,
-            valid_file,
-            test_file,
-            user_vocab,
-            item_vocab,
-            cate_vocab,
-        ]
-        download_and_extract(reviews_name, reviews_file)
-        download_and_extract(meta_name, meta_file)
-        data_preprocessing(
-            *input_files,
-            sample_rate=sample_rate,
-            valid_num_ngs=valid_num_ngs,
-            test_num_ngs=test_num_ngs
-        )
+    return (
+        data_path,
+        user_vocab,
+        item_vocab,
+        cate_vocab,
+    )
+
+
+@pytest.mark.gpu
+def test_slirec_component_definition(sequential_files, deeprec_config_path):
+    yaml_file = os.path.join(deeprec_config_path, "sli_rec.yaml")
+    data_path, user_vocab, item_vocab, cate_vocab = sequential_files
 
     hparams = prepare_hparams(
-        yaml_file, train_num_ngs=4
-    )  # confirm the train_num_ngs when initializing a SLi_Rec model.
-    model = SLI_RECModel(hparams, SequentialIterator)
-    # nextitnet model
-    hparams_nextitnet = prepare_hparams(yaml_file_nextitnet, train_num_ngs=4)
-    model_nextitnet = NextItNetModel(hparams_nextitnet, NextItNetIterator)
-    # sum model
-    hparams_sum = prepare_hparams(
-        yaml_file_sum, train_num_ngs=4
-    )  # confirm the train_num_ngs when initializing a SLi_Rec model.
-    model_sum = SUMModel(hparams_sum, SequentialIterator)
+        yaml_file,
+        train_num_ngs=4,
+        embed_l2=0.0,
+        layer_l2=0.0,
+        learning_rate=0.001,
+        epochs=1,
+        MODEL_DIR=os.path.join(data_path, "model"),
+        SUMMARIES_DIR=os.path.join(data_path, "summary"),
+        user_vocab=user_vocab,
+        item_vocab=item_vocab,
+        cate_vocab=cate_vocab,
+        need_sample=True,
+    )
+    assert hparams is not None
 
+    model = SLI_RECModel(hparams, SequentialIterator)
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
 
+
+@pytest.mark.gpu
+def test_nextitnet_component_definition(sequential_files, deeprec_config_path):
+    yaml_file_nextitnet = os.path.join(deeprec_config_path, "nextitnet.yaml")
+    data_path, user_vocab, item_vocab, cate_vocab = sequential_files
+
+    # NextItNet model
+    hparams_nextitnet = prepare_hparams(
+        yaml_file_nextitnet,
+        train_num_ngs=4,
+        embed_l2=0.0,
+        layer_l2=0.0,
+        learning_rate=0.001,
+        epochs=1,
+        MODEL_DIR=os.path.join(data_path, "model"),
+        SUMMARIES_DIR=os.path.join(data_path, "summary"),
+        user_vocab=user_vocab,
+        item_vocab=item_vocab,
+        cate_vocab=cate_vocab,
+        need_sample=True,
+    )
+    assert hparams_nextitnet is not None
+
+    model_nextitnet = NextItNetModel(hparams_nextitnet, NextItNetIterator)
     assert model_nextitnet.logit is not None
     assert model_nextitnet.update is not None
     assert model_nextitnet.iterator is not None
+
+
+@pytest.mark.gpu
+def test_sum_component_definition(sequential_files, deeprec_config_path):
+    yaml_file_sum = os.path.join(deeprec_config_path, "sum.yaml")
+    data_path, user_vocab, item_vocab, cate_vocab = sequential_files
+
+    # SUM model
+    hparams_sum = prepare_hparams(
+        yaml_file_sum,
+        train_num_ngs=4,
+        embed_l2=0.0,
+        layer_l2=0.0,
+        learning_rate=0.001,
+        epochs=1,
+        MODEL_DIR=os.path.join(data_path, "model"),
+        SUMMARIES_DIR=os.path.join(data_path, "summary"),
+        user_vocab=user_vocab,
+        item_vocab=item_vocab,
+        cate_vocab=cate_vocab,
+        need_sample=True,
+    )
+    assert hparams_sum is not None
+
+    model_sum = SUMModel(hparams_sum, SequentialIterator)
+    assert model_sum.logit is not None
+    assert model_sum.update is not None
+    assert model_sum.iterator is not None
 
 
 @pytest.mark.gpu

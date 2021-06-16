@@ -3,31 +3,31 @@
 
 import tensorflow as tf
 import numpy as np
-import json
-import pickle as pkl
 import random
-import os
-import time
 
 from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
 from reco_utils.recommender.deeprec.deeprec_utils import load_dict
+
 
 __all__ = ["NextItNetIterator"]
 
 
 class NextItNetIterator(SequentialIterator):
     """Data loader for the NextItNet model.
-    NextItNet requires a special type of data format. In training stage, each instance will produce (sequence_length * train_num_ngs) target items and labels, to let NextItNet output predictions of every item in a sequence except only of the last item.
+
+    NextItNet requires a special type of data format. In training stage, each instance will
+    produce `(sequence_length * train_num_ngs)` target items and labels, to let NextItNet
+    output predictions of every item in a sequence except only of the last item.
     """
 
     def __init__(self, hparams, graph, col_spliter="\t"):
         """Initialize an iterator. Create necessary placeholders for the model.
-        * different from sequential iterator
-        
+        Different from sequential iterator
+
         Args:
-            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): the running graph. All created placeholder will be added to this graph.
-            col_spliter (str): column spliter in one line.
+            hparams (object): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
+            graph (object): The running graph. All created placeholder will be added to this graph.
+            col_spliter (str): Column splitter in one line.
         """
         self.col_spliter = col_spliter
 
@@ -82,19 +82,19 @@ class NextItNetIterator(SequentialIterator):
         batch_num_ngs,
     ):
         """Convert data into numpy arrays that are good for further model operation.
-        * different from sequential_iterator
-        
+        Note: This is different from `sequential_iterator`.
+
         Args:
-            label_list (list): a list of ground-truth labels.
-            user_list (list): a list of user indexes.
-            item_list (list): a list of item indexes.
-            item_cate_list (list): a list of category indexes.
-            item_history_batch (list): a list of item history indexes.
-            item_cate_history_batch (list): a list of category history indexes.
-            time_list (list): a list of current timestamp.
-            time_diff_list (list): a list of timestamp between each sequential opertions.
-            time_from_first_action_list (list): a list of timestamp from the first opertion.
-            time_to_now_list (list): a list of timestamp to the current time.
+            label_list (list): A list of ground-truth labels.
+            user_list (list): A list of user indexes.
+            item_list (list): A list of item indexes.
+            item_cate_list (list): A list of category indexes.
+            item_history_batch (list): A list of item history indexes.
+            item_cate_history_batch (list): A list of category history indexes.
+            time_list (list): A list of current timestamp.
+            time_diff_list (list): A list of timestamp between each sequential opertions.
+            time_from_first_action_list (list): A list of timestamp from the first opertion.
+            time_to_now_list (list): A list of timestamp to the current time.
             batch_num_ngs (int): The number of negative sampling while training in mini-batch.
 
         Returns:

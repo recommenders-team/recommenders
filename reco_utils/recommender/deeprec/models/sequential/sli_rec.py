@@ -16,17 +16,19 @@ __all__ = ["SLI_RECModel"]
 class SLI_RECModel(SequentialBaseModel):
     """SLI Rec model
 
-    Z. Yu, J. Lian, A. Mahmoody, G. Liu and X. Xie, "Adaptive User Modeling with
-    Long and Short-Term Preferences for Personailzed Recommendation", in Proceedings of 
-    the 28th International Joint Conferences on Artificial Intelligence, IJCAI’19, 
-    Pages 4213-4219, AAAI Press, 2019.
+    :Citation:
+
+        Z. Yu, J. Lian, A. Mahmoody, G. Liu and X. Xie, "Adaptive User Modeling with
+        Long and Short-Term Preferences for Personailzed Recommendation", in Proceedings of
+        the 28th International Joint Conferences on Artificial Intelligence, IJCAI’19,
+        Pages 4213-4219, AAAI Press, 2019.
     """
 
     def _build_seq_graph(self):
         """The main function to create sli_rec model.
-        
+
         Returns:
-            obj:the output of sli_rec section.
+            object: the output of sli_rec section.
         """
         hparams = self.hparams
         with tf.variable_scope("sli_rec"):
@@ -97,11 +99,11 @@ class SLI_RECModel(SequentialBaseModel):
         """Apply attention by fully connected layers.
 
         Args:
-            query (obj): The embedding of target item which is regarded as a query in attention operations.
-            user_embedding (obj): The output of RNN layers which is regarded as user modeling.
+            query (object): The embedding of target item which is regarded as a query in attention operations.
+            user_embedding (object): The output of RNN layers which is regarded as user modeling.
 
         Returns:
-            obj: Weighted sum of user modeling.
+            object: Weighted sum of user modeling.
         """
         hparams = self.hparams
         with tf.variable_scope("attention_fcn"):

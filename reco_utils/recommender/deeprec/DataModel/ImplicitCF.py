@@ -37,8 +37,8 @@ class ImplicitCF(object):
         Args:
             adj_dir (str): Directory to save / load adjacency matrices. If it is None, adjacency
                 matrices will be created and will not be saved.
-            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
-            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating).
+            train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
+            test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating).
                 test can be None, if so, we only process the training data.
             col_user (str): User column name.
             col_item (str): Item column name.
@@ -62,12 +62,12 @@ class ImplicitCF(object):
         """Process the dataset to reindex userID and itemID and only keep records with ratings greater than 0.
 
         Args:
-            train (pd.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
-            test (pd.DataFrame): Test data with at least columns (col_user, col_item, col_rating).
+            train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
+            test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating).
                 test can be None, if so, we only process the training data.
 
         Returns:
-            list: train and test pd.DataFrame Dataset, which have been reindexed and filtered.
+            list: train and test pandas.DataFrame Dataset, which have been reindexed and filtered.
 
         """
         df = train if test is None else train.append(test)
@@ -194,10 +194,10 @@ class ImplicitCF(object):
             batch_size (int): Batch size of users.
 
         Returns:
-            np.array: Sampled users.
-            np.array: Sampled positive items.
-            np.array: Sampled negative items.
-
+            numpy.ndarray, numpy.ndarray, numpy.ndarray: 
+            - Sampled users.
+            - Sampled positive items.
+            - Sampled negative items.
         """
 
         def sample_neg(x):

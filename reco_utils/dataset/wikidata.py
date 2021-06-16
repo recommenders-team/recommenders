@@ -4,8 +4,11 @@
 import pandas as pd
 import requests
 import logging
+from retrying import retry
+
 
 logger = logging.getLogger(__name__)
+
 
 API_URL_WIKIPEDIA = "https://en.wikipedia.org/w/api.php"
 API_URL_WIKIDATA = "https://query.wikidata.org/sparql"
@@ -31,6 +34,7 @@ def get_session(session=None):
     return session
 
 
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def find_wikidata_id(name, limit=1, session=None):
     """Find the entity ID in wikidata from a title string.
 
@@ -40,8 +44,7 @@ def find_wikidata_id(name, limit=1, session=None):
         session (requests.Session): requests session to reuse connections
 
     Returns:
-        (str): wikidata entityID corresponding to the title string. 
-                  'entityNotFound' will be returned if no page is found
+        str: wikidata entityID corresponding to the title string. 'entityNotFound' will be returned if no page is found
     """
 
     session = get_session(session=session)
@@ -84,6 +87,7 @@ def find_wikidata_id(name, limit=1, session=None):
     return entity_id
 
 
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def query_entity_links(entity_id, session=None):
     """Query all linked pages from a wikidata entityID
 
@@ -92,7 +96,7 @@ def query_entity_links(entity_id, session=None):
         session (requests.Session): requests session to reuse connections
 
     Returns:
-        (json): dictionary with linked pages.
+        json: Dictionary with linked pages.
     """
     query = (
         """
@@ -148,8 +152,9 @@ def read_linked_entities(data):
         data (json): dictionary with linked pages
 
     Returns:
-        (list): List of liked entityIDs
-        (list): List of liked entity names
+        list, list:
+        - List of liked entityIDs.
+        - List of liked entity names.
     """
 
     return [
@@ -161,6 +166,7 @@ def read_linked_entities(data):
     ]
 
 
+@retry(wait_random_min=1000, wait_random_max=5000, stop_max_attempt_number=5)
 def query_entity_description(entity_id, session=None):
     """Query entity wikidata description from entityID
 
@@ -169,9 +175,8 @@ def query_entity_description(entity_id, session=None):
         session (requests.Session): requests session to reuse connections
 
     Returns:
-        (str): Wikidata short description of the entityID
-               descriptionNotFound' will be returned if no 
-               description is found
+        str: Wikidata short description of the entityID
+        descriptionNotFound' will be returned if no description is found
     """
     query = (
         """
@@ -205,13 +210,13 @@ def search_wikidata(names, extras=None, describe=True, verbose=False):
     """Create DataFrame of Wikidata search results
 
     Args:
-        names (list[str]): list of names to search for
-        extras (dict(str: list)): optional extra items to assign to results for corresponding name
-        describe (bool): optional flag to include description of entity
-        verbose (bool): optional flag to print out intermediate data
+        names (list[str]): List of names to search for
+        extras (dict(str: list)): Optional extra items to assign to results for corresponding name
+        describe (bool): Optional flag to include description of entity
+        verbose (bool): Optional flag to print out intermediate data
 
     Returns:
-        pd.DataFrame: wikipedia results for all names with found entities
+        pandas.DataFrame: Wikipedia results for all names with found entities
 
     """
 

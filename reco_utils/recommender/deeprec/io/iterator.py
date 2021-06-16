@@ -7,12 +7,24 @@ import abc
 
 
 class BaseIterator(object):
+    """Abstract base iterator class"""
+
     @abc.abstractmethod
     def parser_one_line(self, line):
+        """Abstract method. Parse one string line into feature values.
+
+        Args:
+            line (str): A string indicating one instance.
+        """
         pass
 
     @abc.abstractmethod
     def load_data_from_file(self, infile):
+        """Abstract method. Read and parse data from a file.
+
+        Args:
+            infile (str): Text input file. Each line in this file is an instance.
+        """
         pass
 
     @abc.abstractmethod
@@ -21,6 +33,11 @@ class BaseIterator(object):
 
     @abc.abstractmethod
     def gen_feed_dict(self, data_dict):
+        """Abstract method. Construct a dictionary that maps graph elements to values.
+
+        Args:
+            data_dict (dict): A dictionary that maps string name to numpy arrays.
+        """
         pass
 
 
@@ -31,11 +48,11 @@ class FFMTextIterator(BaseIterator):
     """
 
     def __init__(self, hparams, graph, col_spliter=" ", ID_spliter="%"):
-        """Initialize an iterator. Create necessary placeholders for the model.
-        
+        """Initialize an iterator. Create the necessary placeholders for the model.
+
         Args:
-            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): the running graph. All created placeholder will be added to this graph.
+            hparams (object): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
+            graph (object): The running graph. All created placeholder will be added to this graph.
             col_spliter (str): column splitter in one line.
             ID_spliter (str): ID splitter in one line.
         """
@@ -70,12 +87,12 @@ class FFMTextIterator(BaseIterator):
 
     def parser_one_line(self, line):
         """Parse one string line into feature values.
-        
+
         Args:
-            line (str): a string indicating one instance
+            line (str): A string indicating one instance.
 
         Returns:
-            list: Parsed results,including label, features and impression_id
+            list: Parsed results, including `label`, `features` and `impression_id`.
 
         """
         impression_id = 0
@@ -98,12 +115,12 @@ class FFMTextIterator(BaseIterator):
 
     def load_data_from_file(self, infile):
         """Read and parse data from a file.
-        
+
         Args:
-            infile (str): text input file. Each line in this file is an instance.
+            infile (str): Text input file. Each line in this file is an instance.
 
         Returns:
-            obj: An iterator that will yields parsed results, in the format of graph feed_dict.
+            object: An iterator that yields parsed results, in the format of graph `feed_dict`.
         """
         label_list = []
         features_list = []
@@ -132,14 +149,14 @@ class FFMTextIterator(BaseIterator):
 
     def _convert_data(self, labels, features):
         """Convert data into numpy arrays that are good for further operation.
-        
+
         Args:
             labels (list): a list of ground-truth labels.
             features (list): a 3-dimensional list, carrying a list (batch_size) of feature array,
-                    where each feature array is a list of [field_idx, feature_idx, feature_value] tuple.
+                    where each feature array is a list of `[field_idx, feature_idx, feature_value]` tuple.
 
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
         dim = self.feature_cnt
         FIELD_COUNT = self.field_cnt
@@ -201,11 +218,12 @@ class FFMTextIterator(BaseIterator):
 
     def gen_feed_dict(self, data_dict):
         """Construct a dictionary that maps graph elements to values.
+
         Args:
-            data_dict (dict): a dictionary that maps string name to numpy arrays.
+            data_dict (dict): A dictionary that maps string name to numpy arrays.
 
         Returns:
-            dict: a dictionary that maps graph elements to numpy arrays.
+            dict: A dictionary that maps graph elements to numpy arrays.
 
         """
         feed_dict = {

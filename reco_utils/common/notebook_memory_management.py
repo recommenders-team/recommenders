@@ -63,7 +63,7 @@ def stop_watching_memory():
 
 
 def watch_memory():
-    # bring in the global memory usage value from the previous iteration
+    """Bring in the global memory usage value from the previous iteration"""
     global previous_call_memory_usage, keep_watching, watching_memory, input_cells
     new_memory_usage = memory_profiler.memory_usage()[0]
     memory_delta = new_memory_usage - previous_call_memory_usage

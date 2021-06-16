@@ -24,7 +24,7 @@ def load_pandas_df(
         metadata_filename (str): Name of file containing top-level metadata for the dataset.
     
     Returns:
-        metadata (pd.DataFrame): Metadata dataframe.
+        metadata (pandas.DataFrame): Metadata dataframe.
     """
 
     # Load into dataframe
@@ -45,7 +45,7 @@ def remove_duplicates(df, cols):
         cols (list of str): Name of columns in which to look for duplicates.
     
     Returns:
-        df (pd.DataFrame): Pandas dataframe with duplicate rows dropped.
+        df (pandas.DataFrame): Pandas dataframe with duplicate rows dropped.
     
     """
     for col in cols:
@@ -65,11 +65,11 @@ def remove_nan(df, cols):
     """ Remove rows with NaN values in specified column.
     
     Args:
-        df (pd.DataFrame): Pandas dataframe.
+        df (pandas.DataFrame): Pandas dataframe.
         cols (list of str): Name of columns in which to look for NaN.
     
     Returns:
-        df (pd.DataFrame): Pandas dataframe with invalid rows dropped.
+        df (pandas.DataFrame): Pandas dataframe with invalid rows dropped.
     
     """
     for col in cols:
@@ -86,10 +86,10 @@ def clean_dataframe(df):
     """ Clean up the dataframe.
     
     Args:
-        df (pd.DataFrame): Pandas dataframe.
+        df (pandas.DataFrame): Pandas dataframe.
     
     Returns:
-        df (pd.DataFrame): Cleaned pandas dataframe.
+        df (pandas.DataFrame): Cleaned pandas dataframe.
     """
 
     # Remove duplicated rows
@@ -150,13 +150,13 @@ def get_public_domain_text(
     """ Get all public domain text.
     
     Args:
-        df (pd.DataFrame): Metadata dataframe for public domain text.
+        df (pandas.DataFrame): Metadata dataframe for public domain text.
         container_name (str): Azure storage container name.
         azure_storage_account_name (str): Azure storage account name.
         azure_storage_sas_token (str): Azure storage SAS token.
 
     Returns:
-        df_full (pd.DataFrame): Dataframe with select metadata and full article text.
+        df_full (pandas.DataFrame): Dataframe with select metadata and full article text.
     """
     # reset index
     df = df.reset_index(drop=True)
