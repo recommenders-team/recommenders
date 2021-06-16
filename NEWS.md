@@ -1,5 +1,11 @@
 # What's New
 
+## Update June 21, 2021
+
+We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)!
+
+Now you can install Recommenders using pip! In addition there are lots of bug fixes and utilities improvement.
+
 ## Update June 1, 2021
 
 We have surpassed 10k stars!
