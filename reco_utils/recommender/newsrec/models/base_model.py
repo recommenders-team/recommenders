@@ -18,10 +18,10 @@ class BaseModel:
     """Basic class of models
 
     Attributes:
-        hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-        iterator_creator_train (obj): An iterator to load the data in training steps.
-        iterator_creator_train (obj): An iterator to load the data in testing steps.
-        graph (obj): An optional graph.
+        hparams (object): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+        train_iterator (object): An iterator to load the data in training steps.
+        test_iterator (object): An iterator to load the data in testing steps.
+        graph (object): An optional graph.
         seed (int): Random seed.
     """
 
@@ -35,10 +35,9 @@ class BaseModel:
         parameter set.
 
         Args:
-            hparams (obj): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-            iterator_creator_train (obj): An iterator to load the data in training steps.
-            iterator_creator_train (obj): An iterator to load the data in testing steps.
-            graph (obj): An optional graph.
+            hparams (object): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+            iterator_creator (object): An iterator to load the data.
+            graph (object): An optional graph.
             seed (int): Random seed.
         """
         self.seed = seed
@@ -83,7 +82,7 @@ class BaseModel:
             file_path (str): the pre-trained glove embeddings file path.
 
         Returns:
-            np.array: A constant numpy array.
+            numpy.ndarray: A constant numpy array.
         """
 
         return np.load(file_path)
@@ -102,7 +101,7 @@ class BaseModel:
         """Make loss function, consists of data loss and regularization loss
 
         Returns:
-            obj: Loss function or loss function name
+            object: Loss function or loss function name
         """
         if self.hparams.loss == "cross_entropy_loss":
             data_loss = "categorical_crossentropy"
@@ -115,7 +114,7 @@ class BaseModel:
     def _get_opt(self):
         """Get the optimizer according to configuration. Usually we will use Adam.
         Returns:
-            obj: An optimizer.
+            object: An optimizer.
         """
         lr = self.hparams.learning_rate
         optimizer = self.hparams.optimizer
@@ -129,11 +128,11 @@ class BaseModel:
         """Make final output as prediction score, according to different tasks.
 
         Args:
-            logit (obj): Base prediction value.
+            logit (object): Base prediction value.
             task (str): A task (values: regression/classification)
 
         Returns:
-            obj: Transformed score
+            object: Transformed score
         """
         if task == "regression":
             pred = tf.identity(logit)
@@ -151,7 +150,7 @@ class BaseModel:
         """Go through the optimization step once with training data in feed_dict.
 
         Args:
-            sess (obj): The model session object.
+            sess (object): The model session object.
             feed_dict (dict): Feed values to train the model. This is a dictionary that maps graph elements to values.
 
         Returns:
@@ -165,12 +164,11 @@ class BaseModel:
         """Evaluate the data in feed_dict with current model.
 
         Args:
-            sess (obj): The model session object.
+            sess (object): The model session object.
             feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
 
         Returns:
-            list: A list of evaluated results, including total loss value, data loss value,
-                predicted scores, and ground-truth labels.
+            list: A list of evaluated results, including total loss value, data loss value, predicted scores, and ground-truth labels.
         """
         eval_input, eval_label = self._get_input_label_from_iter(eval_batch_data)
         imp_index = eval_batch_data["impression_index_batch"]
@@ -197,7 +195,7 @@ class BaseModel:
             test_news_file (str): test set.
 
         Returns:
-            obj: An instance of self.
+            object: An instance of self.
         """
 
         for epoch in range(1, self.hparams.epochs + 1):
@@ -291,8 +289,10 @@ class BaseModel:
             group_keys (list): group key list.
 
         Returns:
-            all_labels: labels after group.
-            all_preds: preds after group.
+            list, list, list:
+            - Keys after group.
+            - Labels after group.
+            - Preds after group.
 
         """
 
@@ -320,7 +320,7 @@ class BaseModel:
             filename (str): A file name that will be evaluated.
 
         Returns:
-            dict: A dictionary contains evaluation metrics.
+            dict: A dictionary that contains evaluation metrics.
         """
 
         if self.support_quick_scoring:

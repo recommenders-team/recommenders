@@ -226,7 +226,7 @@ def create_hparams(flags):
         flags (dict): Dictionary with the model requirements.
 
     Returns:
-        obj: Hyperparameter object in TF (tf.contrib.training.HParams).
+        object: Hyperparameter object in TF (tf.contrib.training.HParams).
     """
     return tf.contrib.training.HParams(
         # data
@@ -284,7 +284,7 @@ def prepare_hparams(yaml_file=None, **kwargs):
         yaml_file (str): YAML file as configuration.
 
     Returns:
-        obj: Hyperparameter object in TF (tf.contrib.training.HParams).
+        object: Hyperparameter object in TF (tf.contrib.training.HParams).
     """
     if yaml_file is not None:
         config = load_yaml(yaml_file)

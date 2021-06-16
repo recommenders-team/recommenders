@@ -1,25 +1,31 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import tensorflow as tf
-import numpy as np
-from tensorflow.contrib.rnn import GRUCell, LSTMCell
-from tensorflow.nn import dynamic_rnn, static_rnn
+from tensorflow.nn import dynamic_rnn
 from reco_utils.recommender.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
-from reco_utils.recommender.deeprec.models.sequential.sum_cells import *
+from reco_utils.recommender.deeprec.models.sequential.sum_cells import (
+    SUMCell,
+    SUMV2Cell,
+)
 
 
 class SUMModel(SequentialBaseModel):
     """Sequential User Matrix Model
 
-    Lian, J., Batal, I., Liu, Z., Soni, A., Kang, E. Y., Wang, Y., & Xie, X. (2021).
-    Multi-Interest-Aware User Modeling for Large-Scale Sequential Recommendations. arXiv preprint arXiv:2102.09211.
+    :Citation:
+
+        Lian, J., Batal, I., Liu, Z., Soni, A., Kang, E. Y., Wang, Y., & Xie, X.,
+        "Multi-Interest-Aware User Modeling for Large-Scale Sequential Recommendations", arXiv preprint arXiv:2102.09211, 2021.
     """
 
     def _build_seq_graph(self):
         """The main function to create SUM model.
 
         Returns:
-            obj:the output of SUM section, which is a concatenation of user vector and target item vector.
+            object: The output of SUM section, which is a concatenation of user vector and target item vector.
         """
         hparams = self.hparams
         with tf.variable_scope("sum"):
@@ -49,12 +55,11 @@ class SUMModel(SequentialBaseModel):
         """Merge a user's memory states conditioned by a query item.
 
         Params:
-            seq_output:  a flatten representation of SUM memory states for (a batch of) users
+            seq_output: A flatten representation of SUM memory states for (a batch of) users
             query: (a batch of) target item candidates
 
         Returns:
-            att_res: merged user represenation
-            att_weights: attention weights of each memory channel
+            tf.Tensor, tf.Tensor: Merged user representation. Attention weights of each memory channel.
         """
         dim_q = query.shape[-1].value
         att_weights = tf.constant(1.0, dtype=tf.float32)
@@ -92,9 +97,10 @@ class SUMModel(SequentialBaseModel):
         return att_res, att_weights
 
     def _create_sumcell(self):
-        """create a sum cell
+        """Create a SUM cell
 
-        Returns:  an initialized sum cell
+        Returns:
+            object: An initialized SUM cell
         """
         hparams = self.hparams
         input_embedding_dim = self.history_embedding.shape[-1]
@@ -114,12 +120,13 @@ class SUMModel(SequentialBaseModel):
         return res
 
     def _build_sum(self, cell):
-        """generate  user memory states from behavior sequence
+        """Generate  user memory states from behavior sequence
 
-        Param: an initiazlied sum cell
+        Args:
+            object: An initialied SUM cell.
 
         Returns:
-            obj: a flatten representation of user memory states, in the shape of (BatchSize, SlotsNum x HiddenSize)
+            object: A flatten representation of user memory states, in the shape of (BatchSize, SlotsNum x HiddenSize)
         """
         hparams = self.hparams
         with tf.variable_scope("sum"):

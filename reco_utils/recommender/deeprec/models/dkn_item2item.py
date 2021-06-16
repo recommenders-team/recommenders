@@ -1,18 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+
+import numpy as np
 import tensorflow as tf
 from reco_utils.recommender.deeprec.models.dkn import DKN
-import numpy as np
 from reco_utils.recommender.deeprec.deeprec_utils import cal_metric
+
 
 r"""
 This new model adapts DKN's structure for item-to-item recommendations.
-The tutorial can be found at: https://github.com/microsoft/recommenders/blob/kdd2020_tutorial/scenarios/academic/KDD2020-tutorial/step4_run_dkn_item2item.ipynb
+The tutorial can be found at: https://github.com/microsoft/recommenders/blob/main/examples/07_tutorials/KDD2020-tutorial/step4_run_dkn_item2item.ipynb
  """
 
 
 class DKNItem2Item(DKN):
+    """Class for item-to-item recommendations using DKN.
+    See https://github.com/microsoft/recommenders/blob/main/examples/07_tutorials/KDD2020-tutorial/step4_run_dkn_item2item.ipynb"""
+
     def _compute_data_loss(self):
         logits = self.pred
         data_loss = -1 * tf.reduce_sum(tf.math.log(logits[:, 0] + 1e-10))
@@ -22,7 +27,7 @@ class DKNItem2Item(DKN):
         """The main function to create DKN's logic.
 
         Returns:
-            obj: Prediction of item2item relation scores made by the DKN model, in the shape of (batch_size, num_negative + 1).
+            object: Prediction of item2item relation scores made by the DKN model, in the shape of (`batch_size`, `num_negative` + 1).
         """
         news_field_embed_final_batch = self._build_doc_embedding(
             self.iterator.candidate_news_index_batch,
@@ -59,7 +64,7 @@ class DKNItem2Item(DKN):
 
     def _build_doc_embedding(self, candidate_word_batch, candidate_entity_batch):
         """
-        To make the document embedding be dense, we add one tanh layer on top of the kims_cnn module.
+        To make the document embedding be dense, we add one tanh layer on top of the `kims_cnn` module.
         """
         with tf.variable_scope("kcnn", initializer=self.initializer):
             news_field_embed = self._kims_cnn(
@@ -77,6 +82,15 @@ class DKNItem2Item(DKN):
         return news_field_embed
 
     def eval(self, sess, feed_dict):
+        """Evaluate the data in `feed_dict` with current model.
+
+        Args:
+            sess (object): The model session object.
+            feed_dict (dict): Feed values for evaluation. This is a dictionary that maps graph elements to values.
+
+        Returns:
+            numpy.ndarray, numpy.ndarray: A tuple with predictions and labels arrays.
+        """
         feed_dict[self.layer_keeps] = self.keep_prob_test
         feed_dict[self.is_train_stage] = False
         preds = sess.run(self.pred, feed_dict=feed_dict)
@@ -85,6 +99,14 @@ class DKNItem2Item(DKN):
         return (preds, labels)
 
     def run_eval(self, filename):
+        """Evaluate the given file and returns some evaluation metrics.
+
+        Args:
+            filename (str): A file name that will be evaluated.
+
+        Returns:
+            dict: A dictionary containing evaluation metrics.
+        """
         load_sess = self.sess
         group_preds = []
         group_labels = []

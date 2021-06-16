@@ -18,6 +18,13 @@ GPU utilities
     :members:
 
 
+Kubernetes utilities
+===============================
+
+.. automodule:: reco_utils.common.k8s_utils
+    :members:
+
+
 Notebook utilities
 ===============================
 

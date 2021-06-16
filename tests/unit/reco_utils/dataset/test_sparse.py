@@ -89,7 +89,7 @@ def test_df_to_sparse(test_specs, python_dataset):
     }
 
     # instantiate the affinity matrix
-    am = AffinityMatrix(DF=python_dataset, **header)
+    am = AffinityMatrix(df=python_dataset, **header)
 
     # obtain the sparse matrix representation of the input dataframe
     X, _, _ = am.gen_affinity_matrix()
@@ -109,7 +109,7 @@ def test_sparse_to_df(test_specs, python_dataset):
     }
 
     # instantiate the the affinity matrix
-    am = AffinityMatrix(DF=python_dataset, **header)
+    am = AffinityMatrix(df=python_dataset, **header)
 
     # generate the sparse matrix representation
     X, _, _ = am.gen_affinity_matrix()

@@ -90,7 +90,7 @@ extras_require["experimental"] = [
 setup(
     name=name,
     version=version,
-    description="Microsoft Recommenders, a library of best practices and utilities for building recommendation systems",
+    description="Microsoft Recommenders - Python utilities for building recommender systems",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     url="https://github.com/microsoft/recommenders",
@@ -120,5 +120,5 @@ setup(
     install_requires=install_requires,
     package_dir={"reco_utils": "reco_utils"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
-    python_requires=">=3.6, <=3.7",
+    python_requires=">=3.6, <=3.7.10",
 )

@@ -139,49 +139,6 @@ jobs:
   - release_nightly_linux_spark
   condition: succeeded()
   steps:
-    # Create archives with complete source code included
-  - task: ArchiveFiles@2
-    displayName: Create zip archive of reco_utils
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-    inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
-      includeRootFolder: false
-      archiveType: zip
-      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-reco_utils_code.zip'
-      replaceExistingArchive: true
-
-  - task: ArchiveFiles@2
-    displayName: Create tar.gz archive of reco_utils
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-    inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)/reco_utils
-      includeRootFolder: false
-      archiveType: tar
-      tarCompression: gz
-      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-reco_utils_code.tar.gz'
-      replaceExistingArchive: true
-
-  - task: ArchiveFiles@2
-    displayName: Create zip archive of examples
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-    inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)/examples
-      includeRootFolder: false
-      archiveType: zip
-      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.zip'
-      replaceExistingArchive: true
-
-  - task: ArchiveFiles@2
-    displayName: Create tar.gz archive of examples
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
-    inputs:
-      rootFolderOrFile: $(Build.SourcesDirectory)/examples
-      includeRootFolder: false
-      archiveType: tar
-      tarCompression: gz
-      archiveFile: '$(Build.ArtifactStagingDirectory)/archives/Recommenders-example_notebooks.tar.gz'
-      replaceExistingArchive: true
-
   - task: DownloadPipelineArtifact@2 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
     displayName: 'Download Artifacts from Shared Storage'
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
@@ -202,7 +159,6 @@ jobs:
       title: 'Recommenders'
       assets: |
         $(Build.SourcesDirectory)/binaries/*
-        $(Build.ArtifactStagingDirectory)/archives/*
       assetUploadMode: 'delete'
       isDraft: true
       isPreRelease: false
