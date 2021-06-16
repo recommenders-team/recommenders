@@ -31,8 +31,8 @@ class RLRMCdataset(object):
         """Initialize parameters.
 
         Args:
-            train (pd.DataFrame: training data with at least columns (col_user, col_item, col_rating)
-            validation (pd.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
+            train (pandas.DataFrame: training data with at least columns (col_user, col_item, col_rating)
+            validation (pandas.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
             mean_center (bool): flag to mean center the ratings in train (and validation) data
             col_user (str): user column name
             col_item (str): item column name
@@ -58,12 +58,12 @@ class RLRMCdataset(object):
         """Process the dataset to reindex userID and itemID
 
         Args:
-            train (pd.DataFrame): training data with at least columns (col_user, col_item, col_rating)
-            validation (pd.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
+            train (pandas.DataFrame): training data with at least columns (col_user, col_item, col_rating)
+            validation (pandas.DataFrame): validation data with at least columns (col_user, col_item, col_rating). validation can be None, if so, we only process the training data
             mean_center (bool): flag to mean center the ratings in train (and validation) data
 
         Returns:
-            list: train and validation pd.DataFrame Dataset, which have been reindexed.
+            list: train and validation pandas.DataFrame Dataset, which have been reindexed.
 
         """
         # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/main/reco_utils/recommender/ncf/dataset.py
@@ -131,10 +131,10 @@ class RLRMCdataset(object):
         """Process dataset to reindex userID and itemID
 
         Args:
-            df (pd.DataFrame): dataframe with at least columns (col_user, col_item, col_rating)
+            df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating)
 
         Returns:
-            list: train and validation pd.DataFrame Dataset, which have been reindexed.
+            list: train and validation pandas.DataFrame Dataset, which have been reindexed.
 
         """
 

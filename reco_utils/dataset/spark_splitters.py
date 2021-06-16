@@ -23,7 +23,7 @@ def spark_random_split(data, ratio=0.75, seed=42):
     Randomly split the data into several splits.
 
     Args:
-        data (spark.DataFrame): Spark DataFrame to be split.
+        data (pyspark.sql.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two halves and the ratio argument indicates the ratio of 
             training data set; if it is a list of float numbers, the splitter splits 
@@ -32,7 +32,7 @@ def spark_random_split(data, ratio=0.75, seed=42):
         seed (int): Seed.
 
     Returns:
-        list: Splits of the input data as spark.DataFrame.
+        list: Splits of the input data as pyspark.sql.DataFrame.
     """
     multi_split, ratio = process_split_ratio(ratio)
 
@@ -61,7 +61,7 @@ def _do_stratification_spark(
         are divided according to the ratio provided.
 
         Args:
-            data (spark.DataFrame): Spark DataFrame to be split.
+            data (pyspark.sql.DataFrame): Spark DataFrame to be split.
             ratio (float or list): Ratio for splitting data. If it is a single float number
                 it splits data into two sets and the ratio argument indicates the ratio of
                 training data set; if it is a list of float numbers, the splitter splits 
@@ -153,7 +153,7 @@ def spark_chrono_split(
     The split is stratified.
 
     Args:
-        data (spark.DataFrame): Spark DataFrame to be split.
+        data (pyspark.sql.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two sets and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits 
@@ -169,7 +169,7 @@ def spark_chrono_split(
         no_partition (bool): set to enable more accurate and less efficient splitting.
 
     Returns:
-        list: Splits of the input data as spark.DataFrame.
+        list: Splits of the input data as pyspark.sql.DataFrame.
     """
 
     return _do_stratification_spark(
@@ -199,7 +199,7 @@ def spark_stratified_split(
     specified by the split ratio(s). The split is stratified.
 
     Args:
-        data (spark.DataFrame): Spark DataFrame to be split.
+        data (pyspark.sql.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two halves and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits
@@ -216,7 +216,7 @@ def spark_stratified_split(
         col_rating (str): column name of ratings.
 
     Returns:
-        list: Splits of the input data as spark.DataFrame.
+        list: Splits of the input data as pyspark.sql.DataFrame.
     """
     return _do_stratification_spark(
         data=data,
@@ -241,7 +241,7 @@ def spark_timestamp_split(
     The ratios are applied on the timestamp column which is divided accordingly into several partitions.
 
     Args:
-        data (spark.DataFrame): Spark DataFrame to be split.
+        data (pyspark.sql.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two sets and the ratio argument indicates the ratio of
             training data set; if it is a list of float numbers, the splitter splits
@@ -255,7 +255,7 @@ def spark_timestamp_split(
         seconds since Epoch.
 
     Returns:
-        list: Splits of the input data as spark.DataFrame.
+        list: Splits of the input data as pyspark.sql.DataFrame.
     """
     return _do_stratification_spark(
         data=data,

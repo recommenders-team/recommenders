@@ -19,11 +19,11 @@ __all__ = ["SequentialIterator"]
 class SequentialIterator(BaseIterator):
     def __init__(self, hparams, graph, col_spliter="\t"):
         """Initialize an iterator. Create necessary placeholders for the model.
-        
+
         Args:
-            hparams (obj): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
-            graph (obj): the running graph. All created placeholder will be added to this graph.
-            col_spliter (str): column spliter in one line.
+            hparams (object): Global hyper-parameters. Some key settings such as #_feature and #_field are there.
+            graph (object): The running graph. All created placeholder will be added to this graph.
+            col_spliter (str): Column splitter in one line.
         """
         self.col_spliter = col_spliter
         user_vocab, item_vocab, cate_vocab = (
@@ -68,13 +68,13 @@ class SequentialIterator(BaseIterator):
             )
 
     def parse_file(self, input_file):
-        """Parse the file to a list ready to be used for downstream tasks
-        
+        """Parse the file to A list ready to be used for downstream tasks.
+
         Args:
             input_file: One of train, valid or test file which has never been parsed.
-        
-        Returns: 
-            list: A list with parsing result
+
+        Returns:
+            list: A list with parsing result.
         """
         with open(input_file, "r") as f:
             lines = f.readlines()
@@ -87,15 +87,13 @@ class SequentialIterator(BaseIterator):
 
     def parser_one_line(self, line):
         """Parse one string line into feature values.
-            a line was saved as the following format:
-            label \t user_hash \t item_hash \t item_cate \t operation_time \t item_history_sequence \t item_cate_history_sequence \t time_history_sequence
 
         Args:
-            line (str): a string indicating one instance
+            line (str): a string indicating one instance. This string contains tab-separated values including: label, user_hash, item_hash, item_cate, operation_time, item_history_sequence, item_cate_history_sequence, and time_history_sequence.
 
         Returns:
-            tuple/list: Parsed results including label, user_id, target_item_id, target_category, item_history, cate_history(, timeinterval_history,
-            timelast_history, timenow_history, mid_mask, seq_len, learning_rate)
+            list: Parsed results including `label`, `user_id`, `item_id`, `item_cate`, `item_history_sequence`, `cate_history_sequence`,
+            `current_time`, `time_diff`, `time_from_first_action`, `time_to_now`.
 
         """
         words = line.strip().split(self.col_spliter)
@@ -169,16 +167,16 @@ class SequentialIterator(BaseIterator):
 
     def load_data_from_file(self, infile, batch_num_ngs=0, min_seq_length=1):
         """Read and parse data from a file.
-        
+
         Args:
             infile (str): Text input file. Each line in this file is an instance.
-            batch_num_ngs (int): The number of negative sampling here in batch. 
+            batch_num_ngs (int): The number of negative sampling here in batch.
                 0 represents that there is no need to do negative sampling here.
-            min_seq_length (int): The minimum number of a sequence length. 
+            min_seq_length (int): The minimum number of a sequence length.
                 Sequences with length lower than min_seq_length will be ignored.
 
-        Returns:
-            obj: An iterator that will yields parsed results, in the format of graph feed_dict.
+        Yields:
+            object: An iterator that yields parsed results, in the format of graph `feed_dict`.
         """
         label_list = []
         user_list = []
@@ -292,22 +290,22 @@ class SequentialIterator(BaseIterator):
         batch_num_ngs,
     ):
         """Convert data into numpy arrays that are good for further model operation.
-        
+
         Args:
-            label_list (list): a list of ground-truth labels.
-            user_list (list): a list of user indexes.
-            item_list (list): a list of item indexes.
-            item_cate_list (list): a list of category indexes.
-            item_history_batch (list): a list of item history indexes.
-            item_cate_history_batch (list): a list of category history indexes.
-            time_list (list): a list of current timestamp.
-            time_diff_list (list): a list of timestamp between each sequential opertions.
-            time_from_first_action_list (list): a list of timestamp from the first opertion.
-            time_to_now_list (list): a list of timestamp to the current time.
+            label_list (list): A list of ground-truth labels.
+            user_list (list): A list of user indexes.
+            item_list (list): A list of item indexes.
+            item_cate_list (list): A list of category indexes.
+            item_history_batch (list): A list of item history indexes.
+            item_cate_history_batch (list): A list of category history indexes.
+            time_list (list): A list of current timestamp.
+            time_diff_list (list): A list of timestamp between each sequential operations.
+            time_from_first_action_list (list): A list of timestamp from the first operation.
+            time_to_now_list (list): A list of timestamp to the current time.
             batch_num_ngs (int): The number of negative sampling while training in mini-batch.
 
         Returns:
-            dict: A dictionary, contains multiple numpy arrays that are convenient for further operation.
+            dict: A dictionary, containing multiple numpy arrays that are convenient for further operation.
         """
         if batch_num_ngs:
             instance_cnt = len(label_list)
@@ -453,12 +451,12 @@ class SequentialIterator(BaseIterator):
 
     def gen_feed_dict(self, data_dict):
         """Construct a dictionary that maps graph elements to values.
-        
+
         Args:
-            data_dict (dict): a dictionary that maps string name to numpy arrays.
+            data_dict (dict): A dictionary that maps string name to numpy arrays.
 
         Returns:
-            dict: a dictionary that maps graph elements to numpy arrays.
+            dict: A dictionary that maps graph elements to numpy arrays.
 
         """
         if not data_dict:

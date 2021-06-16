@@ -190,7 +190,7 @@ class VW:
         """Convert Pandas DataFrame to vw input format file
         
         Args:
-            df (pd.DataFrame): input DataFrame
+            df (pandas.DataFrame): input DataFrame
             train (bool): flag for train mode (or test mode if False)
         """
 
@@ -230,7 +230,7 @@ class VW:
         """Train model
         
         Args:
-            df (pd.DataFrame): input training data
+            df (pandas.DataFrame): input training data
         """
 
         # write dataframe to disk in vw format
@@ -243,7 +243,7 @@ class VW:
         """Predict results
         
         Args:
-            df (pd.DataFrame): input test data
+            df (pandas.DataFrame): input test data
         """
 
         # write dataframe to disk in vw format
