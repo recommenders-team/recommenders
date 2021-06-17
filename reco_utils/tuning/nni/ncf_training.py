@@ -8,26 +8,10 @@ import numpy as np
 import os
 import pandas as pd
 import nni
-import sys
-
-sys.path.append("../../../")
 
 import reco_utils.evaluation.python_evaluation as evaluation
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
-from reco_utils.dataset import movielens
-from reco_utils.dataset.python_splitters import python_chrono_split
-from reco_utils.evaluation.python_evaluation import (
-    rmse,
-    mae,
-    rsquared,
-    exp_var,
-    map_at_k,
-    ndcg_at_k,
-    precision_at_k,
-    recall_at_k,
-    get_top_k_items,
-)
 from reco_utils.common.constants import SEED as DEFAULT_SEED
 
 logging.basicConfig(level=logging.DEBUG)
@@ -119,7 +103,6 @@ def ncf_training(params):
             )
             metrics_dict = _update_metrics(metrics_dict, metric, params, result)
 
-
     if len(ranking_metrics) == 0 and len(rating_metrics) == 0:
         raise ValueError("No metrics were specified.")
 
@@ -171,7 +154,6 @@ def get_params():
 def main(params):
     logger.debug("Args: %s", str(params))
     logger.debug("Number of epochs %d", params["n_epochs"])
-    model = ncf_training(params)
 
 
 if __name__ == "__main__":
@@ -179,7 +161,7 @@ if __name__ == "__main__":
         tuner_params = nni.get_next_parameter()
         logger.debug("Hyperparameters: %s", tuner_params)
         params = vars(get_params())
-        
+
         # in the case of Hyperband, use STEPS to allocate the number of epochs NCF will run for
         if "STEPS" in tuner_params:
             steps_param = tuner_params["STEPS"]

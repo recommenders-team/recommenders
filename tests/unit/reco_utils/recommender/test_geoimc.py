@@ -7,7 +7,7 @@ import pytest
 import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
-from pandas.util.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal
 
 from reco_utils.common.python_utils import binarize
 from reco_utils.recommender.geoimc.geoimc_data import DataPtr

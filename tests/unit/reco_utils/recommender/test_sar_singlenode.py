@@ -7,7 +7,7 @@ import itertools
 import pytest
 import numpy as np
 import pandas as pd
-from pandas.util.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal
 import urllib
 
 from reco_utils.common.constants import DEFAULT_PREDICTION_COL

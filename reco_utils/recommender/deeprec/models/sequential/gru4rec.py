@@ -14,15 +14,17 @@ __all__ = ["GRU4RecModel"]
 class GRU4RecModel(SequentialBaseModel):
     """GRU4Rec Model
 
-    B. Hidasi, A. Karatzoglou, L. Baltrunas, D. Tikk, "Session-based Recommendations 
-    with Recurrent Neural Networks", ICLR (Poster), 2016.
+    :Citation:
+
+        B. Hidasi, A. Karatzoglou, L. Baltrunas, D. Tikk, "Session-based Recommendations
+        with Recurrent Neural Networks", ICLR (Poster), 2016.
     """
 
     def _build_seq_graph(self):
         """The main function to create GRU4Rec model.
-        
+
         Returns:
-            obj:the output of GRU4Rec section.
+            object:the output of GRU4Rec section.
         """
         with tf.variable_scope("gru4rec"):
             # final_state = self._build_lstm()
@@ -35,7 +37,7 @@ class GRU4RecModel(SequentialBaseModel):
         """Apply an LSTM for modeling.
 
         Returns:
-            obj: The output of LSTM section.
+            object: The output of LSTM section.
         """
         with tf.name_scope("lstm"):
             self.mask = self.iterator.mask
@@ -57,7 +59,7 @@ class GRU4RecModel(SequentialBaseModel):
         """Apply a GRU for modeling.
 
         Returns:
-            obj: The output of GRU section.
+            object: The output of GRU section.
         """
         with tf.name_scope("gru"):
             self.mask = self.iterator.mask

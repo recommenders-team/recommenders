@@ -29,7 +29,7 @@ extends:
     - smoke
     - integration
     task_name: "Test - Nightly Linux GPU"
-    timeout: 180
+    timeout: 240
     conda_env: "nightly_linux_gpu"
     conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
     pip_opts: "[gpu,examples]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"

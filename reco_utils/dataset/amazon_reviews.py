@@ -255,8 +255,8 @@ def _data_generating(input_file, train_file, valid_file, test_file, min_sequence
 def _data_generating_no_history_expanding(
     input_file, train_file, valid_file, test_file, min_sequence=1
 ):
-    """produce train, valid and test file from processed_output file
-    Each user's behavior sequence will only produce one line in trian file.
+    """Produce train, valid and test file from processed_output file
+    Each user's behavior sequence will only produce one line in train file.
     Like, user's behavior sequence: 12345, and this function will write into train file: 12345
     """
     f_input = open(input_file, "r")
@@ -482,7 +482,15 @@ def _data_processing(input_file):
 
 
 def download_and_extract(name, dest_path):
-    """Downloads and extracts Amazon reviews and meta datafiles if they don’t already exist"""
+    """Downloads and extracts Amazon reviews and meta datafiles if they don’t already exist
+
+    Args:
+        name (str): Category of reviews.
+        dest_path (str): File path for the downloaded file.
+
+    Returns:
+        str: File path for the extracted file.
+    """
     dirs, _ = os.path.split(dest_path)
     if not os.path.exists(dirs):
         os.makedirs(dirs)
@@ -499,6 +507,7 @@ def _download_reviews(name, dest_path):
     """Downloads Amazon reviews datafile.
 
     Args:
+        name (str): Category of reviews
         dest_path (str): File path for the downloaded file
     """
 

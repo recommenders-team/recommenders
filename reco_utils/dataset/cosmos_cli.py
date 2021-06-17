@@ -7,7 +7,7 @@ def find_collection(client, dbid, id):
     """Find whether or not a CosmosDB collection exists.
     
     Args:
-        client (obj): A pydocumentdb client object.
+        client (object): A pydocumentdb client object.
         dbid (str): Database ID.
         id (str): Collection ID.
     
@@ -34,12 +34,12 @@ def read_collection(client, dbid, id):
     """Read a CosmosDB collection.
     
     Args:
-        client (obj): A pydocumentdb client object.
+        client (object): A pydocumentdb client object.
         dbid (str): Database ID.
         id (str): Collection ID.
     
     Returns:
-        obj: A collection.
+        object: A collection.
     """
     try:
         database_link = "dbs/" + dbid
@@ -57,11 +57,11 @@ def read_database(client, id):
     """Read a CosmosDB database.
     
     Args:
-        client (obj): A pydocumentdb client object.
+        client (object): A pydocumentdb client object.
         id (str): Database ID.
     
     Returns:
-        obj: A database.
+        object: A database.
     """
     try:
         database_link = "dbs/" + id
@@ -78,7 +78,7 @@ def find_database(client, id):
     """Find whether or not a CosmosDB database exists.
     
     Args:
-        client (obj): A pydocumentdb client object.
+        client (object): A pydocumentdb client object.
         id (str): Database ID.
     
     Returns:

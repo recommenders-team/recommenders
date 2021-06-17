@@ -141,9 +141,9 @@ def test_k_preds(model):
     return test_k_preds
 
 
-@pytest.mark.parametrize("remove_seen", [False, True])
+@pytest.mark.parametrize("remove_seen, train", [False, True])
 def test_recommend_k_items(model,
-                           train_data,
+                           train,
                            test_data,
                            test_k_preds,
                            remove_seen):

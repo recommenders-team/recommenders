@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 __title__ = "Microsoft Recommenders"
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 __author__ = "RecoDev Team at Microsoft"
 __license__ = "MIT"
 __copyright__ = "Copyright 2018-present Microsoft Corporation"

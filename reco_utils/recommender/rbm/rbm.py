@@ -138,8 +138,8 @@ class RBM:
         the relu function.
 
         Args:
-            pr (tf.Tensor, float32): input conditional probability
-            g  (np.array, float32):  uniform probability used for comparison
+            pr (tf.Tensor, float32): Input conditional probability.
+            g  (numpy.ndarray, float32):  Uniform probability used for comparison.
 
         Returns:
             tf.Tensor: Float32 tensor of sampled units. The value is 1 if pr>g and 0 otherwise.
@@ -169,9 +169,9 @@ class RBM:
         from a common distribution.
 
         Args:
-            pr (tf.Tensor, float32): a distributions of shape (m, n, r), where m is the number of examples, n the number
+            pr (tf.Tensor, float32): A distributions of shape (m, n, r), where m is the number of examples, n the number
                  of features and r the number of classes. pr needs to be normalized, i.e. sum_k p(k) = 1 for all m, at fixed n.
-            f (tf.Tensor, float32): normalized, uniform probability used for comparison.
+            f (tf.Tensor, float32): Normalized, uniform probability used for comparison.
 
         Returns:
             tf.Tensor: An (m,n) float32 tensor of sampled rankings from 1 to r.
@@ -196,8 +196,8 @@ class RBM:
             r (float): rating scale, corresponding to the number of classes
 
         Returns:
-            tf.Tensor: a tensor of shape (r, m, Nv). This needs to be reshaped as (m, Nv, r) in the last step
-            to allow for faster sampling when used in the multinomial function.
+            tf.Tensor: 
+            - A tensor of shape (r, m, Nv): This needs to be reshaped as (m, Nv, r) in the last step to allow for faster sampling when used in the multinomial function.
 
         """
 
@@ -247,10 +247,10 @@ class RBM:
             Nh (int): number of hidden units (latent variables of the model)
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor: It returns 3 tensors. `w` of size (Nv, Nh): correlation matrix initialized 
-            by sampling from a normal distribution with zero mean and given variance init_stdv. `bv` of size 
-            (1, Nvisible): visible units' bias, initialized to zero. `bh` of size (1, Nhidden)L hidden units' bias, 
-            initiliazed to zero.
+            tf.Tensor, tf.Tensor, tf.Tensor: 
+            - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv. 
+            - `bv` of size (1, Nvisible): visible units' bias, initialized to zero. 
+            - `bh` of size (1, Nhidden): hidden units' bias, initiliazed to zero.
         """
         with tf.variable_scope("Network_parameters"):
 
@@ -291,8 +291,9 @@ class RBM:
             vv (tf.Tensor, float32): visible units
 
         Returns:
-            tf.Tensor, tf.Tensor: Two tensors. `phv` is the activation probability of the hidden unit. `h_` is the
-            sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
+            tf.Tensor, tf.Tensor: 
+            - `phv`: The activation probability of the hidden unit. 
+            - `h_`: The sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
         """
 
         with tf.name_scope("sample_hidden_units"):
@@ -328,9 +329,9 @@ class RBM:
             h (tf.Tensor, float32): visible units.
 
         Returns:
-            tf.Tensor, tf.Tensor: Two tensors. `pvh` is the activation probability of the visible unit given the hidden.
-            `v_` is the sampled value of the visible unit from a Multinomial distributions having success probability 
-            `pvh`.
+            tf.Tensor, tf.Tensor: 
+            - `pvh`: The activation probability of the visible unit given the hidden.
+            - `v_`: The sampled value of the visible unit from a Multinomial distributions having success probability `pvh`.
         """
 
         with tf.name_scope("sample_visible_units"):
@@ -363,8 +364,9 @@ class RBM:
             v (tf.Tensor, float32): visible units.
 
         Returns:
-            tf.Tensor, tf.Tensor: Two tensors of float32. `h_k` is the sampled value of the hidden unit at step k. `v_k`
-            is the sampled value of the visible unit at step k.
+            tf.Tensor, tf.Tensor:
+            - `h_k`: The sampled value of the hidden unit at step k, float32.
+            - `v_k`: The sampled value of the visible unit at step k, float32.
         """
 
         with tf.name_scope("gibbs_sampling"):
@@ -388,8 +390,8 @@ class RBM:
             v_k (tf.Tensor, float32): sampled visible units at step k
 
         Returns:
-            obj: objective function of Contrastive divergence, that is the difference
-            between the free energy clamped on the data (v) and the model Free energy (v_k).
+            object: 
+            - Objective function of Contrastive divergence: the difference between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
         with tf.variable_scope("losses"):
@@ -407,7 +409,7 @@ class RBM:
         accordingly.
 
         Args:
-            i (int): current epoch in the loop
+            i (int): Current epoch in the loop
         """
 
         with tf.name_scope("gibbs_protocol"):
@@ -440,7 +442,7 @@ class RBM:
         per row.
 
         Args:
-            vp (tf.Tensor, float32): inferred output (Network prediction)
+            vp (tf.Tensor, float32): Inferred output (Network prediction)
 
         Returns:
             tf.Tensor: accuracy.
@@ -473,7 +475,7 @@ class RBM:
         Note that this needs to be evaluated on the rated items only
 
         Args:
-            vp (tf.Tensor, float32): inferred output (Network prediction)
+            vp (tf.Tensor, float32): Inferred output (Network prediction)
 
         Returns:
             tf.Tensor: root mean square error.
@@ -529,10 +531,10 @@ class RBM:
         """Evaluates precision on the train and test set
 
         Args:
-            xtst (np.array, integer32): the user/affinity matrix for the test set
+            xtst (numpy.ndarray, integer32): The user/affinity matrix for the test set
 
         Returns:
-            float, float: precision on the train and test sets.
+            float, float: Precision on the train and test sets.
         """
 
         if self.with_metrics:
@@ -557,9 +559,9 @@ class RBM:
         of the training epochs
 
         Args:
-            Rmse_train (list, float32): per epoch rmse on the train set
-            precision_train (float): precision on the train set
-            precision_test  (float): precision on the test set
+            Rmse_train (list, float32): Per epoch rmse on the train set.
+            precision_train (float): Precision on the train set.
+            precision_test  (float): Precision on the test set.
         """
 
         if self.with_metrics:
@@ -612,7 +614,7 @@ class RBM:
         """Initialize the TF session on training data
 
         Args:
-            xtr (np.array, int32): the user/affinity matrix for the train set
+            xtr (numpy.ndarray, int32): The user/affinity matrix for the train set.
         """
 
         init_graph = tf.global_variables_initializer()
@@ -631,10 +633,10 @@ class RBM:
         no online metrics are evaluated.
 
         Args:
-            num_minibatches (scalar, int32): number of training minibatches
+            num_minibatches (scalar, int32): Number of training minibatches.
 
         Returns:
-            float: training error per single epoch. If `self.with_metrics` is False, this is zero.
+            float: Training error per single epoch. If `self.with_metrics` is False, this is zero.
         """
 
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
@@ -668,8 +670,8 @@ class RBM:
         model training
 
         Args:
-            xtr (np.array, integers): the user/affinity matrix for the train set
-            xtst (np.array, integers): the user/affinity matrix for the test set
+            xtr (numpy.ndarray, integers): the user/affinity matrix for the train set
+            xtst (numpy.ndarray, integers): the user/affinity matrix for the test set
 
         Returns:
             float: elapsed time during training
@@ -753,13 +755,14 @@ class RBM:
         then item2 will be recommended.
 
         Args:
-            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
+            x (numpy.ndarray, int32): input user/affinity matrix. Note that this can be a single vector, i.e. the ratings
             of a single user.
             top_k (scalar, int32): the number of items to recommend.
 
         Returns:
-            np.array, float: A sparse matrix containing the top_k elements ordered by their score and the time taken 
-            to recommend k items.
+            numpy.ndarray, float: 
+            - A sparse matrix containing the top_k elements ordered by their score.
+            - The time taken to recommend k items.
         """
 
         self.time()
@@ -811,11 +814,13 @@ class RBM:
         of rows (users).
 
         Args:
-            x (np.array, int32): input user/affinity matrix. Note that this can be a single vector, i.e.
+            x (numpy.ndarray, int32): Input user/affinity matrix. Note that this can be a single vector, i.e.
             the ratings of a single user.
 
         Returns:
-            np.array, float: A matrix with the inferred ratings and the elapsed time for predediction.
+            numpy.ndarray, float: 
+            - A matrix with the inferred ratings.
+            - The elapsed time for predediction.
         """
 
         self.time()
