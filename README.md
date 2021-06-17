@@ -2,15 +2,15 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (June 1, 2021)
+## What's New (June 21, 2021)
 
-We have surpassed 10k stars!
+We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)!
 
-Microsoft Recommenders repository has reached 10k stars and has become the most starred open-source recommender system project on GitHub.
+Recommenders is now on PyPI and can be installed using pip! In addition there are lots of bug fixes and utilities improvements.
 
-Many thanks and congratulations to all the contributors to this repository! More advanced algorithms and best practices are yet to come!
+Here you can find the PyPi page: https://pypi.org/project/ms-recommenders/
 
-See past announcements in [NEWS.md](NEWS.md).
+Here you can find the package documentation: https://microsoft-recommenders.readthedocs.io/en/latest/
 
 ## Introduction
 
@@ -34,7 +34,7 @@ The installation of the recommenders package has been tested with Python version
 
 To set up on your local machine:
 
-To install core utilities, CPU-based algorithms, and dependencies
+To install core utilities, CPU-based algorithms, and dependencies:
 
 1. Ensure software required for compilation is installed. On Linux this can be supported by adding build-essential dependencies:
 ```bash
@@ -144,7 +144,7 @@ These tests are the nightly builds, which compute the smoke and integration test
 
 ### DSVM Build Status
 
-The following tests run on a Windows and Linux DSVM daily. These machines run 24/7.
+The following tests run on a Linux DSVM daily. These machines run 24/7.
 
 | Build Type | Branch | Status |  | Branch | Status |
 | --- | --- | --- | --- | --- | --- |
