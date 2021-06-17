@@ -6,6 +6,10 @@ We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommen
 
 Recommenders is now on PyPI and can be installed using pip! In addition there are lots of bug fixes and utilities improvements.
 
+Here you can find the PyPi page: https://pypi.org/project/ms-recommenders/
+
+Here you can find the package documentation: https://microsoft-recommenders.readthedocs.io/en/latest/
+
 ## Update June 1, 2021
 
 We have surpassed 10k stars!
