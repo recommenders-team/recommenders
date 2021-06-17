@@ -211,6 +211,7 @@ class FBT(object):
             pd.DataFrame: top k recommendation items for each user
         """
 
+        test_users = test[[self.col_user]].drop_duplicates()
         all_recommendations_df = self.predict(test)
 
         if remove_seen:
@@ -253,7 +254,16 @@ class FBT(object):
                                                   col_user=self.col_user,
                                                   col_rating=self.col_score,
                                                   k=top_k)
-        return topk_recommendations_df
+
+        # Making sure we have a row for every test user even if null
+        final_k_recommendations = (
+            test_users
+            .merge(topk_recommendations_df,
+                   on=self.col_user,
+                   how='left')
+        )
+
+        return final_k_recommendations
 
     def eval_map_at_k(self, df_true, df_pred):  # noqa: N803
         """Evaluate quality of recommendations.
