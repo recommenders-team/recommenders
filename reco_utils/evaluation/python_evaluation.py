@@ -31,20 +31,14 @@ from reco_utils.dataset.pandas_df_utils import (
 def check_column_dtypes(func):
     """Checks columns of DataFrame inputs
 
-<<<<<<< HEAD
     This includes the checks on:
-    1. whether the input columns exist in the input DataFrames
-    2. whether the data types of col_user as well as col_item are matched in the two input DataFrames.
-=======
-    This includes the checks on: 
 
     * whether the input columns exist in the input DataFrames
     * whether the data types of col_user as well as col_item are matched in the two input DataFrames.
->>>>>>> main
 
     Args:
         func (function): function that will be wrapped
-    
+
     Returns:
         function: Wrapper function for checking dtypes.
     """
@@ -669,13 +663,8 @@ def get_top_k_items(
         filtered out top k items and sorted by ratings and there is no need to do that again.
 
     Returns:
-<<<<<<< HEAD
-        pd.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`
-      """
-=======
         pandas.DataFrame: DataFrame of top k items for each user, sorted by `col_user` and `rank`
     """
->>>>>>> main
     # Sort dataframe by col_user and (top k) col_rating
     if k is None:
         top_k_items = dataframe
