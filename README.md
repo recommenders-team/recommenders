@@ -2,15 +2,15 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (June 1, 2021)
+## What's New (June 21, 2021)
 
-We have surpassed 10k stars!
+We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)!
 
-Microsoft Recommenders repository has reached 10k stars and has become the most starred open-source recommender system project on GitHub.
+Recommenders is now on PyPI and can be installed using pip! In addition there are lots of bug fixes and utilities improvements.
 
-Many thanks and congratulations to all the contributors to this repository! More advanced algorithms and best practices are yet to come!
+Here you can find the PyPi page: https://pypi.org/project/ms-recommenders/
 
-See past announcements in [NEWS.md](NEWS.md).
+Here you can find the package documentation: https://microsoft-recommenders.readthedocs.io/en/latest/
 
 ## Introduction
 
