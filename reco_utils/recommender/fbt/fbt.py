@@ -24,8 +24,7 @@ class FBT(object):
         self,
         col_user=constants.DEFAULT_USER_COL,
         col_item=constants.DEFAULT_ITEM_COL,
-        col_score=constants.DEFAULT_PREDICTION_COL,
-        num_recos=10
+        col_score=constants.DEFAULT_PREDICTION_COL
     ):
         """Initialize model parameters
 
@@ -37,7 +36,6 @@ class FBT(object):
         self.col_item = col_item
         self.col_user = col_user
         self.col_score = col_score
-        self.num_recos = num_recos
 
         self._model_df = None
         self._item_frequencies = None
@@ -50,8 +48,7 @@ class FBT(object):
         return (
             f"{self.__class__.__name__}(user_colname={self.col_user}, "
             f"item_colname={self.col_item}, "
-            f"score_colname={self.col_score}, "
-            f"num_recos={self.num_recos}, "
+            f"score_colname={self.col_score} "
         )
 
     def _check_dataframe(self, df,
@@ -160,7 +157,7 @@ class FBT(object):
         Returns
         -------
         R : DataFrame
-            DataFrame with up to `num_recos` rows per user in X.
+            DataFrame with each row is a recommendations for each user in X.
         """
         if not self._is_fit:
             raise ValueError(("fit() must be called before predict()!"))
@@ -196,7 +193,7 @@ class FBT(object):
                           test,
                           remove_seen=False,
                           train=None,
-                          top_k=None):
+                          top_k=10):
         """Recommend top K items for all users which are in the test set
 
         Args:
@@ -243,10 +240,6 @@ class FBT(object):
             del temp_df
         else:
             recommendations_df = all_recommendations_df
-
-        # now only keep top_k
-        if not top_k:
-            top_k = self.num_recos
 
         topk_recommendations_df = get_top_k_items(recommendations_df,
                                                   col_user=self.col_user,
