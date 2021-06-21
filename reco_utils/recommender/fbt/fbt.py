@@ -1,12 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-
+from reco_utils.common import constants
 from reco_utils.evaluation.python_evaluation import get_top_k_items
 import pandas as pd
 import logging
-
-from reco_utils.common import constants
 
 logger = logging.getLogger()
 
