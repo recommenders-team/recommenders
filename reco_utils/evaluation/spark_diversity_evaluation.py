@@ -358,17 +358,14 @@ class DiversityEvaluation:
         """
         # In reco_df, how  many times each col_item is being recommended
         df_itemcnt_reco = self.reco_df.groupBy(self.col_item).count()
-        # distinct item count in train_df
-        count_distinct_item_train = (
-            self.train_df.select(self.col_item).distinct().count()
-        )
+
         # the number of total recommendations
         count_row_reco = self.reco_df.count()
         df_entropy = df_itemcnt_reco.withColumn(
             "p(i)", F.col("count") / count_row_reco
         ).withColumn("entropy(i)", F.col("p(i)") * F.log2(F.col("p(i)")))
         # distributional coverage
-        d_coverage = (-2 / count_distinct_item_train) * df_entropy.agg(
+        d_coverage = df_entropy.agg(
             F.sum("entropy(i)")
         ).collect()[0][0]
 
