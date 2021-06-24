@@ -2,11 +2,15 @@
 # Licensed under the MIT License.
 
 
+import numpy as np
+from pyspark.sql.functions import countDistinct
+
 try:
     from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
     from pyspark.sql import Window, DataFrame
     from pyspark.sql.functions import col, row_number, expr
     import pyspark.sql.functions as F
+    from pyspark.sql.types import DoubleType
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -117,7 +121,7 @@ class SparkRatingEvaluation:
 
     def rmse(self):
         """Calculate Root Mean Squared Error.
-        
+
         Returns:
             float: Root mean squared error.
         """
@@ -125,7 +129,7 @@ class SparkRatingEvaluation:
 
     def mae(self):
         """Calculate Mean Absolute Error.
-        
+
         Returns:
             float: Mean Absolute Error.
         """
@@ -142,7 +146,8 @@ class SparkRatingEvaluation:
     def exp_var(self):
         """Calculate explained variance.
 
-        :note: Spark MLLib's implementation is buggy (can lead to values > 1), hence we use var().
+        .. note::
+           Spark MLLib's implementation is buggy (can lead to values > 1), hence we use var().
 
         Returns:
             float: Explained variance (min=0, max=1).
@@ -187,7 +192,7 @@ class SparkRankingEvaluation:
             col_rating (str): column name for rating.
             col_prediction (str): column name for prediction.
             k (int): number of items to recommend to each user.
-            relevancy_method (str): method for determining relevant items. Possible 
+            relevancy_method (str): method for determining relevant items. Possible
                 values are "top_k", "by_time_stamp", and "by_threshold".
             threshold (float): threshold for determining the relevant recommended items.
                 This is used for the case that predicted ratings follow a known
@@ -292,8 +297,9 @@ class SparkRankingEvaluation:
     def precision_at_k(self):
         """Get precision@k.
 
-        NOTE:
-            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt>`_.
+        .. note::
+            More details can be found
+            `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt>`_.
 
         Return:
             float: precision at k (min=0, max=1)
@@ -305,8 +311,9 @@ class SparkRankingEvaluation:
     def recall_at_k(self):
         """Get recall@K.
 
-        NOTE: 
-            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
+        .. note::
+            More details can be found
+            `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
             float: recall at k (min=0, max=1).
@@ -320,8 +327,9 @@ class SparkRankingEvaluation:
     def ndcg_at_k(self):
         """Get Normalized Discounted Cumulative Gain (NDCG)
 
-        NOTE: 
-            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
+        .. note::
+            More details can be found
+            `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
 
         Return:
             float: nDCG at k (min=0, max=1).
@@ -333,8 +341,9 @@ class SparkRankingEvaluation:
     def map_at_k(self):
         """Get mean average precision at k.
 
-        NOTE: 
-            More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
+        .. note::
+            More details can be found
+            `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
             float: MAP at k (min=0, max=1).
@@ -356,7 +365,7 @@ def _get_top_k_items(
     DataFrame, output a Spark DataFrame in the dense format of top k items
     for each user.
 
-    NOTE: 
+    .. note::
         if it is implicit rating, just append a column of constants to be ratings.
 
     Args:
@@ -470,3 +479,393 @@ def _get_relevant_items_by_timestamp(
     )
 
     return items_for_user
+
+
+class DiversityEvaluation:
+    """Spark Diversity Evaluator"""
+
+    def __init__(
+        self,
+        train_df,
+        reco_df,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_relevance=None,
+    ):
+        """Initializer.
+
+        This is the Spark version of diversity metrics evaluator.
+        The methods of this class calculate the following diversity metrics:
+            Coverage - The proportion of items that can be recommended. It includes two metrics:
+                (1) catalog_coverage, which measures the proportion of items that get recommended from the item catalog;
+                (2) distributional_coverage, which measures how unequally different items are recommended in the
+                recommendations to all users.
+            Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.
+            Diversity - The dissimilarity of items being recommended.
+            Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used,
+            it indicates how "pleasant surprise" of recommendations is to a user.
+
+        Info:
+            The metric definitions/formulations are based on the following references with modification:
+            - G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
+            Recommender Systems Handbook pp. 257-297, 2010.
+
+            - Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing
+            serendipity into music recommendation, WSDM 2012
+
+            - P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+            choice, discovery and relevance, ECIR 2011
+
+            - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+            towards data science, April 2020
+
+            - N. Hurley and M. Zhang, Novelty and diversity in top-n recommendation--analysis and evaluation,
+            ACM Transactions, 2011
+
+        Args:
+            train_df (pyspark.sql.DataFrame): Data set with historical data for users and items they 
+                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+            reco_df (pyspark.sql.DataFrame): Recommender's prediction output,
+                containing col_user, col_item, col_relevance (optional). Assumed to not contain any duplicate rows.
+            col_user (str): User id column name.
+            col_item (str): Item id column name.
+            col_relevance (str): This column indicates whether the recommended item is actually
+                relevant to the user or not.
+        """
+
+        self.train_df = train_df.select(col_user, col_item)
+        self.col_user = col_user
+        self.col_item = col_item
+        self.sim_col = "sim"
+        self.df_cosine_similarity = None
+        self.df_user_item_serendipity = None
+        self.df_user_serendipity = None
+        self.df_serendipity = None
+        self.df_item_novelty = None
+        self.df_user_novelty = None
+        self.df_novelty = None
+        self.df_intralist_similarity = None
+        self.df_user_diversity = None
+        self.df_diversity = None
+
+        if col_relevance is None:
+            self.col_relevance = "relevance"
+            # relevance term, default is 1 (relevant) for all
+            self.reco_df = reco_df.select(
+                col_user, col_item, F.lit(1.0).alias(self.col_relevance)
+            )
+        else:
+            self.col_relevance = col_relevance
+            self.reco_df = reco_df.select(
+                col_user, col_item, F.col(self.col_relevance).cast(DoubleType())
+            )
+
+        # check if reco_df contains any user_item pairs that are already shown in train_df
+        count_intersection = (
+            self.train_df.select(self.col_user, self.col_item)
+            .intersect(self.reco_df.select(self.col_user, self.col_item))
+            .count()
+        )
+
+        if count_intersection != 0:
+            raise Exception(
+                "reco_df should not contain any user_item pairs that are already shown in train_df"
+            )
+
+    def _get_pairwise_items(self, df):
+        """Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])
+        """
+        return (
+            df.select(self.col_user, F.col(self.col_item).alias("i1"))
+            .join(
+                df.select(
+                    F.col(self.col_user).alias("_user"),
+                    F.col(self.col_item).alias("i2"),
+                ),
+                (F.col(self.col_user) == F.col("_user")) & (F.col("i1") <= F.col("i2")),
+            ).select(self.col_user, "i1", "i2")
+        )
+
+    def _get_cosine_similarity(self, n_partitions=200):
+        """Cosine similarity metric from 
+            "Auralist: Introducing Serendipity into Music Recommendation", 
+            Zhang, Séaghdha, Quercia and Jambor, 2011. 
+        """
+        if self.df_cosine_similarity is None:
+            pairs = self._get_pairwise_items(df=self.train_df)
+            item_count = self.train_df.groupBy(self.col_item).count()
+
+            self.df_cosine_similarity = (
+                pairs.groupBy("i1", "i2")
+                .count()
+                .join(
+                    item_count.select(
+                        F.col(self.col_item).alias("i1"),
+                        F.pow(F.col("count"), 0.5).alias("i1_sqrt_count"),
+                    ),
+                    on="i1",
+                )
+                .join(
+                    item_count.select(
+                        F.col(self.col_item).alias("i2"),
+                        F.pow(F.col("count"), 0.5).alias("i2_sqrt_count"),
+                    ),
+                    on="i2",
+                )
+                .select(
+                    "i1",
+                    "i2",
+                    (
+                        F.col("count")
+                        / (F.col("i1_sqrt_count") * F.col("i2_sqrt_count"))
+                    ).alias(self.sim_col),
+                )
+                .repartition(n_partitions, "i1", "i2")
+            )
+        return self.df_cosine_similarity
+
+    # Diversity metrics
+    def _get_intralist_similarity(self, df):
+        """Intra-list similarity from 
+            "Improving Recommendation Lists Through Topic Diversification", 
+            Ziegler, McNee, Konstan and Lausen, 2005.
+        """
+        if self.df_intralist_similarity is None:
+            pairs = self._get_pairwise_items(df=df)
+            similarity_df = self._get_cosine_similarity()
+            # Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items.
+            # e.g. i1 and i2 have never occurred together.
+            self.df_intralist_similarity = (
+                pairs.join(similarity_df, on=["i1", "i2"], how="left")
+                .fillna(0)
+                .filter(F.col("i1") != F.col("i2"))
+                .groupBy(self.col_user)
+                .agg(F.mean(self.sim_col).alias("avg_il_sim"))
+                .select(self.col_user, "avg_il_sim")
+            )
+        return self.df_intralist_similarity
+
+    def user_diversity(self):
+        """Calculate average diversity of recommendations for each user.
+        
+        :Citation:
+        
+            "Auralist: Introducing Serendipity into Music Recommendation", 
+            Zhang, Séaghdha, Quercia and Jambor, 2011. 
+
+        Returns:
+            pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_user, user_diversity.
+        """
+        if self.df_user_diversity is None:
+            self.df_intralist_similarity = self._get_intralist_similarity(self.reco_df)
+            self.df_user_diversity = (
+                self.df_intralist_similarity.withColumn(
+                    "user_diversity", 1 - F.col("avg_il_sim")
+                )
+                .select(self.col_user, "user_diversity")
+                .orderBy(self.col_user)
+            )
+        return self.df_user_diversity
+
+    def diversity(self):
+        """Calculate average diversity of recommendations across all users.
+
+        Returns:
+            float: diversity.
+        """
+        if self.df_diversity is None:
+            self.df_user_diversity = self.user_diversity()
+            self.df_diversity = self.df_user_diversity.agg(
+                {"user_diversity": "mean"}
+                ).first()[0]
+        return self.df_diversity
+
+    # Novelty metrics
+    def item_novelty(self):
+        """Calculate novelty for each item in the recommendations. Novelty is computed as the minus logarithm of
+        (number of users recommended item / number of users who have not interacted with item). 
+
+        :Citation:
+
+            Eugene Yan. `Serendipity: Accuracy’s Unpopular Best Friend in Recommenders. 
+            <https://eugeneyan.com/writing/serendipity-and-accuracy-in-recommender-systems/>`_.
+
+        :Citation:
+
+            "Novelty and Diversity Metrics for Recommender Systems: Choice, Discovery and Relevance". 
+            Castells, Vargas and Wang, 2011.
+
+        Returns:
+            pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_item, item_novelty.
+        """
+        if self.df_item_novelty is None:
+            n_users = self.train_df.agg(F.countDistinct(self.col_user)).first()[0]
+            self.df_item_novelty = (
+                self.train_df
+                .groupBy(self.col_item)
+                .count()
+                .join(
+                    self.reco_df.groupBy(self.col_item).agg(
+                        F.count(self.col_user).alias("reco_count")
+                    ),
+                    on=self.col_item,
+                )
+                .withColumn(            # Add eps in denominator to avoid infinite value
+                    "item_novelty", -F.log2(F.col("reco_count") / (n_users - F.col("count") + np.finfo(float).eps))
+                )
+                .select(self.col_item, "item_novelty")
+                .orderBy(self.col_item)
+            )
+        return self.df_item_novelty
+
+    def user_novelty(self):
+        """Calculate average item novelty for each user's recommendations.
+
+        Returns:
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, user_novelty.
+        """
+        if self.df_user_novelty is None:
+            self.df_item_novelty = self.item_novelty()
+            self.df_user_novelty = (
+                self.reco_df.join(self.df_item_novelty, on=self.col_item)
+                .groupBy(self.col_user)
+                .agg(F.mean("item_novelty").alias("user_novelty"))
+                .orderBy(self.col_user)
+            )
+        return self.df_user_novelty
+
+    def novelty(self):
+        """Calculate average novelty for recommendations across all items.
+
+        :Citation:
+
+            "Novelty and Diversity Metrics for Recommender Systems: Choice, Discovery and Relevance". 
+            Castells, Vargas and Wang, 2011.
+
+        Returns:
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: novelty.
+        """
+        if self.df_novelty is None:
+            self.df_item_novelty = self.item_novelty()
+            self.df_novelty = self.df_item_novelty.agg({"item_novelty": "mean"}).first()[0]
+        return self.df_novelty
+
+    # Serendipity metrics
+    def user_item_serendipity(self):
+        """Calculate serendipity of each item in the recommendations for each user.
+
+        Returns:
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, col_item, user_item_serendipity.
+        """
+        # for every col_user, col_item in reco_df, join all interacted items from train_df.
+        # These interacted items are repeated for each item in reco_df for a specific user.
+        if self.df_user_item_serendipity is None:
+            self.df_cosine_similarity = self._get_cosine_similarity()
+            self.df_user_item_serendipity = (
+                self.reco_df.select(
+                    self.col_user,
+                    self.col_item,
+                    F.col(self.col_item).alias(
+                        "reco_item_tmp"
+                    ),  # duplicate col_item to keep
+                )
+                .join(
+                    self.train_df.select(
+                        self.col_user, F.col(self.col_item).alias("train_item_tmp")
+                    ),
+                    on=[self.col_user],
+                )
+                .select(
+                    self.col_user,
+                    self.col_item,
+                    F.least(F.col("reco_item_tmp"), F.col("train_item_tmp")).alias(
+                        "i1"
+                    ),
+                    F.greatest(F.col("reco_item_tmp"), F.col("train_item_tmp")).alias(
+                        "i2"
+                    ),
+                )
+                .join(self.df_cosine_similarity, on=["i1", "i2"], how="left")
+                .fillna(0)
+                .groupBy(self.col_user, self.col_item)
+                .agg(F.mean(self.sim_col).alias("avg_item2interactedHistory_sim"))
+                .join(self.reco_df, on=[self.col_user, self.col_item])
+                .withColumn(
+                    "user_item_serendipity",
+                    (1 - F.col("avg_item2interactedHistory_sim"))
+                    * F.col(self.col_relevance),
+                )
+                .select(self.col_user, self.col_item, "user_item_serendipity")
+                .orderBy(self.col_user, self.col_item)
+            )
+        return self.df_user_item_serendipity
+
+    def user_serendipity(self):
+        """Calculate average serendipity for each user's recommendations.
+
+        Returns:
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, user_serendipity.
+        """
+        if self.df_user_serendipity is None:
+            self.df_user_item_serendipity = self.user_item_serendipity()
+            self.df_user_serendipity = (
+                self.df_user_item_serendipity.groupBy(self.col_user)
+                .agg(F.mean("user_item_serendipity").alias("user_serendipity"))
+                .orderBy(self.col_user)
+            )
+        return self.df_user_serendipity
+
+    def serendipity(self):
+        """Calculate average serentipity for recommendations across all users.
+
+        Returns:
+            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: serendipity.
+        """
+        if self.df_serendipity is None:
+            self.df_user_serendipity = self.user_serendipity()
+            self.df_serendipity = self.df_user_serendipity.agg(
+                F.mean("user_serendipity").alias("serendipity")
+            )
+        return self.df_serendipity
+
+    # coverage metrics
+    def catalog_coverage(self):
+        """Calculate catalog coverage for recommendations across all users.
+
+        Returns:
+            float: catalog coverage
+        """
+        # distinct item count in reco_df
+        count_distinct_item_reco = self.reco_df.select(self.col_item).distinct().count()
+        # distinct item count in train_df
+        count_distinct_item_train = (
+            self.train_df.select(self.col_item).distinct().count()
+        )
+
+        # catalog coverage
+        c_coverage = count_distinct_item_reco / count_distinct_item_train
+        return c_coverage
+
+    def distributional_coverage(self):
+        """Calculate distributional coverage for recommendations across all users.
+
+        Returns:
+            float: distributional coverage
+        """
+        # In reco_df, how  many times each col_item is being recommended
+        df_itemcnt_reco = self.reco_df.groupBy(self.col_item).count()
+        # distinct item count in train_df
+        count_distinct_item_train = (
+            self.train_df.select(self.col_item).distinct().count()
+        )
+        # the number of total recommendations
+        count_row_reco = self.reco_df.count()
+        df_entropy = df_itemcnt_reco.withColumn(
+            "p(i)", F.col("count") / count_row_reco
+        ).withColumn("entropy(i)", F.col("p(i)") * F.log2(F.col("p(i)")))
+        # distributional coverage
+        d_coverage = (-2 / count_distinct_item_train) * df_entropy.agg(
+            F.sum("entropy(i)")
+        ).collect()[0][0]
+
+        return d_coverage
