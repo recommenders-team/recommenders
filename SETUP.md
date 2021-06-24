@@ -169,7 +169,7 @@ unset SPARK_HOME
 
 ```
 sudo apt install openjdk-8-jdk
-sudo update-alternatives --config java
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 ```
 
 * We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
