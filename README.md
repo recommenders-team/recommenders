@@ -46,6 +46,7 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 2. Install the package from [PyPI](https://pypi.org):
 
 ```bash
+conda create -n my_environment_name python=3.6
 pip install --upgrade pip
 pip install ms-recommenders[examples]
 ```
@@ -67,6 +68,8 @@ jupyter notebook
 For additional options to install the package (support for GPU, Spark etc.) see [this guide](reco_utils/README.md).
 
 **NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
+
+**NOTE for DSVM Users** - Please follow the steps in the [Dependencies setup - Set PySpark environment variables on Linux or MacOS](SETUP.md#dependencies-setup) and [Troubleshooting for the DSVM](SETUP.md#troubleshooting-for-the-dsvm) sections if you encounter any issue.
 
 ## Algorithms
 
