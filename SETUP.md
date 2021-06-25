@@ -87,8 +87,6 @@ First, assuming that the environment is called `reco_pyspark`, get the path wher
     mkdir -p $RECO_ENV/etc/conda/activate.d
     mkdir -p $RECO_ENV/etc/conda/deactivate.d
 
-You also need to find where Spark is installed and set `SPARK_HOME` variable, on the DSVM, `SPARK_HOME=/dsvm/tools/spark/current`.
-
 Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 
 ```bash
@@ -96,7 +94,7 @@ Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
 export PYSPARK_PYTHON=$RECO_ENV/bin/python
 export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
-export SPARK_HOME=/dsvm/tools/spark/current
+unset SPARK_HOME
 ```
 
 This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
@@ -162,13 +160,16 @@ SPARK_WORKER_DIR="/mnt"
 SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.appDataTtl=3600, -Dspark.worker.cleanup.interval=300, -Dspark.storage.cleanupFilesAfterExecutorExit=true"
 ```
 
-* Another source of problems is when the variable `SPARK_HOME` is not set correctly. In the Azure DSVM, `SPARK_HOME` should be `/dsvm/tools/spark/current`.
+* Another source of problems is when the variable `SPARK_HOME` is not set correctly. In the Azure DSVM, `SPARK_HOME` is by default `/dsvm/tools/spark/current`. We need to unset it: 
+```
+unset SPARK_HOME
+```
 
 * Java 11 might produce errors when running the notebooks. To change it to Java 8:
 
 ```
 sudo apt install openjdk-8-jdk
-sudo update-alternatives --config java
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 ```
 
 * We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
