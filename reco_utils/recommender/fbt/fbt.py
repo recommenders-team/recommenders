@@ -65,8 +65,7 @@ class FBT(object):
 
         Returns
         -------
-        self
-            TypeError, ValueError or KeyError if checks fail.
+        TypeError, ValueError or KeyError if checks fail.
 
         """
         if not isinstance(df, pd.DataFrame):
@@ -89,14 +88,12 @@ class FBT(object):
         """Fit the FBT recommender using an input DataFrame.
 
         Fitting of model involves computing a item-item co-occurrence
-        matrix: how many people bought watched a pair of movies?
+        matrix: how many people bought watched a pair of movies? This
+        matrix is an attribute of the class object.
 
         Args:
             df (pd.DataFrame): DataFrame of users and items
 
-        Returns:
-        self
-            Fitted estimator.
         """
         logger.info("Check dataframe is of the type, schema we expect")
         expected_cols_df = [self.col_user,
