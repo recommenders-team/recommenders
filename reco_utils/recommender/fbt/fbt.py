@@ -165,7 +165,7 @@ class FBT(object):
             DataFrame with each row is a recommendations for each user in X.
         """
         if not self._is_fit:
-            raise ValueError(("fit() must be called before predict()!"))
+            raise ValueError("fit() must be called before predict()!")
 
         self._check_dataframe(test)
         logger.info("Calculating recommendation scores")
