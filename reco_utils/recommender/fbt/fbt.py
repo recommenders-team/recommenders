@@ -160,7 +160,7 @@ class FBT(object):
         if not self._is_fit:
             raise ValueError("fit() must be called before predict()!")
 
-        logger.info("Check input dataframe to predict() is of the type, schema "
+        logger.info("Check input dataframe to predict() is of type, schema "
                     "we expect and there are no duplicates.")
 
         self._check_dataframe(test)
@@ -246,7 +246,8 @@ class FBT(object):
                                                   k=top_k)
 
         # Making sure we have a row for every test user even if null
-        test_users = test[self.col_user].unique()
+        test_users = pd.DataFrame(set(test[self.col_user]),
+                                  columns=[self.col_user])
         final_k_recommendations = (
             test_users
             .merge(topk_recommendations_df,
