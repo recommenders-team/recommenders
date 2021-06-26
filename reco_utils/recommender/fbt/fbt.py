@@ -95,20 +95,13 @@ class FBT(object):
             df (pd.DataFrame): DataFrame of users and items
 
         """
-        logger.info("Check dataframe is of the type, schema we expect")
-        expected_cols_df = [self.col_user,
-                            self.col_item,
-                            f'{self.col_item}_name']
-        self._check_dataframe(df, expected_columns=expected_cols_df)
-
-        # copy the DataFrame to avoid modification of the input
+        # Only choose the user and item columns from the input
         select_columns = [self.col_user, self.col_item]
-        temp_df = df[select_columns].copy()
+        temp_df = df[select_columns]
 
-        logger.info("De-duplicating the user-item counts")
-        temp_df = temp_df.drop_duplicates(
-                [self.col_user, self.col_item], keep="last"
-        )
+        logger.info("Check input dataframe to fit() is of the type, schema "
+                    "we expect and there are no duplicates.")
+        self._check_dataframe(df)
 
         # To compute co-occurrence, key piece is the self-join
         cooccurrence_df = (
@@ -157,7 +150,7 @@ class FBT(object):
         Args
         ----
         test : pandas.DataFrame
-            DataFrame of users and items
+            DataFrame of users and items with each row being a unique pair.
 
         Returns
         -------
@@ -166,6 +159,9 @@ class FBT(object):
         """
         if not self._is_fit:
             raise ValueError("fit() must be called before predict()!")
+
+        logger.info("Check input dataframe to predict() is of the type, schema "
+                    "we expect and there are no duplicates.")
 
         self._check_dataframe(test)
         logger.info("Calculating recommendation scores")
@@ -211,21 +207,16 @@ class FBT(object):
             pandas.DataFrame: top k recommended items for each user
         """
 
-        test_users = test[[self.col_user]].drop_duplicates()
+        logger.info(f"Recommending top {top_k} items for each user...")
         all_recommendations_df = self.predict(test)
 
         if remove_seen:
             if train is None:
                 raise ValueError("Please provide the training data to "
                                  "remove seen items!")
-            # copy the DataFrame to avoid modification of the input
+            # select user-item columns of the DataFrame
             select_columns = [self.col_user, self.col_item]
-            temp_df = train[select_columns].copy()
-
-            logger.info("De-duplicating the user-item counts")
-            temp_df = temp_df.drop_duplicates(
-                select_columns, keep="last"
-            )
+            temp_df = train[select_columns]
 
             seen_item_indicator = (
                 all_recommendations_df
@@ -241,8 +232,6 @@ class FBT(object):
             )
 
             recommendations_df.drop(columns=['_merge'], inplace=True)
-            # remove dataframe to save memory
-            del temp_df
         else:
             recommendations_df = all_recommendations_df
 
@@ -252,6 +241,7 @@ class FBT(object):
                                                   k=top_k)
 
         # Making sure we have a row for every test user even if null
+        test_users = test[self.col_user].unique()
         final_k_recommendations = (
             test_users
             .merge(topk_recommendations_df,
