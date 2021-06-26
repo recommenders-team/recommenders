@@ -218,6 +218,11 @@ class FBT(object):
             select_columns = [self.col_user, self.col_item]
             temp_df = train[select_columns]
 
+            logger.info("Check train dataframe is of the type, schema "
+                        "we expect and there are no duplicates.")
+
+            self._check_dataframe(train)
+
             seen_item_indicator = (
                 all_recommendations_df
                 .merge(temp_df,
