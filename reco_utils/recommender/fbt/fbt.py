@@ -53,11 +53,21 @@ class FBT(object):
 
     def _check_dataframe(self, df,
                          expected_columns=None):
-        """Verify input is a data frame and has expected columns.
+        """Verify input is a dataframe and has expected columns
+           and if there are duplicate rows.
 
-        Checks if the input is a DataFrame object and if so,
-        if the mandatory columns are present. Also checks for
-        duplicate rows.
+        Args
+        ----
+        df (pandas.DataFrame): Input dataframe
+
+        expected_columns: list()
+            List of expected column names for the dataframe
+
+        Returns
+        -------
+        self
+            TypeError, ValueError or KeyError if checks fail.
+
         """
         if not isinstance(df, pd.DataFrame):
             raise TypeError((
@@ -147,16 +157,14 @@ class FBT(object):
     def predict(self, test):
         """Generate new recommendations using a trained FBT model.
 
-        Parameters
-        ----------
-        test : DataFrame
-            DataFrame of users who need to get recommendations
-        remove_seen (bool): flag to remove items seen in training
-        from recommendation
+        Args
+        ----
+        test : pandas.DataFrame
+            DataFrame of users and items
 
         Returns
         -------
-        R : DataFrame
+        pandas.DataFrame
             DataFrame with each row is a recommendations for each user in X.
         """
         if not self._is_fit:
@@ -203,7 +211,7 @@ class FBT(object):
             that have been seen by user
 
         Returns:
-            pd.DataFrame: top k recommendation items for each user
+            pandas.DataFrame: top k recommended items for each user
         """
 
         test_users = test[[self.col_user]].drop_duplicates()
@@ -255,48 +263,3 @@ class FBT(object):
         )
 
         return final_k_recommendations
-
-    def eval_map_at_k(self, df_true, df_pred):  # noqa: N803
-        """Evaluate quality of recommendations.
-
-        Parameters
-        ----------
-        df_true: DataFrame
-           DataFrame of users and items that these users have interacted with.
-
-        df_pred: DataFrame
-            DataFrame of the same users with their recommendations
-
-        Returns
-        -------
-        map_at_k : float
-            Computes the mean average precision at K (MAP@K) metric over all
-            users in df_true. To compute the metric: if at least one of items
-            bought by a user (in df_true) is found in the Top_K predicted
-            recommendations served to the same user (in df_pred), we consider
-            the prediction a success (1) else a failure (0).
-        """
-        self._check_dataframe(df_true)
-        expected_columns_x_pred = [self.col_user,
-                                   self.col_item,
-                                   self.col_score]
-        self._check_dataframe(df_pred, expected_columns_x_pred)
-
-        preds_df = df_true.merge(
-            df_pred,
-            on=[self.col_user, self.col_item],
-            how='left'
-        )
-
-        preds_df['is_match'] = preds_df['score'].notna().astype(int)
-
-        # aggregate to user-level
-        user_level_preds_df = (
-            preds_df
-            .groupby(self.col_user)
-            .agg(was_match_found=('is_match', 'max'))
-        )
-
-        map_at_k = user_level_preds_df.mean()[0]
-
-        return map_at_k
