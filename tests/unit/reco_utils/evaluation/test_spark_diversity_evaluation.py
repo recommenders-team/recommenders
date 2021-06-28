@@ -17,7 +17,7 @@ TOL = 0.0001
 def target_metrics():
     return {
         "c_coverage": pytest.approx(0.8, TOL),
-        "d_coverage": pytest.approx(0.76732, TOL),
+        "d_coverage": pytest.approx(1.9183, TOL),
         "item_novelty": pd.DataFrame(
         dict(ItemId=[1, 2, 3, 5], item_novelty=[1.0, 0.0, 0.0, 0.0])
         ),

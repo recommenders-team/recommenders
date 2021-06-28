@@ -365,7 +365,7 @@ class DiversityEvaluation:
             "p(i)", F.col("count") / count_row_reco
         ).withColumn("entropy(i)", F.col("p(i)") * F.log2(F.col("p(i)")))
         # distributional coverage
-        d_coverage = df_entropy.agg(
+        d_coverage = -1 * df_entropy.agg(
             F.sum("entropy(i)")
         ).collect()[0][0]
 
