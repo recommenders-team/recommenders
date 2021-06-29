@@ -3,7 +3,6 @@
 
 
 import numpy as np
-from pyspark.sql.functions import countDistinct
 
 try:
     from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
@@ -482,7 +481,8 @@ def _get_relevant_items_by_timestamp(
 
 
 class DiversityEvaluation:
-    """Spark Diversity Evaluator"""
+    """Spark Diversity Evaluator
+    """
 
     def __init__(
         self,
@@ -588,8 +588,13 @@ class DiversityEvaluation:
 
     def _get_cosine_similarity(self, n_partitions=200):
         """Cosine similarity metric from 
+
+        :Citation:
+
             "Auralist: Introducing Serendipity into Music Recommendation", 
             Zhang, Séaghdha, Quercia and Jambor, 2011. 
+        
+        The item indexes in the result are such that i1 <= i2.
         """
         if self.df_cosine_similarity is None:
             pairs = self._get_pairwise_items(df=self.train_df)
@@ -627,6 +632,9 @@ class DiversityEvaluation:
     # Diversity metrics
     def _get_intralist_similarity(self, df):
         """Intra-list similarity from 
+
+        :Citation:
+
             "Improving Recommendation Lists Through Topic Diversification", 
             Ziegler, McNee, Konstan and Lausen, 2005.
         """
@@ -752,10 +760,19 @@ class DiversityEvaluation:
 
     # Serendipity metrics
     def user_item_serendipity(self):
-        """Calculate serendipity of each item in the recommendations for each user.
+        """Calculate serendipity of each item in the recommendations for each user. Based on unserendipity from
+        :Citation:
+        
+            "Auralist: Introducing Serendipity into Music Recommendation", 
+            Zhang, Séaghdha, Quercia and Jambor, 2011. 
+        and 
+        :Citation:
+
+            Eugene Yan. `Serendipity: Accuracy’s Unpopular Best Friend in Recommenders. 
+            <https://eugeneyan.com/writing/serendipity-and-accuracy-in-recommender-systems/>`_.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, col_item, user_item_serendipity.
+            pyspark.sql.dataframe.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.
         """
         # for every col_user, col_item in reco_df, join all interacted items from train_df.
         # These interacted items are repeated for each item in reco_df for a specific user.
@@ -816,7 +833,7 @@ class DiversityEvaluation:
         return self.df_user_serendipity
 
     def serendipity(self):
-        """Calculate average serentipity for recommendations across all users.
+        """Calculate average serendipity for recommendations across all users.
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: serendipity.
