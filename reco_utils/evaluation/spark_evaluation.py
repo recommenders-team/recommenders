@@ -591,8 +591,8 @@ class DiversityEvaluation:
 
         :Citation:
 
-            "Auralist: Introducing Serendipity into Music Recommendation", 
-            Zhang, Séaghdha, Quercia and Jambor, 2011. 
+            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: 
+            introducing serendipity into music recommendation, WSDM 2012
         
         The item indexes in the result are such that i1 <= i2.
         """
@@ -655,11 +655,11 @@ class DiversityEvaluation:
 
     def user_diversity(self):
         """Calculate average diversity of recommendations for each user.
-        
+        The metric definition is based on formula (3) in the following reference:
         :Citation:
-        
-            "Auralist: Introducing Serendipity into Music Recommendation", 
-            Zhang, Séaghdha, Quercia and Jambor, 2011. 
+            
+            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: 
+            introducing serendipity into music recommendation, WSDM 2012
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_user, user_diversity.
@@ -692,16 +692,11 @@ class DiversityEvaluation:
     def item_novelty(self):
         """Calculate novelty for each item in the recommendations. Novelty is computed as the minus logarithm of
         (number of users recommended item / number of users who have not interacted with item). 
-
+        The metric definition is based on formula (1) in the following reference:
         :Citation:
 
-            Eugene Yan. `Serendipity: Accuracy’s Unpopular Best Friend in Recommenders. 
-            <https://eugeneyan.com/writing/serendipity-and-accuracy-in-recommender-systems/>`_.
-
-        :Citation:
-
-            "Novelty and Diversity Metrics for Recommender Systems: Choice, Discovery and Relevance". 
-            Castells, Vargas and Wang, 2011.
+              P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: 
+              choice, discovery and relevance, ECIR 2011
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_item, item_novelty.
@@ -746,9 +741,9 @@ class DiversityEvaluation:
         """Calculate average novelty for recommendations across all items.
 
         :Citation:
-
-            "Novelty and Diversity Metrics for Recommender Systems: Choice, Discovery and Relevance". 
-            Castells, Vargas and Wang, 2011.
+            
+            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: 
+            choice, discovery and relevance, ECIR 2011
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: novelty.
@@ -760,16 +755,13 @@ class DiversityEvaluation:
 
     # Serendipity metrics
     def user_item_serendipity(self):
-        """Calculate serendipity of each item in the recommendations for each user. Based on unserendipity from
-        :Citation:
-        
-            "Auralist: Introducing Serendipity into Music Recommendation", 
-            Zhang, Séaghdha, Quercia and Jambor, 2011. 
-        and 
+        """Calculate serendipity of each item in the recommendations for each user. 
+        The metric definition is based on formula (6) in the following reference with modification:
+
         :Citation:
 
-            Eugene Yan. `Serendipity: Accuracy’s Unpopular Best Friend in Recommenders. 
-            <https://eugeneyan.com/writing/serendipity-and-accuracy-in-recommender-systems/>`_.
+            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: 
+            introducing serendipity into music recommendation, WSDM 2012
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.
@@ -836,18 +828,22 @@ class DiversityEvaluation:
         """Calculate average serendipity for recommendations across all users.
 
         Returns:
-            pyspark.sql.dataframe.DataFrame: A dataframe with following columns: serendipity.
+            float: serendipity.
         """
         if self.df_serendipity is None:
             self.df_user_serendipity = self.user_serendipity()
-            self.df_serendipity = self.df_user_serendipity.agg(
-                F.mean("user_serendipity").alias("serendipity")
-            )
+            self.df_serendipity = self.df_user_serendipity.agg({"user_serendipity": "mean"}).first()[0]
         return self.df_serendipity
 
-    # coverage metrics
+    # Coverage metrics
     def catalog_coverage(self):
         """Calculate catalog coverage for recommendations across all users.
+        The metric definition is based on the "catalog coverage" definition in the following reference:
+
+        :Citation:
+
+            G. Shani and A. Gunawardana, Evaluating Recommendation Systems, 
+            Recommender Systems Handbook pp. 257-297, 2010.
 
         Returns:
             float: catalog coverage
@@ -865,6 +861,12 @@ class DiversityEvaluation:
 
     def distributional_coverage(self):
         """Calculate distributional coverage for recommendations across all users.
+        The metric definition is based on formula (21) in the following reference:
+        
+        :Citation:
+
+            G. Shani and A. Gunawardana, Evaluating Recommendation Systems, 
+            Recommender Systems Handbook pp. 257-297, 2010.
 
         Returns:
             float: distributional coverage
