@@ -38,7 +38,7 @@ class DiversityEvaluation:
 
             - P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: choice, discovery and relevance, ECIR 2011
 
-                - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, towards data science, April 2020
+            - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, towards data science, April 2020
 
             - N. Hurley and M. Zhang, Novelty and diversity in top-n recommendation--analysis and evaluation, ACM Transactions, 2011
 
