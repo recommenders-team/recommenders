@@ -38,11 +38,9 @@ class DiversityEvaluation:
 
             - P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: choice, discovery and relevance, ECIR 2011
 
-            - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, towards data science, April 2020
+            - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, eugeneyan.com, April 2020
 
-            - N. Hurley and M. Zhang, Novelty and diversity in top-n recommendation--analysis and evaluation, ACM Transactions, 2011
-
-        Args:
+         Args:
             train_df (pySpark DataFrame): Training set used for the recommender,
                 containing col_user, col_item.
             reco_df (pySpark DataFrame): Recommender's prediction output,
@@ -200,9 +198,10 @@ class DiversityEvaluation:
     def item_novelty(self):
         """Calculate novelty for each item in the recommendations.
 
-        The metric definition is based on formula (1) in the following reference:
+        The metric definition is based on following reference:
               - P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: choice, discovery and relevance, ECIR 2011
-
+              - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, eugeneyan.com, April 2020
+     
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_item, item_novelty.
         """
@@ -264,9 +263,10 @@ class DiversityEvaluation:
     def user_item_serendipity(self):
         """Calculate serendipity of each item in the recommendations for each user.
 
-        The metric definition is based on formula (6) in the following reference with modification:
+        The metric definition is based on following reference:
             - Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing serendipity into music recommendation, WSDM 2012
-
+            - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, eugeneyan.com, April 2020
+        
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, col_item, user_item_serendipity.
         """
