@@ -517,10 +517,7 @@ class DiversityEvaluation:
             choice, discovery and relevance, ECIR 2011
 
             - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
-            towards data science, April 2020
-
-            - N. Hurley and M. Zhang, Novelty and diversity in top-n recommendation--analysis and evaluation,
-            ACM Transactions, 2011
+            eugeneyan.com, April 2020
 
         Args:
             train_df (pyspark.sql.DataFrame): Data set with historical data for users and items they 
@@ -695,8 +692,13 @@ class DiversityEvaluation:
         The metric definition is based on formula (1) in the following reference:
         :Citation:
 
-              P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: 
-              choice, discovery and relevance, ECIR 2011
+            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: 
+            choice, discovery and relevance, ECIR 2011
+
+        :Citation:
+
+            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+            eugeneyan.com, April 2020
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_item, item_novelty.
@@ -762,6 +764,11 @@ class DiversityEvaluation:
 
             Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: 
             introducing serendipity into music recommendation, WSDM 2012
+
+        :Citation:
+
+            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+            eugeneyan.com, April 2020
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.
@@ -873,17 +880,14 @@ class DiversityEvaluation:
         """
         # In reco_df, how  many times each col_item is being recommended
         df_itemcnt_reco = self.reco_df.groupBy(self.col_item).count()
-        # distinct item count in train_df
-        count_distinct_item_train = (
-            self.train_df.select(self.col_item).distinct().count()
-        )
+
         # the number of total recommendations
         count_row_reco = self.reco_df.count()
         df_entropy = df_itemcnt_reco.withColumn(
             "p(i)", F.col("count") / count_row_reco
         ).withColumn("entropy(i)", F.col("p(i)") * F.log2(F.col("p(i)")))
         # distributional coverage
-        d_coverage = (-2 / count_distinct_item_train) * df_entropy.agg(
+        d_coverage = -df_entropy.agg(
             F.sum("entropy(i)")
         ).collect()[0][0]
 
