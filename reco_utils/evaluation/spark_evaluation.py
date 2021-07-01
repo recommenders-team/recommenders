@@ -480,9 +480,8 @@ def _get_relevant_items_by_timestamp(
     return items_for_user
 
 
-class DiversityEvaluation:
-    """Spark Diversity Evaluator
-    """
+class SparkDiversityEvaluation:
+    """Spark Diversity Evaluator"""
 
     def __init__(
         self,
@@ -520,7 +519,7 @@ class DiversityEvaluation:
             eugeneyan.com, April 2020
 
         Args:
-            train_df (pyspark.sql.DataFrame): Data set with historical data for users and items they 
+            train_df (pyspark.sql.DataFrame): Data set with historical data for users and items they
                 have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
             reco_df (pyspark.sql.DataFrame): Recommender's prediction output,
                 containing col_user, col_item, col_relevance (optional). Assumed to not contain any duplicate rows.
@@ -570,8 +569,7 @@ class DiversityEvaluation:
             )
 
     def _get_pairwise_items(self, df):
-        """Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])
-        """
+        """Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])"""
         return (
             df.select(self.col_user, F.col(self.col_item).alias("i1"))
             .join(
@@ -580,17 +578,18 @@ class DiversityEvaluation:
                     F.col(self.col_item).alias("i2"),
                 ),
                 (F.col(self.col_user) == F.col("_user")) & (F.col("i1") <= F.col("i2")),
-            ).select(self.col_user, "i1", "i2")
+            )
+            .select(self.col_user, "i1", "i2")
         )
 
     def _get_cosine_similarity(self, n_partitions=200):
-        """Cosine similarity metric from 
+        """Cosine similarity metric from
 
         :Citation:
 
-            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: 
+            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
             introducing serendipity into music recommendation, WSDM 2012
-        
+
         The item indexes in the result are such that i1 <= i2.
         """
         if self.df_cosine_similarity is None:
@@ -628,11 +627,11 @@ class DiversityEvaluation:
 
     # Diversity metrics
     def _get_intralist_similarity(self, df):
-        """Intra-list similarity from 
+        """Intra-list similarity from
 
         :Citation:
 
-            "Improving Recommendation Lists Through Topic Diversification", 
+            "Improving Recommendation Lists Through Topic Diversification",
             Ziegler, McNee, Konstan and Lausen, 2005.
         """
         if self.df_intralist_similarity is None:
@@ -654,8 +653,8 @@ class DiversityEvaluation:
         """Calculate average diversity of recommendations for each user.
         The metric definition is based on formula (3) in the following reference:
         :Citation:
-            
-            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: 
+
+            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
             introducing serendipity into music recommendation, WSDM 2012
 
         Returns:
@@ -682,23 +681,19 @@ class DiversityEvaluation:
             self.df_user_diversity = self.user_diversity()
             self.df_diversity = self.df_user_diversity.agg(
                 {"user_diversity": "mean"}
-                ).first()[0]
+            ).first()[0]
         return self.df_diversity
 
     # Novelty metrics
     def item_novelty(self):
         """Calculate novelty for each item in the recommendations. Novelty is computed as the minus logarithm of
-        (number of users recommended item / number of users who have not interacted with item). 
-        The metric definition is based on formula (1) in the following reference:
+        (number of users who have accessed item / number of users).
+        The metric definition is based on the following reference (eqs. 4 and 8):
+
         :Citation:
 
-            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: 
+            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
             choice, discovery and relevance, ECIR 2011
-
-        :Citation:
-
-            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
-            eugeneyan.com, April 2020
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_item, item_novelty.
@@ -706,18 +701,9 @@ class DiversityEvaluation:
         if self.df_item_novelty is None:
             n_users = self.train_df.agg(F.countDistinct(self.col_user)).first()[0]
             self.df_item_novelty = (
-                self.train_df
-                .groupBy(self.col_item)
+                self.train_df.groupBy(self.col_item)
                 .count()
-                .join(
-                    self.reco_df.groupBy(self.col_item).agg(
-                        F.count(self.col_user).alias("reco_count")
-                    ),
-                    on=self.col_item,
-                )
-                .withColumn(            # Add eps in denominator to avoid infinite value
-                    "item_novelty", -F.log2(F.col("reco_count") / (n_users - F.col("count") + np.finfo(float).eps))
-                )
+                .withColumn("item_novelty", -F.log2(F.col("count") / n_users))
                 .select(self.col_item, "item_novelty")
                 .orderBy(self.col_item)
             )
@@ -735,6 +721,7 @@ class DiversityEvaluation:
                 self.reco_df.join(self.df_item_novelty, on=self.col_item)
                 .groupBy(self.col_user)
                 .agg(F.mean("item_novelty").alias("user_novelty"))
+                .select(self.col_user, "user_novelty")
                 .orderBy(self.col_user)
             )
         return self.df_user_novelty
@@ -743,8 +730,8 @@ class DiversityEvaluation:
         """Calculate average novelty for recommendations across all items.
 
         :Citation:
-            
-            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: 
+
+            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
             choice, discovery and relevance, ECIR 2011
 
         Returns:
@@ -752,17 +739,19 @@ class DiversityEvaluation:
         """
         if self.df_novelty is None:
             self.df_item_novelty = self.item_novelty()
-            self.df_novelty = self.df_item_novelty.agg({"item_novelty": "mean"}).first()[0]
+            self.df_novelty = self.df_item_novelty.agg(
+                {"item_novelty": "mean"}
+            ).first()[0]
         return self.df_novelty
 
     # Serendipity metrics
     def user_item_serendipity(self):
-        """Calculate serendipity of each item in the recommendations for each user. 
-        The metric definition is based on formula (6) in the following reference with modification:
+        """Calculate serendipity of each item in the recommendations for each user.
+        The metric definition is based on the following references:
 
         :Citation:
 
-            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: 
+            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
             introducing serendipity into music recommendation, WSDM 2012
 
         :Citation:
@@ -839,7 +828,9 @@ class DiversityEvaluation:
         """
         if self.df_serendipity is None:
             self.df_user_serendipity = self.user_serendipity()
-            self.df_serendipity = self.df_user_serendipity.agg({"user_serendipity": "mean"}).first()[0]
+            self.df_serendipity = self.df_user_serendipity.agg(
+                {"user_serendipity": "mean"}
+            ).first()[0]
         return self.df_serendipity
 
     # Coverage metrics
@@ -849,7 +840,7 @@ class DiversityEvaluation:
 
         :Citation:
 
-            G. Shani and A. Gunawardana, Evaluating Recommendation Systems, 
+            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
             Recommender Systems Handbook pp. 257-297, 2010.
 
         Returns:
@@ -869,10 +860,10 @@ class DiversityEvaluation:
     def distributional_coverage(self):
         """Calculate distributional coverage for recommendations across all users.
         The metric definition is based on formula (21) in the following reference:
-        
+
         :Citation:
 
-            G. Shani and A. Gunawardana, Evaluating Recommendation Systems, 
+            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
             Recommender Systems Handbook pp. 257-297, 2010.
 
         Returns:
@@ -887,8 +878,6 @@ class DiversityEvaluation:
             "p(i)", F.col("count") / count_row_reco
         ).withColumn("entropy(i)", F.col("p(i)") * F.log2(F.col("p(i)")))
         # distributional coverage
-        d_coverage = -df_entropy.agg(
-            F.sum("entropy(i)")
-        ).collect()[0][0]
+        d_coverage = -df_entropy.agg(F.sum("entropy(i)")).collect()[0][0]
 
         return d_coverage
