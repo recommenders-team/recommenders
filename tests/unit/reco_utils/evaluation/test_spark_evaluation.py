@@ -45,8 +45,8 @@ def target_metrics():
         "user_novelty": pd.DataFrame(
             dict(UserId=[1, 2, 3], user_novelty=[0.0, 0.0, 0.5])
         ),
-        "novelty": pd.DataFrame(dict(novelty=[0.16667])),
-        "diversity": pd.DataFrame(dict(diversity=[0.43096])),
+        "novelty": pytest.approx(0.16667, TOL),
+        "diversity": pytest.approx(0.43096, TOL),
         "user_diversity": pd.DataFrame(
             dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
         ),
@@ -67,7 +67,7 @@ def target_metrics():
         "user_serendipity": pd.DataFrame(
             dict(UserId=[1, 2, 3], user_serendipity=[0.76770, 0.53455, 0.80755])
         ),
-        "serendipity": pd.DataFrame(dict(serendipity=[0.70326])),
+        "serendipity": pytest.approx(0.70326, TOL),
     }
 
 
@@ -422,10 +422,7 @@ def test_novelty(spark_diversity_data, target_metrics):
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    actual = evaluator.novelty().toPandas()
-    assert_frame_equal(
-        target_metrics["novelty"], actual, check_exact=False, check_less_precise=4
-    )
+    assert target_metrics["novelty"] == evaluator.novelty()
 
 
 @pytest.mark.spark
@@ -449,10 +446,7 @@ def test_diversity(spark_diversity_data, target_metrics):
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    actual = evaluator.diversity().toPandas()
-    assert_frame_equal(
-        target_metrics["diversity"], actual, check_exact=False, check_less_precise=4
-    )
+    assert target_metrics["diversity"] == evaluator.diversity()
 
 
 @pytest.mark.spark
@@ -491,7 +485,4 @@ def test_serendipity(spark_diversity_data, target_metrics):
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    actual = evaluator.serendipity().toPandas()
-    assert_frame_equal(
-        target_metrics["serendipity"], actual, check_exact=False, check_less_precise=4
-    )
+    assert target_metrics["serendipity"] == evaluator.serendipity()
