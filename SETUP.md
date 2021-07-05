@@ -51,7 +51,7 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `ms-recommenders` package from [PyPI](https://pypi.org). Another option is to install from a local copy of the code. For instructions on how to do these, see [this guide](reco_utils/README.md).
+There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `ms-recommenders` package from [PyPI](https://pypi.org). For instructions on how to do these, see [this guide](reco_utils/README.md).
 
 An alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md)
 
