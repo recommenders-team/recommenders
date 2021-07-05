@@ -521,8 +521,9 @@ class SparkDiversityEvaluation:
         Args:
             train_df (pyspark.sql.DataFrame): Data set with historical data for users and items they
                 have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
-            reco_df (pyspark.sql.DataFrame): Recommender's prediction output,
-                containing col_user, col_item, col_relevance (optional). Assumed to not contain any duplicate rows.
+                Interaction here follows the *item choice model* from Castells et al.
+            reco_df (pyspark.sql.DataFrame): Recommender's prediction output, containing col_user, col_item,
+                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
             col_user (str): User id column name.
             col_item (str): Item id column name.
             col_relevance (str): This column indicates whether the recommended item is actually
@@ -686,9 +687,9 @@ class SparkDiversityEvaluation:
 
     # Novelty metrics
     def item_novelty(self):
-        """Calculate novelty for each item in the recommendations. Novelty is computed as the minus logarithm of
-        (number of users who have accessed item / number of users).
-        The metric definition is based on the following reference (eqs. 4 and 8):
+        """Calculate novelty for each item. Novelty is computed as the minus logarithm of
+        (number of interactions with item / total number of interactions). The definition of the metric
+        is based on the following reference using the choice model (eqs. 1 and 6):
 
         :Citation:
 
@@ -699,35 +700,73 @@ class SparkDiversityEvaluation:
             pyspark.sql.dataframe.DataFrame: A dataframe with the following columns: col_item, item_novelty.
         """
         if self.df_item_novelty is None:
-            n_users = self.train_df.agg(F.countDistinct(self.col_user)).first()[0]
+            n_records = self.train_df.count()
             self.df_item_novelty = (
                 self.train_df.groupBy(self.col_item)
                 .count()
-                .withColumn("item_novelty", -F.log2(F.col("count") / n_users))
+                .withColumn("item_novelty", -F.log2(F.col("count") / n_records))
                 .select(self.col_item, "item_novelty")
                 .orderBy(self.col_item)
             )
         return self.df_item_novelty
 
     def user_novelty(self):
-        """Calculate average item novelty for each user's recommendations.
+        """Calculate user-relative novelty of recommended items. The implementation is based on eqs. 1 and 7 from
+
+        :Citation:
+
+            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+            choice, discovery and relevance, ECIR 2011
 
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, user_novelty.
         """
         if self.df_user_novelty is None:
-            self.df_item_novelty = self.item_novelty()
-            self.df_user_novelty = (
-                self.reco_df.join(self.df_item_novelty, on=self.col_item)
-                .groupBy(self.col_user)
-                .agg(F.mean("item_novelty").alias("user_novelty"))
-                .select(self.col_user, "user_novelty")
-                .orderBy(self.col_user)
+            pair_counts = (
+                self._get_pairwise_items(df=self.train_df)
+                .groupBy("i1", "i2")
+                .count()
+                .filter(F.col("i1") != F.col("i2"))
             )
+            # neeed to make indexes symmetric because i1 < i2 in pair_counts
+            cooccurrences = pair_counts.select("i1", "i2", "count").union(
+                pair_counts.select("i2", "i1", "count")
+            )
+            item_count = (
+                self.train_df.groupBy(self.col_item)
+                .count()
+                .select(
+                    F.col(self.col_item).alias("j"), F.col("count").alias("item_count")
+                )
+            )
+
+            self.df_unnormalized = (
+                self.train_df.select(self.col_user, F.col(self.col_item).alias("j"))
+                .join(cooccurrences, F.col("j") == F.col("i2"))
+                .join(item_count, "j")
+                .groupBy("i1", self.col_user)
+                .agg(F.sum(F.col("count") / F.col("item_count")).alias("item_prob"))
+            )
+            # renormalize probabilities and transform into novelties
+            self.df_user_novelty = (
+                self.df_unnormalized.join(
+                    self.df_unnormalized.groupBy(self.col_user).agg(
+                        {"item_prob": "sum"}
+                    ),
+                    self.col_user,
+                )
+                .withColumn(
+                    "user_novelty",
+                    -F.log2(F.col("item_prob") / F.col("sum(item_prob)")),
+                )
+                .select(self.col_user, F.col("i1").alias(self.col_item), "user_novelty")
+                .orderBy([self.col_user, self.col_item])
+            )
+
         return self.df_user_novelty
 
     def novelty(self):
-        """Calculate average novelty for recommendations across all items.
+        """Calculate average novelty for recommendations across all items. Follows section 5 from
 
         :Citation:
 

@@ -46,7 +46,6 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 2. Install the package from [PyPI](https://pypi.org):
 
 ```bash
-conda create -n my_environment_name python=3.6
 pip install --upgrade pip
 pip install ms-recommenders[examples]
 ```
