@@ -766,7 +766,7 @@ class SparkDiversityEvaluation:
         return self.df_user_novelty
 
     def novelty(self):
-        """Calculate average novelty for recommendations across all items. Follows section 5 from
+        """Calculate average novelty for recommended items. Follows section 5 from
 
         :Citation:
 
@@ -778,9 +778,18 @@ class SparkDiversityEvaluation:
         """
         if self.df_novelty is None:
             self.df_item_novelty = self.item_novelty()
-            self.df_novelty = self.df_item_novelty.agg(
-                {"item_novelty": "mean"}
-            ).first()[0]
+            n_users = self.reco_df.select(self.col_user).distinct().count()
+            self.df_novelty = (
+                self.reco_df
+                .groupBy(self.col_item)
+                .count()
+                .join(
+                    self.df_item_novelty,
+                    self.col_item
+                )
+                .selectExpr("sum(count * item_novelty)")
+                .first()[0] / n_users
+            )
         return self.df_novelty
 
     # Serendipity metrics

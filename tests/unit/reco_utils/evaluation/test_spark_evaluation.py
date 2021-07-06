@@ -40,7 +40,7 @@ def target_metrics():
         "c_coverage": pytest.approx(0.8, TOL),
         "d_coverage": pytest.approx(1.9183, TOL),
         "item_novelty": pd.DataFrame(
-            dict(ItemId=[1, 2, 3, 5], item_novelty=[1.0, 0.0, 0.0, 0.0])
+            dict(ItemId=[1, 2, 3, 4, 5], item_novelty=[3.0, 3.0, 2.0, 1.41504, 3.0])
         ),
         "user_novelty": pd.DataFrame(
             dict(UserId=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3], 
@@ -48,7 +48,7 @@ def target_metrics():
             user_novelty=[2.087463, 2.087463, 3.087463, 1.502500, 4.087463, 3.247928, 3.247928, 2.247928, \
                 1.662965, 1.925999, 3.954196, 3.954196, 1.632268, 1.369234, 2.632268])
         ),
-        "novelty": pytest.approx(0.16667, TOL),
+        "novelty": pytest.approx(5.6667, TOL),
         "diversity": pytest.approx(0.43096, TOL),
         "user_diversity": pd.DataFrame(
             dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
@@ -414,7 +414,6 @@ def test_user_novelty(spark_diversity_data, target_metrics):
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     actual = evaluator.user_novelty().toPandas()
-    print(actual)
     assert_frame_equal(
         target_metrics["user_novelty"], actual, check_exact=False, check_less_precise=4
     )
