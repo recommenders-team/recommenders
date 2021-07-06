@@ -4,9 +4,10 @@ In this directory, a notebook is provided to illustrate evaluating models using 
 
 | Notebook | Description | 
 | --- | --- | 
-| [evaluation](evaluation.ipynb) | Examples of different rating and ranking metrics in Python+CPU and PySpark environments.
+| [diversity, novelty etc.](als_movielens_diversity_metrics.ipynb) | Examples of non accuracy based metrics in PySpark environment.
+| [evaluation](evaluation.ipynb) | Examples of various rating and ranking metrics in Python+CPU and PySpark environments.
 
-Two approaches for evaluating model performance are demonstrated along with their respective metrics.
+Several approaches for evaluating model performance are demonstrated along with their respective metrics.
 1. Rating Metrics: These are used to evaluate how accurate a recommender is at predicting ratings that users gave to items
     * Root Mean Square Error (RMSE) - measure of average error in predicted ratings
     * R Squared (R<sup>2</sup>) - essentially how much of the total variation is explained by the model
@@ -20,6 +21,11 @@ Two approaches for evaluating model performance are demonstrated along with thei
 3. Classification metrics: These are used to evaluate binary labels
     * Arear Under Curver (AUC) - integral area under the receiver operating characteristic curve
     * Logistic loss (Logloss) - the negative log-likelihood of the true labels given the predictions of a classifier
+4. Non accuracy based metrics: These do not require any ground truth but instead evaluate the following properties of the recommendations
+    * Novelty - measures of how different an item is compared to the items that users have already known or interacted with 
+    * Diversity - measures of how different items in a set are with respect to each other
+    * Serendipity - measures of how surprising recommendations are to users 
+    * Coverage - measures related to the distribution of items recommended by the system. 
     
 References:
 1. Asela Gunawardana and Guy Shani: [A Survey of Accuracy Evaluation Metrics of Recommendation Tasks

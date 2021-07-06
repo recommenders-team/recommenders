@@ -18,6 +18,7 @@ from reco_utils.common.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
+    DEFAULT_RELEVANCE_COL,
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
@@ -546,7 +547,7 @@ class SparkDiversityEvaluation:
         self.df_diversity = None
 
         if col_relevance is None:
-            self.col_relevance = "relevance"
+            self.col_relevance = DEFAULT_RELEVANCE_COL
             # relevance term, default is 1 (relevant) for all
             self.reco_df = reco_df.select(
                 col_user, col_item, F.lit(1.0).alias(self.col_relevance)

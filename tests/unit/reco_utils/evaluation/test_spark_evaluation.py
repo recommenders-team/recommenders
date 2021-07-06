@@ -59,18 +59,18 @@ def target_metrics():
                 ItemId=[3, 5, 2, 5, 1, 2],
                 user_item_serendipity=[
                     0.72783,
-                    0.80755,
+                    0.0,
                     0.71132,
                     0.35777,
                     0.80755,
-                    0.80755,
+                    0.0,
                 ],
             )
         ),
         "user_serendipity": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_serendipity=[0.76770, 0.53455, 0.80755])
+            dict(UserId=[1, 2, 3], user_serendipity=[0.363915, 0.53455, 0.403775])
         ),
-        "serendipity": pytest.approx(0.70326, TOL),
+        "serendipity": pytest.approx(0.43408, TOL),
     }
 
 
@@ -138,12 +138,12 @@ def spark_diversity_data(spark):
     )
     reco_df = spark.createDataFrame(
         [
-            Row(UserId=1, ItemId=3, Rating=1),
-            Row(UserId=1, ItemId=5, Rating=1),
-            Row(UserId=2, ItemId=2, Rating=1),
-            Row(UserId=2, ItemId=5, Rating=1),
-            Row(UserId=3, ItemId=1, Rating=1),
-            Row(UserId=3, ItemId=2, Rating=1),
+            Row(UserId=1, ItemId=3, Relevance=1),
+            Row(UserId=1, ItemId=5, Relevance=0),
+            Row(UserId=2, ItemId=2, Relevance=1),
+            Row(UserId=2, ItemId=5, Relevance=1),
+            Row(UserId=3, ItemId=1, Relevance=1),
+            Row(UserId=3, ItemId=2, Relevance=0),
         ]
     )
     return train_df, reco_df
@@ -456,7 +456,7 @@ def test_diversity(spark_diversity_data, target_metrics):
 def test_user_item_serendipity(spark_diversity_data, target_metrics):
     train_df, reco_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
+        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId", col_relevance="Relevance"
     )
     actual = evaluator.user_item_serendipity().toPandas()
     assert_frame_equal(
@@ -471,7 +471,7 @@ def test_user_item_serendipity(spark_diversity_data, target_metrics):
 def test_user_serendipity(spark_diversity_data, target_metrics):
     train_df, reco_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
+        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId", col_relevance="Relevance"
     )
     actual = evaluator.user_serendipity().toPandas()
     assert_frame_equal(
@@ -486,6 +486,6 @@ def test_user_serendipity(spark_diversity_data, target_metrics):
 def test_serendipity(spark_diversity_data, target_metrics):
     train_df, reco_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
+        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId", col_relevance="Relevance"
     )
     assert target_metrics["serendipity"] == evaluator.serendipity()
