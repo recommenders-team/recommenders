@@ -784,7 +784,7 @@ class SparkDiversityEvaluation:
         """
         if self.df_novelty is None:
             self.df_item_novelty = self.item_novelty()
-            n_users = self.reco_df.select(self.col_user).distinct().count()
+            n_recommendations = self.reco_df.count()
             self.df_novelty = (
                 self.reco_df
                 .groupBy(self.col_item)
@@ -794,7 +794,7 @@ class SparkDiversityEvaluation:
                     self.col_item
                 )
                 .selectExpr("sum(count * item_novelty)")
-                .first()[0] / n_users
+                .first()[0] / n_recommendations
             )
         return self.df_novelty
 

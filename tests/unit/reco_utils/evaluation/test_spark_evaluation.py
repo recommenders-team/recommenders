@@ -48,7 +48,7 @@ def target_metrics():
             user_novelty=[2.087463, 2.087463, 3.087463, 1.502500, 4.087463, 3.247928, 3.247928, 2.247928, \
                 1.662965, 1.925999, 3.954196, 3.954196, 1.632268, 1.369234, 2.632268])
         ),
-        "novelty": pytest.approx(5.6667, TOL),
+        "novelty": pytest.approx(2.83333, TOL),
         "diversity": pytest.approx(0.43096, TOL),
         "user_diversity": pd.DataFrame(
             dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
