@@ -496,27 +496,31 @@ class SparkDiversityEvaluation:
 
         This is the Spark version of diversity metrics evaluator.
         The methods of this class calculate the following diversity metrics:
-            Coverage - The proportion of items that can be recommended. It includes two metrics:
-                (1) catalog_coverage, which measures the proportion of items that get recommended from the item catalog;
-                (2) distributional_coverage, which measures how unequally different items are recommended in the
-                recommendations to all users.
-            Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.
-            Diversity - The dissimilarity of items being recommended.
-            Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used,
-            it indicates how "pleasant surprise" of recommendations is to a user.
+        
+        * Coverage - The proportion of items that can be recommended. It includes two metrics:
+            
+            1. catalog_coverage, which measures the proportion of items that get recommended from the item catalog;
+            2. distributional_coverage, which measures how unequally different items are recommended in the 
+               recommendations to all users.
+        
+        * Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.
+        * Diversity - The dissimilarity of items being recommended.
+        * Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used, it indicates how "pleasant surprise" of recommendations is to a user.
 
-        Info:
-            The metric definitions/formulations are based on the following references with modification:
-            - G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
+        The metric definitions/formulations are based on the following references with modification:
+            
+        :Citation:
+
+            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
             Recommender Systems Handbook pp. 257-297, 2010.
 
-            - Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing
+            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing
             serendipity into music recommendation, WSDM 2012
 
-            - P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
             choice, discovery and relevance, ECIR 2011
 
-            - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
             eugeneyan.com, April 2020
 
         Args:
@@ -654,6 +658,7 @@ class SparkDiversityEvaluation:
     def user_diversity(self):
         """Calculate average diversity of recommendations for each user.
         The metric definition is based on formula (3) in the following reference:
+
         :Citation:
 
             Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
@@ -802,8 +807,6 @@ class SparkDiversityEvaluation:
 
             Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
             introducing serendipity into music recommendation, WSDM 2012
-
-        :Citation:
 
             Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
             eugeneyan.com, April 2020
