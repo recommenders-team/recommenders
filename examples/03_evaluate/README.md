@@ -21,7 +21,7 @@ Several approaches for evaluating model performance are demonstrated along with 
 3. Classification metrics: These are used to evaluate binary labels
     * Arear Under Curver (AUC) - integral area under the receiver operating characteristic curve
     * Logistic loss (Logloss) - the negative log-likelihood of the true labels given the predictions of a classifier
-4. Non accuracy based metrics: These do not require any ground truth but instead evaluate the following properties of the recommendations
+4. Non accuracy based metrics: These do not compare predictions against ground truth but instead evaluate the following properties of the recommendations
     * Novelty - measures of how different an item is compared to the items that users have already known or interacted with 
     * Diversity - measures of how different items in a set are with respect to each other
     * Serendipity - measures of how surprising recommendations are to users 
