@@ -22,9 +22,9 @@ Several approaches for evaluating model performance are demonstrated along with 
     * Arear Under Curver (AUC) - integral area under the receiver operating characteristic curve
     * Logistic loss (Logloss) - the negative log-likelihood of the true labels given the predictions of a classifier
 4. Non accuracy based metrics: These do not compare predictions against ground truth but instead evaluate the following properties of the recommendations
-    * Novelty - measures of how different an item is compared to the items that users have already known or interacted with 
+    * Novelty - measures of how novel recommendation items are by calculating their recommendation frequency among users 
     * Diversity - measures of how different items in a set are with respect to each other
-    * Serendipity - measures of how surprising recommendations are to users 
+    * Serendipity - measures of how surprising recommendations are to to a specific user by comparing them to the items that the user has already interacted with
     * Coverage - measures related to the distribution of items recommended by the system. 
     
 References:
