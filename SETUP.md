@@ -40,7 +40,7 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 * An optional requirement is Anaconda with Python version >= 3.6
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
   
-  Alternatively a [virtual environment](https://docs.python.org/3/library/venv.html) can be used instead of Anaconda.
+  Alternatively a [virtual environment](#using-a-virtual-environment) can be used instead of Anaconda.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
@@ -155,6 +155,8 @@ If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsof
 It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
 recommend running the virtual environment within an Nvidia docker container as the most convenient way to do this.  
 
+    # start docker daemon if not running
+    sudo dockerd &
     sudo nvidia-docker run -v /usr:/host_usr -it 2d6e4efb9d8d
 
     Within container: 
