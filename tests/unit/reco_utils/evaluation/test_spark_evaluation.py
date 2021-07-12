@@ -401,7 +401,7 @@ def test_item_novelty(spark_diversity_data, target_metrics):
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    actual = evaluator.item_novelty().toPandas()
+    actual = evaluator.historical_item_novelty().toPandas()
     assert_frame_equal(
         target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4
     )
@@ -413,7 +413,7 @@ def test_user_novelty(spark_diversity_data, target_metrics):
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    actual = evaluator.user_novelty().toPandas()
+    actual = evaluator.historical_user_novelty().toPandas()
     assert_frame_equal(
         target_metrics["user_novelty"], actual, check_exact=False, check_less_precise=4
     )

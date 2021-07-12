@@ -692,7 +692,7 @@ class SparkDiversityEvaluation:
         return self.df_diversity
 
     # Novelty metrics
-    def item_novelty(self):
+    def historical_item_novelty(self):
         """Calculate novelty for each item. Novelty is computed as the minus logarithm of
         (number of interactions with item / total number of interactions). The definition of the metric
         is based on the following reference using the choice model (eqs. 1 and 6):
@@ -716,8 +716,8 @@ class SparkDiversityEvaluation:
             )
         return self.df_item_novelty
 
-    def user_novelty(self):
-        """Calculate user-relative novelty of recommended items. The implementation is based on eqs. 1 and 7 from
+    def historical_user_novelty(self):
+        """Calculate user-relative novelty of items. The implementation is based on eqs. 1 and 7 from
 
         :Citation:
 
@@ -783,7 +783,7 @@ class SparkDiversityEvaluation:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: novelty.
         """
         if self.df_novelty is None:
-            self.df_item_novelty = self.item_novelty()
+            self.df_item_novelty = self.historical_item_novelty()
             n_recommendations = self.reco_df.count()
             self.df_novelty = (
                 self.reco_df
