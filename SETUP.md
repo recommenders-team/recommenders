@@ -14,6 +14,7 @@ This document describes how to setup all the dependencies to run the notebooks i
     - [Requirements](#requirements)
     - [Dependencies setup](#dependencies-setup)
     - [Register the environment as a kernel in Jupyter](#register-the-environment-as-a-kernel-in-jupyter)
+    - [Using a virtual environment](#using-a-virtual-environment)
     - [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
   - [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
     - [Requirements of Azure Databricks](#requirements-1)
@@ -147,6 +148,37 @@ We can register our conda or virtual environment to appear as a kernel in the Ju
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 
 If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
+
+
+### Using a virtual environment
+
+It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
+recommend running the virtual environment within an Nvidia docker container as the most convenient way to do this.  
+
+    sudo nvidia-docker run -v /usr:/host_usr -it 2d6e4efb9d8d
+
+    Within container: 
+
+    apt-get -y update
+    apt-get -y install python3.7
+    apt-get -y install python3-pip
+    apt-get -y install python3.7-venv
+    apt-get -y install libpython3.7-dev
+    python3.7 -m venv --system-site-packages /venv
+
+    export JAVA_HOME=/host_usr/lib/jvm/java-8-openjdk-amd64
+    export PATH=$PATH:/host_usr/local/bin
+
+
+    source /venv/bin/activate
+    pip install --upgrade pip
+    pip install --upgrade setuptools
+
+    export PYSPARK_DRIVER_PYTHON=/venv/bin/python
+    export PYSPARK_PYTHON=/venv/bin/python
+
+    pip install ms-recommenders
+
 
 ### Troubleshooting for the DSVM
 
