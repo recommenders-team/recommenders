@@ -162,11 +162,11 @@ recommend running the virtual environment within an Nvidia docker container as t
     Within container: 
 
     apt-get -y update
-    apt-get -y install python3.7
+    apt-get -y install python3.6
     apt-get -y install python3-pip
-    apt-get -y install python3.7-venv
-    apt-get -y install libpython3.7-dev
-    python3.7 -m venv --system-site-packages /venv
+    apt-get -y install python3.6-venv
+    apt-get -y install libpython3.6-dev
+    python3.6 -m venv --system-site-packages /venv
 
     export JAVA_HOME=/host_usr/lib/jvm/java-8-openjdk-amd64
     export PATH=$PATH:/host_usr/local/bin
@@ -180,6 +180,7 @@ recommend running the virtual environment within an Nvidia docker container as t
     export PYSPARK_PYTHON=/venv/bin/python
 
     pip install ms-recommenders
+
 
 
 ### Troubleshooting for the DSVM
