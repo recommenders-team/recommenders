@@ -157,21 +157,20 @@ recommend running the virtual environment within an Nvidia docker container as t
 
     # start docker daemon if not running
     sudo dockerd &
-    sudo nvidia-docker run -v /usr:/host_usr -it 2d6e4efb9d8d
+    sudo nvidia-docker run -it 2d6e4efb9d8d
 
-    Within container: 
+    # Within container: 
 
     apt-get -y update
     apt-get -y install python3.6
     apt-get -y install python3-pip
     apt-get -y install python3.6-venv
     apt-get -y install libpython3.6-dev
+    apt-get -y install cmake
+    apt-get install -y libgomp1 openjdk-8-jre
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    
     python3.6 -m venv --system-site-packages /venv
-
-    export JAVA_HOME=/host_usr/lib/jvm/java-8-openjdk-amd64
-    export PATH=$PATH:/host_usr/local/bin
-
-
     source /venv/bin/activate
     pip install --upgrade pip
     pip install --upgrade setuptools
@@ -179,7 +178,7 @@ recommend running the virtual environment within an Nvidia docker container as t
     export PYSPARK_DRIVER_PYTHON=/venv/bin/python
     export PYSPARK_PYTHON=/venv/bin/python
 
-    pip install ms-recommenders
+    pip install ms-recommenders[all]
 
 
 
