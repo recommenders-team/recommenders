@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import numpy as np
 import pandas as pd
 import pytest
 from pandas.util.testing import assert_frame_equal
@@ -405,6 +406,14 @@ def test_item_novelty(spark_diversity_data, target_metrics):
     assert_frame_equal(
         target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4
     )
+    assert np.all(actual["item_novelty"].values >= 0) 
+    # Test that novelty is zero when data includes only one item 
+    train_df_new = train_df.filter("ItemId == 3") 
+    evaluator = SparkDiversityEvaluation(
+        train_df=train_df_new, reco_df=reco_df, col_user="UserId", col_item="ItemId"
+    )
+    actual = evaluator.historical_item_novelty().toPandas()
+    assert actual["item_novelty"].values[0] == 0
 
 
 @pytest.mark.spark
@@ -417,6 +426,7 @@ def test_user_novelty(spark_diversity_data, target_metrics):
     assert_frame_equal(
         target_metrics["user_novelty"], actual, check_exact=False, check_less_precise=4
     )
+    assert np.all(actual["user_novelty"].values >= 0) 
 
 
 @pytest.mark.spark
@@ -425,7 +435,16 @@ def test_novelty(spark_diversity_data, target_metrics):
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    assert target_metrics["novelty"] == evaluator.novelty()
+    novelty = evaluator.novelty()
+    assert target_metrics["novelty"] == novelty
+    assert novelty >= 0
+    # Test that novelty is zero when data includes only one item 
+    train_df_new = train_df.filter("ItemId == 3") 
+    reco_df_new = reco_df.filter("ItemId == 3") 
+    evaluator = SparkDiversityEvaluation(
+        train_df=train_df_new, reco_df=reco_df_new, col_user="UserId", col_item="ItemId"
+    )
+    assert evaluator.novelty() == 0
 
 
 @pytest.mark.spark
