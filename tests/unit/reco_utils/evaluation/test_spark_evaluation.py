@@ -43,12 +43,6 @@ def target_metrics():
         "item_novelty": pd.DataFrame(
             dict(ItemId=[1, 2, 3, 4, 5], item_novelty=[3.0, 3.0, 2.0, 1.41504, 3.0])
         ),
-        "user_novelty": pd.DataFrame(
-            dict(UserId=[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3], 
-            ItemId=[1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
-            user_novelty=[2.087463, 2.087463, 3.087463, 1.502500, 4.087463, 3.247928, 3.247928, 2.247928, \
-                1.662965, 1.925999, 3.954196, 3.954196, 1.632268, 1.369234, 2.632268])
-        ),
         "novelty": pytest.approx(2.83333, TOL),
         "diversity": pytest.approx(0.43096, TOL),
         "user_diversity": pd.DataFrame(
@@ -414,19 +408,6 @@ def test_item_novelty(spark_diversity_data, target_metrics):
     )
     actual = evaluator.historical_item_novelty().toPandas()
     assert actual["item_novelty"].values[0] == 0
-
-
-@pytest.mark.spark
-def test_user_novelty(spark_diversity_data, target_metrics):
-    train_df, reco_df = spark_diversity_data
-    evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
-    )
-    actual = evaluator.historical_user_novelty().toPandas()
-    assert_frame_equal(
-        target_metrics["user_novelty"], actual, check_exact=False, check_less_precise=4
-    )
-    assert np.all(actual["user_novelty"].values >= 0) 
 
 
 @pytest.mark.spark
