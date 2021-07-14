@@ -778,7 +778,8 @@ class SparkDiversityEvaluation:
         return self.df_user_novelty
 
     def novelty(self):
-        """Calculate average novelty for recommended items. Follows section 5 from
+        """Calculate the average novelty in a list of recommended items (this assumes that the recommendation list 
+        is already computed). Follows section 5 from
 
         :Citation:
 
