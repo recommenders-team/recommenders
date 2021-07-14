@@ -39,31 +39,31 @@ To install core utilities, CPU-based algorithms, and dependencies:
 1. Ensure software required for compilation is installed. On Linux this can be supported by adding build-essential dependencies:
 ```bash
 sudo apt-get install -y build-essential
-```
-On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+``` 
+On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
   
+2. Create a conda or virtual environment. See the [setup guide](SETUP.md) for more details.
 
-2. Install the package from [PyPI](https://pypi.org):
+3. Within the created environment, install the package from [PyPI](https://pypi.org):
 
 ```bash
-conda create -n my_environment_name python=3.6
 pip install --upgrade pip
 pip install ms-recommenders[examples]
 ```
 
-3. Register your (conda or virtual) environment with Jupyter:
+4. Register your (conda or virtual) environment with Jupyter:
 
 ```bash
 python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
 ```
 
-4. Start the Jupyter notebook server
+5. Start the Jupyter notebook server
 
 ```bash
 jupyter notebook
 ```
 
-5. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
+6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
 
 For additional options to install the package (support for GPU, Spark etc.) see [this guide](reco_utils/README.md).
 
