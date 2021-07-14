@@ -13,8 +13,8 @@ This document describes how to setup all the dependencies to run the notebooks i
   - [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
     - [Requirements](#requirements)
     - [Dependencies setup](#dependencies-setup)
-    - [Register the environment as a kernel in Jupyter](#register-the-environment-as-a-kernel-in-jupyter)
     - [Using a virtual environment](#using-a-virtual-environment)
+    - [Register the environment as a kernel in Jupyter](#register-the-environment-as-a-kernel-in-jupyter)
     - [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
   - [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
     - [Requirements of Azure Databricks](#requirements-1)
@@ -141,25 +141,18 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 </details>
 
 
-### Register the environment as a kernel in Jupyter
-
-We can register our conda or virtual environment to appear as a kernel in the Jupyter notebooks. After activating the environment (`my_env_name`) do
-
-    python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
-
-If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
-
-
 ### Using a virtual environment
 
 It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
-recommend running the virtual environment within an Nvidia docker container as the most convenient way to do this.  
+recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) and running the virtual environment within a container, as the most convenient way to do this.  
 
     # start docker daemon if not running
     sudo dockerd &
-    sudo nvidia-docker run -it 2d6e4efb9d8d
+    # Pull the image from the Nvidia docker hub (https://hub.docker.com/r/nvidia/cuda) that is suitable for your system
+    # E.g. for Ubuntu 18.04 do
+    sudo docker run --gpus all -it --rm nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
 
-    # Within container: 
+    # Within the container: 
 
     apt-get -y update
     apt-get -y install python3.6
@@ -180,6 +173,14 @@ recommend running the virtual environment within an Nvidia docker container as t
 
     pip install ms-recommenders[all]
 
+
+### Register the environment as a kernel in Jupyter
+
+We can register our conda or virtual environment to appear as a kernel in the Jupyter notebooks. After activating the environment (`my_env_name`) do
+
+    python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
+
+If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
 
 
 ### Troubleshooting for the DSVM

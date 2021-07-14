@@ -50,6 +50,7 @@ You will need CUDA Toolkit v10.0 and CuDNN >= 7.6 to enable both Tensorflow and 
 ```bash
 conda install cudatoolkit=10.0 "cudnn>=7.6"
 ```
+For a virtual environment, you may use a [docker container by Nvidia](../SETUP.md#using-a-virtual-environment). 
 
 For manual installation of the necessary requirements see [TensorFlow](https://www.tensorflow.org/install/gpu#software_requirements) and [PyTorch](https://pytorch.org/get-started/locally/) installation pages.
 
