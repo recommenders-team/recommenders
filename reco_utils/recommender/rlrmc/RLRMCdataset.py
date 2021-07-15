@@ -66,7 +66,7 @@ class RLRMCdataset(object):
             list: train and validation pandas.DataFrame Dataset, which have been reindexed.
 
         """
-        # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/main/reco_utils/recommender/ncf/dataset.py
+        # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/main/reco_utils/models/ncf/dataset.py
         # If validation dataset is None
         df = train if validation is None else train.append(validation)
         df = df if test is None else df.append(test)
