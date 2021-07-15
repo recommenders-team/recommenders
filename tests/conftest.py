@@ -456,5 +456,5 @@ def deeprec_config_path():
         Path(__file__)
         .absolute()
         .parents[1]
-        .joinpath("reco_utils", "recommender", "deeprec", "config")
+        .joinpath("reco_utils", "models", "deeprec", "config")
     )
