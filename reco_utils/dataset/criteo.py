@@ -11,7 +11,7 @@ try:
 except ImportError:
     pass  # so the environment without spark doesn't break
 
-from reco_utils.dataset.download_utils import maybe_download, download_path
+from reco_utils.datasets.download_utils import maybe_download, download_path
 from reco_utils.utils.notebook_utils import is_databricks
 
 

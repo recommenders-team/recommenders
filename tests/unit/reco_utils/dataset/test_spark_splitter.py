@@ -12,10 +12,10 @@ from reco_utils.utils.constants import (
 )
 
 try:
-    from reco_utils.dataset.split_utils import min_rating_filter_spark
+    from reco_utils.datasets.split_utils import min_rating_filter_spark
     from pyspark.sql import functions as F
     from pyspark.sql.functions import col
-    from reco_utils.dataset.spark_splitters import (
+    from reco_utils.datasets.spark_splitters import (
         spark_chrono_split,
         spark_random_split,
         spark_stratified_split,

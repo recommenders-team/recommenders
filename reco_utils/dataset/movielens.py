@@ -7,7 +7,7 @@ import shutil
 import warnings
 import pandas as pd
 from zipfile import ZipFile
-from reco_utils.dataset.download_utils import maybe_download, download_path
+from reco_utils.datasets.download_utils import maybe_download, download_path
 from reco_utils.utils.notebook_utils import is_databricks
 from reco_utils.utils.constants import (
     DEFAULT_USER_COL,

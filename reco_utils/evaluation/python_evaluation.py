@@ -21,7 +21,7 @@ from reco_utils.utils.constants import (
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
-from reco_utils.dataset.pandas_df_utils import (
+from reco_utils.datasets.pandas_df_utils import (
     has_columns,
     has_same_base_dtype,
     lru_cache_df,

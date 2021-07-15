@@ -14,7 +14,7 @@ from reco_utils.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filter_spark
+from reco_utils.datasets.split_utils import process_split_ratio, min_rating_filter_spark
 
 
 def spark_random_split(data, ratio=0.75, seed=42):

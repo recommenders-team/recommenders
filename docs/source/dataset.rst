@@ -20,7 +20,7 @@ information, ratings, and a plaintext review.
     J. McAuley and J. Leskovec, "Hidden factors and hidden topics: understanding rating dimensions with review text", 
     RecSys, 2013.
 
-.. automodule:: reco_utils.dataset.amazon_reviews
+.. automodule:: reco_utils.datasets.amazon_reviews
     :members:
 
 CORD-19
@@ -44,7 +44,7 @@ to generate new insights in support of the fight against this infectious disease
     Funk, K., Kinney, R., Liu, Z., Merrill, W. and Mooney, P. "Cord-19: The COVID-19 Open Research Dataset.", 2020.
 
 
-.. automodule:: reco_utils.dataset.covid_utils
+.. automodule:: reco_utils.datasets.covid_utils
     :members:
 
 Criteo
@@ -55,7 +55,7 @@ for millions of display Ads. Every Ad has has 40 attributes, the first attribute
 that the Ad has been clicked on and a 0 represents it wasn't clicked on. The rest consist of 13 integer columns and 
 26 categorical columns.
 
-.. automodule:: reco_utils.dataset.criteo
+.. automodule:: reco_utils.datasets.criteo
     :members:
 
 MIND
@@ -76,7 +76,7 @@ this impression. To protect user privacy, each user was de-linked from the produ
 
 
 
-.. automodule:: reco_utils.dataset.mind
+.. automodule:: reco_utils.datasets.mind
     :members:  
 
 MovieLens
@@ -101,52 +101,52 @@ It comes with several sizes:
     ACM Transactions on Interactive Intelligent Systems (TiiS) 5, 4, Article 19, 
     DOI=http://dx.doi.org/10.1145/2827872, 2015.
 
-.. automodule:: reco_utils.dataset.movielens
+.. automodule:: reco_utils.datasets.movielens
     :members:
 
 Download utilities 
 ******************
 
-.. automodule:: reco_utils.dataset.download_utils
+.. automodule:: reco_utils.datasets.download_utils
     :members:
 
 
 Cosmos CLI utilities
 *********************
 
-.. automodule:: reco_utils.dataset.cosmos_cli
+.. automodule:: reco_utils.datasets.cosmos_cli
     :members:
 
 
 Pandas dataframe utilities
 ***************************
 
-.. automodule:: reco_utils.dataset.pandas_df_utils
+.. automodule:: reco_utils.datasets.pandas_df_utils
     :members:
 
 
 Splitter utilities
 ******************
 
-.. automodule:: reco_utils.dataset.python_splitters
+.. automodule:: reco_utils.datasets.python_splitters
     :members:
 
-.. automodule:: reco_utils.dataset.spark_splitters
+.. automodule:: reco_utils.datasets.spark_splitters
     :members:
 
-.. automodule:: reco_utils.dataset.split_utils
+.. automodule:: reco_utils.datasets.split_utils
     :members:
 
 
 Sparse utilities
 ****************
 
-.. automodule:: reco_utils.dataset.sparse
+.. automodule:: reco_utils.datasets.sparse
     :members:
   
 
 Knowledge graph utilities
 *************************
 
-.. automodule:: reco_utils.dataset.wikidata
+.. automodule:: reco_utils.datasets.wikidata
     :members:

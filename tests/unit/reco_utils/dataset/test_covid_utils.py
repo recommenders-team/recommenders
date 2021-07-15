@@ -3,7 +3,7 @@
 
 from unittest.mock import patch, MagicMock
 import pytest
-from reco_utils.dataset.covid_utils import (
+from reco_utils.datasets.covid_utils import (
     remove_duplicates,
     remove_nan,
     clean_dataframe,
@@ -68,7 +68,7 @@ def test_retrieve_text():
 
         return MockResponse()
 
-    with patch("reco_utils.dataset.covid_utils.requests.get", side_effect=mock_get):
+    with patch("reco_utils.datasets.covid_utils.requests.get", side_effect=mock_get):
         result = retrieve_text(entry=dict(pdf_json_files="a"), container_name="test")
     assert "test" == result
 
@@ -85,7 +85,7 @@ def test_get_public_domain_text(df):
         return "full text"
 
     with patch(
-        "reco_utils.dataset.covid_utils.retrieve_text", side_effect=mock_retrieve_text
+        "reco_utils.datasets.covid_utils.retrieve_text", side_effect=mock_retrieve_text
     ):
         full = get_public_domain_text(df, container_name="test")
 

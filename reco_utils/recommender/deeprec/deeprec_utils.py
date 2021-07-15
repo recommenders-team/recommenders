@@ -17,7 +17,7 @@ import json
 import pickle as pkl
 import tensorflow as tf
 
-from reco_utils.dataset.download_utils import maybe_download
+from reco_utils.datasets.download_utils import maybe_download
 
 
 def flat_config(config):

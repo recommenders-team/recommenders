@@ -4,6 +4,7 @@
 import os
 import papermill as pm
 import pytest
+
 try:
     import tensorflow as tf
     from reco_utils.recommender.deeprec.deeprec_utils import (
@@ -18,11 +19,14 @@ try:
     from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
     from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
     from reco_utils.recommender.deeprec.models.sequential.sum import SUMModel
-    from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
+    from reco_utils.datasets.amazon_reviews import (
+        download_and_extract,
+        data_preprocessing,
+    )
     from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
     from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
-    from reco_utils.dataset import movielens
-    from reco_utils.dataset.python_splitters import python_stratified_split
+    from reco_utils.datasets import movielens
+    from reco_utils.datasets.python_splitters import python_stratified_split
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 

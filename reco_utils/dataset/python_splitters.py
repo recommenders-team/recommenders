@@ -9,7 +9,7 @@ from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from reco_utils.dataset.split_utils import (
+from reco_utils.datasets.split_utils import (
     process_split_ratio,
     min_rating_filter_pandas,
     split_pandas_data_with_ratios,

@@ -3,9 +3,13 @@
 
 import os
 import pytest
+
 try:
     import tensorflow as tf
-    from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
+    from reco_utils.datasets.amazon_reviews import (
+        download_and_extract,
+        data_preprocessing,
+    )
     from reco_utils.recommender.deeprec.deeprec_utils import (
         prepare_hparams,
         download_deeprec_resources,

@@ -3,7 +3,7 @@
 
 import os
 import pytest
-from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
+from reco_utils.datasets.amazon_reviews import download_and_extract, data_preprocessing
 
 try:
     from reco_utils.recommender.deeprec.deeprec_utils import (

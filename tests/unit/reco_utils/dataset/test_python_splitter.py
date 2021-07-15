@@ -5,12 +5,12 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from reco_utils.dataset.split_utils import (
+from reco_utils.datasets.split_utils import (
     min_rating_filter_pandas,
     split_pandas_data_with_ratios,
 )
 
-from reco_utils.dataset.python_splitters import (
+from reco_utils.datasets.python_splitters import (
     python_chrono_split,
     python_random_split,
     python_stratified_split,

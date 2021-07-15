@@ -3,9 +3,9 @@
 
 import pytest
 import os
-from reco_utils.dataset import movielens
-from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
-from reco_utils.dataset.python_splitters import python_stratified_split
+from reco_utils.datasets import movielens
+from reco_utils.datasets.amazon_reviews import download_and_extract, data_preprocessing
+from reco_utils.datasets.python_splitters import python_stratified_split
 
 try:
     from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF

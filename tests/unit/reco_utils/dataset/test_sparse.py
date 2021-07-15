@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from reco_utils.dataset.sparse import AffinityMatrix
+from reco_utils.datasets.sparse import AffinityMatrix
 from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,

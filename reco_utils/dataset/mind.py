@@ -10,7 +10,7 @@ import re
 from tqdm import tqdm
 from nltk.tokenize import RegexpTokenizer
 
-from reco_utils.dataset.download_utils import maybe_download, download_path, unzip_file
+from reco_utils.datasets.download_utils import maybe_download, download_path, unzip_file
 
 
 URL_MIND_LARGE_TRAIN = (
@@ -29,19 +29,20 @@ URL_MIND_DEMO_TRAIN = (
     "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip"
 )
 URL_MIND_DEMO_VALID = (
-      "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip"
+    "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip"
 )
 URL_MIND_DEMO_UTILS = (
-      "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip"
+    "https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip"
 )
 
 URL_MIND = {
     "large": (URL_MIND_LARGE_TRAIN, URL_MIND_LARGE_VALID),
     "small": (URL_MIND_SMALL_TRAIN, URL_MIND_SMALL_VALID),
-    "demo": (URL_MIND_DEMO_TRAIN, URL_MIND_DEMO_VALID)
+    "demo": (URL_MIND_DEMO_TRAIN, URL_MIND_DEMO_VALID),
 }
 
 logger = logging.getLogger()
+
 
 def download_mind(size="small", dest_path=None):
     """Download MIND dataset
@@ -49,11 +50,11 @@ def download_mind(size="small", dest_path=None):
     Args:
         size (str): Dataset size. One of ["small", "large"]
         dest_path (str): Download path. If path is None, it will download the dataset on a temporal path
-        
+
     Returns:
         str, str: Path to train and validation sets.
     """
-    size_options = ["small", "large","demo"]
+    size_options = ["small", "large", "demo"]
     if size not in size_options:
         raise ValueError(f"Wrong size option, available options are {size_options}")
     url_train, url_valid = URL_MIND[size]
@@ -63,7 +64,13 @@ def download_mind(size="small", dest_path=None):
     return train_path, valid_path
 
 
-def extract_mind(train_zip, valid_zip, train_folder="train", valid_folder="valid", clean_zip_file=True):
+def extract_mind(
+    train_zip,
+    valid_zip,
+    train_folder="train",
+    valid_folder="valid",
+    clean_zip_file=True,
+):
     """Extract MIND dataset
 
     Args:
@@ -71,7 +78,7 @@ def extract_mind(train_zip, valid_zip, train_folder="train", valid_folder="valid
         valid_zip (str): Path to valid zip file
         train_folder (str): Destination forder for train set
         valid_folder (str): Destination forder for validation set
-    
+
     Returns:
         str, str: Train and validation folders
     """
@@ -91,8 +98,8 @@ def read_clickhistory(path, filename):
         filename (str): Filename
 
     Returns:
-        list, dict: 
-        - A list of user session with user_id, clicks, positive and negative interactions. 
+        list, dict:
+        - A list of user session with user_id, clicks, positive and negative interactions.
         - A dictionary with user_id click history.
     """
     userid_history = {}
@@ -217,7 +224,7 @@ def get_words_and_entities(train_news, valid_news):
         train_news (str): News train file.
         valid_news (str): News validation file.
 
-    Returns: 
+    Returns:
         dict, dict: Words and entities dictionaries.
     """
     news_words = {}
@@ -234,12 +241,12 @@ def get_words_and_entities(train_news, valid_news):
 
 def download_and_extract_glove(dest_path):
     """Download and extract the Glove embedding
-    
+
     Args:
         dest_path (str): Destination directory path for the downloaded file
 
     Returns:
-        str: File path where Glove was extracted.  
+        str: File path where Glove was extracted.
     """
     url = "http://nlp.stanford.edu/data/glove.6B.zip"
     filepath = maybe_download(url=url, work_directory=dest_path)
@@ -384,45 +391,46 @@ def generate_embeddings(
 
 
 def load_glove_matrix(path_emb, word_dict, word_embedding_dim):
-    '''Load pretrained embedding metrics of words in word_dict
-    
-    Args: 
+    """Load pretrained embedding metrics of words in word_dict
+
+    Args:
         path_emb (string): Folder path of downloaded glove file
         word_dict (dict): word dictionary
         word_embedding_dim: dimention of word embedding vectors
-        
+
     Returns:
         numpy.ndarray, list: pretrained word embedding metrics, words can be found in glove files
-    '''
-    
-    embedding_matrix = np.zeros((len(word_dict)+1, word_embedding_dim))
-    exist_word=[]
+    """
 
-    with open(os.path.join(path_emb, f"glove.6B.{word_embedding_dim}d.txt"),'rb') as f:
+    embedding_matrix = np.zeros((len(word_dict) + 1, word_embedding_dim))
+    exist_word = []
+
+    with open(os.path.join(path_emb, f"glove.6B.{word_embedding_dim}d.txt"), "rb") as f:
         for l in tqdm(f):
-            l=l.split()
+            l = l.split()
             word = l[0].decode()
             if len(word) != 0:
                 if word in word_dict:
                     wordvec = [float(x) for x in l[1:]]
                     index = word_dict[word]
-                    embedding_matrix[index]=np.array(wordvec)
+                    embedding_matrix[index] = np.array(wordvec)
                     exist_word.append(word)
-                    
+
     return embedding_matrix, exist_word
 
+
 def word_tokenize(sent):
-    ''' Tokenize a sententence
-    
+    """Tokenize a sententence
+
     Args:
         sent: the sentence need to be tokenized
-    
+
     Returns:
-        list: words in the sentence   
-    '''
-    
-    #treat consecutive words or special punctuation as words
-    pat = re.compile(r'[\w]+|[.,!?;|]')
+        list: words in the sentence
+    """
+
+    # treat consecutive words or special punctuation as words
+    pat = re.compile(r"[\w]+|[.,!?;|]")
     if isinstance(sent, str):
         return pat.findall(sent.lower())
     else:

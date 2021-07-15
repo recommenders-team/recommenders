@@ -14,7 +14,7 @@ from sklearn.metrics import (
 import numpy as np
 import yaml
 import zipfile
-from reco_utils.dataset.download_utils import maybe_download
+from reco_utils.datasets.download_utils import maybe_download
 from reco_utils.recommender.deeprec.deeprec_utils import (
     flat_config,
     load_yaml,
@@ -28,7 +28,7 @@ import re
 
 def check_type(config):
     """Check that the config parameters are the correct type
-    
+
     Args:
         config (dict): Configuration dictionary.
 
@@ -96,10 +96,10 @@ def check_type(config):
 
 def check_nn_config(f_config):
     """Check neural networks configuration.
-    
+
     Args:
         f_config (dict): Neural network configuration.
-    
+
     Raises:
         ValueError: If the parameters are not correct.
     """
@@ -299,7 +299,7 @@ def prepare_hparams(yaml_file=None, **kwargs):
 
 
 def word_tokenize(sent):
-    """ Split sentence into word list using regex.
+    """Split sentence into word list using regex.
     Args:
         sent (str): Input sentence
 
@@ -314,13 +314,13 @@ def word_tokenize(sent):
 
 
 def newsample(news, ratio):
-    """ Sample ratio samples from news list. 
+    """Sample ratio samples from news list.
     If length of news is less than ratio, pad zeros.
 
     Args:
         news (list): input news list
         ratio (int): sample number
-    
+
     Returns:
         list: output of sample list.
     """
@@ -331,11 +331,11 @@ def newsample(news, ratio):
 
 
 def get_mind_data_set(type):
-    """ Get MIND dataset address 
+    """Get MIND dataset address
 
     Args:
         type (str): type of mind dataset, must be in ['large', 'small', 'demo']
-        
+
     Returns:
         list: data url and train valid dataset name
     """
@@ -364,4 +364,3 @@ def get_mind_data_set(type):
             "MINDdemo_dev.zip",
             "MINDdemo_utils.zip",
         )
-

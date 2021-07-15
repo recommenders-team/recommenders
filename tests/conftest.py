@@ -25,8 +25,8 @@ from reco_utils.utils.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from reco_utils.dataset.python_splitters import numpy_stratified_split
-from reco_utils.dataset.python_splitters import python_chrono_split
+from reco_utils.datasets.python_splitters import numpy_stratified_split
+from reco_utils.datasets.python_splitters import python_chrono_split
 from reco_utils.utils.spark_utils import start_or_get_spark
 
 
