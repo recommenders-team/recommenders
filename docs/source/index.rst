@@ -12,9 +12,9 @@ evaluating recommender systems.
    :caption: Contents:
 
     Utils <utils>
-    Dataset <dataset>
+    Datasets <datasets>
     Evaluation <evaluation>
-    Recommender algorithms <recommender>
+    Recommender algorithms <models>
     Hyperparameter tuning <tuning>
 
 
