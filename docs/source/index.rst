@@ -11,7 +11,7 @@ evaluating recommender systems.
    :maxdepth: 1
    :caption: Contents:
 
-    Common <common>
+    Utils <utils>
     Dataset <dataset>
     Evaluation <evaluation>
     Recommender algorithms <recommender>

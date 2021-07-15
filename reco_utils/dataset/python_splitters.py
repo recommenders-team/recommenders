@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split as sk_split
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
@@ -245,8 +245,8 @@ def numpy_stratified_split(X, ratio=0.75, seed=42):
         seed (int): random seed
 
     Returns:
-        numpy.ndarray, numpy.ndarray: 
-        - Xtr: The train set user/item affinity matrix. 
+        numpy.ndarray, numpy.ndarray:
+        - Xtr: The train set user/item affinity matrix.
         - Xtst: The test set user/item affinity matrix.
     """
 

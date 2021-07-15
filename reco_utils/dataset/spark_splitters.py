@@ -8,7 +8,7 @@ try:
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
@@ -19,15 +19,15 @@ from reco_utils.dataset.split_utils import process_split_ratio, min_rating_filte
 
 def spark_random_split(data, ratio=0.75, seed=42):
     """Spark random splitter.
-    
+
     Randomly split the data into several splits.
 
     Args:
         data (pyspark.sql.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
-            it splits data into two halves and the ratio argument indicates the ratio of 
-            training data set; if it is a list of float numbers, the splitter splits 
-            data into several portions corresponding to the split ratios. If a list 
+            it splits data into two halves and the ratio argument indicates the ratio of
+            training data set; if it is a list of float numbers, the splitter splits
+            data into several portions corresponding to the split ratios. If a list
             is provided and the ratios are not summed to 1, they will be normalized.
         seed (int): Seed.
 
@@ -56,30 +56,30 @@ def _do_stratification_spark(
 ):
     """Helper function to perform stratified splits.
 
-        This function splits data in a stratified manner. That is, the same values for the
-        filter_by column are retained in each split, but the corresponding set of entries
-        are divided according to the ratio provided.
+    This function splits data in a stratified manner. That is, the same values for the
+    filter_by column are retained in each split, but the corresponding set of entries
+    are divided according to the ratio provided.
 
-        Args:
-            data (pyspark.sql.DataFrame): Spark DataFrame to be split.
-            ratio (float or list): Ratio for splitting data. If it is a single float number
-                it splits data into two sets and the ratio argument indicates the ratio of
-                training data set; if it is a list of float numbers, the splitter splits 
-                data into several portions corresponding to the split ratios. If a list is 
-                provided and the ratios are not summed to 1, they will be normalized.
-            min_rating (int): minimum number of ratings for user or item.
-            filter_by (str): either "user" or "item", depending on which of the two is to filter
-                with min_rating.
-            is_partitioned (bool): flag to partition data by filter_by column
-            is_random (bool): flag to make split randomly or use timestamp column
-            seed (int): Seed.
-            col_user (str): column name of user IDs.
-            col_item (str): column name of item IDs.
-            col_timestamp (str): column name of timestamps.
+    Args:
+        data (pyspark.sql.DataFrame): Spark DataFrame to be split.
+        ratio (float or list): Ratio for splitting data. If it is a single float number
+            it splits data into two sets and the ratio argument indicates the ratio of
+            training data set; if it is a list of float numbers, the splitter splits
+            data into several portions corresponding to the split ratios. If a list is
+            provided and the ratios are not summed to 1, they will be normalized.
+        min_rating (int): minimum number of ratings for user or item.
+        filter_by (str): either "user" or "item", depending on which of the two is to filter
+            with min_rating.
+        is_partitioned (bool): flag to partition data by filter_by column
+        is_random (bool): flag to make split randomly or use timestamp column
+        seed (int): Seed.
+        col_user (str): column name of user IDs.
+        col_item (str): column name of item IDs.
+        col_timestamp (str): column name of timestamps.
 
-        Args:
+    Args:
 
-        Returns:
+    Returns:
     """
     # A few preliminary checks.
     if filter_by not in ["user", "item"]:
@@ -115,17 +115,16 @@ def _do_stratification_spark(
     window_spec = Window.partitionBy(partition_by).orderBy(order_by)
 
     data = (
-      data
-      .withColumn("_count", F.count(split_by).over(window_count))
-      .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
-      .drop("_count")
+        data.withColumn("_count", F.count(split_by).over(window_count))
+        .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
+        .drop("_count")
     )
 
     multi_split, ratio = process_split_ratio(ratio)
     ratio = ratio if multi_split else [ratio, 1 - ratio]
 
     splits = []
-    prev_split = None 
+    prev_split = None
     for split in np.cumsum(ratio):
         condition = F.col("_rank") <= split
         if prev_split is not None:
@@ -156,8 +155,8 @@ def spark_chrono_split(
         data (pyspark.sql.DataFrame): Spark DataFrame to be split.
         ratio (float or list): Ratio for splitting data. If it is a single float number
             it splits data into two sets and the ratio argument indicates the ratio of
-            training data set; if it is a list of float numbers, the splitter splits 
-            data into several portions corresponding to the split ratios. If a list is 
+            training data set; if it is a list of float numbers, the splitter splits
+            data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
         seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
@@ -182,6 +181,7 @@ def spark_chrono_split(
         col_item=col_item,
         col_timestamp=col_timestamp,
     )
+
 
 def spark_stratified_split(
     data,
@@ -227,6 +227,7 @@ def spark_stratified_split(
         col_user=col_user,
         col_item=col_item,
     )
+
 
 def spark_timestamp_split(
     data,

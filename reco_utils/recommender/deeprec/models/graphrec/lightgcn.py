@@ -13,14 +13,14 @@ from reco_utils.evaluation.python_evaluation import (
     precision_at_k,
     recall_at_k,
 )
-from reco_utils.common.python_utils import get_top_k_scored_items
+from reco_utils.utils.python_utils import get_top_k_scored_items
 
 
 class LightGCN(object):
     """LightGCN model
 
     :Citation:
-    
+
         He, Xiangnan, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, and Meng Wang.
         "LightGCN: Simplifying and Powering Graph Convolution Network for Recommendation." arXiv
         preprint arXiv:2002.02126, 2020.

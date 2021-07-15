@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import scipy.sparse as sp
 import time
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_RATING_COL,
@@ -194,7 +194,7 @@ class ImplicitCF(object):
             batch_size (int): Batch size of users.
 
         Returns:
-            numpy.ndarray, numpy.ndarray, numpy.ndarray: 
+            numpy.ndarray, numpy.ndarray, numpy.ndarray:
             - Sampled users.
             - Sampled positive items.
             - Sampled negative items.

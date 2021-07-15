@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import warnings
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_RATING_COL,
@@ -27,21 +27,21 @@ class Dataset(object):
         binary=True,
         seed=None,
     ):
-        """Constructor 
-        
+        """Constructor
+
         Args:
             train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
-            test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None, 
+            test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None,
                 if so, we only process the training data.
             n_neg (int): Number of negative samples for training set.
             n_neg_test (int): Number of negative samples for test set.
             col_user (str): User column name.
             col_item (str): Item column name.
-            col_rating (str): Rating column name. 
+            col_rating (str): Rating column name.
             col_timestamp (str): Timestamp column name.
-            binary (bool): If true, set rating > 0 to rating = 1. 
+            binary (bool): If true, set rating > 0 to rating = 1.
             seed (int): Seed.
-        
+
         """
         # initialize user and item index
         self.user_idx = None
@@ -66,14 +66,14 @@ class Dataset(object):
         """Process the dataset to reindex userID and itemID, also set rating as binary feedback
 
         Args:
-            train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating). 
+            train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
             test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating)
                     test can be None, if so, we only process the training data.
             binary (bool): If true, set rating>0 to rating = 1.
 
         Returns:
             list: train and test pandas.DataFrame Dataset, which have been reindexed.
-        
+
         """
         # If testing dataset is None
         df = train if test is None else train.append(test)
@@ -109,12 +109,12 @@ class Dataset(object):
         """Process dataset to reindex userID and itemID, also set rating as binary feedback
 
         Args:
-            df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating) 
-            binary (bool): if true, set rating>0 to rating = 1 
+            df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating)
+            binary (bool): if true, set rating>0 to rating = 1
 
         Returns:
             list: train and test pandas.DataFrame Dataset, which have been reindexed.
-        
+
         """
 
         # If testing dataset is None
@@ -140,7 +140,7 @@ class Dataset(object):
     def _init_train_data(self):
         """Return all negative items (in train dataset) and store them in self.interact_status[self.col_item + '_negative']
         store train dataset in self.users, self.items and self.ratings
-        
+
         """
 
         self.item_pool = set(self.train[self.col_item].unique())
@@ -277,11 +277,11 @@ class Dataset(object):
 
     def train_loader(self, batch_size, shuffle=True):
         """Feed train data every batch.
-        
+
         Args:
             batch_size (int): Batch size.
             shuffle (bool): Ff true, train data will be shuffled.
-        
+
         Yields:
             list: A list of userID list, itemID list, and rating list. Public data loader returns the userID, itemID consistent with raw data.
         """
@@ -305,7 +305,7 @@ class Dataset(object):
 
     def test_loader(self):
         """Feed leave-one-out data every user
-        
+
         Generate test batch by every positive test instance,
         (eg. \[1, 2, 1\] is a positive user & item pair in test set
         (\[userID, itemID, rating\] for this tuple). This function

@@ -8,8 +8,8 @@ import warnings
 import pandas as pd
 from zipfile import ZipFile
 from reco_utils.dataset.download_utils import maybe_download, download_path
-from reco_utils.common.notebook_utils import is_databricks
-from reco_utils.common.constants import (
+from reco_utils.utils.notebook_utils import is_databricks
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -151,7 +151,7 @@ def load_pandas_df(
     """Loads the MovieLens dataset as pd.DataFrame.
 
     Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load.
-    To load movie information only, you can use load_item_df function. 
+    To load movie information only, you can use load_item_df function.
 
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
@@ -165,12 +165,12 @@ def load_pandas_df(
 
     Returns:
         pandas.DataFrame: Movie rating dataset.
-        
+
 
     **Examples**
 
     .. code-block:: python
-    
+
         # To load just user-id, item-id, and ratings from MovieLens-1M dataset,
         df = load_pandas_df('1m', ('UserId', 'ItemId', 'Rating'))
 
@@ -345,14 +345,14 @@ def load_spark_df(
 
     Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.sql.DataFrame`.
 
-    To load movie information only, you can use `load_item_df` function. 
+    To load movie information only, you can use `load_item_df` function.
 
     Args:
         spark (pyspark.SparkSession): Spark session.
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
         header (list or tuple): Rating dataset header.
             If schema is provided, this argument is ignored.
-        schema (pyspark.StructType): Dataset schema. 
+        schema (pyspark.StructType): Dataset schema.
         local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
         dbutils (Databricks.dbutils): Databricks utility object
@@ -363,11 +363,11 @@ def load_spark_df(
 
     Returns:
         pyspark.sql.DataFrame: Movie rating dataset.
-        
+
     **Examples**
 
     .. code-block:: python
-    
+
         # To load just user-id, item-id, and ratings from MovieLens-1M dataset:
         spark_df = load_spark_df(spark, '1m', ('UserId', 'ItemId', 'Rating'))
 

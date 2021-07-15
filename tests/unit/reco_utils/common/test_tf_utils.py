@@ -6,7 +6,7 @@ import os
 import numpy as np
 import pandas as pd
 import pytest
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -15,7 +15,7 @@ from reco_utils.common.constants import (
 from reco_utils.evaluation.python_evaluation import rmse
 
 try:
-    from reco_utils.common.tf_utils import (
+    from reco_utils.utils.tf_utils import (
         build_optimizer,
         evaluation_log_hook,
         export_model,

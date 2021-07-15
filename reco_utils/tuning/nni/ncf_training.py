@@ -12,7 +12,7 @@ import nni
 import reco_utils.evaluation.python_evaluation as evaluation
 from reco_utils.recommender.ncf.ncf_singlenode import NCF
 from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
-from reco_utils.common.constants import SEED as DEFAULT_SEED
+from reco_utils.utils.constants import SEED as DEFAULT_SEED
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("ncf")

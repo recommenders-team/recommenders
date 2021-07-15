@@ -7,14 +7,14 @@ import pandas as pd
 import logging
 from scipy import sparse
 
-from reco_utils.common.python_utils import (
+from reco_utils.utils.python_utils import (
     jaccard,
     lift,
     exponential_decay,
     get_top_k_scored_items,
     rescale,
 )
-from reco_utils.common import constants
+from reco_utils.utils import constants
 
 
 COOCCUR = "cooccurrence"
@@ -111,7 +111,7 @@ class SARSingleNode:
         self.index2item = None
 
     def compute_affinity_matrix(self, df, rating_col):
-        """ Affinity matrix.
+        """Affinity matrix.
 
         The user-affinity matrix can be constructed by treating the users and items as
         indices in a sparse matrix, and the events as the data. Here, we're treating
@@ -157,7 +157,7 @@ class SARSingleNode:
         return df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
     def compute_coocurrence_matrix(self, df):
-        """ Co-occurrence matrix.
+        """Co-occurrence matrix.
 
         The co-occurrence matrix is defined as :math:`C = U^T * U`
 

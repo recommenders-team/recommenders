@@ -6,7 +6,8 @@ from scipy.linalg import sqrtm
 from numba import njit, jit, prange
 
 from .geoimc_utils import length_normalize
-from reco_utils.common.python_utils import binarize as conv_binary
+from reco_utils.utils.python_utils import binarize as conv_binary
+
 
 class PlainScalarProduct(object):
     """
@@ -14,12 +15,7 @@ class PlainScalarProduct(object):
     as the retrieval criterion
     """
 
-    def __init__(
-            self,
-            X,
-            Y,
-            **kwargs
-    ):
+    def __init__(self, X, Y, **kwargs):
         """
         Args:
             X: numpy matrix of shape (users, features)
@@ -28,25 +24,18 @@ class PlainScalarProduct(object):
         self.X = X
         self.Y = Y
 
-
     def sim(self, **kwargs):
-        """Calculate the similarity score
-        """
+        """Calculate the similarity score"""
         sim = self.X.dot(self.Y.T)
         return sim
 
 
-class Inferer():
+class Inferer:
     """
     Holds necessary (minimal) information needed for inference
     """
 
-    def __init__(
-            self,
-            method='dot',
-            k=10,
-            transformation=''
-    ):
+    def __init__(self, method="dot", k=10, transformation=""):
         """Initialize parameters
 
         Args:
@@ -64,7 +53,6 @@ class Inferer():
         self.k = k
         self.transformation = transformation
 
-
     def _get_method(self, k):
         """Get the inferer method
 
@@ -74,12 +62,11 @@ class Inferer():
         Returns:
             class: A class object implementing the inferer 'k'
         """
-        if k == 'dot':
+        if k == "dot":
             method = PlainScalarProduct
         else:
             raise ValueError(f"{k} is unknown.")
         return method
-
 
     def infer(self, dataPtr, W, **kwargs):
         """Main inference method
@@ -96,18 +83,15 @@ class Inferer():
             a = dataPtr.get_entity("row").dot(W[0]).dot(sqrtm(W[1]))
             b = dataPtr.get_entity("col").dot(W[2]).dot(sqrtm(W[1]))
 
-        sim_score = self.method(
-            a,
-            b
-        ).sim(**kwargs)
+        sim_score = self.method(a, b).sim(**kwargs)
 
-        if self.transformation == 'mean':
+        if self.transformation == "mean":
             prediction = conv_binary(sim_score, sim_score.mean())
-        elif self.transformation == 'topk':
+        elif self.transformation == "topk":
             masked_sim_score = sim_score.copy()
 
             for i in range(sim_score.shape[0]):
-                topKidx = np.argpartition(masked_sim_score[i], -self.k)[-self.k:]
+                topKidx = np.argpartition(masked_sim_score[i], -self.k)[-self.k :]
                 mask = np.ones(sim_score[i].size, dtype=bool)
                 mask[topKidx] = False
 

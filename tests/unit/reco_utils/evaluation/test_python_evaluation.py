@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from unittest.mock import Mock
 from sklearn.preprocessing import minmax_scale
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -64,6 +64,7 @@ def rating_nohit():
         }
     )
 # fmt: on
+
 
 @pytest.fixture
 def rating_true_binary(rating_true):

@@ -5,12 +5,12 @@ import pandas as pd
 import numpy as np
 import pandas as pd
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_PREDICTION_COL,
 )
-from reco_utils.common.general_utils import invert_dictionary
+from reco_utils.utils.general_utils import invert_dictionary
 
 
 def surprise_trainset_to_df(
@@ -25,7 +25,7 @@ def surprise_trainset_to_df(
         col_user (str): User column name.
         col_item (str): Item column name.
         col_rating (str): Rating column name.
-    
+
     Returns:
         pandas.DataFrame: A dataframe with user column (str), item column (str), and rating column (float).
     """
@@ -53,13 +53,13 @@ def predict(
     predcol=DEFAULT_PREDICTION_COL,
 ):
     """Computes predictions of an algorithm from Surprise on the data. Can be used for computing rating metrics like RMSE.
-    
+
     Args:
         algo (surprise.prediction_algorithms.algo_base.AlgoBase): an algorithm from Surprise
         data (pandas.DataFrame): the data on which to predict
         usercol (str): name of the user column
         itemcol (str): name of the item column
-    
+
     Returns:
         pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """
@@ -84,14 +84,14 @@ def compute_ranking_predictions(
 ):
     """Computes predictions of an algorithm from Surprise on all users and items in data. It can be used for computing
     ranking metrics like NDCG.
-    
+
     Args:
         algo (surprise.prediction_algorithms.algo_base.AlgoBase): an algorithm from Surprise
         data (pandas.DataFrame): the data from which to get the users and items
         usercol (str): name of the user column
         itemcol (str): name of the item column
         remove_seen (bool): flag to remove (user, item) pairs seen in the training data
-    
+
     Returns:
         pandas.DataFrame: Dataframe with usercol, itemcol, predcol
     """

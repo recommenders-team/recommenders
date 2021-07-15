@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from scipy.sparse import csr_matrix
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_RATING_COL,

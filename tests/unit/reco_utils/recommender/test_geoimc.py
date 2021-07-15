@@ -9,7 +9,7 @@ import pandas as pd
 from scipy.sparse import csr_matrix
 from pandas.testing import assert_frame_equal
 
-from reco_utils.common.python_utils import binarize
+from reco_utils.utils.python_utils import binarize
 from reco_utils.recommender.geoimc.geoimc_data import DataPtr
 from reco_utils.recommender.geoimc.geoimc_predict import PlainScalarProduct, Inferer
 from reco_utils.recommender.geoimc.geoimc_algorithm import IMCProblem

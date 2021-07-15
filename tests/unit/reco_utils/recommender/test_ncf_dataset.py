@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     SEED,

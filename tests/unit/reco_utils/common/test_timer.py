@@ -4,7 +4,7 @@
 
 import pytest
 import time
-from reco_utils.common.timer import Timer
+from reco_utils.utils.timer import Timer
 
 
 TOL = 0.03

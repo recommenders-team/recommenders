@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import math
 
-from reco_utils.common.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
+from reco_utils.utils.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
 try:
     from pyspark.sql import functions as F, Window
@@ -62,10 +62,10 @@ def min_rating_filter_pandas(
 
     Args:
         data (pandas.DataFrame): DataFrame of user-item tuples. Columns of user and item
-            should be present in the DataFrame while other columns like rating, 
+            should be present in the DataFrame while other columns like rating,
             timestamp, etc. can be optional.
         min_rating (int): minimum number of ratings for user or item.
-        filter_by (str): either "user" or "item", depending on which of the two is to 
+        filter_by (str): either "user" or "item", depending on which of the two is to
             filter with min_rating.
         col_user (str): column name of user ID.
         col_item (str): column name of item ID.
@@ -73,19 +73,12 @@ def min_rating_filter_pandas(
     Returns:
         pandas.DataFrame: DataFrame with at least columns of user and item that has been filtered by the given specifications.
     """
-    split_by_column = _get_column_name(
-        filter_by, col_user, col_item
-    )
+    split_by_column = _get_column_name(filter_by, col_user, col_item)
 
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
 
-    return (
-        data
-        .groupby(split_by_column)
-        .filter(lambda x: len(x) >= min_rating)
-    )
-    
+    return data.groupby(split_by_column).filter(lambda x: len(x) >= min_rating)
 
 
 def min_rating_filter_spark(
@@ -103,10 +96,10 @@ def min_rating_filter_spark(
 
     Args:
         data (pyspark.sql.DataFrame): DataFrame of user-item tuples. Columns of user and item
-            should be present in the DataFrame while other columns like rating, 
+            should be present in the DataFrame while other columns like rating,
             timestamp, etc. can be optional.
         min_rating (int): minimum number of ratings for user or item.
-        filter_by (str): either "user" or "item", depending on which of the two is to 
+        filter_by (str): either "user" or "item", depending on which of the two is to
             filter with min_rating.
         col_user (str): column name of user ID.
         col_item (str): column name of item ID.
@@ -115,9 +108,7 @@ def min_rating_filter_spark(
         pyspark.sql.DataFrame: DataFrame with at least columns of user and item that has been filtered by the given specifications.
     """
 
-    split_by_column = _get_column_name(
-        filter_by, col_user, col_item
-    )
+    split_by_column = _get_column_name(filter_by, col_user, col_item)
 
     if min_rating < 1:
         raise ValueError("min_rating should be integer and larger than or equal to 1.")
@@ -125,12 +116,11 @@ def min_rating_filter_spark(
     if min_rating > 1:
         window = Window.partitionBy(split_by_column)
         data = (
-            data
-            .withColumn("_count", F.count(split_by_column).over(window))
+            data.withColumn("_count", F.count(split_by_column).over(window))
             .where(F.col("_count") >= min_rating)
             .drop("_count")
         )
-    
+
     return data
 
 

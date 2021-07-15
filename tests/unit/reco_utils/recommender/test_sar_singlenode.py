@@ -10,7 +10,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import urllib
 
-from reco_utils.common.constants import DEFAULT_PREDICTION_COL
+from reco_utils.utils.constants import DEFAULT_PREDICTION_COL
 from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
 
 

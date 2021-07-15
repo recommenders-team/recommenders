@@ -4,7 +4,7 @@
 from pyspark.sql.types import *
 from pyspark.sql import functions as F
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
 )
@@ -21,7 +21,7 @@ class DiversityEvaluation:
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
     ):
-        """Initializer. 
+        """Initializer.
 
         This is the Spark version of diversity metrics evaluator.
         The methods of this class calculate following diversity metrics:
@@ -163,7 +163,7 @@ class DiversityEvaluation:
 
     def user_diversity(self):
         """Calculate average diversity for recommendations for each user.
-       
+
         The metric definition is based on formula (3) in the following reference:
             - Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing serendipity into music recommendation, WSDM 2012
 
@@ -201,7 +201,7 @@ class DiversityEvaluation:
         The metric definition is based on following reference:
               - P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems: choice, discovery and relevance, ECIR 2011
               - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, eugeneyan.com, April 2020
-     
+
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_item, item_novelty.
         """
@@ -266,7 +266,7 @@ class DiversityEvaluation:
         The metric definition is based on following reference:
             - Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing serendipity into music recommendation, WSDM 2012
             - Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems, eugeneyan.com, April 2020
-        
+
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: col_user, col_item, user_item_serendipity.
         """
@@ -380,8 +380,6 @@ class DiversityEvaluation:
             "p(i)", F.col("count") / count_row_reco
         ).withColumn("entropy(i)", F.col("p(i)") * F.log2(F.col("p(i)")))
         # distributional coverage
-        d_coverage = -df_entropy.agg(
-            F.sum("entropy(i)")
-        ).collect()[0][0]
+        d_coverage = -df_entropy.agg(F.sum("entropy(i)")).collect()[0][0]
 
         return d_coverage

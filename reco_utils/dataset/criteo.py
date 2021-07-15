@@ -12,7 +12,7 @@ except ImportError:
     pass  # so the environment without spark doesn't break
 
 from reco_utils.dataset.download_utils import maybe_download, download_path
-from reco_utils.common.notebook_utils import is_databricks
+from reco_utils.utils.notebook_utils import is_databricks
 
 
 CRITEO_URL = {
@@ -40,11 +40,11 @@ def load_pandas_df(size="sample", local_cache_path=None, header=DEFAULT_HEADER):
     The schema is:
 
     .. code-block:: python
-        
+
         <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
 
-    More details (need to accept user terms to see the information): 
-    http://labs.criteo.com/2013/12/download-terabyte-click-logs/ 
+    More details (need to accept user terms to see the information):
+    http://labs.criteo.com/2013/12/download-terabyte-click-logs/
 
     Args:
         size (str): Dataset size. It can be "sample" or "full".
@@ -80,13 +80,13 @@ def load_spark_df(
     onto 32 bits for anonymization purposes.
 
     The schema is:
-    
+
     .. code-block:: python
-        
+
         <label> <integer feature 1> ... <integer feature 13> <categorical feature 1> ... <categorical feature 26>
 
-    More details (need to accept user terms to see the information): 
-    http://labs.criteo.com/2013/12/download-terabyte-click-logs/ 
+    More details (need to accept user terms to see the information):
+    http://labs.criteo.com/2013/12/download-terabyte-click-logs/
 
     Args:
         spark (pySpark.SparkSession): Spark session.
@@ -95,7 +95,7 @@ def load_spark_df(
         header (list): Dataset header names.
         dbfs_datapath (str): Where to store the extracted files on Databricks.
         dbutils (Databricks.dbutils): Databricks utility object.
-  
+
     Returns:
         pyspark.sql.DataFrame: Criteo DAC training dataset.
     """
@@ -145,10 +145,10 @@ def extract_criteo(size, compressed_file, path=None):
         size (str): Size of Criteo dataset. It can be "full" or "sample".
         compressed_file (str): Path to compressed file.
         path (str): Path to extract the file.
-    
+
     Returns:
         str: Path to the extracted file.
-    
+
     """
     if path is None:
         folder = os.path.dirname(compressed_file)

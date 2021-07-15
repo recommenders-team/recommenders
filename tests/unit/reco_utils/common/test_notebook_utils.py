@@ -3,12 +3,13 @@
 
 from pathlib import Path
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
 except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
-from reco_utils.common.notebook_utils import is_jupyter, is_databricks
+from reco_utils.utils.notebook_utils import is_jupyter, is_databricks
 
 
 @pytest.mark.notebooks

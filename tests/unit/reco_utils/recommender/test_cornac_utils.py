@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 import cornac
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,

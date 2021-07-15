@@ -5,7 +5,7 @@
 import numpy as np
 import pytest
 
-from reco_utils.common.python_utils import (
+from reco_utils.utils.python_utils import (
     exponential_decay,
     jaccard,
     lift,

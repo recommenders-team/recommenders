@@ -8,7 +8,7 @@ import fastai
 import fastprogress
 from fastprogress.fastprogress import force_console_behavior
 
-from reco_utils.common import constants as cc
+from reco_utils.utils import constants as cc
 
 
 def cartesian_product(*arrays):
@@ -38,7 +38,7 @@ def score(
     top_k=None,
 ):
     """Score all users+items provided and reduce to top_k items per user if top_k>0
-    
+
     Args:
         learner (object): Model.
         test_df (pandas.DataFrame): Test dataframe.
@@ -48,7 +48,7 @@ def score(
         top_k (int): Number of top items to recommend.
 
     Returns:
-        pandas.DataFrame: Result of recommendation 
+        pandas.DataFrame: Result of recommendation
     """
     # replace values not known to the model with NaN
     total_users, total_items = learner.data.train_ds.x.classes.values()

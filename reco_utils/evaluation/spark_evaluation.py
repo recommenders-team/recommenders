@@ -10,7 +10,7 @@ try:
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_PREDICTION_COL,
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -117,7 +117,7 @@ class SparkRatingEvaluation:
 
     def rmse(self):
         """Calculate Root Mean Squared Error.
-        
+
         Returns:
             float: Root mean squared error.
         """
@@ -125,7 +125,7 @@ class SparkRatingEvaluation:
 
     def mae(self):
         """Calculate Mean Absolute Error.
-        
+
         Returns:
             float: Mean Absolute Error.
         """
@@ -187,7 +187,7 @@ class SparkRankingEvaluation:
             col_rating (str): column name for rating.
             col_prediction (str): column name for prediction.
             k (int): number of items to recommend to each user.
-            relevancy_method (str): method for determining relevant items. Possible 
+            relevancy_method (str): method for determining relevant items. Possible
                 values are "top_k", "by_time_stamp", and "by_threshold".
             threshold (float): threshold for determining the relevant recommended items.
                 This is used for the case that predicted ratings follow a known
@@ -305,7 +305,7 @@ class SparkRankingEvaluation:
     def recall_at_k(self):
         """Get recall@K.
 
-        NOTE: 
+        NOTE:
             More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
@@ -320,7 +320,7 @@ class SparkRankingEvaluation:
     def ndcg_at_k(self):
         """Get Normalized Discounted Cumulative Gain (NDCG)
 
-        NOTE: 
+        NOTE:
             More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
 
         Return:
@@ -333,7 +333,7 @@ class SparkRankingEvaluation:
     def map_at_k(self):
         """Get mean average precision at k.
 
-        NOTE: 
+        NOTE:
             More details can be found `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
@@ -356,7 +356,7 @@ def _get_top_k_items(
     DataFrame, output a Spark DataFrame in the dense format of top k items
     for each user.
 
-    NOTE: 
+    NOTE:
         if it is implicit rating, just append a column of constants to be ratings.
 
     Args:
