@@ -51,7 +51,7 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `ms-recommenders` package from [PyPI](https://pypi.org). For instructions on how to do these, see [this guide](reco_utils/README.md).
+There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org). For instructions on how to do these, see [this guide](reco_utils/README.md).
 
 An alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md)
 
@@ -190,7 +190,7 @@ An example of how to create an Azure Databricks workspace and an Apache Spark cl
 
 ### Installation from PyPI
 
-The `ms-recommenders` package can be installed with core dependencies for utilities and CPU-based algorithms.
+The `recommenders` package can be installed with core dependencies for utilities and CPU-based algorithms.
 This is done from the _Libraries_ link at the cluster, selecting the option to import a library and selecting _PyPI_ in the menu.  
 For installations with more dependencies, see the steps below.
 
@@ -352,4 +352,4 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [re
 generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
-1. Publish the wheel and tar.gz to pypi: `twine upload ms_recommenders*`
+1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`

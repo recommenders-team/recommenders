@@ -8,7 +8,7 @@ We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommen
 
 Recommenders is now on PyPI and can be installed using pip! In addition there are lots of bug fixes and utilities improvements.
 
-Here you can find the PyPi page: https://pypi.org/project/ms-recommenders/
+Here you can find the PyPi page: https://pypi.org/project/recommenders/
 
 Here you can find the package documentation: https://microsoft-recommenders.readthedocs.io/en/latest/
 
@@ -48,7 +48,7 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 ```bash
 conda create -n my_environment_name python=3.6
 pip install --upgrade pip
-pip install ms-recommenders[examples]
+pip install recommenders[examples]
 ```
 
 3. Register your (conda or virtual) environment with Jupyter:
