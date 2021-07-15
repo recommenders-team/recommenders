@@ -5,7 +5,7 @@ import numpy as np
 import logging
 
 from pymanopt import Problem
-from reco_utils.recommender.rlrmc.conjugate_gradient_ms import ConjugateGradientMS
+from reco_utils.models.rlrmc.conjugate_gradient_ms import ConjugateGradientMS
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 from pymanopt.manifolds import Stiefel, PositiveDefinite, Product
 from math import sqrt
@@ -35,7 +35,7 @@ class RLRMCalgorithm(object):
         Args:
             rank (int): rank of the final model. Should be a positive integer.
             C (float): regularization parameter. Should be a positive real number.
-            model_param (dict): contains model parameters such as number of rows & columns of the matrix as well as 
+            model_param (dict): contains model parameters such as number of rows & columns of the matrix as well as
                 the mean rating in the training dataset.
             initialize_flag (str): flag to set the initialization step of the algorithm. Current options are 'random'
                 (which is random initilization) and 'svd' (which is a singular value decomposition based initilization).
@@ -67,12 +67,12 @@ class RLRMCalgorithm(object):
         return W0
 
     def fit_and_evaluate(self, RLRMCdata, verbosity=0):
-        """Main fit and evalute method for RLRMC. In addition to fitting the model, it also computes the per 
+        """Main fit and evalute method for RLRMC. In addition to fitting the model, it also computes the per
         iteration statistics in train (and validation) datasets.
 
         Args:
             RLRMCdata (RLRMCdataset): the RLRMCdataset object.
-            verbosity (int): verbosity of Pymanopt. Possible values are 0 (least verbose), 1, or 2 (most verbose). 
+            verbosity (int): verbosity of Pymanopt. Possible values are 0 (least verbose), 1, or 2 (most verbose).
         """
         # it calls fit method with appropriate arguments
         self.fit(RLRMCdata, verbosity, True)
@@ -82,7 +82,7 @@ class RLRMCalgorithm(object):
 
         Args:
             RLRMCdata (RLRMCdataset): the RLRMCdataset object.
-            verbosity (int): verbosity of Pymanopt. Possible values are 0 (least verbose), 1, or 2 (most verbose). 
+            verbosity (int): verbosity of Pymanopt. Possible values are 0 (least verbose), 1, or 2 (most verbose).
             _evaluate (bool): flag to compute the per iteration statistics in train (and validation) datasets.
         """
         # initialize the model
@@ -259,13 +259,13 @@ class RLRMCalgorithm(object):
 
     def predict(self, user_input, item_input, low_memory=False):
         """Predict function of this trained model
-            
+
         Args:
-            user_input ( list or element of list ): userID or userID list 
+            user_input ( list or element of list ): userID or userID list
             item_input ( list or element of list ): itemID or itemID list
-        
+
         Returns:
-            list or float: list of predicted rating or predicted rating score. 
+            list or float: list of predicted rating or predicted rating score.
         """
         # index converting
         user_input = np.array([self.user2id[x] for x in user_input])  # rows

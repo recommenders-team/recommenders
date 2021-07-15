@@ -3,10 +3,10 @@
 
 import tensorflow as tf
 from tensorflow.nn import dynamic_rnn
-from reco_utils.recommender.deeprec.models.sequential.sequential_base_model import (
+from reco_utils.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
-from reco_utils.recommender.deeprec.models.sequential.sum_cells import (
+from reco_utils.models.deeprec.models.sequential.sum_cells import (
     SUMCell,
     SUMV2Cell,
 )

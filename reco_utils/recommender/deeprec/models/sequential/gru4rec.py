@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
-from reco_utils.recommender.deeprec.models.sequential.sequential_base_model import (
+from reco_utils.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
 from tensorflow.contrib.rnn import GRUCell, LSTMCell

@@ -23,7 +23,7 @@ try:
         pandas_input_fn,
         pandas_input_fn_for_saved_model,
     )
-    from reco_utils.recommender.wide_deep.wide_deep_utils import (
+    from reco_utils.models.wide_deep.wide_deep_utils import (
         build_model,
         build_feature_columns,
     )

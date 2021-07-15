@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 
 try:
-    from reco_utils.recommender.ncf.ncf_singlenode import NCF
-    from reco_utils.recommender.ncf.dataset import Dataset
+    from reco_utils.models.ncf.ncf_singlenode import NCF
+    from reco_utils.models.ncf.dataset import Dataset
     from reco_utils.utils.constants import (
         DEFAULT_USER_COL,
         DEFAULT_ITEM_COL,

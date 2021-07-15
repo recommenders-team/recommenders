@@ -7,8 +7,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.recommender.newsrec.models.base_model import BaseModel
-from reco_utils.recommender.newsrec.models.layers import (
+from reco_utils.models.newsrec.models.base_model import BaseModel
+from reco_utils.models.newsrec.models.layers import (
     AttLayer2,
     ComputeMasking,
     OverwriteMasking,
@@ -20,7 +20,7 @@ __all__ = ["LSTURModel"]
 class LSTURModel(BaseModel):
     """LSTUR model(Neural News Recommendation with Multi-Head Self-Attention)
 
-    Mingxiao An, Fangzhao Wu, Chuhan Wu, Kun Zhang, Zheng Liu and Xing Xie: 
+    Mingxiao An, Fangzhao Wu, Chuhan Wu, Kun Zhang, Zheng Liu and Xing Xie:
     Neural News Recommendation with Long- and Short-term User Representations, ACL 2019
 
     Attributes:
@@ -32,7 +32,7 @@ class LSTURModel(BaseModel):
         """Initialization steps for LSTUR.
         Compared with the BaseModel, LSTUR need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
-        
+
         Args:
             hparams (object): Global hyper-parameters. Some key setttings such as type and gru_unit are there.
             iterator_creator_train (object): LSTUR data loader class for train data.
@@ -74,7 +74,7 @@ class LSTURModel(BaseModel):
         """The main function to create user encoder of LSTUR.
 
         Args:
-            titleencoder (object): the news encoder of LSTUR. 
+            titleencoder (object): the news encoder of LSTUR.
 
         Return:
             object: the user encoder of LSTUR.
@@ -132,7 +132,7 @@ class LSTURModel(BaseModel):
 
         Args:
             embedding_layer (object): a word embedding layer.
-        
+
         Return:
             object: the news encoder of LSTUR.
         """
@@ -162,7 +162,7 @@ class LSTURModel(BaseModel):
     def _build_lstur(self):
         """The main function to create LSTUR's logic. The core of LSTUR
         is a user encoder and a news encoder.
-        
+
         Returns:
             object: a model used to train.
             object: a model used to evaluate and inference.
@@ -176,7 +176,11 @@ class LSTURModel(BaseModel):
             shape=(hparams.npratio + 1, hparams.title_size), dtype="int32"
         )
         pred_input_title_one = keras.Input(
-            shape=(1, hparams.title_size,), dtype="int32"
+            shape=(
+                1,
+                hparams.title_size,
+            ),
+            dtype="int32",
         )
         pred_title_reshape = layers.Reshape((hparams.title_size,))(pred_input_title_one)
         user_indexes = keras.Input(shape=(1,), dtype="int32")

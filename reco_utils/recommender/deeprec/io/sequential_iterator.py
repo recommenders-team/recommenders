@@ -9,8 +9,8 @@ import random
 import os
 import time
 
-from reco_utils.recommender.deeprec.io.iterator import BaseIterator
-from reco_utils.recommender.deeprec.deeprec_utils import load_dict
+from reco_utils.models.deeprec.io.iterator import BaseIterator
+from reco_utils.models.deeprec.deeprec_utils import load_dict
 
 
 __all__ = ["SequentialIterator"]

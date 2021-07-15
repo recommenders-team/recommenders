@@ -12,7 +12,7 @@ import surprise
 
 
 import reco_utils.evaluation.python_evaluation as evaluation
-from reco_utils.recommender.surprise.surprise_utils import (
+from reco_utils.models.surprise.surprise_utils import (
     predict,
     compute_ranking_predictions,
 )

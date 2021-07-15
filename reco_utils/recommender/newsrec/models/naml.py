@@ -7,8 +7,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.recommender.newsrec.models.base_model import BaseModel
-from reco_utils.recommender.newsrec.models.layers import AttLayer2
+from reco_utils.models.newsrec.models.base_model import BaseModel
+from reco_utils.models.newsrec.models.layers import AttLayer2
 
 __all__ = ["NAMLModel"]
 
@@ -28,7 +28,7 @@ class NAMLModel(BaseModel):
         """Initialization steps for NAML.
         Compared with the BaseModel, NAML need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
-        
+
         Args:
             hparams (object): Global hyper-parameters. Some key setttings such as filter_num are there.
             iterator_creator_train (object): NAML data loader class for train data.
@@ -55,10 +55,10 @@ class NAMLModel(BaseModel):
         return input_feat, input_label
 
     def _get_user_feature_from_iter(self, batch_data):
-        """ get input of user encoder 
+        """get input of user encoder
         Args:
             batch_data: input batch data from user iterator
-        
+
         Returns:
             numpy.ndarray: input user feature (clicked title batch)
         """
@@ -72,10 +72,10 @@ class NAMLModel(BaseModel):
         return input_feature
 
     def _get_news_feature_from_iter(self, batch_data):
-        """ get input of news encoder
+        """get input of news encoder
         Args:
             batch_data: input batch data from news iterator
-        
+
         Returns:
             numpy.ndarray: input news feature (candidate title batch)
         """
@@ -103,7 +103,7 @@ class NAMLModel(BaseModel):
         """The main function to create user encoder of NAML.
 
         Args:
-            newsencoder (object): the news encoder of NAML. 
+            newsencoder (object): the news encoder of NAML.
 
         Return:
             object: the user encoder of NAML.
@@ -132,7 +132,7 @@ class NAMLModel(BaseModel):
 
         Args:
             embedding_layer (object): a word embedding layer.
-        
+
         Return:
             object: the news encoder of NAML.
         """
@@ -180,7 +180,7 @@ class NAMLModel(BaseModel):
 
         Args:
             embedding_layer (object): a word embedding layer.
-        
+
         Return:
             object: the title encoder of NAML.
         """
@@ -209,7 +209,7 @@ class NAMLModel(BaseModel):
 
         Args:
             embedding_layer (object): a word embedding layer.
-        
+
         Return:
             object: the body encoder of NAML.
         """
@@ -286,7 +286,7 @@ class NAMLModel(BaseModel):
     def _build_naml(self):
         """The main function to create NAML's logic. The core of NAML
         is a user encoder and a news encoder.
-        
+
         Returns:
             object: a model used to train.
             object: a model used to evaluate and predict.
@@ -312,9 +312,19 @@ class NAMLModel(BaseModel):
         pred_input_subvert = keras.Input(shape=(hparams.npratio + 1, 1), dtype="int32")
 
         pred_input_title_one = keras.Input(
-            shape=(1, hparams.title_size,), dtype="int32"
+            shape=(
+                1,
+                hparams.title_size,
+            ),
+            dtype="int32",
         )
-        pred_input_body_one = keras.Input(shape=(1, hparams.body_size,), dtype="int32")
+        pred_input_body_one = keras.Input(
+            shape=(
+                1,
+                hparams.body_size,
+            ),
+            dtype="int32",
+        )
         pred_input_vert_one = keras.Input(shape=(1, 1), dtype="int32")
         pred_input_subvert_one = keras.Input(shape=(1, 1), dtype="int32")
 

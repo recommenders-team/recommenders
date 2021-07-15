@@ -11,7 +11,7 @@ from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.recommender.cornac.cornac_utils import predict, predict_ranking
+from reco_utils.models.cornac.cornac_utils import predict, predict_ranking
 from reco_utils.evaluation.python_evaluation import mae, rmse, ndcg_at_k, recall_at_k
 
 TOL = 0.001

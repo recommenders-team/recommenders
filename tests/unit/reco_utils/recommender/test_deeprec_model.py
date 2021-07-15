@@ -8,27 +8,27 @@ from reco_utils.datasets.amazon_reviews import download_and_extract, data_prepro
 from reco_utils.datasets.python_splitters import python_stratified_split
 
 try:
-    from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
-    from reco_utils.recommender.deeprec.deeprec_utils import (
+    from reco_utils.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+    from reco_utils.models.deeprec.deeprec_utils import (
         prepare_hparams,
         download_deeprec_resources,
     )
-    from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
-    from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import (
+    from reco_utils.models.deeprec.io.iterator import FFMTextIterator
+    from reco_utils.models.deeprec.io.dkn_item2item_iterator import (
         DKNItem2itemTextIterator,
     )
-    from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
-    from reco_utils.recommender.deeprec.io.nextitnet_iterator import NextItNetIterator
-    from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
-    from reco_utils.recommender.deeprec.models.dkn import DKN
-    from reco_utils.recommender.deeprec.models.dkn_item2item import DKNItem2Item
-    from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
-    from reco_utils.recommender.deeprec.models.sequential.nextitnet import (
+    from reco_utils.models.deeprec.io.dkn_iterator import DKNTextIterator
+    from reco_utils.models.deeprec.io.nextitnet_iterator import NextItNetIterator
+    from reco_utils.models.deeprec.io.sequential_iterator import SequentialIterator
+    from reco_utils.models.deeprec.models.dkn import DKN
+    from reco_utils.models.deeprec.models.dkn_item2item import DKNItem2Item
+    from reco_utils.models.deeprec.models.graphrec.lightgcn import LightGCN
+    from reco_utils.models.deeprec.models.sequential.nextitnet import (
         NextItNetModel,
     )
-    from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
-    from reco_utils.recommender.deeprec.models.sequential.sum import SUMModel
-    from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
+    from reco_utils.models.deeprec.models.sequential.sli_rec import SLI_RECModel
+    from reco_utils.models.deeprec.models.sequential.sum import SUMModel
+    from reco_utils.models.deeprec.models.xDeepFM import XDeepFMModel
 except ImportError:
     pass  # skip this import if we are in cpu environment
 

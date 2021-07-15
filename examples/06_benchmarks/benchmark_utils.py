@@ -19,21 +19,21 @@ from reco_utils.utils.constants import (
 )
 from reco_utils.utils.timer import Timer
 from reco_utils.utils.spark_utils import start_or_get_spark
-from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
-from reco_utils.recommender.ncf.ncf_singlenode import NCF
-from reco_utils.recommender.ncf.dataset import Dataset as NCFDataset
-from reco_utils.recommender.surprise.surprise_utils import (
+from reco_utils.models.sar.sar_singlenode import SARSingleNode
+from reco_utils.models.ncf.ncf_singlenode import NCF
+from reco_utils.models.ncf.dataset import Dataset as NCFDataset
+from reco_utils.models.surprise.surprise_utils import (
     predict,
     compute_ranking_predictions,
 )
-from reco_utils.recommender.fastai.fastai_utils import (
+from reco_utils.models.fastai.fastai_utils import (
     cartesian_product,
     score,
 )
-from reco_utils.recommender.cornac.cornac_utils import predict_ranking
-from reco_utils.recommender.deeprec.models.graphrec.lightgcn import LightGCN
-from reco_utils.recommender.deeprec.DataModel.ImplicitCF import ImplicitCF
-from reco_utils.recommender.deeprec.deeprec_utils import prepare_hparams
+from reco_utils.models.cornac.cornac_utils import predict_ranking
+from reco_utils.models.deeprec.models.graphrec.lightgcn import LightGCN
+from reco_utils.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+from reco_utils.models.deeprec.deeprec_utils import prepare_hparams
 from reco_utils.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
     SparkRankingEvaluation,

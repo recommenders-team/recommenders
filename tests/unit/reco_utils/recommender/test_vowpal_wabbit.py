@@ -6,7 +6,7 @@ import pytest
 from unittest import mock
 import pandas as pd
 
-from reco_utils.recommender.vowpal_wabbit.vw import VW
+from reco_utils.models.vowpal_wabbit.vw import VW
 
 
 @pytest.fixture(scope="module")
@@ -114,7 +114,7 @@ def test_fit_and_predict(model, df):
         f.writelines(["1 0\n", "3 1\n", "5 2\n"])
 
     # patch subprocess call to vw
-    with mock.patch("reco_utils.recommender.vowpal_wabbit.vw.run") as mock_run:
+    with mock.patch("reco_utils.models.vowpal_wabbit.vw.run") as mock_run:
         model.fit(df)
         result = model.predict(df)
 

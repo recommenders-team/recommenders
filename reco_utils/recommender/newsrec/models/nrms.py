@@ -7,8 +7,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.recommender.newsrec.models.base_model import BaseModel
-from reco_utils.recommender.newsrec.models.layers import AttLayer2, SelfAttention
+from reco_utils.models.newsrec.models.base_model import BaseModel
+from reco_utils.models.newsrec.models.layers import AttLayer2, SelfAttention
 
 __all__ = ["NRMSModel"]
 
@@ -17,8 +17,8 @@ class NRMSModel(BaseModel):
     """NRMS model(Neural News Recommendation with Multi-Head Self-Attention)
 
     Chuhan Wu, Fangzhao Wu, Suyu Ge, Tao Qi, Yongfeng Huang,and Xing Xie, "Neural News
-    Recommendation with Multi-Head Self-Attention" in Proceedings of the 2019 Conference 
-    on Empirical Methods in Natural Language Processing and the 9th International Joint Conference 
+    Recommendation with Multi-Head Self-Attention" in Proceedings of the 2019 Conference
+    on Empirical Methods in Natural Language Processing and the 9th International Joint Conference
     on Natural Language Processing (EMNLP-IJCNLP)
 
     Attributes:
@@ -27,12 +27,15 @@ class NRMSModel(BaseModel):
     """
 
     def __init__(
-        self, hparams, iterator_creator, seed=None,
+        self,
+        hparams,
+        iterator_creator,
+        seed=None,
     ):
         """Initialization steps for NRMS.
         Compared with the BaseModel, NRMS need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
-        
+
         Args:
             hparams (object): Global hyper-parameters. Some key setttings such as head_num and head_dim are there.
             iterator_creator_train (object): NRMS data loader class for train data.
@@ -41,13 +44,15 @@ class NRMSModel(BaseModel):
         self.word2vec_embedding = self._init_embedding(hparams.wordEmb_file)
 
         super().__init__(
-            hparams, iterator_creator, seed=seed,
+            hparams,
+            iterator_creator,
+            seed=seed,
         )
 
     def _get_input_label_from_iter(self, batch_data):
-        """ get input and labels for trainning from iterator
+        """get input and labels for trainning from iterator
 
-        Args: 
+        Args:
             batch data: input batch data from iterator
 
         Returns:
@@ -62,20 +67,20 @@ class NRMSModel(BaseModel):
         return input_feat, input_label
 
     def _get_user_feature_from_iter(self, batch_data):
-        """ get input of user encoder 
+        """get input of user encoder
         Args:
             batch_data: input batch data from user iterator
-        
+
         Returns:
             numpy.ndarray: input user feature (clicked title batch)
         """
         return batch_data["clicked_title_batch"]
 
     def _get_news_feature_from_iter(self, batch_data):
-        """ get input of news encoder
+        """get input of news encoder
         Args:
             batch_data: input batch data from news iterator
-        
+
         Returns:
             numpy.ndarray: input news feature (candidate title batch)
         """
@@ -96,7 +101,7 @@ class NRMSModel(BaseModel):
         """The main function to create user encoder of NRMS.
 
         Args:
-            titleencoder (object): the news encoder of NRMS. 
+            titleencoder (object): the news encoder of NRMS.
 
         Return:
             object: the user encoder of NRMS.
@@ -120,7 +125,7 @@ class NRMSModel(BaseModel):
 
         Args:
             embedding_layer (object): a word embedding layer.
-        
+
         Return:
             object: the news encoder of NRMS.
         """
@@ -140,7 +145,7 @@ class NRMSModel(BaseModel):
     def _build_nrms(self):
         """The main function to create NRMS's logic. The core of NRMS
         is a user encoder and a news encoder.
-        
+
         Returns:
             object: a model used to train.
             object: a model used to evaluate and inference.
@@ -154,7 +159,11 @@ class NRMSModel(BaseModel):
             shape=(hparams.npratio + 1, hparams.title_size), dtype="int32"
         )
         pred_input_title_one = keras.Input(
-            shape=(1, hparams.title_size,), dtype="int32"
+            shape=(
+                1,
+                hparams.title_size,
+            ),
+            dtype="int32",
         )
         pred_title_one_reshape = layers.Reshape((hparams.title_size,))(
             pred_input_title_one

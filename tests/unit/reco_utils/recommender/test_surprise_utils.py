@@ -11,7 +11,7 @@ from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.recommender.surprise.surprise_utils import (
+from reco_utils.models.surprise.surprise_utils import (
     predict,
     compute_ranking_predictions,
 )

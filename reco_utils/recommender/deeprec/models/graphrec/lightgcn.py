@@ -31,7 +31,7 @@ class LightGCN(object):
 
         Args:
             hparams (object): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-            data (object): A reco_utils.recommender.deeprec.DataModel.ImplicitCF object, load and process data.
+            data (object): A reco_utils.models.deeprec.DataModel.ImplicitCF object, load and process data.
             seed (int): Seed.
 
         """

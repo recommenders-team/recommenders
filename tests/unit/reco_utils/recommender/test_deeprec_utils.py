@@ -6,18 +6,18 @@ import pytest
 from reco_utils.datasets.amazon_reviews import download_and_extract, data_preprocessing
 
 try:
-    from reco_utils.recommender.deeprec.deeprec_utils import (
+    from reco_utils.models.deeprec.deeprec_utils import (
         prepare_hparams,
         download_deeprec_resources,
         load_yaml,
     )
-    from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
-    from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import (
+    from reco_utils.models.deeprec.io.iterator import FFMTextIterator
+    from reco_utils.models.deeprec.io.dkn_item2item_iterator import (
         DKNItem2itemTextIterator,
     )
-    from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
-    from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
-    from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
+    from reco_utils.models.deeprec.io.dkn_iterator import DKNTextIterator
+    from reco_utils.models.deeprec.io.sequential_iterator import SequentialIterator
+    from reco_utils.models.deeprec.models.sequential.sli_rec import SLI_RECModel
     import tensorflow as tf
 except ImportError:
     pass  # skip this import if we are in cpu environment

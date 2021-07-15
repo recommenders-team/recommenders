@@ -7,8 +7,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.recommender.newsrec.models.base_model import BaseModel
-from reco_utils.recommender.newsrec.models.layers import PersonalizedAttentivePooling
+from reco_utils.models.newsrec.models.base_model import BaseModel
+from reco_utils.models.newsrec.models.layers import PersonalizedAttentivePooling
 
 __all__ = ["NPAModel"]
 
@@ -28,7 +28,7 @@ class NPAModel(BaseModel):
         """Initialization steps for MANL.
         Compared with the BaseModel, NPA need word embedding.
         After creating word embedding matrix, BaseModel's __init__ method will be called.
-        
+
         Args:
             hparams (object): Global hyper-parameters. Some key setttings such as filter_num are there.
             iterator_creator_train (object): NPA data loader class for train data.
@@ -64,7 +64,7 @@ class NPAModel(BaseModel):
         """The main function to create user encoder of NPA.
 
         Args:
-            titleencoder (object): the news encoder of NPA. 
+            titleencoder (object): the news encoder of NPA.
 
         Return:
             object: the user encoder of NPA.
@@ -102,7 +102,7 @@ class NPAModel(BaseModel):
 
         Args:
             embedding_layer (object): a word embedding layer.
-        
+
         Return:
             object: the news encoder of NPA.
         """
@@ -148,7 +148,7 @@ class NPAModel(BaseModel):
     def _build_npa(self):
         """The main function to create NPA's logic. The core of NPA
         is a user encoder and a news encoder.
-        
+
         Returns:
             object: a model used to train.
             object: a model used to evaluate and predict.
@@ -162,7 +162,11 @@ class NPAModel(BaseModel):
             shape=(hparams.npratio + 1, hparams.title_size), dtype="int32"
         )
         pred_input_title_one = keras.Input(
-            shape=(1, hparams.title_size,), dtype="int32"
+            shape=(
+                1,
+                hparams.title_size,
+            ),
+            dtype="int32",
         )
         pred_title_one_reshape = layers.Reshape((hparams.title_size,))(
             pred_input_title_one

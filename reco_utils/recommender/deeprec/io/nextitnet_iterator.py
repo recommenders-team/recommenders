@@ -5,8 +5,8 @@ import tensorflow as tf
 import numpy as np
 import random
 
-from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
-from reco_utils.recommender.deeprec.deeprec_utils import load_dict
+from reco_utils.models.deeprec.io.sequential_iterator import SequentialIterator
+from reco_utils.models.deeprec.deeprec_utils import load_dict
 
 
 __all__ = ["NextItNetIterator"]

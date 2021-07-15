@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
-from reco_utils.recommender.deeprec.models.sequential.sequential_base_model import (
+from reco_utils.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
 from tensorflow.nn import dynamic_rnn
-from reco_utils.recommender.deeprec.models.sequential.rnn_cell_implement import (
+from reco_utils.models.deeprec.models.sequential.rnn_cell_implement import (
     Time4LSTMCell,
 )
 

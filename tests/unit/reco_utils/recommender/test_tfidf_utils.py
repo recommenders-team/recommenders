@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import pytest
-from reco_utils.recommender.tfidf.tfidf_utils import TfidfRecommender
+from reco_utils.models.tfidf.tfidf_utils import TfidfRecommender
 import pandas as pd
 import scipy
 

@@ -8,7 +8,7 @@ import os
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from reco_utils.recommender.deeprec.deeprec_utils import cal_metric
+from reco_utils.models.deeprec.deeprec_utils import cal_metric
 
 
 __all__ = ["BaseModel"]
@@ -532,8 +532,8 @@ class BaseModel:
             group_keys (list): group key list.
 
         Returns:
-            list, list: 
-            - Labels after group. 
+            list, list:
+            - Labels after group.
             - Predictions after group.
         """
         all_keys = list(set(group_keys))

@@ -11,7 +11,7 @@ from pandas.testing import assert_frame_equal
 import urllib
 
 from reco_utils.utils.constants import DEFAULT_PREDICTION_COL
-from reco_utils.recommender.sar.sar_singlenode import SARSingleNode
+from reco_utils.models.sar.sar_singlenode import SARSingleNode
 
 
 def _csv_reader_url(url, delimiter=",", encoding="utf-8"):

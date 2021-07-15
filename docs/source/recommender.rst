@@ -8,7 +8,7 @@ Recommender system algorithms and utilities.
 Cornac
 ******************************
 
-.. automodule:: reco_utils.recommender.cornac.cornac_utils
+.. automodule:: reco_utils.models.cornac.cornac_utils
     :members:
 
 DeepRec
@@ -16,27 +16,27 @@ DeepRec
 
 Base model
 ==================
-.. automodule:: reco_utils.recommender.deeprec.models.base_model
+.. automodule:: reco_utils.models.deeprec.models.base_model
     :members:
 
 DKN
 ==================
-.. automodule:: reco_utils.recommender.deeprec.models.dkn
+.. automodule:: reco_utils.models.deeprec.models.dkn
     :members:
 
 DKN item-to-item
 ==================
-.. automodule:: reco_utils.recommender.deeprec.models.dkn_item2item
+.. automodule:: reco_utils.models.deeprec.models.dkn_item2item
     :members:
 
 LightGCN
 ==================
-.. automodule:: reco_utils.recommender.deeprec.models.graphrec.lightgcn
+.. automodule:: reco_utils.models.deeprec.models.graphrec.lightgcn
     :members:
 
 xDeepFM
 ==============
-.. automodule:: reco_utils.recommender.deeprec.models.xDeepFM
+.. automodule:: reco_utils.models.deeprec.models.xDeepFM
     :members:
 
 Sequential models
@@ -44,202 +44,202 @@ Sequential models
 
 Sequential base model
 ---------------------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.sequential_base_model
+.. automodule:: reco_utils.models.deeprec.models.sequential.sequential_base_model
     :members:
 
 A2SVD
 -------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.asvd
+.. automodule:: reco_utils.models.deeprec.models.sequential.asvd
     :members:
 
 Caser
 ----------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.caser
+.. automodule:: reco_utils.models.deeprec.models.sequential.caser
     :members:
 
 GRU4Rec
 --------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.gru4rec
+.. automodule:: reco_utils.models.deeprec.models.sequential.gru4rec
     :members:
 
 NextItNet
 --------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.nextitnet
+.. automodule:: reco_utils.models.deeprec.models.sequential.nextitnet
     :members:
 
 RNN Cells
 ------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.rnn_cell_implement
+.. automodule:: reco_utils.models.deeprec.models.sequential.rnn_cell_implement
     :members:
 
 SUM
 -------------------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.sum
+.. automodule:: reco_utils.models.deeprec.models.sequential.sum
     :members:
 
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.sum_cells
+.. automodule:: reco_utils.models.deeprec.models.sequential.sum_cells
     :members:
 
 SLIRec
 -------------
-.. automodule:: reco_utils.recommender.deeprec.models.sequential.sli_rec
+.. automodule:: reco_utils.models.deeprec.models.sequential.sli_rec
     :members:
 
 Iterators
 ===========
 
-.. automodule:: reco_utils.recommender.deeprec.io.iterator
+.. automodule:: reco_utils.models.deeprec.io.iterator
     :members:
 
-.. automodule:: reco_utils.recommender.deeprec.io.dkn_iterator
+.. automodule:: reco_utils.models.deeprec.io.dkn_iterator
     :members:
 
-.. automodule:: reco_utils.recommender.deeprec.io.dkn_item2item_iterator
+.. automodule:: reco_utils.models.deeprec.io.dkn_item2item_iterator
     :members:
 
-.. automodule:: reco_utils.recommender.deeprec.io.nextitnet_iterator
+.. automodule:: reco_utils.models.deeprec.io.nextitnet_iterator
     :members:
 
-.. automodule:: reco_utils.recommender.deeprec.io.sequential_iterator
+.. automodule:: reco_utils.models.deeprec.io.sequential_iterator
     :members:
 
 Data processing utilities
 ===========================
 
-.. automodule:: reco_utils.recommender.deeprec.DataModel.ImplicitCF
+.. automodule:: reco_utils.models.deeprec.DataModel.ImplicitCF
     :members:
 
 Utilities
 ============
 
-.. automodule:: reco_utils.recommender.deeprec.deeprec_utils
+.. automodule:: reco_utils.models.deeprec.deeprec_utils
     :members:
 
 FastAI
 ******************************
 
-.. automodule:: reco_utils.recommender.fastai.fastai_utils
+.. automodule:: reco_utils.models.fastai.fastai_utils
     :members:
 
 GeoIMC
 ******************************
 
-.. automodule:: reco_utils.recommender.geoimc.geoimc_algorithm
+.. automodule:: reco_utils.models.geoimc.geoimc_algorithm
     :members:
 
-.. automodule:: reco_utils.recommender.geoimc.geoimc_data
+.. automodule:: reco_utils.models.geoimc.geoimc_data
     :members:
 
-.. automodule:: reco_utils.recommender.geoimc.geoimc_predict
+.. automodule:: reco_utils.models.geoimc.geoimc_predict
     :members:
 
-.. automodule:: reco_utils.recommender.geoimc.geoimc_utils
+.. automodule:: reco_utils.models.geoimc.geoimc_utils
     :members:
 
 LightFM
 ******************************
 
-.. automodule:: reco_utils.recommender.lightfm.lightfm_utils
+.. automodule:: reco_utils.models.lightfm.lightfm_utils
     :members:
 
 LightGBM
 ******************************
 
-.. automodule:: reco_utils.recommender.lightgbm.lightgbm_utils
+.. automodule:: reco_utils.models.lightgbm.lightgbm_utils
     :members:
 
 NCF
 ******************************
 
-.. automodule:: reco_utils.recommender.ncf.dataset
+.. automodule:: reco_utils.models.ncf.dataset
     :members:
 
-.. automodule:: reco_utils.recommender.ncf.ncf_singlenode
+.. automodule:: reco_utils.models.ncf.ncf_singlenode
     :members:
 
 NewsRec
 ******************************
 
-.. automodule:: reco_utils.recommender.newsrec.io.mind_all_iterator
+.. automodule:: reco_utils.models.newsrec.io.mind_all_iterator
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.io.mind_iterator
+.. automodule:: reco_utils.models.newsrec.io.mind_iterator
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.models.base_model
+.. automodule:: reco_utils.models.newsrec.models.base_model
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.models.layers
+.. automodule:: reco_utils.models.newsrec.models.layers
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.models.lstur
+.. automodule:: reco_utils.models.newsrec.models.lstur
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.models.naml
+.. automodule:: reco_utils.models.newsrec.models.naml
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.models.npa
+.. automodule:: reco_utils.models.newsrec.models.npa
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.models.nrms
+.. automodule:: reco_utils.models.newsrec.models.nrms
     :members:
 
-.. automodule:: reco_utils.recommender.newsrec.newsrec_utils
+.. automodule:: reco_utils.models.newsrec.newsrec_utils
     :members:
 
 RBM
 ******************************
 
-.. automodule:: reco_utils.recommender.rbm.rbm
+.. automodule:: reco_utils.models.rbm.rbm
     :members:
 
 
 RLRMC
 ******************************
 
-.. automodule:: reco_utils.recommender.rlrmc.RLRMCalgorithm
+.. automodule:: reco_utils.models.rlrmc.RLRMCalgorithm
     :members:
 
-.. automodule:: reco_utils.recommender.rlrmc.RLRMCdataset
+.. automodule:: reco_utils.models.rlrmc.RLRMCdataset
     :members:
 
-.. automodule:: reco_utils.recommender.rlrmc.conjugate_gradient_ms
+.. automodule:: reco_utils.models.rlrmc.conjugate_gradient_ms
     :members:
 
 
 SAR
 ******************************
 
-.. automodule:: reco_utils.recommender.sar.sar_singlenode
+.. automodule:: reco_utils.models.sar.sar_singlenode
     :members:
 
 
 Surprise
 ******************************
 
-.. automodule:: reco_utils.recommender.surprise.surprise_utils
+.. automodule:: reco_utils.models.surprise.surprise_utils
     :members:
 
 
 TF-IDF
 ******************************
 
-.. automodule:: reco_utils.recommender.tfidf.tfidf_utils
+.. automodule:: reco_utils.models.tfidf.tfidf_utils
     :members:
 
 
 VAE
 ******************************
 
-.. automodule:: reco_utils.recommender.vae.multinomial_vae
+.. automodule:: reco_utils.models.vae.multinomial_vae
     :members:
 
-.. automodule:: reco_utils.recommender.vae.standard_vae
+.. automodule:: reco_utils.models.vae.standard_vae
     :members:
 
 
 Wide & Deep
 ******************************
 
-.. automodule:: reco_utils.recommender.wide_deep.wide_deep_utils
+.. automodule:: reco_utils.models.wide_deep.wide_deep_utils
     :members:

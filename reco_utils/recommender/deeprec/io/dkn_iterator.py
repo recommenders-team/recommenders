@@ -4,7 +4,7 @@
 import tensorflow as tf
 import numpy as np
 
-from reco_utils.recommender.deeprec.io.iterator import BaseIterator
+from reco_utils.models.deeprec.io.iterator import BaseIterator
 
 
 __all__ = ["DKNTextIterator"]
@@ -216,8 +216,8 @@ class DKNTextIterator(BaseIterator):
             infile (str): text input file. Each line in this file is an instance.
 
         Yields:
-            obj, list, int: 
-            - An iterator that yields parsed results, in the format of graph `feed_dict`. 
+            obj, list, int:
+            - An iterator that yields parsed results, in the format of graph `feed_dict`.
             - Impression id list.
             - Size of the data in a batch.
         """

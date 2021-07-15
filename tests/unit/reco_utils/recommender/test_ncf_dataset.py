@@ -7,7 +7,7 @@ from reco_utils.utils.constants import (
     DEFAULT_ITEM_COL,
     SEED,
 )
-from reco_utils.recommender.ncf.dataset import Dataset
+from reco_utils.models.ncf.dataset import Dataset
 
 
 N_NEG = 5
