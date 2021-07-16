@@ -80,6 +80,7 @@ def test_lightgbm(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
+@pytest.mark.skip(reason="Wikidata API is unstable")
 def test_wikidata_runs(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["wikidata_knowledge_graph"]
     MOVIELENS_SAMPLE_SIZE = 5
