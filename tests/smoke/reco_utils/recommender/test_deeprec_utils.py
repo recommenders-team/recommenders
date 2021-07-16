@@ -3,21 +3,25 @@
 
 import os
 import pytest
+
 try:
     import tensorflow as tf
-    from reco_utils.dataset.amazon_reviews import download_and_extract, data_preprocessing
-    from reco_utils.recommender.deeprec.deeprec_utils import (
+    from reco_utils.datasets.amazon_reviews import (
+        download_and_extract,
+        data_preprocessing,
+    )
+    from reco_utils.models.deeprec.deeprec_utils import (
         prepare_hparams,
         download_deeprec_resources,
         load_yaml,
     )
-    from reco_utils.recommender.deeprec.io.dkn_iterator import DKNTextIterator
-    from reco_utils.recommender.deeprec.io.dkn_item2item_iterator import (
+    from reco_utils.models.deeprec.io.dkn_iterator import DKNTextIterator
+    from reco_utils.models.deeprec.io.dkn_item2item_iterator import (
         DKNItem2itemTextIterator,
     )
-    from reco_utils.recommender.deeprec.io.iterator import FFMTextIterator
-    from reco_utils.recommender.deeprec.io.sequential_iterator import SequentialIterator
-    from reco_utils.recommender.deeprec.models.sequential.sli_rec import SLI_RECModel
+    from reco_utils.models.deeprec.io.iterator import FFMTextIterator
+    from reco_utils.models.deeprec.io.sequential_iterator import SequentialIterator
+    from reco_utils.models.deeprec.models.sequential.sli_rec import SLI_RECModel
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 

@@ -13,7 +13,7 @@ try:
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_PREDICTION_COL,
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -496,19 +496,19 @@ class SparkDiversityEvaluation:
 
         This is the Spark version of diversity metrics evaluator.
         The methods of this class calculate the following diversity metrics:
-        
+
         * Coverage - The proportion of items that can be recommended. It includes two metrics:
-            
+
             1. catalog_coverage, which measures the proportion of items that get recommended from the item catalog;
-            2. distributional_coverage, which measures how unequally different items are recommended in the 
+            2. distributional_coverage, which measures how unequally different items are recommended in the
                recommendations to all users.
-        
+
         * Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.
         * Diversity - The dissimilarity of items being recommended.
         * Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used, it indicates how "pleasant surprise" of recommendations is to a user.
 
         The metric definitions/formulations are based on the following references with modification:
-            
+
         :Citation:
 
             G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
@@ -701,10 +701,10 @@ class SparkDiversityEvaluation:
             P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
             choice, discovery and relevance, ECIR 2011
 
-        The novelty of an item can be defined relative to a set of observed events on the set of all items. 
-        These can be events of user choice (item "is picked" by a random user) or user discovery 
-        (item "is known" to a random user). The above definition of novelty reflects a factor of item popularity. 
-        High novelty values correspond to long-tail items in the density function, that few users have interacted 
+        The novelty of an item can be defined relative to a set of observed events on the set of all items.
+        These can be events of user choice (item "is picked" by a random user) or user discovery
+        (item "is known" to a random user). The above definition of novelty reflects a factor of item popularity.
+        High novelty values correspond to long-tail items in the density function, that few users have interacted
         with and low novelty values correspond to popular head items.
 
         Returns:
@@ -722,7 +722,7 @@ class SparkDiversityEvaluation:
         return self.df_item_novelty
 
     def novelty(self):
-        """Calculate the average novelty in a list of recommended items (this assumes that the recommendation list 
+        """Calculate the average novelty in a list of recommended items (this assumes that the recommendation list
         is already computed). Follows section 5 from
 
         :Citation:
@@ -737,15 +737,12 @@ class SparkDiversityEvaluation:
             self.df_item_novelty = self.historical_item_novelty()
             n_recommendations = self.reco_df.count()
             self.df_novelty = (
-                self.reco_df
-                .groupBy(self.col_item)
+                self.reco_df.groupBy(self.col_item)
                 .count()
-                .join(
-                    self.df_item_novelty,
-                    self.col_item
-                )
+                .join(self.df_item_novelty, self.col_item)
                 .selectExpr("sum(count * item_novelty)")
-                .first()[0] / n_recommendations
+                .first()[0]
+                / n_recommendations
             )
         return self.df_novelty
 

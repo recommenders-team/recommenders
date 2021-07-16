@@ -1,7 +1,7 @@
 import argparse
 
 from azureml.studio.core.logger import module_logger as logger
-from reco_utils.dataset.python_splitters import python_stratified_split
+from reco_utils.datasets.python_splitters import python_stratified_split
 from azureml.studio.core.data_frame_schema import DataFrameSchema
 from azureml.studio.core.io.data_frame_directory import (
     load_data_frame_from_directory,
@@ -13,30 +13,41 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
-        "--input-path", help="The input directory.",
+        "--input-path",
+        help="The input directory.",
     )
 
     parser.add_argument(
-        "--ratio", type=float, help="A float parameter.",
+        "--ratio",
+        type=float,
+        help="A float parameter.",
     )
 
     parser.add_argument(
-        "--col-user", type=str, help="A string parameter.",
+        "--col-user",
+        type=str,
+        help="A string parameter.",
     )
 
     parser.add_argument(
-        "--col-item", type=str, help="A string parameter.",
+        "--col-item",
+        type=str,
+        help="A string parameter.",
     )
 
     parser.add_argument(
-        "--seed", type=int, help="An int parameter.",
+        "--seed",
+        type=int,
+        help="An int parameter.",
     )
 
     parser.add_argument(
-        "--output-train", help="The output training data directory.",
+        "--output-train",
+        help="The output training data directory.",
     )
     parser.add_argument(
-        "--output-test", help="The output test data directory.",
+        "--output-test",
+        help="The output test data directory.",
     )
 
     args, _ = parser.parse_known_args()

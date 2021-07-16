@@ -4,7 +4,7 @@
 import pytest
 import os
 import requests
-from reco_utils.dataset.mind import download_mind, extract_mind
+from reco_utils.datasets.mind import download_mind, extract_mind
 
 
 @pytest.mark.smoke

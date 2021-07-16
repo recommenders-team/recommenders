@@ -3,12 +3,13 @@
 
 import os
 import pytest
+
 try:
     import tensorflow as tf
-    from reco_utils.recommender.newsrec.newsrec_utils import prepare_hparams, load_yaml
-    from reco_utils.recommender.deeprec.deeprec_utils import download_deeprec_resources
-    from reco_utils.recommender.newsrec.io.mind_iterator import MINDIterator
-    from reco_utils.recommender.newsrec.io.mind_all_iterator import MINDAllIterator
+    from reco_utils.models.newsrec.newsrec_utils import prepare_hparams, load_yaml
+    from reco_utils.models.deeprec.deeprec_utils import download_deeprec_resources
+    from reco_utils.models.newsrec.io.mind_iterator import MINDIterator
+    from reco_utils.models.newsrec.io.mind_all_iterator import MINDAllIterator
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 

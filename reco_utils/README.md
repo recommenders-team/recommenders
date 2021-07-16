@@ -85,7 +85,7 @@ It is also possible to install directly from GitHub. Or from a specific branch a
 
 # Contents
 
-## [Common](common)
+## [Utils](utils)
 
 This submodule contains high-level utilities for defining constants used in most algorithms as well as helper functions for managing aspects of different frameworks: GPU, Spark, Jupyter notebook.
 

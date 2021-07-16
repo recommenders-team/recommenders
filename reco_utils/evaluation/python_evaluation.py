@@ -13,7 +13,7 @@ from sklearn.metrics import (
     log_loss,
 )
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -21,7 +21,7 @@ from reco_utils.common.constants import (
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
-from reco_utils.dataset.pandas_df_utils import (
+from reco_utils.datasets.pandas_df_utils import (
     has_columns,
     has_same_base_dtype,
     lru_cache_df,
@@ -31,14 +31,14 @@ from reco_utils.dataset.pandas_df_utils import (
 def check_column_dtypes(func):
     """Checks columns of DataFrame inputs
 
-    This includes the checks on: 
+    This includes the checks on:
 
     * whether the input columns exist in the input DataFrames
     * whether the data types of col_user as well as col_item are matched in the two input DataFrames.
 
     Args:
         func (function): function that will be wrapped
-    
+
     Returns:
         function: Wrapper function for checking dtypes.
     """
@@ -100,7 +100,7 @@ def merge_rating_true_pred(
 ):
     """Join truth and prediction data frames on userID and itemID and return the true
     and predicted rated with the correct index.
-    
+
     Args:
         rating_true (pandas.DataFrame): True data
         rating_pred (pandas.DataFrame): Predicted data
@@ -210,7 +210,7 @@ def rsquared(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-    
+
     Returns:
         float: R squared (min=0, max=1).
     """
@@ -361,7 +361,7 @@ def merge_ranking_true_pred(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user (optional)
         threshold (float): threshold of top items per user (optional)
@@ -438,7 +438,7 @@ def precision_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
@@ -485,13 +485,13 @@ def recall_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
 
     Returns:
-        float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than 
+        float: recall at k (min=0, max=1). The maximum value is 1 even when fewer than
         k items exist for a user in rating_true.
     """
 
@@ -525,9 +525,9 @@ def ndcg_at_k(
     threshold=DEFAULT_THRESHOLD,
 ):
     """Normalized Discounted Cumulative Gain (nDCG).
-    
+
     Info: https://en.wikipedia.org/wiki/Discounted_cumulative_gain
-    
+
     Args:
         rating_true (pandas.DataFrame): True DataFrame
         rating_pred (pandas.DataFrame): Predicted DataFrame
@@ -535,7 +535,7 @@ def ndcg_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
@@ -587,7 +587,7 @@ def map_at_k(
     threshold=DEFAULT_THRESHOLD,
 ):
     """Mean Average Precision at k
-    
+
     The implementation of MAP is referenced from Spark MLlib evaluation metrics.
     https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems
 
@@ -597,7 +597,7 @@ def map_at_k(
     Note:
         1. The evaluation function is named as 'MAP is at k' because the evaluation class takes top k items for
         the prediction items. The naming is different from Spark.
-        
+
         2. The MAP is meant to calculate Avg. Precision for the relevant items, so it is normalized by the number of
         relevant items in the ground truth data, instead of k.
 
@@ -608,7 +608,7 @@ def map_at_k(
         col_item (str): column name for item
         col_rating (str): column name for rating
         col_prediction (str): column name for prediction
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the 
+        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
         k (int): number of top k items per user
         threshold (float): threshold of top items per user (optional)
@@ -649,7 +649,7 @@ def get_top_k_items(
     """Get the input customer-item-rating tuple in the format of Pandas
     DataFrame, output a Pandas DataFrame in the dense format of top k items
     for each user.
-    
+
     Note:
         If it is implicit rating, just append a column of constants to be
         ratings.

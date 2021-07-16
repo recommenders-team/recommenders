@@ -148,7 +148,7 @@ def test_surprise_svd_integration(
         )
     ],
 )
-@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
+@pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_integration(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
@@ -169,7 +169,7 @@ def test_vw_deep_dive_integration(
 
 # @pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
 @pytest.mark.integration
-@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
+@pytest.mark.skip(reason="NNI pip package has installation incompatibilities")
 def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
     pm.execute_notebook(
@@ -189,6 +189,7 @@ def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
 
 
 @pytest.mark.integration
+@pytest.mark.skip(reason="Wikidata API is unstable")
 def test_wikidata_integration(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["wikidata_knowledge_graph"]
     pm.execute_notebook(
@@ -250,7 +251,7 @@ def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_va
 
 
 @pytest.mark.integration
-@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
+@pytest.mark.skip(reason="xLearn pip package has installation incompatibilities")
 def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xlearn_fm_deep_dive"]
     pm.execute_notebook(

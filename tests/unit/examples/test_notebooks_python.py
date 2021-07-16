@@ -3,6 +3,7 @@
 
 import sys
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
@@ -55,7 +56,7 @@ def test_surprise_deep_dive_runs(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
+@pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)

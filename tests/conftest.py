@@ -19,15 +19,15 @@ import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
 
-from reco_utils.common.constants import (
+from reco_utils.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from reco_utils.dataset.python_splitters import numpy_stratified_split
-from reco_utils.dataset.python_splitters import python_chrono_split
-from reco_utils.common.spark_utils import start_or_get_spark
+from reco_utils.datasets.python_splitters import numpy_stratified_split
+from reco_utils.datasets.python_splitters import python_chrono_split
+from reco_utils.utils.spark_utils import start_or_get_spark
 
 
 @pytest.fixture(scope="session")
@@ -461,5 +461,5 @@ def deeprec_config_path():
         Path(__file__)
         .absolute()
         .parents[1]
-        .joinpath("reco_utils", "recommender", "deeprec", "config")
+        .joinpath("reco_utils", "models", "deeprec", "config")
     )
