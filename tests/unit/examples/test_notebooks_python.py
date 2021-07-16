@@ -3,6 +3,7 @@
 
 import sys
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
@@ -80,6 +81,7 @@ def test_lightgbm(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
+@pytest.skip(reason="Wikidata API is unstable")
 def test_wikidata_runs(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["wikidata_knowledge_graph"]
     MOVIELENS_SAMPLE_SIZE = 5
