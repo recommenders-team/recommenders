@@ -352,7 +352,7 @@ def merge_ranking_true_pred(
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
 ):
-    """Filter truth and prediction data frames on utils users
+    """Filter truth and prediction data frames on common users
 
     Args:
         rating_true (pandas.DataFrame): True DataFrame
