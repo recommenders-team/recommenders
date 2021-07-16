@@ -30,7 +30,7 @@ For a more detailed overview of the repository, please see the documents on the 
 
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
-The installation of the recommenders package has been tested with Python versions 3.6 and 3.7. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
+The installation of the recommenders package has been tested with Python version 3.6. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
 
 To set up on your local machine:
 
@@ -39,31 +39,31 @@ To install core utilities, CPU-based algorithms, and dependencies:
 1. Ensure software required for compilation is installed. On Linux this can be supported by adding build-essential dependencies:
 ```bash
 sudo apt-get install -y build-essential
-```
-On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+``` 
+On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
   
+2. Create a conda or virtual environment. See the [setup guide](SETUP.md) for more details.
 
-2. Install the package from [PyPI](https://pypi.org):
+3. Within the created environment, install the package from [PyPI](https://pypi.org):
 
 ```bash
-conda create -n my_environment_name python=3.6
 pip install --upgrade pip
 pip install recommenders[examples]
 ```
 
-3. Register your (conda or virtual) environment with Jupyter:
+4. Register your (conda or virtual) environment with Jupyter:
 
 ```bash
 python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
 ```
 
-4. Start the Jupyter notebook server
+5. Start the Jupyter notebook server
 
 ```bash
 jupyter notebook
 ```
 
-5. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
+6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
 
 For additional options to install the package (support for GPU, Spark etc.) see [this guide](reco_utils/README.md).
 
