@@ -171,7 +171,7 @@ recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) an
     export PYSPARK_DRIVER_PYTHON=/venv/bin/python
     export PYSPARK_PYTHON=/venv/bin/python
 
-    pip install ms-recommenders[all]
+    pip install recommenders[all]
 
 
 ### Register the environment as a kernel in Jupyter
