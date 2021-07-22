@@ -89,7 +89,7 @@ It is also possible to install directly from GitHub. Or from a specific branch a
 
 This submodule contains high-level utilities for defining constants used in most algorithms as well as helper functions for managing aspects of different frameworks: GPU, Spark, Jupyter notebook.
 
-## [Dataset](dataset)
+## [Dataset](datasets)
 
 Dataset includes helper functions for pulling different datasets and formatting them appropriately as well as utilities for splitting data for training / testing.
 
@@ -126,7 +126,7 @@ Currently available metrics include:
 - Area Under Curve
 - Logistic Loss
 
-## [Recommender](recommender)
+## [Recommender](models)
 
 The recommender submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). The following is a list of the algorithm utilities:
 
