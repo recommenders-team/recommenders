@@ -85,13 +85,9 @@ It is also possible to install directly from GitHub. Or from a specific branch a
 
 # Contents
 
-## [Utils](utils)
+## [Datasets](datasets)
 
-This submodule contains high-level utilities for defining constants used in most algorithms as well as helper functions for managing aspects of different frameworks: GPU, Spark, Jupyter notebook.
-
-## [Dataset](datasets)
-
-Dataset includes helper functions for pulling different datasets and formatting them appropriately as well as utilities for splitting data for training / testing.
+Datasets module includes helper functions for pulling different datasets and formatting them appropriately as well as utilities for splitting data for training / testing.
 
 ### Data Loading
 
@@ -126,9 +122,9 @@ Currently available metrics include:
 - Area Under Curve
 - Logistic Loss
 
-## [Recommender](models)
+## [Models](models)
 
-The recommender submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). The following is a list of the algorithm utilities:
+The models submodule contains implementations of various algorithms that can be used in addition to external packages to evaluate and develop new recommender system approaches. A description of all the algorithms can be found on [this table](../README.md#algorithms). The following is a list of the algorithm utilities:
 
 * Cornac
 * DeepRec
@@ -167,3 +163,7 @@ The recommender submodule contains implementations of various algorithms that ca
 ## [Tuning](tuning)
 
 This submodule contains utilities for performing hyperparameter tuning.
+
+## [Utils](utils)
+
+This submodule contains high-level utilities for defining constants used in most algorithms as well as helper functions for managing aspects of different frameworks: GPU, Spark, Jupyter notebook.
