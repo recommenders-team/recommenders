@@ -6,13 +6,13 @@ import pandas as pd
 import pytest
 from unittest.mock import Mock
 from sklearn.preprocessing import minmax_scale
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_PREDICTION_COL,
 )
-from reco_utils.evaluation.python_evaluation import (
+from recommenders.evaluation.python_evaluation import (
     check_column_dtypes,
     merge_rating_true_pred,
     merge_ranking_true_pred,

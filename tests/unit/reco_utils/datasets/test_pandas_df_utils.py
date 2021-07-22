@@ -7,7 +7,7 @@ import pytest
 from tempfile import TemporaryDirectory
 import os
 
-from reco_utils.datasets.pandas_df_utils import (
+from recommenders.datasets.pandas_df_utils import (
     user_item_pairs,
     filter_by,
     LibffmConverter,

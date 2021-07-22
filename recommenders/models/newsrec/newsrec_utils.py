@@ -14,8 +14,8 @@ from sklearn.metrics import (
 import numpy as np
 import yaml
 import zipfile
-from reco_utils.datasets.download_utils import maybe_download
-from reco_utils.models.deeprec.deeprec_utils import (
+from recommenders.datasets.download_utils import maybe_download
+from recommenders.models.deeprec.deeprec_utils import (
     flat_config,
     load_yaml,
     load_dict,

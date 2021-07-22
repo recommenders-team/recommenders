@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 try:
-    from reco_utils.models.rbm.rbm import RBM
+    from recommenders.models.rbm.rbm import RBM
 except ImportError:
     pass  # skip this import if we are in cpu environment
 

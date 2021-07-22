@@ -9,7 +9,7 @@ from scipy.sparse import coo_matrix
 import logging
 
 # import default parameters
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,

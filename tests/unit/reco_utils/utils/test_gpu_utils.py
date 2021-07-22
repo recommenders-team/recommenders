@@ -11,7 +11,7 @@ except ImportError:
     pass  # skip this import if we are in cpu environment
 
 
-from reco_utils.utils.gpu_utils import (
+from recommenders.utils.gpu_utils import (
     get_cuda_version,
     get_cudnn_version,
     get_gpu_info,

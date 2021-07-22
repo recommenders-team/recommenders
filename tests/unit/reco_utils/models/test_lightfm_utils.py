@@ -8,7 +8,7 @@ import pandas as pd
 import lightfm
 from lightfm import LightFM, cross_validation
 from lightfm.data import Dataset
-from reco_utils.models.lightfm.lightfm_utils import (
+from recommenders.models.lightfm.lightfm_utils import (
     compare_metric,
     track_model_metrics,
     similar_users,

@@ -12,7 +12,7 @@ from sklearn import datasets
 from sklearn.preprocessing import normalize
 from numba import jit, prange
 
-from reco_utils.utils.python_utils import binarize
+from recommenders.utils.python_utils import binarize
 from .geoimc_utils import length_normalize, reduce_dims
 
 

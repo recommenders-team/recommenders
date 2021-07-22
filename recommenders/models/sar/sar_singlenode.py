@@ -7,14 +7,14 @@ import pandas as pd
 import logging
 from scipy import sparse
 
-from reco_utils.utils.python_utils import (
+from recommenders.utils.python_utils import (
     jaccard,
     lift,
     exponential_decay,
     get_top_k_scored_items,
     rescale,
 )
-from reco_utils.utils import constants
+from recommenders.utils import constants
 
 
 COOCCUR = "cooccurrence"

@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from reco_utils.utils.k8s_utils import (
+from recommenders.utils.k8s_utils import (
     qps_to_replicas,
     replicas_to_qps,
     nodes_to_replicas,

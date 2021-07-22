@@ -4,15 +4,15 @@
 import os
 import pytest
 import pandas as pd
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
 
 try:
-    from reco_utils.utils.tf_utils import pandas_input_fn, MODEL_DIR
-    from reco_utils.models.wide_deep.wide_deep_utils import (
+    from recommenders.utils.tf_utils import pandas_input_fn, MODEL_DIR
+    from recommenders.models.wide_deep.wide_deep_utils import (
         build_model,
         build_feature_columns,
     )

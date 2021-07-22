@@ -5,7 +5,7 @@ import numpy as np
 import logging
 
 from pymanopt import Problem
-from reco_utils.models.rlrmc.conjugate_gradient_ms import ConjugateGradientMS
+from recommenders.models.rlrmc.conjugate_gradient_ms import ConjugateGradientMS
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 from pymanopt.manifolds import Stiefel, PositiveDefinite, Product
 from math import sqrt

@@ -7,13 +7,13 @@ import os
 import sys
 import numpy as np
 import pandas as pd
-from reco_utils.evaluation.python_evaluation import (
+from recommenders.evaluation.python_evaluation import (
     map_at_k,
     ndcg_at_k,
     precision_at_k,
     recall_at_k,
 )
-from reco_utils.utils.python_utils import get_top_k_scored_items
+from recommenders.utils.python_utils import get_top_k_scored_items
 
 
 class LightGCN(object):
@@ -31,7 +31,7 @@ class LightGCN(object):
 
         Args:
             hparams (object): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
-            data (object): A reco_utils.models.deeprec.DataModel.ImplicitCF object, load and process data.
+            data (object): A recommenders.models.deeprec.DataModel.ImplicitCF object, load and process data.
             seed (int): Seed.
 
         """

@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import pytest
-from reco_utils.utils.plot import line_graph
+from recommenders.utils.plot import line_graph
 
 
 def test_line_graph():

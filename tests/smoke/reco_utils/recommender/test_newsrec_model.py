@@ -6,15 +6,15 @@ import papermill as pm
 import pytest
 
 try:
-    from reco_utils.models.newsrec.newsrec_utils import prepare_hparams
-    from reco_utils.models.deeprec.deeprec_utils import download_deeprec_resources
-    from reco_utils.models.newsrec.models.base_model import BaseModel
-    from reco_utils.models.newsrec.models.nrms import NRMSModel
-    from reco_utils.models.newsrec.models.naml import NAMLModel
-    from reco_utils.models.newsrec.models.lstur import LSTURModel
-    from reco_utils.models.newsrec.models.npa import NPAModel
-    from reco_utils.models.newsrec.io.mind_iterator import MINDIterator
-    from reco_utils.models.newsrec.io.mind_all_iterator import MINDAllIterator
+    from recommenders.models.newsrec.newsrec_utils import prepare_hparams
+    from recommenders.models.deeprec.deeprec_utils import download_deeprec_resources
+    from recommenders.models.newsrec.models.base_model import BaseModel
+    from recommenders.models.newsrec.models.nrms import NRMSModel
+    from recommenders.models.newsrec.models.naml import NAMLModel
+    from recommenders.models.newsrec.models.lstur import LSTURModel
+    from recommenders.models.newsrec.models.npa import NPAModel
+    from recommenders.models.newsrec.io.mind_iterator import MINDIterator
+    from recommenders.models.newsrec.io.mind_all_iterator import MINDAllIterator
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 

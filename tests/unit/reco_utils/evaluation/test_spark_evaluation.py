@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from pandas.util.testing import assert_frame_equal
 
-from reco_utils.evaluation.python_evaluation import (
+from recommenders.evaluation.python_evaluation import (
     precision_at_k,
     recall_at_k,
     ndcg_at_k,
@@ -15,7 +15,7 @@ from reco_utils.evaluation.python_evaluation import (
 
 try:
     from pyspark.sql import Row
-    from reco_utils.evaluation.spark_evaluation import (
+    from recommenders.evaluation.spark_evaluation import (
         SparkDiversityEvaluation,
         SparkRankingEvaluation,
         SparkRatingEvaluation,
@@ -400,9 +400,9 @@ def test_item_novelty(spark_diversity_data, target_metrics):
     assert_frame_equal(
         target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4
     )
-    assert np.all(actual["item_novelty"].values >= 0) 
-    # Test that novelty is zero when data includes only one item 
-    train_df_new = train_df.filter("ItemId == 3") 
+    assert np.all(actual["item_novelty"].values >= 0)
+    # Test that novelty is zero when data includes only one item
+    train_df_new = train_df.filter("ItemId == 3")
     evaluator = SparkDiversityEvaluation(
         train_df=train_df_new, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
@@ -419,9 +419,9 @@ def test_novelty(spark_diversity_data, target_metrics):
     novelty = evaluator.novelty()
     assert target_metrics["novelty"] == novelty
     assert novelty >= 0
-    # Test that novelty is zero when data includes only one item 
-    train_df_new = train_df.filter("ItemId == 3") 
-    reco_df_new = reco_df.filter("ItemId == 3") 
+    # Test that novelty is zero when data includes only one item
+    train_df_new = train_df.filter("ItemId == 3")
+    reco_df_new = reco_df.filter("ItemId == 3")
     evaluator = SparkDiversityEvaluation(
         train_df=train_df_new, reco_df=reco_df_new, col_user="UserId", col_item="ItemId"
     )
@@ -456,7 +456,11 @@ def test_diversity(spark_diversity_data, target_metrics):
 def test_user_item_serendipity(spark_diversity_data, target_metrics):
     train_df, reco_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId", col_relevance="Relevance"
+        train_df=train_df,
+        reco_df=reco_df,
+        col_user="UserId",
+        col_item="ItemId",
+        col_relevance="Relevance",
     )
     actual = evaluator.user_item_serendipity().toPandas()
     assert_frame_equal(
@@ -471,7 +475,11 @@ def test_user_item_serendipity(spark_diversity_data, target_metrics):
 def test_user_serendipity(spark_diversity_data, target_metrics):
     train_df, reco_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId", col_relevance="Relevance"
+        train_df=train_df,
+        reco_df=reco_df,
+        col_user="UserId",
+        col_item="ItemId",
+        col_relevance="Relevance",
     )
     actual = evaluator.user_serendipity().toPandas()
     assert_frame_equal(
@@ -486,6 +494,10 @@ def test_user_serendipity(spark_diversity_data, target_metrics):
 def test_serendipity(spark_diversity_data, target_metrics):
     train_df, reco_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId", col_relevance="Relevance"
+        train_df=train_df,
+        reco_df=reco_df,
+        col_user="UserId",
+        col_item="ItemId",
+        col_relevance="Relevance",
     )
     assert target_metrics["serendipity"] == evaluator.serendipity()

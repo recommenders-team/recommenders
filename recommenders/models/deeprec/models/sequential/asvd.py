@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
-from reco_utils.models.deeprec.models.sequential.sequential_base_model import (
+from recommenders.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
 

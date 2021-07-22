@@ -14,8 +14,8 @@ try:
 except ModuleNotFoundError:
     HAS_AML = False
 
-from reco_utils.evaluation.python_evaluation import *
-from reco_utils.models.surprise.surprise_utils import (
+from recommenders.evaluation.python_evaluation import *
+from recommenders.models.surprise.surprise_utils import (
     predict,
     compute_ranking_predictions,
 )

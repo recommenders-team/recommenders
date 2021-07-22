@@ -4,7 +4,7 @@
 import numpy as np
 import pandas as pd
 import pytest
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
@@ -12,10 +12,10 @@ from reco_utils.utils.constants import (
 )
 
 try:
-    from reco_utils.datasets.split_utils import min_rating_filter_spark
+    from recommenders.datasets.split_utils import min_rating_filter_spark
     from pyspark.sql import functions as F
     from pyspark.sql.functions import col
-    from reco_utils.datasets.spark_splitters import (
+    from recommenders.datasets.spark_splitters import (
         spark_chrono_split,
         spark_random_split,
         spark_stratified_split,

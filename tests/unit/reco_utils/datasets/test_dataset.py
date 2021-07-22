@@ -6,7 +6,7 @@ import pytest
 import requests
 from tempfile import TemporaryDirectory
 import logging
-from reco_utils.datasets.download_utils import maybe_download, download_path
+from recommenders.datasets.download_utils import maybe_download, download_path
 
 
 @pytest.fixture

@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import pytest
-from reco_utils.utils.general_utils import invert_dictionary, get_number_processors
+from recommenders.utils.general_utils import invert_dictionary, get_number_processors
 
 
 def test_invert_dictionary():

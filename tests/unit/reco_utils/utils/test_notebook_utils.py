@@ -9,7 +9,7 @@ try:
     import scrapbook as sb
 except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
-from reco_utils.utils.notebook_utils import is_jupyter, is_databricks
+from recommenders.utils.notebook_utils import is_jupyter, is_databricks
 
 
 @pytest.mark.notebooks

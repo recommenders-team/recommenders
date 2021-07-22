@@ -6,13 +6,13 @@ import pandas as pd
 import pytest
 import cornac
 
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.models.cornac.cornac_utils import predict, predict_ranking
-from reco_utils.evaluation.python_evaluation import mae, rmse, ndcg_at_k, recall_at_k
+from recommenders.models.cornac.cornac_utils import predict, predict_ranking
+from recommenders.evaluation.python_evaluation import mae, rmse, ndcg_at_k, recall_at_k
 
 TOL = 0.001
 

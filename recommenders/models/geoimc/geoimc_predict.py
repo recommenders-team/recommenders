@@ -6,7 +6,7 @@ from scipy.linalg import sqrtm
 from numba import njit, jit, prange
 
 from .geoimc_utils import length_normalize
-from reco_utils.utils.python_utils import binarize as conv_binary
+from recommenders.utils.python_utils import binarize as conv_binary
 
 
 class PlainScalarProduct(object):

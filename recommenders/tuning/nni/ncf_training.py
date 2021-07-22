@@ -9,10 +9,10 @@ import os
 import pandas as pd
 import nni
 
-import reco_utils.evaluation.python_evaluation as evaluation
-from reco_utils.models.ncf.ncf_singlenode import NCF
-from reco_utils.models.ncf.dataset import Dataset as NCFDataset
-from reco_utils.utils.constants import SEED as DEFAULT_SEED
+import recommenders.evaluation.python_evaluation as evaluation
+from recommenders.models.ncf.ncf_singlenode import NCF
+from recommenders.models.ncf.dataset import Dataset as NCFDataset
+from recommenders.utils.constants import SEED as DEFAULT_SEED
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("ncf")

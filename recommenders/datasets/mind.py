@@ -10,7 +10,11 @@ import re
 from tqdm import tqdm
 from nltk.tokenize import RegexpTokenizer
 
-from reco_utils.datasets.download_utils import maybe_download, download_path, unzip_file
+from recommenders.datasets.download_utils import (
+    maybe_download,
+    download_path,
+    unzip_file,
+)
 
 
 URL_MIND_LARGE_TRAIN = (

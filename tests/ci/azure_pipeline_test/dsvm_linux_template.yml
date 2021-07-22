@@ -57,7 +57,7 @@ jobs:
         else
             PLATFORM="manylinux2014_$ARCH"
         fi
-        RELEASE_VERSION=$(awk '/__version__ = / {print $3}' reco_utils/__init__.py | sed 's/"//g')
+        RELEASE_VERSION=$(awk '/__version__ = / {print $3}' recommenders/__init__.py | sed 's/"//g')
 
         echo "   --- BUILDING PACKAGE ---"
         rm -rf dist || exit -1
@@ -97,10 +97,10 @@ jobs:
             export TEST_MARKER="${{ test }} and "
         fi
 
-        # Remove reco_utils folder to make sure it is using the package to run the tests
+        # Remove recommenders folder to make sure it is using the package to run the tests
         # We leave the yaml files from DeepRec that are used in the tests
-        find reco_utils ! -name "*.yaml" -delete 2>/dev/null 
-        du -a reco_utils
+        find recommenders ! -name "*.yaml" -delete 2>/dev/null 
+        du -a recommenders
 
         # run tests
         pytest tests/${{ test }} \

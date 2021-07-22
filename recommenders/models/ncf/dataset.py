@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import warnings
 
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_RATING_COL,

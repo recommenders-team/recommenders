@@ -8,7 +8,7 @@ import fastai
 import fastprogress
 from fastprogress.fastprogress import force_console_behavior
 
-from reco_utils.utils import constants as cc
+from recommenders.utils import constants as cc
 
 
 def cartesian_product(*arrays):

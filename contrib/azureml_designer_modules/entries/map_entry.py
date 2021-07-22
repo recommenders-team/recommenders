@@ -8,7 +8,7 @@ from azureml.studio.core.io.data_frame_directory import (
     load_data_frame_from_directory,
     save_data_frame_to_directory,
 )
-from reco_utils.evaluation.python_evaluation import map_at_k
+from recommenders.evaluation.python_evaluation import map_at_k
 
 
 if __name__ == "__main__":

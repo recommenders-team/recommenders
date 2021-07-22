@@ -4,7 +4,7 @@
 
 import pytest
 
-from reco_utils.tuning.parameter_sweep import generate_param_grid
+from recommenders.tuning.parameter_sweep import generate_param_grid
 
 
 @pytest.fixture(scope="module")

@@ -71,7 +71,7 @@ We are currently evaluating inclusion of the following dependencies:
 In case you want to use a version of the source code that is not published on PyPI, one alternative is to install from a clone of the source code on your machine. To this end, 
 a [setup.py](../setup.py) file is provided in order to simplify the installation of the utilities in this repo from the main directory.
 
-This still requires an environment to be installed as described in the [setup guide](../SETUP.md). Once the necessary dependencies are installed, you can use the following command to install `reco_utils` as a python package.
+This still requires an environment to be installed as described in the [setup guide](../SETUP.md). Once the necessary dependencies are installed, you can use the following command to install `recommenders` as a python package.
 
     pip install -e .
 

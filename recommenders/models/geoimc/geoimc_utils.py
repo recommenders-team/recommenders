@@ -4,7 +4,7 @@
 import numpy as np
 from sklearn.decomposition import PCA
 
-from reco_utils.datasets.download_utils import maybe_download
+from recommenders.datasets.download_utils import maybe_download
 
 
 def length_normalize(matrix):

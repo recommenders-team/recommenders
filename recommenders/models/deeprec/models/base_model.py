@@ -8,7 +8,7 @@ import os
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
-from reco_utils.models.deeprec.deeprec_utils import cal_metric
+from recommenders.models.deeprec.deeprec_utils import cal_metric
 
 
 __all__ = ["BaseModel"]

@@ -1,7 +1,7 @@
 import argparse
 
 from azureml.studio.core.logger import module_logger as logger
-from reco_utils.datasets.python_splitters import python_stratified_split
+from recommenders.datasets.python_splitters import python_stratified_split
 from azureml.studio.core.data_frame_schema import DataFrameSchema
 from azureml.studio.core.io.data_frame_directory import (
     load_data_frame_from_directory,

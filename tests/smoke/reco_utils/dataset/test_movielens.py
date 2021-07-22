@@ -3,7 +3,7 @@
 
 import os
 import pytest
-from reco_utils.datasets.movielens import (
+from recommenders.datasets.movielens import (
     load_pandas_df,
     load_spark_df,
     load_item_df,

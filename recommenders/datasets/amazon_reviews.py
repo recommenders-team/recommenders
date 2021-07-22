@@ -11,8 +11,8 @@ import random
 import logging
 import _pickle as cPickle
 
-from reco_utils.utils.constants import SEED
-from reco_utils.datasets.download_utils import maybe_download, download_path
+from recommenders.utils.constants import SEED
+from recommenders.datasets.download_utils import maybe_download, download_path
 
 
 random.seed(SEED)

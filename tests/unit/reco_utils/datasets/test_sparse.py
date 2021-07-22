@@ -5,8 +5,8 @@ import pandas as pd
 import numpy as np
 import pytest
 
-from reco_utils.datasets.sparse import AffinityMatrix
-from reco_utils.utils.constants import (
+from recommenders.datasets.sparse import AffinityMatrix
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,

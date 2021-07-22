@@ -3,7 +3,7 @@
 
 
 import tensorflow as tf
-from reco_utils.models.deeprec.io.dkn_iterator import DKNTextIterator
+from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
 
 
 class DKNItem2itemTextIterator(DKNTextIterator):

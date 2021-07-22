@@ -4,7 +4,7 @@
 import pytest
 
 
-from reco_utils.datasets.wikidata import (
+from recommenders.datasets.wikidata import (
     search_wikidata,
     find_wikidata_id,
     query_entity_links,

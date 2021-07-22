@@ -7,26 +7,26 @@ import pytest
 
 try:
     import tensorflow as tf
-    from reco_utils.models.deeprec.deeprec_utils import (
+    from recommenders.models.deeprec.deeprec_utils import (
         download_deeprec_resources,
         prepare_hparams,
     )
-    from reco_utils.models.deeprec.models.base_model import BaseModel
-    from reco_utils.models.deeprec.models.xDeepFM import XDeepFMModel
-    from reco_utils.models.deeprec.models.dkn import DKN
-    from reco_utils.models.deeprec.io.iterator import FFMTextIterator
-    from reco_utils.models.deeprec.io.dkn_iterator import DKNTextIterator
-    from reco_utils.models.deeprec.io.sequential_iterator import SequentialIterator
-    from reco_utils.models.deeprec.models.sequential.sli_rec import SLI_RECModel
-    from reco_utils.models.deeprec.models.sequential.sum import SUMModel
-    from reco_utils.datasets.amazon_reviews import (
+    from recommenders.models.deeprec.models.base_model import BaseModel
+    from recommenders.models.deeprec.models.xDeepFM import XDeepFMModel
+    from recommenders.models.deeprec.models.dkn import DKN
+    from recommenders.models.deeprec.io.iterator import FFMTextIterator
+    from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
+    from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
+    from recommenders.models.deeprec.models.sequential.sli_rec import SLI_RECModel
+    from recommenders.models.deeprec.models.sequential.sum import SUMModel
+    from recommenders.datasets.amazon_reviews import (
         download_and_extract,
         data_preprocessing,
     )
-    from reco_utils.models.deeprec.models.graphrec.lightgcn import LightGCN
-    from reco_utils.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-    from reco_utils.datasets import movielens
-    from reco_utils.datasets.python_splitters import python_stratified_split
+    from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
+    from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+    from recommenders.datasets import movielens
+    from recommenders.datasets.python_splitters import python_stratified_split
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 

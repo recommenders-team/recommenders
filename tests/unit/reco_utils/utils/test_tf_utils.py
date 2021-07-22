@@ -6,16 +6,16 @@ import os
 import numpy as np
 import pandas as pd
 import pytest
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     SEED,
 )
-from reco_utils.evaluation.python_evaluation import rmse
+from recommenders.evaluation.python_evaluation import rmse
 
 try:
-    from reco_utils.utils.tf_utils import (
+    from recommenders.utils.tf_utils import (
         build_optimizer,
         evaluation_log_hook,
         export_model,
@@ -23,7 +23,7 @@ try:
         pandas_input_fn,
         pandas_input_fn_for_saved_model,
     )
-    from reco_utils.models.wide_deep.wide_deep_utils import (
+    from recommenders.models.wide_deep.wide_deep_utils import (
         build_model,
         build_feature_columns,
     )

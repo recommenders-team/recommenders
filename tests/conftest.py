@@ -19,15 +19,15 @@ import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
 
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from reco_utils.datasets.python_splitters import numpy_stratified_split
-from reco_utils.datasets.python_splitters import python_chrono_split
-from reco_utils.utils.spark_utils import start_or_get_spark
+from recommenders.datasets.python_splitters import numpy_stratified_split
+from recommenders.datasets.python_splitters import python_chrono_split
+from recommenders.utils.spark_utils import start_or_get_spark
 
 
 @pytest.fixture(scope="session")
@@ -321,10 +321,8 @@ def notebooks():
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "evaluation_diversity": os.path.join(
-            folder_notebooks, 
-            "03_evaluate", 
-            "als_movielens_diversity_metrics.ipynb"
-            ),
+            folder_notebooks, "03_evaluate", "als_movielens_diversity_metrics.ipynb"
+        ),
         "spark_tuning": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "tuning_spark_als.ipynb"
         ),
@@ -461,5 +459,5 @@ def deeprec_config_path():
         Path(__file__)
         .absolute()
         .parents[1]
-        .joinpath("reco_utils", "models", "deeprec", "config")
+        .joinpath("recommenders", "models", "deeprec", "config")
     )

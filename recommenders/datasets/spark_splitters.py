@@ -8,13 +8,16 @@ try:
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_RATING_COL,
 )
-from reco_utils.datasets.split_utils import process_split_ratio, min_rating_filter_spark
+from recommenders.datasets.split_utils import (
+    process_split_ratio,
+    min_rating_filter_spark,
+)
 
 
 def spark_random_split(data, ratio=0.75, seed=42):

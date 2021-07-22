@@ -4,7 +4,7 @@
 import os
 import pytest
 import pandas as pd
-from reco_utils.datasets import criteo
+from recommenders.datasets import criteo
 
 
 @pytest.mark.smoke

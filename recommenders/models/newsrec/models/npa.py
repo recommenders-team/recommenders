@@ -7,8 +7,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.models.newsrec.models.base_model import BaseModel
-from reco_utils.models.newsrec.models.layers import PersonalizedAttentivePooling
+from recommenders.models.newsrec.models.base_model import BaseModel
+from recommenders.models.newsrec.models.layers import PersonalizedAttentivePooling
 
 __all__ = ["NPAModel"]
 

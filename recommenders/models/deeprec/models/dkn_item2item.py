@@ -4,8 +4,8 @@
 
 import numpy as np
 import tensorflow as tf
-from reco_utils.models.deeprec.models.dkn import DKN
-from reco_utils.models.deeprec.deeprec_utils import cal_metric
+from recommenders.models.deeprec.models.dkn import DKN
+from recommenders.models.deeprec.deeprec_utils import cal_metric
 
 
 r"""

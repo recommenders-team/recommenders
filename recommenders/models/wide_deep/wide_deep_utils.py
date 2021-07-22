@@ -3,8 +3,8 @@
 
 import tensorflow as tf
 
-from reco_utils.utils.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL
-from reco_utils.utils.tf_utils import MODEL_DIR
+from recommenders.utils.constants import DEFAULT_USER_COL, DEFAULT_ITEM_COL
+from recommenders.utils.tf_utils import MODEL_DIR
 
 
 def build_feature_columns(

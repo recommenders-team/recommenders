@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import math
 
-from reco_utils.utils.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
+from recommenders.utils.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
 
 try:
     from pyspark.sql import functions as F, Window

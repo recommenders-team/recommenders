@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from reco_utils.evaluation.python_evaluation import ndcg_at_k
+from recommenders.evaluation.python_evaluation import ndcg_at_k
 
 import bottleneck as bn
 from tensorflow.keras.layers import *

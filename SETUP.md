@@ -52,7 +52,7 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org). For instructions on how to do these, see [this guide](reco_utils/README.md).
+There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org). For instructions on how to do these, see [this guide](recommenders/README.md).
 
 An alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md)
 
@@ -307,12 +307,12 @@ To install the repo manually onto Databricks, follow the steps:
 After installation, you can now create a new notebook and import the utilities from Databricks in order to confirm that the import worked.
 
 ```{python}
-import reco_utils
+import recommenders
 ```
 
 ### Troubleshooting Installation on Azure Databricks
 
-* For the [reco_utils](reco_utils) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
+* For the [recommenders](recommenders) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
 
 ### Prepare Azure Databricks for Operationalization
 
@@ -378,7 +378,7 @@ You can then open the Jupyter notebook server at http://localhost:8888
 
 The process of making a new release and publishing it to pypi is as follows:
 
-First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [reco_utils.py/__init__.py](reco_utils.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
+First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [recommenders.py/__init__.py](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.

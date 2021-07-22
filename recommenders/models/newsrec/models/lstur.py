@@ -7,8 +7,8 @@ import tensorflow.keras as keras
 from tensorflow.keras import layers
 
 
-from reco_utils.models.newsrec.models.base_model import BaseModel
-from reco_utils.models.newsrec.models.layers import (
+from recommenders.models.newsrec.models.base_model import BaseModel
+from recommenders.models.newsrec.models.layers import (
     AttLayer2,
     ComputeMasking,
     OverwriteMasking,

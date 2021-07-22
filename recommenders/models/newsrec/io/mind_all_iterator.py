@@ -5,8 +5,8 @@ import tensorflow as tf
 import numpy as np
 import pickle
 
-from reco_utils.models.deeprec.io.iterator import BaseIterator
-from reco_utils.models.newsrec.newsrec_utils import word_tokenize, newsample
+from recommenders.models.deeprec.io.iterator import BaseIterator
+from recommenders.models.newsrec.newsrec_utils import word_tokenize, newsample
 
 __all__ = ["MINDAllIterator"]
 
