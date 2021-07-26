@@ -7,7 +7,7 @@ from fastai.collab import collab_learner, CollabDataBunch
 import surprise
 import cornac
 
-from reco_utils.utils.constants import (
+from recommenders.utils.constants import (
     COL_DICT,
     DEFAULT_K,
     DEFAULT_USER_COL,
@@ -17,34 +17,34 @@ from reco_utils.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     SEED,
 )
-from reco_utils.utils.timer import Timer
-from reco_utils.utils.spark_utils import start_or_get_spark
-from reco_utils.models.sar.sar_singlenode import SARSingleNode
-from reco_utils.models.ncf.ncf_singlenode import NCF
-from reco_utils.models.ncf.dataset import Dataset as NCFDataset
-from reco_utils.models.surprise.surprise_utils import (
+from recommenders.utils.timer import Timer
+from recommenders.utils.spark_utils import start_or_get_spark
+from recommenders.models.sar.sar_singlenode import SARSingleNode
+from recommenders.models.ncf.ncf_singlenode import NCF
+from recommenders.models.ncf.dataset import Dataset as NCFDataset
+from recommenders.models.surprise.surprise_utils import (
     predict,
     compute_ranking_predictions,
 )
-from reco_utils.models.fastai.fastai_utils import (
+from recommenders.models.fastai.fastai_utils import (
     cartesian_product,
     score,
 )
-from reco_utils.models.cornac.cornac_utils import predict_ranking
-from reco_utils.models.deeprec.models.graphrec.lightgcn import LightGCN
-from reco_utils.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-from reco_utils.models.deeprec.deeprec_utils import prepare_hparams
-from reco_utils.evaluation.spark_evaluation import (
+from recommenders.models.cornac.cornac_utils import predict_ranking
+from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
+from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+from recommenders.models.deeprec.deeprec_utils import prepare_hparams
+from recommenders.evaluation.spark_evaluation import (
     SparkRatingEvaluation,
     SparkRankingEvaluation,
 )
-from reco_utils.evaluation.python_evaluation import (
+from recommenders.evaluation.python_evaluation import (
     map_at_k,
     ndcg_at_k,
     precision_at_k,
     recall_at_k,
 )
-from reco_utils.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
+from recommenders.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
 
 
 def prepare_training_als(train, test):

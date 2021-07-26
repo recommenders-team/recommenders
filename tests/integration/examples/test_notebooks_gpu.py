@@ -11,7 +11,7 @@ except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
 
 
-from reco_utils.utils.gpu_utils import get_number_gpus
+from recommenders.utils.gpu_utils import get_number_gpus
 
 
 TOL = 0.5
@@ -260,7 +260,7 @@ def test_wide_deep_integration(
     "yaml_file, data_path, epochs, batch_size, expected_values, seed",
     [
         (
-            "reco_utils/models/deeprec/config/sli_rec.yaml",
+            "recommenders/models/deeprec/config/sli_rec.yaml",
             os.path.join("tests", "resources", "deeprec", "slirec"),
             10,
             400,
@@ -503,7 +503,7 @@ def test_npa_quickstart_integration(
     "yaml_file, data_path, size, epochs, batch_size, expected_values, seed",
     [
         (
-            "reco_utils/models/deeprec/config/lightgcn.yaml",
+            "recommenders/models/deeprec/config/lightgcn.yaml",
             os.path.join("tests", "resources", "deeprec", "lightgcn"),
             "100k",
             5,

@@ -28,7 +28,7 @@
 # An example of the variables we use in the GPU environment:
 # env_name=artifact_reco_gpu
 # env_flag=--gpu
-# library_name=reco_utils_gpu
+# library_name=recommenders_gpu
 
 # The global variables are defined in ADO/Pipelines/Library
 # https://dev.azure.com/best-practices/recommenders/_library?itemType=VariableGroups

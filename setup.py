@@ -9,12 +9,12 @@ from os import environ
 # Version
 here = Path(__file__).absolute().parent
 version_data = {}
-with open(here.joinpath("reco_utils", "__init__.py"), "r") as f:
+with open(here.joinpath("recommenders", "__init__.py"), "r") as f:
     exec(f.read(), version_data)
 version = version_data.get("__version__", "0.0")
 
 # Get the long description from the README file
-with open(here.joinpath("reco_utils", "README.md"), encoding="utf-8") as f:
+with open(here.joinpath("recommenders", "README.md"), encoding="utf-8") as f:
     LONG_DESCRIPTION = f.read()
 
 HASH = environ.get("HASH", None)
@@ -116,7 +116,7 @@ setup(
     keywords="recommendations recommendation recommenders recommender system engine "
     "machine learning python spark gpu",
     install_requires=install_requires,
-    package_dir={"reco_utils": "reco_utils"},
+    package_dir={"recommenders": "recommenders"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
     python_requires=">=3.6, <3.8",
 )

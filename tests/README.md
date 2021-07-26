@@ -115,13 +115,13 @@ Several of the tests are skipped for various reasons which are noted below.
 <td>Reason</td>
 </tr>
 <tr>
-<td>unit/reco_utils/datasets/test_wikidata</td>
+<td>unit/recommenders/datasets/test_wikidata</td>
 <td>*</td>
 <td>Linux</td>
 <td>Wikidata API is unstable</td>
 </tr>
 <tr>
-<td>integration/reco_utils/datasets/test_notebooks_python</td>
+<td>integration/recommenders/datasets/test_notebooks_python</td>
 <td>test_wikidata</td>
 <td>Linux</td>
 <td>Wikidata API is unstable</td>
