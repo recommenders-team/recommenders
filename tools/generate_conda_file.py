@@ -59,6 +59,7 @@ CONDA_BASE = {
     "cornac": "cornac>=1.11.0",
     "papermill": "papermill>=2.2.0",
     "tqdm": "tqdm>=4.31.1",
+    "retrying": "retrying>=1.3.3",
 }
 
 CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.4.5"}
