@@ -4,7 +4,9 @@
 from reco_utils.common import constants
 from reco_utils.evaluation.python_evaluation import get_top_k_items
 import pandas as pd
+import numpy as np
 import logging
+from scipy import sparse
 
 logger = logging.getLogger()
 
@@ -36,6 +38,21 @@ class FBT(object):
         self.col_item = col_item
         self.col_user = col_user
         self.col_score = col_score
+
+        # column for mapping user / item ids to internal indices
+        self.col_item_id = "_indexed_items"
+        self.col_user_id = "_indexed_users"
+
+        # obtain all the users and items from both training and test data
+        self.n_users = None
+        self.n_items = None
+
+        # mapping for item to matrix element
+        self.user2index = None
+        self.item2index = None
+
+        # the opposite of the above map - map array index to actual string ID
+        self.index2item = None
 
         self._model_df = None
         self._item_frequencies = None
@@ -84,6 +101,44 @@ class FBT(object):
         if df.groupby(expected_columns).size().max() > 1:
             raise ValueError("Duplicate rows found!!")
 
+    def set_index(self, df):
+        """Generate continuous indices for users and items to reduce memory usage.
+        Args:
+            df (pandas.DataFrame): dataframe with user and item ids
+        """
+
+        # generate a map of continuous index values to items
+        self.index2item = dict(enumerate(df[self.col_item].unique()))
+
+        # invert the mapping from above
+        self.item2index = {v: k for k, v in self.index2item.items()}
+
+        # create mapping of users to continuous indices
+        self.user2index = {x[1]: x[0] for x in enumerate(df[self.col_user].unique())}
+
+        # set values for the total count of users and items
+        self.n_users = len(self.user2index)
+        self.n_items = len(self.index2item)
+
+    def compute_coocurrence_matrix(self, df):
+        """ Co-occurrence matrix.
+        The co-occurrence matrix is defined as :math:`C = U^T * U`
+        where U is the user_affinity matrix with 1's as values (instead of ratings).
+        Args:
+            df (pandas.DataFrame): DataFrame of users and items
+        Returns:
+            numpy.ndarray: Co-occurrence matrix
+        """
+
+        user_item_hits = sparse.coo_matrix(
+            (np.repeat(1, df.shape[0]), (df[self.col_user_id],
+                                         df[self.col_item_id])),
+            shape=(self.n_users, self.n_items),
+        ).tocsr()
+
+        item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
+        return item_cooccurrence
+
     def fit(self, df):
         """Fit the FBT recommender using an input DataFrame.
 
@@ -103,43 +158,55 @@ class FBT(object):
                     "we expect and there are no duplicates.")
         self._check_dataframe(df)
 
-        # To compute co-occurrence, key piece is the self-join
-        cooccurrence_df = (
-            temp_df
-            .merge(temp_df, on=self.col_user,
-                   how='inner', suffixes=['', '_paired'])
+        # generate continuous indices if this hasn't been done
+        if self.index2item is None:
+            self.set_index(df)
+
+        logger.info("Creating index columns")
+        # add mapping of user and item ids to indices
+        temp_df.loc[:, self.col_item_id] = temp_df[self.col_item].apply(
+            lambda item: self.item2index.get(item, np.NaN)
         )
+        temp_df.loc[:, self.col_user_id] = temp_df[self.col_user].apply(
+            lambda user: self.user2index.get(user, np.NaN)
+        )
+
         # similarity score is defined by how many distinct
-        # users interacted with the same pair of items
-        sim_df = (
-            cooccurrence_df
-            .groupby([self.col_item,
-                     f'{self.col_item}_paired'])[self.col_user]
-            .nunique()
-            .reset_index(drop=False)
-            .rename(columns={self.col_user: self.col_score})
-        )
+        # users interacted with the same pair of items (cooccurrence)
+        item_cooccurrence = self.compute_coocurrence_matrix(df=temp_df)
 
-        # Retaining item-pairs where item isn't paired with itself
-        fbt_df = (
-            sim_df
-            .loc[sim_df
-                 [self.col_item] !=
-                 sim_df[f'{self.col_item}_paired']]
-        )
+        self._model_df = item_cooccurrence
+        self.item_frequencies = self._model_df.diagonal()
 
-        self._model_df = fbt_df
+        # sim_df = (
+        #     cooccurrence_df
+        #     .groupby([self.col_item,
+        #              f'{self.col_item}_paired'])[self.col_user]
+        #     .nunique()
+        #     .reset_index(drop=False)
+        #     .rename(columns={self.col_user: self.col_score})
+        # )
 
-        # Item frequencies can be obtained by looking at the
-        # number of distinct users who interacted with a specific
-        # item: can be extracted from items paired with itself
-        self.item_frequencies = (
-            sim_df
-            .loc[sim_df
-                 [self.col_item] ==
-                 sim_df[f'{self.col_item}_paired']]
-            .drop(columns=[f'{self.col_item}_paired'])
-        )
+        # # Retaining item-pairs where item isn't paired with itself
+        # fbt_df = (
+        #     sim_df
+        #     .loc[sim_df
+        #          [self.col_item] !=
+        #          sim_df[f'{self.col_item}_paired']]
+        # )
+
+        # self._model_df = item_cooccurrence
+
+        # # Item frequencies can be obtained by looking at the
+        # # number of distinct users who interacted with a specific
+        # # item: can be extracted from items paired with itself
+        # self.item_frequencies = (
+        #     sim_df
+        #     .loc[sim_df
+        #          [self.col_item] ==
+        #          sim_df[f'{self.col_item}_paired']]
+        #     .drop(columns=[f'{self.col_item}_paired'])
+        # )
 
         self._is_fit = True
         logger.info("Done training")
