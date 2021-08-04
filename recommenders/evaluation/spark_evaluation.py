@@ -19,6 +19,7 @@ from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_RELEVANCE_COL,
+    DEFAULT_SIMILARITY_COL,
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
@@ -497,8 +498,7 @@ class SparkDiversityEvaluation:
         This is the Spark version of diversity metrics evaluator.
         The methods of this class calculate the following diversity metrics:
 
-        * Coverage - The proportion of items that can be recommended. It includes two metrics:
-
+        * Coverage - it includes two metrics:
             1. catalog_coverage, which measures the proportion of items that get recommended from the item catalog;
             2. distributional_coverage, which measures how unequally different items are recommended in the
                recommendations to all users.
@@ -538,16 +538,16 @@ class SparkDiversityEvaluation:
         self.train_df = train_df.select(col_user, col_item)
         self.col_user = col_user
         self.col_item = col_item
-        self.sim_col = "sim"
+        self.sim_col = DEFAULT_SIMILARITY_COL
         self.df_cosine_similarity = None
         self.df_user_item_serendipity = None
         self.df_user_serendipity = None
-        self.df_serendipity = None
+        self.avg_serendipity = None
         self.df_item_novelty = None
-        self.df_novelty = None
+        self.avg_novelty = None
         self.df_intralist_similarity = None
         self.df_user_diversity = None
-        self.df_diversity = None
+        self.avg_diversity = None
 
         if col_relevance is None:
             self.col_relevance = DEFAULT_RELEVANCE_COL
@@ -683,12 +683,12 @@ class SparkDiversityEvaluation:
         Returns:
             float: diversity.
         """
-        if self.df_diversity is None:
+        if self.avg_diversity is None:
             self.df_user_diversity = self.user_diversity()
-            self.df_diversity = self.df_user_diversity.agg(
+            self.avg_diversity = self.df_user_diversity.agg(
                 {"user_diversity": "mean"}
             ).first()[0]
-        return self.df_diversity
+        return self.avg_diversity
 
     # Novelty metrics
     def historical_item_novelty(self):
@@ -733,10 +733,10 @@ class SparkDiversityEvaluation:
         Returns:
             pyspark.sql.dataframe.DataFrame: A dataframe with following columns: novelty.
         """
-        if self.df_novelty is None:
+        if self.avg_novelty is None:
             self.df_item_novelty = self.historical_item_novelty()
             n_recommendations = self.reco_df.count()
-            self.df_novelty = (
+            self.avg_novelty = (
                 self.reco_df.groupBy(self.col_item)
                 .count()
                 .join(self.df_item_novelty, self.col_item)
@@ -744,7 +744,7 @@ class SparkDiversityEvaluation:
                 .first()[0]
                 / n_recommendations
             )
-        return self.df_novelty
+        return self.avg_novelty
 
     # Serendipity metrics
     def user_item_serendipity(self):
@@ -826,12 +826,12 @@ class SparkDiversityEvaluation:
         Returns:
             float: serendipity.
         """
-        if self.df_serendipity is None:
+        if self.avg_serendipity is None:
             self.df_user_serendipity = self.user_serendipity()
-            self.df_serendipity = self.df_user_serendipity.agg(
+            self.avg_serendipity = self.df_user_serendipity.agg(
                 {"user_serendipity": "mean"}
             ).first()[0]
-        return self.df_serendipity
+        return self.avg_serendipity
 
     # Coverage metrics
     def catalog_coverage(self):
