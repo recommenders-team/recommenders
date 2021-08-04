@@ -19,6 +19,7 @@ from recommenders.utils.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_PREDICTION_COL,
     DEFAULT_RELEVANCE_COL,
+    DEFAULT_SIMILARITY_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
@@ -751,7 +752,7 @@ class PythonDiversityEvaluation:
         self.train_df = train_df[[col_user, col_item]]
         self.col_user = col_user
         self.col_item = col_item
-        self.sim_col = "sim"
+        self.sim_col = DEFAULT_SIMILARITY_COL
         self.df_cosine_similarity = None
         self.df_user_item_serendipity = None
         self.df_user_serendipity = None

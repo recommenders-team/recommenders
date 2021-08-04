@@ -19,6 +19,7 @@ from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_RELEVANCE_COL,
+    DEFAULT_SIMILARITY_COL,
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
@@ -537,7 +538,7 @@ class SparkDiversityEvaluation:
         self.train_df = train_df.select(col_user, col_item)
         self.col_user = col_user
         self.col_item = col_item
-        self.sim_col = "sim"
+        self.sim_col = DEFAULT_SIMILARITY_COL
         self.df_cosine_similarity = None
         self.df_user_item_serendipity = None
         self.df_user_serendipity = None
