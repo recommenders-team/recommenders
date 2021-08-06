@@ -45,7 +45,7 @@ jobs:
       
     - name: Prepare Code Coverage Report
       run: |
-          mv .coverage '.coverage_${{ matrix.marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
+          mv .coverage '.coverage_${{ matrix.test-marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
           ls .coverage*
       
     - name: Upload Code Coverage
@@ -108,7 +108,7 @@ jobs:
       
     - name: Prepare Code Coverage Report
       run: |
-          mv .coverage '.coverage_${{ matrix.marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
+          mv .coverage '.coverage_${{ matrix.test-marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
           ls .coverage*
       
     - name: Upload Code Coverage
@@ -116,3 +116,45 @@ jobs:
       with:
         name: code-cov
         path: .coverage*
+
+###############################################
+############ TEST COVERAGE SUMMARY ############
+###############################################
+  collect-code-cov:
+    runs-on: ubuntu-latest
+    needs: build-*
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: '3.6'
+
+      - name: Install dev-dependencies
+        run: |
+          pip install --upgrade pip setuptools wheel
+          python -m pip install coverage
+
+      - name: Download coverage reports from all previous jobs
+        uses: actions/download-artifact@v2
+        with:
+          name: code-cov
+          
+      - name: Show downloaded coverage reports
+        run: ls .coverage*
+      
+      - name: Merage coverage reports
+        run: |
+          python -m coverage combine .coverage*
+          python -m coverage report
+          python -m coverage xml
+          
+      - name: Show merged report
+        run: |
+          ls *.xml .coverage*
+          
+      - name: Upload code coverage report to CodeCov
+        uses: codecov/codecov-action@v2.0.2
+        with:
+          fail_ci_if_error: true
+          files: ./coverage.xml
