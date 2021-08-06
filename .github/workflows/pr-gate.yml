@@ -1,15 +1,62 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
 name: pr-gate
 
 on:
   push:
     branches: [ laserprec/ghaction-sandbox, laserprec/ghaction-ci ]
 
+# This file defines following CI workflow:
+#
+#  ┌──────────┐   ┌─────────┐   ┌────────┐
+#  │  static  ├─┬─►  build* ├─┬─►  test  │
+#  │ analysis │ │ │  (cpu)  │ │ │ report │
+#  └──────────┘ │ └─────────┘ │ └────────┘         
+#               │ ┌─────────┐ │
+#               ├─►  build* ├─┤
+#               │ │ (spark) │ │
+#               │ └─────────┘ │
+#               │ ┌─────────┐ │
+#               └─►  build* ├─┘
+#                 │ (spark) │
+#                 └─────────┘
+#                    ....
+# *each runs in PARALLEL different combinations
+#  of python version, OS, test subsets, etc
+#
+#  ASCII chart created via https://asciiflow.com/
+
 jobs:
 ###############################################
-################# CPU-BUILD #################
+############### STATIC-ANALYSIS ###############
+###############################################
+  static-analysis:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Python 3.6
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+    
+    - name: Install dependencies (tox)
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install tox
+
+    - name: Run flake8
+      # TODO: re-enable static analysis (turned off to get a draft of the pipeline infrastracture)
+      run: |
+        echo "tox -e flake8"
+
+###############################################
+################## CPU-BUILD ##################
 ###############################################
   build-cpu:
     runs-on: ${{ matrix.os }}
+    needs: static-analysis
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -59,6 +106,7 @@ jobs:
 ###############################################
   build-spark:
     runs-on: ${{ matrix.os }}
+    needs: static-analysis
     strategy:
       matrix:
         os: [ubuntu-latest]
@@ -77,13 +125,10 @@ jobs:
     - name: Setup Java JDK
       uses: actions/setup-java@v2.1.0
       with:
-        # The Java version to set up. Takes a whole or semver Java version. See examples of supported syntax in README file
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
 
     - name: Setup Apache Spark
-      # You may pin to the exact commit or the version.
-      # uses: vemonet/setup-spark@e8cb86fc6de0c73c110a9744d8a0d526384b5b2d
       uses: vemonet/setup-spark@v1
       with:
         # Apache Spark version to install, see https://spark.apache.org/downloads.html
@@ -139,10 +184,12 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: code-cov
-          
+
       - name: Show downloaded coverage reports
         run: ls .coverage*
       
+      # Merge code coverge reports so the coverage numbers are accurate across
+      # different runsof subsets of tests
       - name: Merage coverage reports
         run: |
           python -m coverage combine .coverage*
@@ -151,7 +198,7 @@ jobs:
           
       - name: Show merged report
         run: |
-          ls *.xml .coverage*
+          ls *.xml
           
       - name: Upload code coverage report to CodeCov
         uses: codecov/codecov-action@v2.0.2
