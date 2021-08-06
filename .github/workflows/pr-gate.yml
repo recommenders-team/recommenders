@@ -6,7 +6,7 @@ name: pr-gate
 
 on:
   push:
-    branches: [ laserprec/ghaction-sandbox, laserprec/ghaction-ci ]
+    branches: [ laserprec/ghaction-ci ]
 
 # This file defines following CI workflow:
 #
@@ -20,7 +20,7 @@ on:
 #               │ └─────────┘ │
 #               │ ┌─────────┐ │
 #               └─►  build* ├─┘
-#                 │ (spark) │
+#                 │  (gpu)  │   <-- TODO: Coming Soon
 #                 └─────────┘
 #                    ....
 # *each runs in PARALLEL different combinations
