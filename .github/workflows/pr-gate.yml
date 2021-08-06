@@ -1,0 +1,35 @@
+name: pr-gate
+
+on:
+  push:
+    branches: [ laserprec/ghaction-sandbox, laserprec/ghaction-ci ]
+
+jobs:
+
+  run-unit-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        python: [3.6]
+        tests-to-run: ["not gpu and not spark and not notebooks", "notebooks and not gpu and not spark"]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    
+    - name: Install build dependencies
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install pytest
+        
+    - name: Install 'recommenders' and its dependencies
+      run: |
+        pip install -e .[examples]
+
+    - name: Run unit tests (${{ matrix.os }}-${{ matrix.python }}-'${{ matrix.tests-to-run }}')
+      run: |
+        pytest tests/unit -m "${{ matrix.tests-to-run }}"
