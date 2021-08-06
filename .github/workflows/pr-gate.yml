@@ -5,7 +5,10 @@ on:
     branches: [ laserprec/ghaction-sandbox, laserprec/ghaction-ci ]
 
 jobs:
-  run-unit-tests:
+###############################################
+################# CPU-BUILD #################
+###############################################
+  build-cpu:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -14,10 +17,11 @@ jobs:
         # different kind of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ["not gpu and not spark and not notebooks", "notebooks and not gpu and not spark"]
+        test-marker: ['not gpu and not spark and not notebooks', 'not gpu and notebooks and not spark']
 
     steps:
     - uses: actions/checkout@v2
+    ################# Run Python tests #################
     - name: Use Python ${{ matrix.python }}
       uses: actions/setup-python@v2
       with:
@@ -28,7 +32,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install tox
     
-    - name: Run ${{ matrix.test-kind }} tests ('${{ matrix.test-marker }}'-${{ matrix.python }}-${{ matrix.os }})
+    - name: Run ${{ matrix.test-kind }} tests ('${{ matrix.test-marker }}')
       # '-e py' will use the default 'python' executable found in system path
       # for why using tox, see: https://tox.readthedocs.io/en/latest/index.html
       # tox will do:
@@ -38,3 +42,77 @@ jobs:
       #   4. show test reports
       run: |
         tox -e py -- tests/${{ matrix.test-kind }} -m '${{ matrix.test-marker }}'
+      
+    - name: Prepare Code Coverage Report
+      run: |
+          mv .coverage '.coverage_${{ matrix.marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
+          ls .coverage*
+      
+    - name: Upload Code Coverage
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-cov
+        path: .coverage*
+
+###############################################
+################# SPARK-BUILD #################
+###############################################
+  build-spark:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java: [8]
+        spark: [2.4.8]
+        hadoop: [2.6]
+        python: [3.6]
+        # different kind of tests are located in tests/<unit|integration|smoke> folders
+        test-kind: ['unit'] 
+        # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
+        test-marker: ['notebooks and spark and not gpu', 'spark and not notebooks and not gpu']
+
+    steps:
+    - uses: actions/checkout@v2
+    ################# Install spark dependencies (java, spark & hadoop) #################
+    - name: Setup Java JDK
+      uses: actions/setup-java@v2.1.0
+      with:
+        # The Java version to set up. Takes a whole or semver Java version. See examples of supported syntax in README file
+        java-version: ${{ matrix.java }}
+        distribution: 'adopt'
+
+    - name: Setup Apache Spark
+      # You may pin to the exact commit or the version.
+      # uses: vemonet/setup-spark@e8cb86fc6de0c73c110a9744d8a0d526384b5b2d
+      uses: vemonet/setup-spark@v1
+      with:
+        # Apache Spark version to install, see https://spark.apache.org/downloads.html
+        spark-version: ${{ matrix.spark }}
+        # Hadoop version
+        hadoop-version: ${{ matrix.hadoop }}
+    
+    ################# Run Python tests #################
+    - name: Use Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+    
+    - name: Install build dependencies (tox)
+      run: |
+        python -m pip install --upgrade pip setuptools wheel
+        pip install tox
+    
+    - name: Run ${{ matrix.test-kind }} tests ('${{ matrix.test-marker }}')
+      run: |
+        tox -e py -- tests/${{ matrix.test-kind }} -m '${{ matrix.test-marker }}'
+      
+    - name: Prepare Code Coverage Report
+      run: |
+          mv .coverage '.coverage_${{ matrix.marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
+          ls .coverage*
+      
+    - name: Upload Code Coverage
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-cov
+        path: .coverage*
