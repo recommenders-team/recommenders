@@ -47,9 +47,10 @@ jobs:
         pip install tox
 
     - name: Run flake8
-      # TODO: re-enable static analysis (turned off to get a draft of the pipeline infrastracture)
+      # TODO: re-enable this flake8 blocks (turned off to get a draft of the pipeline infrastracture)
+      continue-on-error: true
       run: |
-        echo "tox -e flake8"
+       tox -e flake8
 
 ###############################################
 ################## CPU-BUILD ##################
