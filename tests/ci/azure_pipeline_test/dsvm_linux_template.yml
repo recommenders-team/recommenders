@@ -84,6 +84,7 @@ jobs:
 
         conda activate ${{ parameters.conda_env }}
         pip install pytest>=3.6.4 || exit -1
+        pip install pytest-cov
 
         if [[ "${{ parameters.conda_env }}" == *"spark"* ]]; then
           export PYSPARK_PYTHON=`which python`
