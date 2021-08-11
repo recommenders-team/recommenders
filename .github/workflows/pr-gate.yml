@@ -6,7 +6,7 @@ name: pr-gate
 
 on:
   push:
-    branches: [ laserprec/ghaction-ci ]
+    branches: [ laserprec/ghaction-ci, laserprec/ghaction-sandbox2]
 
 # This file defines following CI workflow:
 #
@@ -74,28 +74,18 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    
-    - name: Install build dependencies (tox)
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        pip install tox
-    
+    # There are little documentation on how to call **local** actions
+    # https://docs.github.com/en/actions/creating-actions/about-actions#choosing-a-location-for-your-action
+    # but there is some working insights from this discussion:
+    # https://github.community/t/path-to-action-in-the-same-repository-as-workflow/16952/2
     - name: Run ${{ matrix.test-kind }} tests ('${{ matrix.test-marker }}')
-      # '-e py' will use the default 'python' executable found in system path
-      # for why using tox, see: https://tox.readthedocs.io/en/latest/index.html
-      # tox will do:
-      #   1. build and install source distribution (sdist)
-      #   2. run static analysis on the code (not implemented yet)
-      #   3. run all of the specified test environment (i.e. run tests in different pyversions, etc)
-      #   4. show test reports
-      run: |
-        tox -e py -- tests/${{ matrix.test-kind }} -m '${{ matrix.test-marker }}'
-      
-    - name: Prepare Code Coverage Report
-      run: |
-          mv .coverage '.coverage_${{ matrix.test-marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
-          ls .coverage*
-      
+      uses: ./.github/workflows/actions/run-tests
+      with:
+        test-kind: ${{ matrix.test-kind }}
+        test-marker: ${{ matrix.test-marker }}
+    # Currently GitHub workflow cannot call an action from another action
+    # https://github.community/t/call-an-action-from-another-action/17524
+    # Else this shared step can also be move to the local action: .github/workflows/actions/run-tests
     - name: Upload Code Coverage
       uses: actions/upload-artifact@v2
       with:
@@ -112,8 +102,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java: [8]
-        spark: [2.4.8]
-        hadoop: [2.6]
         python: [3.6]
         # different kind of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
@@ -128,34 +116,18 @@ jobs:
       with:
         java-version: ${{ matrix.java }}
         distribution: 'adopt'
-
-    - name: Setup Apache Spark
-      uses: vemonet/setup-spark@v1
-      with:
-        # Apache Spark version to install, see https://spark.apache.org/downloads.html
-        spark-version: ${{ matrix.spark }}
-        # Hadoop version
-        hadoop-version: ${{ matrix.hadoop }}
     
     ################# Run Python tests #################
     - name: Use Python ${{ matrix.python }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    
-    - name: Install build dependencies (tox)
-      run: |
-        python -m pip install --upgrade pip setuptools wheel
-        pip install tox
-    
+
     - name: Run ${{ matrix.test-kind }} tests ('${{ matrix.test-marker }}')
-      run: |
-        tox -e py -- tests/${{ matrix.test-kind }} -m '${{ matrix.test-marker }}'
-      
-    - name: Prepare Code Coverage Report
-      run: |
-          mv .coverage '.coverage_${{ matrix.test-marker }}_${{ matrix.test-kind }}_${{ matrix.os }}_${{ matrix.python }}'
-          ls .coverage*
+      uses: ./.github/workflows/actions/run-tests
+      with:
+        test-kind: ${{ matrix.test-kind }}
+        test-marker: ${{ matrix.test-marker }}
       
     - name: Upload Code Coverage
       uses: actions/upload-artifact@v2
