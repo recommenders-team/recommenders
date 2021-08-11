@@ -23,7 +23,7 @@ on:
 #                 │  (gpu)  │   <-- TODO: Coming Soon
 #                 └─────────┘
 #                    ....
-# *each runs in PARALLEL different combinations
+# *each runs in PARALLEL the different combinations
 #  of python version, OS, test subsets, etc
 #
 #  ASCII chart created via https://asciiflow.com/
@@ -190,8 +190,8 @@ jobs:
         run: ls .coverage*
       
       # Merge code coverge reports so the coverage numbers are accurate across
-      # different runsof subsets of tests
-      - name: Merage coverage reports
+      # different parallelized runs
+      - name: Merge coverage reports
         run: |
           python -m coverage combine .coverage*
           python -m coverage report
