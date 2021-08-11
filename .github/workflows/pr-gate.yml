@@ -161,7 +161,7 @@ jobs:
       - name: Show downloaded coverage reports
         run: ls .coverage*
       
-      # Merge code coverge reports so the coverage numbers are accurate across
+      # Merge code coverage reports so the coverage numbers are accurate across
       # different parallelized runs
       - name: Merge coverage reports
         run: |
