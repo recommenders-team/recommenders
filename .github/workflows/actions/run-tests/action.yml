@@ -13,10 +13,6 @@
 name: 'Run Python tests'
 description: 'Specify parameters to configure test subsets to run and collect test report for.'
 inputs:
-  python-version:
-    description: "Python version to run the tests in"
-    required: true
-    default: 3.6
   test-kind:
     description:
       "The kinds of tests to run. EX) unit|integration|smoke

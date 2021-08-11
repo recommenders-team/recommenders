@@ -110,7 +110,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    ################# Install spark dependencies (java, spark & hadoop) #################
+    ################# Install spark dependencies (java) #################
     - name: Setup Java JDK
       uses: actions/setup-java@v2.1.0
       with:
@@ -148,33 +148,17 @@ jobs:
         with:
           python-version: '3.6'
 
-      - name: Install dev-dependencies
-        run: |
-          pip install --upgrade pip setuptools wheel
-          python -m pip install coverage
-
       - name: Download coverage reports from all previous jobs
         uses: actions/download-artifact@v2
         with:
           name: code-cov
 
-      - name: Show downloaded coverage reports
-        run: ls .coverage*
-      
-      # Merge code coverage reports so the coverage numbers are accurate across
-      # different parallelized runs
       - name: Merge coverage reports
-        run: |
-          python -m coverage combine .coverage*
-          python -m coverage report
-          python -m coverage xml
-          
-      - name: Show merged report
-        run: |
-          ls *.xml
+        uses: ./.github/workflows/actions/merge-cov
           
       - name: Upload code coverage report to CodeCov
         uses: codecov/codecov-action@v2.0.2
         with:
           fail_ci_if_error: true
+          # comes from the last 'Merge coverage reports' step
           files: ./coverage.xml
