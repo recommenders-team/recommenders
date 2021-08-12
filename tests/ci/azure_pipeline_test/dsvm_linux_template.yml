@@ -99,11 +99,6 @@ jobs:
             export TEST_MARKER="${{ test }} and "
         fi
 
-        # Remove recommenders folder to make sure it is using the package to run the tests
-        # We leave the yaml files from DeepRec that are used in the tests
-        find recommenders ! -name "*.yaml" -delete 2>/dev/null 
-        du -a recommenders
-
         # run tests
         pytest tests/${{ test }} \
           ${{ parameters.pytest_params }} \
