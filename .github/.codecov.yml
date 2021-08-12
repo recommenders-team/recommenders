@@ -2,6 +2,7 @@
 # For more details, please see: 
 # https://docs.codecov.com/docs/pull-request-comments#section-behavior
 comment:
-  behavior: default
+  behavior: new
+  layout: "sunburst, diff, files"
   require_head: no
   require_base: no
