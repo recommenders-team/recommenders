@@ -6,7 +6,7 @@ name: pr-gate
 
 on:
   push:
-    branches: [ laserprec/ghaction-ci, laserprec/ghaction-sandbox2]
+    branches: [ laserprec/ghaction-ci, laserprec/ghaction-sandbox* ]
 
 # This file defines following CI workflow:
 #
@@ -47,7 +47,7 @@ jobs:
         pip install tox
 
     - name: Run flake8
-      # TODO: re-enable this flake8 blocks (turned off to get a draft of the pipeline infrastracture)
+      # TODO: re-enable this flake8 block (turned off to get a draft of the pipeline infrastructure)
       continue-on-error: true
       run: |
        tox -e flake8
@@ -65,7 +65,7 @@ jobs:
         # different kind of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['not gpu and not spark and not notebooks', 'not gpu and notebooks and not spark']
+        test-marker: ['not gpu and not spark and not notebooks', 'notebooks and not gpu and not spark']
 
     steps:
     - uses: actions/checkout@v2
