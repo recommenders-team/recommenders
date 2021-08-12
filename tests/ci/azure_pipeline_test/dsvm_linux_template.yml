@@ -98,18 +98,10 @@ jobs:
             export TEST_MARKER="${{ test }} and "
         fi
 
-        # Disable the deletion as this will make prevent generating code coverage numbers
-        # # Remove recommenders folder to make sure it is using the package to run the tests
-        # # We leave the yaml files from DeepRec that are used in the tests
-        # find recommenders ! -name "*.yaml" -delete 2>/dev/null 
-        # du -a recommenders
-
         # run tests
         pytest tests/${{ test }} \
           ${{ parameters.pytest_params }} \
-          -m "${TEST_MARKER}${{ parameters.pytest_markers }}" \
-          --durations 0 \
-          --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml || exit -1
+          -m "${TEST_MARKER}${{ parameters.pytest_markers }}" 
         
         rm -rf $SPARK_DIR || exit -1
         conda deactivate
@@ -119,7 +111,7 @@ jobs:
     - task: PublishTestResults@2
       displayName: 'Publish Test Results'
       inputs:
-        testResultsFiles: 'reports/test-${{ test }}*.xml'
+        testResultsFiles: 'junit/*.xml'
         failTaskOnFailedTests: true
       condition: succeededOrFailed()
 
