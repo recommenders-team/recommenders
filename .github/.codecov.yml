@@ -1,0 +1,7 @@
+# This file controls how codecov submit comments in the PR about code coverage.
+# For more details, please see: 
+# https://docs.codecov.com/docs/pull-request-comments#section-behavior
+comment:
+  behavior: default
+  require_head: no
+  require_base: no
