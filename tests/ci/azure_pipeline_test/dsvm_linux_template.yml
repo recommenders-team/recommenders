@@ -76,7 +76,7 @@ jobs:
 
       # clean up any previous test results        
       rm -rf reports
-      rm .coverage*
+      rm -f .coverage*
     displayName: 'Install Dependencies'
 
   - ${{ each test in parameters.test_types }}:
