@@ -76,6 +76,7 @@ jobs:
 
       # clean up any previous test results        
       rm -rf reports
+      rm -f .coverage*
     displayName: 'Install Dependencies'
 
   - ${{ each test in parameters.test_types }}:
@@ -83,7 +84,8 @@ jobs:
         eval "$(conda shell.bash hook)"
 
         conda activate ${{ parameters.conda_env }}
-        pip install pytest>=3.6.4 || exit -1
+        pip install pytest || exit -1
+        pip install pytest-cov
 
         if [[ "${{ parameters.conda_env }}" == *"spark"* ]]; then
           export PYSPARK_PYTHON=`which python`
@@ -97,18 +99,13 @@ jobs:
             export TEST_MARKER="${{ test }} and "
         fi
 
-        # Remove recommenders folder to make sure it is using the package to run the tests
-        # We leave the yaml files from DeepRec that are used in the tests
-        find recommenders ! -name "*.yaml" -delete 2>/dev/null 
-        du -a recommenders
-
         # run tests
         pytest tests/${{ test }} \
           ${{ parameters.pytest_params }} \
           -m "${TEST_MARKER}${{ parameters.pytest_markers }}" \
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml || exit -1
-        
+
         rm -rf $SPARK_DIR || exit -1
         conda deactivate
       displayName: 'Run ${{ test }} tests'
