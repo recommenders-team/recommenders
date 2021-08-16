@@ -6,7 +6,7 @@ name: pr-gate
 
 on:
   push:
-    branches: [ laserprec/ghaction-ci, laserprec/ghaction-sandbox* ]
+    branches: [ laserprec/gpu-ci, laserprec/ghaction-sandbox* ]
 
 # This file defines following CI workflow:
 #
@@ -20,7 +20,7 @@ on:
 #               │ └─────────┘ │
 #               │ ┌─────────┐ │
 #               └─►  build* ├─┘
-#                 │  (gpu)  │   <-- TODO: Coming Soon
+#                 │  (gpu)  │
 #                 └─────────┘
 #                    ....
 # *each runs in PARALLEL the different combinations
@@ -136,11 +136,46 @@ jobs:
         path: .coverage*
 
 ###############################################
+################# GPU-BUILD #################
+###############################################
+  build-gpu:
+    runs-on: [self-hosted, Linux, gpu] # this is a union of labels to select specific self-hosted machine
+    needs: static-analysis
+    strategy:
+      matrix:
+        python: [3.6]
+        # different kind of tests are located in tests/<unit|integration|smoke> folders
+        test-kind: ['unit'] 
+        # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
+        test-marker: ['gpu and notebooks and not spark', 'gpu and not notebooks and not spark']
+
+    steps:
+    - uses: actions/checkout@v2
+
+    ################# Run Python tests #################
+    - name: Use Python ${{ matrix.python }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python }}
+
+    - name: Run ${{ matrix.test-kind }} tests ('${{ matrix.test-marker }}')
+      uses: ./.github/workflows/actions/run-tests
+      with:
+        test-kind: ${{ matrix.test-kind }}
+        test-marker: ${{ matrix.test-marker }}
+      
+    - name: Upload Code Coverage
+      uses: actions/upload-artifact@v2
+      with:
+        name: code-cov
+        path: .coverage*
+
+###############################################
 ############ TEST COVERAGE SUMMARY ############
 ###############################################
   collect-code-cov:
     runs-on: ubuntu-latest
-    needs: [build-cpu, build-spark]
+    needs: [build-cpu, build-spark, build-gpu]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
