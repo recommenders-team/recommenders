@@ -2,7 +2,12 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (June 21, 2021)
+## What's New 
+### (July 22, 2021)
+
+We have changed the names of the folders which contain the source code, so that they are more informative. This implies that you will need to change any import statements using the recommenders package. Specifically, the folder `reco_utils` has been renamed to `recommenders` and its subfolders have been renamed according to [issue 1390](https://github.com/microsoft/recommenders/issues/1390).  
+
+### (June 21, 2021)
 
 We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)!
 
