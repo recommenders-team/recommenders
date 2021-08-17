@@ -5,6 +5,9 @@
 name: pr-gate
 
 on:
+  pull_request:
+    branches: [ staging, main ]
+  # development triggers can be removed afterwards.
   push:
     branches: [ laserprec/gpu-ci, laserprec/ghaction-sandbox* ]
 
