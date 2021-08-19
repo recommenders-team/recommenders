@@ -12,12 +12,17 @@ on:
   #            │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
   #            │ │ │ │ │
   #            │ │ │ │ │
-  # schedule: "0 0 * * *"  # basically running everyday at 12AM
-  #   branches: [ staging, main ]
-
-  # development triggers, can be removed afterwards.
+  schedule:
+    - cron: '0 0 * * *'  # basically running everyday at 12AM\
+    # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
+  
   push:
-    branches: [ laserprec/nightly-ci ]
+    branches:
+      # Before we can't schedule run for non-main branches,
+      # to ensure we are running the build on the staging branch, we can add push policy for it
+      - staging
+      # Development triggers, can be removed afterwards
+      - laserprec/nightly-ci
 
 # This file defines following CI workflow:
 #
