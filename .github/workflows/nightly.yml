@@ -5,20 +5,20 @@
 name: nightly
 
 on:
-  #            ┌───────────── minute (0 - 59)
-  #            │ ┌───────────── hour (0 - 23)
-  #            │ │ ┌───────────── day of the month (1 - 31)
-  #            │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
-  #            │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
-  #            │ │ │ │ │
-  #            │ │ │ │ │
-  schedule:
-    - cron: '0 0 * * *'  # basically running everyday at 12AM\
+  #          ┌───────────── minute (0 - 59)
+  #          │ ┌───────────── hour (0 - 23)
+  #          │ │ ┌───────────── day of the month (1 - 31)
+  #          │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+  #          │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
+  #          │ │ │ │ │
+  #          │ │ │ │ │
+  schedule: 
+    - cron: '0 0 * * *'  # basically running everyday at 12AM
     # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
   
   push:
     branches:
-      # Before we can't schedule run for non-main branches,
+      # Because we can't schedule run for non-main branches,
       # to ensure we are running the build on the staging branch, we can add push policy for it
       - staging
       # Development triggers, can be removed afterwards
@@ -82,6 +82,10 @@ jobs:
         test-kind: ['unit', 'smoke', 'integration'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
         test-marker: ['not spark and not gpu']
+        include:
+          # Integration tests needs a more powermachine with more memory. GitHub-hosted agents only have 7GB memory.
+          - os: self-hosted
+            test-kind: 'integration'
 
     steps:
     - uses: actions/checkout@v2
@@ -123,6 +127,11 @@ jobs:
         test-kind: ['unit', 'smoke', 'integration'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
         test-marker: ['spark and not gpu']
+        include:
+          # Integration tests needs a more powermachine with more memory. GitHub-hosted agents only have 7GB memory.
+          - os: self-hosted
+            test-kind: 'integration'
+        
 
     steps:
     - uses: actions/checkout@v2
