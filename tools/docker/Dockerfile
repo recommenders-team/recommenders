@@ -12,9 +12,9 @@ ARG HOME
 ENV HOME="${HOME}"
 WORKDIR ${HOME}
 
-# Install base dependencies
+# Install base dependencies and cmake (for xlearn)
 RUN apt-get update && \
-    apt-get install -y curl git
+    apt-get install -y curl build-essential cmake
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -23,11 +23,75 @@ RUN curl ${ANACONDA} -o anaconda.sh && \
     rm anaconda.sh && \
     echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     echo "conda activate base" >> ~/.bashrc
+
 ENV PATH="${HOME}/conda/bin:${PATH}"
 
-# Clone Recommenders repo
-ARG BRANCH="main"
-RUN git clone --depth 1 --single-branch -b ${BRANCH} https://github.com/microsoft/recommenders
+# Python version supported by recommenders
+RUN conda install python=3.7
+
+
+###########
+# CPU Stage
+###########
+FROM base AS cpu
+
+RUN pip install recommenders[xlearn,examples]
+
+
+###############
+# PySpark Stage
+###############
+FROM base AS pyspark
+
+# Install Java version 8
+RUN apt-get update && \
+    apt-get install -y libgomp1 openjdk-8-jre
+
+ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
+    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
+    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python"
+
+# Install dependencies in Conda environment
+RUN pip install recommenders[spark,xlearn,examples]
+
+
+###########
+# GPU Stage
+###########
+FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04 AS gpu
+
+ARG HOME
+WORKDIR ${HOME}
+
+COPY --from=base ${HOME} .
+RUN apt-get update && \
+    apt-get install -y build-essential cmake
+ENV PATH="${HOME}/conda/bin:${PATH}"
+
+# Install dependencies in Conda environment
+RUN conda install cudatoolkit=10.0 "cudnn>=7.6"
+RUN pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html
+
+
+############
+# Full Stage
+############
+FROM gpu AS full
+
+ARG HOME
+WORKDIR ${HOME}
+
+ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
+    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
+    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python"
+
+# Install dependencies in Conda environment
+RUN pip install recommenders[all,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html
+
+#############
+# Final Stage
+#############
+FROM $ENV AS final
 
 # Setup Jupyter notebook configuration
 ENV NOTEBOOK_CONFIG="${HOME}/.jupyter/jupyter_notebook_config.py"
@@ -38,80 +102,11 @@ RUN mkdir ${HOME}/.jupyter && \
     echo "c.NotebookApp.open_browser = False" >> ${NOTEBOOK_CONFIG} && \
     echo "c.MultiKernelManager.default_kernel_name = 'python3'" >> ${NOTEBOOK_CONFIG}
 
-
-# CPU Stage
-FROM base AS cpu
-
-RUN python recommenders/tools/generate_conda_file.py --name base
-
-
-# PySpark Stage
-FROM base AS pyspark
-
-# Install base dependencies
-RUN apt-get update && \
-    apt-get install -y libgomp1 openjdk-8-jre
-
-# Install Spark
-ARG SPARK="http://archive.apache.org/dist/spark/spark-2.3.1/spark-2.3.1-bin-hadoop2.7.tgz"
-RUN mkdir spark && \
-    curl ${SPARK} -o spark.tgz && \
-    tar xzf spark.tgz --strip-components 1 -C spark && \
-    rm spark.tgz
-
-# Setup Conda environment
-RUN python recommenders/tools/generate_conda_file.py --name base --pyspark
-
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
-    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
-    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python" \
-    SPARK_HOME="${HOME}/spark"
-
-
-# GPU Stage
-FROM nvidia/cuda:9.0-base AS gpu
+# Register the environment with Jupyter
+RUN python -m ipykernel install --user --name base --display-name "Python (base)"
 
 ARG HOME
 WORKDIR ${HOME}
-
-COPY --from=base ${HOME} .
-
-# Setup Conda environment
-ENV PATH="${HOME}/conda/bin:${PATH}"
-RUN python recommenders/tools/generate_conda_file.py --name base --gpu
-
-
-# Full Stage
-FROM gpu AS full
-
-ARG HOME
-WORKDIR ${HOME}
-
-COPY --from=pyspark ${HOME}/spark spark
-
-# Setup Conda environment
-RUN python recommenders/tools/generate_conda_file.py --name base --gpu --pyspark
-
-ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
-    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
-    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python" \
-    SPARK_HOME="${HOME}/spark"
-
-
-# Final Stage
-FROM $ENV AS final
-
-# Install XLearn dependencies
-RUN apt-get update && \
-    apt-get install -y build-essential cmake
-
-# Install Conda packages
-RUN conda env update -f base.yaml && \
-    conda clean -fay && \
-    python -m ipykernel install --user --name 'python3' --display-name 'python3'
-
-ARG HOME
-WORKDIR ${HOME}/recommenders
 
 EXPOSE 8888
 CMD ["jupyter", "notebook"]
