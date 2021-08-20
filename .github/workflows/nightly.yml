@@ -79,13 +79,15 @@ jobs:
         os: [ubuntu-latest]
         python: [3.6]
         # different kind of tests are located in tests/<unit|integration|smoke> folders
-        test-kind: ['unit', 'smoke', 'integration'] 
+        test-kind: ['unit', 'smoke']
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
         test-marker: ['not spark and not gpu']
         include:
           # Integration tests needs a more powermachine with more memory. GitHub-hosted agents only have 7GB memory.
           - os: self-hosted
+            python: 3.6
             test-kind: 'integration'
+            test-marker: 'not spark and not gpu'
 
     steps:
     - uses: actions/checkout@v2
@@ -124,13 +126,16 @@ jobs:
         java: [8]
         python: [3.6]
         # different kind of tests are located in tests/<unit|integration|smoke> folders
-        test-kind: ['unit', 'smoke', 'integration'] 
+        test-kind: ['unit', 'smoke'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
         test-marker: ['spark and not gpu']
         include:
           # Integration tests needs a more powermachine with more memory. GitHub-hosted agents only have 7GB memory.
           - os: self-hosted
+            python: 3.6
             test-kind: 'integration'
+            test-marker: 'not spark and not gpu'
+
         
 
     steps:
