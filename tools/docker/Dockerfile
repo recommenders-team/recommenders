@@ -63,6 +63,7 @@ FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04 AS gpu
 ARG HOME
 WORKDIR ${HOME}
 
+# Get up to date with base
 COPY --from=base ${HOME} .
 RUN apt-get update && \
     apt-get install -y build-essential cmake
@@ -92,6 +93,9 @@ RUN pip install recommenders[all,examples] -f https://download.pytorch.org/whl/c
 # Final Stage
 #############
 FROM $ENV AS final
+
+# For Cornac
+RUN apt-get install libpython3.7
 
 # Setup Jupyter notebook configuration
 ENV NOTEBOOK_CONFIG="${HOME}/.jupyter/jupyter_notebook_config.py"
