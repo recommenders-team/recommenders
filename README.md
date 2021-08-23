@@ -3,15 +3,14 @@
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
 ## What's New 
-### (July 22, 2021)
+### (August 23, 2021)
 
+We have a new release [Recommenders 0.7.0](https://github.com/microsoft/recommenders/releases/tag/0.7.0)!
 We have changed the names of the folders which contain the source code, so that they are more informative. This implies that you will need to change any import statements that reference the recommenders package. Specifically, the folder `reco_utils` has been renamed to `recommenders` and its subfolders have been renamed according to [issue 1390](https://github.com/microsoft/recommenders/issues/1390).  
 
-### (June 21, 2021)
+The previous release ([0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)) is compatible with the old style of naming of modules. 
 
-We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)!
-
-Recommenders is now on PyPI and can be installed using pip! In addition there are lots of bug fixes and utilities improvements.
+Starting with release 0.6.0, Recommenders is on PyPI and can be installed using pip! 
 
 Here you can find the PyPi page: https://pypi.org/project/recommenders/
 
