@@ -19,7 +19,7 @@ on:
   push:
     # because we can't schedule run for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [staging]
+    branches: [staging, laserprec/nightly-ci]
 
   # enable manual trigger
   workflow_dispatch:
