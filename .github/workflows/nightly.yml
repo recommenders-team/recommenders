@@ -17,12 +17,17 @@ on:
     # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
   
   push:
-    branches:
-      # Because we can't schedule run for non-main branches,
-      # to ensure we are running the build on the staging branch, we can add push policy for it
-      - staging
-      # Development triggers, can be removed afterwards
-      - laserprec/nightly-ci
+    # because we can't schedule run for non-main branches,
+    # to ensure we are running the build on the staging branch, we can add push policy for it
+    branches: [staging]
+
+  # enable manual trigger
+  workflow_dispatch:
+    input:
+      tags:
+        description: 'Test scenario tags'
+        default: 'Anything to describe this manual run (optional)'
+    
 
 # This file defines following CI workflow:
 #
@@ -137,8 +142,6 @@ jobs:
             python: 3.6
             test-kind: 'integration'
             test-marker: 'not spark and not gpu'
-
-        
 
     steps:
     - uses: actions/checkout@v2

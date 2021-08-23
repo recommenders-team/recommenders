@@ -8,6 +8,13 @@ on:
   pull_request:
     branches: [ staging, main ]
 
+  # enable manual trigger
+  workflow_dispatch:
+    input:
+      tags:
+        description: 'Test scenario tags'
+        default: 'Anything to describe this manual run (optional)'
+
 # This file defines following CI workflow:
 #
 #  ┌──────────┐   ┌─────────┐   ┌────────┐
