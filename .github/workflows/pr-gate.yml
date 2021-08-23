@@ -62,7 +62,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python: [3.6]
-        # different kind of tests are located in tests/<unit|integration|smoke> folders
+        # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
         test-marker: ['not gpu and not spark and not notebooks', 'notebooks and not gpu and not spark']
@@ -103,7 +103,7 @@ jobs:
         os: [ubuntu-latest]
         java: [8]
         python: [3.6]
-        # different kind of tests are located in tests/<unit|integration|smoke> folders
+        # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
         test-marker: ['notebooks and spark and not gpu', 'spark and not notebooks and not gpu']
@@ -144,7 +144,7 @@ jobs:
     strategy:
       matrix:
         python: [3.6]
-        # different kind of tests are located in tests/<unit|integration|smoke> folders
+        # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
         test-marker: ['gpu and notebooks and not spark', 'gpu and not notebooks and not spark']
