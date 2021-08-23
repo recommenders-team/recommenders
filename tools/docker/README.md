@@ -65,14 +65,12 @@ There are several build arguments which can change how the image is built. Simil
 Build Arg|Description|
 ---------|-----------|
 ENV|Environment to use, options: cpu, psypark, gpu, full|
-BRANCH|Git branch of the repo to use (defaults to `main`)
 ANACONDA|Anaconda installation script (defaults to miniconda3 4.6.14)|
-SPARK|Spark installation tarball (defaults to Spark 2.3.1)|
 
-Example using the staging branch:
+Example:
 
 ```
-DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" --build-arg BRANCH="staging" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
 ```
 
 In order to see detailed progress with BuildKit you can provide a flag during the build command: ```--progress=plain```
@@ -81,5 +79,10 @@ Running tests with docker
 -------------------------
 
 ```
-docker run -it recommenders:cpu pytest tests/unit -m "not spark and not gpu and not notebooks"
+docker run -it recommenders:cpu bash -c 'pip install pytest; \
+pip install pytest-cov; \
+apt-get install -y git; \
+git clone https://github.com/microsoft/recommenders.git; \
+cd recommenders; \
+pytest tests/unit -m "not spark and not gpu and not notebooks"'
 ```
