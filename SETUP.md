@@ -13,6 +13,7 @@ This document describes how to setup all the dependencies to run the notebooks i
   - [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
     - [Requirements](#requirements)
     - [Dependencies setup](#dependencies-setup)
+    - [Using a virtual environment](#using-a-virtual-environment)
     - [Register the environment as a kernel in Jupyter](#register-the-environment-as-a-kernel-in-jupyter)
     - [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
   - [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
@@ -39,7 +40,7 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 * An optional requirement is Anaconda with Python version >= 3.6
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
   
-  Alternatively a [virtual environment](https://docs.python.org/3/library/venv.html) can be used instead of Anaconda.
+  Alternatively a [virtual environment](#using-a-virtual-environment) can be used instead of Anaconda.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
@@ -51,7 +52,7 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `ms-recommenders` package from [PyPI](https://pypi.org). Another option is to install from a local copy of the code. For instructions on how to do these, see [this guide](reco_utils/README.md).
+There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org). For instructions on how to do these, see [this guide](recommenders/README.md).
 
 An alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md)
 
@@ -87,8 +88,6 @@ First, assuming that the environment is called `reco_pyspark`, get the path wher
     mkdir -p $RECO_ENV/etc/conda/activate.d
     mkdir -p $RECO_ENV/etc/conda/deactivate.d
 
-You also need to find where Spark is installed and set `SPARK_HOME` variable, on the DSVM, `SPARK_HOME=/dsvm/tools/spark/current`.
-
 Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 
 ```bash
@@ -96,7 +95,7 @@ Then, create the file `$RECO_ENV/etc/conda/activate.d/env_vars.sh` and add:
 RECO_ENV=$(conda env list | grep reco_pyspark | awk '{print $NF}')
 export PYSPARK_PYTHON=$RECO_ENV/bin/python
 export PYSPARK_DRIVER_PYTHON=$RECO_ENV/bin/python
-export SPARK_HOME=/dsvm/tools/spark/current
+unset SPARK_HOME
 ```
 
 This will export the variables every time we do `conda activate reco_pyspark`. To unset these variables when we deactivate the environment, create the file `$RECO_ENV/etc/conda/deactivate.d/env_vars.sh` and add:
@@ -142,6 +141,39 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 </details>
 
 
+### Using a virtual environment
+
+It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
+recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) and running the virtual environment within a container, as the most convenient way to do this.  
+
+    # Start docker daemon if not running
+    sudo dockerd &
+    # Pull the image from the Nvidia docker hub (https://hub.docker.com/r/nvidia/cuda) that is suitable for your system
+    # E.g. for Ubuntu 18.04 do
+    sudo docker run --gpus all -it --rm nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+
+    # Within the container: 
+
+    apt-get -y update
+    apt-get -y install python3.6
+    apt-get -y install python3-pip
+    apt-get -y install python3.6-venv
+    apt-get -y install libpython3.6-dev
+    apt-get -y install cmake
+    apt-get install -y libgomp1 openjdk-8-jre
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    
+    python3.6 -m venv --system-site-packages /venv
+    source /venv/bin/activate
+    pip install --upgrade pip
+    pip install --upgrade setuptools
+
+    export PYSPARK_DRIVER_PYTHON=/venv/bin/python
+    export PYSPARK_PYTHON=/venv/bin/python
+
+    pip install recommenders[all]
+
+
 ### Register the environment as a kernel in Jupyter
 
 We can register our conda or virtual environment to appear as a kernel in the Jupyter notebooks. After activating the environment (`my_env_name`) do
@@ -149,6 +181,7 @@ We can register our conda or virtual environment to appear as a kernel in the Ju
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 
 If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
+
 
 ### Troubleshooting for the DSVM
 
@@ -162,13 +195,16 @@ SPARK_WORKER_DIR="/mnt"
 SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.appDataTtl=3600, -Dspark.worker.cleanup.interval=300, -Dspark.storage.cleanupFilesAfterExecutorExit=true"
 ```
 
-* Another source of problems is when the variable `SPARK_HOME` is not set correctly. In the Azure DSVM, `SPARK_HOME` should be `/dsvm/tools/spark/current`.
+* Another source of problems is when the variable `SPARK_HOME` is not set correctly. In the Azure DSVM, `SPARK_HOME` is by default `/dsvm/tools/spark/current`. We need to unset it: 
+```
+unset SPARK_HOME
+```
 
 * Java 11 might produce errors when running the notebooks. To change it to Java 8:
 
 ```
 sudo apt install openjdk-8-jdk
-sudo update-alternatives --config java
+export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 ```
 
 * We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
@@ -189,7 +225,7 @@ An example of how to create an Azure Databricks workspace and an Apache Spark cl
 
 ### Installation from PyPI
 
-The `ms-recommenders` package can be installed with core dependencies for utilities and CPU-based algorithms.
+The `recommenders` package can be installed with core dependencies for utilities and CPU-based algorithms.
 This is done from the _Libraries_ link at the cluster, selecting the option to import a library and selecting _PyPI_ in the menu.  
 For installations with more dependencies, see the steps below.
 
@@ -271,12 +307,12 @@ To install the repo manually onto Databricks, follow the steps:
 After installation, you can now create a new notebook and import the utilities from Databricks in order to confirm that the import worked.
 
 ```{python}
-import reco_utils
+import recommenders
 ```
 
 ### Troubleshooting Installation on Azure Databricks
 
-* For the [reco_utils](reco_utils) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
+* For the [recommenders](recommenders) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
 
 ### Prepare Azure Databricks for Operationalization
 
@@ -342,7 +378,7 @@ You can then open the Jupyter notebook server at http://localhost:8888
 
 The process of making a new release and publishing it to pypi is as follows:
 
-First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [reco_utils.py/__init__.py](reco_utils.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
+First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [recommenders.py/__init__.py](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
@@ -351,4 +387,4 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [re
 generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
-1. Publish the wheel and tar.gz to pypi: `twine upload ms_recommenders*`
+1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`

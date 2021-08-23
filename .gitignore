@@ -24,6 +24,7 @@ wheels/
 .installed.cfg
 *.egg
 MANIFEST
+license.txt
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -37,6 +38,7 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
+junit
 .tox/
 .coverage
 .coverage.*
