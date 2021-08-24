@@ -81,12 +81,17 @@ FROM gpu AS full
 ARG HOME
 WORKDIR ${HOME}
 
+# Install Java version 8
+RUN apt-get update && \
+    apt-get install -y libgomp1 openjdk-8-jre
+
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
     PYSPARK_PYTHON="${HOME}/conda/bin/python" \
     PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python"
 
 # Install dependencies in Conda environment
-RUN pip install recommenders[all,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html
+RUN pip install recommenders[all] -f https://download.pytorch.org/whl/cu100/torch_stable.html
+
 
 #############
 # Final Stage
