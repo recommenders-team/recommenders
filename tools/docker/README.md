@@ -78,6 +78,7 @@ In order to see detailed progress with BuildKit you can provide a flag during th
 Running tests with docker
 -------------------------
 
+To run the tests using e.g. the CPU image, do the following: 
 ```
 docker run -it recommenders:cpu bash -c 'pip install pytest; \
 pip install pytest-cov; \

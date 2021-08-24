@@ -12,9 +12,9 @@ ARG HOME
 ENV HOME="${HOME}"
 WORKDIR ${HOME}
 
-# Install base dependencies, cmake (for xlearn) and libpython3.7 (for cornac)
+# Install base dependencies, cmake (for xlearn) and libpython3.6 (for cornac)
 RUN apt-get update && \
-    apt-get install -y curl build-essential cmake libpython3.7
+    apt-get install -y curl build-essential cmake libpython3.6
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -27,7 +27,7 @@ RUN curl ${ANACONDA} -o anaconda.sh && \
 ENV PATH="${HOME}/conda/bin:${PATH}"
 
 # Python version supported by recommenders
-RUN conda install python=3.7
+RUN conda install python=3.6
 
 
 ###########
@@ -66,11 +66,10 @@ WORKDIR ${HOME}
 # Get up to date with base
 COPY --from=base ${HOME} .
 RUN apt-get update && \
-    apt-get install -y build-essential cmake
+    apt-get install -y build-essential cmake libpython3.6
 ENV PATH="${HOME}/conda/bin:${PATH}"
 
 # Install dependencies in Conda environment
-RUN conda install cudatoolkit=10.0 "cudnn>=7.6"
 RUN pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html
 
 
