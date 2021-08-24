@@ -12,9 +12,9 @@ ARG HOME
 ENV HOME="${HOME}"
 WORKDIR ${HOME}
 
-# Install base dependencies and cmake (for xlearn)
+# Install base dependencies, cmake (for xlearn) and libpython3.7 (for cornac)
 RUN apt-get update && \
-    apt-get install -y curl build-essential cmake
+    apt-get install -y curl build-essential cmake libpython3.7
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -93,9 +93,6 @@ RUN pip install recommenders[all,examples] -f https://download.pytorch.org/whl/c
 # Final Stage
 #############
 FROM $ENV AS final
-
-# For Cornac
-RUN apt-get install libpython3.7
 
 # Setup Jupyter notebook configuration
 ENV NOTEBOOK_CONFIG="${HOME}/.jupyter/jupyter_notebook_config.py"
