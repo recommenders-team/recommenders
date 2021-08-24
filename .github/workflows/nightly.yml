@@ -17,7 +17,7 @@ on:
     # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
   
   push:
-    # because we can't schedule run for non-main branches,
+    # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
     branches: [staging, laserprec/nightly-ci]
 
@@ -139,9 +139,10 @@ jobs:
           # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
           # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
           - os: self-hosted
+            java: 8
             python: 3.6
             test-kind: 'integration'
-            test-marker: 'not spark and not gpu'
+            test-marker: 'spark and not gpu'
 
     steps:
     - uses: actions/checkout@v2
