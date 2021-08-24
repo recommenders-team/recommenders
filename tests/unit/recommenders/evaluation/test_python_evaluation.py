@@ -199,7 +199,7 @@ def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
             col_prediction=DEFAULT_RATING_COL,
             k=10,
         )
-        == 1
+        == pytest.approx(1.0, TOL)
     )
     assert ndcg_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert ndcg_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.38172, TOL)
