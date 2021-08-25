@@ -17,11 +17,12 @@ Once the container is running you can access Jupyter notebooks at http://localho
 Building and Running with Docker
 --------------------------------
 
+See examples below for the case of conda. If you use venv instead, replace `--build-arg VIRTUAL_ENV=conda` with `--build-arg VIRTUAL_ENV=venv`.
 <details>
 <summary><strong><em>CPU environment</em></strong></summary>
 
 ```
-DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV=cpu --build-arg VIRTUAL_ENV=conda .
 docker run -p 8888:8888 -d recommenders:cpu
 ```
 
@@ -31,7 +32,7 @@ docker run -p 8888:8888 -d recommenders:cpu
 <summary><strong><em>PySpark environment</em></strong></summary>
 
 ```
-DOCKER_BUILDKIT=1 docker build -t recommenders:pyspark --build-arg ENV="pyspark" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:pyspark --build-arg ENV=pyspark --build-arg VIRTUAL_ENV=conda .
 docker run -p 8888:8888 -d recommenders:pyspark
 ```
 
@@ -41,7 +42,7 @@ docker run -p 8888:8888 -d recommenders:pyspark
 <summary><strong><em>GPU environment</em></strong></summary>
 
 ```
-DOCKER_BUILDKIT=1 docker build -t recommenders:gpu --build-arg ENV="gpu" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:gpu --build-arg ENV=gpu --build-arg VIRTUAL_ENV=conda .
 docker run --runtime=nvidia -p 8888:8888 -d recommenders:gpu
 ```
 
@@ -51,7 +52,7 @@ docker run --runtime=nvidia -p 8888:8888 -d recommenders:gpu
 <summary><strong><em>GPU + PySpark environment</em></strong></summary>
 
 ```
-DOCKER_BUILDKIT=1 docker build -t recommenders:full --build-arg ENV="full" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:full --build-arg ENV=full --build-arg VIRTUAL_ENV=conda .
 docker run --runtime=nvidia -p 8888:8888 -d recommenders:full
 ```
 
@@ -64,13 +65,14 @@ There are several build arguments which can change how the image is built. Simil
 
 Build Arg|Description|
 ---------|-----------|
-ENV|Environment to use, options: cpu, psypark, gpu, full|
+ENV|Environment to use, options: cpu, psypark, gpu, full (defaults to cpu)|
+VIRTUAL_ENV|Virtual environment to use; mandatory argument, must be one of "conda", "venv"|
 ANACONDA|Anaconda installation script (defaults to miniconda3 4.6.14)|
 
 Example:
 
 ```
-DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV=cpu --build-arg VIRTUAL_ENV=conda .
 ```
 
 In order to see detailed progress with BuildKit you can provide a flag during the build command: ```--progress=plain```

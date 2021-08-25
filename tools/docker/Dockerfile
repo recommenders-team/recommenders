@@ -9,8 +9,13 @@ FROM ubuntu:18.04 AS base
 LABEL maintainer="Microsoft Recommender Project <RecoDevTeam@service.microsoft.com>"
 
 ARG HOME
+ARG VIRTUAL_ENV
 ENV HOME="${HOME}"
 WORKDIR ${HOME}
+
+# Exit if VIRTUAL_ENV is not specified correctly
+RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ]; then \
+    echo 'VIRTUAL_ENV argument should be either "conda" or "venv"'; exit 1; fi
 
 # Install base dependencies, cmake (for xlearn) and libpython3.6 (for cornac)
 RUN apt-get update && \
@@ -18,16 +23,24 @@ RUN apt-get update && \
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-RUN curl ${ANACONDA} -o anaconda.sh && \
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then curl ${ANACONDA} -o anaconda.sh && \
     /bin/bash anaconda.sh -b -p conda && \
     rm anaconda.sh && \
     echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
+    echo "conda activate base" >> ~/.bashrc ; fi
 
-ENV PATH="${HOME}/conda/bin:${PATH}"
+ENV PATH="${HOME}/${VIRTUAL_ENV}/bin:${PATH}"
 
 # Python version supported by recommenders
-RUN conda install python=3.6
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.6; fi
+SHELL ["/bin/bash", "-c"]
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
+    apt-get -y install python3-pip; \
+    apt-get -y install python3.6-venv; \
+    python3.6 -m venv --system-site-packages $HOME/venv; \
+    source $HOME/venv/bin/activate; \
+    pip install --upgrade pip; \
+    pip install --upgrade setuptools; fi
 
 
 ###########
@@ -35,7 +48,9 @@ RUN conda install python=3.6
 ###########
 FROM base AS cpu
 
-RUN pip install recommenders[xlearn,examples]
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then source $HOME/venv/bin/activate; \
+    pip install recommenders[xlearn,examples]; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[xlearn,examples]; fi
 
 
 ###############
@@ -48,8 +63,8 @@ RUN apt-get update && \
     apt-get install -y libgomp1 openjdk-8-jre
 
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
-    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
-    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python"
+    PYSPARK_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python" \
+    PYSPARK_DRIVER_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python"
 
 # Install dependencies in Conda environment
 RUN pip install recommenders[spark,xlearn,examples]
@@ -61,16 +76,28 @@ RUN pip install recommenders[spark,xlearn,examples]
 FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04 AS gpu
 
 ARG HOME
+ARG VIRTUAL_ENV
 WORKDIR ${HOME}
 
 # Get up to date with base
 COPY --from=base ${HOME} .
 RUN apt-get update && \
     apt-get install -y build-essential cmake libpython3.6
-ENV PATH="${HOME}/conda/bin:${PATH}"
+ENV PATH="${HOME}/${VIRTUAL_ENV}/bin:${PATH}"
 
-# Install dependencies in Conda environment
-RUN pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html
+# Install dependencies in virtual environment
+SHELL ["/bin/bash", "-c"]
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
+    apt-get -y install python3-pip; \
+    apt-get -y install python3.6-venv; \
+    python3.6 -m venv --system-site-packages $HOME/venv; \
+    source $HOME/venv/bin/activate; \
+    pip install --upgrade pip; \
+    pip install --upgrade setuptools; \
+    pip install recommenders[gpu,xlearn,examples]; fi
+
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
+    pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html; fi
 
 
 ############
@@ -86,11 +113,11 @@ RUN apt-get update && \
     apt-get install -y libgomp1 openjdk-8-jre
 
 ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
-    PYSPARK_PYTHON="${HOME}/conda/bin/python" \
-    PYSPARK_DRIVER_PYTHON="${HOME}/conda/bin/python"
+    PYSPARK_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python" \
+    PYSPARK_DRIVER_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python"
 
 # Install dependencies in Conda environment
-RUN pip install recommenders[all] -f https://download.pytorch.org/whl/cu100/torch_stable.html
+RUN pip install recommenders[all]
 
 
 #############
@@ -108,7 +135,9 @@ RUN mkdir ${HOME}/.jupyter && \
     echo "c.MultiKernelManager.default_kernel_name = 'python3'" >> ${NOTEBOOK_CONFIG}
 
 # Register the environment with Jupyter
-RUN python -m ipykernel install --user --name base --display-name "Python (base)"
+RUN if [ ${VIRTUAL_ENV} = "conda" ]; then python -m ipykernel install --user --name base --display-name "Python (base)"; fi
+RUN if [ ${VIRTUAL_ENV} = "venv" ]; then source $HOME/venv/bin/activate; \
+    python -m ipykernel install --user --name venv --display-name "Python (venv)"; fi
 
 ARG HOME
 WORKDIR ${HOME}
