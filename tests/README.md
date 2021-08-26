@@ -185,6 +185,11 @@ For executing this test, first make sure you are in the correct environment as d
 pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
 ```
 
+## Test execution with tox
+
+.........
+
+
 ### Developing smoke and integration tests with Papermill
 
 A more advanced option is used in the smoke and integration tests, where we not only execute the notebook, but inject parameters and recover the computed metrics.
