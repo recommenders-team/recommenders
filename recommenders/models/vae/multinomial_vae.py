@@ -287,8 +287,8 @@ class Mult_VAE:
         self.h = Dense(
             self.intermediate_dim,
             activation="tanh",
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            bias_initializer=keras.initializers.truncated_normal(
+            kernel_initializer=tf.keras.initializers.glorot_uniform(seed=self.seed),
+            bias_initializer=tf.keras.initializers.truncated_normal(
                 stddev=0.001, seed=self.seed
             ),
         )(self.dropout_encoder)
@@ -304,8 +304,8 @@ class Mult_VAE:
         self.h_decoder = Dense(
             self.intermediate_dim,
             activation="tanh",
-            kernel_initializer=keras.initializers.glorot_uniform(seed=self.seed),
-            bias_initializer=keras.initializers.truncated_normal(
+            kernel_initializer=tf.keras.initializers.glorot_uniform(seed=self.seed),
+            bias_initializer=tf.keras.initializers.truncated_normal(
                 stddev=0.001, seed=self.seed
             ),
         )
@@ -318,7 +318,7 @@ class Mult_VAE:
         # Training
         self.model = Model(self.x, self.x_decoded)
         self.model.compile(
-            optimizer=keras.optimizers.Adam(learning_rate=0.001),
+            optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
             loss=self._get_vae_loss,
         )
 
