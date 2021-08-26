@@ -52,7 +52,7 @@ extras_require = {
     "examples": [
         "azure.mgmt.cosmosdb>=0.8.0,<1",
         "hyperopt>=0.1.2,<1",
-        "ipykernel>=4.6.1,<5",
+        "ipykernel>=4.6.1,<7",
         "jupyter>=1,<2",
         "locust>=1,<2",
         "papermill>=2.1.2,<3",
@@ -73,7 +73,11 @@ extras_require = {
         "cmake>=3.18.4.post1",
         "xlearn==0.40a1",
     ],
-    "dev": ["black>=18.6b4,<21", "pytest>=3.6.4", "pytest-cov>=2.12.1"],
+    "dev": [
+        "black>=18.6b4,<21",
+        "pytest>=3.6.4",
+        "pytest-cov>=2.12.1",
+    ],
 }
 # for the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
