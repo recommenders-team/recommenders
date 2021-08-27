@@ -30,16 +30,22 @@ For a more detailed overview of the repository, please see the documents on the 
 
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
-The installation of the recommenders package has been tested with Python version 3.6. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
+The installation of the recommenders package has been tested with 
+- Python version 3.6 and [venv](https://docs.python.org/3/library/venv.html)
+- Python version 3.7 and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
+
+and currently does not support version 3.8 and above. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
 
 To set up on your local machine:
 
 To install core utilities, CPU-based algorithms, and dependencies:
 
-1. Ensure software required for compilation is installed. On Linux this can be supported by adding build-essential dependencies:
+1. Ensure software required for compilation and Python libraries is installed. On Linux this can be supported by adding:
 ```bash
-sudo apt-get install -y build-essential
+sudo apt-get install -y build-essential cmake libpython<version>
 ``` 
+where `<version>` should be `3.6` or `3.7` as appropriate.
+
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
   
 2. Create a conda or virtual environment. See the [setup guide](SETUP.md) for more details.
@@ -48,8 +54,14 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 
 ```bash
 pip install --upgrade pip
+pip install --upgrade setuptools
 pip install recommenders[examples]
 ```
+In the case of conda, you also need to 
+```bash
+conda install numpy-base
+```
+after the pip installation.
 
 4. Register your (conda or virtual) environment with Jupyter:
 
