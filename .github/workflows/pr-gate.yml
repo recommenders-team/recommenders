@@ -2,21 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # ---------------------------------------------------------
-name: pr-gate
 
-on:
-  pull_request:
-    branches: [ staging, main ]
-
-  # enable manual trigger
-  workflow_dispatch:
-    input:
-      tags:
-        description: 'Test scenario tags'
-        default: 'Anything to describe this manual run (optional)'
-
+# NOTE:
 # This file defines following CI workflow:
-#
 #  ┌──────────┐   ┌─────────┐   ┌────────┐
 #  │  static  ├─┬─►  build* ├─┬─►  test  │
 #  │ analysis │ │ │  (cpu)  │ │ │ report │
@@ -33,7 +21,24 @@ on:
 # *each runs in PARALLEL the different combinations
 #  of python version, OS, test subsets, etc
 #
-#  ASCII chart created via https://asciiflow.com/
+# There are 3 compute environments our library is supporting: CPU, GPU and Spark
+# This pipeline's goal is to ensure we run and pass our tests in these supported compute envs
+# For all of the jobs in GPU build, we are using self-host VMs to run them.
+#
+# ASCII chart created via https://asciiflow.com/
+name: pr-gate
+
+on:
+  pull_request:
+    branches: [ staging, main ]
+
+  # enable manual trigger
+  workflow_dispatch:
+    input:
+      tags:
+        description: 'Test scenario tags'
+        default: 'Anything to describe this manual run (optional)'
+
 
 jobs:
 ###############################################

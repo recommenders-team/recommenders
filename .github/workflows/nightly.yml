@@ -2,6 +2,31 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 # ---------------------------------------------------------
+
+# NOTE:
+# This file defines following CI workflow:
+#  ┌──────────┐   ┌─────────┐   ┌────────┐
+#  │  static  ├─┬─►  build* ├─┬─►  test  │
+#  │ analysis │ │ │  (cpu)  │ │ │ report │
+#  └──────────┘ │ └─────────┘ │ └────────┘         
+#               │ ┌─────────┐ │
+#               ├─►  build* ├─┤
+#               │ │ (spark) │ │
+#               │ └─────────┘ │
+#               │ ┌─────────┐ │
+#               └─►  build* ├─┘
+#                 │  (gpu)  │
+#                 └─────────┘
+#                    ....
+# *each runs in PARALLEL the different combinations
+#  of python version, OS, test subsets, etc
+#
+# There are 3 compute environments our library is supporting: CPU, GPU and Spark
+# This pipeline's goal is to ensure we run and pass our tests in these supported compute
+# For all of the jobs in GPU build, we are using self-host VMs to run them.
+# For the rest of the jobs, with the exception of integration tests (#1507), we will use default agents provided by GitHub 
+#
+# ASCII chart created via https://asciiflow.com/
 name: nightly
 
 on:
@@ -28,26 +53,6 @@ on:
         description: 'Test scenario tags'
         default: 'Anything to describe this manual run (optional)'
     
-
-# This file defines following CI workflow:
-#
-#  ┌──────────┐   ┌─────────┐   ┌────────┐
-#  │  static  ├─┬─►  build* ├─┬─►  test  │
-#  │ analysis │ │ │  (cpu)  │ │ │ report │
-#  └──────────┘ │ └─────────┘ │ └────────┘         
-#               │ ┌─────────┐ │
-#               ├─►  build* ├─┤
-#               │ │ (spark) │ │
-#               │ └─────────┘ │
-#               │ ┌─────────┐ │
-#               └─►  build* ├─┘
-#                 │  (gpu)  │
-#                 └─────────┘
-#                    ....
-# *each runs in PARALLEL the different combinations
-#  of python version, OS, test subsets, etc
-#
-#  ASCII chart created via https://asciiflow.com/
 
 jobs:
 ###############################################
