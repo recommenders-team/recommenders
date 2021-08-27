@@ -187,7 +187,24 @@ pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
 
 ## Test execution with tox
 
-.........
+Tox is a great virtual environment management tool and test command tools that acts like a front-end for our CI workflows. Our existing CI pipelines in GitHub is leveraging tox to orchestrate the build. This way we can provide a parity in the local and remote execution environment if both run tox. No more panic when "tests run fine in my dev box but fail in remote build pipeline"! 
+
+1. If you haven't, `pip install tox`
+2. To run static analysis: `tox -e flake8`
+3. To run any of our test suites:
+    `tox -e {TOX_ENV} -- {PYTEST_PARAM}`
+
+    where 
+    - `TOX_ENV` can be `cpu|gpu|spark|all`, each env maps to the "extra" dependency for `recommenders`, for example recommend[gpu], and recommend[spark].
+    - `PYTEST_PARAM` are any standard parameters to supply to `pytest` cli executing particular tests.
+
+    For example:
+    
+    1. `tox -e cpu -- tests/unit -m "not notebook and not spark and not gpu` (runs the unit tests without extra dependency)
+    2. `tox -e gpu -- tests/unit -m "gpu and notebook"` (runs the gpu notebook tests)
+    3. `tox -e spark -- tests/unit -m "spark and notebook"` (runs the spark notebook tests)
+    4. `tox -e all -- tests/unit` (to run all of the unit tests)
+
 
 
 ### Developing smoke and integration tests with Papermill
