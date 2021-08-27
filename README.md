@@ -83,6 +83,8 @@ For additional options to install the package (support for GPU, Spark etc.) see 
 
 **NOTE for DSVM Users** - Please follow the steps in the [Dependencies setup - Set PySpark environment variables on Linux or MacOS](SETUP.md#dependencies-setup) and [Troubleshooting for the DSVM](SETUP.md#troubleshooting-for-the-dsvm) sections if you encounter any issue.
 
+**DOCKER** - Another easy way to try the recommenders repository and get started quickly is to build [docker images](tools/docker/README.md) suitable for different environments. 
+
 ## Algorithms
 
 The table below lists the recommender algorithms currently available in the repository. Notebooks are linked under the Environment column when different implementations are available.
