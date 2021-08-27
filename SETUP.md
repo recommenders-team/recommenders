@@ -58,6 +58,8 @@ An alternative is to run all the recommender utilities directly from a local cop
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
 
+**NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
+
 **NOTE** PySpark v2.4.x requires Java version 8. 
 
 <details> 
@@ -368,7 +370,7 @@ See guidelines in the Docker [README](tools/docker/README.md) for detailed instr
 
 Example command to build and run Docker image with base CPU environment.
 ```{shell}
-DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" --build-arg VIRTUAL_ENV="conda" .
 docker run -p 8888:8888 -d recommenders:cpu
 ```
 

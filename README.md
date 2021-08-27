@@ -42,7 +42,7 @@ To install core utilities, CPU-based algorithms, and dependencies:
 
 1. Ensure software required for compilation and Python libraries is installed. On Linux this can be supported by adding:
 ```bash
-sudo apt-get install -y build-essential cmake libpython<version>
+sudo apt-get install -y build-essential libpython<version>
 ``` 
 where `<version>` should be `3.6` or `3.7` as appropriate.
 
