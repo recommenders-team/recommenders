@@ -10,6 +10,8 @@ DEFAULT_RELEVANCE_COL = "relevance"
 DEFAULT_TIMESTAMP_COL = "timestamp"
 DEFAULT_PREDICTION_COL = "prediction"
 DEFAULT_SIMILARITY_COL = "sim"
+DEFAULT_ITEM_FEATURES_COL = "features"
+
 COL_DICT = {
     "col_user": DEFAULT_USER_COL,
     "col_item": DEFAULT_ITEM_COL,

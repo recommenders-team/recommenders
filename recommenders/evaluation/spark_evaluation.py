@@ -22,6 +22,7 @@ from recommenders.utils.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_RELEVANCE_COL,
     DEFAULT_SIMILARITY_COL,
+    DEFAULT_ITEM_FEATURES_COL,
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
@@ -495,6 +496,7 @@ class SparkDiversityEvaluation:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
+        col_item_features=DEFAULT_ITEM_FEATURES_COL,
     ):
         """Initializer.
 
@@ -569,10 +571,11 @@ class SparkDiversityEvaluation:
         if item_feature_df is None:
             self.item_feature_df = None
         else:
+            self.col_item_features = col_item_features
             required_schema = StructType(
                (
                  StructField(self.col_item, IntegerType()),
-                 StructField("features", VectorUDT()),
+                 StructField(self.col_item_features, VectorUDT()),
                )
             )
             if str(required_schema) != str(item_feature_df.schema):
@@ -675,11 +678,11 @@ class SparkDiversityEvaluation:
         """
         if self.df_cosine_similarity is None:
             self.df_cosine_similarity = (
-                self.item_feature_df.select(F.col(self.col_item).alias("i1"), F.col("features").alias("f1"))\
+                self.item_feature_df.select(F.col(self.col_item).alias("i1"), F.col(self.col_item_features).alias("f1"))\
                 .join(
                     self.item_feature_df.select(
                         F.col(self.col_item).alias("i2"),
-                        F.col("features").alias("f2")
+                        F.col(self.col_item_features).alias("f2")
                     ),
                     (F.col("i1") < F.col("i2")),
                 )
