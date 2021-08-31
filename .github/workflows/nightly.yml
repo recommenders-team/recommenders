@@ -22,15 +22,29 @@
 #  of python version, OS, test subsets, etc
 #
 # There are 3 compute environments our library is supporting: CPU, GPU and Spark
-# This pipeline's goal is to ensure we run and pass our tests in these supported compute envs
+# This pipeline's goal is to ensure we run and pass our tests in these supported compute
 # For all of the jobs in GPU build, we are using self-host VMs to run them.
+# For the rest of the jobs, with the exception of integration tests (#1507), we will use default agents provided by GitHub 
 #
 # ASCII chart created via https://asciiflow.com/
-name: pr-gate
+name: nightly
 
 on:
-  pull_request:
-    branches: [ staging, main ]
+  #          ┌───────────── minute (0 - 59)
+  #          │ ┌───────────── hour (0 - 23)
+  #          │ │ ┌───────────── day of the month (1 - 31)
+  #          │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+  #          │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
+  #          │ │ │ │ │
+  #          │ │ │ │ │
+  schedule: 
+    - cron: '0 0 * * *'  # basically running everyday at 12AM
+    # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
+  
+  push:
+    # because we can't schedule runs for non-main branches,
+    # to ensure we are running the build on the staging branch, we can add push policy for it
+    branches: [staging]
 
   # enable manual trigger
   workflow_dispatch:
@@ -38,7 +52,7 @@ on:
       tags:
         description: 'Test scenario tags'
         default: 'Anything to describe this manual run (optional)'
-
+    
 
 jobs:
 ###############################################
@@ -75,9 +89,16 @@ jobs:
         os: [ubuntu-latest]
         python: [3.6]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
-        test-kind: ['unit'] 
+        test-kind: ['unit', 'smoke']
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['not gpu and not spark and not notebooks', 'notebooks and not gpu and not spark']
+        test-marker: ['not spark and not gpu']
+        include:
+          # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
+          # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
+          - os: self-hosted
+            python: 3.6
+            test-kind: 'integration'
+            test-marker: 'not spark and not gpu'
 
     steps:
     - uses: actions/checkout@v2
@@ -116,9 +137,17 @@ jobs:
         java: [8]
         python: [3.6]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
-        test-kind: ['unit'] 
+        test-kind: ['unit', 'smoke'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['notebooks and spark and not gpu', 'spark and not notebooks and not gpu']
+        test-marker: ['spark and not gpu']
+        include:
+          # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
+          # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
+          - os: self-hosted
+            java: 8
+            python: 3.6
+            test-kind: 'integration'
+            test-marker: 'spark and not gpu'
 
     steps:
     - uses: actions/checkout@v2
@@ -157,9 +186,9 @@ jobs:
       matrix:
         python: [3.6]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
-        test-kind: ['unit'] 
+        test-kind: ['unit', 'smoke', 'integration'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['gpu and notebooks and not spark', 'gpu and not notebooks and not spark']
+        test-marker: ['gpu and not spark']
 
     steps:
     - uses: actions/checkout@v2
