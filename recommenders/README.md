@@ -30,9 +30,9 @@ after the pip installation.
 
 ## Optional Dependencies
 
-By default `recommenders` does not install all dependencies used throughout the code and the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the `recommenders` package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default `recommenders` does not install all dependencies used throughout the code and the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the `recommenders` package (excluding Spark, GPU and Jupyter functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
-- examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
+- examples: dependencies related to Jupyter needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
 - spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation and certain algorithms
 - xlearn: xLearn package (on some platforms it requires pre-installation of cmake)

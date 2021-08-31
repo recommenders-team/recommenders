@@ -32,7 +32,7 @@ Please see the [setup guide](SETUP.md) for more details on setting up your machi
 
 The installation of the recommenders package has been tested with 
 - Python version 3.6 and [venv](https://docs.python.org/3/library/venv.html)
-- Python version 3.7 and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
+- Python versions 3.6, 3.7 and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
 
 and currently does not support version 3.8 and above. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
 
