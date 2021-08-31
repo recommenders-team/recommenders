@@ -668,6 +668,10 @@ class SparkDiversityEvaluation:
         try:
             p = 2
             return float(v1.dot(v2))/float(v1.norm(p)*v2.norm(p))
+        except AssertionError:
+            raise Exception(
+                "Dimension mismatch! The size of two input vectors should be the same."
+            )
         except:
             return 0
 
