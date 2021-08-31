@@ -39,7 +39,6 @@ install_requires = [
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
-    "jinja2>=2,<3",
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
