@@ -195,7 +195,7 @@ Tox is a great virtual environment management tool and test command tools that a
     `tox -e {TOX_ENV} -- {PYTEST_PARAM}`
 
     where 
-    - `TOX_ENV` can be `cpu|gpu|spark|all`, each env maps to the "extra" dependency for `recommenders`, for example recommend[gpu], and recommend[spark]. It can also be any of the [default envs](https://tox.readthedocs.io/en/latest/config.html#tox-environments): "py|pyNM"
+    - `TOX_ENV` can be `cpu|gpu|spark|all`, each env maps to the "extra" dependency, for example recommenders[gpu], and recommenders[spark]. It can also be any of the [default envs](https://tox.readthedocs.io/en/latest/config.html#tox-environments): "py|pyNM"
     - `PYTEST_PARAM` are any standard parameters to supply to `pytest` cli executing particular tests.
 
     For example:
