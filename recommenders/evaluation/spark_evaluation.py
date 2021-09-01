@@ -568,9 +568,7 @@ class SparkDiversityEvaluation:
                 col_user, col_item, F.col(self.col_relevance).cast(DoubleType())
             )
             
-        if item_feature_df is None:
-            self.item_feature_df = None
-        else:
+        if self.item_feature_df is not None:
             self.col_item_features = col_item_features
             required_schema = StructType(
                (
