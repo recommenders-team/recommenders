@@ -195,7 +195,7 @@ Tox is a great virtual environment management tool and test command tools that a
     `tox -e {TOX_ENV} -- {PYTEST_PARAM}`
 
     where 
-    - `TOX_ENV` can be `cpu|gpu|spark|all`, each env maps to the "extra" dependency for `recommenders`, for example recommend[gpu], and recommend[spark].
+    - `TOX_ENV` can be `cpu|gpu|spark|all`, each env maps to the "extra" dependency for `recommenders`, for example recommend[gpu], and recommend[spark]. It can also be any of the [default envs](https://tox.readthedocs.io/en/latest/config.html#tox-environments): "py|pyNM"
     - `PYTEST_PARAM` are any standard parameters to supply to `pytest` cli executing particular tests.
 
     For example:
@@ -204,7 +204,8 @@ Tox is a great virtual environment management tool and test command tools that a
     2. `tox -e gpu -- tests/unit -m "gpu and notebook"` (runs the gpu notebook tests)
     3. `tox -e spark -- tests/unit -m "spark and notebook"` (runs the spark notebook tests)
     4. `tox -e all -- tests/unit` (to run all of the unit tests)
-
+    5. `tox -e py -- test/unit` (runs the unit tests under the default python interpreter)
+    6. `tox -e py37 -- test/unit` (runs the unit tests under Python3.7)
 
 
 ### Developing smoke and integration tests with Papermill
