@@ -496,7 +496,6 @@ class SparkDiversityEvaluation:
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
-        col_item_features=DEFAULT_ITEM_FEATURES_COL,
     ):
         """Initializer.
 
@@ -569,7 +568,7 @@ class SparkDiversityEvaluation:
             )
             
         if self.item_feature_df is not None:
-            self.col_item_features = col_item_features
+            self.col_item_features = DEFAULT_ITEM_FEATURES_COL
             required_schema = StructType(
                (
                  StructField(self.col_item, IntegerType()),
