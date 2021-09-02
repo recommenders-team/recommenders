@@ -15,7 +15,7 @@ from recommenders.evaluation.python_evaluation import (
 
 try:
     from pyspark.sql import Row
-    from pyspark.ml.linalg import Vectors, VectorUDT 
+    from pyspark.ml.linalg import Vectors, VectorUDT
     from pyspark.sql.types import StructField, StructType, IntegerType
     from recommenders.evaluation.spark_evaluation import (
         SparkDiversityEvaluation,
@@ -47,7 +47,7 @@ def target_metrics():
         ),
         "novelty": pytest.approx(2.83333, TOL),
         # diversity when using item co-occurrence count to calculate item similarity
-        "diversity": pytest.approx(0.43096, TOL), 
+        "diversity": pytest.approx(0.43096, TOL),
         "user_diversity": pd.DataFrame(
             dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
         ),
@@ -74,7 +74,6 @@ def target_metrics():
             dict(UserId=[1, 2, 3], user_serendipity=[0.363915, 0.53455, 0.403775])
         ),
         "serendipity": pytest.approx(0.43408, TOL),
-   
     }
 
 
@@ -150,10 +149,10 @@ def spark_diversity_data(spark):
             Row(UserId=3, ItemId=2, Relevance=0),
         ]
     )
-    
+
     field = [
-    StructField("ItemId", IntegerType(), True),
-    StructField("features", VectorUDT(), True),
+        StructField("ItemId", IntegerType(), True),
+        StructField("features", VectorUDT(), True),
     ]
     schema = StructType(field)
     item_feature_df = spark.createDataFrame(
@@ -163,8 +162,8 @@ def spark_diversity_data(spark):
             Row(ItemId=3, features=Vectors.sparse(5, [2, 3], [1.0, 1.0])),
             Row(ItemId=4, features=Vectors.sparse(5, [2, 4], [1.0, 1.0])),
             Row(ItemId=5, features=Vectors.sparse(5, [3, 4], [1.0, 1.0])),
-         
-        ], schema
+        ],
+        schema,
     )
     return train_df, reco_df, item_feature_df
 
@@ -527,11 +526,16 @@ def test_serendipity(spark_diversity_data, target_metrics):
     )
     assert target_metrics["serendipity"] == evaluator.serendipity()
 
+
 @pytest.mark.spark
 def test_user_diversity2(spark_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, item_feature_df=item_feature_df, col_user="UserId", col_item="ItemId"
+        train_df=train_df,
+        reco_df=reco_df,
+        item_feature_df=item_feature_df,
+        col_user="UserId",
+        col_item="ItemId",
     )
     actual = evaluator.user_diversity().toPandas()
     assert_frame_equal(
@@ -540,11 +544,16 @@ def test_user_diversity2(spark_diversity_data, target_metrics):
         check_exact=False,
         check_less_precise=4,
     )
-    
+
+
 @pytest.mark.spark
 def test_diversity2(spark_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, item_feature_df=item_feature_df, col_user="UserId", col_item="ItemId"
+        train_df=train_df,
+        reco_df=reco_df,
+        item_feature_df=item_feature_df,
+        col_user="UserId",
+        col_item="ItemId",
     )
     assert target_metrics["diversity2"] == evaluator.diversity()

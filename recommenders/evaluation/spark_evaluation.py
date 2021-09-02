@@ -492,7 +492,7 @@ class SparkDiversityEvaluation:
         self,
         train_df,
         reco_df,
-        item_feature_df=None, 
+        item_feature_df=None,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
@@ -566,20 +566,20 @@ class SparkDiversityEvaluation:
             self.reco_df = reco_df.select(
                 col_user, col_item, F.col(self.col_relevance).cast(DoubleType())
             )
-            
+
         if self.item_feature_df is not None:
             self.col_item_features = DEFAULT_ITEM_FEATURES_COL
             required_schema = StructType(
-               (
-                 StructField(self.col_item, IntegerType()),
-                 StructField(self.col_item_features, VectorUDT()),
-               )
+                (
+                    StructField(self.col_item, IntegerType()),
+                    StructField(self.col_item_features, VectorUDT()),
+                )
             )
             if str(required_schema) != str(item_feature_df.schema):
                 raise Exception(
-                "Incorrect schema! item_feature_df should have schema:" + str(required_schema)
-            )
-
+                    "Incorrect schema! item_feature_df should have schema:"
+                    + str(required_schema)
+                )
 
         # check if reco_df contains any user_item pairs that are already shown in train_df
         count_intersection = (
@@ -606,7 +606,7 @@ class SparkDiversityEvaluation:
             )
             .select(self.col_user, "i1", "i2")
         )
-    
+
     def _get_cosine_similarity(self, n_partitions=200):
         if self.item_feature_df is None:
             # calculate item-item similarity based on item co-occurrence count
@@ -661,10 +661,10 @@ class SparkDiversityEvaluation:
 
     @staticmethod
     @udf(returnType=DoubleType())
-    def sim_cos(v1,v2):
+    def sim_cos(v1, v2):
         try:
             p = 2
-            return float(v1.dot(v2))/float(v1.norm(p)*v2.norm(p))
+            return float(v1.dot(v2)) / float(v1.norm(p) * v2.norm(p))
         except AssertionError:
             raise Exception(
                 "Dimension mismatch! The size of two input vectors should be the same."
@@ -674,16 +674,19 @@ class SparkDiversityEvaluation:
 
     def _get_item_feature_similarity(self, n_partitions):
         """Cosine similarity metric based on item feature vectors
-        
+
         The item indexes in the result are such that i1 <= i2.
         """
         if self.df_cosine_similarity is None:
             self.df_cosine_similarity = (
-                self.item_feature_df.select(F.col(self.col_item).alias("i1"), F.col(self.col_item_features).alias("f1"))\
+                self.item_feature_df.select(
+                    F.col(self.col_item).alias("i1"),
+                    F.col(self.col_item_features).alias("f1"),
+                )
                 .join(
                     self.item_feature_df.select(
                         F.col(self.col_item).alias("i2"),
-                        F.col(self.col_item_features).alias("f2")
+                        F.col(self.col_item_features).alias("f2"),
                     ),
                     (F.col("i1") < F.col("i2")),
                 )
@@ -693,9 +696,6 @@ class SparkDiversityEvaluation:
             )
         return self.df_cosine_similarity
 
-    
-
-    
     # Diversity metrics
     def _get_intralist_similarity(self, df):
         """Intra-list similarity from
