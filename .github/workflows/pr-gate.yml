@@ -73,7 +73,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python: [3.6]
+        python: [3.6, 3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
@@ -115,7 +115,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java: [8]
-        python: [3.6]
+        python: [3.6, 3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
@@ -157,7 +157,7 @@ jobs:
     needs: static-analysis
     strategy:
       matrix:
-        python: [3.6]
+        python: [3.6, 3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
