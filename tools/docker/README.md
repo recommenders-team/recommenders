@@ -17,7 +17,7 @@ Once the container is running you can access Jupyter notebooks at http://localho
 Building and Running with Docker
 --------------------------------
 
-See examples below for the case of conda. If you use venv instead, replace `--build-arg VIRTUAL_ENV=conda` with `--build-arg VIRTUAL_ENV=venv`.
+See examples below for the case of conda. If you use venv or virtualenv instead, replace `--build-arg VIRTUAL_ENV=conda` with `--build-arg VIRTUAL_ENV=venv` or `--build-arg VIRTUAL_ENV=virtualenv`, respectively.
 <details>
 <summary><strong><em>CPU environment</em></strong></summary>
 
@@ -66,7 +66,7 @@ There are several build arguments which can change how the image is built. Simil
 Build Arg|Description|
 ---------|-----------|
 ENV|Environment to use, options: cpu, psypark, gpu, full (defaults to cpu)|
-VIRTUAL_ENV|Virtual environment to use; mandatory argument, must be one of "conda", "venv"|
+VIRTUAL_ENV|Virtual environment to use; mandatory argument, must be one of "conda", "venv", "virtualenv"|
 ANACONDA|Anaconda installation script (defaults to miniconda3 4.6.14)|
 
 Example:
