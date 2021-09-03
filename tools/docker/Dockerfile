@@ -44,12 +44,12 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; 
     python3.6 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/venv; \
-    source $HOME/venv/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+    source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/venv; \
-    source $HOME/venv/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/${VIRTUAL_ENV}; \
+    source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; fi
 
@@ -58,7 +58,7 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/
 ###########
 FROM base AS cpu
 
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/venv/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[xlearn,examples]; fi
 # Note that "conda install numpy-base" needs to be called after the pip installation
 # so that numpy works smoothly with other dependencies in python 3.7
@@ -80,7 +80,7 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
     PYSPARK_DRIVER_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python"
 
 # Install dependencies in virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/venv/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[spark,xlearn,examples]; fi
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,xlearn,examples]; \
     conda install numpy-base; fi
@@ -113,13 +113,13 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; 
     python3.6 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/venv; \
-    source $HOME/venv/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+    source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; \
     pip install recommenders[gpu,xlearn,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/venv; \
-    source $HOME/venv/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/${VIRTUAL_ENV}; \
+    source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; \
     pip install recommenders[gpu,xlearn,examples]; fi
@@ -146,7 +146,7 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
     PYSPARK_DRIVER_PYTHON="${HOME}/${VIRTUAL_ENV}/bin/python"
 
 # Install dependencies in virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/venv/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[all]; fi
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[all]; \
     conda install numpy-base; fi
@@ -168,7 +168,7 @@ RUN mkdir ${HOME}/.jupyter && \
 
 # Register the environment with Jupyter
 RUN if [ ${VIRTUAL_ENV} = "conda" ]; then python -m ipykernel install --user --name base --display-name "Python (base)"; fi
-RUN if [ ${VIRTUAL_ENV} = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/venv/bin/activate; \
+RUN if [ ${VIRTUAL_ENV} = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     python -m ipykernel install --user --name venv --display-name "Python (venv)"; fi
 
 ARG HOME
