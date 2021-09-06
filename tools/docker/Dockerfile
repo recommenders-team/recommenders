@@ -93,10 +93,13 @@ FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04 AS gpu
 
 ARG HOME
 ARG VIRTUAL_ENV
+ENV HOME="${HOME}"
 WORKDIR ${HOME}
 
 # Get up to date with base
 COPY --from=base ${HOME} .
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ]; then rm -rf ${HOME}/${VIRTUAL_ENV}; fi
+
 RUN apt-get update && \
     apt-get install -y build-essential cmake
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
