@@ -52,8 +52,8 @@ def target_metrics():
             dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
         ),
         # diversity when using item features to calculate item similarity
-        "diversity2": pytest.approx(0.5000, TOL),
-        "user_diversity2": pd.DataFrame(
+        "diversity_item_feature_vector": pytest.approx(0.5000, TOL),
+        "user_diversity_item_feature_vector": pd.DataFrame(
             dict(UserId=[1, 2, 3], user_diversity=[0.5000, 0.5000, 0.5000])
         ),
         "user_item_serendipity": pd.DataFrame(
@@ -528,18 +528,19 @@ def test_serendipity(spark_diversity_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_user_diversity2(spark_diversity_data, target_metrics):
+def test_user_diversity_item_feature_vector(spark_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
         reco_df=reco_df,
         item_feature_df=item_feature_df,
+        item_sim_measure="item_feature_vector",
         col_user="UserId",
         col_item="ItemId",
     )
     actual = evaluator.user_diversity().toPandas()
     assert_frame_equal(
-        target_metrics["user_diversity2"],
+        target_metrics["user_diversity_item_feature_vector"],
         actual,
         check_exact=False,
         check_less_precise=4,
@@ -547,13 +548,14 @@ def test_user_diversity2(spark_diversity_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_diversity2(spark_diversity_data, target_metrics):
+def test_diversity_item_feature_vector(spark_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
         reco_df=reco_df,
         item_feature_df=item_feature_df,
+        item_sim_measure="item_feature_vector",
         col_user="UserId",
         col_item="ItemId",
     )
-    assert target_metrics["diversity2"] == evaluator.diversity()
+    assert target_metrics["diversity_item_feature_vector"] == evaluator.diversity()

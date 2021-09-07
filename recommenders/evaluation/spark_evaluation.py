@@ -23,6 +23,7 @@ from recommenders.utils.constants import (
     DEFAULT_RELEVANCE_COL,
     DEFAULT_SIMILARITY_COL,
     DEFAULT_ITEM_FEATURES_COL,
+    DEFAULT_ITEM_SIM_MEASURE,
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
@@ -493,6 +494,7 @@ class SparkDiversityEvaluation:
         train_df,
         reco_df,
         item_feature_df=None,
+        item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
@@ -554,6 +556,7 @@ class SparkDiversityEvaluation:
         self.df_user_diversity = None
         self.avg_diversity = None
         self.item_feature_df = item_feature_df
+        self.item_sim_measure = item_sim_measure
 
         if col_relevance is None:
             self.col_relevance = DEFAULT_RELEVANCE_COL
@@ -567,7 +570,7 @@ class SparkDiversityEvaluation:
                 col_user, col_item, F.col(self.col_relevance).cast(DoubleType())
             )
 
-        if self.item_feature_df is not None:
+        if self.item_sim_measure == "item_feature_vector":
             self.col_item_features = DEFAULT_ITEM_FEATURES_COL
             required_schema = StructType(
                 (
@@ -575,9 +578,16 @@ class SparkDiversityEvaluation:
                     StructField(self.col_item_features, VectorUDT()),
                 )
             )
-            if str(required_schema) != str(item_feature_df.schema):
+            if self.item_feature_df is not None:
+
+                if str(required_schema) != str(item_feature_df.schema):
+                    raise Exception(
+                        "Incorrect schema! item_feature_df should have schema:"
+                        + str(required_schema)
+                    )
+            else:
                 raise Exception(
-                    "Incorrect schema! item_feature_df should have schema:"
+                    "item_feature_df not specified! item_feature_df must be provided if choosing to use item_feature_vector to calculate item similarity. item_feature_df should have schema:"
                     + str(required_schema)
                 )
 
@@ -608,12 +618,12 @@ class SparkDiversityEvaluation:
         )
 
     def _get_cosine_similarity(self, n_partitions=200):
-        if self.item_feature_df is None:
-            # calculate item-item similarity based on item co-occurrence count
-            self._get_cooccurrence_similarity(n_partitions)
-        else:
+        if self.item_sim_measure == "item_feature_vector":
             # calculate item-item similarity based on item feature vectors
             self._get_item_feature_similarity(n_partitions)
+        else:
+            # calculate item-item similarity based on item co-occurrence count
+            self._get_cooccurrence_similarity(n_partitions)
         return self.df_cosine_similarity
 
     def _get_cooccurrence_similarity(self, n_partitions):
@@ -662,15 +672,8 @@ class SparkDiversityEvaluation:
     @staticmethod
     @udf(returnType=DoubleType())
     def sim_cos(v1, v2):
-        try:
-            p = 2
-            return float(v1.dot(v2)) / float(v1.norm(p) * v2.norm(p))
-        except AssertionError:
-            raise Exception(
-                "Dimension mismatch! The size of two input vectors should be the same."
-            )
-        except:
-            return 0
+        p = 2
+        return float(v1.dot(v2)) / float(v1.norm(p) * v2.norm(p))
 
     def _get_item_feature_similarity(self, n_partitions):
         """Cosine similarity metric based on item feature vectors

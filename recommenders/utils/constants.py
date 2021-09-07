@@ -11,6 +11,7 @@ DEFAULT_TIMESTAMP_COL = "timestamp"
 DEFAULT_PREDICTION_COL = "prediction"
 DEFAULT_SIMILARITY_COL = "sim"
 DEFAULT_ITEM_FEATURES_COL = "features"
+DEFAULT_ITEM_SIM_MEASURE = "item_cooccurrence_count"
 
 COL_DICT = {
     "col_user": DEFAULT_USER_COL,
