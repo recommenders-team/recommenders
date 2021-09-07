@@ -691,7 +691,7 @@ class SparkDiversityEvaluation:
                         F.col(self.col_item).alias("i2"),
                         F.col(self.col_item_features).alias("f2"),
                     ),
-                    (F.col("i1") < F.col("i2")),
+                    (F.col("i1") <= F.col("i2")),
                 )
                 .select("i1", "i2", self.sim_cos("f1", "f2").alias("sim"))
                 .sort("i1", "i2")
