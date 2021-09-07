@@ -33,9 +33,10 @@ RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then curl ${ANACONDA} -o anaconda.sh && 
 
 ENV PATH="${HOME}/${VIRTUAL_ENV}/bin:${PATH}"
 
+SHELL ["/bin/bash", "-ic"]
+
 # Python version supported by recommenders
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
-SHELL ["/bin/bash", "-c"]
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
     apt-get -y install python3-pip; \
     apt-get -y install python3.6-venv; fi
@@ -44,6 +45,7 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; 
     python3.6 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda activate base; fi
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
@@ -96,17 +98,25 @@ ARG VIRTUAL_ENV
 ENV HOME="${HOME}"
 WORKDIR ${HOME}
 
-# Get up to date with base
-COPY --from=base ${HOME} .
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ]; then rm -rf ${HOME}/${VIRTUAL_ENV}; fi
-
 RUN apt-get update && \
-    apt-get install -y build-essential cmake
+    apt-get install -y curl build-essential cmake
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.6; fi
+
+# Install Anaconda
+ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then curl ${ANACONDA} -o anaconda.sh && \
+    /bin/bash anaconda.sh -b -p conda && \
+    rm anaconda.sh && \
+    echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc ; fi
+
 ENV PATH="${HOME}/${VIRTUAL_ENV}/bin:${PATH}"
 
-# Install dependencies in virtual environment
+SHELL ["/bin/bash", "-ic"]
+
+# Python version supported by recommenders
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
 SHELL ["/bin/bash", "-c"]
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
     apt-get -y install python3-pip; \
@@ -116,6 +126,7 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; 
     python3.6 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda activate base; fi
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
@@ -151,8 +162,8 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
 # Install dependencies in virtual environment
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[all]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[all]; \
-    conda install numpy-base; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[all]; fi
+RUN conda activate base && conda install numpy-base
 
 
 #############
@@ -170,8 +181,8 @@ RUN mkdir ${HOME}/.jupyter && \
     echo "c.MultiKernelManager.default_kernel_name = 'python3'" >> ${NOTEBOOK_CONFIG}
 
 # Register the environment with Jupyter
-RUN if [ ${VIRTUAL_ENV} = "conda" ]; then python -m ipykernel install --user --name base --display-name "Python (base)"; fi
-RUN if [ ${VIRTUAL_ENV} = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
+RUN if [ "${VIRTUAL_ENV}" = "conda" ]; then python -m ipykernel install --user --name base --display-name "Python (base)"; fi
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     python -m ipykernel install --user --name venv --display-name "Python (venv)"; fi
 
 ARG HOME
