@@ -536,9 +536,10 @@ class SparkDiversityEvaluation:
             reco_df (pyspark.sql.DataFrame): Recommender's prediction output, containing col_user, col_item,
                 col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
             item_feature_df (pyspark.sql.DataFrame): Optional. It contains two columns: col_item and features (a feature vector).
+            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
             col_user (str): User id column name.
             col_item (str): Item id column name.
-            col_relevance (str): This column indicates whether the recommended item is actually
+            col_relevance (str): Optional. This column indicates whether the recommended item is actually
                 relevant to the user or not.
         """
 
@@ -618,12 +619,17 @@ class SparkDiversityEvaluation:
         )
 
     def _get_cosine_similarity(self, n_partitions=200):
-        if self.item_sim_measure == "item_feature_vector":
+
+        if self.item_sim_measure == "item_cooccurrence_count":
+            # calculate item-item similarity based on item co-occurrence count
+            self._get_cooccurrence_similarity(n_partitions)
+        elif self.item_sim_measure == "item_feature_vector":
             # calculate item-item similarity based on item feature vectors
             self._get_item_feature_similarity(n_partitions)
         else:
-            # calculate item-item similarity based on item co-occurrence count
-            self._get_cooccurrence_similarity(n_partitions)
+            raise Exception(
+                "item_sim_measure not recognized! The available options include 'item_cooccurrence_count' and 'item_feature_vector'."
+            )
         return self.df_cosine_similarity
 
     def _get_cooccurrence_similarity(self, n_partitions):
