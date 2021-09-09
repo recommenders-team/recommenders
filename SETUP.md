@@ -34,6 +34,12 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 
 ## Setup guide for Local or DSVM
 
+There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org).
+
+Another way is to build a docker image and use the functions inside a [docker container](#setup-guide-for-docker).
+
+Another alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md).
+
 ### Requirements
 
 * A machine running Linux, MacOS or Windows
@@ -52,11 +58,11 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org). For instructions on how to do these, see [this guide](recommenders/README.md).
-
-An alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md)
+If using venv, see [these instructions](#using-a-virtual-environment).
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
+
+**NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
 
 **NOTE** PySpark v2.4.x requires Java version 8. 
 
@@ -172,6 +178,22 @@ recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) an
     export PYSPARK_PYTHON=/venv/bin/python
 
     pip install recommenders[all]
+
+If you prefer to use [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) instead of venv, you may follow the above steps, except you will need to replace the line
+
+`apt-get -y install python3.6-venv` 
+
+with 
+
+`python3.6 -m pip install --user virtualenv`
+
+and the line
+
+`python3.6 -m venv --system-site-packages /venv`
+
+with
+
+`python3.6 -m virtualenv /venv`
 
 
 ### Register the environment as a kernel in Jupyter
@@ -368,7 +390,7 @@ See guidelines in the Docker [README](tools/docker/README.md) for detailed instr
 
 Example command to build and run Docker image with base CPU environment.
 ```{shell}
-DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" --build-arg VIRTUAL_ENV="conda" .
 docker run -p 8888:8888 -d recommenders:cpu
 ```
 
