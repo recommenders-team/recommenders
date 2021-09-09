@@ -6,7 +6,11 @@ We have a new release [Recommenders 0.7.0](https://github.com/microsoft/recommen
 
 In this, we have changed the names of the folders which contain the source code, so that they are more informative. This implies that you will need to change any import statements that reference the recommenders package. Specifically, the folder `reco_utils` has been renamed to `recommenders` and its subfolders have been renamed according to [issue 1390](https://github.com/microsoft/recommenders/issues/1390).  
 
+The recommenders package now supports three types of environments: [venv](https://docs.python.org/3/library/venv.html) and [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) with Python 3.6, [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) with Python versions 3.6 and 3.7.
+
 We have also added new evaluation metrics: _novelty, serendipity, diversity and coverage_ (see the [evalution notebooks](examples/03_evaluate/README.md)).
+
+Code coverage reports are now generated for every PR, using [Codecov](https://about.codecov.io/).
 
 
 ## Update June 21, 2021
