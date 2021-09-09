@@ -6,7 +6,7 @@
 		"args": { 
 			// Python version: 3, 3.6, 3.7
 			"PYTHON_VERSION": "3.7",
-			"USER": "vscode"
+			"REMOTE_USER": "vscode"
 		}
 	},
 
