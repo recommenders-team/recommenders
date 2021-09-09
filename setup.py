@@ -1,12 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from os import environ
 from pathlib import Path
 from setuptools import setup, find_packages
+import site
+import sys
 import time
-from os import environ
 
-# Version
+# workround for enabling editable user pip installs
+site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
+
+# version
 here = Path(__file__).absolute().parent
 version_data = {}
 with open(here.joinpath("recommenders", "__init__.py"), "r") as f:
@@ -121,6 +126,6 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
+    packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
     python_requires=">=3.6, <3.8",
 )
