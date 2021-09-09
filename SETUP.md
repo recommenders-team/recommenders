@@ -179,6 +179,22 @@ recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) an
 
     pip install recommenders[all]
 
+If you prefer to use [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) instead of venv, you may follow the above steps, except you will need to replace the line
+
+`apt-get -y install python3.6-venv` 
+
+with 
+
+`python3.6 -m pip install --user virtualenv`
+
+and the line
+
+`python3.6 -m venv --system-site-packages /venv`
+
+with
+
+`python3.6 -m virtualenv /venv`
+
 
 ### Register the environment as a kernel in Jupyter
 
