@@ -20,6 +20,8 @@ from recommenders.utils.constants import (
     DEFAULT_PREDICTION_COL,
     DEFAULT_RELEVANCE_COL,
     DEFAULT_SIMILARITY_COL,
+    DEFAULT_ITEM_FEATURES_COL,
+    DEFAULT_ITEM_SIM_MEASURE,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
 )
@@ -703,6 +705,8 @@ class PythonDiversityEvaluation:
         self,
         train_df,
         reco_df,
+        item_feature_df=None,
+        item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
@@ -743,6 +747,8 @@ class PythonDiversityEvaluation:
                 Interaction here follows the *item choice model* from Castells et al.
             reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
                 col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+              item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
             col_user (str): User id column name.
             col_item (str): Item id column name.
             col_relevance (str): This column indicates whether the recommended item is actually
@@ -762,6 +768,8 @@ class PythonDiversityEvaluation:
         self.df_intralist_similarity = None
         self.df_user_diversity = None
         self.avg_diversity = None
+        self.item_feature_df = item_feature_df
+        self.item_sim_measure = item_sim_measure
 
         if col_relevance is None:
             self.col_relevance = DEFAULT_RELEVANCE_COL
@@ -773,6 +781,26 @@ class PythonDiversityEvaluation:
             self.reco_df = reco_df[[col_user, col_item, col_relevance]].astype(
                 {col_relevance: np.float16}
             )
+        if self.item_sim_measure == "item_feature_vector":
+            self.col_item_features = DEFAULT_ITEM_FEATURES_COL
+            required_columns = [self.col_item, self.col_item_features]
+            #    print(str(required_columns))
+            #    print(str(item_feature_df.columns.values.tolist()))
+            if self.item_feature_df is not None:
+
+                if str(required_columns) != str(
+                    item_feature_df.columns.values.tolist()
+                ):
+                    raise Exception(
+                        "Incorrect column names! item_feature_df should have columns:"
+                        + str(required_columns)
+                    )
+            else:
+                raise Exception(
+                    "item_feature_df not specified! item_feature_df must be provided if choosing to use item_feature_vector to calculate item similarity. item_feature_df should have columns:"
+                    + str(required_columns)
+                )
+
         # check if reco_df contains any user_item pairs that are already shown in train_df
         count_intersection = pd.merge(
             self.train_df, self.reco_df, how="inner", on=[self.col_user, self.col_item]
@@ -799,7 +827,21 @@ class PythonDiversityEvaluation:
         ].reset_index(drop=True)
         return df_pairwise_items
 
-    def _get_cosine_similarity(self, n_partitions=200):
+    def _get_cosine_similarity(self):
+
+        if self.item_sim_measure == "item_cooccurrence_count":
+            # calculate item-item similarity based on item co-occurrence count
+            self._get_cooccurrence_similarity()
+        elif self.item_sim_measure == "item_feature_vector":
+            # calculate item-item similarity based on item feature vectors
+            self._get_item_feature_similarity()
+        else:
+            raise Exception(
+                "item_sim_measure not recognized! The available options include 'item_cooccurrence_count' and 'item_feature_vector'."
+            )
+        return self.df_cosine_similarity
+
+    def _get_cooccurrence_similarity(self):
         """Cosine similarity metric from
 
         :Citation:
@@ -847,6 +889,34 @@ class PythonDiversityEvaluation:
                 .sort_values(["i1", "i2"])
                 .reset_index(drop=True)
             )
+
+        return self.df_cosine_similarity
+
+    def _get_item_feature_similarity(self):
+        """Cosine similarity metric based on item feature vectors
+
+        The item indexes in the result are such that i1 <= i2.
+        """
+        if self.df_cosine_similarity is None:
+            df1 = self.item_feature_df[[self.col_item, self.col_item_features]]
+            df1.columns = ["i1", "f1"]
+            df1["key"] = 0
+            df2 = self.item_feature_df[[self.col_item, self.col_item_features]]
+            df2.columns = ["i2", "f2"]
+            df2["key"] = 0
+
+            df = pd.merge(df1, df2, on="key", how="outer").drop("key", axis=1)
+            df_item_feature_pair = df[(df["i1"] <= df["i2"])].reset_index(drop=True)
+
+            df_item_feature_pair["sim"] = df_item_feature_pair.apply(
+                lambda x: float(x.f1.dot(x.f2))
+                / float(np.linalg.norm(x.f1, 2) * np.linalg.norm(x.f2, 2)),
+                axis=1,
+            )
+
+            self.df_cosine_similarity = df_item_feature_pair[
+                ["i1", "i2", "sim"]
+            ].sort_values(["i1", "i2"])
 
         return self.df_cosine_similarity
 
