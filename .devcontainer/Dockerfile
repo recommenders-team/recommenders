@@ -2,8 +2,7 @@ ARG PYTHON_VERSION
 FROM mcr.microsoft.com/vscode/devcontainers/python:${PYTHON_VERSION}
 
 ARG REMOTE_USER
-ENV DEBIAN_FRONTEND="noninteractive" \
-    HOME="/home/${REMOTE_USER}" \
+ENV HOME="/home/${REMOTE_USER}" \
     JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
     PYSPARK_PYTHON="/usr/local/bin/python" \
     PYSPARK_DRIVER_PYTHON="/usr/local/bin/python"
