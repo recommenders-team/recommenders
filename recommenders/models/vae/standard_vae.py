@@ -5,14 +5,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from recommenders.evaluation.python_evaluation import ndcg_at_k
-
 import bottleneck as bn
+import tensorflow as tf
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
 from tensorflow.keras.losses import binary_crossentropy
 from tensorflow.keras import backend as K
 from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
+
+from recommenders.evaluation.python_evaluation import ndcg_at_k
 
 
 class LossHistory(Callback):
@@ -292,7 +293,7 @@ class StandardVAE:
         # Training
         self.model = Model(self.x, self.x_decoded)
         self.model.compile(
-            optimizer=keras.optimizers.Adam(learning_rate=0.001),
+            optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
             loss=self._get_vae_loss,
         )
 

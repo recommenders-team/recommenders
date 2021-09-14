@@ -7,8 +7,9 @@ This package contains functions to simplify common tasks used when developing an
 ## Pre-requisites
 Some dependencies require compilation during pip installation. On Linux this can be supported by adding build-essential dependencies:
 ```bash
-sudo apt-get install -y build-essential
-```
+sudo apt-get install -y build-essential libpython<version>
+``` 
+where `<version>` should be `3.6` or `3.7` as appropriate.
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
@@ -21,12 +22,17 @@ To install core utilities, CPU-based algorithms, and dependencies
 pip install --upgrade pip
 pip install recommenders
 ```
+In the case of conda, you also need to 
+```bash
+conda install numpy-base
+```
+after the pip installation.
 
 ## Optional Dependencies
 
-By default `recommenders` does not install all dependencies used throughout the code and the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the `recommenders` package (excluding Spark and GPU functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
+By default `recommenders` does not install all dependencies used throughout the code and the notebook examples in this repo. Instead we require a bare minimum set of dependencies needed to execute functionality in the `recommenders` package (excluding Spark, GPU and Jupyter functionality). We also allow the user to specify which groups of dependencies are needed at installation time (or later if updating the pip installation). The following groups are provided:
 
-- examples: dependencies needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
+- examples: dependencies related to Jupyter needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
 - spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation and certain algorithms
 - xlearn: xLearn package (on some platforms it requires pre-installation of cmake)

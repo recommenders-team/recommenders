@@ -9,7 +9,7 @@ parameters:
   type: string
 - name: timeout
   type: number
-  default: 20
+  default: 30
 - name: conda_env
   type: string
 - name: conda_opts

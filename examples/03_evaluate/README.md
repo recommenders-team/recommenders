@@ -1,6 +1,6 @@
 # Evaluate
 
-In this directory, a notebook is provided to illustrate evaluating models using various performance measures which can be found in [recommenders](../../recommenders).
+In this directory, notebooks are provided to illustrate evaluating models using various performance measures which can be found in [recommenders](../../recommenders).
 
 | Notebook | Description | 
 | --- | --- | 
