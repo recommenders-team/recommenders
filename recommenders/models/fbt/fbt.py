@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 from recommenders.utils import constants
-from recommenders.utils.python_utils import get_top_k_items
+from recommenders.utils.python_utils import get_top_k_scored_items
 import pandas as pd
 import numpy as np
 import logging
@@ -54,7 +54,7 @@ class FBT(object):
         # the opposite of the above map - map array index to actual string ID
         self.index2item = None
 
-        self._model_df = None
+        self._item_similarity = None
         self._item_frequencies = None
 
         # set flag to disallow calling fit() before predict()
@@ -101,6 +101,28 @@ class FBT(object):
         if df.groupby(expected_columns).size().max() > 1:
             raise ValueError("Duplicate rows found!!")
 
+    def compute_affinity_matrix(self, df):
+        """Affinity matrix.
+
+        The user-affinity matrix can be constructed by treating the users and items as
+        indices in a sparse matrix, and the events as the data. Here, we treat
+        a user-item interactions as the event weights, so 1 if user interacted with
+        the item, 0 otherwise.  We convert between different sparse-matrix
+        formats to de-duplicate user-item pairs, otherwise they will get added up.
+
+        Args:
+            df (pandas.DataFrame): Indexed df of users and items
+
+        Returns:
+            sparse.csr: Affinity matrix in Compressed Sparse Row (CSR) format.
+        """
+        user_item_hits = sparse.coo_matrix(
+            (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])),
+            shape=(self.n_users, self.n_items),
+        ).tocsr()
+
+        return user_item_hits
+
     def set_index(self, df):
         """Generate continuous indices for users and items to reduce memory usage.
         Args:
@@ -130,11 +152,7 @@ class FBT(object):
             numpy.ndarray: Co-occurrence matrix
         """
 
-        user_item_hits = sparse.coo_matrix(
-            (np.repeat(1, df.shape[0]), (df[self.col_user_id],
-                                         df[self.col_item_id])),
-            shape=(self.n_users, self.n_items),
-        ).tocsr()
+        user_item_hits = self.compute_affinity_matrix(df)
 
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
         return item_cooccurrence
@@ -143,24 +161,23 @@ class FBT(object):
         """Fit the FBT recommender using an input DataFrame.
 
         Fitting of model involves computing a item-item co-occurrence
-        matrix: how many people bought watched a pair of movies? This
-        matrix is an attribute of the class object.
+        matrix: how many people watched a pair of movies?
 
         Args:
             df (pd.DataFrame): DataFrame of users and items
 
         """
-        # Only choose the user and item columns from the input
-        select_columns = [self.col_user, self.col_item]
-        temp_df = df[select_columns]
-
-        logger.info("Check input dataframe to fit() is of the type, schema "
-                    "we expect and there are no duplicates.")
-        self._check_dataframe(df)
-
         # generate continuous indices if this hasn't been done
         if self.index2item is None:
             self.set_index(df)
+
+        # Only choose the user and item columns from the input
+        select_columns = [self.col_user, self.col_item]
+        temp_df = df[select_columns].copy()
+
+        logger.info("Check input dataframe to fit() is of the type, schema "
+                    "we expect and there are no duplicates.")
+        self._check_dataframe(temp_df)
 
         logger.info("Creating index columns")
         # add mapping of user and item ids to indices
@@ -173,10 +190,12 @@ class FBT(object):
 
         # similarity score is defined by how many distinct
         # users interacted with the same pair of items (cooccurrence)
-        item_cooccurrence = self.compute_coocurrence_matrix(df=temp_df)
+        self.item_similarity = self.compute_coocurrence_matrix(df=temp_df)
 
-        self._model_df = item_cooccurrence
-        self.item_frequencies = self._model_df.diagonal()
+        # free up some space
+        del temp_df
+
+        self.item_frequencies = self.item_similarity.diagonal()
 
         # sim_df = (
         #     cooccurrence_df
@@ -307,10 +326,10 @@ class FBT(object):
         else:
             recommendations_df = all_recommendations_df
 
-        topk_recommendations_df = get_top_k_items(recommendations_df,
-                                                  col_user=self.col_user,
-                                                  col_rating=self.col_score,
-                                                  k=top_k)
+        topk_recommendations_df = get_top_k_scored_items(recommendations_df,
+                                                         col_user=self.col_user,
+                                                         col_rating=self.col_score,
+                                                         k=top_k)
 
         # Making sure we have a row for every test user even if null
         test_users = pd.DataFrame(set(test[self.col_user]),
