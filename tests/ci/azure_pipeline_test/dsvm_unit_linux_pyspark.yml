@@ -22,7 +22,7 @@ pr:
     - SETUP.md
     - .gitignore
     - examples/README.md
-    - reco_utils/README.md
+    - recommenders/README.md
     - tests/README.md
 
 # Any commit to this branch will trigger the build, excluding some files
@@ -46,7 +46,7 @@ trigger:
     - SETUP.md
     - .gitignore
     - examples/README.md
-    - reco_utils/README.md
+    - recommenders/README.md
     - tests/README.md
 
 variables:
