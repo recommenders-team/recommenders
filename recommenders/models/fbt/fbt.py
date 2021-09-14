@@ -54,6 +54,7 @@ class FBT(object):
         # the opposite of the above map - map array index to actual string ID
         self.index2item = None
 
+        self.user_affinity = None
         self._item_similarity = None
         self._item_frequencies = None
 
@@ -188,6 +189,10 @@ class FBT(object):
             lambda user: self.user2index.get(user, np.NaN)
         )
 
+        # affinity matrix
+        logger.info("Building user affinity sparse matrix")
+        self.user_affinity = self.compute_affinity_matrix(df=temp_df)
+
         # similarity score is defined by how many distinct
         # users interacted with the same pair of items (cooccurrence)
         self.item_similarity = self.compute_coocurrence_matrix(df=temp_df)
@@ -230,115 +235,255 @@ class FBT(object):
         self._is_fit = True
         logger.info("Done training")
 
-    def predict(self, test):
-        """Generate new recommendations using a trained FBT model.
+    def score(self, test, remove_seen=False):
+        """Score all items for test users.
 
-        Args
-        ----
-        test : pandas.DataFrame
-            DataFrame of users and items with each row being a unique pair.
+        Args:
+            test (pandas.DataFrame): user to test
+            remove_seen (bool): flag to remove items seen in training from recommendation
 
-        Returns
-        -------
-        pandas.DataFrame
-            DataFrame with each row is a recommendations for each user in X.
+        Returns:
+            numpy.ndarray: Value of interest of all items for the users.
         """
-        if not self._is_fit:
-            raise ValueError("fit() must be called before predict()!")
 
-        logger.info("Check input dataframe to predict() is of type, schema "
-                    "we expect and there are no duplicates.")
+        # get user / item indices from test set
+        user_ids = list(
+            map(
+                lambda user: self.user2index.get(user, np.NaN),
+                test[self.col_user].unique(),
+            )
+        )
+        if any(np.isnan(user_ids)):
+            raise ValueError("FBT cannot score users that are not in the training set")
 
-        self._check_dataframe(test)
+        # calculate raw scores with a matrix multiplication
         logger.info("Calculating recommendation scores")
+        test_scores = self.user_affinity[user_ids, :].dot(self.item_similarity)
 
-        # To get recommendations, merge test dataset of users with the
-        # item similarity on col_item to get all matches
-        all_test_item_matches_df = test.merge(
-            self._model_df,
-            on=self.col_item,
-            how='left'
-        )
-        # Give user may interact with multiple items A, B, C, a
-        # item D may be recommended as a popular paired choice for
-        # each of A, B, C. Will average such scores
-        all_recommendations_df = (
-            all_test_item_matches_df
-            .groupby([self.col_user,
-                     f'{self.col_item}_paired'])[self.col_score]
-            .mean()
-            .reset_index(drop=False)
-            .rename(columns={f'{self.col_item}_paired': self.col_item})
-        )
-        all_recommendations_df[self.col_item] = (
-            all_recommendations_df[self.col_item].astype('int64')
+        # ensure we're working with a dense ndarray
+        if isinstance(test_scores, sparse.spmatrix):
+            test_scores = test_scores.toarray()
+
+        # remove items in the train set so recommended items are always novel
+        if remove_seen:
+            logger.info("Removing seen items")
+            test_scores += self.user_affinity[user_ids, :] * -np.inf
+
+        return test_scores
+
+    def get_popularity_based_topk(self, top_k=10, sort_top_k=True):
+        """Get top K most frequently occurring items across all users.
+
+        Args:
+            top_k (int): number of top items to recommend.
+            sort_top_k (bool): flag to sort top k results.
+
+        Returns:
+            pandas.DataFrame: top k most popular items.
+        """
+
+        test_scores = np.array([self.item_frequencies])
+
+        logger.info("Getting top K")
+        top_items, top_scores = get_top_k_scored_items(
+            scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
         )
 
-        return all_recommendations_df
+        return pd.DataFrame(
+            {
+                self.col_item: [self.index2item[item] for item in top_items.flatten()],
+                self.col_score: top_scores.flatten(),
+            }
+        )
 
-    def recommend_k_items(self,
-                          test,
-                          remove_seen=False,
-                          train=None,
-                          top_k=10):
+    def recommend_k_items(self, test, top_k=10, sort_top_k=True, remove_seen=False):
         """Recommend top K items for all users which are in the test set
 
         Args:
-            test (pd.DataFrame): users to test
+            test (pandas.DataFrame): users to test
             top_k (int): number of top items to recommend
-            remove_seen (bool): flag to remove recommendations
-            that have been seen by user
+            sort_top_k (bool): flag to sort top k results
+            remove_seen (bool): flag to remove items seen in training from recommendation
 
         Returns:
-            pandas.DataFrame: top k recommended items for each user
+            pandas.DataFrame: top k recommendation items for each user
         """
 
-        logger.info(f"Recommending top {top_k} items for each user...")
-        all_recommendations_df = self.predict(test)
+        test_scores = self.score(test, remove_seen=remove_seen)
 
-        if remove_seen:
-            if train is None:
-                raise ValueError("Please provide the training data to "
-                                 "remove seen items!")
-            # select user-item columns of the DataFrame
-            select_columns = [self.col_user, self.col_item]
-            temp_df = train[select_columns]
-
-            logger.info("Check train dataframe is of the type, schema "
-                        "we expect and there are no duplicates.")
-
-            self._check_dataframe(train)
-
-            seen_item_indicator = (
-                all_recommendations_df
-                .merge(temp_df,
-                       on=select_columns,
-                       how='left',
-                       indicator=True)
-            )
-            # filtering original recommendations to novel ones
-            recommendations_df = (
-                seen_item_indicator
-                .loc[seen_item_indicator['_merge'] == 'left_only']
-            )
-
-            recommendations_df.drop(columns=['_merge'], inplace=True)
-        else:
-            recommendations_df = all_recommendations_df
-
-        topk_recommendations_df = get_top_k_scored_items(recommendations_df,
-                                                         col_user=self.col_user,
-                                                         col_rating=self.col_score,
-                                                         k=top_k)
-
-        # Making sure we have a row for every test user even if null
-        test_users = pd.DataFrame(set(test[self.col_user]),
-                                  columns=[self.col_user])
-        final_k_recommendations = (
-            test_users
-            .merge(topk_recommendations_df,
-                   on=self.col_user,
-                   how='left')
+        top_items, top_scores = get_top_k_scored_items(
+            scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
         )
 
-        return final_k_recommendations
+        df = pd.DataFrame(
+            {
+                self.col_user: np.repeat(
+                    test[self.col_user].drop_duplicates().values, top_items.shape[1]
+                ),
+                self.col_item: [self.index2item[item] for item in top_items.flatten()],
+                self.col_score: top_scores.flatten(),
+            }
+        )
+
+        # drop invalid items
+        return df.replace(-np.inf, np.nan).dropna()
+
+    def predict(self, test):
+        """Output FBT scores for only the users-items pairs which are in the test set
+
+        Args:
+            test (pandas.DataFrame): DataFrame that contains users and items to test
+
+        Returns:
+            pandas.DataFrame: DataFrame contains the prediction results
+        """
+
+        test_scores = self.score(test)
+        user_ids = np.asarray(
+            list(
+                map(
+                    lambda user: self.user2index.get(user, np.NaN),
+                    test[self.col_user].values,
+                )
+            )
+        )
+
+        # create mapping of new items to zeros
+        item_ids = np.asarray(
+            list(
+                map(
+                    lambda item: self.item2index.get(item, np.NaN),
+                    test[self.col_item].values,
+                )
+            )
+        )
+        nans = np.isnan(item_ids)
+        if any(nans):
+            logger.warning(
+                "Items found in test not seen during training, new items will have score of 0"
+            )
+            test_scores = np.append(test_scores, np.zeros((self.n_users, 1)), axis=1)
+            item_ids[nans] = self.n_items
+            item_ids = item_ids.astype("int64")
+
+        df = pd.DataFrame(
+            {
+                self.col_user: test[self.col_user].values,
+                self.col_item: test[self.col_item].values,
+                self.col_score: test_scores[user_ids, item_ids],
+            }
+        )
+        return df
+
+    # def predict(self, test):
+    #     """Generate new recommendations using a trained FBT model.
+
+    #     Args
+    #     ----
+    #     test : pandas.DataFrame
+    #         DataFrame of users and items with each row being a unique pair.
+
+    #     Returns
+    #     -------
+    #     pandas.DataFrame
+    #         DataFrame with each row is a recommendations for each user in X.
+    #     """
+    #     if not self._is_fit:
+    #         raise ValueError("fit() must be called before predict()!")
+
+    #     logger.info("Check input dataframe to predict() is of type, schema "
+    #                 "we expect and there are no duplicates.")
+
+    #     self._check_dataframe(test)
+    #     logger.info("Calculating recommendation scores")
+
+    #     # To get recommendations, merge test dataset of users with the
+    #     # item similarity on col_item to get all matches
+    #     all_test_item_matches_df = test.merge(
+    #         self._model_df,
+    #         on=self.col_item,
+    #         how='left'
+    #     )
+    #     # Give user may interact with multiple items A, B, C, a
+    #     # item D may be recommended as a popular paired choice for
+    #     # each of A, B, C. Will average such scores
+    #     all_recommendations_df = (
+    #         all_test_item_matches_df
+    #         .groupby([self.col_user,
+    #                  f'{self.col_item}_paired'])[self.col_score]
+    #         .mean()
+    #         .reset_index(drop=False)
+    #         .rename(columns={f'{self.col_item}_paired': self.col_item})
+    #     )
+    #     all_recommendations_df[self.col_item] = (
+    #         all_recommendations_df[self.col_item].astype('int64')
+    #     )
+
+    #     return all_recommendations_df
+
+    # def recommend_k_items(self,
+    #                       test,
+    #                       remove_seen=False,
+    #                       train=None,
+    #                       top_k=10):
+    #     """Recommend top K items for all users which are in the test set
+
+    #     Args:
+    #         test (pd.DataFrame): users to test
+    #         top_k (int): number of top items to recommend
+    #         remove_seen (bool): flag to remove recommendations
+    #         that have been seen by user
+
+    #     Returns:
+    #         pandas.DataFrame: top k recommended items for each user
+    #     """
+
+    #     logger.info(f"Recommending top {top_k} items for each user...")
+    #     all_recommendations_df = self.predict(test)
+
+    #     if remove_seen:
+    #         if train is None:
+    #             raise ValueError("Please provide the training data to "
+    #                              "remove seen items!")
+    #         # select user-item columns of the DataFrame
+    #         select_columns = [self.col_user, self.col_item]
+    #         temp_df = train[select_columns]
+
+    #         logger.info("Check train dataframe is of the type, schema "
+    #                     "we expect and there are no duplicates.")
+
+    #         self._check_dataframe(train)
+
+    #         seen_item_indicator = (
+    #             all_recommendations_df
+    #             .merge(temp_df,
+    #                    on=select_columns,
+    #                    how='left',
+    #                    indicator=True)
+    #         )
+    #         # filtering original recommendations to novel ones
+    #         recommendations_df = (
+    #             seen_item_indicator
+    #             .loc[seen_item_indicator['_merge'] == 'left_only']
+    #         )
+
+    #         recommendations_df.drop(columns=['_merge'], inplace=True)
+    #     else:
+    #         recommendations_df = all_recommendations_df
+
+    #     topk_recommendations_df = get_top_k_scored_items(recommendations_df,
+    #                                                      col_user=self.col_user,
+    #                                                      col_rating=self.col_score,
+    #                                                      k=top_k)
+
+    #     # Making sure we have a row for every test user even if null
+    #     test_users = pd.DataFrame(set(test[self.col_user]),
+    #                               columns=[self.col_user])
+    #     final_k_recommendations = (
+    #         test_users
+    #         .merge(topk_recommendations_df,
+    #                on=self.col_user,
+    #                how='left')
+    #     )
+
+    #     return final_k_recommendations
