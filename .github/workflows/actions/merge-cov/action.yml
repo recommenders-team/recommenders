@@ -1,0 +1,46 @@
+# Encapsulate the steps to merge code coverage reports
+# You can call this action wit the following:
+# 
+# steps:
+#   ...
+#   # make sure to checkout the code before running the local action
+#   - uses: actions/checkout@v2
+#   - uses: ./.github/workflows/actions/merge-cov
+
+name: 'Merge code coverage reports'
+description: 'Merge the coverage reports from all of the different test runs.'
+
+outputs:
+  # return the filename of the final coverage report (if needed by downstream)
+  cov-report-filename:
+    description: "Filename of the code coverage report"
+    value: ${{ steps.show-final-report.outputs.cov-report-final }}
+
+runs:
+  using: "composite"
+  steps:
+  - name: Install dev-dependencies
+    shell: bash
+    run: |
+      pip install --upgrade pip setuptools wheel
+      python -m pip install coverage
+
+  - name: Show downloaded coverage reports
+    shell: bash
+    run: ls .coverage*
+      
+  # Merge code coverage reports so the coverage numbers are accurate across
+  # different parallelized runs
+  - name: Merge coverage reports
+    shell: bash
+    run: |
+      python -m coverage combine .coverage*
+      python -m coverage report
+      python -m coverage xml
+      
+  - name: Show merged report
+    id: show-final-report
+    shell: bash
+    run: |
+      echo "Final code coverage report: '$(ls *.xml)'"
+      echo "::set-output name=cov-report-final::$(echo $(ls *.xml))"

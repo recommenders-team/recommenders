@@ -107,37 +107,44 @@ For executing the PySpark integration tests:
 
 Several of the tests are skipped for various reasons which are noted below.
 
-<table><tr>
+<table>
+<tr>
 <td>Test Module</td>
 <td>Test</td>
 <td>Test Environment</td>
 <td>Reason</td>
-</tr><tr>
-<td>unit/test_nni</td>
+</tr>
+<tr>
+<td>unit/recommenders/datasets/test_wikidata</td>
 <td>*</td>
-<td>Windows</td>
-<td>NNI is not currently supported on Windows</td>
-</tr><tr>
-<td>integration/test_notebooks_python</td>
-<td>test_nni_tuning_svd</td>
-<td>Windows</td>
-<td>NNI is not currently supported on Windows</td>
-</tr><tr>
-<td>*/test_notebook_pyspark</td>
-<td>test_mmlspark_lightgbm_criteo_runs</td>
-<td>Windows</td>
-<td>MML Spark and LightGBM issue: https://github.com/Azure/mmlspark/issues/483</td>
-</tr><tr>
-<td>unit/test_gpu_utils</td>
-<td>test_get_cuda_version</td>
-<td>Windows</td>
-<td>Current method for retrieval of CUDA info on Windows is install specific</td>
-</tr><tr>
-<td>nightly*, *notebooks*</td>
-<td>vowpalwabbit: test_surprise_svd_integration  test_vw_deep_dive_integration test_vw_deep_dive_smoke test_vw_deep_dive_runs/vowpal_wabbit_deep_dive test_vowpal_wabbit.py</td>
-<td>AzureML</td>
-<td>To optimize our efforts, we decided to wait until a pip installable version of vowpalwabbit is again available and then it can be added back into the AzureML test suite.</td>
-</tr></table>
+<td>Linux</td>
+<td>Wikidata API is unstable</td>
+</tr>
+<tr>
+<td>integration/recommenders/datasets/test_notebooks_python</td>
+<td>test_wikidata</td>
+<td>Linux</td>
+<td>Wikidata API is unstable</td>
+</tr>
+<tr>
+<td>*/test_notebooks_python</td>
+<td>test_vw*</td>
+<td>Linux</td>
+<td>VW pip package has installation incompatibilities</td>
+</tr>
+<tr>
+<td>*/test_notebooks_python</td>
+<td>test_nni*</td>
+<td>Linux</td>
+<td>NNI pip package has installation incompatibilities</td>
+</tr>
+<tr>
+<td>integration/examples/test_notebooks_python</td>
+<td>test_xlearn*</td>
+<td>Linux</td>
+<td>xLearn pip package has installation incompatibilities</td>
+</tr>
+</table>
 
 In order to skip a test because there is an OS or upstream issue which cannot be resolved you can use pytest [annotations](https://docs.pytest.org/en/latest/skipping.html).
 

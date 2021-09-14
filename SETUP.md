@@ -13,6 +13,7 @@ This document describes how to setup all the dependencies to run the notebooks i
   - [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
     - [Requirements](#requirements)
     - [Dependencies setup](#dependencies-setup)
+    - [Using a virtual environment](#using-a-virtual-environment)
     - [Register the environment as a kernel in Jupyter](#register-the-environment-as-a-kernel-in-jupyter)
     - [Troubleshooting for the DSVM](#troubleshooting-for-the-dsvm)
   - [Setup guide for Azure Databricks](#setup-guide-for-azure-databricks)
@@ -33,13 +34,19 @@ Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark
 
 ## Setup guide for Local or DSVM
 
+There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org).
+
+Another way is to build a docker image and use the functions inside a [docker container](#setup-guide-for-docker).
+
+Another alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md).
+
 ### Requirements
 
 * A machine running Linux, MacOS or Windows
 * An optional requirement is Anaconda with Python version >= 3.6
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
   
-  Alternatively a [virtual environment](https://docs.python.org/3/library/venv.html) can be used instead of Anaconda.
+  Alternatively a [virtual environment](#using-a-virtual-environment) can be used instead of Anaconda.
 * [Apache Spark](https://spark.apache.org/downloads.html) (this is only needed for the PySpark environment).
 
 ### Dependencies setup
@@ -51,11 +58,11 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `ms-recommenders` package from [PyPI](https://pypi.org). Another option is to install from a local copy of the code. For instructions on how to do these, see [this guide](reco_utils/README.md).
-
-An alternative is to run all the recommender utilities directly from a local copy of the source code. This requires installing all the necessary dependencies from Anaconda and PyPI. For instructions on how to do this, see [this guide](conda.md)
+If using venv, see [these instructions](#using-a-virtual-environment).
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
+
+**NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
 
 **NOTE** PySpark v2.4.x requires Java version 8. 
 
@@ -140,6 +147,55 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 </details>
 
 
+### Using a virtual environment
+
+It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
+recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) and running the virtual environment within a container, as the most convenient way to do this.  
+
+    # Start docker daemon if not running
+    sudo dockerd &
+    # Pull the image from the Nvidia docker hub (https://hub.docker.com/r/nvidia/cuda) that is suitable for your system
+    # E.g. for Ubuntu 18.04 do
+    sudo docker run --gpus all -it --rm nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+
+    # Within the container: 
+
+    apt-get -y update
+    apt-get -y install python3.6
+    apt-get -y install python3-pip
+    apt-get -y install python3.6-venv
+    apt-get -y install libpython3.6-dev
+    apt-get -y install cmake
+    apt-get install -y libgomp1 openjdk-8-jre
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+    
+    python3.6 -m venv --system-site-packages /venv
+    source /venv/bin/activate
+    pip install --upgrade pip
+    pip install --upgrade setuptools
+
+    export PYSPARK_DRIVER_PYTHON=/venv/bin/python
+    export PYSPARK_PYTHON=/venv/bin/python
+
+    pip install recommenders[all]
+
+If you prefer to use [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) instead of venv, you may follow the above steps, except you will need to replace the line
+
+`apt-get -y install python3.6-venv` 
+
+with 
+
+`python3.6 -m pip install --user virtualenv`
+
+and the line
+
+`python3.6 -m venv --system-site-packages /venv`
+
+with
+
+`python3.6 -m virtualenv /venv`
+
+
 ### Register the environment as a kernel in Jupyter
 
 We can register our conda or virtual environment to appear as a kernel in the Jupyter notebooks. After activating the environment (`my_env_name`) do
@@ -147,6 +203,7 @@ We can register our conda or virtual environment to appear as a kernel in the Ju
     python -m ipykernel install --user --name my_env_name --display-name "Python (my_env_name)"
 
 If you are using the DSVM, you can [connect to JupyterHub](https://docs.microsoft.com/en-us/azure/machine-learning/data-science-virtual-machine/dsvm-ubuntu-intro#jupyterhub-and-jupyterlab) by browsing to `https://your-vm-ip:8000`.
+
 
 ### Troubleshooting for the DSVM
 
@@ -190,7 +247,7 @@ An example of how to create an Azure Databricks workspace and an Apache Spark cl
 
 ### Installation from PyPI
 
-The `ms-recommenders` package can be installed with core dependencies for utilities and CPU-based algorithms.
+The `recommenders` package can be installed with core dependencies for utilities and CPU-based algorithms.
 This is done from the _Libraries_ link at the cluster, selecting the option to import a library and selecting _PyPI_ in the menu.  
 For installations with more dependencies, see the steps below.
 
@@ -272,12 +329,12 @@ To install the repo manually onto Databricks, follow the steps:
 After installation, you can now create a new notebook and import the utilities from Databricks in order to confirm that the import worked.
 
 ```{python}
-import reco_utils
+import recommenders
 ```
 
 ### Troubleshooting Installation on Azure Databricks
 
-* For the [reco_utils](reco_utils) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
+* For the [recommenders](recommenders) import to work on Databricks, it is important to zip the content correctly. The zip has to be performed inside the Recommenders folder, if you zip directly above the Recommenders folder, it won't work.
 
 ### Prepare Azure Databricks for Operationalization
 
@@ -333,7 +390,7 @@ See guidelines in the Docker [README](tools/docker/README.md) for detailed instr
 
 Example command to build and run Docker image with base CPU environment.
 ```{shell}
-DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" .
+DOCKER_BUILDKIT=1 docker build -t recommenders:cpu --build-arg ENV="cpu" --build-arg VIRTUAL_ENV="conda" .
 docker run -p 8888:8888 -d recommenders:cpu
 ```
 
@@ -343,7 +400,7 @@ You can then open the Jupyter notebook server at http://localhost:8888
 
 The process of making a new release and publishing it to pypi is as follows:
 
-First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [reco_utils.py/__init__.py](reco_utils.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
+First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [recommenders.py/__init__.py](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
@@ -352,4 +409,4 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [re
 generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
-1. Publish the wheel and tar.gz to pypi: `twine upload ms_recommenders*`
+1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`

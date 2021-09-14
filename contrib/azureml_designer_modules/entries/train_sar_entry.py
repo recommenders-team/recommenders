@@ -4,7 +4,7 @@ import time
 import joblib
 from pathlib import Path
 
-from reco_utils.recommender.sar import SAR
+from recommenders.models.sar import SAR
 
 from azureml.studio.core.logger import module_logger as logger
 from azureml.studio.core.utils.fileutils import ensure_folder

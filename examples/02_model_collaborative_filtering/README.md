@@ -1,6 +1,6 @@
 # Deep dive in collaborative filtering algorithms
 
-In this directory, notebooks are provided to give a deep dive of collaborative filtering recommendation algorithms. The notebooks make use of the utility functions ([reco_utils](../../reco_utils)) available in the repo.
+In this directory, notebooks are provided to give a deep dive of collaborative filtering recommendation algorithms. The notebooks make use of the utility functions ([recommenders](../../recommenders)) available in the repo.
 
 | Notebook | Environment | Description |
 | --- | --- | --- |

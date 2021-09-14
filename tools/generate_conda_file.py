@@ -35,29 +35,28 @@ $ python -m ipykernel install --user --name {conda_env} --display-name "Python (
 CHANNELS = ["defaults", "conda-forge", "pytorch", "fastai"]
 
 CONDA_BASE = {
-    "python": "python==3.6.11",
+    "python": "python>=3.6,<3.8",
     "bottleneck": "bottleneck==1.2.1",
-    "dask": "dask>=0.17.1",
-    "fastparquet": "fastparquet>=0.1.6",
+    "cornac": "cornac>=1.11.0",
     "ipykernel": "ipykernel>=4.6.1",
     "jupyter": "jupyter>=1.0.0",
     "lightfm": "lightfm==1.15",
+    "lightgbm": "lightgbm==2.2.1",
     "matplotlib": "matplotlib>=2.2.2",
-    "mock": "mock==2.0.0",
     "nltk": "nltk>=3.4",
     "numpy": "numpy>=1.13.3",
     "pandas": "pandas>1.0.3,<=1.2.2",
+    "papermill": "papermill>=2.2.0",
     "pip": "pip>=19.2",
     "pytest": "pytest>=3.6.4",
+    "pytest-cov": "pytest-cov>=2.12.1",
     "pytorch": "pytorch-cpu>=1.0.0",
-    "seaborn": "seaborn>=0.8.1",
+    "requests": "requests>=2.0.0,<3",
+    "retrying": "retrying>=1.3.3",
     "scikit-learn": "scikit-learn>=0.19.1",
-    "scipy": "scipy>=1.0.0",
     "scikit-surprise": "scikit-surprise>=1.0.6",
-    "swig": "swig==3.0.12",
-    "lightgbm": "lightgbm==2.2.1",
-    "cornac": "cornac>=1.11.0",
-    "papermill": "papermill>=2.2.0",
+    "scipy": "scipy>=1.0.0",
+    "seaborn": "seaborn>=0.8.1",
     "tqdm": "tqdm>=4.31.1",
 }
 
@@ -66,8 +65,9 @@ CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark==2.4.5"}
 CONDA_GPU = {
     "fastai": "fastai==1.0.46",
     "numba": "numba>=0.38.1",
-    "pytorch": "pytorch>=1.0.0",
+    "pytorch": "pytorch>=1.0.0,<=1.2.0",    # For cudatoolkit=10.0
     "cudatoolkit": "cudatoolkit=10.0",
+    "cudnn": "cudnn>=7.6"
 }
 
 PIP_BASE = {
@@ -77,14 +77,12 @@ PIP_BASE = {
     "azure-mgmt-cosmosdb": "azure-mgmt-cosmosdb==0.8.0",
     "black": "black>=18.6b4",
     "category_encoders": "category_encoders>=1.3.0",
-    "dataclasses": "dataclasses>=0.6",
     "hyperopt": "hyperopt==0.1.2",
-    "idna": "idna==2.7",
-    "locustio": "locustio==0.11.0",
+    "locust": "locust>=1,<2",
     "memory-profiler": "memory-profiler>=0.54.0",
-    "nbconvert": "nbconvert==5.5.0",
     "pydocumentdb": "pydocumentdb>=2.3.3",
     "pymanopt": "pymanopt==0.2.5",
+    "pyyaml": "pyyaml>=5.4.1,<6",
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
     "tensorflow": "tensorflow==1.15.4",

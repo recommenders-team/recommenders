@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
@@ -79,7 +80,7 @@ def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.smoke
-@pytest.mark.skip(reason="Tests removed due to installation incompatibilities")
+@pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
     pm.execute_notebook(

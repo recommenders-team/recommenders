@@ -32,3 +32,8 @@ nvidia-ml-py3>=7.352.0
 tensorflow-gpu>=1.15.0,<2
 torch==1.2.0
 fastai>=1.0.46,<2
+databricks_cli>=0.8.6,<1
+pyarrow>=0.8.0,<1.0.0
+pyspark>=2.4.5,<3.0.0
+cmake>=3.18.4.post1
+xlearn==0.40a1

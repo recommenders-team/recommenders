@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# This script installs Recommenders/reco_utils as an egg library onto a Databricks Workspace
+# This script installs Recommenders/recommenders as an egg library onto a Databricks Workspace
 # Optionally, also installs a version of mmlspark as a maven library, and prepares the cluster
 # for operationalization
 
@@ -77,7 +77,7 @@ def create_egg(
     overwrite=False,
 ):
     """
-    Packages files in the reco_utils directory as a .egg file that can be uploaded to dbfs and installed as a library on a databricks cluster.
+    Packages files in the recommenders directory as a .egg file that can be uploaded to dbfs and installed as a library on a databricks cluster.
 
     Args:
         path_to_recommenders_repo_root (str): the (relative or absolute) path to the root of the recommenders repository
@@ -89,10 +89,10 @@ def create_egg(
     """
     # create the zip archive:
     myzipfile = shutil.make_archive(
-        "reco_utils",
+        "recommenders",
         "zip",
         root_dir=path_to_recommenders_repo_root,
-        base_dir="reco_utils",
+        base_dir="recommenders",
     )
 
     # overwrite egg if it previously existed
@@ -109,7 +109,7 @@ def dbfs_file_exists(api_client, dbfs_path):
     Args:
         api_client (ApiClient object): Object used for authenticating to the workspace
         dbfs_path (str): Path to check
-    
+
     Returns:
         True if file exists on dbfs, False otherwise.
     """
@@ -172,7 +172,7 @@ def prepare_for_operationalization(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-      This script packages the reco_utils directory into a .egg file and installs it onto a databricks cluster. 
+      This script packages the recommenders directory into a .egg file and installs it onto a databricks cluster. 
       Optionally, this script may also install the mmlspark library, and it may also install additional libraries useful 
       for operationalization. This script requires that you have installed databricks-cli in the python environment in 
       which you are running this script, and that have you have already configured it with a profile.
@@ -331,7 +331,7 @@ if __name__ == "__main__":
 
     # install the library and its dependencies
     print(
-        "Installing the reco_utils module onto databricks cluster {}".format(
+        "Installing the recommenders module onto databricks cluster {}".format(
             args.cluster_id
         )
     )

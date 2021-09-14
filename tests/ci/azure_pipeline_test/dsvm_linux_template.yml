@@ -9,7 +9,7 @@ parameters:
   type: string
 - name: timeout
   type: number
-  default: 20
+  default: 30
 - name: conda_env
   type: string
 - name: conda_opts
@@ -57,7 +57,7 @@ jobs:
         else
             PLATFORM="manylinux2014_$ARCH"
         fi
-        RELEASE_VERSION=$(awk '/__version__ = / {print $3}' reco_utils/__init__.py | sed 's/"//g')
+        RELEASE_VERSION=$(awk '/__version__ = / {print $3}' recommenders/__init__.py | sed 's/"//g')
 
         echo "   --- BUILDING PACKAGE ---"
         rm -rf dist || exit -1
@@ -65,7 +65,7 @@ jobs:
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
 
         echo "   --- INSTALLING WHEEL ---"
-        pip install dist/ms_recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} || exit -1
+        pip install dist/recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} || exit -1
       else
         echo "   --- INSTALLING LATEST CODE ---"
         pip install .${{ parameters.pip_opts }} || exit -1
@@ -76,6 +76,7 @@ jobs:
 
       # clean up any previous test results        
       rm -rf reports
+      rm -f .coverage*
     displayName: 'Install Dependencies'
 
   - ${{ each test in parameters.test_types }}:
@@ -83,7 +84,8 @@ jobs:
         eval "$(conda shell.bash hook)"
 
         conda activate ${{ parameters.conda_env }}
-        pip install pytest>=3.6.4 || exit -1
+        pip install pytest || exit -1
+        pip install pytest-cov
 
         if [[ "${{ parameters.conda_env }}" == *"spark"* ]]; then
           export PYSPARK_PYTHON=`which python`
@@ -97,18 +99,13 @@ jobs:
             export TEST_MARKER="${{ test }} and "
         fi
 
-        # Remove reco_utils folder to make sure it is using the package to run the tests
-        # We leave the yaml files from DeepRec that are used in the tests
-        find reco_utils ! -name "*.yaml" -delete 2>/dev/null 
-        du -a reco_utils
-
         # run tests
         pytest tests/${{ test }} \
           ${{ parameters.pytest_params }} \
           -m "${TEST_MARKER}${{ parameters.pytest_markers }}" \
           --durations 0 \
           --junitxml=reports/test-${{ test }}-${{ parameters.conda_env }}.xml || exit -1
-        
+
         rm -rf $SPARK_DIR || exit -1
         conda deactivate
       displayName: 'Run ${{ test }} tests'
@@ -128,7 +125,7 @@ jobs:
     condition: and(succeeded(), eq('${{ parameters.install }}', 'release'), eq('${{ parameters.package }}', 'publish'))
     inputs:
       targetPath: $(System.DefaultWorkingDirectory)/dist
-      patterns: 'ms_recommenders*'
+      patterns: 'recommenders*'
       artifactName: PackageAssets
 
   - script: |
