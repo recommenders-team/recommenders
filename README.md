@@ -2,15 +2,26 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (June 21, 2021)
+## What's New 
+### (September 9, 2021)
 
-We have a new release [Recommenders 0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)!
+We have a new release [Recommenders 0.7.0](https://github.com/microsoft/recommenders/releases/tag/0.7.0)!
+We have changed the names of the folders which contain the source code, so that they are more informative. This implies that you will need to change any import statements that reference the recommenders package. Specifically, the folder `reco_utils` has been renamed to `recommenders` and its subfolders have been renamed according to [issue 1390](https://github.com/microsoft/recommenders/issues/1390).  
 
-Recommenders is now on PyPI and can be installed using pip! In addition there are lots of bug fixes and utilities improvements.
+The previous release ([0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)) is compatible with the old style of naming of modules. 
+
+The recommenders package now supports three types of environments: [venv](https://docs.python.org/3/library/venv.html) and [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) with Python 3.6, [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) with Python versions 3.6 and 3.7.
+
+We have also added new evaluation metrics: _novelty, serendipity, diversity and coverage_ (see the [evalution notebooks](examples/03_evaluate/README.md)).
+
+Code coverage reports are now generated for every PR, using [Codecov](https://about.codecov.io/).
+
+Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
 
 Here you can find the PyPi page: https://pypi.org/project/recommenders/
 
 Here you can find the package documentation: https://microsoft-recommenders.readthedocs.io/en/latest/
+
 
 ## Introduction
 
@@ -30,16 +41,22 @@ For a more detailed overview of the repository, please see the documents on the 
 
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
-The installation of the recommenders package has been tested with Python version 3.6. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) or [venv](https://docs.python.org/3/library/venv.html)).
+The installation of the recommenders package has been tested with 
+- Python version 3.6 and [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)
+- Python versions 3.6, 3.7 and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
+
+and currently does not support version 3.8 and above. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment), [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)).
 
 To set up on your local machine:
 
 To install core utilities, CPU-based algorithms, and dependencies:
 
-1. Ensure software required for compilation is installed. On Linux this can be supported by adding build-essential dependencies:
+1. Ensure software required for compilation and Python libraries is installed. On Linux this can be supported by adding:
 ```bash
-sudo apt-get install -y build-essential
+sudo apt-get install -y build-essential libpython<version>
 ``` 
+where `<version>` should be `3.6` or `3.7` as appropriate.
+
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
   
 2. Create a conda or virtual environment. See the [setup guide](SETUP.md) for more details.
@@ -48,8 +65,14 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 
 ```bash
 pip install --upgrade pip
+pip install --upgrade setuptools
 pip install recommenders[examples]
 ```
+In the case of conda, you also need to 
+```bash
+conda install numpy-base
+```
+after the pip installation.
 
 4. Register your (conda or virtual) environment with Jupyter:
 
@@ -70,6 +93,8 @@ For additional options to install the package (support for GPU, Spark etc.) see 
 **NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
 
 **NOTE for DSVM Users** - Please follow the steps in the [Dependencies setup - Set PySpark environment variables on Linux or MacOS](SETUP.md#dependencies-setup) and [Troubleshooting for the DSVM](SETUP.md#troubleshooting-for-the-dsvm) sections if you encounter any issue.
+
+**DOCKER** - Another easy way to try the recommenders repository and get started quickly is to build [docker images](tools/docker/README.md) suitable for different environments. 
 
 ## Algorithms
 

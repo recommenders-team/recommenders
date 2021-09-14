@@ -8,8 +8,10 @@ try:
     from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
     from pyspark.sql import Window, DataFrame
     from pyspark.sql.functions import col, row_number, expr
+    from pyspark.sql.functions import udf
     import pyspark.sql.functions as F
-    from pyspark.sql.types import DoubleType
+    from pyspark.sql.types import IntegerType, DoubleType, StructType, StructField
+    from pyspark.ml.linalg import VectorUDT
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -20,6 +22,8 @@ from recommenders.utils.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_RELEVANCE_COL,
     DEFAULT_SIMILARITY_COL,
+    DEFAULT_ITEM_FEATURES_COL,
+    DEFAULT_ITEM_SIM_MEASURE,
     DEFAULT_TIMESTAMP_COL,
     DEFAULT_K,
     DEFAULT_THRESHOLD,
@@ -489,6 +493,8 @@ class SparkDiversityEvaluation:
         self,
         train_df,
         reco_df,
+        item_feature_df=None,
+        item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_relevance=None,
@@ -529,9 +535,11 @@ class SparkDiversityEvaluation:
                 Interaction here follows the *item choice model* from Castells et al.
             reco_df (pyspark.sql.DataFrame): Recommender's prediction output, containing col_user, col_item,
                 col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+            item_feature_df (pyspark.sql.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
             col_user (str): User id column name.
             col_item (str): Item id column name.
-            col_relevance (str): This column indicates whether the recommended item is actually
+            col_relevance (str): Optional. This column indicates whether the recommended item is actually
                 relevant to the user or not.
         """
 
@@ -548,6 +556,8 @@ class SparkDiversityEvaluation:
         self.df_intralist_similarity = None
         self.df_user_diversity = None
         self.avg_diversity = None
+        self.item_feature_df = item_feature_df
+        self.item_sim_measure = item_sim_measure
 
         if col_relevance is None:
             self.col_relevance = DEFAULT_RELEVANCE_COL
@@ -560,6 +570,27 @@ class SparkDiversityEvaluation:
             self.reco_df = reco_df.select(
                 col_user, col_item, F.col(self.col_relevance).cast(DoubleType())
             )
+
+        if self.item_sim_measure == "item_feature_vector":
+            self.col_item_features = DEFAULT_ITEM_FEATURES_COL
+            required_schema = StructType(
+                (
+                    StructField(self.col_item, IntegerType()),
+                    StructField(self.col_item_features, VectorUDT()),
+                )
+            )
+            if self.item_feature_df is not None:
+
+                if str(required_schema) != str(item_feature_df.schema):
+                    raise Exception(
+                        "Incorrect schema! item_feature_df should have schema:"
+                        + str(required_schema)
+                    )
+            else:
+                raise Exception(
+                    "item_feature_df not specified! item_feature_df must be provided if choosing to use item_feature_vector to calculate item similarity. item_feature_df should have schema:"
+                    + str(required_schema)
+                )
 
         # check if reco_df contains any user_item pairs that are already shown in train_df
         count_intersection = (
@@ -588,6 +619,20 @@ class SparkDiversityEvaluation:
         )
 
     def _get_cosine_similarity(self, n_partitions=200):
+
+        if self.item_sim_measure == "item_cooccurrence_count":
+            # calculate item-item similarity based on item co-occurrence count
+            self._get_cooccurrence_similarity(n_partitions)
+        elif self.item_sim_measure == "item_feature_vector":
+            # calculate item-item similarity based on item feature vectors
+            self._get_item_feature_similarity(n_partitions)
+        else:
+            raise Exception(
+                "item_sim_measure not recognized! The available options include 'item_cooccurrence_count' and 'item_feature_vector'."
+            )
+        return self.df_cosine_similarity
+
+    def _get_cooccurrence_similarity(self, n_partitions):
         """Cosine similarity metric from
 
         :Citation:
@@ -626,6 +671,36 @@ class SparkDiversityEvaluation:
                         / (F.col("i1_sqrt_count") * F.col("i2_sqrt_count"))
                     ).alias(self.sim_col),
                 )
+                .repartition(n_partitions, "i1", "i2")
+            )
+        return self.df_cosine_similarity
+
+    @staticmethod
+    @udf(returnType=DoubleType())
+    def sim_cos(v1, v2):
+        p = 2
+        return float(v1.dot(v2)) / float(v1.norm(p) * v2.norm(p))
+
+    def _get_item_feature_similarity(self, n_partitions):
+        """Cosine similarity metric based on item feature vectors
+
+        The item indexes in the result are such that i1 <= i2.
+        """
+        if self.df_cosine_similarity is None:
+            self.df_cosine_similarity = (
+                self.item_feature_df.select(
+                    F.col(self.col_item).alias("i1"),
+                    F.col(self.col_item_features).alias("f1"),
+                )
+                .join(
+                    self.item_feature_df.select(
+                        F.col(self.col_item).alias("i2"),
+                        F.col(self.col_item_features).alias("f2"),
+                    ),
+                    (F.col("i1") <= F.col("i2")),
+                )
+                .select("i1", "i2", self.sim_cos("f1", "f2").alias("sim"))
+                .sort("i1", "i2")
                 .repartition(n_partitions, "i1", "i2")
             )
         return self.df_cosine_similarity
