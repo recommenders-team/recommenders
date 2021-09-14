@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# This script installs Recommenders/recommenders as an egg library onto a Databricks Workspace
+# This script installs Recommenders/recommenders from PyPI onto a Databricks Workspace
 # Optionally, also installs a version of mmlspark as a maven library, and prepares the cluster
 # for operationalization
 
@@ -26,6 +26,7 @@ from databricks_cli.dbfs.api import DbfsApi
 from databricks_cli.libraries.api import LibrariesApi
 from databricks_cli.dbfs.dbfs_path import DbfsPath
 
+from recommenders.utils.spark_utils import MMLSPARK_PACKAGE, MMLSPARK_REPO
 
 CLUSTER_NOT_FOUND_MSG = """
     Cannot find the target cluster {}. Please check if you entered the valid id. 
@@ -50,8 +51,8 @@ COSMOSDB_JAR_FILE_OPTIONS = {
 
 MMLSPARK_INFO = {
     "maven": {
-        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.18.1",
-        "repo": "https://mvnrepository.com/artifact",
+        "coordinates": MMLSPARK_PACKAGE,
+        "repo": MMLSPARK_REPO,
     }
 }
 
@@ -68,39 +69,22 @@ PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
 
+## depend on PIP_BASE:
+PYPI_RECO_LIB_DEPS = [
+    "recommenders",     
+    "azure-cli-core==2.0.75",
+    "azure-mgmt-cosmosdb==0.8.0",     
+    "azureml-sdk[notebooks,tensorboard]==1.0.69",
+    "azure-storage-blob<=2.1.0",
+]
+
+PYPI_O16N_LIBS = [
+    "azure-cli==2.0.56",
+    "azureml-sdk[databricks]==1.0.69",
+    "pydocumentdb>=2.3.3",
+]
+
 ## Additional dependencies met below.
-
-
-def create_egg(
-    path_to_recommenders_repo_root=os.getcwd(),
-    local_eggname="Recommenders.egg",
-    overwrite=False,
-):
-    """
-    Packages files in the recommenders directory as a .egg file that can be uploaded to dbfs and installed as a library on a databricks cluster.
-
-    Args:
-        path_to_recommenders_repo_root (str): the (relative or absolute) path to the root of the recommenders repository
-        local_eggname (str): the basename of the egg you want to create (NOTE: must have .egg extension)
-        overwrite (bool): whether to overwrite local_eggname if it already exists.
-
-    Returns:
-        the path to the created egg file.
-    """
-    # create the zip archive:
-    myzipfile = shutil.make_archive(
-        "recommenders",
-        "zip",
-        root_dir=path_to_recommenders_repo_root,
-        base_dir="recommenders",
-    )
-
-    # overwrite egg if it previously existed
-    if os.path.exists(local_eggname) and overwrite:
-        os.unlink(local_eggname)
-    os.rename(myzipfile, local_eggname)
-    return local_eggname
-
 
 def dbfs_file_exists(api_client, dbfs_path):
     """
@@ -227,26 +211,6 @@ if __name__ == "__main__":
 
     # make sure path_to_recommenders is on sys.path to allow for import
     sys.path.append(args.path_to_recommenders)
-    from tools.generate_conda_file import PIP_BASE, CONDA_BASE
-
-    ## depend on PIP_BASE:
-    PYPI_RECO_LIB_DEPS = [CONDA_BASE["tqdm"]]
-
-    PYPI_O16N_LIBS = [
-        "azure-cli==2.0.56",
-        "azureml-sdk[databricks]==1.0.69",
-        PIP_BASE["pydocumentdb"],
-    ]
-
-    #################
-    # Create the egg:
-    #################
-
-    print("Preparing Recommenders library file ({})...".format(args.eggname))
-    myegg = create_egg(
-        args.path_to_recommenders, local_eggname=args.eggname, overwrite=args.overwrite
-    )
-    print("Created: {}".format(myegg))
 
     ############################
     # Interact with Databricks:
@@ -266,29 +230,6 @@ if __name__ == "__main__":
                 DEFAULT_CLUSTER_CONFIG["cluster_name"], args.cluster_id
             )
         )
-
-    # Upload the egg:
-    upload_path = Path(args.dbfs_path, args.eggname).as_posix()
-
-    # Check if file exists to alert user.
-    print("Uploading {} to databricks at {}".format(args.eggname, upload_path))
-    if dbfs_file_exists(my_api_client, upload_path):
-        if args.overwrite:
-            print("Overwriting file at {}".format(upload_path))
-        else:
-            raise IOError(
-                """
-            {} already exists on databricks cluster. 
-            This is likely an older version of the library.
-            Please use the '--overwrite' flag to proceed.
-            """.format(
-                    upload_path
-                )
-            )
-
-    DbfsApi(my_api_client).cp(
-        recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
-    )
 
     # steps below require the cluster to be running. Check status
     try:
@@ -335,9 +276,8 @@ if __name__ == "__main__":
             args.cluster_id
         )
     )
-    libs2install = [{"egg": upload_path}]
     # PYPI dependencies:
-    libs2install.extend([{"pypi": {"package": i}} for i in PYPI_RECO_LIB_DEPS])
+    libs2install = [{"pypi": {"package": i}} for i in PYPI_RECO_LIB_DEPS]
 
     # add mmlspark if selected.
     if args.mmlspark:
