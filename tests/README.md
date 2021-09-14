@@ -176,8 +176,8 @@ Example:
     2. `tox -e gpu -- tests/unit -m "gpu and notebook"` (runs the gpu notebook tests with `recommenders[dev,example,gpu]` dependencies)
     3. `tox -e spark -- tests/unit -m "spark and notebook"` (runs the spark notebook tests with `recommenders[dev,example,spark]` dependencies)
     4. `tox -e all -- tests/unit` (to run all of the unit tests with `recommenders[all]` dependencies)
-    5. `tox -e py -- test/unit` (runs the unit tests under the default python interpreter with `recommenders[all]`)
-    6. `tox -e py37 -- test/unit` (runs the unit tests under Python3.7 with `recommenders[all]` )
+    5. `tox -e py -- tests/unit` (runs the unit tests under the default python interpreter with `recommenders[all]`)
+    6. `tox -e py37 -- tests/unit` (runs the unit tests under Python3.7 with `recommenders[all]` )
 
 ## How to create tests on notebooks with Papermill
 
