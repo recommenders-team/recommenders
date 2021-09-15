@@ -69,9 +69,14 @@ PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
 
-## depend on PIP_BASE:
-PYPI_RECO_LIB_DEPS = [
-    "recommenders",     
+## dependencies from PyPI
+PYPI_PREREQS = [
+    "pip==21.2.4",
+    "setuptools==54.0.0",
+    "numpy==1.18.0"
+]
+
+PYPI_EXTRA_DEPS = [
     "azure-cli-core==2.0.75",
     "azure-mgmt-cosmosdb==0.8.0",     
     "azureml-sdk[notebooks,tensorboard]==1.0.69",
@@ -270,14 +275,26 @@ if __name__ == "__main__":
         )
         sys.exit()
 
+
+    # install prerequisites
+    print(
+        "Installing required Python libraries onto databricks cluster {}".format(
+            args.cluster_id
+        )
+    )
+    libs2install = [{"pypi": {"package": i}} for i in PYPI_PREREQS]
+    LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
+
     # install the library and its dependencies
     print(
         "Installing the recommenders module onto databricks cluster {}".format(
             args.cluster_id
         )
     )
-    # PYPI dependencies:
-    libs2install = [{"pypi": {"package": i}} for i in PYPI_RECO_LIB_DEPS]
+    LibrariesApi(my_api_client).install_libraries(args.cluster_id, [{"pypi": {"package": "recommenders"}}])
+
+    # additional PyPI dependencies:
+    libs2install = [{"pypi": {"package": i}} for i in PYPI_EXTRA_DEPS]
 
     # add mmlspark if selected.
     if args.mmlspark:
