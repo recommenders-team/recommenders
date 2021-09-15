@@ -329,6 +329,11 @@ def notebooks():
         "nni_tuning_svd": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"
         ),
+        # TF2.x
+        "sasrec_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "sasrec-tf2.ipynb"
+        ),
+
     }
     return paths
 
