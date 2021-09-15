@@ -161,7 +161,7 @@ def prepare_for_operationalization(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-      This script packages the recommenders directory into a .egg file and installs it onto a databricks cluster. 
+      This script installs the recommenders package from PyPI onto a databricks cluster. 
       Optionally, this script may also install the mmlspark library, and it may also install additional libraries useful 
       for operationalization. This script requires that you have installed databricks-cli in the python environment in 
       which you are running this script, and that have you have already configured it with a profile.
@@ -177,11 +177,6 @@ if __name__ == "__main__":
         "--path-to-recommenders",
         help="The path to the root of the recommenders repository. Default assumes that the script is run in the root of the repository",
         default=".",
-    )
-    parser.add_argument(
-        "--eggname",
-        help="Name of the egg you want to generate. Useful if you want to name based on branch or date.",
-        default="Recommenders.egg",
     )
     parser.add_argument(
         "--dbfs-path",
@@ -209,10 +204,6 @@ if __name__ == "__main__":
         help="cluster id for the cluster to install data on. If used in conjunction with --create-cluster, this is the name of the cluster created",
     )
     args = parser.parse_args()
-
-    # Check for extension of eggname
-    if not args.eggname.endswith(".egg"):
-        args.eggname += ".egg"
 
     # make sure path_to_recommenders is on sys.path to allow for import
     sys.path.append(args.path_to_recommenders)
