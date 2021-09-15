@@ -28,7 +28,15 @@ from recommenders.evaluation.python_evaluation import (
     map_at_k,
     auc,
     logloss,
-    PythonDiversityEvaluation,
+    user_diversity,
+    diversity,
+    historical_item_novelty,
+    novelty,
+    user_item_serendipity,
+    user_serendipity,
+    serendipity,
+    catalog_coverage,
+    distributional_coverage,
 )
 
 TOL = 0.0001
@@ -468,64 +476,70 @@ def python_diversity_data():
 
 def test_catalog_coverage(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    c_coverage = catalog_coverage(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    c_coverage = evaluator.catalog_coverage()
     assert c_coverage == target_metrics["c_coverage"]
 
 
 def test_distributional_coverage(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    d_coverage = distributional_coverage(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    d_coverage = evaluator.distributional_coverage()
     assert d_coverage == target_metrics["d_coverage"]
 
 
 def test_item_novelty(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    actual = historical_item_novelty(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    actual = evaluator.historical_item_novelty()
     assert_frame_equal(
         target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4
     )
     assert np.all(actual["item_novelty"].values >= 0)
     # Test that novelty is zero when data includes only one item
     train_df_new = train_df.loc[train_df["ItemId"] == 3]
-    evaluator = PythonDiversityEvaluation(
+    actual = historical_item_novelty(
         train_df=train_df_new, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    actual = evaluator.historical_item_novelty()
     assert actual["item_novelty"].values[0] == 0
 
 
 def test_novelty(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    actual = novelty(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    novelty = evaluator.novelty()
-    assert target_metrics["novelty"] == novelty
-    assert novelty >= 0
+    assert target_metrics["novelty"] == actual
+    assert actual >= 0
     # Test that novelty is zero when data includes only one item
     train_df_new = train_df.loc[train_df["ItemId"] == 3]
     reco_df_new = reco_df.loc[reco_df["ItemId"] == 3]
-    evaluator = PythonDiversityEvaluation(
-        train_df=train_df_new, reco_df=reco_df_new, col_user="UserId", col_item="ItemId"
+    assert (
+        novelty(
+            train_df=train_df_new,
+            reco_df=reco_df_new,
+            col_user="UserId",
+            col_item="ItemId",
+        )
+        == 0
     )
-    assert evaluator.novelty() == 0
 
 
 def test_user_diversity(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
+    actual = user_diversity(
+        train_df=train_df,
+        reco_df=reco_df,
+        item_feature_df=None,
+        item_sim_measure="item_cooccurrence_count",
+        col_user="UserId",
+        col_item="ItemId",
+        col_sim="sim",
+        col_relevance=None,
     )
-    actual = evaluator.user_diversity()
     assert_frame_equal(
         target_metrics["user_diversity"],
         actual,
@@ -536,22 +550,30 @@ def test_user_diversity(python_diversity_data, target_metrics):
 
 def test_diversity(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
-        train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
+    assert target_metrics["diversity"] == diversity(
+        train_df=train_df,
+        reco_df=reco_df,
+        item_feature_df=None,
+        item_sim_measure="item_cooccurrence_count",
+        col_user="UserId",
+        col_item="ItemId",
+        col_sim="sim",
+        col_relevance=None,
     )
-    assert target_metrics["diversity"] == evaluator.diversity()
 
 
 def test_user_item_serendipity(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    actual = user_item_serendipity(
         train_df=train_df,
         reco_df=reco_df,
+        item_feature_df=None,
+        item_sim_measure="item_cooccurrence_count",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
         col_relevance="Relevance",
     )
-    actual = evaluator.user_item_serendipity()
     assert_frame_equal(
         target_metrics["user_item_serendipity"],
         actual,
@@ -562,14 +584,16 @@ def test_user_item_serendipity(python_diversity_data, target_metrics):
 
 def test_user_serendipity(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    actual = user_serendipity(
         train_df=train_df,
         reco_df=reco_df,
+        item_feature_df=None,
+        item_sim_measure="item_cooccurrence_count",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
         col_relevance="Relevance",
     )
-    actual = evaluator.user_serendipity()
     assert_frame_equal(
         target_metrics["user_serendipity"],
         actual,
@@ -580,27 +604,30 @@ def test_user_serendipity(python_diversity_data, target_metrics):
 
 def test_serendipity(python_diversity_data, target_metrics):
     train_df, reco_df, _ = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    assert target_metrics["serendipity"] == serendipity(
         train_df=train_df,
         reco_df=reco_df,
+        item_feature_df=None,
+        item_sim_measure="item_cooccurrence_count",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
         col_relevance="Relevance",
     )
-    assert target_metrics["serendipity"] == evaluator.serendipity()
 
 
 def test_user_diversity_item_feature_vector(python_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    actual = user_diversity(
         train_df=train_df,
         reco_df=reco_df,
         item_feature_df=item_feature_df,
         item_sim_measure="item_feature_vector",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
+        col_relevance=None,
     )
-    actual = evaluator.user_diversity()
     assert_frame_equal(
         target_metrics["user_diversity_item_feature_vector"],
         actual,
@@ -611,31 +638,32 @@ def test_user_diversity_item_feature_vector(python_diversity_data, target_metric
 
 def test_diversity_item_feature_vector(python_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    assert target_metrics["diversity_item_feature_vector"] == diversity(
         train_df=train_df,
         reco_df=reco_df,
         item_feature_df=item_feature_df,
         item_sim_measure="item_feature_vector",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
+        col_relevance=None,
     )
-    assert target_metrics["diversity_item_feature_vector"] == evaluator.diversity()
 
 
 def test_user_item_serendipity_item_feature_vector(
     python_diversity_data, target_metrics
 ):
     train_df, reco_df, item_feature_df = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    actual = user_item_serendipity(
         train_df=train_df,
         reco_df=reco_df,
         item_feature_df=item_feature_df,
         item_sim_measure="item_feature_vector",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
         col_relevance="Relevance",
     )
-    actual = evaluator.user_item_serendipity()
     assert_frame_equal(
         target_metrics["user_item_serendipity_item_feature_vector"],
         actual,
@@ -646,16 +674,16 @@ def test_user_item_serendipity_item_feature_vector(
 
 def test_user_serendipity_item_feature_vector(python_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    actual = user_serendipity(
         train_df=train_df,
         reco_df=reco_df,
         item_feature_df=item_feature_df,
         item_sim_measure="item_feature_vector",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
         col_relevance="Relevance",
     )
-    actual = evaluator.user_serendipity()
     assert_frame_equal(
         target_metrics["user_serendipity_item_feature_vector"],
         actual,
@@ -666,13 +694,13 @@ def test_user_serendipity_item_feature_vector(python_diversity_data, target_metr
 
 def test_serendipity_item_feature_vector(python_diversity_data, target_metrics):
     train_df, reco_df, item_feature_df = python_diversity_data
-    evaluator = PythonDiversityEvaluation(
+    assert target_metrics["serendipity_item_feature_vector"] == serendipity(
         train_df=train_df,
         reco_df=reco_df,
         item_feature_df=item_feature_df,
         item_sim_measure="item_feature_vector",
         col_user="UserId",
         col_item="ItemId",
+        col_sim="sim",
         col_relevance="Relevance",
     )
-    assert target_metrics["serendipity_item_feature_vector"] == evaluator.serendipity()

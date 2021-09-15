@@ -698,48 +698,131 @@ metrics = {
 }
 
 # diversity metrics
-class PythonDiversityEvaluation:
-    """Python Diversity Evaluator"""
+def check_column_dtypes_diversity_serendipity(func):
+    """Checks columns of DataFrame inputs
 
-    def __init__(
-        self,
+    This includes the checks on:
+
+    * whether the input columns exist in the input DataFrames
+    * whether the data types of col_user as well as col_item are matched in the two input DataFrames.
+    * whether reco_df contains any user_item pairs that are already shown in train_df
+    * check relevance column in reco_df
+    * check column names in item_feature_df
+
+    Args:
+        func (function): function that will be wrapped
+
+    Returns:
+        function: Wrapper function for checking dtypes.
+    """
+
+    @wraps(func)
+    def check_column_dtypes_diversity_serendipity_wrapper(
         train_df,
         reco_df,
         item_feature_df=None,
         item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+        col_item_features=DEFAULT_ITEM_FEATURES_COL,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
+        col_sim=DEFAULT_SIMILARITY_COL,
         col_relevance=None,
+        *args,
+        **kwargs
     ):
-        """Initializer.
+        """Check columns of DataFrame inputs
 
-        This is the Python version of diversity metrics evaluator.
-        The methods of this class calculate the following diversity metrics:
+        Args:
+          train_df (pandas.DataFrame): Data set with historical data for users and items they
+              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+          reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+          item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+          item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+          col_item_features (str): item feature column name.
+          col_user (str): User id column name.
+          col_item (str): Item id column name.
+          col_relevance (str): This column indicates whether the recommended item is actually
+              relevant to the user or not.
+        """
 
-        * Coverage - it includes two metrics:
-            1. catalog_coverage, which measures the proportion of items that get recommended from the item catalog;
-            2. distributional_coverage, which measures how unequally different items are recommended in the
-               recommendations to all users.
+        if not has_columns(train_df, [col_user, col_item]):
+            raise ValueError("Missing columns in train_df DataFrame")
+        if not has_columns(reco_df, [col_user, col_item]):
+            raise ValueError("Missing columns in reco_df DataFrame")
+        if not has_same_base_dtype(train_df, reco_df, columns=[col_user, col_item]):
+            raise ValueError("Columns in provided DataFrames are not the same datatype")
+        if col_relevance is None:
+            col_relevance = DEFAULT_RELEVANCE_COL
+            # relevance term, default is 1 (relevant) for all
+            reco_df = reco_df[[col_user, col_item]]
+            reco_df[col_relevance] = 1.0
+        else:
+            col_relevance = col_relevance
+            reco_df = reco_df[[col_user, col_item, col_relevance]].astype(
+                {col_relevance: np.float16}
+            )
+        if item_sim_measure == "item_feature_vector":
+            required_columns = [col_item, col_item_features]
+            if item_feature_df is not None:
+                if not has_columns(item_feature_df, required_columns):
+                    raise ValueError("Missing columns in item_feature_df DataFrame")
+            else:
+                raise Exception(
+                    "item_feature_df not specified! item_feature_df must be provided if choosing to use item_feature_vector to calculate item similarity. item_feature_df should have columns:"
+                    + str(required_columns)
+                )
+        # check if reco_df contains any user_item pairs that are already shown in train_df
+        count_intersection = pd.merge(
+            train_df, reco_df, how="inner", on=[col_user, col_item]
+        ).shape[0]
+        if count_intersection != 0:
+            raise Exception(
+                "reco_df should not contain any user_item pairs that are already shown in train_df"
+            )
 
-        * Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.
-        * Diversity - The dissimilarity of items being recommended.
-        * Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used, it indicates how "pleasant surprise" of recommendations is to a user.
+        return func(
+            train_df=train_df,
+            reco_df=reco_df,
+            item_feature_df=item_feature_df,
+            item_sim_measure=item_sim_measure,
+            col_user=col_user,
+            col_item=col_item,
+            col_sim=col_sim,
+            col_relevance=col_relevance,
+            *args,
+            **kwargs
+        )
 
-        The metric definitions/formulations are based on the following references with modification:
+    return check_column_dtypes_diversity_serendipity_wrapper
 
-        :Citation:
 
-            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
-            Recommender Systems Handbook pp. 257-297, 2010.
+def check_column_dtypes_novelty_coverage(func):
+    """Checks columns of DataFrame inputs
 
-            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist: introducing
-            serendipity into music recommendation, WSDM 2012
+    This includes the checks on:
 
-            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
-            choice, discovery and relevance, ECIR 2011
+    * whether the input columns exist in the input DataFrames
+    * whether the data types of col_user as well as col_item are matched in the two input DataFrames.
+    * whether reco_df contains any user_item pairs that are already shown in train_df
 
-            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
-            eugeneyan.com, April 2020
+    Args:
+        func (function): function that will be wrapped
+
+    Returns:
+        function: Wrapper function for checking dtypes.
+    """
+
+    @wraps(func)
+    def check_column_dtypes_novelty_coverage_wrapper(
+        train_df,
+        reco_df,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        *args,
+        **kwargs
+    ):
+        """Check columns of DataFrame inputs
 
         Args:
             train_df (pandas.DataFrame): Data set with historical data for users and items they
@@ -747,458 +830,582 @@ class PythonDiversityEvaluation:
                 Interaction here follows the *item choice model* from Castells et al.
             reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
                 col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-              item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
             col_user (str): User id column name.
             col_item (str): Item id column name.
-            col_relevance (str): This column indicates whether the recommended item is actually
-                relevant to the user or not.
+
         """
 
-        self.train_df = train_df[[col_user, col_item]]
-        self.col_user = col_user
-        self.col_item = col_item
-        self.sim_col = DEFAULT_SIMILARITY_COL
-        self.df_cosine_similarity = None
-        self.df_user_item_serendipity = None
-        self.df_user_serendipity = None
-        self.avg_serendipity = None
-        self.df_item_novelty = None
-        self.avg_novelty = None
-        self.df_intralist_similarity = None
-        self.df_user_diversity = None
-        self.avg_diversity = None
-        self.item_feature_df = item_feature_df
-        self.item_sim_measure = item_sim_measure
+        if not has_columns(train_df, [col_user, col_item]):
+            raise ValueError("Missing columns in train_df DataFrame")
+        if not has_columns(reco_df, [col_user, col_item]):
+            raise ValueError("Missing columns in reco_df DataFrame")
+        if not has_same_base_dtype(train_df, reco_df, columns=[col_user, col_item]):
+            raise ValueError("Columns in provided DataFrames are not the same datatype")
 
-        if col_relevance is None:
-            self.col_relevance = DEFAULT_RELEVANCE_COL
-            # relevance term, default is 1 (relevant) for all
-            self.reco_df = reco_df[[col_user, col_item]]
-            self.reco_df[self.col_relevance] = 1.0
-        else:
-            self.col_relevance = col_relevance
-            self.reco_df = reco_df[[col_user, col_item, col_relevance]].astype(
-                {col_relevance: np.float16}
-            )
-        if self.item_sim_measure == "item_feature_vector":
-            self.col_item_features = DEFAULT_ITEM_FEATURES_COL
-            required_columns = [self.col_item, self.col_item_features]
-            #    print(str(required_columns))
-            #    print(str(item_feature_df.columns.values.tolist()))
-            if self.item_feature_df is not None:
-
-                if str(required_columns) != str(
-                    item_feature_df.columns.values.tolist()
-                ):
-                    raise Exception(
-                        "Incorrect column names! item_feature_df should have columns:"
-                        + str(required_columns)
-                    )
-            else:
-                raise Exception(
-                    "item_feature_df not specified! item_feature_df must be provided if choosing to use item_feature_vector to calculate item similarity. item_feature_df should have columns:"
-                    + str(required_columns)
-                )
-
-        # check if reco_df contains any user_item pairs that are already shown in train_df
         count_intersection = pd.merge(
-            self.train_df, self.reco_df, how="inner", on=[self.col_user, self.col_item]
+            train_df, reco_df, how="inner", on=[col_user, col_item]
         ).shape[0]
         if count_intersection != 0:
             raise Exception(
                 "reco_df should not contain any user_item pairs that are already shown in train_df"
             )
 
-    def _get_pairwise_items(self, df):
-        """Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])"""
-        df_user_i1 = df[[self.col_user, self.col_item]]
-        df_user_i1.columns = [self.col_user, "i1"]
-
-        df_user_i2 = df[[self.col_user, self.col_item]]
-        df_user_i2.columns = [self.col_user, "i2"]
-
-        df_user_i1_i2 = pd.merge(
-            df_user_i1, df_user_i2, how="inner", on=[self.col_user]
+        return func(
+            train_df=train_df,
+            reco_df=reco_df,
+            col_user=col_user,
+            col_item=col_item,
+            *args,
+            **kwargs
         )
 
-        df_pairwise_items = df_user_i1_i2[(df_user_i1_i2["i1"] <= df_user_i1_i2["i2"])][
-            [self.col_user, "i1", "i2"]
-        ].reset_index(drop=True)
-        return df_pairwise_items
-
-    def _get_cosine_similarity(self):
-
-        if self.item_sim_measure == "item_cooccurrence_count":
-            # calculate item-item similarity based on item co-occurrence count
-            self._get_cooccurrence_similarity()
-        elif self.item_sim_measure == "item_feature_vector":
-            # calculate item-item similarity based on item feature vectors
-            self._get_item_feature_similarity()
-        else:
-            raise Exception(
-                "item_sim_measure not recognized! The available options include 'item_cooccurrence_count' and 'item_feature_vector'."
-            )
-        return self.df_cosine_similarity
-
-    def _get_cooccurrence_similarity(self):
-        """Cosine similarity metric from
-
-        :Citation:
-
-            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
-            introducing serendipity into music recommendation, WSDM 2012
-
-        The item indexes in the result are such that i1 <= i2.
-        """
-        if self.df_cosine_similarity is None:
-            pairs = self._get_pairwise_items(df=self.train_df)
-            pairs_count = pd.DataFrame(
-                {"count": pairs.groupby(["i1", "i2"]).size()}
-            ).reset_index()
-            item_count = pd.DataFrame(
-                {"count": self.train_df.groupby([self.col_item]).size()}
-            ).reset_index()
-            item_count["item_sqrt_count"] = item_count["count"] ** 0.5
-            item_co_occur = pairs_count.merge(
-                item_count[[self.col_item, "item_sqrt_count"]],
-                left_on=["i1"],
-                right_on=[self.col_item],
-            ).drop(columns=[self.col_item])
-
-            item_co_occur.columns = ["i1", "i2", "count", "i1_sqrt_count"]
-
-            item_co_occur = item_co_occur.merge(
-                item_count[[self.col_item, "item_sqrt_count"]],
-                left_on=["i2"],
-                right_on=[self.col_item],
-            ).drop(columns=[self.col_item])
-            item_co_occur.columns = [
-                "i1",
-                "i2",
-                "count",
-                "i1_sqrt_count",
-                "i2_sqrt_count",
-            ]
-
-            item_co_occur[self.sim_col] = item_co_occur["count"] / (
-                item_co_occur["i1_sqrt_count"] * item_co_occur["i2_sqrt_count"]
-            )
-            self.df_cosine_similarity = (
-                item_co_occur[["i1", "i2", self.sim_col]]
-                .sort_values(["i1", "i2"])
-                .reset_index(drop=True)
-            )
-
-        return self.df_cosine_similarity
-
-    def _get_item_feature_similarity(self):
-        """Cosine similarity metric based on item feature vectors
-
-        The item indexes in the result are such that i1 <= i2.
-        """
-        if self.df_cosine_similarity is None:
-            df1 = self.item_feature_df[[self.col_item, self.col_item_features]]
-            df1.columns = ["i1", "f1"]
-            df1["key"] = 0
-            df2 = self.item_feature_df[[self.col_item, self.col_item_features]]
-            df2.columns = ["i2", "f2"]
-            df2["key"] = 0
-
-            df = pd.merge(df1, df2, on="key", how="outer").drop("key", axis=1)
-            df_item_feature_pair = df[(df["i1"] <= df["i2"])].reset_index(drop=True)
-
-            df_item_feature_pair["sim"] = df_item_feature_pair.apply(
-                lambda x: float(x.f1.dot(x.f2))
-                / float(np.linalg.norm(x.f1, 2) * np.linalg.norm(x.f2, 2)),
-                axis=1,
-            )
-
-            self.df_cosine_similarity = df_item_feature_pair[
-                ["i1", "i2", "sim"]
-            ].sort_values(["i1", "i2"])
-
-        return self.df_cosine_similarity
-
-    # Diversity metrics
-    def _get_intralist_similarity(self, df):
-        """Intra-list similarity from
-
-        :Citation:
-
-            "Improving Recommendation Lists Through Topic Diversification",
-            Ziegler, McNee, Konstan and Lausen, 2005.
-        """
-        if self.df_intralist_similarity is None:
-            pairs = self._get_pairwise_items(df=df)
-            similarity_df = self._get_cosine_similarity()
-            # Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items.
-            # e.g. i1 and i2 have never occurred together.
-
-            item_pair_sim = pairs.merge(similarity_df, on=["i1", "i2"], how="left")
-            item_pair_sim[self.sim_col].fillna(0, inplace=True)
-            item_pair_sim = item_pair_sim.loc[
-                item_pair_sim["i1"] != item_pair_sim["i2"]
-            ].reset_index(drop=True)
-            self.df_intralist_similarity = (
-                item_pair_sim.groupby([self.col_user])
-                .agg({self.sim_col: "mean"})
-                .reset_index()
-            )
-            self.df_intralist_similarity.columns = [self.col_user, "avg_il_sim"]
-
-        return self.df_intralist_similarity
-
-    def user_diversity(self):
-        """Calculate average diversity of recommendations for each user.
-        The metric definition is based on formula (3) in the following reference:
-
-        :Citation:
-
-            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
-            introducing serendipity into music recommendation, WSDM 2012
-
-        Returns:
-            pandas.DataFrame: A dataframe with the following columns: col_user, user_diversity.
-        """
-        if self.df_user_diversity is None:
-            self.df_intralist_similarity = self._get_intralist_similarity(self.reco_df)
-            self.df_user_diversity = self.df_intralist_similarity
-            self.df_user_diversity["user_diversity"] = (
-                1 - self.df_user_diversity["avg_il_sim"]
-            )
-            self.df_user_diversity = (
-                self.df_user_diversity[[self.col_user, "user_diversity"]]
-                .sort_values(self.col_user)
-                .reset_index(drop=True)
-            )
-
-        return self.df_user_diversity
-
-    def diversity(self):
-        """Calculate average diversity of recommendations across all users.
-
-        Returns:
-            float: diversity.
-        """
-        if self.avg_diversity is None:
-            self.df_user_diversity = self.user_diversity()
-            self.avg_diversity = self.df_user_diversity.agg({"user_diversity": "mean"})[
-                0
-            ]
-        return self.avg_diversity
-
-    # Novelty metrics
-    def historical_item_novelty(self):
-        """Calculate novelty for each item. Novelty is computed as the minus logarithm of
-        (number of interactions with item / total number of interactions). The definition of the metric
-        is based on the following reference using the choice model (eqs. 1 and 6):
-
-        :Citation:
-
-            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
-            choice, discovery and relevance, ECIR 2011
-
-        The novelty of an item can be defined relative to a set of observed events on the set of all items.
-        These can be events of user choice (item "is picked" by a random user) or user discovery
-        (item "is known" to a random user). The above definition of novelty reflects a factor of item popularity.
-        High novelty values correspond to long-tail items in the density function, that few users have interacted
-        with and low novelty values correspond to popular head items.
-
-        Returns:
-            pandas.DataFrame: A dataframe with the following columns: col_item, item_novelty.
-        """
-        if self.df_item_novelty is None:
-            n_records = self.train_df.shape[0]
-            item_count = pd.DataFrame(
-                {"count": self.train_df.groupby([self.col_item]).size()}
-            ).reset_index()
-            item_count["item_novelty"] = -np.log2(item_count["count"] / n_records)
-            self.df_item_novelty = (
-                item_count[[self.col_item, "item_novelty"]]
-                .sort_values(self.col_item)
-                .reset_index(drop=True)
-            )
-
-        return self.df_item_novelty
-
-    def novelty(self):
-        """Calculate the average novelty in a list of recommended items (this assumes that the recommendation list
-        is already computed). Follows section 5 from
-
-        :Citation:
-
-            P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
-            choice, discovery and relevance, ECIR 2011
-
-        Returns:
-            float: novelty.
-        """
-        if self.avg_novelty is None:
-            self.df_item_novelty = self.historical_item_novelty()
-            n_recommendations = self.reco_df.shape[0]
-            reco_item_count = pd.DataFrame(
-                {"count": self.reco_df.groupby([self.col_item]).size()}
-            ).reset_index()
-            reco_item_novelty = reco_item_count.merge(
-                self.df_item_novelty, on=self.col_item
-            )
-            reco_item_novelty["product"] = (
-                reco_item_novelty["count"] * reco_item_novelty["item_novelty"]
-            )
-            self.avg_novelty = (
-                reco_item_novelty.agg({"product": "sum"})[0] / n_recommendations
-            )
-
-        return self.avg_novelty
-
-    # Serendipity metrics
-    def user_item_serendipity(self):
-        """Calculate serendipity of each item in the recommendations for each user.
-        The metric definition is based on the following references:
-
-        :Citation:
-
-            Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
-            introducing serendipity into music recommendation, WSDM 2012
-
-            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
-            eugeneyan.com, April 2020
-
-        Returns:
-            pandas.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.
-        """
-        # for every col_user, col_item in reco_df, join all interacted items from train_df.
-        # These interacted items are repeated for each item in reco_df for a specific user.
-        if self.df_user_item_serendipity is None:
-            self.df_cosine_similarity = self._get_cosine_similarity()
-            reco_user_item = self.reco_df[[self.col_user, self.col_item]]
-            reco_user_item["reco_item_tmp"] = reco_user_item[self.col_item]
-
-            train_user_item = self.train_df[[self.col_user, self.col_item]]
-            train_user_item.columns = [self.col_user, "train_item_tmp"]
-
-            reco_train_user_item = reco_user_item.merge(
-                train_user_item, on=[self.col_user]
-            )
-            reco_train_user_item["i1"] = reco_train_user_item[
-                ["reco_item_tmp", "train_item_tmp"]
-            ].min(axis=1)
-            reco_train_user_item["i2"] = reco_train_user_item[
-                ["reco_item_tmp", "train_item_tmp"]
-            ].max(axis=1)
-
-            reco_train_user_item_sim = reco_train_user_item.merge(
-                self.df_cosine_similarity, on=["i1", "i2"], how="left"
-            )
-            reco_train_user_item_sim[self.sim_col].fillna(0, inplace=True)
-
-            reco_user_item_avg_sim = (
-                reco_train_user_item_sim.groupby([self.col_user, self.col_item])
-                .agg({self.sim_col: "mean"})
-                .reset_index()
-            )
-            reco_user_item_avg_sim.columns = [
-                self.col_user,
-                self.col_item,
-                "avg_item2interactedHistory_sim",
-            ]
-
-            self.df_user_item_serendipity = reco_user_item_avg_sim.merge(
-                self.reco_df, on=[self.col_user, self.col_item]
-            )
-            self.df_user_item_serendipity["user_item_serendipity"] = (
-                1 - self.df_user_item_serendipity["avg_item2interactedHistory_sim"]
-            ) * self.df_user_item_serendipity[self.col_relevance]
-            self.df_user_item_serendipity = (
-                self.df_user_item_serendipity[
-                    [self.col_user, self.col_item, "user_item_serendipity"]
-                ]
-                .sort_values([self.col_user, self.col_item])
-                .reset_index(drop=True)
-            )
-
-        return self.df_user_item_serendipity
-
-    def user_serendipity(self):
-        """Calculate average serendipity for each user's recommendations.
-
-        Returns:
-            pandas.DataFrame: A dataframe with following columns: col_user, user_serendipity.
-        """
-        if self.df_user_serendipity is None:
-            self.df_user_item_serendipity = self.user_item_serendipity()
-            self.df_user_serendipity = (
-                self.df_user_item_serendipity.groupby(self.col_user)
-                .agg({"user_item_serendipity": "mean"})
-                .reset_index()
-            )
-            self.df_user_serendipity.columns = [self.col_user, "user_serendipity"]
-            self.df_user_serendipity = self.df_user_serendipity.sort_values(
-                self.col_user
-            ).reset_index(drop=True)
-
-        return self.df_user_serendipity
-
-    def serendipity(self):
-        """Calculate average serendipity for recommendations across all users.
-
-        Returns:
-            float: serendipity.
-        """
-        if self.avg_serendipity is None:
-            self.df_user_serendipity = self.user_serendipity()
-            self.avg_serendipity = self.df_user_serendipity.agg(
-                {"user_serendipity": "mean"}
-            )[0]
-        return self.avg_serendipity
-
-    # Coverage metrics
-    def catalog_coverage(self):
-        """Calculate catalog coverage for recommendations across all users.
-        The metric definition is based on the "catalog coverage" definition in the following reference:
-
-        :Citation:
-
-            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
-            Recommender Systems Handbook pp. 257-297, 2010.
-
-        Returns:
-            float: catalog coverage
-        """
-        # distinct item count in reco_df
-        count_distinct_item_reco = self.reco_df[self.col_item].nunique()
-        # distinct item count in train_df
-        count_distinct_item_train = self.train_df[self.col_item].nunique()
-
-        # catalog coverage
-        c_coverage = count_distinct_item_reco / count_distinct_item_train
-        return c_coverage
-
-    def distributional_coverage(self):
-        """Calculate distributional coverage for recommendations across all users.
-        The metric definition is based on formula (21) in the following reference:
-
-        :Citation:
-
-            G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
-            Recommender Systems Handbook pp. 257-297, 2010.
-
-        Returns:
-            float: distributional coverage
-        """
-        # In reco_df, how  many times each col_item is being recommended
-        df_itemcnt_reco = pd.DataFrame(
-            {"count": self.reco_df.groupby([self.col_item]).size()}
-        ).reset_index()
-
-        # the number of total recommendations
-        count_row_reco = self.reco_df.shape[0]
-
-        df_entropy = df_itemcnt_reco
-        df_entropy["p(i)"] = df_entropy["count"] / count_row_reco
-        df_entropy["entropy(i)"] = df_entropy["p(i)"] * np.log2(df_entropy["p(i)"])
-
-        d_coverage = -df_entropy.agg({"entropy(i)": "sum"})[0]
-
-        return d_coverage
+    return check_column_dtypes_novelty_coverage_wrapper
+
+
+@lru_cache_df(maxsize=1)
+def _get_pairwise_items(
+    df,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+):
+    """Get pairwise combinations of items per user (ignoring duplicate pairs [1,2] == [2,1])"""
+    df_user_i1 = df[[col_user, col_item]]
+    df_user_i1.columns = [col_user, "i1"]
+
+    df_user_i2 = df[[col_user, col_item]]
+    df_user_i2.columns = [col_user, "i2"]
+
+    df_user_i1_i2 = pd.merge(df_user_i1, df_user_i2, how="inner", on=[col_user])
+
+    df_pairwise_items = df_user_i1_i2[(df_user_i1_i2["i1"] <= df_user_i1_i2["i2"])][
+        [col_user, "i1", "i2"]
+    ].reset_index(drop=True)
+    return df_pairwise_items
+
+
+@lru_cache_df(maxsize=1)
+def _get_cosine_similarity(
+    train_df,
+    item_feature_df=None,
+    item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+):
+
+    if item_sim_measure == "item_cooccurrence_count":
+        # calculate item-item similarity based on item co-occurrence count
+        df_cosine_similarity = _get_cooccurrence_similarity(
+            train_df, col_user, col_item, col_sim
+        )
+    elif item_sim_measure == "item_feature_vector":
+        # calculdf_cosine_similarity = ate item-item similarity based on item feature vectors
+        df_cosine_similarity = _get_item_feature_similarity(
+            item_feature_df, col_item_features, col_user, col_item
+        )
+    else:
+        raise Exception(
+            "item_sim_measure not recognized! The available options include 'item_cooccurrence_count' and 'item_feature_vector'."
+        )
+    return df_cosine_similarity
+
+
+@lru_cache_df(maxsize=1)
+def _get_cooccurrence_similarity(
+    train_df,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+):
+    """Cosine similarity metric from
+
+    :Citation:
+
+        Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
+        introducing serendipity into music recommendation, WSDM 2012
+
+    The item indexes in the result are such that i1 <= i2.
+    """
+    pairs = _get_pairwise_items(train_df, col_user, col_item)
+    pairs_count = pd.DataFrame(
+        {"count": pairs.groupby(["i1", "i2"]).size()}
+    ).reset_index()
+    item_count = pd.DataFrame(
+        {"count": train_df.groupby([col_item]).size()}
+    ).reset_index()
+    item_count["item_sqrt_count"] = item_count["count"] ** 0.5
+    item_co_occur = pairs_count.merge(
+        item_count[[col_item, "item_sqrt_count"]],
+        left_on=["i1"],
+        right_on=[col_item],
+    ).drop(columns=[col_item])
+
+    item_co_occur.columns = ["i1", "i2", "count", "i1_sqrt_count"]
+
+    item_co_occur = item_co_occur.merge(
+        item_count[[col_item, "item_sqrt_count"]],
+        left_on=["i2"],
+        right_on=[col_item],
+    ).drop(columns=[col_item])
+    item_co_occur.columns = [
+        "i1",
+        "i2",
+        "count",
+        "i1_sqrt_count",
+        "i2_sqrt_count",
+    ]
+
+    item_co_occur[col_sim] = item_co_occur["count"] / (
+        item_co_occur["i1_sqrt_count"] * item_co_occur["i2_sqrt_count"]
+    )
+    df_cosine_similarity = (
+        item_co_occur[["i1", "i2", col_sim]]
+        .sort_values(["i1", "i2"])
+        .reset_index(drop=True)
+    )
+
+    return df_cosine_similarity
+
+
+@lru_cache_df(maxsize=1)
+def _get_item_feature_similarity(
+    item_feature_df,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+):
+    """Cosine similarity metric based on item feature vectors
+
+    The item indexes in the result are such that i1 <= i2.
+    """
+    df1 = item_feature_df[[col_item, col_item_features]]
+    df1.columns = ["i1", "f1"]
+    df1["key"] = 0
+    df2 = item_feature_df[[col_item, col_item_features]]
+    df2.columns = ["i2", "f2"]
+    df2["key"] = 0
+
+    df = pd.merge(df1, df2, on="key", how="outer").drop("key", axis=1)
+    df_item_feature_pair = df[(df["i1"] <= df["i2"])].reset_index(drop=True)
+
+    df_item_feature_pair[col_sim] = df_item_feature_pair.apply(
+        lambda x: float(x.f1.dot(x.f2))
+        / float(np.linalg.norm(x.f1, 2) * np.linalg.norm(x.f2, 2)),
+        axis=1,
+    )
+
+    df_cosine_similarity = df_item_feature_pair[["i1", "i2", col_sim]].sort_values(
+        ["i1", "i2"]
+    )
+
+    return df_cosine_similarity
+
+
+# Diversity metrics
+@lru_cache_df(maxsize=1)
+def _get_intralist_similarity(
+    train_df,
+    reco_df,
+    item_feature_df=None,
+    item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+):
+    """Intra-list similarity from
+
+    :Citation:
+
+        "Improving Recommendation Lists Through Topic Diversification",
+        Ziegler, McNee, Konstan and Lausen, 2005.
+    """
+    pairs = _get_pairwise_items(reco_df, col_user, col_item)
+    similarity_df = _get_cosine_similarity(
+        train_df,
+        item_feature_df,
+        item_sim_measure,
+        col_item_features,
+        col_user,
+        col_item,
+        col_sim,
+    )
+    # Fillna(0) is needed in the cases where similarity_df does not have an entry for a pair of items.
+    # e.g. i1 and i2 have never occurred together.
+
+    item_pair_sim = pairs.merge(similarity_df, on=["i1", "i2"], how="left")
+    item_pair_sim[col_sim].fillna(0, inplace=True)
+    item_pair_sim = item_pair_sim.loc[
+        item_pair_sim["i1"] != item_pair_sim["i2"]
+    ].reset_index(drop=True)
+    df_intralist_similarity = (
+        item_pair_sim.groupby([col_user]).agg({col_sim: "mean"}).reset_index()
+    )
+    df_intralist_similarity.columns = [col_user, "avg_il_sim"]
+
+    return df_intralist_similarity
+
+
+@check_column_dtypes_diversity_serendipity
+@lru_cache_df(maxsize=1)
+def user_diversity(
+    train_df,
+    reco_df,
+    item_feature_df=None,
+    item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+    col_relevance=None,
+):
+    """Calculate average diversity of recommendations for each user.
+    The metric definition is based on formula (3) in the following reference:
+
+    :Citation:
+
+        Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
+        introducing serendipity into music recommendation, WSDM 2012
+
+    Returns:
+        pandas.DataFrame: A dataframe with the following columns: col_user, user_diversity.
+    """
+
+    df_intralist_similarity = _get_intralist_similarity(
+        train_df,
+        reco_df,
+        item_feature_df,
+        item_sim_measure,
+        col_item_features,
+        col_user,
+        col_item,
+        col_sim,
+    )
+    df_user_diversity = df_intralist_similarity
+    df_user_diversity["user_diversity"] = 1 - df_user_diversity["avg_il_sim"]
+    df_user_diversity = (
+        df_user_diversity[[col_user, "user_diversity"]]
+        .sort_values(col_user)
+        .reset_index(drop=True)
+    )
+
+    return df_user_diversity
+
+
+@check_column_dtypes_diversity_serendipity
+def diversity(
+    train_df,
+    reco_df,
+    item_feature_df=None,
+    item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+    col_relevance=None,
+):
+    """Calculate average diversity of recommendations across all users.
+
+    Returns:
+        float: diversity.
+    """
+    df_user_diversity = user_diversity(
+        train_df,
+        reco_df,
+        item_feature_df,
+        item_sim_measure,
+        col_item_features,
+        col_user,
+        col_item,
+        col_sim,
+    )
+    avg_diversity = df_user_diversity.agg({"user_diversity": "mean"})[0]
+    return avg_diversity
+
+
+# Novelty metrics
+@check_column_dtypes_novelty_coverage
+@lru_cache_df(maxsize=1)
+def historical_item_novelty(
+    train_df,
+    reco_df,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+):
+    """Calculate novelty for each item. Novelty is computed as the minus logarithm of
+    (number of interactions with item / total number of interactions). The definition of the metric
+    is based on the following reference using the choice model (eqs. 1 and 6):
+
+    :Citation:
+
+        P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+        choice, discovery and relevance, ECIR 2011
+
+    The novelty of an item can be defined relative to a set of observed events on the set of all items.
+    These can be events of user choice (item "is picked" by a random user) or user discovery
+    (item "is known" to a random user). The above definition of novelty reflects a factor of item popularity.
+    High novelty values correspond to long-tail items in the density function, that few users have interacted
+    with and low novelty values correspond to popular head items.
+
+    Returns:
+        pandas.DataFrame: A dataframe with the following columns: col_item, item_novelty.
+    """
+
+    n_records = train_df.shape[0]
+    item_count = pd.DataFrame(
+        {"count": train_df.groupby([col_item]).size()}
+    ).reset_index()
+    item_count["item_novelty"] = -np.log2(item_count["count"] / n_records)
+    df_item_novelty = (
+        item_count[[col_item, "item_novelty"]]
+        .sort_values(col_item)
+        .reset_index(drop=True)
+    )
+
+    return df_item_novelty
+
+
+@check_column_dtypes_novelty_coverage
+def novelty(train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL):
+    """Calculate the average novelty in a list of recommended items (this assumes that the recommendation list
+    is already computed). Follows section 5 from
+
+    :Citation:
+
+        P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
+        choice, discovery and relevance, ECIR 2011
+
+    Returns:
+        float: novelty.
+    """
+
+    df_item_novelty = historical_item_novelty(train_df, reco_df, col_user, col_item)
+    n_recommendations = reco_df.shape[0]
+    reco_item_count = pd.DataFrame(
+        {"count": reco_df.groupby([col_item]).size()}
+    ).reset_index()
+    reco_item_novelty = reco_item_count.merge(df_item_novelty, on=col_item)
+    reco_item_novelty["product"] = (
+        reco_item_novelty["count"] * reco_item_novelty["item_novelty"]
+    )
+    avg_novelty = reco_item_novelty.agg({"product": "sum"})[0] / n_recommendations
+
+    return avg_novelty
+
+
+# Serendipity metrics
+@check_column_dtypes_diversity_serendipity
+@lru_cache_df(maxsize=1)
+def user_item_serendipity(
+    train_df,
+    reco_df,
+    item_feature_df=None,
+    item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+    col_relevance=None,
+):
+    """Calculate serendipity of each item in the recommendations for each user.
+    The metric definition is based on the following references:
+
+    :Citation:
+
+    Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
+    introducing serendipity into music recommendation, WSDM 2012
+
+    Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+    eugeneyan.com, April 2020
+
+    Returns:
+        pandas.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.
+    """
+    # for every col_user, col_item in reco_df, join all interacted items from train_df.
+    # These interacted items are repeated for each item in reco_df for a specific user.
+    df_cosine_similarity = _get_cosine_similarity(
+        train_df,
+        item_feature_df,
+        item_sim_measure,
+        col_item_features,
+        col_user,
+        col_item,
+        col_sim,
+    )
+    reco_user_item = reco_df[[col_user, col_item]]
+    reco_user_item["reco_item_tmp"] = reco_user_item[col_item]
+
+    train_user_item = train_df[[col_user, col_item]]
+    train_user_item.columns = [col_user, "train_item_tmp"]
+
+    reco_train_user_item = reco_user_item.merge(train_user_item, on=[col_user])
+    reco_train_user_item["i1"] = reco_train_user_item[
+        ["reco_item_tmp", "train_item_tmp"]
+    ].min(axis=1)
+    reco_train_user_item["i2"] = reco_train_user_item[
+        ["reco_item_tmp", "train_item_tmp"]
+    ].max(axis=1)
+
+    reco_train_user_item_sim = reco_train_user_item.merge(
+        df_cosine_similarity, on=["i1", "i2"], how="left"
+    )
+    reco_train_user_item_sim[col_sim].fillna(0, inplace=True)
+
+    reco_user_item_avg_sim = (
+        reco_train_user_item_sim.groupby([col_user, col_item])
+        .agg({col_sim: "mean"})
+        .reset_index()
+    )
+    reco_user_item_avg_sim.columns = [
+        col_user,
+        col_item,
+        "avg_item2interactedHistory_sim",
+    ]
+
+    df_user_item_serendipity = reco_user_item_avg_sim.merge(
+        reco_df, on=[col_user, col_item]
+    )
+    df_user_item_serendipity["user_item_serendipity"] = (
+        1 - df_user_item_serendipity["avg_item2interactedHistory_sim"]
+    ) * df_user_item_serendipity[col_relevance]
+    df_user_item_serendipity = (
+        df_user_item_serendipity[[col_user, col_item, "user_item_serendipity"]]
+        .sort_values([col_user, col_item])
+        .reset_index(drop=True)
+    )
+
+    return df_user_item_serendipity
+
+
+@lru_cache_df(maxsize=1)
+@check_column_dtypes_diversity_serendipity
+def user_serendipity(
+    train_df,
+    reco_df,
+    item_feature_df=None,
+    item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+    col_relevance=None,
+):
+    """Calculate average serendipity for each user's recommendations.
+
+    Returns:
+        pandas.DataFrame: A dataframe with following columns: col_user, user_serendipity.
+    """
+    df_user_item_serendipity = user_item_serendipity(
+        train_df,
+        reco_df,
+        item_feature_df,
+        item_sim_measure,
+        col_item_features,
+        col_user,
+        col_item,
+        col_sim,
+        col_relevance,
+    )
+    df_user_serendipity = (
+        df_user_item_serendipity.groupby(col_user)
+        .agg({"user_item_serendipity": "mean"})
+        .reset_index()
+    )
+    df_user_serendipity.columns = [col_user, "user_serendipity"]
+    df_user_serendipity = df_user_serendipity.sort_values(col_user).reset_index(
+        drop=True
+    )
+
+    return df_user_serendipity
+
+
+@check_column_dtypes_diversity_serendipity
+def serendipity(
+    train_df,
+    reco_df,
+    item_feature_df=None,
+    item_sim_measure=DEFAULT_ITEM_SIM_MEASURE,
+    col_item_features=DEFAULT_ITEM_FEATURES_COL,
+    col_user=DEFAULT_USER_COL,
+    col_item=DEFAULT_ITEM_COL,
+    col_sim=DEFAULT_SIMILARITY_COL,
+    col_relevance=None,
+):
+    """Calculate average serendipity for recommendations across all users.
+
+    Returns:
+        float: serendipity.
+    """
+    df_user_serendipity = user_serendipity(
+        train_df,
+        reco_df,
+        item_feature_df,
+        item_sim_measure,
+        col_item_features,
+        col_user,
+        col_item,
+        col_sim,
+        col_relevance,
+    )
+    avg_serendipity = df_user_serendipity.agg({"user_serendipity": "mean"})[0]
+    return avg_serendipity
+
+
+# Coverage metrics
+@check_column_dtypes_novelty_coverage
+def catalog_coverage(
+    train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL
+):
+    """Calculate catalog coverage for recommendations across all users.
+    The metric definition is based on the "catalog coverage" definition in the following reference:
+
+    :Citation:
+
+        G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
+        Recommender Systems Handbook pp. 257-297, 2010.
+
+    Returns:
+        float: catalog coverage
+    """
+    # distinct item count in reco_df
+    count_distinct_item_reco = reco_df[col_item].nunique()
+    # distinct item count in train_df
+    count_distinct_item_train = train_df[col_item].nunique()
+
+    # catalog coverage
+    c_coverage = count_distinct_item_reco / count_distinct_item_train
+    return c_coverage
+
+
+@check_column_dtypes_novelty_coverage
+def distributional_coverage(
+    train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL
+):
+    """Calculate distributional coverage for recommendations across all users.
+    The metric definition is based on formula (21) in the following reference:
+
+    :Citation:
+
+        G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
+        Recommender Systems Handbook pp. 257-297, 2010.
+
+    Returns:
+        float: distributional coverage
+    """
+    # In reco_df, how  many times each col_item is being recommended
+    df_itemcnt_reco = pd.DataFrame(
+        {"count": reco_df.groupby([col_item]).size()}
+    ).reset_index()
+
+    # the number of total recommendations
+    count_row_reco = reco_df.shape[0]
+
+    df_entropy = df_itemcnt_reco
+    df_entropy["p(i)"] = df_entropy["count"] / count_row_reco
+    df_entropy["entropy(i)"] = df_entropy["p(i)"] * np.log2(df_entropy["p(i)"])
+
+    d_coverage = -df_entropy.agg({"entropy(i)": "sum"})[0]
+
+    return d_coverage
