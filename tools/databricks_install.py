@@ -291,7 +291,12 @@ if __name__ == "__main__":
     if args.mmlspark:
         print("Installing MMLSPARK package...")
         libs2install.extend([MMLSPARK_INFO])
-    print(libs2install)
+    print(
+        "Installing {} onto databricks cluster {}".format(
+            libs2install,
+            args.cluster_id
+        )
+    )
     LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
 
     # prepare for operationalization if desired:
