@@ -1,11 +1,8 @@
 version: 2
 
-# Build from the docs/ directory with Sphinx
-sphinx:
-  configuration: docs/source/conf.py
-
 # Add necessary apt-get packages
 build:
+  image: latest
   apt_packages:
     - cmake
 
@@ -14,3 +11,7 @@ python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
+
+# Build from the docs/ directory with Sphinx
+sphinx:
+  configuration: docs/source/conf.py
