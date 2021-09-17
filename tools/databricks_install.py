@@ -12,7 +12,7 @@ import textwrap
 import os
 from pathlib import Path
 
-import shutil
+import pkg_resources
 import sys
 import time
 from urllib.request import urlretrieve
@@ -79,29 +79,26 @@ PYPI_PREREQS = [
 
 PYPI_EXTRA_DEPS = [
     "azure-cli-core==2.0.75",
-    "azure-mgmt-cosmosdb==0.8.0",     
-    "azureml-sdk[notebooks,tensorboard]==1.0.69",
+    "azure-mgmt-cosmosdb==0.8.0",
+    "azureml-sdk[databricks]",
     "azure-storage-blob<=2.1.0",
 ]
 
 PYPI_O16N_LIBS = [
-    "azure-cli==2.0.56",
-    "azureml-sdk[databricks]==1.0.69",
     "pydocumentdb>=2.3.3",
 ]
 
 ## Additional dependencies met below.
 
 def dbfs_file_exists(api_client, dbfs_path):
-    """
-    Checks to determine whether a file exists.
+    """Checks to determine whether a file exists.
 
     Args:
         api_client (ApiClient object): Object used for authenticating to the workspace
         dbfs_path (str): Path to check
 
     Returns:
-        True if file exists on dbfs, False otherwise.
+        bool: True if file exists on dbfs, False otherwise.
     """
     try:
         DbfsApi(api_client).list_files(dbfs_path=DbfsPath(dbfs_path))
@@ -109,6 +106,21 @@ def dbfs_file_exists(api_client, dbfs_path):
     except:
         file_exists = False
     return file_exists
+
+
+def get_installed_libraries(api_client, cluster_id):
+    """Returns the installed PyPI packages and the ones that failed.
+
+    Args:
+        api_client (ApiClient object): object used for authenticating to the workspace
+        cluster_id (str): id of the cluster
+    
+    Returns:
+        Dict[str, str]: dictionary of {package: status} 
+    """
+    cluster_status = LibrariesApi(api_client).cluster_status(cluster_id)
+    libraries = {lib["library"]["pypi"]["package"]: lib["status"] for lib in cluster_status["library_statuses"] if "pypi" in lib["library"]}
+    return {pkg_resources.Requirement.parse(package).name: libraries[package] for package in libraries}
 
 
 def prepare_for_operationalization(
@@ -279,11 +291,22 @@ if __name__ == "__main__":
 
     # install the library and its dependencies
     print(
-        "Installing the recommenders module onto databricks cluster {}".format(
+        "Installing the recommenders package onto databricks cluster {}".format(
             args.cluster_id
         )
     )
     LibrariesApi(my_api_client).install_libraries(args.cluster_id, [{"pypi": {"package": "recommenders"}}])
+
+    # pip cannot handle everything together, so wait until recommenders package is installed
+    installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
+    while "recommenders" not in installed_libraries:
+        time.sleep(PENDING_SLEEP_INTERVAL)
+        installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
+    while installed_libraries["recommenders"] != "INSTALLED":
+        time.sleep(PENDING_SLEEP_INTERVAL)
+        installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
+    if installed_libraries["recommenders"] == "FAILED":
+        raise Exception("recommenders package failed to install")    
 
     # additional PyPI dependencies:
     libs2install = [{"pypi": {"package": i}} for i in PYPI_EXTRA_DEPS]
