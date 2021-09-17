@@ -4,13 +4,13 @@ version: 2
 sphinx:
   configuration: docs/source/conf.py
 
+# Add necessary apt-get packages
+build:
+  apt_packages:
+    - cmake
+
 # Explicitly set the version of Python and its requirements
 python:
   version: 3.7
   install:
     - requirements: docs/requirements.txt
-
-# Add necessary apt-get packages
-build:
-  apt_packages:
-    - cmake
