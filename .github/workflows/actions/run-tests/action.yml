@@ -7,21 +7,27 @@
 #   - uses: actions/checkout@v2
 #   - uses: ./.github/workflows/actions/run-tests
 #     with:
+#       tox-env: 'spark'
 #       test-kind: 'unit'
 #       test-marker: 'spark and notebooks'
 
 name: 'Run Python tests'
 description: 'Specify parameters to configure test subsets to run and collect test report for.'
 inputs:
+  tox-env:
+    description: "Name of the tox env. EX) cpu|gpu|spark 
+      See tox.ini at root level for more info"
+    required: true
+    # Options are "cpu|gpu|spark|all" and any default tox env. 
+    # For more info on default tox env, see https://tox.readthedocs.io/en/latest/config.html#tox-environments
+    default: 'all'
   test-kind:
-    description:
-      "The kinds of tests to run. EX) unit|integration|smoke
+    description: "The kinds of tests to run. EX) unit|integration|smoke
       This maps to those in the 'tests/<unit|integration|smoke>' folder"
     required: true
     default: 'unit'
   test-marker:
-    description: 
-      "Finer filter for selecting the tests to run with pytest markers.
+    description: "Finer filter for selecting the tests to run with pytest markers.
       See https://docs.pytest.org/en/6.2.x/example/markers.html"
     default: 'not gpu and not notebooks and not spark'
 outputs:
@@ -44,12 +50,12 @@ runs:
     # '-e py' will use the default 'python' executable found in system path
     # for why using tox, see: https://tox.readthedocs.io/en/latest/index.html
     # tox will do:
-    #   1. build and install source distribution (sdist)
-    #   2. run static analysis on the code (not implemented yet)
-    #   3. run all of the specified test environment (i.e. run tests in different py-versions, etc)
+    #   1. create a virtual env
+    #   2. build and install source distribution (sdist)
+    #   3. run the specified tests
     #   4. show test reports
     run: |
-      tox -e py -- tests/${{ inputs.test-kind }} -m '${{ inputs.test-marker }}'
+      tox -ve ${{ inputs.tox-env }} -- tests/${{ inputs.test-kind }} -m '${{ inputs.test-marker }}'
     
   - name: Prepare Code Coverage Report
     id: rename-cov-report
