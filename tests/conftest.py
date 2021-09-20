@@ -19,14 +19,15 @@ import pandas as pd
 import pytest
 from sklearn.model_selection import train_test_split
 
+from recommenders.datasets.python_splitters import numpy_stratified_split
+from recommenders.datasets.python_splitters import python_chrono_split
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
 )
-from recommenders.datasets.python_splitters import numpy_stratified_split
-from recommenders.datasets.python_splitters import python_chrono_split
+from recommenders.utils.notebook_utils import is_databricks
 from recommenders.utils.spark_utils import start_or_get_spark
 
 
@@ -82,7 +83,8 @@ def spark(tmp_path_factory, app_name="Sample", url="local[*]"):
             "spark.sql.shuffle.partitions": 1,
             "spark.sql.crossJoin.enabled": "true",
         }
-        spark = start_or_get_spark(app_name=app_name, url=url, config=config)
+        if not is_databricks():
+            spark = start_or_get_spark(app_name=app_name, url=url, config=config)
         yield spark
         spark.stop()
 

@@ -17,6 +17,7 @@ from recommenders.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     SEED,
 )
+from recommenders.utils.notebook_utils import is_databricks
 from recommenders.utils.timer import Timer
 from recommenders.utils.spark_utils import start_or_get_spark
 from recommenders.models.sar.sar_singlenode import SARSingleNode
@@ -56,7 +57,8 @@ def prepare_training_als(train, test):
             StructField(DEFAULT_TIMESTAMP_COL, LongType()),
         )
     )
-    spark = start_or_get_spark()
+    if not is_databricks():
+        spark = start_or_get_spark()
     return spark.createDataFrame(train, schema)
 
 
@@ -76,7 +78,8 @@ def prepare_metrics_als(train, test):
             StructField(DEFAULT_TIMESTAMP_COL, LongType()),
         )
     )
-    spark = start_or_get_spark()
+    if not is_databricks():
+        spark = start_or_get_spark()
     return spark.createDataFrame(train, schema), spark.createDataFrame(test, schema)
 
 
