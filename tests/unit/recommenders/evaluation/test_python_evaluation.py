@@ -15,7 +15,7 @@ from recommenders.utils.constants import (
     DEFAULT_PREDICTION_COL,
 )
 from recommenders.evaluation.python_evaluation import (
-    check_column_dtypes,
+    _check_column_dtypes,
     merge_rating_true_pred,
     merge_ranking_true_pred,
     rmse,
@@ -102,7 +102,7 @@ def test_column_dtypes_match(rating_true, rating_pred):
 
     expected_error = "Columns in provided DataFrames are not the same datatype"
     with pytest.raises(ValueError, match=expected_error):
-        check_column_dtypes(Mock())(
+        _check_column_dtypes(Mock())(
             rating_true,
             rating_pred,
             col_user=DEFAULT_USER_COL,

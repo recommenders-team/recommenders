@@ -32,7 +32,7 @@ from recommenders.datasets.pandas_df_utils import (
 )
 
 
-def check_column_dtypes(func):
+def _check_column_dtypes(func):
     """Checks columns of DataFrame inputs
 
     This includes the checks on:
@@ -92,7 +92,7 @@ def check_column_dtypes(func):
     return check_column_dtypes_wrapper
 
 
-@check_column_dtypes
+@_check_column_dtypes
 @lru_cache_df(maxsize=1)
 def merge_rating_true_pred(
     rating_true,
@@ -343,7 +343,7 @@ def logloss(
     return log_loss(y_true, y_pred)
 
 
-@check_column_dtypes
+@_check_column_dtypes
 @lru_cache_df(maxsize=1)
 def merge_ranking_true_pred(
     rating_true,
@@ -698,7 +698,7 @@ metrics = {
 }
 
 # diversity metrics
-def check_column_dtypes_diversity_serendipity(func):
+def _check_column_dtypes_diversity_serendipity(func):
     """Checks columns of DataFrame inputs
 
     This includes the checks on:
@@ -742,6 +742,7 @@ def check_column_dtypes_diversity_serendipity(func):
           col_item_features (str): item feature column name.
           col_user (str): User id column name.
           col_item (str): Item id column name.
+          col_sim (str): This column indicates the column name for item similarity.
           col_relevance (str): This column indicates whether the recommended item is actually
               relevant to the user or not.
         """
@@ -797,7 +798,7 @@ def check_column_dtypes_diversity_serendipity(func):
     return check_column_dtypes_diversity_serendipity_wrapper
 
 
-def check_column_dtypes_novelty_coverage(func):
+def _check_column_dtypes_novelty_coverage(func):
     """Checks columns of DataFrame inputs
 
     This includes the checks on:
@@ -1048,7 +1049,7 @@ def _get_intralist_similarity(
     return df_intralist_similarity
 
 
-@check_column_dtypes_diversity_serendipity
+@_check_column_dtypes_diversity_serendipity
 @lru_cache_df(maxsize=1)
 def user_diversity(
     train_df,
@@ -1069,6 +1070,19 @@ def user_diversity(
         Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
         introducing serendipity into music recommendation, WSDM 2012
 
+     Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        col_item_features (str): item feature column name.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
+        col_sim (str): This column indicates the column name for item similarity.
+        col_relevance (str): This column indicates whether the recommended item is actually
+              relevant to the user or not.
     Returns:
         pandas.DataFrame: A dataframe with the following columns: col_user, user_diversity.
     """
@@ -1094,7 +1108,7 @@ def user_diversity(
     return df_user_diversity
 
 
-@check_column_dtypes_diversity_serendipity
+@_check_column_dtypes_diversity_serendipity
 def diversity(
     train_df,
     reco_df,
@@ -1108,6 +1122,19 @@ def diversity(
 ):
     """Calculate average diversity of recommendations across all users.
 
+     Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        col_item_features (str): item feature column name.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
+        col_sim (str): This column indicates the column name for item similarity.
+        col_relevance (str): This column indicates whether the recommended item is actually
+              relevant to the user or not.
     Returns:
         float: diversity.
     """
@@ -1126,7 +1153,7 @@ def diversity(
 
 
 # Novelty metrics
-@check_column_dtypes_novelty_coverage
+@_check_column_dtypes_novelty_coverage
 @lru_cache_df(maxsize=1)
 def historical_item_novelty(
     train_df,
@@ -1149,6 +1176,15 @@ def historical_item_novelty(
     High novelty values correspond to long-tail items in the density function, that few users have interacted
     with and low novelty values correspond to popular head items.
 
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+                Interaction here follows the *item choice model* from Castells et al.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
+
     Returns:
         pandas.DataFrame: A dataframe with the following columns: col_item, item_novelty.
     """
@@ -1167,7 +1203,7 @@ def historical_item_novelty(
     return df_item_novelty
 
 
-@check_column_dtypes_novelty_coverage
+@_check_column_dtypes_novelty_coverage
 def novelty(train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL):
     """Calculate the average novelty in a list of recommended items (this assumes that the recommendation list
     is already computed). Follows section 5 from
@@ -1176,6 +1212,15 @@ def novelty(train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_
 
         P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
         choice, discovery and relevance, ECIR 2011
+
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+                Interaction here follows the *item choice model* from Castells et al.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
 
     Returns:
         float: novelty.
@@ -1196,7 +1241,7 @@ def novelty(train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_
 
 
 # Serendipity metrics
-@check_column_dtypes_diversity_serendipity
+@_check_column_dtypes_diversity_serendipity
 @lru_cache_df(maxsize=1)
 def user_item_serendipity(
     train_df,
@@ -1220,6 +1265,19 @@ def user_item_serendipity(
     Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
     eugeneyan.com, April 2020
 
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        col_item_features (str): item feature column name.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
+        col_sim (str): This column indicates the column name for item similarity.
+        col_relevance (str): This column indicates whether the recommended item is actually
+              relevant to the user or not.
     Returns:
         pandas.DataFrame: A dataframe with columns: col_user, col_item, user_item_serendipity.
     """
@@ -1280,7 +1338,7 @@ def user_item_serendipity(
 
 
 @lru_cache_df(maxsize=1)
-@check_column_dtypes_diversity_serendipity
+@_check_column_dtypes_diversity_serendipity
 def user_serendipity(
     train_df,
     reco_df,
@@ -1294,6 +1352,19 @@ def user_serendipity(
 ):
     """Calculate average serendipity for each user's recommendations.
 
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        col_item_features (str): item feature column name.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
+        col_sim (str): This column indicates the column name for item similarity.
+        col_relevance (str): This column indicates whether the recommended item is actually
+              relevant to the user or not.
     Returns:
         pandas.DataFrame: A dataframe with following columns: col_user, user_serendipity.
     """
@@ -1321,7 +1392,7 @@ def user_serendipity(
     return df_user_serendipity
 
 
-@check_column_dtypes_diversity_serendipity
+@_check_column_dtypes_diversity_serendipity
 def serendipity(
     train_df,
     reco_df,
@@ -1335,6 +1406,19 @@ def serendipity(
 ):
     """Calculate average serendipity for recommendations across all users.
 
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        col_item_features (str): item feature column name.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
+        col_sim (str): This column indicates the column name for item similarity.
+        col_relevance (str): This column indicates whether the recommended item is actually
+              relevant to the user or not.
     Returns:
         float: serendipity.
     """
@@ -1354,7 +1438,7 @@ def serendipity(
 
 
 # Coverage metrics
-@check_column_dtypes_novelty_coverage
+@_check_column_dtypes_novelty_coverage
 def catalog_coverage(
     train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL
 ):
@@ -1365,6 +1449,15 @@ def catalog_coverage(
 
         G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
         Recommender Systems Handbook pp. 257-297, 2010.
+
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+                Interaction here follows the *item choice model* from Castells et al.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
 
     Returns:
         float: catalog coverage
@@ -1379,7 +1472,7 @@ def catalog_coverage(
     return c_coverage
 
 
-@check_column_dtypes_novelty_coverage
+@_check_column_dtypes_novelty_coverage
 def distributional_coverage(
     train_df, reco_df, col_user=DEFAULT_USER_COL, col_item=DEFAULT_ITEM_COL
 ):
@@ -1390,6 +1483,15 @@ def distributional_coverage(
 
         G. Shani and A. Gunawardana, Evaluating Recommendation Systems,
         Recommender Systems Handbook pp. 257-297, 2010.
+
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they
+                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+                Interaction here follows the *item choice model* from Castells et al.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+        col_user (str): User id column name.
+        col_item (str): Item id column name.
 
     Returns:
         float: distributional coverage
