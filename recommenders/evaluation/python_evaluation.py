@@ -372,7 +372,7 @@ def merge_ranking_true_pred(
 
     Returns:
         pandas.DataFrame, pandas.DataFrame, int: DataFrame of recommendation hits, sorted by `col_user` and `rank`
-        DataFrmae of hit counts vs actual relevant items per user number of unique user ids
+        DataFrame of hit counts vs actual relevant items per user number of unique user ids
     """
 
     # Make sure the prediction and true data frames have the same set of users
@@ -1070,19 +1070,17 @@ def user_diversity(
         Y.C. Zhang, D.Ó. Séaghdha, D. Quercia and T. Jambor, Auralist:
         introducing serendipity into music recommendation, WSDM 2012
 
-     Args:
-        train_df (pandas.DataFrame): Data set with historical data for users and items they
-              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
-        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
-              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item, col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
         item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
         item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
         col_item_features (str): item feature column name.
         col_user (str): User id column name.
         col_item (str): Item id column name.
         col_sim (str): This column indicates the column name for item similarity.
-        col_relevance (str): This column indicates whether the recommended item is actually
-              relevant to the user or not.
+        col_relevance (str): This column indicates whether the recommended item is actually relevant to the user or not.
+    
     Returns:
         pandas.DataFrame: A dataframe with the following columns: col_user, user_diversity.
     """
@@ -1122,19 +1120,17 @@ def diversity(
 ):
     """Calculate average diversity of recommendations across all users.
 
-     Args:
-        train_df (pandas.DataFrame): Data set with historical data for users and items they
-              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
-        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
-              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+    Args:
+        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item, col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
         item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
         item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
         col_item_features (str): item feature column name.
         col_user (str): User id column name.
         col_item (str): Item id column name.
         col_sim (str): This column indicates the column name for item similarity.
-        col_relevance (str): This column indicates whether the recommended item is actually
-              relevant to the user or not.
+        col_relevance (str): This column indicates whether the recommended item is actually relevant to the user or not.
+
     Returns:
         float: diversity.
     """
