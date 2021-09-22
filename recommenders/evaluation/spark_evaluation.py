@@ -3,6 +3,7 @@
 
 
 import numpy as np
+from pyspark.sql.types import LongType
 
 try:
     from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
@@ -574,7 +575,7 @@ class SparkDiversityEvaluation:
             self.col_item_features = DEFAULT_ITEM_FEATURES_COL
             required_schema = StructType(
                 (
-                    StructField(self.col_item, IntegerType()),
+                    StructField(self.col_item, LongType()),
                     StructField(self.col_item_features, VectorUDT()),
                 )
             )

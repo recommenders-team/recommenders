@@ -48,9 +48,11 @@ def test_evaluation_runs(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
+@pytest.mark.parametrize("data_size", ["100k", "mock100"])
+def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name, data_size):
     notebook_path = notebooks["evaluation_diversity"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name, 
+                        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=data_size))
 
 
 @pytest.mark.notebooks
