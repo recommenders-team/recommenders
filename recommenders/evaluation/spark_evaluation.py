@@ -575,7 +575,7 @@ class SparkDiversityEvaluation:
             self.col_item_features = DEFAULT_ITEM_FEATURES_COL
             required_schema = StructType(
                 (
-                    StructField(self.col_item, LongType()),
+                    StructField(self.col_item, IntegerType()),
                     StructField(self.col_item_features, VectorUDT()),
                 )
             )
@@ -618,7 +618,7 @@ class SparkDiversityEvaluation:
             .select(self.col_user, "i1", "i2")
         )
 
-    def _get_cosine_similarity(self, n_partitions=200):
+    def _get_cosine_similarity(self, n_partitions=10):
 
         if self.item_sim_measure == "item_cooccurrence_count":
             # calculate item-item similarity based on item co-occurrence count

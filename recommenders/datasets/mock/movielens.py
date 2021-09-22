@@ -23,7 +23,7 @@ from pandera.typing import DateTime, Series
 from pandera import Field, Check
 from pandera.schemas import DataFrameSchema
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StructType
+from pyspark.sql.types import StructField, StructType, LongType, IntegerType, StringType, FloatType
 
 
 class MockMovielens100kSchema(pa.SchemaModel):
@@ -39,7 +39,7 @@ class MockMovielens100kSchema(pa.SchemaModel):
     itemID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
     # Rating is on the scale from 1 to 5
     rating: Series[int] = Field(in_range={"min_value": 1, "max_value": 5})
-    timestamp: Series[DateTime]
+    timestamp: Series[int]
     title: Series[str] = Field(eq="foo")
     genres: Series[str] = Field(eq="genreA|0")
 
@@ -85,7 +85,16 @@ class MockMovielens100kSchema(pa.SchemaModel):
             pyspark.sql.DataFrame: a mock dataset
         """
         pandas_df = cls.get_df(size=size, seed=seed)
-        return spark.createDataFrame(pandas_df)
+        pandas_df.to_csv('test.csv', header=False, index=False)
+        default_schema = StructType([
+            StructField(DEFAULT_USER_COL, IntegerType()),
+            StructField(DEFAULT_ITEM_COL, IntegerType()),
+            StructField(DEFAULT_RATING_COL, FloatType()),
+            StructField(DEFAULT_TIMESTAMP_COL, LongType()),
+            StructField("title", StringType()),
+            StructField("genres", StringType()),
+        ])
+        return spark.read.csv('test.csv', schema=default_schema)
 
     # @classmethod
     # def _get_item_df(cls, size, title_col: Optional[str] = None, genres_col: Optional[str] = None):
