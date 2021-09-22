@@ -7,6 +7,7 @@ import shutil
 import warnings
 import pandas as pd
 from zipfile import ZipFile
+from recommenders.datasets.mock.movielens import MockMovielens100kSchema
 from recommenders.datasets.download_utils import maybe_download, download_path
 from recommenders.utils.notebook_utils import is_databricks
 from recommenders.utils.constants import (
@@ -100,6 +101,11 @@ DATA_FORMAT = {
     "20m": _DataFormat(",", "ml-20m/ratings.csv", True, ",", "ml-20m/movies.csv", True),
 }
 
+# Fake data for testing only
+MOCK_DATA_FORMAT = {
+    "mock100": {"size": 100, "seed": 101}
+}
+
 # 100K data genres index to string mapper. For 1m, 10m, and 20m, the genres labels are already in the dataset.
 GENRES = (
     "unknown",
@@ -136,7 +142,7 @@ WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
     Will only use the first four column names."""
 WARNING_HAVE_SCHEMA_AND_HEADER = """Both schema and header are provided.
     The header argument will be ignored."""
-ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m}"
+ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m, or mock100}"
 ERROR_HEADER = "Header error. At least user and movie column names should be provided"
 
 
@@ -154,14 +160,16 @@ def load_pandas_df(
     To load movie information only, you can use load_item_df function.
 
     Args:
-        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
-        header (list or tuple or None): Rating dataset header.
-        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m", "mock100").
+        header* (list or tuple or None): Rating dataset header. 'DEFAULT_HEADER' is set for all mock data sizes ("mock*").
+        local_cache_path* (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
-        title_col (str): Movie title column name. If None, the column will not be loaded.
-        genres_col (str): Genres column name. Genres are '|' separated string.
+        title_col* (str): Movie title column name. If None, the column will not be loaded.
+        genres_col* (str): Genres column name. Genres are '|' separated string.
             If None, the column will not be loaded.
-        year_col (str): Movie release year column name. If None, the column will not be loaded.
+        year_col* (str): Movie release year column name. If None, the column will not be loaded.
+
+        All (*) arguments are not applicable when mock dataset is specified (size = "mock*")
 
     Returns:
         pandas.DataFrame: Movie rating dataset.
@@ -185,8 +193,12 @@ def load_pandas_df(
         )
     """
     size = size.lower()
-    if size not in DATA_FORMAT:
+    if size not in DATA_FORMAT and size not in MOCK_DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
+
+    if size in MOCK_DATA_FORMAT:
+        # generate fake data using the dictionary as a kwarg to the generation function
+        return MockMovielens100kSchema.get_df(**MOCK_DATA_FORMAT[size])
 
     if header is None:
         header = DEFAULT_HEADER
@@ -349,17 +361,19 @@ def load_spark_df(
 
     Args:
         spark (pyspark.SparkSession): Spark session.
-        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
-        header (list or tuple): Rating dataset header.
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m", "mock100").
+        header* (list or tuple): Rating dataset header. 'DEFAULT_HEADER' is set for all mock data sizes ("mock*").
             If schema is provided, this argument is ignored.
-        schema (pyspark.StructType): Dataset schema.
-        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
+        schema* (pyspark.StructType): Dataset schema.
+        local_cache_path* (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
-        dbutils (Databricks.dbutils): Databricks utility object
-        title_col (str): Title column name. If None, the column will not be loaded.
-        genres_col (str): Genres column name. Genres are '|' separated string.
+        dbutils* (Databricks.dbutils): Databricks utility object
+        title_col* (str): Title column name. If None, the column will not be loaded.
+        genres_col* (str): Genres column name. Genres are '|' separated string.
             If None, the column will not be loaded.
-        year_col (str): Movie release year column name. If None, the column will not be loaded.
+        year_col* (str): Movie release year column name. If None, the column will not be loaded.
+
+            All (*) arguments are not applicable when mock dataset is specified (size = "mock*")
 
     Returns:
         pyspark.sql.DataFrame: Movie rating dataset.
@@ -394,8 +408,12 @@ def load_spark_df(
         spark_df = load_spark_df(spark, dbutils=dbutils)
     """
     size = size.lower()
-    if size not in DATA_FORMAT:
+    if size not in DATA_FORMAT and size not in MOCK_DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
+
+    if size in MOCK_DATA_FORMAT:
+        # generate fake data using the dictionary as a kwarg to the generation function
+        return MockMovielens100kSchema.get_spark_df(spark, **MOCK_DATA_FORMAT[size])
 
     schema = _get_schema(header, schema)
     if len(schema) < 2:
