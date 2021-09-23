@@ -1,6 +1,6 @@
 # What's New
 
-## Update September 9, 2021
+## Update September 27, 2021
 
 We have a new release [Recommenders 0.7.0](https://github.com/microsoft/recommenders/releases/tag/0.7.0)!
 
