@@ -75,9 +75,9 @@ extras_require = {
     ],
     "dev": [
         "black>=18.6b4,<21",
+        "pandera[strategies]>=0.6.5",  # For generating fake datasets
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
-        "pytest-lazy-fixture>=0.6.3",  # Allow using fixtures in pytest.mark.parametrize
     ],
 }
 # for the brave of heart

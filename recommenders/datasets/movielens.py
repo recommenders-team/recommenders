@@ -7,14 +7,12 @@ import shutil
 import warnings
 import pandas as pd
 from zipfile import ZipFile
-from recommenders.datasets.mock.movielens import MockMovielens100kSchema
+from recommenders.datasets.mock.movielens import MockMovielensSchema
 from recommenders.datasets.download_utils import maybe_download, download_path
 from recommenders.utils.notebook_utils import is_databricks
 from recommenders.utils.constants import (
-    DEFAULT_USER_COL,
+    DEFAULT_HEADER,
     DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
 )
 
 try:
@@ -130,12 +128,6 @@ GENRES = (
     "Western",
 )
 
-DEFAULT_HEADER = (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
-)
 
 # Warning and error messages
 WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
@@ -197,10 +189,6 @@ def load_pandas_df(
     if size not in DATA_FORMAT and size not in MOCK_DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
-    if size in MOCK_DATA_FORMAT:
-        # generate fake data using the dictionary as a kwarg to the generation function
-        return MockMovielens100kSchema.get_df(**MOCK_DATA_FORMAT[size])
-
     if header is None:
         header = DEFAULT_HEADER
     elif len(header) < 2:
@@ -208,6 +196,15 @@ def load_pandas_df(
     elif len(header) > 4:
         warnings.warn(WARNING_MOVIE_LENS_HEADER)
         header = header[:4]
+
+    if size in MOCK_DATA_FORMAT:
+        # generate fake data
+        return MockMovielensSchema.get_df(
+            keep_first_n_cols=len(header),
+            keep_title_col=(title_col is not None),
+            keep_genre_col=(genres_col is not None),
+            **MOCK_DATA_FORMAT[size]  # supply the rest of the kwarg with the dictionary
+        )
 
     movie_col = header[1]
 
@@ -368,9 +365,9 @@ def load_spark_df(
         schema* (pyspark.StructType): Dataset schema.
         local_cache_path* (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
-        dbutils* (Databricks.dbutils): Databricks utility object
-        title_col* (str): Title column name. If None, the column will not be loaded.
-        genres_col* (str): Genres column name. Genres are '|' separated string.
+        dbutils (Databricks.dbutils): Databricks utility object
+        title_col (str): Title column name. If None, the column will not be loaded.
+        genres_col (str): Genres column name. Genres are '|' separated string.
             If None, the column will not be loaded.
         year_col* (str): Movie release year column name. If None, the column will not be loaded.
 
@@ -413,8 +410,13 @@ def load_spark_df(
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     if size in MOCK_DATA_FORMAT:
-        # generate fake data using the dictionary as a kwarg to the generation function
-        return MockMovielens100kSchema.get_spark_df(spark, **MOCK_DATA_FORMAT[size])
+        # generate fake data
+        return MockMovielensSchema.get_spark_df(
+            spark,
+            keep_title_col=(title_col is not None),
+            keep_genre_col=(genres_col is not None),
+            **MOCK_DATA_FORMAT[size]   # supply the rest of the kwarg with the dictionary
+        )
 
     schema = _get_schema(header, schema)
     if len(schema) < 2:

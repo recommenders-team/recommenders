@@ -1,72 +1,66 @@
-from recommenders.datasets.mock.movielens import MockMovielens100kSchema
+from recommenders.datasets.mock.movielens import MockMovielensSchema
 from recommenders.datasets.movielens import DEFAULT_HEADER
 from recommenders.utils.constants import (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
+    DEFAULT_GENRE_COL,
+    DEFAULT_TITLE_COL,
 )
 
 import pytest
 import pandas
 import pyspark.sql
 from pyspark.sql import SparkSession
-from pyspark.sql.types import IntegerType, FloatType, LongType, StructField, StructType
-
-
-@pytest.fixture(scope="module")
-def default_schema():
-    return StructType([
-        StructField(DEFAULT_USER_COL, IntegerType()),
-        StructField(DEFAULT_ITEM_COL, IntegerType()),
-        StructField(DEFAULT_RATING_COL, FloatType()),
-        StructField(DEFAULT_TIMESTAMP_COL, LongType()),
-    ])
-
-
-@pytest.fixture(scope="module")
-def custom_schema():
-    return StructType([
-        StructField("userID", IntegerType()),
-        StructField("itemID", IntegerType()),
-        StructField("rating", FloatType()),
-    ])
 
 
 @pytest.mark.parametrize("size", [10, 100])
 def test_mock_movielens_schema__has_default_col_names(size):
-    df = MockMovielens100kSchema.example(size=size)
+    df = MockMovielensSchema.example(size=size)
     for col_name in DEFAULT_HEADER:
         assert col_name in df.columns
 
 
+@pytest.mark.parametrize("keep_first_n_cols", [1, 2, 3, 4])
+def test_mock_movielens_schema__get_df_remove_default_col__return_success(keep_first_n_cols):
+    df = MockMovielensSchema.get_df(size=3, keep_first_n_cols=keep_first_n_cols)
+    assert len(df) > 0
+    assert len(df.columns) == keep_first_n_cols
+
+
+@pytest.mark.parametrize("keep_first_n_cols", [-1, 0, 100])
+def test_mock_movielens_schema__get_df_invalid_param__return_failure(keep_first_n_cols):
+    with pytest.raises(ValueError, match=r"Invalid value.*"):
+        MockMovielensSchema.get_df(size=3, keep_first_n_cols=keep_first_n_cols)
+
+
+@pytest.mark.parametrize("keep_genre_col", [True, False])
+@pytest.mark.parametrize("keep_title_col", [True, False])
+@pytest.mark.parametrize("keep_first_n_cols", [None, 2])
 @pytest.mark.parametrize("seed", [-1])  # seed for pseudo-random # generation
 @pytest.mark.parametrize("size", [0, 3, 10])
-def test_mock_movielens_schema__get_df__return_success(size, seed):
-    df = MockMovielens100kSchema.get_df(size, seed=seed)
+def test_mock_movielens_schema__get_df__return_success(size, seed, keep_first_n_cols, keep_title_col, keep_genre_col):
+    df = MockMovielensSchema.get_df(
+        size=size, seed=seed,
+        keep_first_n_cols=keep_first_n_cols,
+        keep_title_col=keep_title_col, keep_genre_col=keep_genre_col
+    )
     assert type(df) == pandas.DataFrame
     assert len(df) == size
 
+    if keep_title_col:
+        assert len(df[DEFAULT_TITLE_COL]) == size
+    if keep_genre_col:
+        assert len(df[DEFAULT_GENRE_COL]) == size
 
-@pytest.mark.parametrize("seed", [0, 101])  # seed for pseudo-random # generation
-@pytest.mark.parametrize("size", [3, 10])
-def test_mock_movielens_schema__get_spark_df__return_success(spark: SparkSession, size, seed):
-    df = MockMovielens100kSchema.get_spark_df(spark, size, seed=seed)
+
+@pytest.mark.parametrize("keep_genre_col", [True, False])
+@pytest.mark.parametrize("keep_title_col", [True, False])
+@pytest.mark.parametrize("seed", [101])  # seed for pseudo-random # generation
+@pytest.mark.parametrize("size", [0, 3, 10])
+def test_mock_movielens_schema__get_spark_df__return_success(spark: SparkSession, size, seed, keep_title_col, keep_genre_col):
+    df = MockMovielensSchema.get_spark_df(spark, size=size, seed=seed, keep_title_col=keep_title_col, keep_genre_col=keep_genre_col)
     assert type(df) == pyspark.sql.DataFrame
     assert df.count() == size
 
-
-@pytest.mark.parametrize("schema", [
-    None,
-    pytest.lazy_fixture('default_schema'),
-    pytest.lazy_fixture('custom_schema')
-])
-def test_mock_movielens_schema__get_spark_df__with_custom_schema_return_success(spark: SparkSession, schema):
-    df = MockMovielens100kSchema.get_spark_df(spark, schema=schema)
-    assert type(df) == pyspark.sql.DataFrame
-    assert df.count() >= 0
-
-
-def test_mock_movielens_schema__get_spark_df__fail_on_empty_rows(spark: SparkSession):
-    with pytest.raises(ValueError, match="can not infer schema from empty dataset.*"):
-        MockMovielens100kSchema.get_spark_df(spark, 0)
+    if keep_title_col:
+        assert df.schema[DEFAULT_TITLE_COL]
+    if keep_genre_col:
+        assert df.schema[DEFAULT_GENRE_COL]
