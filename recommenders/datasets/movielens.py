@@ -103,7 +103,8 @@ DATA_FORMAT = {
 
 # Fake data for testing only
 MOCK_DATA_FORMAT = {
-    "mock100": {"size": 100, "seed": 101}
+    "mock100": {"size": 100, "seed": 0},
+    "mock10": {"size": 10, "seed": 6}
 }
 
 # 100K data genres index to string mapper. For 1m, 10m, and 20m, the genres labels are already in the dataset.

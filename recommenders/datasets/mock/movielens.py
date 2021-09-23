@@ -39,7 +39,7 @@ class MockMovielens100kSchema(pa.SchemaModel):
     itemID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
     # Rating is on the scale from 1 to 5
     rating: Series[int] = Field(in_range={"min_value": 1, "max_value": 5})
-    timestamp: Series[int]
+    timestamp: Series[str] = Field(eq="2022-2-22")
     title: Series[str] = Field(eq="foo")
     genres: Series[str] = Field(eq="genreA|0")
 
@@ -90,7 +90,7 @@ class MockMovielens100kSchema(pa.SchemaModel):
             StructField(DEFAULT_USER_COL, IntegerType()),
             StructField(DEFAULT_ITEM_COL, IntegerType()),
             StructField(DEFAULT_RATING_COL, FloatType()),
-            StructField(DEFAULT_TIMESTAMP_COL, LongType()),
+            StructField(DEFAULT_TIMESTAMP_COL, StringType()),
             StructField("title", StringType()),
             StructField("genres", StringType()),
         ])
