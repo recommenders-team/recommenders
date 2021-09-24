@@ -7,7 +7,7 @@ Mock dataset schema to generate fake data for testing use. This will mimic the M
 try:
     import pandera as pa
 except ImportError as e:
-    raise ImportError("Pandera not installed. Try `pip install recommender['dev']`") from e
+    raise ImportError("pandera is not installed. Try `pip install recommenders['dev']`") from e
 
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,

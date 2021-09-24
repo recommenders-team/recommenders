@@ -7,7 +7,6 @@ import shutil
 import warnings
 import pandas as pd
 from zipfile import ZipFile
-from recommenders.datasets.mock.movielens import MockMovielensSchema
 from recommenders.datasets.download_utils import maybe_download, download_path
 from recommenders.utils.notebook_utils import is_databricks
 from recommenders.utils.constants import (
@@ -198,6 +197,8 @@ def load_pandas_df(
         header = header[:4]
 
     if size in MOCK_DATA_FORMAT:
+        # function-wide import to isolate extra dependencies from the mock schema will use
+        from recommenders.datasets.mock.movielens import MockMovielensSchema
         # generate fake data
         return MockMovielensSchema.get_df(
             keep_first_n_cols=len(header),
@@ -410,6 +411,8 @@ def load_spark_df(
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     if size in MOCK_DATA_FORMAT:
+        # function-wide import to isolate extra dependencies from the mock schema will use
+        from recommenders.datasets.mock.movielens import MockMovielensSchema
         # generate fake data
         return MockMovielensSchema.get_spark_df(
             spark,
