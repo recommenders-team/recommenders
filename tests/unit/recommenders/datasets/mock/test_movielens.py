@@ -67,12 +67,15 @@ def test_mock_movielens_schema__get_spark_df__return_success(spark, size, seed, 
         assert df.schema[DEFAULT_GENRE_COL]
 
 
+@pytest.mark.spark
 def test_mock_movielens_schema__get_spark_df__store_tmp_file(spark, tmp_path):
     data_size = 3
     MockMovielensSchema.get_spark_df(spark, size=data_size, tmp_path=tmp_path)
     assert os.path.exists(os.path.join(tmp_path, f"mock_movielens_{data_size}.csv"))
 
 
+
+@pytest.mark.spark
 def test_mock_movielens_schema__get_spark_df__data_serialization_default_param(spark, mocker: MockerFixture):
     data_size = 3
     to_csv_spy = mocker.spy(pandas.DataFrame, "to_csv")
