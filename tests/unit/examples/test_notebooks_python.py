@@ -51,7 +51,7 @@ def test_baseline_deep_dive_runs(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.mock_movielens
-@pytest.mark.parametrize("data_size", ["100k", "mock100"])
+@pytest.mark.parametrize("data_size", ["mock100"])
 def test_surprise_deep_dive_runs(notebooks, output_notebook, kernel_name, data_size):
     notebook_path = notebooks["surprise_svd_deep_dive"]
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name,
@@ -102,7 +102,7 @@ def test_wikidata_runs(notebooks, output_notebook, kernel_name, tmp):
 
 @pytest.mark.notebooks
 @pytest.mark.mock_movielens
-@pytest.mark.parametrize("data_size", ["10m", "mock100"])
+@pytest.mark.parametrize("data_size", ["mock100"])
 def test_rlrmc_quickstart_runs(notebooks, output_notebook, kernel_name, data_size):
     notebook_path = notebooks["rlrmc_quickstart"]
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name,

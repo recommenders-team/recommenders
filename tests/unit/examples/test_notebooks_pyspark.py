@@ -34,7 +34,7 @@ def test_data_split_runs(notebooks, output_notebook, kernel_name):
 @pytest.mark.skipif(
     sys.platform == "win32", reason="Takes 2764.50s in Windows, while in Linux 124.35s"
 )
-@pytest.mark.parametrize("data_size", ["100k", "mock100"])
+@pytest.mark.parametrize("data_size", ["mock100"])
 def test_als_deep_dive_runs(notebooks, output_notebook, kernel_name, data_size):
     notebook_path = notebooks["als_deep_dive"]
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name,
@@ -59,7 +59,7 @@ def test_evaluation_runs(notebooks, output_notebook, kernel_name):
 @pytest.mark.notebooks
 @pytest.mark.spark
 @pytest.mark.mock_movielens
-@pytest.mark.parametrize("data_size", ["100k", "mock100"])
+@pytest.mark.parametrize("data_size", ["mock100"])
 def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name, data_size):
     notebook_path = notebooks["evaluation_diversity"]
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name, 
@@ -72,7 +72,7 @@ def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name, data
 @pytest.mark.skipif(
     sys.platform == "win32", reason="Takes 2409.69s in Windows, while in Linux 138.30s"
 )
-@pytest.mark.parametrize("data_size", ["100k", "mock100"])
+@pytest.mark.parametrize("data_size", ["mock100"])
 def test_spark_tuning(notebooks, output_notebook, kernel_name, data_size):
     notebook_path = notebooks["spark_tuning"]
     pm.execute_notebook(
