@@ -30,7 +30,7 @@ def test_data_split_runs(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-@pytest.mark.mock_movielens
+@pytest.mark.fake_movielens
 @pytest.mark.skipif(
     sys.platform == "win32", reason="Takes 2764.50s in Windows, while in Linux 124.35s"
 )
@@ -58,7 +58,7 @@ def test_evaluation_runs(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-@pytest.mark.mock_movielens
+@pytest.mark.fake_movielens
 @pytest.mark.parametrize("data_size", ["mock100"])
 def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name, data_size):
     notebook_path = notebooks["evaluation_diversity"]
@@ -68,7 +68,7 @@ def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name, data
 
 @pytest.mark.notebooks
 @pytest.mark.spark
-@pytest.mark.mock_movielens
+@pytest.mark.fake_movielens
 @pytest.mark.skipif(
     sys.platform == "win32", reason="Takes 2409.69s in Windows, while in Linux 138.30s"
 )
