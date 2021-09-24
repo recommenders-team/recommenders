@@ -7,8 +7,6 @@ from recommenders.utils.constants import (
 
 import pytest
 import pandas
-import pyspark.sql
-from pyspark.sql import SparkSession
 
 
 @pytest.mark.parametrize("size", [10, 100])
@@ -51,13 +49,13 @@ def test_mock_movielens_schema__get_df__return_success(size, seed, keep_first_n_
         assert len(df[DEFAULT_GENRE_COL]) == size
 
 
+@pytest.mark.spark
 @pytest.mark.parametrize("keep_genre_col", [True, False])
 @pytest.mark.parametrize("keep_title_col", [True, False])
 @pytest.mark.parametrize("seed", [101])  # seed for pseudo-random # generation
 @pytest.mark.parametrize("size", [0, 3, 10])
-def test_mock_movielens_schema__get_spark_df__return_success(spark: SparkSession, size, seed, keep_title_col, keep_genre_col):
+def test_mock_movielens_schema__get_spark_df__return_success(spark, size, seed, keep_title_col, keep_genre_col):
     df = MockMovielensSchema.get_spark_df(spark, size=size, seed=seed, keep_title_col=keep_title_col, keep_genre_col=keep_genre_col)
-    assert type(df) == pyspark.sql.DataFrame
     assert df.count() == size
 
     if keep_title_col:

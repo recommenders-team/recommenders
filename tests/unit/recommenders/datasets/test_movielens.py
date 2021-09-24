@@ -2,10 +2,9 @@ from recommenders.datasets.movielens import DATA_FORMAT, MOCK_DATA_FORMAT
 from recommenders.datasets.movielens import load_pandas_df, load_spark_df
 from recommenders.utils.constants import DEFAULT_GENRE_COL, DEFAULT_TITLE_COL
 
-import pyspark.sql
 import pandas
+import pytest
 from pandas.core.series import Series
-from pyspark.sql import SparkSession
 
 
 def test_mock_movielens_data__no_name_collision():
@@ -18,9 +17,9 @@ def test_mock_movielens_data__no_name_collision():
     assert not collision
 
 
-def test_load_spark_df_mock_100__with_default_param__succeed(spark: SparkSession):
+@pytest.mark.spark
+def test_load_spark_df_mock_100__with_default_param__succeed(spark):
     df = load_spark_df(spark, "mock100")
-    assert type(df) == pyspark.sql.DataFrame
     assert df.count() == 100
 
 
@@ -30,7 +29,8 @@ def test_load_pandas_df_mock_100__with_default_param__succeed():
     assert len(df) == 100
 
 
-def test_load_spark_df_mock_100__with_custom_param__succeed(spark: SparkSession):
+@pytest.mark.spark
+def test_load_spark_df_mock_100__with_custom_param__succeed(spark):
     df = load_spark_df(spark, "mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL)
     assert df.schema[DEFAULT_TITLE_COL]
     assert df.schema[DEFAULT_GENRE_COL]
@@ -39,7 +39,7 @@ def test_load_spark_df_mock_100__with_custom_param__succeed(spark: SparkSession)
     assert df.take(1)[0][DEFAULT_TITLE_COL] == 'foo'
 
 
-def test_load_pandas_df_mock_100__with_custom_param__succeed(spark: SparkSession):
+def test_load_pandas_df_mock_100__with_custom_param__succeed():
     df = load_pandas_df("mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL)
     assert type(df[DEFAULT_TITLE_COL]) == Series
     assert type(df[DEFAULT_GENRE_COL]) == Series

@@ -9,6 +9,11 @@ try:
 except ImportError as e:
     raise ImportError("pandera is not installed. Try `pip install recommenders['dev']`") from e
 
+try:
+    from pyspark.sql.types import StructField, StructType, IntegerType, StringType, FloatType
+except ImportError:
+    pass  # so the environment without spark doesn't break
+
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -23,11 +28,8 @@ import random
 from typing import Optional
 
 import pandas
-import pyspark.sql
 from pandera.typing import Series
 from pandera import Field
-from pyspark.sql import SparkSession
-from pyspark.sql.types import StructField, StructType, IntegerType, StringType, FloatType
 
 
 class MockMovielensSchema(pa.SchemaModel):
@@ -36,10 +38,12 @@ class MockMovielensSchema(pa.SchemaModel):
     This schema is configured to mimic the Movielens dataset
 
     http://files.grouplens.org/datasets/movielens/ml-100k/
+
+    Dataset schema and generation is configured using pandera.
+    Please see https://pandera.readthedocs.io/en/latest/schema_models.html
+    for more information.
     """
-    # The 100k dataset has 943 total users
     userID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
-    # And 1682 total items
     itemID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
     # Rating is on the scale from 1 to 5
     rating: Series[float] = Field(in_range={"min_value": 1, "max_value": 5})
@@ -77,15 +81,16 @@ class MockMovielensSchema(pa.SchemaModel):
             schema = schema.remove_columns([DEFAULT_GENRE_COL])
 
         random.seed(seed)
+        # For more information on data synthesis, see https://pandera.readthedocs.io/en/latest/data_synthesis_strategies.html
         return schema.example(size=size)
 
     @classmethod
     def get_spark_df(
         cls,
-        spark: SparkSession,
+        spark,
         size: int = 3, seed: int = 100,
         keep_title_col: bool = False, keep_genre_col: bool = False,
-    ) -> pyspark.sql.DataFrame:
+    ):
         """Return fake movielens dataset as a Spark Dataframe with specified rows
 
         Args:
