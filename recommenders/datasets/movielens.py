@@ -101,7 +101,6 @@ DATA_FORMAT = {
 # Fake data for testing only
 MOCK_DATA_FORMAT = {
     "mock100": {"size": 100, "seed": 0},
-    "mock10": {"size": 10, "seed": 6}
 }
 
 # 100K data genres index to string mapper. For 1m, 10m, and 20m, the genres labels are already in the dataset.
@@ -153,15 +152,16 @@ def load_pandas_df(
 
     Args:
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m", "mock100").
-        header* (list or tuple or None): Rating dataset header. 'DEFAULT_HEADER' is set for all mock data sizes ("mock*").
+        header* (list or tuple or None): Rating dataset header.
+            If size is set to any of 'MOCK_DATA_FORMAT', this parameter is ignored and data is rendered using the 'DEFAULT_HEADER' instead.
         local_cache_path* (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
-        title_col* (str): Movie title column name. If None, the column will not be loaded.
-        genres_col* (str): Genres column name. Genres are '|' separated string.
+        title_col (str): Movie title column name. If None, the column will not be loaded.
+        genres_col (str): Genres column name. Genres are '|' separated string.
             If None, the column will not be loaded.
         year_col* (str): Movie release year column name. If None, the column will not be loaded.
 
-        All (*) arguments are not applicable when mock dataset is specified (size = "mock*")
+            All (*) arguments are not applicable when mock dataset is specified (size = "mock*")
 
     Returns:
         pandas.DataFrame: Movie rating dataset.
@@ -361,10 +361,11 @@ def load_spark_df(
     Args:
         spark (pyspark.SparkSession): Spark session.
         size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m", "mock100").
-        header* (list or tuple): Rating dataset header. 'DEFAULT_HEADER' is set for all mock data sizes ("mock*").
+        header* (list or tuple): Rating dataset header.
             If schema is provided, this argument is ignored.
-        schema* (pyspark.StructType): Dataset schema.
-        local_cache_path* (str): Path (directory or a zip file) to cache the downloaded zip file.
+        schema* (pyspark.StructType): Dataset schema. 
+            If size is set to any of 'MOCK_DATA_FORMAT', data is rendered in the 'MockMovielensSchema' instead.
+        local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
         dbutils (Databricks.dbutils): Databricks utility object
         title_col (str): Title column name. If None, the column will not be loaded.
@@ -372,7 +373,7 @@ def load_spark_df(
             If None, the column will not be loaded.
         year_col* (str): Movie release year column name. If None, the column will not be loaded.
 
-            All (*) arguments are not applicable when mock dataset is specified (size = "mock*")
+            All (*) arguments are not applicable if size is set to any of 'MOCK_DATA_FORMAT'
 
     Returns:
         pyspark.sql.DataFrame: Movie rating dataset.
