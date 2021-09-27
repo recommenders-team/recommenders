@@ -3,6 +3,7 @@
 
 import os
 import pytest
+import tensorflow as tf
 
 try:
     import papermill as pm
@@ -44,7 +45,7 @@ ABS_TOL = 0.05
 #             "1m",
 #             5,
 #             {
-#                 "ndcg@10": 0.3014, 
+#                 "ndcg@10": 0.3014,
 #                 "Hit@10": 0.4875,
 #             },
 #             42,
@@ -52,8 +53,17 @@ ABS_TOL = 0.05
 #         # ("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})# takes too long
 #     ],
 # )
+@pytest.mark.skipif(tf.__versoin__ > "2.0", reason="We are currently on TF 1.5")
 def test_sasrec_quickstart_integration(
-    notebooks, output_notebook, kernel_name, yaml_file, data_path, epochs, batch_size, expected_values, seed
+    notebooks,
+    output_notebook,
+    kernel_name,
+    yaml_file,
+    data_path,
+    epochs,
+    batch_size,
+    expected_values,
+    seed,
 ):
     notebook_path = notebooks["sasrec_quickstart"]
     params = {
@@ -127,4 +137,3 @@ def test_sasrec_quickstart_integration(
 #         # assert results[key]["logloss"] == pytest.approx(
 #         #     value["logloss"], rel=TOL, abs=ABS_TOL
 #         # )
-

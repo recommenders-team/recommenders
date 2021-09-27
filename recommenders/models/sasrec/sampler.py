@@ -1,19 +1,29 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
 import numpy as np
 from multiprocessing import Process, Queue
 
 
-def random_neq(l, r, s):
-    t = np.random.randint(l, r)
+def random_neq(left, right, s):
+    t = np.random.randint(left, right)
     while t in s:
-        t = np.random.randint(l, r)
+        t = np.random.randint(left, right)
     return t
 
 
-def sample_function(user_train, usernum, itemnum, batch_size, maxlen, result_queue, SEED):
+def sample_function(
+    user_train, usernum, itemnum, batch_size, maxlen, result_queue, SEED
+):
+    """
+    Batch sampler that creates a sequence of negative items based on the
+    original sequence of items (positive) that the user has interacted with.
+    """
+
     def sample():
 
         user = np.random.randint(1, usernum + 1)
-        while len(user_train[user]) <= 1: user = np.random.randint(1, usernum + 1)
+        while len(user_train[user]) <= 1:
+            user = np.random.randint(1, usernum + 1)
 
         seq = np.zeros([maxlen], dtype=np.int32)
         pos = np.zeros([maxlen], dtype=np.int32)
@@ -25,10 +35,12 @@ def sample_function(user_train, usernum, itemnum, batch_size, maxlen, result_que
         for i in reversed(user_train[user][:-1]):
             seq[idx] = i
             pos[idx] = nxt
-            if nxt != 0: neg[idx] = random_neq(1, itemnum + 1, ts)
+            if nxt != 0:
+                neg[idx] = random_neq(1, itemnum + 1, ts)
             nxt = i
             idx -= 1
-            if idx == -1: break
+            if idx == -1:
+                break
 
         return (user, seq, pos, neg)
 
@@ -47,14 +59,19 @@ class WarpSampler(object):
         self.processors = []
         for i in range(n_workers):
             self.processors.append(
-                Process(target=sample_function, args=(User,
-                                                      usernum,
-                                                      itemnum,
-                                                      batch_size,
-                                                      maxlen,
-                                                      self.result_queue,
-                                                      np.random.randint(2e9)
-                                                      )))
+                Process(
+                    target=sample_function,
+                    args=(
+                        User,
+                        usernum,
+                        itemnum,
+                        batch_size,
+                        maxlen,
+                        self.result_queue,
+                        np.random.randint(2e9),
+                    ),
+                )
+            )
             self.processors[-1].daemon = True
             self.processors[-1].start()
 
