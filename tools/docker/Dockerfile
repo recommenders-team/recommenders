@@ -62,10 +62,7 @@ FROM base AS cpu
 
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[xlearn,examples]; fi
-# Note that "conda install numpy-base" needs to be called after the pip installation
-# so that numpy works smoothly with other dependencies in python 3.7
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[xlearn,examples]; \
-    conda install -n base numpy-base; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[xlearn,examples]; fi
 
 
 ###############
@@ -84,8 +81,7 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
 # Install dependencies in virtual environment
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[spark,xlearn,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,xlearn,examples]; \
-    conda install -n base numpy-base; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,xlearn,examples]; fi
 
 
 ###########
@@ -141,8 +137,7 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/
     pip install recommenders[gpu,xlearn,examples]; fi
 
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
-    pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html && \
-    conda install -n base numpy-base; fi
+    pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html ; fi
 
 
 ############
@@ -167,10 +162,6 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[all]; fi
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[all]; fi
-
-# It is not clear why but force-reinstall is needed at this place, 
-# otherwise numpy-base does not appear in conda list  
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda update --force-reinstall -y -n base numpy-base; fi
 
 
 #############

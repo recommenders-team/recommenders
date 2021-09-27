@@ -68,11 +68,6 @@ pip install --upgrade pip
 pip install --upgrade setuptools
 pip install recommenders[examples]
 ```
-In the case of conda, you also need to 
-```bash
-conda install numpy-base
-```
-after the pip installation.
 
 4. Register your (conda or virtual) environment with Jupyter:
 
