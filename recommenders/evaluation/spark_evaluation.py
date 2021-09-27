@@ -1,10 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-
-import numpy as np
-from pyspark.sql.types import LongType
-
 try:
     from pyspark.mllib.evaluation import RegressionMetrics, RankingMetrics
     from pyspark.sql import Window, DataFrame
@@ -618,7 +614,7 @@ class SparkDiversityEvaluation:
             .select(self.col_user, "i1", "i2")
         )
 
-    def _get_cosine_similarity(self, n_partitions=10):
+    def _get_cosine_similarity(self, n_partitions=200):
 
         if self.item_sim_measure == "item_cooccurrence_count":
             # calculate item-item similarity based on item co-occurrence count
