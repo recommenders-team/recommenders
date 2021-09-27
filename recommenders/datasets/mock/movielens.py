@@ -117,7 +117,6 @@ class MockMovielensSchema(pa.SchemaModel):
             filepath = os.path.join(tmp_folder, f"mock_movielens_{size}.csv")
             # serialize the pandas.df as a csv to avoid the expensive java <-> python communication
             pandas_df.to_csv(filepath, header=False, index=False)
-            print(f"Saving file {filepath}.")
             spark_df = spark.read.csv(filepath, schema=cls._get_spark_deserialization_schema())
             # Cache and force trigger action since data-file might be removed.
             spark_df.cache()

@@ -20,9 +20,7 @@ try:
         StructField,
         IntegerType,
         FloatType,
-        DoubleType,
-        LongType,
-        StringType,
+        LongType
     )
     from pyspark.sql.functions import concat_ws, col
 except ImportError:
