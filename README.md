@@ -10,7 +10,7 @@ We have changed the names of the folders which contain the source code, so that 
 
 The previous release ([0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)) is compatible with the old style of naming of modules. 
 
-The recommenders package now supports three types of environments: [venv](https://docs.python.org/3/library/venv.html) and [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) with Python 3.6, [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) with Python versions 3.6 and 3.7.
+The recommenders package now supports three types of environments: [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) with Python versions 3.6 and 3.7.
 
 We have also added new evaluation metrics: _novelty, serendipity, diversity and coverage_ (see the [evalution notebooks](examples/03_evaluate/README.md)).
 
@@ -42,8 +42,7 @@ For a more detailed overview of the repository, please see the documents on the 
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
 The installation of the recommenders package has been tested with 
-- Python version 3.6 and [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)
-- Python versions 3.6, 3.7 and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
+- Python versions 3.6, 3.7 and [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) or [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
 
 and currently does not support version 3.8 and above. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment), [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)).
 

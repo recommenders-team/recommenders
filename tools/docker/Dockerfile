@@ -21,7 +21,7 @@ RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "$
 RUN apt-get update && \
     apt-get install -y curl build-essential cmake
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.6; fi
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.7; fi
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -38,19 +38,19 @@ SHELL ["/bin/bash", "--login", "-c"]
 
 # Python version supported by recommenders
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    apt-get -y install python3.6-venv; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; \
+    apt-get -y install python3.7-venv; fi
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    python3.6 -m pip install --user virtualenv; fi
+    python3.7 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; fi
@@ -101,7 +101,7 @@ RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "$
 RUN apt-get update && \
     apt-get install -y curl build-essential cmake
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.6; fi
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.7; fi
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -117,20 +117,20 @@ SHELL ["/bin/bash", "--login", "-c"]
 
 # Python version supported by recommenders
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    apt-get -y install python3.6-venv; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; \
+    apt-get -y install python3.7-venv; fi
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    python3.6 -m pip install --user virtualenv; fi
+    python3.7 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; \
     pip install recommenders[gpu,xlearn,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; \
