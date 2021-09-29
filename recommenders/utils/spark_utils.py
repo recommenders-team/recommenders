@@ -10,8 +10,8 @@ except ImportError:
     pass  # skip this import if we are in pure python environment
 
 
-MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark_2.11:0.18.1"
-MMLSPARK_REPO = "https://mvnrepository.com/artifact"
+MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark:1.0.0-rc3-184-3314e164-SNAPSHOT"
+MMLSPARK_REPO = "https://mmlspark.azureedge.net/maven"
 
 def start_or_get_spark(
     app_name="Sample",
