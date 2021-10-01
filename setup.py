@@ -22,13 +22,13 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "numpy>=1.14",
+    "numpy<1.19.0,>=1.16.0",
     "pandas>1.0.3,<2",
-    "scipy>=1.0.0,<2",
+    "scipy==1.4.1",
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<4",
     "scikit-learn>=0.22.1,<1",
-    "numba>=0.38.1,<1",
+    # "numba>=0.38.1,<1",
     "lightfm>=1.15,<2",
     "lightgbm>=2.2.1,<3",
     "memory_profiler>=0.54.0,<1",
@@ -60,8 +60,10 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow-gpu>=1.15.0,<2",  # compiled with CUDA 10.0
-        "torch==1.2.0",  # last os-common version with CUDA 10.0 support
+        "tensorflow-gpu==2.3.0",  # compiled with CUDA 10.0
+        "torch==1.9.1",  # last os-common version with CUDA 10.0 support
+        "six~=1.15.0",
+        "typing-extensions~=3.7.4",
         "fastai>=1.0.46,<2",
     ],
     "spark": [
