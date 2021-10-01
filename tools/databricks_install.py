@@ -47,7 +47,10 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "3": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.2.0_2.11/1.1.1/azure-cosmosdb-spark_2.2.0_2.11-1.1.1-uber.jar",
     "4": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.3.0_2.11/1.2.2/azure-cosmosdb-spark_2.3.0_2.11-1.2.2-uber.jar",
     "5": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/1.3.5/azure-cosmosdb-spark_2.4.0_2.11-1.3.5-uber.jar",
-    "6": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/3.7.0/azure-cosmosdb-spark_2.4.0_2.11-3.7.0-uber.jar"
+    "6": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/3.7.0/azure-cosmosdb-spark_2.4.0_2.11-3.7.0-uber.jar",
+    "7": "https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar",
+    "8": "https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar",
+    "9": "https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar"
 }
 
 MMLSPARK_INFO = {
@@ -302,7 +305,7 @@ if __name__ == "__main__":
     while "recommenders" not in installed_libraries:
         time.sleep(PENDING_SLEEP_INTERVAL)
         installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
-    while installed_libraries["recommenders"] != "INSTALLED":
+    while installed_libraries["recommenders"] not in ["INSTALLED", "FAILED"]:
         time.sleep(PENDING_SLEEP_INTERVAL)
         installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
     if installed_libraries["recommenders"] == "FAILED":
