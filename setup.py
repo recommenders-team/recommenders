@@ -118,5 +118,5 @@ setup(
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
     packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
-    python_requires=">=3.6, <3.8",
+    python_requires=">=3.6, <3.9",     # latest Databricks versions come with Python 3.8 installed
 )
