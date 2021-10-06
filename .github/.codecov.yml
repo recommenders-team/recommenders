@@ -3,3 +3,7 @@
 # https://docs.codecov.com/docs/pull-request-comments#section-behavior
 comment:
   behavior: new
+
+flags:
+  nightly:
+    joined: false
