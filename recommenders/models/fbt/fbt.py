@@ -25,19 +25,16 @@ class FBT(object):
     def __init__(
         self,
         col_user=constants.DEFAULT_USER_COL,
-        col_item=constants.DEFAULT_ITEM_COL,
-        col_score=constants.DEFAULT_PREDICTION_COL
+        col_item=constants.DEFAULT_ITEM_COL
     ):
         """Initialize model parameters
 
         Args:
             col_user (str): user column name
             col_item (str): item column name
-            col_score (str): score column name
         """
         self.col_item = col_item
         self.col_user = col_user
-        self.col_score = col_score
 
         # column for mapping user / item ids to internal indices
         self.col_item_id = "_indexed_items"
@@ -99,7 +96,7 @@ class FBT(object):
                     f"Column {col} not found in DataFrame!"))
 
         # check there are no duplicate rows in dataframe
-        if df.groupby(expected_columns).size().max() > 1:
+        if np.any(df.duplicated()):
             raise ValueError("Duplicate rows found!!")
 
     def compute_affinity_matrix(self, df):
@@ -156,7 +153,7 @@ class FBT(object):
         user_item_hits = self.compute_affinity_matrix(df)
 
         item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
-        return item_cooccurrence
+        return item_cooccurrence.astype(np.number)
 
     def fit(self, df):
         """Fit the FBT recommender using an input DataFrame.
@@ -200,37 +197,10 @@ class FBT(object):
         # free up some space
         del temp_df
 
+        # Item frequencies can be obtained by looking at the
+        # number of distinct users who interacted with a specific
+        # item: can be extracted from the diagonal of the similarity matrix
         self.item_frequencies = self.item_similarity.diagonal()
-
-        # sim_df = (
-        #     cooccurrence_df
-        #     .groupby([self.col_item,
-        #              f'{self.col_item}_paired'])[self.col_user]
-        #     .nunique()
-        #     .reset_index(drop=False)
-        #     .rename(columns={self.col_user: self.col_score})
-        # )
-
-        # # Retaining item-pairs where item isn't paired with itself
-        # fbt_df = (
-        #     sim_df
-        #     .loc[sim_df
-        #          [self.col_item] !=
-        #          sim_df[f'{self.col_item}_paired']]
-        # )
-
-        # self._model_df = item_cooccurrence
-
-        # # Item frequencies can be obtained by looking at the
-        # # number of distinct users who interacted with a specific
-        # # item: can be extracted from items paired with itself
-        # self.item_frequencies = (
-        #     sim_df
-        #     .loc[sim_df
-        #          [self.col_item] ==
-        #          sim_df[f'{self.col_item}_paired']]
-        #     .drop(columns=[f'{self.col_item}_paired'])
-        # )
 
         self._is_fit = True
         logger.info("Done training")
