@@ -71,17 +71,14 @@ class FBT(object):
         """Verify input is a dataframe and has expected columns
            and if there are duplicate rows.
 
-        Args
-        ----
-        df (pandas.DataFrame): Input dataframe
+        Args:
+            df (pandas.DataFrame): Input dataframe
 
-        expected_columns: list()
-            List of expected column names for the dataframe
+            expected_columns (list()): List of expected column names
+                                       for the dataframe
 
-        Returns
-        -------
-        TypeError, ValueError or KeyError if checks fail.
-
+        Returns:
+            TypeError, ValueError or KeyError if checks fail.
         """
         if not isinstance(df, pd.DataFrame):
             raise TypeError((
