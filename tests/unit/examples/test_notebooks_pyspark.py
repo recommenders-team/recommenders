@@ -9,6 +9,8 @@ except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=3, reruns_delay=2)
 @pytest.mark.notebooks
 @pytest.mark.spark
 @pytest.mark.skipif(
@@ -53,6 +55,8 @@ def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=3, reruns_delay=2)
 @pytest.mark.notebooks
 @pytest.mark.spark
 @pytest.mark.skipif(

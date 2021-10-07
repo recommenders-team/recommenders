@@ -63,6 +63,20 @@ jobs:
       continue-on-error: true
       run: |
        tox -e flake8
+    
+    - name: Detect changes in 'setup.py'
+      id: setup-dot-py-changed
+      uses: tj-actions/changed-files@v10
+      with:
+        files: setup.py
+
+    - name: Raise warning for changes in 'setup.py'
+      # Throws a new release notice if there are changes in 'setup.py'
+      if: |
+        github.base_ref == 'main' &&
+        steps.changed-files-specific.outputs.any_changed == 'true'
+      run: |
+        echo "::notice file=setup.py,title=A new release may be needed::Changes detected in 'setup.py'. Please examine if a new release on PyPI is needed"
 
 ###############################################
 ################## CPU-BUILD ##################

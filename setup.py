@@ -74,7 +74,12 @@ extras_require = {
         "cmake>=3.18.4.post1",
         "xlearn==0.40a1",
     ],
-    "dev": ["black>=18.6b4,<21", "pytest>=3.6.4", "pytest-cov>=2.12.1"],
+    "dev": [
+        "black>=18.6b4,<21",
+        "pytest>=3.6.4",
+        "pytest-cov>=2.12.1"
+        "pytest-rerunfailures>=10.2",  # to mark flaky tests
+    ],
 }
 # for the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
