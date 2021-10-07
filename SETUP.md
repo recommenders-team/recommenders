@@ -243,6 +243,7 @@ sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsof
 * Databricks Runtime version >= 7 (Apache Spark >= 3.0.1, Scala 2.12)
 * Python 3
 
+Earlier versions of Databricks or Spark may work but this is not guaranteed.
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
 
 ### Installation from PyPI
