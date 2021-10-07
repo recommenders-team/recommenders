@@ -95,7 +95,7 @@ jobs:
         include:
           # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
           # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
-          - os: [self-hosted, Linux]
+          - os: [self-hosted, Linux, nightly]
             python: [3.6, 3.7]
             test-kind: 'integration'
             test-marker: 'not spark and not gpu'
@@ -144,8 +144,7 @@ jobs:
         include:
           # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
           # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
-          - os: [self-hosted, Linux]
-            java: 8
+          - os: [self-hosted, Linux, nightly]
             python: [3.6, 3.7]
             test-kind: 'integration'
             test-marker: 'spark and not gpu'
@@ -182,7 +181,7 @@ jobs:
 ################# GPU-BUILD #################
 ###############################################
   build-gpu:
-    runs-on: [self-hosted, Linux, gpu] # this is a union of labels to select specific self-hosted machine
+    runs-on: [self-hosted, Linux, gpu, nightly] # this is a union of labels to select specific self-hosted machine
     needs: static-analysis
     strategy:
       matrix:
