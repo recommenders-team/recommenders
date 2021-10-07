@@ -70,13 +70,13 @@ jobs:
       with:
         files: setup.py
 
-    - name: Raise warning for changes in 'setup.py'
+    - name: Raise notice for changes in 'setup.py'
       # Throws a new release notice if there are changes in 'setup.py'
       if: |
         github.base_ref == 'main' &&
-        steps.changed-files-specific.outputs.any_changed == 'true'
-      run: |
-        echo "::notice file=setup.py,title=A new release may be needed::Changes detected in 'setup.py'. Please examine if a new release on PyPI is needed"
+        steps.setup-dot-py-changed.outputs.any_changed == 'true'
+      run:
+        echo "::notice file=setup.py,line=1,title=A new release may be needed::Changes detected in 'setup.py'. Please examine if a new release on PyPI is needed."
 
 ###############################################
 ################## CPU-BUILD ##################
