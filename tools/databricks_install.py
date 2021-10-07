@@ -3,7 +3,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-# This script installs Recommenders/recommenders as an egg library onto a Databricks Workspace
+# This script installs Recommenders/recommenders from PyPI onto a Databricks Workspace
 # Optionally, also installs a version of mmlspark as a maven library, and prepares the cluster
 # for operationalization
 
@@ -12,7 +12,7 @@ import textwrap
 import os
 from pathlib import Path
 
-import shutil
+import pkg_resources
 import sys
 import time
 from urllib.request import urlretrieve
@@ -26,6 +26,7 @@ from databricks_cli.dbfs.api import DbfsApi
 from databricks_cli.libraries.api import LibrariesApi
 from databricks_cli.dbfs.dbfs_path import DbfsPath
 
+from recommenders.utils.spark_utils import MMLSPARK_PACKAGE, MMLSPARK_REPO
 
 CLUSTER_NOT_FOUND_MSG = """
     Cannot find the target cluster {}. Please check if you entered the valid id. 
@@ -46,12 +47,13 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "3": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.2.0_2.11/1.1.1/azure-cosmosdb-spark_2.2.0_2.11-1.1.1-uber.jar",
     "4": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.3.0_2.11/1.2.2/azure-cosmosdb-spark_2.3.0_2.11-1.2.2-uber.jar",
     "5": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/1.3.5/azure-cosmosdb-spark_2.4.0_2.11-1.3.5-uber.jar",
+    "6": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/3.7.0/azure-cosmosdb-spark_2.4.0_2.11-3.7.0-uber.jar"
 }
 
 MMLSPARK_INFO = {
     "maven": {
-        "coordinates": "com.microsoft.ml.spark:mmlspark_2.11:0.18.1",
-        "repo": "https://mvnrepository.com/artifact",
+        "coordinates": MMLSPARK_PACKAGE,
+        "repo": MMLSPARK_REPO,
     }
 }
 
@@ -68,50 +70,35 @@ PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
 
+## dependencies from PyPI
+PYPI_PREREQS = [
+    "pip==21.2.4",
+    "setuptools==54.0.0",
+    "numpy==1.18.0"
+]
+
+PYPI_EXTRA_DEPS = [
+    "azure-cli-core==2.0.75",
+    "azure-mgmt-cosmosdb==0.8.0",
+    "azureml-sdk[databricks]",
+    "azure-storage-blob<=2.1.0",
+]
+
+PYPI_O16N_LIBS = [
+    "pydocumentdb>=2.3.3",
+]
+
 ## Additional dependencies met below.
 
-
-def create_egg(
-    path_to_recommenders_repo_root=os.getcwd(),
-    local_eggname="Recommenders.egg",
-    overwrite=False,
-):
-    """
-    Packages files in the recommenders directory as a .egg file that can be uploaded to dbfs and installed as a library on a databricks cluster.
-
-    Args:
-        path_to_recommenders_repo_root (str): the (relative or absolute) path to the root of the recommenders repository
-        local_eggname (str): the basename of the egg you want to create (NOTE: must have .egg extension)
-        overwrite (bool): whether to overwrite local_eggname if it already exists.
-
-    Returns:
-        the path to the created egg file.
-    """
-    # create the zip archive:
-    myzipfile = shutil.make_archive(
-        "recommenders",
-        "zip",
-        root_dir=path_to_recommenders_repo_root,
-        base_dir="recommenders",
-    )
-
-    # overwrite egg if it previously existed
-    if os.path.exists(local_eggname) and overwrite:
-        os.unlink(local_eggname)
-    os.rename(myzipfile, local_eggname)
-    return local_eggname
-
-
 def dbfs_file_exists(api_client, dbfs_path):
-    """
-    Checks to determine whether a file exists.
+    """Checks to determine whether a file exists.
 
     Args:
         api_client (ApiClient object): Object used for authenticating to the workspace
         dbfs_path (str): Path to check
 
     Returns:
-        True if file exists on dbfs, False otherwise.
+        bool: True if file exists on dbfs, False otherwise.
     """
     try:
         DbfsApi(api_client).list_files(dbfs_path=DbfsPath(dbfs_path))
@@ -119,6 +106,21 @@ def dbfs_file_exists(api_client, dbfs_path):
     except:
         file_exists = False
     return file_exists
+
+
+def get_installed_libraries(api_client, cluster_id):
+    """Returns the installed PyPI packages and the ones that failed.
+
+    Args:
+        api_client (ApiClient object): object used for authenticating to the workspace
+        cluster_id (str): id of the cluster
+    
+    Returns:
+        Dict[str, str]: dictionary of {package: status} 
+    """
+    cluster_status = LibrariesApi(api_client).cluster_status(cluster_id)
+    libraries = {lib["library"]["pypi"]["package"]: lib["status"] for lib in cluster_status["library_statuses"] if "pypi" in lib["library"]}
+    return {pkg_resources.Requirement.parse(package).name: libraries[package] for package in libraries}
 
 
 def prepare_for_operationalization(
@@ -172,7 +174,7 @@ def prepare_for_operationalization(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-      This script packages the recommenders directory into a .egg file and installs it onto a databricks cluster. 
+      This script installs the recommenders package from PyPI onto a databricks cluster. 
       Optionally, this script may also install the mmlspark library, and it may also install additional libraries useful 
       for operationalization. This script requires that you have installed databricks-cli in the python environment in 
       which you are running this script, and that have you have already configured it with a profile.
@@ -188,11 +190,6 @@ if __name__ == "__main__":
         "--path-to-recommenders",
         help="The path to the root of the recommenders repository. Default assumes that the script is run in the root of the repository",
         default=".",
-    )
-    parser.add_argument(
-        "--eggname",
-        help="Name of the egg you want to generate. Useful if you want to name based on branch or date.",
-        default="Recommenders.egg",
     )
     parser.add_argument(
         "--dbfs-path",
@@ -221,32 +218,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # Check for extension of eggname
-    if not args.eggname.endswith(".egg"):
-        args.eggname += ".egg"
-
     # make sure path_to_recommenders is on sys.path to allow for import
     sys.path.append(args.path_to_recommenders)
-    from tools.generate_conda_file import PIP_BASE, CONDA_BASE
-
-    ## depend on PIP_BASE:
-    PYPI_RECO_LIB_DEPS = [CONDA_BASE["tqdm"]]
-
-    PYPI_O16N_LIBS = [
-        "azure-cli==2.0.56",
-        "azureml-sdk[databricks]==1.0.69",
-        PIP_BASE["pydocumentdb"],
-    ]
-
-    #################
-    # Create the egg:
-    #################
-
-    print("Preparing Recommenders library file ({})...".format(args.eggname))
-    myegg = create_egg(
-        args.path_to_recommenders, local_eggname=args.eggname, overwrite=args.overwrite
-    )
-    print("Created: {}".format(myegg))
 
     ############################
     # Interact with Databricks:
@@ -266,29 +239,6 @@ if __name__ == "__main__":
                 DEFAULT_CLUSTER_CONFIG["cluster_name"], args.cluster_id
             )
         )
-
-    # Upload the egg:
-    upload_path = Path(args.dbfs_path, args.eggname).as_posix()
-
-    # Check if file exists to alert user.
-    print("Uploading {} to databricks at {}".format(args.eggname, upload_path))
-    if dbfs_file_exists(my_api_client, upload_path):
-        if args.overwrite:
-            print("Overwriting file at {}".format(upload_path))
-        else:
-            raise IOError(
-                """
-            {} already exists on databricks cluster. 
-            This is likely an older version of the library.
-            Please use the '--overwrite' flag to proceed.
-            """.format(
-                    upload_path
-                )
-            )
-
-    DbfsApi(my_api_client).cp(
-        recursive=False, src=myegg, dst=upload_path, overwrite=args.overwrite
-    )
 
     # steps below require the cluster to be running. Check status
     try:
@@ -329,21 +279,48 @@ if __name__ == "__main__":
         )
         sys.exit()
 
-    # install the library and its dependencies
+
+    # install prerequisites
     print(
-        "Installing the recommenders module onto databricks cluster {}".format(
+        "Installing required Python libraries onto databricks cluster {}".format(
             args.cluster_id
         )
     )
-    libs2install = [{"egg": upload_path}]
-    # PYPI dependencies:
-    libs2install.extend([{"pypi": {"package": i}} for i in PYPI_RECO_LIB_DEPS])
+    libs2install = [{"pypi": {"package": i}} for i in PYPI_PREREQS]
+    LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
+
+    # install the library and its dependencies
+    print(
+        "Installing the recommenders package onto databricks cluster {}".format(
+            args.cluster_id
+        )
+    )
+    LibrariesApi(my_api_client).install_libraries(args.cluster_id, [{"pypi": {"package": "recommenders"}}])
+
+    # pip cannot handle everything together, so wait until recommenders package is installed
+    installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
+    while "recommenders" not in installed_libraries:
+        time.sleep(PENDING_SLEEP_INTERVAL)
+        installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
+    while installed_libraries["recommenders"] != "INSTALLED":
+        time.sleep(PENDING_SLEEP_INTERVAL)
+        installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
+    if installed_libraries["recommenders"] == "FAILED":
+        raise Exception("recommenders package failed to install")    
+
+    # additional PyPI dependencies:
+    libs2install = [{"pypi": {"package": i}} for i in PYPI_EXTRA_DEPS]
 
     # add mmlspark if selected.
     if args.mmlspark:
         print("Installing MMLSPARK package...")
         libs2install.extend([MMLSPARK_INFO])
-    print(libs2install)
+    print(
+        "Installing {} onto databricks cluster {}".format(
+            libs2install,
+            args.cluster_id
+        )
+    )
     LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
 
     # prepare for operationalization if desired:

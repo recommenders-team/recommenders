@@ -1,6 +1,6 @@
 One possible way to use the repository is to run all the recommender utilities directly from a local copy of the source code (without building the package). This requires installing all the necessary dependencies from Anaconda and PyPI.
 
-To this end we provide a script, [generate_conda_file.py](tools/generate_conda_file.py), to generate a conda-environment yaml file which you can use to create the target environment using Python 3.6 with all the correct dependencies.
+To this end we provide a script, [generate_conda_file.py](tools/generate_conda_file.py), to generate a conda-environment yaml file which you can use to create the target environment using Python 3.6 or 3.7 with all the correct dependencies.
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
