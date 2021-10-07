@@ -1,5 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# Original codes are from
+# https://github.com/kang205/SASRec/blob/master/sampler.py
 import numpy as np
 from multiprocessing import Process, Queue
 
@@ -12,7 +14,7 @@ def random_neq(left, right, s):
 
 
 def sample_function(
-    user_train, usernum, itemnum, batch_size, maxlen, result_queue, SEED
+    user_train, usernum, itemnum, batch_size, maxlen, result_queue, seed
 ):
     """
     Batch sampler that creates a sequence of negative items based on the
@@ -44,7 +46,7 @@ def sample_function(
 
         return (user, seq, pos, neg)
 
-    np.random.seed(SEED)
+    np.random.seed(seed)
     while True:
         one_batch = []
         for i in range(batch_size):
