@@ -50,8 +50,8 @@ on:
   workflow_dispatch:
     input:
       tags:
-        description: 'Test scenario tags'
-        default: 'Anything to describe this manual run (optional)'
+        description: 'Tags to label this manual run (optional)'
+        default: 'Anything to describe this manual run'
     
 
 jobs:
