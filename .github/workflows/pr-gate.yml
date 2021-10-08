@@ -48,6 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
     - name: Use Python 3.6
       uses: actions/setup-python@v2
       with:
