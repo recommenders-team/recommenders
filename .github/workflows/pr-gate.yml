@@ -65,16 +65,14 @@ jobs:
        tox -e flake8
     
     - name: Detect changes in 'setup.py'
-      id: setup-dot-py-changed
+      id: setup-dot-py-changes
       uses: tj-actions/changed-files@v10
       with:
         files: setup.py
 
     - name: Raise notice for changes in 'setup.py'
-      # Throws a new release notice if there are changes in 'setup.py'
-      if: |
-        github.base_ref == 'main' &&
-        steps.setup-dot-py-changed.outputs.any_changed == 'true'
+      # Throws a notice for new release if there are changes in 'setup.py'
+      if: steps.setup-dot-py-changes.outputs.any_changed == 'true'
       run:
         echo "::notice file=setup.py,line=1,title=A new release may be needed::Changes detected in 'setup.py'. Please examine if a new release on PyPI is needed."
 
