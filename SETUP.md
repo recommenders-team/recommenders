@@ -58,18 +58,18 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-If using venv, see [these instructions](#using-a-virtual-environment).
+If using venv or virtualenv, see [these instructions](#using-a-virtual-environment).
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
 
 **NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
 
-**NOTE** PySpark v2.4.x requires Java version 8. 
+**NOTE** Spark requires Java version >= 8. We support Spark version 3, but versions 2.4+ with Java version 8 may also work. 
 
 <details> 
-<summary><strong><em>Install Java 8 on MacOS</em></strong></summary>
+<summary><strong><em>Install Java on MacOS</em></strong></summary>
   
-To install Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
+To install e.g. Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
 
     brew install asdf
     asdf plugin add Java
@@ -167,8 +167,6 @@ In the following `3.6` should be replaced with the Python version you are using.
     apt-get -y install python3.6-venv
     apt-get -y install libpython3.6-dev
     apt-get -y install cmake
-    apt-get install -y libgomp1 openjdk-8-jre
-    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     
     python3.6 -m venv --system-site-packages /venv
     source /venv/bin/activate
@@ -221,13 +219,6 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 * Another source of problems is when the variable `SPARK_HOME` is not set correctly. In the Azure DSVM, `SPARK_HOME` is by default `/dsvm/tools/spark/current`. We need to unset it: 
 ```
 unset SPARK_HOME
-```
-
-* Java 11 might produce errors when running the notebooks. To change it to Java 8:
-
-```
-sudo apt install openjdk-8-jdk
-export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
 ```
 
 * We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
