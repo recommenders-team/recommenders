@@ -151,6 +151,7 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 
 It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
 recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) and running the virtual environment within a container, as the most convenient way to do this.  
+In the following `3.6` should be replaced with the Python version you are using. 
 
     # Start docker daemon if not running
     sudo dockerd &
