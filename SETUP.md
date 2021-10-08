@@ -151,7 +151,7 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 
 It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
 recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) and running the virtual environment within a container, as the most convenient way to do this.  
-In the following `3.6` should be replaced with the Python version you are using. 
+In the following `3.6` should be replaced with the Python version you are using and `11` should be replaced with the appropriate Java version. 
 
     # Start docker daemon if not running
     sudo dockerd &
@@ -167,6 +167,8 @@ In the following `3.6` should be replaced with the Python version you are using.
     apt-get -y install python3.6-venv
     apt-get -y install libpython3.6-dev
     apt-get -y install cmake
+    apt-get install -y libgomp1 openjdk-11-jre
+    export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
     
     python3.6 -m venv --system-site-packages /venv
     source /venv/bin/activate
