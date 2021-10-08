@@ -175,6 +175,7 @@ In the following `3.6` should be replaced with the Python version you are using 
     pip install --upgrade pip
     pip install --upgrade setuptools
 
+    export SPARK_HOME=/venv/lib/python3.6/site-packages/pyspark
     export PYSPARK_DRIVER_PYTHON=/venv/bin/python
     export PYSPARK_PYTHON=/venv/bin/python
 
