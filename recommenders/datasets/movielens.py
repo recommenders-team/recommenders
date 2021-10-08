@@ -7,6 +7,9 @@ import random
 import shutil
 import warnings
 import pandas as pd
+import pandera as pa
+from pandera import Field
+from pandera.typing import Series
 from typing import Optional
 from zipfile import ZipFile
 from recommenders.datasets.download_utils import maybe_download, download_path
@@ -21,6 +24,7 @@ from recommenders.utils.constants import (
     DEFAULT_GENRE_COL,
 )
 
+
 try:
     from pyspark.sql.types import (
         StructType,
@@ -33,13 +37,6 @@ try:
     from pyspark.sql.functions import concat_ws, col
 except ImportError:
     pass  # so the environment without spark doesn't break
-
-try:
-    import pandera as pa
-    from pandera import Field
-    from pandera.typing import Series
-except ImportError:
-    pass  # so the environment without recommender['dev'] doesn't break
 
 
 class _DataFormat:
