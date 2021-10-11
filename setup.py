@@ -72,8 +72,8 @@ extras_require = {
     ],
     "spark": [
         "databricks_cli>=0.8.6,<1",
-        "pyarrow>=0.8.0,<1.0.0",
-        "pyspark>=2.4.5,<3.0.0",
+        "pyarrow>=0.12.1,<6.0.0",
+        "pyspark>=2.4.5,<4.0.0",
     ],
     "xlearn": [
         "cmake>=3.18.4.post1",
@@ -129,6 +129,6 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
+    python_requires=">=3.6, <3.9",     # latest Databricks versions come with Python 3.8 installed
     packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
-    python_requires=">=3.6, <3.8",
 )
