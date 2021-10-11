@@ -81,8 +81,10 @@ extras_require = {
     ],
     "dev": [
         "black>=18.6b4,<21",
+        "pandera[strategies]>=0.6.5",  # For generating fake datasets
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
+        "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
     ],
 }
 # for the brave of heart

@@ -33,6 +33,6 @@ extends:
     timeout: 180
     conda_env: "nightly_linux_spark"
     conda_opts: "python=3.6"
-    pip_opts: "[spark,examples]"
+    pip_opts: "[spark,examples,dev]"
     pytest_markers: "spark and not gpu"
     pytest_params: "-x"
