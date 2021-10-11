@@ -31,7 +31,7 @@ extends:
     task_name: "Test - Nightly Linux GPU"
     timeout: 240
     conda_env: "nightly_linux_gpu"
-    conda_opts: "python=3.6 cudatoolkit=10.0 \"cudnn>=7.6\""
+    conda_opts: "python=3.6 -c conda-forge cudatoolkit=11.2 cudnn=8.1"
     pip_opts: "[gpu,examples,dev]  -f https://download.pytorch.org/whl/cu100/torch_stable.html"
     pytest_markers: "not spark and gpu"
     pytest_params: "-x"

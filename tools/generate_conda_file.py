@@ -65,9 +65,9 @@ CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark>=3"}
 CONDA_GPU = {
     "fastai": "fastai==1.0.46",
     "numba": "numba>=0.38.1",
-    "pytorch": "pytorch>=1.0.0,<=1.2.0",    # For cudatoolkit=10.0
-    "cudatoolkit": "cudatoolkit=10.0",
-    "cudnn": "cudnn>=7.6"
+    "pytorch": "pytorch>=1.8.0",    # For cudatoolkit=11
+    "cudatoolkit": "cudatoolkit=11.2",
+    "cudnn": "cudnn=8.1"
 }
 
 PIP_BASE = {
