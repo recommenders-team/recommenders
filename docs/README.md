@@ -4,7 +4,7 @@ To setup the documentation, first you need to install the dependencies of the fu
 
     conda create -n reco_full python=3.6 cudatoolkit=10.0 "cudnn>=7.6"
     conda activate reco_full
-    pip install .[all]
+    pip install --no-cache --no-binary scikit-surprise .[all]
     pip install sphinx_rtd_theme
 
 

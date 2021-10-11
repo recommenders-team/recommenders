@@ -65,7 +65,7 @@ On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.micros
 ```bash
 pip install --upgrade pip
 pip install --upgrade setuptools
-pip install recommenders[examples]
+pip install --no-cache --no-binary scikit-surprise recommenders[examples]
 ```
 
 4. Register your (conda or virtual) environment with Jupyter:

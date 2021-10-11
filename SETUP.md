@@ -179,7 +179,7 @@ In the following `3.6` should be replaced with the Python version you are using 
     export PYSPARK_DRIVER_PYTHON=/venv/bin/python
     export PYSPARK_PYTHON=/venv/bin/python
 
-    pip install recommenders[all]
+    pip install --no-cache --no-binary scikit-surprise recommenders[all]
 
 If you prefer to use [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) instead of venv, you may follow the above steps, except you will need to replace the line
 

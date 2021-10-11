@@ -20,7 +20,7 @@ For more details about the software requirements that must be pre-installed on e
 To install core utilities, CPU-based algorithms, and dependencies
 ```bash
 pip install --upgrade pip
-pip install recommenders
+pip install --no-cache --no-binary scikit-surprise recommenders
 ```
 
 ## Optional Dependencies
@@ -39,10 +39,10 @@ Note that, currently, NNI and Vowpal Wabbit are in the experimental group.
 These groups can be installed alone or in combination:
 ```bash
 # install recommenders with core requirements and support for CPU-based recommender algorithms and notebooks
-pip install recommenders[examples]
+pip install --no-cache --no-binary scikit-surprise recommenders[examples]
 
 # add support for running example notebooks and GPU functionality
-pip install recommenders[examples,gpu]
+pip install --no-cache --no-binary scikit-surprise recommenders[examples,gpu]
 ```
 
 ## GPU Support
@@ -57,7 +57,7 @@ For manual installation of the necessary requirements see [TensorFlow](https://w
 
 When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
-`pip install recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
+`pip install --no-cache --no-binary scikit-surprise recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
 
 ## Experimental dependencies
 
@@ -74,12 +74,12 @@ a [setup.py](../setup.py) file is provided in order to simplify the installation
 
 This still requires an environment to be installed as described in the [setup guide](../SETUP.md). Once the necessary dependencies are installed, you can use the following command to install `recommenders` as a python package.
 
-    pip install -e .
+    pip install --no-cache --no-binary scikit-surprise -e .
 
 It is also possible to install directly from GitHub. Or from a specific branch as well.
 
-    pip install -e git+https://github.com/microsoft/recommenders/#egg=pkg
-    pip install -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg
+    pip install --no-cache --no-binary scikit-surprise -e git+https://github.com/microsoft/recommenders/#egg=pkg
+    pip install --no-cache --no-binary scikit-surprise -e git+https://github.com/microsoft/recommenders/@staging#egg=pkg
 
 **NOTE** - The pip installation does not install all of the pre-requisites; it is assumed that the environment has already been set up according to the [setup guide](../SETUP.md), for the utilities to be used.
 
