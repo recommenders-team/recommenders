@@ -3,8 +3,8 @@
 
 import itertools
 import numpy as np
-import pandas as pd
 import tensorflow as tf
+from tensorflow_estimator.python.estimator.export.export import build_supervised_input_receiver_fn_from_input_fn
 
 MODEL_DIR = "model_checkpoints"
 
@@ -167,12 +167,12 @@ def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
     """
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
     train_rcvr_fn = (
-        tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
+        build_supervised_input_receiver_fn_from_input_fn(
             train_input_fn
         )
     )
     eval_rcvr_fn = (
-        tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
+        build_supervised_input_receiver_fn_from_input_fn(
             eval_input_fn
         )
     )
