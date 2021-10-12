@@ -63,8 +63,8 @@ def test_pandas_input_fn(pd_df):
 
     # check dataset
     dataset = pandas_input_fn(df)()
-    batch = dataset.make_one_shot_iterator().get_next()
-    with tf.Session() as sess:
+    batch = tf.compat.v1.data.make_one_shot_iterator(dataset).get_next()
+    with tf.compat.v1.Session() as sess:
         features = sess.run(batch)
 
         # check the input function returns all the columns
@@ -80,8 +80,8 @@ def test_pandas_input_fn(pd_df):
 
     # check dataset with shuffles
     dataset = pandas_input_fn(df, shuffle=True, seed=SEED)()
-    batch = dataset.make_one_shot_iterator().get_next()
-    with tf.Session() as sess:
+    batch = tf.compat.v1.data.make_one_shot_iterator(dataset).get_next()
+    with tf.compat.v1.Session() as sess:
         features = sess.run(batch)
         print(features)
         # check the input function returns all the columns
@@ -97,8 +97,8 @@ def test_pandas_input_fn(pd_df):
 
     # check dataset w/ label
     dataset_with_label = pandas_input_fn(df, y_col=DEFAULT_RATING_COL)()
-    batch = dataset_with_label.make_one_shot_iterator().get_next()
-    with tf.Session() as sess:
+    batch = tf.compat.v1.data.make_one_shot_iterator(dataset_with_label).get_next()
+    with tf.compat.v1.Session() as sess:
         features, label = sess.run(batch)
         assert (
             len(features) == len(df.columns) - 1
@@ -108,25 +108,25 @@ def test_pandas_input_fn(pd_df):
 @pytest.mark.gpu
 def test_build_optimizer():
     adadelta = build_optimizer("Adadelta")
-    assert isinstance(adadelta, tf.train.AdadeltaOptimizer)
+    assert isinstance(adadelta, tf.compat.v1.train.AdadeltaOptimizer)
 
     adagrad = build_optimizer("Adagrad")
-    assert isinstance(adagrad, tf.train.AdagradOptimizer)
+    assert isinstance(adagrad, tf.compat.v1.train.AdagradOptimizer)
 
     adam = build_optimizer("Adam")
-    assert isinstance(adam, tf.train.AdamOptimizer)
+    assert isinstance(adam, tf.compat.v1.train.AdamOptimizer)
 
     ftrl = build_optimizer("Ftrl", **{"l1_regularization_strength": 0.001})
-    assert isinstance(ftrl, tf.train.FtrlOptimizer)
+    assert isinstance(ftrl, tf.compat.v1.train.FtrlOptimizer)
 
     momentum = build_optimizer("Momentum", **{"momentum": 0.5})
-    assert isinstance(momentum, tf.train.MomentumOptimizer)
+    assert isinstance(momentum, tf.compat.v1.train.MomentumOptimizer)
 
     rmsprop = build_optimizer("RMSProp")
-    assert isinstance(rmsprop, tf.train.RMSPropOptimizer)
+    assert isinstance(rmsprop, tf.compat.v1.train.RMSPropOptimizer)
 
     sgd = build_optimizer("SGD")
-    assert isinstance(sgd, tf.train.GradientDescentOptimizer)
+    assert isinstance(sgd, tf.compat.v1.train.GradientDescentOptimizer)
 
 
 @pytest.mark.gpu
@@ -177,7 +177,7 @@ def test_evaluation_log_hook(pd_df, tmp):
     assert len(evaluation_logger.get_log()[rmse.__name__]) == hook_frequency
 
     # Close the event file so that the model folder can be cleaned up.
-    summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
+    summary_writer = tf.compat.v1.summary.FileWriterCache.get(model.model_dir)
     summary_writer.close()
 
 
@@ -230,5 +230,5 @@ def test_pandas_input_fn_for_saved_model(pd_df, tmp):
     )
 
     # Close the event file so that the model folder can be cleaned up.
-    summary_writer = tf.summary.FileWriterCache.get(model.model_dir)
+    summary_writer = tf.compat.v1.summary.FileWriterCache.get(model.model_dir)
     summary_writer.close()

@@ -36,7 +36,7 @@ class LightGCN(object):
 
         """
 
-        tf.set_random_seed(seed)
+        tf.compat.v1.set_random_seed(seed)
         np.random.seed(seed)
 
         self.data = data
@@ -67,28 +67,28 @@ class LightGCN(object):
         self.n_users = data.n_users
         self.n_items = data.n_items
 
-        self.users = tf.placeholder(tf.int32, shape=(None,))
-        self.pos_items = tf.placeholder(tf.int32, shape=(None,))
-        self.neg_items = tf.placeholder(tf.int32, shape=(None,))
+        self.users = tf.compat.v1.placeholder(tf.int32, shape=(None,))
+        self.pos_items = tf.compat.v1.placeholder(tf.int32, shape=(None,))
+        self.neg_items = tf.compat.v1.placeholder(tf.int32, shape=(None,))
 
         self.weights = self._init_weights()
         self.ua_embeddings, self.ia_embeddings = self._create_lightgcn_embed()
 
-        self.u_g_embeddings = tf.nn.embedding_lookup(self.ua_embeddings, self.users)
+        self.u_g_embeddings = tf.nn.embedding_lookup(params=self.ua_embeddings, ids=self.users)
         self.pos_i_g_embeddings = tf.nn.embedding_lookup(
-            self.ia_embeddings, self.pos_items
+            params=self.ia_embeddings, ids=self.pos_items
         )
         self.neg_i_g_embeddings = tf.nn.embedding_lookup(
-            self.ia_embeddings, self.neg_items
+            params=self.ia_embeddings, ids=self.neg_items
         )
         self.u_g_embeddings_pre = tf.nn.embedding_lookup(
-            self.weights["user_embedding"], self.users
+            params=self.weights["user_embedding"], ids=self.users
         )
         self.pos_i_g_embeddings_pre = tf.nn.embedding_lookup(
-            self.weights["item_embedding"], self.pos_items
+            params=self.weights["item_embedding"], ids=self.pos_items
         )
         self.neg_i_g_embeddings_pre = tf.nn.embedding_lookup(
-            self.weights["item_embedding"], self.neg_items
+            params=self.weights["item_embedding"], ids=self.neg_items
         )
 
         self.batch_ratings = tf.matmul(
@@ -103,12 +103,12 @@ class LightGCN(object):
         )
         self.loss = self.mf_loss + self.emb_loss
 
-        self.opt = tf.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss)
-        self.saver = tf.train.Saver(max_to_keep=1)
+        self.opt = tf.compat.v1.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss)
+        self.saver = tf.compat.v1.train.Saver(max_to_keep=1)
 
-        gpu_options = tf.GPUOptions(allow_growth=True)
-        self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
-        self.sess.run(tf.global_variables_initializer())
+        gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
+        self.sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
+        self.sess.run(tf.compat.v1.global_variables_initializer())
 
     def _init_weights(self):
         """Initialize user and item embeddings.
@@ -118,7 +118,7 @@ class LightGCN(object):
 
         """
         all_weights = dict()
-        initializer = tf.contrib.layers.xavier_initializer()
+        initializer = tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform")
 
         all_weights["user_embedding"] = tf.Variable(
             initializer([self.n_users, self.emb_dim]), name="user_embedding"
@@ -145,11 +145,11 @@ class LightGCN(object):
         all_embeddings = [ego_embeddings]
 
         for k in range(0, self.n_layers):
-            ego_embeddings = tf.sparse_tensor_dense_matmul(A_hat, ego_embeddings)
+            ego_embeddings = tf.sparse.sparse_dense_matmul(A_hat, ego_embeddings)
             all_embeddings += [ego_embeddings]
 
         all_embeddings = tf.stack(all_embeddings, 1)
-        all_embeddings = tf.reduce_mean(all_embeddings, axis=1, keepdims=False)
+        all_embeddings = tf.reduce_mean(input_tensor=all_embeddings, axis=1, keepdims=False)
         u_g_embeddings, i_g_embeddings = tf.split(
             all_embeddings, [self.n_users, self.n_items], 0
         )
@@ -167,8 +167,8 @@ class LightGCN(object):
             tf.Tensor, tf.Tensor: Matrix factorization loss. Embedding regularization loss.
 
         """
-        pos_scores = tf.reduce_sum(tf.multiply(users, pos_items), axis=1)
-        neg_scores = tf.reduce_sum(tf.multiply(users, neg_items), axis=1)
+        pos_scores = tf.reduce_sum(input_tensor=tf.multiply(users, pos_items), axis=1)
+        neg_scores = tf.reduce_sum(input_tensor=tf.multiply(users, neg_items), axis=1)
 
         regularizer = (
             tf.nn.l2_loss(self.u_g_embeddings_pre)
@@ -176,7 +176,7 @@ class LightGCN(object):
             + tf.nn.l2_loss(self.neg_i_g_embeddings_pre)
         )
         regularizer = regularizer / self.batch_size
-        mf_loss = tf.reduce_mean(tf.nn.softplus(-(pos_scores - neg_scores)))
+        mf_loss = tf.reduce_mean(input_tensor=tf.nn.softplus(-(pos_scores - neg_scores)))
         emb_loss = self.decay * regularizer
         return mf_loss, emb_loss
 
