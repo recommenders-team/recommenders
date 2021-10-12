@@ -8,6 +8,8 @@ try:
 except ImportError:
     pass  # disable error while collecting tests for non-notebook environments
 
+from recommenders.utils.constants import DEFAULT_RATING_COL, DEFAULT_USER_COL, DEFAULT_ITEM_COL
+
 
 # This is a flaky test that can fail unexpectedly
 @pytest.mark.flaky(reruns=3, reruns_delay=2)
@@ -18,7 +20,13 @@ except ImportError:
 )
 def test_als_pyspark_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_pyspark"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name,
+                        parameters=dict(
+                            MOVIELENS_DATA_SIZE="mock100",
+                            COL_USER=DEFAULT_USER_COL,
+                            COL_ITEM=DEFAULT_ITEM_COL,
+                            COL_RATING=DEFAULT_RATING_COL,
+                        ))
 
 
 @pytest.mark.notebooks
@@ -35,7 +43,13 @@ def test_data_split_runs(notebooks, output_notebook, kernel_name):
 )
 def test_als_deep_dive_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_deep_dive"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name,
+                        parameters=dict(
+                            MOVIELENS_DATA_SIZE="mock100",
+                            COL_USER=DEFAULT_USER_COL,
+                            COL_ITEM=DEFAULT_ITEM_COL,
+                            COL_RATING=DEFAULT_RATING_COL,
+                        ))
 
 
 @pytest.mark.notebooks
@@ -52,7 +66,14 @@ def test_evaluation_runs(notebooks, output_notebook, kernel_name):
 @pytest.mark.spark
 def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["evaluation_diversity"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name,
+                        parameters=dict(
+                            TOP_K=10,
+                            MOVIELENS_DATA_SIZE="mock100",
+                            COL_USER=DEFAULT_USER_COL,
+                            COL_ITEM=DEFAULT_ITEM_COL,
+                            COL_RATING=DEFAULT_RATING_COL,
+                        ))
 
 
 # This is a flaky test that can fail unexpectedly
@@ -69,6 +90,7 @@ def test_spark_tuning(notebooks, output_notebook, kernel_name):
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
+            MOVIELENS_DATA_SIZE="mock100",
             NUMBER_CORES="*",
             NUMBER_ITERATIONS=3,
             SUBSET_RATIO=0.5,
