@@ -106,7 +106,7 @@ class RBM:
         # Seed
         self.seed = seed
         np.random.seed(self.seed)
-        tf.set_random_seed(self.seed)
+        tf.compat.v1.set_random_seed(self.seed)
 
     def time(self):
         """Time a particular section of the code - call this once to set the state somewhere
@@ -146,7 +146,7 @@ class RBM:
         """
 
         # sample from a Bernoulli distribution with same dimensions as input distribution
-        g = tf.convert_to_tensor(np.random.uniform(size=pr.shape[1]), dtype=tf.float32)
+        g = tf.convert_to_tensor(value=np.random.uniform(size=pr.shape[1]), dtype=tf.float32)
 
         # sample the value of the hidden units
         h_sampled = tf.nn.relu(tf.sign(pr - g))
@@ -178,12 +178,12 @@ class RBM:
         """
         g = np.random.uniform(size=pr.shape[2])  # sample from a uniform distribution
         f = tf.convert_to_tensor(
-            g / g.sum(), dtype=tf.float32
+            value=g / g.sum(), dtype=tf.float32
         )  # normalize and convert to tensor
 
         samp = tf.nn.relu(tf.sign(pr - f))  # apply rejection method
         v_samp = tf.cast(
-            tf.argmax(samp, axis=2) + 1, "float32"
+            tf.argmax(input=samp, axis=2) + 1, "float32"
         )  # select sampled element
 
         return v_samp
@@ -206,11 +206,11 @@ class RBM:
             for k in range(1, self.ratings + 1)
         ]
 
-        denominator = tf.reduce_sum(numerator, axis=0)
+        denominator = tf.reduce_sum(input_tensor=numerator, axis=0)
 
-        prob = tf.div(numerator, denominator)
+        prob = tf.compat.v1.div(numerator, denominator)
 
-        return tf.transpose(prob, perm=[1, 2, 0])
+        return tf.transpose(a=prob, perm=[1, 2, 0])
 
     def free_energy(self, x):
         """Free energy of the visible units given the hidden units. Since the sum is over the hidden units'
@@ -223,10 +223,10 @@ class RBM:
             tf.Tensor: Free energy of the model.
         """
 
-        bias = -tf.reduce_sum(tf.matmul(x, tf.transpose(self.bv)))
+        bias = -tf.reduce_sum(input_tensor=tf.matmul(x, tf.transpose(a=self.bv)))
 
         phi_x = tf.matmul(x, self.w) + self.bh
-        f = -tf.reduce_sum(tf.nn.softplus(phi_x))
+        f = -tf.reduce_sum(input_tensor=tf.nn.softplus(phi_x))
 
         F = bias + f  # free energy density per training example
 
@@ -234,7 +234,7 @@ class RBM:
 
     def placeholder(self):
         """Initialize the placeholders for the visible units"""
-        self.vu = tf.placeholder(shape=[None, self.Nvisible], dtype="float32")
+        self.vu = tf.compat.v1.placeholder(shape=[None, self.Nvisible], dtype="float32")
 
     def init_parameters(self):
         """Initialize the parameters of the model.
@@ -252,28 +252,28 @@ class RBM:
             - `bv` of size (1, Nvisible): visible units' bias, initialized to zero. 
             - `bh` of size (1, Nhidden): hidden units' bias, initiliazed to zero.
         """
-        with tf.variable_scope("Network_parameters"):
+        with tf.compat.v1.variable_scope("Network_parameters"):
 
-            self.w = tf.get_variable(
+            self.w = tf.compat.v1.get_variable(
                 "weight",
                 [self.Nvisible, self.Nhidden],
-                initializer=tf.random_normal_initializer(
+                initializer=tf.compat.v1.random_normal_initializer(
                     stddev=self.stdv, seed=self.seed
                 ),
                 dtype="float32",
             )
 
-            self.bv = tf.get_variable(
+            self.bv = tf.compat.v1.get_variable(
                 "v_bias",
                 [1, self.Nvisible],
-                initializer=tf.zeros_initializer(),
+                initializer=tf.compat.v1.zeros_initializer(),
                 dtype="float32",
             )
 
-            self.bh = tf.get_variable(
+            self.bh = tf.compat.v1.get_variable(
                 "h_bias",
                 [1, self.Nhidden],
-                initializer=tf.zeros_initializer(),
+                initializer=tf.compat.v1.zeros_initializer(),
                 dtype="float32",
             )
 
@@ -296,11 +296,11 @@ class RBM:
             - `h_`: The sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
         """
 
-        with tf.name_scope("sample_hidden_units"):
+        with tf.compat.v1.name_scope("sample_hidden_units"):
 
             phi_v = tf.matmul(vv, self.w) + self.bh  # create a linear combination
             phv = tf.nn.sigmoid(phi_v)  # conditional probability of h given v
-            phv_reg = tf.nn.dropout(phv, self.keep)
+            phv_reg = tf.nn.dropout(phv, 1 - (self.keep))
 
             # Sampling
             h_ = self.binomial_sampling(
@@ -334,9 +334,9 @@ class RBM:
             - `v_`: The sampled value of the visible unit from a Multinomial distributions having success probability `pvh`.
         """
 
-        with tf.name_scope("sample_visible_units"):
+        with tf.compat.v1.name_scope("sample_visible_units"):
 
-            phi_h = tf.matmul(h, tf.transpose(self.w)) + self.bv  # linear combination
+            phi_h = tf.matmul(h, tf.transpose(a=self.w)) + self.bv  # linear combination
             pvh = self.multinomial_distribution(
                 phi_h
             )  # conditional probability of v given h
@@ -348,7 +348,7 @@ class RBM:
 
             mask = tf.equal(self.v, 0)  # selects the inactive units in the input vector
 
-            v_ = tf.where(
+            v_ = tf.compat.v1.where(
                 mask, x=self.v, y=v_tmp
             )  # enforce inactive units in the reconstructed vector
 
@@ -369,7 +369,7 @@ class RBM:
             - `v_k`: The sampled value of the visible unit at step k, float32.
         """
 
-        with tf.name_scope("gibbs_sampling"):
+        with tf.compat.v1.name_scope("gibbs_sampling"):
 
             self.v_k = (
                 self.v
@@ -394,7 +394,7 @@ class RBM:
             - Objective function of Contrastive divergence: the difference between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
-        with tf.variable_scope("losses"):
+        with tf.compat.v1.variable_scope("losses"):
             obj = self.free_energy(vv) - self.free_energy(self.v_k)
 
         return obj
@@ -412,7 +412,7 @@ class RBM:
             i (int): Current epoch in the loop
         """
 
-        with tf.name_scope("gibbs_protocol"):
+        with tf.compat.v1.name_scope("gibbs_protocol"):
 
             epoch_percentage = (
                 i / self.epochs
@@ -449,15 +449,15 @@ class RBM:
             
         """
 
-        with tf.name_scope("accuracy"):
+        with tf.compat.v1.name_scope("accuracy"):
 
             # 1) define and apply the mask
             mask = tf.not_equal(self.v, 0)
-            n_values = tf.reduce_sum(tf.cast(mask, "float32"), axis=1)
+            n_values = tf.reduce_sum(input_tensor=tf.cast(mask, "float32"), axis=1)
 
             # 2) Take the difference between the input data and the inferred ones. This value is zero whenever
             #    the two values coincides
-            vd = tf.where(
+            vd = tf.compat.v1.where(
                 mask, x=tf.abs(tf.subtract(self.v, vp)), y=tf.ones_like(self.v)
             )
 
@@ -465,7 +465,7 @@ class RBM:
             corr = tf.cast(tf.equal(vd, 0), "float32")
 
             # 3) evaluate the accuracy
-            ac_score = tf.reduce_mean(tf.div(tf.reduce_sum(corr, axis=1), n_values))
+            ac_score = tf.reduce_mean(input_tensor=tf.compat.v1.div(tf.reduce_sum(input_tensor=corr, axis=1), n_values))
 
         return ac_score
 
@@ -482,21 +482,21 @@ class RBM:
 
         """
 
-        with tf.name_scope("re"):
+        with tf.compat.v1.name_scope("re"):
 
             mask = tf.not_equal(self.v, 0)  # selects only the rated items
             n_values = tf.reduce_sum(
-                tf.cast(mask, "float32"), axis=1
+                input_tensor=tf.cast(mask, "float32"), axis=1
             )  # number of rated items
 
             # evaluate the square difference between the inferred and the input data on the rated items
-            e = tf.where(
-                mask, x=tf.squared_difference(self.v, vp), y=tf.zeros_like(self.v)
+            e = tf.compat.v1.where(
+                mask, x=tf.math.squared_difference(self.v, vp), y=tf.zeros_like(self.v)
             )
 
             # evaluate the msre
             err = tf.sqrt(
-                tf.reduce_mean(tf.div(tf.reduce_sum(e, axis=1), n_values)) / 2
+                tf.reduce_mean(input_tensor=tf.compat.v1.div(tf.reduce_sum(input_tensor=e, axis=1), n_values)) / 2
             )
 
         return err
@@ -505,7 +505,7 @@ class RBM:
         """Define the data pipeline"""
 
         # placeholder for the batch_size
-        self.batch_size = tf.placeholder(tf.int64)
+        self.batch_size = tf.compat.v1.placeholder(tf.int64)
 
         # Create the data pipeline for faster training
         self.dataset = tf.data.Dataset.from_tensor_slices(self.vu)
@@ -517,7 +517,7 @@ class RBM:
         self.dataset = self.dataset.batch(batch_size=self.batch_size).repeat()
 
         # define iterator
-        self.iter = self.dataset.make_initializable_iterator()
+        self.iter = tf.compat.v1.data.make_initializable_iterator(self.dataset)
         self.v = self.iter.get_next()
 
     def init_metrics(self):
@@ -605,7 +605,7 @@ class RBM:
     def init_gpu(self):
         """Config GPU memory"""
 
-        self.config_gpu = tf.ConfigProto(
+        self.config_gpu = tf.compat.v1.ConfigProto(
             log_device_placement=True, allow_soft_placement=True
         )
         self.config_gpu.gpu_options.allow_growth = True  # dynamic memory allocation
@@ -617,10 +617,10 @@ class RBM:
             xtr (numpy.ndarray, int32): The user/affinity matrix for the train set.
         """
 
-        init_graph = tf.global_variables_initializer()
+        init_graph = tf.compat.v1.global_variables_initializer()
 
         # Start TF training session on default graph
-        self.sess = tf.Session(config=self.config_gpu)
+        self.sess = tf.compat.v1.Session(config=self.config_gpu)
         self.sess.run(init_graph)
 
         self.sess.run(
@@ -685,7 +685,7 @@ class RBM:
         m, self.Nvisible = xtr.shape  # m= # users, Nvisible= # items
         num_minibatches = int(m / self.minibatch)  # number of minibatches
 
-        tf.reset_default_graph()
+        tf.compat.v1.reset_default_graph()
 
         # ----------------------Initializers-------------------------------------
         self.generate_graph()
@@ -724,7 +724,7 @@ class RBM:
 
         # sample v
         phi_h = (
-            tf.transpose(tf.matmul(self.w, tf.transpose(h))) + self.bv
+            tf.transpose(a=tf.matmul(self.w, tf.transpose(a=h))) + self.bv
         )  # linear combination
         pvh = self.multinomial_distribution(
             phi_h

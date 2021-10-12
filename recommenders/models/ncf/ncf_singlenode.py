@@ -156,10 +156,10 @@ class NCF:
 
             # get user embedding p and item embedding q
             self.gmf_p = tf.reduce_sum(
-                tf.nn.embedding_lookup(self.embedding_gmf_P, self.user_input), 1
+                input_tensor=tf.nn.embedding_lookup(params=self.embedding_gmf_P, ids=self.user_input), axis=1
             )
             self.gmf_q = tf.reduce_sum(
-                tf.nn.embedding_lookup(self.embedding_gmf_Q, self.item_input), 1
+                input_tensor=tf.nn.embedding_lookup(params=self.embedding_gmf_Q, ids=self.item_input), axis=1
             )
 
             # get gmf vector
@@ -169,10 +169,10 @@ class NCF:
 
             # get user embedding p and item embedding q
             self.mlp_p = tf.reduce_sum(
-                tf.nn.embedding_lookup(self.embedding_mlp_P, self.user_input), 1
+                input_tensor=tf.nn.embedding_lookup(params=self.embedding_mlp_P, ids=self.user_input), axis=1
             )
             self.mlp_q = tf.reduce_sum(
-                tf.nn.embedding_lookup(self.embedding_mlp_Q, self.item_input), 1
+                input_tensor=tf.nn.embedding_lookup(params=self.embedding_mlp_Q, ids=self.item_input), axis=1
             )
 
             # concatenate user and item vector
@@ -184,8 +184,8 @@ class NCF:
                     output,
                     num_outputs=layer_size,
                     activation_fn=tf.nn.relu,
-                    weights_initializer=tf.contrib.layers.xavier_initializer(
-                        seed=self.seed
+                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
                     ),
                 )
             self.mlp_vector = output
@@ -201,8 +201,8 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
-                    weights_initializer=tf.contrib.layers.xavier_initializer(
-                        seed=self.seed
+                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
                     ),
                 )
                 self.output = tf.sigmoid(output)
@@ -214,8 +214,8 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
-                    weights_initializer=tf.contrib.layers.xavier_initializer(
-                        seed=self.seed
+                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
                     ),
                 )
                 self.output = tf.sigmoid(output)
@@ -229,8 +229,8 @@ class NCF:
                     num_outputs=1,
                     activation_fn=None,
                     biases_initializer=None,
-                    weights_initializer=tf.contrib.layers.xavier_initializer(
-                        seed=self.seed
+                    weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
                     ),
                 )
                 self.output = tf.sigmoid(output)
@@ -326,17 +326,17 @@ class NCF:
         saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
 
         # concat pretrain h_from_gmf and h_from_mlp
-        vars_list = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope="ncf")
+        vars_list = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="ncf")
 
         assert len(vars_list) == 1
         ncf_fc = vars_list[0]
 
         # get weight from gmf and mlp
-        gmf_fc = tf.contrib.framework.load_variable(gmf_dir, ncf_fc.name)
-        mlp_fc = tf.contrib.framework.load_variable(mlp_dir, ncf_fc.name)
+        gmf_fc = tf.train.load_variable(gmf_dir, ncf_fc.name)
+        mlp_fc = tf.train.load_variable(mlp_dir, ncf_fc.name)
 
         # load fc layer by tf.concat
-        assign_op = tf.assign(
+        assign_op = tf.compat.v1.assign(
             ncf_fc, tf.concat([alpha * gmf_fc, (1 - alpha) * mlp_fc], axis=0)
         )
         self.sess.run(assign_op)

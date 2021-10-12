@@ -31,9 +31,9 @@ class XDeepFMModel(BaseModel):
         self.keep_prob_train = 1 - np.array(hparams.dropout)
         self.keep_prob_test = np.ones_like(hparams.dropout)
 
-        with tf.variable_scope("XDeepFM") as scope:
-            with tf.variable_scope("embedding", initializer=self.initializer) as escope:
-                self.embedding = tf.get_variable(
+        with tf.compat.v1.variable_scope("XDeepFM") as scope:
+            with tf.compat.v1.variable_scope("embedding", initializer=self.initializer) as escope:
+                self.embedding = tf.compat.v1.get_variable(
                     name="embedding_layer",
                     shape=[hparams.FEATURE_COUNT, hparams.dim],
                     dtype=tf.float32,
@@ -88,7 +88,7 @@ class XDeepFMModel(BaseModel):
             self.iterator.dnn_feat_shape,
         )
         w_fm_nn_input_orgin = tf.nn.embedding_lookup_sparse(
-            self.embedding, fm_sparse_index, fm_sparse_weight, combiner="sum"
+            params=self.embedding, sp_ids=fm_sparse_index, sp_weights=fm_sparse_weight, combiner="sum"
         )
         embedding = tf.reshape(
             w_fm_nn_input_orgin, [-1, hparams.dim * hparams.FIELD_COUNT]
@@ -103,26 +103,26 @@ class XDeepFMModel(BaseModel):
         Returns:
             object: Prediction score made by linear regression.
         """
-        with tf.variable_scope("linear_part", initializer=self.initializer) as scope:
-            w = tf.get_variable(
+        with tf.compat.v1.variable_scope("linear_part", initializer=self.initializer) as scope:
+            w = tf.compat.v1.get_variable(
                 name="w", shape=[self.hparams.FEATURE_COUNT, 1], dtype=tf.float32
             )
-            b = tf.get_variable(
+            b = tf.compat.v1.get_variable(
                 name="b",
                 shape=[1],
                 dtype=tf.float32,
-                initializer=tf.zeros_initializer(),
+                initializer=tf.compat.v1.zeros_initializer(),
             )
             x = tf.SparseTensor(
                 self.iterator.fm_feat_indices,
                 self.iterator.fm_feat_values,
                 self.iterator.fm_feat_shape,
             )
-            linear_output = tf.add(tf.sparse_tensor_dense_matmul(x, w), b)
+            linear_output = tf.add(tf.sparse.sparse_dense_matmul(x, w), b)
             self.layer_params.append(w)
             self.layer_params.append(b)
-            tf.summary.histogram("linear_part/w", w)
-            tf.summary.histogram("linear_part/b", b)
+            tf.compat.v1.summary.histogram("linear_part/w", w)
+            tf.compat.v1.summary.histogram("linear_part/b", b)
             return linear_output
 
     def _build_fm(self):
@@ -132,7 +132,7 @@ class XDeepFMModel(BaseModel):
         Returns:
             object: Prediction score made by factorization machine.
         """
-        with tf.variable_scope("fm_part") as scope:
+        with tf.compat.v1.variable_scope("fm_part") as scope:
             x = tf.SparseTensor(
                 self.iterator.fm_feat_indices,
                 self.iterator.fm_feat_values,
@@ -144,10 +144,10 @@ class XDeepFMModel(BaseModel):
                 self.iterator.fm_feat_shape,
             )
             fm_output = 0.5 * tf.reduce_sum(
-                tf.pow(tf.sparse_tensor_dense_matmul(x, self.embedding), 2)
-                - tf.sparse_tensor_dense_matmul(xx, tf.pow(self.embedding, 2)),
-                1,
-                keep_dims=True,
+                input_tensor=tf.pow(tf.sparse.sparse_dense_matmul(x, self.embedding), 2)
+                - tf.sparse.sparse_dense_matmul(xx, tf.pow(self.embedding, 2)),
+                axis=1,
+                keepdims=True,
             )
             return fm_output
 
@@ -178,7 +178,7 @@ class XDeepFMModel(BaseModel):
         hidden_nn_layers.append(nn_input)
         final_result = []
         split_tensor0 = tf.split(hidden_nn_layers[0], hparams.dim * [1], 2)
-        with tf.variable_scope("exfm_part", initializer=self.initializer) as scope:
+        with tf.compat.v1.variable_scope("exfm_part", initializer=self.initializer) as scope:
             for idx, layer_size in enumerate(hparams.cross_layer_sizes):
                 split_tensor = tf.split(hidden_nn_layers[-1], hparams.dim * [1], 2)
                 dot_result_m = tf.matmul(
@@ -188,9 +188,9 @@ class XDeepFMModel(BaseModel):
                     dot_result_m,
                     shape=[hparams.dim, -1, field_nums[0] * field_nums[-1]],
                 )  # shape: (D,B,FH)
-                dot_result = tf.transpose(dot_result_o, perm=[1, 0, 2])  # (B,D,FH)
+                dot_result = tf.transpose(a=dot_result_o, perm=[1, 0, 2])  # (B,D,FH)
 
-                filters = tf.get_variable(
+                filters = tf.compat.v1.get_variable(
                     name="f_" + str(idx),
                     shape=[1, field_nums[-1] * field_nums[0], layer_size],
                     dtype=tf.float32,
@@ -198,7 +198,7 @@ class XDeepFMModel(BaseModel):
 
                 if is_masked and idx == 0:
                     ones = tf.ones([field_nums[0], field_nums[0]], dtype=tf.float32)
-                    mask_matrix = tf.matrix_band_part(ones, 0, -1) - tf.diag(
+                    mask_matrix = tf.linalg.band_part(ones, 0, -1) - tf.linalg.tensor_diag(
                         tf.ones(field_nums[0])
                     )
                     mask_matrix = tf.reshape(
@@ -209,21 +209,21 @@ class XDeepFMModel(BaseModel):
                     self.dot_result = dot_result
 
                 curr_out = tf.nn.conv1d(
-                    dot_result, filters=filters, stride=1, padding="VALID"
+                    input=dot_result, filters=filters, stride=1, padding="VALID"
                 )  # shape : (B,D,H`)
 
                 if bias:
-                    b = tf.get_variable(
+                    b = tf.compat.v1.get_variable(
                         name="f_b" + str(idx),
                         shape=[layer_size],
                         dtype=tf.float32,
-                        initializer=tf.zeros_initializer(),
+                        initializer=tf.compat.v1.zeros_initializer(),
                     )
                     curr_out = tf.nn.bias_add(curr_out, b)
                     self.cross_params.append(b)
 
                 if hparams.enable_BN is True:
-                    curr_out = tf.layers.batch_normalization(
+                    curr_out = tf.compat.v1.layers.batch_normalization(
                         curr_out,
                         momentum=0.95,
                         epsilon=0.0001,
@@ -232,7 +232,7 @@ class XDeepFMModel(BaseModel):
 
                 curr_out = self._activate(curr_out, hparams.cross_activation)
 
-                curr_out = tf.transpose(curr_out, perm=[0, 2, 1])  # shape : (B,H,D)
+                curr_out = tf.transpose(a=curr_out, perm=[0, 2, 1])  # shape : (B,H,D)
 
                 if direct:
                     direct_connect = curr_out
@@ -258,25 +258,25 @@ class XDeepFMModel(BaseModel):
                 self.cross_params.append(filters)
 
             result = tf.concat(final_result, axis=1)
-            result = tf.reduce_sum(result, -1)  # shape : (B,H)
+            result = tf.reduce_sum(input_tensor=result, axis=-1)  # shape : (B,H)
 
             if res:
-                base_score = tf.reduce_sum(result, 1, keepdims=True)  # (B,1)
+                base_score = tf.reduce_sum(input_tensor=result, axis=1, keepdims=True)  # (B,1)
             else:
                 base_score = 0
 
-            w_nn_output = tf.get_variable(
+            w_nn_output = tf.compat.v1.get_variable(
                 name="w_nn_output", shape=[final_len, 1], dtype=tf.float32
             )
-            b_nn_output = tf.get_variable(
+            b_nn_output = tf.compat.v1.get_variable(
                 name="b_nn_output",
                 shape=[1],
                 dtype=tf.float32,
-                initializer=tf.zeros_initializer(),
+                initializer=tf.compat.v1.zeros_initializer(),
             )
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
-            exFM_out = base_score + tf.nn.xw_plus_b(result, w_nn_output, b_nn_output)
+            exFM_out = base_score + tf.compat.v1.nn.xw_plus_b(result, w_nn_output, b_nn_output)
             return exFM_out
 
     def _build_fast_CIN(self, nn_input, res=False, direct=False, bias=False):
@@ -304,14 +304,14 @@ class XDeepFMModel(BaseModel):
         nn_input = tf.reshape(
             nn_input, shape=[-1, int(field_num), hparams.dim]
         )  # (B,F,D)
-        nn_input = tf.transpose(nn_input, perm=[0, 2, 1])  # (B,D,F)
+        nn_input = tf.transpose(a=nn_input, perm=[0, 2, 1])  # (B,D,F)
         field_nums.append(int(field_num))
         hidden_nn_layers.append(nn_input)
         final_result = []
-        with tf.variable_scope("exfm_part", initializer=self.initializer) as scope:
+        with tf.compat.v1.variable_scope("exfm_part", initializer=self.initializer) as scope:
             for idx, layer_size in enumerate(hparams.cross_layer_sizes):
                 if idx == 0:
-                    fast_w = tf.get_variable(
+                    fast_w = tf.compat.v1.get_variable(
                         "fast_CIN_w_" + str(idx),
                         shape=[1, field_nums[0], fast_CIN_d * layer_size],
                         dtype=tf.float32,
@@ -319,10 +319,10 @@ class XDeepFMModel(BaseModel):
 
                     self.cross_params.append(fast_w)
                     dot_result_1 = tf.nn.conv1d(
-                        nn_input, filters=fast_w, stride=1, padding="VALID"
+                        input=nn_input, filters=fast_w, stride=1, padding="VALID"
                     )  # shape: (B,D,d*H)
                     dot_result_2 = tf.nn.conv1d(
-                        tf.pow(nn_input, 2),
+                        input=tf.pow(nn_input, 2),
                         filters=tf.pow(fast_w, 2),
                         stride=1,
                         padding="VALID",
@@ -332,15 +332,15 @@ class XDeepFMModel(BaseModel):
                         shape=[-1, hparams.dim, layer_size, fast_CIN_d],
                     )
                     curr_out = tf.reduce_sum(
-                        dot_result, 3, keepdims=False
+                        input_tensor=dot_result, axis=3, keepdims=False
                     )  # shape: ((B,D,H)
                 else:
-                    fast_w = tf.get_variable(
+                    fast_w = tf.compat.v1.get_variable(
                         "fast_CIN_w_" + str(idx),
                         shape=[1, field_nums[0], fast_CIN_d * layer_size],
                         dtype=tf.float32,
                     )
-                    fast_v = tf.get_variable(
+                    fast_v = tf.compat.v1.get_variable(
                         "fast_CIN_v_" + str(idx),
                         shape=[1, field_nums[-1], fast_CIN_d * layer_size],
                         dtype=tf.float32,
@@ -350,31 +350,31 @@ class XDeepFMModel(BaseModel):
                     self.cross_params.append(fast_v)
 
                     dot_result_1 = tf.nn.conv1d(
-                        nn_input, filters=fast_w, stride=1, padding="VALID"
+                        input=nn_input, filters=fast_w, stride=1, padding="VALID"
                     )  # shape: ((B,D,d*H)
                     dot_result_2 = tf.nn.conv1d(
-                        hidden_nn_layers[-1], filters=fast_v, stride=1, padding="VALID"
+                        input=hidden_nn_layers[-1], filters=fast_v, stride=1, padding="VALID"
                     )  # shape: ((B,D,d*H)
                     dot_result = tf.reshape(
                         tf.multiply(dot_result_1, dot_result_2),
                         shape=[-1, hparams.dim, layer_size, fast_CIN_d],
                     )
                     curr_out = tf.reduce_sum(
-                        dot_result, 3, keepdims=False
+                        input_tensor=dot_result, axis=3, keepdims=False
                     )  # shape: ((B,D,H)
 
                 if bias:
-                    b = tf.get_variable(
+                    b = tf.compat.v1.get_variable(
                         name="f_b" + str(idx),
                         shape=[1, 1, layer_size],
                         dtype=tf.float32,
-                        initializer=tf.zeros_initializer(),
+                        initializer=tf.compat.v1.zeros_initializer(),
                     )
                     curr_out = tf.nn.bias_add(curr_out, b)
                     self.cross_params.append(b)
 
                 if hparams.enable_BN is True:
-                    curr_out = tf.layers.batch_normalization(
+                    curr_out = tf.compat.v1.layers.batch_normalization(
                         curr_out,
                         momentum=0.95,
                         epsilon=0.0001,
@@ -406,25 +406,25 @@ class XDeepFMModel(BaseModel):
                 hidden_nn_layers.append(next_hidden)
 
             result = tf.concat(final_result, axis=2)
-            result = tf.reduce_sum(result, 1, keepdims=False)  # (B,H)
+            result = tf.reduce_sum(input_tensor=result, axis=1, keepdims=False)  # (B,H)
 
             if res:
-                base_score = tf.reduce_sum(result, 1, keepdims=True)  # (B,1)
+                base_score = tf.reduce_sum(input_tensor=result, axis=1, keepdims=True)  # (B,1)
             else:
                 base_score = 0
 
-            w_nn_output = tf.get_variable(
+            w_nn_output = tf.compat.v1.get_variable(
                 name="w_nn_output", shape=[final_len, 1], dtype=tf.float32
             )
-            b_nn_output = tf.get_variable(
+            b_nn_output = tf.compat.v1.get_variable(
                 name="b_nn_output",
                 shape=[1],
                 dtype=tf.float32,
-                initializer=tf.zeros_initializer(),
+                initializer=tf.compat.v1.zeros_initializer(),
             )
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
-            exFM_out = tf.nn.xw_plus_b(result, w_nn_output, b_nn_output) + base_score
+            exFM_out = tf.compat.v1.nn.xw_plus_b(result, w_nn_output, b_nn_output) + base_score
 
         return exFM_out
 
@@ -445,33 +445,33 @@ class XDeepFMModel(BaseModel):
         layer_idx = 0
         hidden_nn_layers = []
         hidden_nn_layers.append(w_fm_nn_input)
-        with tf.variable_scope("nn_part", initializer=self.initializer) as scope:
+        with tf.compat.v1.variable_scope("nn_part", initializer=self.initializer) as scope:
             for idx, layer_size in enumerate(hparams.layer_sizes):
-                curr_w_nn_layer = tf.get_variable(
+                curr_w_nn_layer = tf.compat.v1.get_variable(
                     name="w_nn_layer" + str(layer_idx),
                     shape=[last_layer_size, layer_size],
                     dtype=tf.float32,
                 )
-                curr_b_nn_layer = tf.get_variable(
+                curr_b_nn_layer = tf.compat.v1.get_variable(
                     name="b_nn_layer" + str(layer_idx),
                     shape=[layer_size],
                     dtype=tf.float32,
-                    initializer=tf.zeros_initializer(),
+                    initializer=tf.compat.v1.zeros_initializer(),
                 )
-                tf.summary.histogram(
+                tf.compat.v1.summary.histogram(
                     "nn_part/" + "w_nn_layer" + str(layer_idx), curr_w_nn_layer
                 )
-                tf.summary.histogram(
+                tf.compat.v1.summary.histogram(
                     "nn_part/" + "b_nn_layer" + str(layer_idx), curr_b_nn_layer
                 )
-                curr_hidden_nn_layer = tf.nn.xw_plus_b(
+                curr_hidden_nn_layer = tf.compat.v1.nn.xw_plus_b(
                     hidden_nn_layers[layer_idx], curr_w_nn_layer, curr_b_nn_layer
                 )
                 scope = "nn_part" + str(idx)
                 activation = hparams.activation[idx]
 
                 if hparams.enable_BN is True:
-                    curr_hidden_nn_layer = tf.layers.batch_normalization(
+                    curr_hidden_nn_layer = tf.compat.v1.layers.batch_normalization(
                         curr_hidden_nn_layer,
                         momentum=0.95,
                         epsilon=0.0001,
@@ -487,22 +487,22 @@ class XDeepFMModel(BaseModel):
                 self.layer_params.append(curr_w_nn_layer)
                 self.layer_params.append(curr_b_nn_layer)
 
-            w_nn_output = tf.get_variable(
+            w_nn_output = tf.compat.v1.get_variable(
                 name="w_nn_output", shape=[last_layer_size, 1], dtype=tf.float32
             )
-            b_nn_output = tf.get_variable(
+            b_nn_output = tf.compat.v1.get_variable(
                 name="b_nn_output",
                 shape=[1],
                 dtype=tf.float32,
-                initializer=tf.zeros_initializer(),
+                initializer=tf.compat.v1.zeros_initializer(),
             )
-            tf.summary.histogram(
+            tf.compat.v1.summary.histogram(
                 "nn_part/" + "w_nn_output" + str(layer_idx), w_nn_output
             )
-            tf.summary.histogram(
+            tf.compat.v1.summary.histogram(
                 "nn_part/" + "b_nn_output" + str(layer_idx), b_nn_output
             )
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
-            nn_output = tf.nn.xw_plus_b(hidden_nn_layers[-1], w_nn_output, b_nn_output)
+            nn_output = tf.compat.v1.nn.xw_plus_b(hidden_nn_layers[-1], w_nn_output, b_nn_output)
             return nn_output

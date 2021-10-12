@@ -287,8 +287,8 @@ class Mult_VAE:
         self.h = Dense(
             self.intermediate_dim,
             activation="tanh",
-            kernel_initializer=tf.keras.initializers.glorot_uniform(seed=self.seed),
-            bias_initializer=tf.keras.initializers.truncated_normal(
+            kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(seed=self.seed),
+            bias_initializer=tf.compat.v1.keras.initializers.truncated_normal(
                 stddev=0.001, seed=self.seed
             ),
         )(self.dropout_encoder)
@@ -304,8 +304,8 @@ class Mult_VAE:
         self.h_decoder = Dense(
             self.intermediate_dim,
             activation="tanh",
-            kernel_initializer=tf.keras.initializers.glorot_uniform(seed=self.seed),
-            bias_initializer=tf.keras.initializers.truncated_normal(
+            kernel_initializer=tf.compat.v1.keras.initializers.glorot_uniform(seed=self.seed),
+            bias_initializer=tf.compat.v1.keras.initializers.truncated_normal(
                 stddev=0.001, seed=self.seed
             ),
         )
@@ -325,7 +325,7 @@ class Mult_VAE:
     def _get_vae_loss(self, x, x_bar):
         """Calculate negative ELBO (NELBO)."""
         log_softmax_var = tf.nn.log_softmax(x_bar)
-        self.neg_ll = -tf.reduce_mean(tf.reduce_sum(log_softmax_var * x, axis=-1))
+        self.neg_ll = -tf.reduce_mean(input_tensor=tf.reduce_sum(input_tensor=log_softmax_var * x, axis=-1))
         a = tf.keras.backend.print_tensor(self.neg_ll)
         # calculate positive Kullback–Leibler divergence  divergence term
         kl_loss = K.mean(

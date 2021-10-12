@@ -43,27 +43,27 @@ class SequentialIterator(BaseIterator):
 
         self.graph = graph
         with self.graph.as_default():
-            self.labels = tf.placeholder(tf.float32, [None, 1], name="label")
-            self.users = tf.placeholder(tf.int32, [None], name="users")
-            self.items = tf.placeholder(tf.int32, [None], name="items")
-            self.cates = tf.placeholder(tf.int32, [None], name="cates")
-            self.item_history = tf.placeholder(
+            self.labels = tf.compat.v1.placeholder(tf.float32, [None, 1], name="label")
+            self.users = tf.compat.v1.placeholder(tf.int32, [None], name="users")
+            self.items = tf.compat.v1.placeholder(tf.int32, [None], name="items")
+            self.cates = tf.compat.v1.placeholder(tf.int32, [None], name="cates")
+            self.item_history = tf.compat.v1.placeholder(
                 tf.int32, [None, self.max_seq_length], name="item_history"
             )
-            self.item_cate_history = tf.placeholder(
+            self.item_cate_history = tf.compat.v1.placeholder(
                 tf.int32, [None, self.max_seq_length], name="item_cate_history"
             )
-            self.mask = tf.placeholder(
+            self.mask = tf.compat.v1.placeholder(
                 tf.int32, [None, self.max_seq_length], name="mask"
             )
-            self.time = tf.placeholder(tf.float32, [None], name="time")
-            self.time_diff = tf.placeholder(
+            self.time = tf.compat.v1.placeholder(tf.float32, [None], name="time")
+            self.time_diff = tf.compat.v1.placeholder(
                 tf.float32, [None, self.max_seq_length], name="time_diff"
             )
-            self.time_from_first_action = tf.placeholder(
+            self.time_from_first_action = tf.compat.v1.placeholder(
                 tf.float32, [None, self.max_seq_length], name="time_from_first_action"
             )
-            self.time_to_now = tf.placeholder(
+            self.time_to_now = tf.compat.v1.placeholder(
                 tf.float32, [None, self.max_seq_length], name="time_to_now"
             )
 

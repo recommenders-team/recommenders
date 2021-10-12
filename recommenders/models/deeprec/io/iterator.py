@@ -64,24 +64,24 @@ class FFMTextIterator(BaseIterator):
 
         self.graph = graph
         with self.graph.as_default():
-            self.labels = tf.placeholder(tf.float32, [None, 1], name="label")
-            self.fm_feat_indices = tf.placeholder(
+            self.labels = tf.compat.v1.placeholder(tf.float32, [None, 1], name="label")
+            self.fm_feat_indices = tf.compat.v1.placeholder(
                 tf.int64, [None, 2], name="fm_feat_indices"
             )
-            self.fm_feat_values = tf.placeholder(
+            self.fm_feat_values = tf.compat.v1.placeholder(
                 tf.float32, [None], name="fm_feat_values"
             )
-            self.fm_feat_shape = tf.placeholder(tf.int64, [None], name="fm_feat_shape")
-            self.dnn_feat_indices = tf.placeholder(
+            self.fm_feat_shape = tf.compat.v1.placeholder(tf.int64, [None], name="fm_feat_shape")
+            self.dnn_feat_indices = tf.compat.v1.placeholder(
                 tf.int64, [None, 2], name="dnn_feat_indices"
             )
-            self.dnn_feat_values = tf.placeholder(
+            self.dnn_feat_values = tf.compat.v1.placeholder(
                 tf.int64, [None], name="dnn_feat_values"
             )
-            self.dnn_feat_weights = tf.placeholder(
+            self.dnn_feat_weights = tf.compat.v1.placeholder(
                 tf.float32, [None], name="dnn_feat_weights"
             )
-            self.dnn_feat_shape = tf.placeholder(
+            self.dnn_feat_shape = tf.compat.v1.placeholder(
                 tf.int64, [None], name="dnn_feat_shape"
             )
 
@@ -127,7 +127,7 @@ class FFMTextIterator(BaseIterator):
         impression_id_list = []
         cnt = 0
 
-        with tf.gfile.GFile(infile, "r") as rd:
+        with tf.io.gfile.GFile(infile, "r") as rd:
             for line in rd:
                 label, features, impression_id = self.parser_one_line(line)
 
