@@ -184,8 +184,8 @@ def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
         tf.estimator.ModeKeys.EVAL: eval_rcvr_fn,
         tf.estimator.ModeKeys.PREDICT: serve_rcvr_fn,
     }
-    exported_path = tf.contrib.estimator.export_all_saved_models(
-        model, export_dir_base=base_dir, input_receiver_fn_map=rcvr_fn_map
+    exported_path = model.experimental_export_all_saved_models(
+        export_dir_base=base_dir, input_receiver_fn_map=rcvr_fn_map
     )
 
     return exported_path.decode("utf-8")

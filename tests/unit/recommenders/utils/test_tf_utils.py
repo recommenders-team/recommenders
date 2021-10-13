@@ -61,6 +61,7 @@ def pd_df():
 def test_pandas_input_fn(pd_df):
     df, _, _ = pd_df
 
+    tf.compat.v1.disable_eager_execution() # need to disable eager in TF2.x
     # check dataset
     dataset = pandas_input_fn(df)()
     batch = tf.compat.v1.data.make_one_shot_iterator(dataset).get_next()
@@ -208,22 +209,22 @@ def test_pandas_input_fn_for_saved_model(pd_df, tmp):
         tf_feat_cols=deep_columns,
         base_dir=export_dir,
     )
-    saved_model = tf.contrib.estimator.SavedModelEstimator(exported_path)
+    saved_model = tf.saved_model.load(exported_path, tags="serve")
 
     # Test pandas_input_fn_for_saved_model with the saved model
     test = data.drop(DEFAULT_RATING_COL, axis=1)
     test.reset_index(drop=True, inplace=True)
     list(
         itertools.islice(
-            saved_model.predict(
-                pandas_input_fn_for_saved_model(
+            saved_model.signatures["predict"](
+                examples=pandas_input_fn_for_saved_model(
                     df=test,
                     feat_name_type={
                         DEFAULT_USER_COL: int,
                         DEFAULT_ITEM_COL: int,
                         ITEM_FEAT_COL: list,
                     },
-                )
+                )()["inputs"]
             ),
             len(test),
         )
