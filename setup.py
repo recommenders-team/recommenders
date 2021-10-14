@@ -85,6 +85,7 @@ extras_require = {
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
+        "pytest-rerunfailures>=10.2",  # to mark flaky tests
     ],
 }
 # for the brave of heart

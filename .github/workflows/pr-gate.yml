@@ -48,6 +48,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 2
+
     - name: Setup Python
       uses: actions/setup-python@v2
       with:
@@ -63,6 +66,18 @@ jobs:
       continue-on-error: true
       run: |
        tox -e flake8
+    
+    - name: Detect changes in 'setup.py'
+      id: setup-dot-py-changes
+      uses: tj-actions/changed-files@v10
+      with:
+        files: setup.py
+
+    - name: Raise notice for changes in 'setup.py'
+      # Throws a notice for new release if there are changes in 'setup.py'
+      if: steps.setup-dot-py-changes.outputs.any_changed == 'true'
+      run:
+        echo "::notice file=setup.py,line=1,title=A new release may be needed::Changes detected in 'setup.py'. Please examine if a new release on PyPI is needed."
 
 ###############################################
 ################## CPU-BUILD ##################
@@ -209,6 +224,7 @@ jobs:
       - name: Upload code coverage report to CodeCov
         uses: codecov/codecov-action@v2.0.2
         with:
+          flags: pr-gate
           fail_ci_if_error: true
           # comes from the last 'Merge coverage reports' step
           files: ./coverage.xml
