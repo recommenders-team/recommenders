@@ -64,7 +64,7 @@ If using venv or virtualenv, see [these instructions](#using-a-virtual-environme
 
 **NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
 
-**NOTE** Spark requires Java version 8 or 11. We support Spark version 3, but versions 2.4+ with Java version 8 may also work. 
+**NOTE** We now support Spark version 3 by default, which requires Java version 11.
 
 <details> 
 <summary><strong><em>Install Java on MacOS</em></strong></summary>
@@ -151,7 +151,7 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 
 It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
 recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) and running the virtual environment within a container, as the most convenient way to do this.  
-In the following `3.6` should be replaced with the Python version you are using and `11` should be replaced with the appropriate Java version. 
+In the following, `3.6` should be replaced with the Python version you are using. For users of Spark2, `11` should be replace with Java `8` and `pip install recommenders[all]==0.6.0` instead. 
 
     # Start docker daemon if not running
     sudo dockerd &
