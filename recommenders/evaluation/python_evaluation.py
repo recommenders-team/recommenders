@@ -697,6 +697,7 @@ metrics = {
     map_at_k.__name__: map_at_k,
 }
 
+
 # diversity metrics
 def _check_column_dtypes_diversity_serendipity(func):
     """Checks columns of DataFrame inputs

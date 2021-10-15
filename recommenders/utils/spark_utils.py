@@ -15,6 +15,7 @@ MMLSPARK_REPO = "https://mmlspark.azureedge.net/maven"
 # MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark_2.11:0.18.1"
 # MMLSPARK_REPO = "https://mvnrepository.com/artifact"
 
+
 def start_or_get_spark(
     app_name="Sample",
     url="local[*]",
