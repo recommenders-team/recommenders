@@ -62,12 +62,10 @@ class IMCProblem(object):
                             )
         ])
 
-
     def _loadTarget(self, ):
         """Loads target matrix from the dataset pointer.
         """
         self.Y = self.dataset.get_data()
-
 
     @staticmethod
     @njit(nogil=True, parallel=True)
@@ -82,7 +80,6 @@ class IMCProblem(object):
                     num += a[i, k] * b[k, indices[j]]
                 residual_global[j] = num - cd[j]
         return residual_global
-
 
     def _cost(self, params, residual_global):
         """Compute the cost of GeoIMC optimization problem
@@ -109,7 +106,6 @@ class IMCProblem(object):
         cost = 0.5 * np.sum((residual_global)**2)/self.nSamples + regularizer
 
         return cost
-
 
     def _egrad(self, params, residual_global):
         """Computes the euclidean gradient
@@ -150,7 +146,6 @@ class IMCProblem(object):
             gradV
         ]
 
-
     def solve(self, *args):
         """ Main solver of the IMC model
 
@@ -166,7 +161,6 @@ class IMCProblem(object):
 
         self.optima_reached = True
         return
-
 
     def _optimize(self, max_opt_time, max_opt_iter, verbosity):
         """Optimize the GeoIMC optimization problem
@@ -192,7 +186,6 @@ class IMCProblem(object):
         self.W = [solution[0], solution[1], solution[2]]
 
         return self._cost(self.W, residual_global)
-
 
     def reset(self):
         """Reset the model.

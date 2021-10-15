@@ -282,7 +282,6 @@ if __name__ == "__main__":
         )
         sys.exit()
 
-
     # install prerequisites
     print(
         "Installing required Python libraries onto databricks cluster {}".format(
