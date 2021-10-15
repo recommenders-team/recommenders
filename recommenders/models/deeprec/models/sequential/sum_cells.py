@@ -8,9 +8,7 @@ from tensorflow.python.keras import activations
 from tensorflow.python.keras import initializers
 from tensorflow.python.keras.utils import tf_utils
 from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import variable_scope as vs
 from tensorflow.python.platform import tf_logging as logging
-from tensorflow.python.util.deprecation import deprecated
 from tensorflow.contrib.rnn import LayerRNNCell
 from tensorflow.python.ops import init_ops
 from tensorflow.python.framework import dtypes

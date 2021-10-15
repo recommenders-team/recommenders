@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 from timeit import default_timer
-from datetime import timedelta
 
 
 class Timer(object):

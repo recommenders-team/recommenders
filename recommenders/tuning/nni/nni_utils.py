@@ -8,7 +8,6 @@ import requests
 import subprocess
 import sys
 import time
-import pandas as pd
 
 
 NNI_REST_ENDPOINT = "http://localhost:8080/api/v1/nni"

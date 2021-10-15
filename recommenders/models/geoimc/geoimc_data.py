@@ -1,16 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import warnings
 import logging
-from scipy.io import loadmat
 import pandas as pd
 import numpy as np
 from scipy.sparse import coo_matrix, isspmatrix_csr
 from sklearn.model_selection import train_test_split
-from sklearn import datasets
 from sklearn.preprocessing import normalize
-from numba import jit, prange
 
 from recommenders.utils.python_utils import binarize
 from .geoimc_utils import length_normalize, reduce_dims

@@ -2,17 +2,15 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from recommenders.evaluation.python_evaluation import ndcg_at_k
 
 import tensorflow as tf
-import bottleneck as bn
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
 from tensorflow.keras import backend as K
-from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
+from tensorflow.keras.callbacks import ReduceLROnPlateau, Callback
 
 
 class LossHistory(Callback):

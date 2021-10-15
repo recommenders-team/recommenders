@@ -5,15 +5,12 @@
 Module maintaining the IMC problem.
 """
 
-import os
-import itertools
-from collections import Counter, OrderedDict
 import numpy as np
-from sklearn.cluster import KMeans
-from scipy.sparse import coo_matrix, csr_matrix, isspmatrix_csr
-from numba import njit, jit, prange
+
+from scipy.sparse import csr_matrix
+from numba import njit, prange
 from pymanopt import Problem
-from pymanopt.manifolds import Stiefel, Product, PositiveDefinite, Euclidean
+from pymanopt.manifolds import Stiefel, Product, PositiveDefinite
 from pymanopt.solvers import ConjugateGradient
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 

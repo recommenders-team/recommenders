@@ -6,7 +6,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from transformers import BertTokenizer
 import re
-import string
 import unicodedata
 import pandas as pd
 import numpy as np

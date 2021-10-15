@@ -5,7 +5,7 @@ import os
 
 
 try:
-    from pyspark.sql import SparkSession
+    from pyspark.sql import SparkSession  # noqa: F401
 except ImportError:
     pass  # skip this import if we are in pure python environment
 

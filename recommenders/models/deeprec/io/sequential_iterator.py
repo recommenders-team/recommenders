@@ -3,11 +3,7 @@
 
 import tensorflow as tf
 import numpy as np
-import json
-import pickle as pkl
 import random
-import os
-import time
 
 from recommenders.models.deeprec.io.iterator import BaseIterator
 from recommenders.models.deeprec.deeprec_utils import load_dict

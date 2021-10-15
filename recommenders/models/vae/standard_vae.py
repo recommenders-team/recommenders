@@ -2,16 +2,14 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import bottleneck as bn
 import tensorflow as tf
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
 from tensorflow.keras.losses import binary_crossentropy
 from tensorflow.keras import backend as K
-from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
+from tensorflow.keras.callbacks import ReduceLROnPlateau, Callback
 
 from recommenders.evaluation.python_evaluation import ndcg_at_k
 

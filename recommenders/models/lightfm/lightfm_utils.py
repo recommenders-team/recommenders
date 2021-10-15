@@ -3,10 +3,8 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
 
-import lightfm
 from lightfm.evaluation import precision_at_k, recall_at_k
 
 

@@ -3,7 +3,6 @@
 
 import logging
 import numpy as np
-import pandas as pd
 import category_encoders as ce
 from tqdm import tqdm
 import collections

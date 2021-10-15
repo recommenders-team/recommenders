@@ -13,7 +13,6 @@ from sklearn.metrics import (
 import numpy as np
 import yaml
 import zipfile
-import json
 import pickle as pkl
 import tensorflow as tf
 
