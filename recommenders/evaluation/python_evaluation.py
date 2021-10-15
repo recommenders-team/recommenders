@@ -733,18 +733,20 @@ def _check_column_dtypes_diversity_serendipity(func):
         """Check columns of DataFrame inputs
 
         Args:
-          train_df (pandas.DataFrame): Data set with historical data for users and items they
-              have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
-          reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
-              col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-          item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-          item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
-          col_item_features (str): item feature column name.
-          col_user (str): User id column name.
-          col_item (str): Item id column name.
-          col_sim (str): This column indicates the column name for item similarity.
-          col_relevance (str): This column indicates whether the recommended item is actually
-              relevant to the user or not.
+            train_df (pandas.DataFrame): Data set with historical data for users and items they
+                have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
+            reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
+                col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
+            item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'.
+                It contains two columns: col_item and features (a feature vector).
+            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.
+                Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+            col_item_features (str): item feature column name.
+            col_user (str): User id column name.
+            col_item (str): Item id column name.
+            col_sim (str): This column indicates the column name for item similarity.
+            col_relevance (str): This column indicates whether the recommended item is actually
+                relevant to the user or not.
         """
 
         if not has_columns(train_df, [col_user, col_item]):
@@ -770,7 +772,9 @@ def _check_column_dtypes_diversity_serendipity(func):
                     raise ValueError("Missing columns in item_feature_df DataFrame")
             else:
                 raise Exception(
-                    "item_feature_df not specified! item_feature_df must be provided if choosing to use item_feature_vector to calculate item similarity. item_feature_df should have columns:"
+                    "item_feature_df not specified! item_feature_df must be provided "
+                    "if choosing to use item_feature_vector to calculate item similarity. "
+                    "item_feature_df should have columns: "
                     + str(required_columns)
                 )
         # check if reco_df contains any user_item pairs that are already shown in train_df
@@ -1071,10 +1075,14 @@ def user_diversity(
         introducing serendipity into music recommendation, WSDM 2012
 
     Args:
-        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
-        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item, col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with;
+            contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item, col_relevance (optional).
+            Assumed to not contain any duplicate user-item pairs.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'.
+            It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.
+            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
         col_item_features (str): item feature column name.
         col_user (str): User id column name.
         col_item (str): Item id column name.
@@ -1121,10 +1129,14 @@ def diversity(
     """Calculate average diversity of recommendations across all users.
 
     Args:
-        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
-        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item, col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        train_df (pandas.DataFrame): Data set with historical data for users and items they have interacted with;
+            contains col_user, col_item. Assumed to not contain any duplicate rows.
+        reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item, col_relevance (optional).
+            Assumed to not contain any duplicate user-item pairs.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'.
+            It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.
+            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
         col_item_features (str): item feature column name.
         col_user (str): User id column name.
         col_item (str): Item id column name.
@@ -1266,8 +1278,10 @@ def user_item_serendipity(
               have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
         reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
               col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'.
+            It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.
+            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
         col_item_features (str): item feature column name.
         col_user (str): User id column name.
         col_item (str): Item id column name.
@@ -1353,8 +1367,10 @@ def user_serendipity(
               have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
         reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
               col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'.
+            It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.
+            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
         col_item_features (str): item feature column name.
         col_user (str): User id column name.
         col_item (str): Item id column name.
@@ -1407,8 +1423,10 @@ def serendipity(
               have interacted with; contains col_user, col_item. Assumed to not contain any duplicate rows.
         reco_df (pandas.DataFrame): Recommender's prediction output, containing col_user, col_item,
               col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+        item_feature_df (pandas.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'.
+            It contains two columns: col_item and features (a feature vector).
+        item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.
+            Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
         col_item_features (str): item feature column name.
         col_user (str): User id column name.
         col_item (str): Item id column name.
