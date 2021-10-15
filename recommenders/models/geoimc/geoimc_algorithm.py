@@ -49,17 +49,17 @@ class IMCProblem(object):
         self.W = None
         self.optima_reached = False
         self.manifold = Product([
-                            Stiefel(
-                                self.X.shape[1],
-                                self.rank
-                            ),
-                            PositiveDefinite(
-                                self.rank
-                            ),
-                            Stiefel(
-                                self.Z.shape[1],
-                                self.rank
-                            )
+            Stiefel(
+                self.X.shape[1],
+                self.rank
+            ),
+            PositiveDefinite(
+                self.rank
+            ),
+            Stiefel(
+                self.Z.shape[1],
+                self.rank
+            )
         ])
 
     def _loadTarget(self, ):
