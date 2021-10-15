@@ -61,7 +61,7 @@ def find_wikidata_id(name, limit=1, session=None):
     try:
         response = session.get(API_URL_WIKIPEDIA, params=params)
         page_id = response.json()["query"]["search"][0]["pageid"]
-    except Exception as e:
+    except Exception:
         # TODO: distinguish between connection error and entity not found
         logger.error("ENTITY NOT FOUND")
         return "entityNotFound"
@@ -79,7 +79,7 @@ def find_wikidata_id(name, limit=1, session=None):
         entity_id = response.json()["query"]["pages"][str(page_id)]["pageprops"][
             "wikibase_item"
         ]
-    except Exception as e:
+    except Exception:
         # TODO: distinguish between connection error and entity not found
         logger.error("ENTITY NOT FOUND")
         return "entityNotFound"
@@ -138,7 +138,7 @@ def query_entity_links(entity_id, session=None):
         data = session.get(
             API_URL_WIKIDATA, params=dict(query=query, format="json")
         ).json()
-    except Exception as e:
+    except Exception as e:  # noqa: F841
         logger.error("ENTITY NOT FOUND")
         return {}
 
@@ -199,7 +199,7 @@ def query_entity_description(entity_id, session=None):
     try:
         r = session.get(API_URL_WIKIDATA, params=dict(query=query, format="json"))
         description = r.json()["results"]["bindings"][0]["o"]["value"]
-    except Exception as e:
+    except Exception as e:  # noqa: F841
         logger.error("DESCRIPTION NOT FOUND")
         return "descriptionNotFound"
 

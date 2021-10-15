@@ -224,7 +224,7 @@ class LightGCN(object):
                 save_path_str = os.path.join(self.model_dir, "epoch_" + str(epoch))
                 if not os.path.exists(save_path_str):
                     os.makedirs(save_path_str)
-                checkpoint_path = self.saver.save(
+                checkpoint_path = self.saver.save(  # noqa: F841
                     sess=self.sess, save_path=save_path_str
                 )
                 print("Save model to path {0}".format(os.path.abspath(save_path_str)))

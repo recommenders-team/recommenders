@@ -465,7 +465,7 @@ class BaseModel:
                     os.makedirs(self.hparams.MODEL_DIR)
                 if epoch % self.hparams.save_epoch == 0:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
-                    checkpoint_path = self.saver.save(
+                    self.saver.save(
                         sess=train_sess, save_path=save_path_str
                     )
 

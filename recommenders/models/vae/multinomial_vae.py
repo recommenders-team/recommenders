@@ -326,7 +326,7 @@ class Mult_VAE:
         """Calculate negative ELBO (NELBO)."""
         log_softmax_var = tf.nn.log_softmax(x_bar)
         self.neg_ll = -tf.reduce_mean(tf.reduce_sum(log_softmax_var * x, axis=-1))
-        a = tf.keras.backend.print_tensor(self.neg_ll)
+        a = tf.keras.backend.print_tensor(self.neg_ll)  # noqa: F841
         # calculate positive Kullback–Leibler divergence  divergence term
         kl_loss = K.mean(
             0.5

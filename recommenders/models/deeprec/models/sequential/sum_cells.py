@@ -141,9 +141,9 @@ class SUMCell(LayerRNNCell):
                 % str(inputs_shape)
             )
         _check_supported_dtypes(self.dtype)
-        d = inputs_shape[-1]
-        h = self._real_units
-        s = self._slots
+        d = inputs_shape[-1]  # noqa: F841
+        h = self._real_units  # noqa: F841
+        s = self._slots       # noqa: F841
 
         self._basic_build(inputs_shape)
 

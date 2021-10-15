@@ -237,7 +237,7 @@ def prepare_all_predictions(
     Returns:
         pandas.DataFrame: all predictions
     """
-    users, items, preds = [], [], []
+    users, items, preds = [], [], []  # noqa: F841
     item = list(data.itemID.unique())
     for user in data.userID.unique():
         user = [user] * len(item)

@@ -158,7 +158,7 @@ class TfidfRecommender:
 
         elif self.tokenization_method == "nltk":
             # NLTK Stemming
-            token_dict = {}
+            token_dict = {}  # noqa: F841
             stemmer = PorterStemmer()
 
             def stem_tokens(tokens, stemmer):

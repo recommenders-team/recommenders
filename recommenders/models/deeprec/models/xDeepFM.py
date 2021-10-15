@@ -31,8 +31,8 @@ class XDeepFMModel(BaseModel):
         self.keep_prob_train = 1 - np.array(hparams.dropout)
         self.keep_prob_test = np.ones_like(hparams.dropout)
 
-        with tf.variable_scope("XDeepFM") as scope:
-            with tf.variable_scope("embedding", initializer=self.initializer) as escope:
+        with tf.variable_scope("XDeepFM") as scope:  # noqa: F841
+            with tf.variable_scope("embedding", initializer=self.initializer) as escope:  # noqa: F841
                 self.embedding = tf.get_variable(
                     name="embedding_layer",
                     shape=[hparams.FEATURE_COUNT, hparams.dim],
@@ -103,7 +103,7 @@ class XDeepFMModel(BaseModel):
         Returns:
             object: Prediction score made by linear regression.
         """
-        with tf.variable_scope("linear_part", initializer=self.initializer) as scope:
+        with tf.variable_scope("linear_part", initializer=self.initializer) as scope:  # noqa: F841
             w = tf.get_variable(
                 name="w", shape=[self.hparams.FEATURE_COUNT, 1], dtype=tf.float32
             )
@@ -132,7 +132,7 @@ class XDeepFMModel(BaseModel):
         Returns:
             object: Prediction score made by factorization machine.
         """
-        with tf.variable_scope("fm_part") as scope:
+        with tf.variable_scope("fm_part") as scope:  # noqa: F841
             x = tf.SparseTensor(
                 self.iterator.fm_feat_indices,
                 self.iterator.fm_feat_values,
@@ -178,7 +178,7 @@ class XDeepFMModel(BaseModel):
         hidden_nn_layers.append(nn_input)
         final_result = []
         split_tensor0 = tf.split(hidden_nn_layers[0], hparams.dim * [1], 2)
-        with tf.variable_scope("exfm_part", initializer=self.initializer) as scope:
+        with tf.variable_scope("exfm_part", initializer=self.initializer) as scope:  # noqa: F841
             for idx, layer_size in enumerate(hparams.cross_layer_sizes):
                 split_tensor = tf.split(hidden_nn_layers[-1], hparams.dim * [1], 2)
                 dot_result_m = tf.matmul(
@@ -308,7 +308,7 @@ class XDeepFMModel(BaseModel):
         field_nums.append(int(field_num))
         hidden_nn_layers.append(nn_input)
         final_result = []
-        with tf.variable_scope("exfm_part", initializer=self.initializer) as scope:
+        with tf.variable_scope("exfm_part", initializer=self.initializer) as scope:  # noqa: F841
             for idx, layer_size in enumerate(hparams.cross_layer_sizes):
                 if idx == 0:
                     fast_w = tf.get_variable(
@@ -467,7 +467,7 @@ class XDeepFMModel(BaseModel):
                 curr_hidden_nn_layer = tf.nn.xw_plus_b(
                     hidden_nn_layers[layer_idx], curr_w_nn_layer, curr_b_nn_layer
                 )
-                scope = "nn_part" + str(idx)
+                scope = "nn_part" + str(idx)  # noqa: F841
                 activation = hparams.activation[idx]
 
                 if hparams.enable_BN is True:
