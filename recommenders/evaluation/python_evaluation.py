@@ -1080,7 +1080,7 @@ def user_diversity(
         col_item (str): Item id column name.
         col_sim (str): This column indicates the column name for item similarity.
         col_relevance (str): This column indicates whether the recommended item is actually relevant to the user or not.
-    
+
     Returns:
         pandas.DataFrame: A dataframe with the following columns: col_user, user_diversity.
     """

@@ -35,7 +35,7 @@ class ConjugateGradientMS(Solver):
         **kwargs
     ):
         """Instantiate gradient solver class.
-        
+
         Args:
             beta_type (object): Conjugate gradient beta rule used to construct the new search direction.
             orth_value (float): Parameter for Powell's restart strategy. An infinite value disables this strategy.
@@ -60,7 +60,7 @@ class ConjugateGradientMS(Solver):
         This method first computes the gradient of obj w.r.t. arg, and then
         optimizes by moving in a direction that is conjugate to all previous
         search directions.
-        
+
         Args:
             problem (object): Pymanopt problem setup using the Problem class, this must
                 have a .manifold attribute specifying the manifold to optimize
@@ -70,7 +70,7 @@ class ConjugateGradientMS(Solver):
                 then a starting point will be randomly generated.
             reuselinesearch (bool): Whether to reuse the previous linesearch object. Allows to
                 use information from a previous solve run.
-        
+
         Returns:
             numpy.ndarray: Local minimum of obj, or if algorithm terminated before convergence x will be the point at which it terminated.
         """

@@ -9,7 +9,7 @@ class Timer(object):
     """Timer class.
 
     `Original code <https://github.com/miguelgfierro/pybase/blob/2298172a13fb4a243754acbc6029a4a2dcf72c20/log_base/timer.py>`_.
-    
+
     Examples:
         >>> import time
         >>> t = Timer()

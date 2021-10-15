@@ -15,7 +15,7 @@ def model_perf_plots(df):
 
     Args:
         df (pandas.DataFrame): Dataframe in tidy format, with ['epoch','level','value'] columns
-    
+
     Returns:
         object: matplotlib axes
     """
@@ -30,7 +30,7 @@ def compare_metric(df_list, metric="prec", stage="test"):
         df_list (list): List of dataframes
         metrics (str): name of metric to be extracted, optional
         stage (str): name of model fitting stage to be extracted, optional
-    
+
     Returns:
         pandas.DataFrame: Metrics
     """
@@ -68,7 +68,7 @@ def track_model_metrics(
         no_epochs (int): Number of epochs to run, optional
         no_threads (int): Number of parallel threads to use, optional
         **kwargs: other keyword arguments to be passed down
-    
+
     Returns:
         pandas.DataFrame, LightFM model, matplotlib axes:
         - Performance traces of the fitted model
@@ -135,7 +135,7 @@ def similar_users(user_id, user_features, model, N=10):
         user_features (scipy sparse CSR matrix): user feature matric
         model (LightFM instance): fitted LightFM model
         N (int): Number of top similar users to return
-    
+
     Returns:
         pandas.DataFrame: top N most similar users with score
     """
@@ -163,7 +163,7 @@ def similar_items(item_id, item_features, model, N=10):
         item_features (scipy sparse CSR matrix): item feature matric
         model (LightFM instance): fitted LightFM model
         N (int): Number of top similar items to return
-    
+
     Returns:
         pandas.DataFrame: top N most similar items with score
     """
@@ -223,7 +223,7 @@ def prepare_all_predictions(
     item_features=None,
 ):
     """Function to prepare all predictions for evaluation.
-    
+
     Args:
         data (pandas df): dataframe of all users, items and ratings as loaded
         uid_map (dict): Keys to map internal user indices to external ids.

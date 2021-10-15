@@ -446,7 +446,7 @@ class RBM:
 
         Returns:
             tf.Tensor: accuracy.
-            
+
         """
 
         with tf.name_scope("accuracy"):

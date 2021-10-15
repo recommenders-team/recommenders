@@ -78,7 +78,7 @@ def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
 
 def check_metrics_written(wait=WAITING_TIME, max_retries=MAX_RETRIES):
     """Waits until the metrics have been written to the trial logs.
-    
+
     Args:
         wait (numeric) : time to wait in seconds
         max_retries (int): max number of retries

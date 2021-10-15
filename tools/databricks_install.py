@@ -117,7 +117,7 @@ def get_installed_libraries(api_client, cluster_id):
     Args:
         api_client (ApiClient object): object used for authenticating to the workspace
         cluster_id (str): id of the cluster
-    
+
     Returns:
         Dict[str, str]: dictionary of {package: status}
     """

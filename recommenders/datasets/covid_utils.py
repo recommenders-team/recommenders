@@ -22,7 +22,7 @@ def load_pandas_df(
         azure_storage_sas_token (str): Azure storage SAS token.
         container_name (str): Azure storage container name.
         metadata_filename (str): Name of file containing top-level metadata for the dataset.
-    
+
     Returns:
         metadata (pandas.DataFrame): Metadata dataframe.
     """
@@ -39,14 +39,14 @@ def load_pandas_df(
 
 def remove_duplicates(df, cols):
     """ Remove duplicated entries.
-    
+
     Args:
         df (pd.DataFrame): Pandas dataframe.
         cols (list of str): Name of columns in which to look for duplicates.
-    
+
     Returns:
         df (pandas.DataFrame): Pandas dataframe with duplicate rows dropped.
-    
+
     """
     for col in cols:
         # Reset index
@@ -63,14 +63,14 @@ def remove_duplicates(df, cols):
 
 def remove_nan(df, cols):
     """ Remove rows with NaN values in specified column.
-    
+
     Args:
         df (pandas.DataFrame): Pandas dataframe.
         cols (list of str): Name of columns in which to look for NaN.
-    
+
     Returns:
         df (pandas.DataFrame): Pandas dataframe with invalid rows dropped.
-    
+
     """
     for col in cols:
         # Convert any empty string cells to nan
@@ -84,10 +84,10 @@ def remove_nan(df, cols):
 
 def clean_dataframe(df):
     """ Clean up the dataframe.
-    
+
     Args:
         df (pandas.DataFrame): Pandas dataframe.
-    
+
     Returns:
         df (pandas.DataFrame): Cleaned pandas dataframe.
     """
@@ -110,7 +110,7 @@ def retrieve_text(
         azure_storage_sas_token="",
 ):
     """ Retrieve body text from article of interest.
-    
+
     Args:
         entry (pd.Series): A single row from the dataframe (df.iloc[n]).
         container_name (str): Azure storage container name.
@@ -148,7 +148,7 @@ def get_public_domain_text(
     azure_storage_sas_token="",
 ):
     """ Get all public domain text.
-    
+
     Args:
         df (pandas.DataFrame): Metadata dataframe for public domain text.
         container_name (str): Azure storage container name.
