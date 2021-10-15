@@ -103,7 +103,7 @@ class IMCProblem(object):
             self.Y.indptr,
             residual_global
         )
-        cost = 0.5 * np.sum((residual_global)**2)/self.nSamples + regularizer
+        cost = 0.5 * np.sum((residual_global)**2) / self.nSamples + regularizer
 
         return cost
 
@@ -127,18 +127,18 @@ class IMCProblem(object):
         gradU = np.dot(
             self.X.T,
             residual_global_csr.dot(self.Z.dot(V.dot(B.T)))
-        )/self.nSamples
+        ) / self.nSamples
 
         gradB = np.dot(
             (self.X.dot(U)).T,
             residual_global_csr.dot(self.Z.dot(V))
-        )/self.nSamples + self.lambda1 * B
-        gradB_sym = (gradB + gradB.T)/2
+        ) / self.nSamples + self.lambda1 * B
+        gradB_sym = (gradB + gradB.T) / 2
 
         gradV = np.dot(
             (self.X.dot(U.dot(B))).T,
             residual_global_csr.dot(self.Z)
-        ).T/self.nSamples
+        ).T / self.nSamples
 
         return [
             gradU,
