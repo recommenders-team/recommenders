@@ -21,8 +21,10 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
     test_results = {}
 
     # Rating Metrics
-    predictions = [[row.userID, row.itemID, model.predict(row.userID, row.itemID)]
-           for (_, row) in test.iterrows()]
+    predictions = [
+        [row.userID, row.itemID, model.predict(row.userID, row.itemID)]
+        for (_, row) in test.iterrows()
+    ]
 
     predictions = pd.DataFrame(predictions, columns=['userID', 'itemID', 'prediction'])
     predictions = predictions.astype({'userID': 'int64', 'itemID': 'int64', 'prediction': 'float64'})
