@@ -50,7 +50,7 @@ class SUMCell(LayerRNNCell):
             )
 
         self._input_size = input_size
-        self._slots = slots - 1  ## the last channel is reserved for the highway slot
+        self._slots = slots - 1  # the last channel is reserved for the highway slot
         self._num_units = num_units
         self._real_units = (self._num_units - input_size) // slots
         if activation:
