@@ -167,7 +167,7 @@ class SUMCell(LayerRNNCell):
             state:  (a batch of) user states at time T-1
 
         returns:
-            state, state: 
+            state, state:
             - after process the user behavior at time T, returns (a batch of) new user states at time T
             - after process the user behavior at time T, returns (a batch of) new user states at time T
         """

@@ -15,7 +15,7 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
         ranking_metrics (list): List of ranking metrics.
         
     Returns:
-        dict: Test results. 
+        dict: Test results.
     
     """
     test_results = {}
@@ -34,7 +34,7 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
     users, items, preds = [], [], []
     item = list(train.itemID.unique())
     for user in train.userID.unique():
-        user = [user] * len(item) 
+        user = [user] * len(item)
         users.extend(user)
         items.extend(item)
         preds.extend(list(model.predict(user, item, is_list=True)))
@@ -57,7 +57,7 @@ def combine_metrics_dicts(*metrics):
         metrics (dict): Metrics
         
     Returns:
-        pandas.DataFrame: Dataframe with metrics combined.    
+        pandas.DataFrame: Dataframe with metrics combined.
     """
     df = pd.DataFrame(metrics[0], index=[0])
     for metric in metrics[1:]:

@@ -24,7 +24,7 @@ def unpackbits(x, num_bits):
 
 
 class NumEncoder(object):
-    """Encode all the categorical features into numerical ones by sequential label encoding, sequential count encoding, 
+    """Encode all the categorical features into numerical ones by sequential label encoding, sequential count encoding,
     and binary encoding. Additionally, it also filters the low-frequency categories and fills the missing values.
     """
 
@@ -35,7 +35,7 @@ class NumEncoder(object):
             cate_cols (list): The columns of categorical features.
             nume_cols (list): The columns of numerical features.
             label_col (object): The column of Label.
-            threshold (int): The categories whose frequency is lower than the threshold will be filtered (be treated 
+            threshold (int): The categories whose frequency is lower than the threshold will be filtered (be treated
                 as "<LESS>").
             thresrate (float): The (1.0 - thersrate, default 1%) lowest-frequency categories will also be filtered.
         """

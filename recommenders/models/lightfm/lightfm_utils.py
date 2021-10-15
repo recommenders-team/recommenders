@@ -27,7 +27,7 @@ def compare_metric(df_list, metric="prec", stage="test"):
     """Function to combine and prepare list of dataframes into tidy format.
 
     Args:
-        df_list (list): List of dataframes 
+        df_list (list): List of dataframes
         metrics (str): name of metric to be extracted, optional
         stage (str): name of model fitting stage to be extracted, optional
     
@@ -66,11 +66,11 @@ def track_model_metrics(
         test_interactions (scipy sparse COO matrix): test interaction set
         k (int): number of recommendations, optional
         no_epochs (int): Number of epochs to run, optional
-        no_threads (int): Number of parallel threads to use, optional 
+        no_threads (int): Number of parallel threads to use, optional
         **kwargs: other keyword arguments to be passed down
     
     Returns:
-        pandas.DataFrame, LightFM model, matplotlib axes: 
+        pandas.DataFrame, LightFM model, matplotlib axes:
         - Performance traces of the fitted model
         - Fitted model
         - Side effect of the method
@@ -133,7 +133,7 @@ def similar_users(user_id, user_features, model, N=10):
      Args:
         user_id (int): id of user to be used as reference
         user_features (scipy sparse CSR matrix): user feature matric
-        model (LightFM instance): fitted LightFM model 
+        model (LightFM instance): fitted LightFM model
         N (int): Number of top similar users to return
     
     Returns:
@@ -161,7 +161,7 @@ def similar_items(item_id, item_features, model, N=10):
     Args:
         item_id (int): id of item to be used as reference
         item_features (scipy sparse CSR matrix): item feature matric
-        model (LightFM instance): fitted LightFM model 
+        model (LightFM instance): fitted LightFM model
         N (int): Number of top similar items to return
     
     Returns:
@@ -231,7 +231,7 @@ def prepare_all_predictions(
         interactions (np.float32 coo_matrix): user-item interaction
         model (LightFM instance): fitted LightFM model
         num_threads (int): number of parallel computation threads
-        user_features (np.float32 csr_matrix): User weights over features 
+        user_features (np.float32 csr_matrix): User weights over features
         item_features (np.float32 csr_matrix):  Item weights over features
 
     Returns:

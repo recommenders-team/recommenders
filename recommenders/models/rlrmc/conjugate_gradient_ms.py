@@ -38,7 +38,7 @@ class ConjugateGradientMS(Solver):
         
         Args:
             beta_type (object): Conjugate gradient beta rule used to construct the new search direction.
-            orth_value (float): Parameter for Powell's restart strategy. An infinite value disables this strategy. 
+            orth_value (float): Parameter for Powell's restart strategy. An infinite value disables this strategy.
                 See in code formula for the specific criterion used.
             - linesearch (object): The linesearch method to used.
         """

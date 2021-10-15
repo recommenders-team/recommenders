@@ -86,7 +86,7 @@ class AttLayer2(layers.Layer):
     def compute_mask(self, input, input_mask=None):
         """Compte output mask value
 
-        Args: 
+        Args:
             input (object): input tensor.
             input_mask: input mask
         
@@ -260,7 +260,7 @@ class SelfAttention(layers.Layer):
         """ add multiheads, multiheads and mask_right into layer config.
 
         Returns:
-            dict: config of SelfAttention layer.  
+            dict: config of SelfAttention layer.
         """
         config = super(SelfAttention, self).get_config()
         config.update(

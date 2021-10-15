@@ -104,7 +104,7 @@ def clean_dataframe(df):
 
 
 def retrieve_text(
-        entry, 
+        entry,
         container_name,
         azure_storage_account_name="azureopendatastorage",
         azure_storage_sas_token="",
@@ -142,7 +142,7 @@ def retrieve_text(
 
 
 def get_public_domain_text(
-    df, 
+    df,
     container_name,
     azure_storage_account_name="azureopendatastorage",
     azure_storage_sas_token="",
@@ -164,9 +164,9 @@ def get_public_domain_text(
     # Add in full_text
     df["full_text"] = df.apply(
         lambda row: retrieve_text(
-            row, 
-            container_name, 
-            azure_storage_account_name, 
+            row,
+            container_name,
+            azure_storage_account_name,
             azure_storage_sas_token
         ), axis=1
     )

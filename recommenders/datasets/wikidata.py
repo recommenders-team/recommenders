@@ -184,7 +184,7 @@ def query_entity_description(entity_id, session=None):
     PREFIX schema: <http://schema.org/>
 
     SELECT ?o
-    WHERE 
+    WHERE
     {
       wd:"""
         + entity_id
