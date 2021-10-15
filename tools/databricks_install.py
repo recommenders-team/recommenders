@@ -73,7 +73,7 @@ PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
 
-## dependencies from PyPI
+# dependencies from PyPI
 PYPI_PREREQS = [
     "pip==21.2.4",
     "setuptools==54.0.0",
@@ -91,7 +91,7 @@ PYPI_O16N_LIBS = [
     "pydocumentdb>=2.3.3",
 ]
 
-## Additional dependencies met below.
+# Additional dependencies met below.
 
 def dbfs_file_exists(api_client, dbfs_path):
     """Checks to determine whether a file exists.

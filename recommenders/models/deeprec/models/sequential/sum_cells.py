@@ -312,7 +312,7 @@ class SUMV2Cell(SUMCell):
         h_hat = tf.reduce_sum(tf.multiply(state[:, : self._slots, :], att_weights), 1)
         h_hat = (h_hat + state[:, self._slots, :]) / 2
 
-        ## get the true writing attentions
+        # get the true writing attentions
         writing_input = tf.concat([inputs, h_hat], axis=1)
         att_weights = tf.nn.xw_plus_b(writing_input, self._writing_W, self._writing_b)
         att_weights = tf.nn.relu(att_weights)
