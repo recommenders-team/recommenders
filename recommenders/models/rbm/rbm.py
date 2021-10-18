@@ -429,6 +429,7 @@ class RBM:
                 log.info("percentage of epochs covered so far %f2" % (epoch_percentage))
 
     def accuracy(self, vp):
+        # flake8: noqa W695 invalid escape sequence '\s'
         """Train/Test Mean average precision
 
         Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on

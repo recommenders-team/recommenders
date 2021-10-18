@@ -221,7 +221,7 @@ def evaluation_log_hook(
         batch_size (int): Number of samples fed into the model at a time.
             Note, the batch size doesn't affect on evaluation results.
         eval_fns (iterable of functions): List of evaluation functions that have signature of
-            (true_df, prediction_df, \*\*eval_kwargs)->(float). If None, loss is calculated on true_df.
+            (true_df, prediction_df, **eval_kwargs)->(float). If None, loss is calculated on true_df.
         eval_kwargs: Evaluation function's keyword arguments.
             Note, prediction column name should be 'prediction'
 

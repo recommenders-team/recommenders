@@ -307,9 +307,9 @@ class Dataset(object):
         """Feed leave-one-out data every user
 
         Generate test batch by every positive test instance,
-        (eg. \[1, 2, 1\] is a positive user & item pair in test set
-        (\[userID, itemID, rating\] for this tuple). This function
-        returns like \[\[1, 2, 1\], \[1, 3, 0\], \[1,6, 0\], ...\],
+        (eg. [1, 2, 1] is a positive user & item pair in test set
+        ([userID, itemID, rating] for this tuple). This function
+        returns like [[1, 2, 1], [1, 3, 0], [1,6, 0], ...],
         ie. following our *leave-one-out* evaluation protocol.
 
         Returns:
