@@ -320,7 +320,7 @@ def _data_generating_no_history_expanding(
                         + dt_str
                         + "\n"
                     )
-            if tfile == "train" or last_user_id == None:
+            if tfile == "train" or last_user_id is None:
                 movie_id_list = []
                 cate_list = []
                 dt_list = []
