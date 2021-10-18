@@ -390,7 +390,7 @@ class TfidfRecommender:
             format_ = {"url": self.__make_clickable}
             df = df.head().style.format(format_)
 
-        if verbose == True:
+        if verbose:
             df
 
         return df

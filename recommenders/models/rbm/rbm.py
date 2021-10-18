@@ -699,7 +699,7 @@ class RBM:
             self.gibbs_protocol(i)  # Gibbs sampling update
             epoch_tr_err = self.batch_training(num_minibatches)  # model train
 
-            if self.with_metrics == True and i % self.display == 0:
+            if self.with_metrics == True and i % self.display == 0:  # noqa: E712 comparison to True
                 log.info("training epoch %i rmse %f" % (i, epoch_tr_err))
 
             Rmse_train.append(epoch_tr_err)  # mse training error per training epoch
