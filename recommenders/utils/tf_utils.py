@@ -85,7 +85,7 @@ def pandas_input_fn(
     for col in X_df.columns:
         values = X_df[col].values
         if isinstance(values[0], (list, np.ndarray)):
-            values = np.array([l for l in values], dtype=np.float32)
+            values = np.array([l for l in values], dtype=np.float32)  # noqa: E741 ambiguous variable name 'l'
         X[col] = values
 
     return lambda: _dataset(

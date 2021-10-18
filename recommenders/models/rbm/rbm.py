@@ -422,7 +422,7 @@ class RBM:
                     and epoch_percentage <= self.sampling_protocol[self.l + 1]
                 ):
                     self.k += 1
-                    self.l += 1
+                    self.l += 1  # noqa: E741 ambiguous variable name 'l'
                     self.gibbs_sampling()
 
             if self.debug:
@@ -586,7 +586,8 @@ class RBM:
         # --------------Initialize protocol for Gibbs sampling------------------
         log.info("Initialize Gibbs protocol")
         self.k = 1  # initialize the G_sampling step
-        self.l = 0  # initialize epoch_sample index
+        # initialize epoch_sample index
+        self.l = 0  # noqa: E741 ambiguous variable name 'l'
         self.gibbs_sampling()  # returns the sampled value of the visible units
 
         # ---Instantiate loss function and optimizer----------------------------
@@ -640,14 +641,15 @@ class RBM:
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
 
         if self.with_metrics:
-
-            for l in range(num_minibatches):  # minibatch loop
+            # minibatch loop
+            for l in range(num_minibatches):  # noqa: E741 ambiguous variable name 'l'
                 _, batch_err = self.sess.run([self.opt, self.Rmse])
                 # average msr error per minibatch
                 epoch_tr_err += batch_err / num_minibatches
 
         else:
-            for l in range(num_minibatches):  # minibatch loop
+            # minibatch loop
+            for l in range(num_minibatches):  # noqa: E741 ambiguous variable name 'l'
                 _ = self.sess.run(self.opt)
 
         return epoch_tr_err
