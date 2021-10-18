@@ -7,7 +7,6 @@ import time
 import os
 import numpy as np
 import tensorflow as tf
-from tensorflow import keras
 from recommenders.models.deeprec.deeprec_utils import cal_metric
 
 
@@ -22,7 +21,7 @@ class BaseModel:
         parameter set.
 
         Args:
-            hparams (object): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
+            hparams (object): An `HParams` object, holds the entire set of hyperparameters.
             iterator_creator (object): An iterator to load the data.
             graph (object): An optional graph.
             seed (int): Random seed.
@@ -34,7 +33,7 @@ class BaseModel:
         self.graph = graph if graph is not None else tf.Graph()
         self.iterator = iterator_creator(hparams, self.graph)
         self.train_num_ngs = (
-            hparams.train_num_ngs if "train_num_ngs" in hparams else None
+            hparams.train_num_ngs if "train_num_ngs" in hparams.values() else None
         )
 
         with self.graph.as_default():

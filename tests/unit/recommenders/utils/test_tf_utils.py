@@ -28,6 +28,7 @@ try:
         build_feature_columns,
     )
     import tensorflow as tf
+    tf.compat.v1.disable_eager_execution() # need to disable eager in TF2.x
 except ImportError:
     pass  # skip this import if we are in cpu environment
 
@@ -61,7 +62,6 @@ def pd_df():
 def test_pandas_input_fn(pd_df):
     df, _, _ = pd_df
 
-    tf.compat.v1.disable_eager_execution() # need to disable eager in TF2.x
     # check dataset
     dataset = pandas_input_fn(df)()
     batch = tf.compat.v1.data.make_one_shot_iterator(dataset).get_next()

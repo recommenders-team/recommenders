@@ -36,9 +36,9 @@ class SequentialBaseModel(BaseModel):
                 "Please confirm the number of negative samples for each positive instance."
             )
         self.min_seq_length = (
-            hparams.min_seq_length if "min_seq_length" in hparams else 1
+            hparams.min_seq_length if "min_seq_length" in hparams.values() else 1
         )
-        self.hidden_size = hparams.hidden_size if "hidden_size" in hparams else None
+        self.hidden_size = hparams.hidden_size if "hidden_size" in hparams.values() else None
         self.graph = tf.Graph() if not graph else graph
 
         with self.graph.as_default():
