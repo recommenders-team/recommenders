@@ -67,7 +67,7 @@ def check_stopped(wait=WAITING_TIME, max_retries=MAX_RETRIES):
     while i < max_retries:
         try:
             get_experiment_status(NNI_STATUS_URL)
-        except:
+        except:  # noqa E722 do not use bare 'except'
             break
         time.sleep(wait)
         i += 1

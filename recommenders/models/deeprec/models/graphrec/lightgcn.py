@@ -268,7 +268,7 @@ class LightGCN(object):
         """
         try:
             self.saver.restore(self.sess, model_path)
-        except:
+        except:  # noqa E722 do not use bare 'except'
             raise IOError(
                 "Failed to find any matching files for {0}".format(model_path)
             )

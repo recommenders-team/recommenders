@@ -411,7 +411,7 @@ class BaseModel:
 
         try:
             self.saver.restore(self.sess, act_path)
-        except:
+        except:  # noqa E722 do not use bare 'except'
             raise IOError("Failed to find any matching files for {0}".format(act_path))
 
     def fit(self, train_file, valid_file, test_file=None):

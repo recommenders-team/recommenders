@@ -134,7 +134,7 @@ def retrieve_text(
         data = requests.get(uri, headers={"Content-type": "application/json"}).json()
         text = " ".join([paragraph["text"] for paragraph in data["body_text"]])
 
-    except:
+    except:  # noqa E722 do not use bare 'except'
         text = ""
 
     return text
