@@ -40,13 +40,11 @@ class DKN(BaseModel):
                 if hparams.use_entity:
                     e_embedding = self._init_embedding(hparams.entityEmb_file)
                     W = tf.Variable(
-                        tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1)
+                        tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1),
+                        trainable=True
                     )
-                    b = tf.Variable(tf.zeros([hparams.dim]))
-                    e_embedding_transformed = tf.nn.tanh(tf.matmul(e_embedding, W) + b)
-                    self.entity_embedding = tf.Variable(
-                        e_embedding_transformed, trainable=True, name="entity"
-                    )
+                    b = tf.Variable(tf.zeros([hparams.dim]), trainable=True)
+                    self.entity_embedding = tf.nn.tanh(tf.matmul(e_embedding, W) + b)
                 else:
                     self.entity_embedding = tf.Variable(
                         tf.constant(
@@ -61,13 +59,11 @@ class DKN(BaseModel):
                 if hparams.use_context:
                     c_embedding = self._init_embedding(hparams.contextEmb_file)
                     W = tf.Variable(
-                        tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1)
+                        tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1),
+                        trainable=True
                     )
-                    b = tf.Variable(tf.zeros([hparams.dim]))
-                    c_embedding_transformed = tf.nn.tanh(tf.matmul(c_embedding, W) + b)
-                    self.context_embedding = tf.Variable(
-                        c_embedding_transformed, trainable=True, name="context"
-                    )
+                    b = tf.Variable(tf.zeros([hparams.dim]), trainable=True)
+                    self.context_embedding = tf.nn.tanh(tf.matmul(c_embedding, W) + b)
                 else:
                     self.context_embedding = tf.Variable(
                         tf.constant(

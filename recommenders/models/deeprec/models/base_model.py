@@ -10,6 +10,7 @@ import tensorflow as tf
 from recommenders.models.deeprec.deeprec_utils import cal_metric
 
 
+tf.compat.v1.disable_eager_execution()
 __all__ = ["BaseModel"]
 
 
