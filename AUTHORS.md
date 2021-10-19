@@ -105,4 +105,7 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Zhenhui Xu](https://github.com/motefly)**
    * Reco utils of LightGBM
    * LightGBM notebook quickstart
+* **[Yan Zhang](https://github.com/YanZhangADS)**
+   * Diversity metrics including coverage, novelty, diversity, and serendipity
+   * Diversity metrics evaluation sample notebook
     
