@@ -570,7 +570,7 @@ class BaseModel:
             labels.extend(np.reshape(step_labels, -1))
             imp_indexs.extend(np.reshape(imp_index, -1))
         res = cal_metric(labels, preds, self.hparams.metrics)
-        if self.hparams.pairwise_metrics is not None:
+        if "pairwise_metrics" in self.hparams.values():
             group_labels, group_preds = self.group_labels(labels, preds, imp_indexs)
             res_pairwise = cal_metric(
                 group_labels, group_preds, self.hparams.pairwise_metrics
