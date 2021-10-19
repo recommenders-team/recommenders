@@ -127,7 +127,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        java: [8]
+        java: [11]
         python: [3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 

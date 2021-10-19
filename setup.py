@@ -73,7 +73,7 @@ extras_require = {
     "spark": [
         "databricks_cli>=0.8.6,<1",
         "pyarrow>=0.12.1,<6.0.0",
-        "pyspark>=2.4.5,<4.0.0",
+        "pyspark>=2.4.5,<3.2.0",
     ],
     "xlearn": [
         "cmake>=3.18.4.post1",
