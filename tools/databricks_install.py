@@ -29,7 +29,7 @@ from databricks_cli.dbfs.dbfs_path import DbfsPath
 from recommenders.utils.spark_utils import MMLSPARK_PACKAGE, MMLSPARK_REPO
 
 CLUSTER_NOT_FOUND_MSG = """
-    Cannot find the target cluster {}. Please check if you entered the valid id. 
+    Cannot find the target cluster {}. Please check if you entered the valid id.
     Cluster id can be found by running 'databricks clusters list', which returns a table formatted as:
 
     <CLUSTER_ID>\t<CLUSTER_NAME>\t<STATUS>
@@ -73,7 +73,7 @@ PENDING_SLEEP_ATTEMPTS = int(
     5 * 60 / PENDING_SLEEP_INTERVAL
 )  # wait a maximum of 5 minutes...
 
-## dependencies from PyPI
+# dependencies from PyPI
 PYPI_PREREQS = [
     "pip==21.2.4",
     "setuptools==54.0.0",
@@ -91,7 +91,8 @@ PYPI_O16N_LIBS = [
     "pydocumentdb>=2.3.3",
 ]
 
-## Additional dependencies met below.
+# Additional dependencies met below.
+
 
 def dbfs_file_exists(api_client, dbfs_path):
     """Checks to determine whether a file exists.
@@ -117,9 +118,9 @@ def get_installed_libraries(api_client, cluster_id):
     Args:
         api_client (ApiClient object): object used for authenticating to the workspace
         cluster_id (str): id of the cluster
-    
+
     Returns:
-        Dict[str, str]: dictionary of {package: status} 
+        Dict[str, str]: dictionary of {package: status}
     """
     cluster_status = LibrariesApi(api_client).cluster_status(cluster_id)
     libraries = {lib["library"]["pypi"]["package"]: lib["status"] for lib in cluster_status["library_statuses"] if "pypi" in lib["library"]}
@@ -177,9 +178,9 @@ def prepare_for_operationalization(
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="""
-      This script installs the recommenders package from PyPI onto a databricks cluster. 
-      Optionally, this script may also install the mmlspark library, and it may also install additional libraries useful 
-      for operationalization. This script requires that you have installed databricks-cli in the python environment in 
+      This script installs the recommenders package from PyPI onto a databricks cluster.
+      Optionally, this script may also install the mmlspark library, and it may also install additional libraries useful
+      for operationalization. This script requires that you have installed databricks-cli in the python environment in
       which you are running this script, and that have you have already configured it with a profile.
       """,
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -282,7 +283,6 @@ if __name__ == "__main__":
         )
         sys.exit()
 
-
     # install prerequisites
     print(
         "Installing required Python libraries onto databricks cluster {}".format(
@@ -309,7 +309,7 @@ if __name__ == "__main__":
         time.sleep(PENDING_SLEEP_INTERVAL)
         installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
     if installed_libraries["recommenders"] == "FAILED":
-        raise Exception("recommenders package failed to install")    
+        raise Exception("recommenders package failed to install")
 
     # additional PyPI dependencies:
     libs2install = [{"pypi": {"package": i}} for i in PYPI_EXTRA_DEPS]
@@ -343,7 +343,7 @@ if __name__ == "__main__":
     # wrap up and send out a final message:
     print(
         """
-        Requests submitted. You can check on status of your cluster with: 
+        Requests submitted. You can check on status of your cluster with:
 
         databricks --profile """
         + args.profile

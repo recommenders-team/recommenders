@@ -2,8 +2,6 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import pandas as pd
-import math
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
@@ -196,7 +194,7 @@ class RBM:
             r (float): rating scale, corresponding to the number of classes
 
         Returns:
-            tf.Tensor: 
+            tf.Tensor:
             - A tensor of shape (r, m, Nv): This needs to be reshaped as (m, Nv, r) in the last step to allow for faster sampling when used in the multinomial function.
 
         """
@@ -247,9 +245,9 @@ class RBM:
             Nh (int): number of hidden units (latent variables of the model)
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor: 
-            - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv. 
-            - `bv` of size (1, Nvisible): visible units' bias, initialized to zero. 
+            tf.Tensor, tf.Tensor, tf.Tensor:
+            - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv.
+            - `bv` of size (1, Nvisible): visible units' bias, initialized to zero.
             - `bh` of size (1, Nhidden): hidden units' bias, initiliazed to zero.
         """
         with tf.variable_scope("Network_parameters"):
@@ -291,8 +289,8 @@ class RBM:
             vv (tf.Tensor, float32): visible units
 
         Returns:
-            tf.Tensor, tf.Tensor: 
-            - `phv`: The activation probability of the hidden unit. 
+            tf.Tensor, tf.Tensor:
+            - `phv`: The activation probability of the hidden unit.
             - `h_`: The sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
         """
 
@@ -329,7 +327,7 @@ class RBM:
             h (tf.Tensor, float32): visible units.
 
         Returns:
-            tf.Tensor, tf.Tensor: 
+            tf.Tensor, tf.Tensor:
             - `pvh`: The activation probability of the visible unit given the hidden.
             - `v_`: The sampled value of the visible unit from a Multinomial distributions having success probability `pvh`.
         """
@@ -390,7 +388,7 @@ class RBM:
             v_k (tf.Tensor, float32): sampled visible units at step k
 
         Returns:
-            object: 
+            object:
             - Objective function of Contrastive divergence: the difference between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
@@ -438,7 +436,7 @@ class RBM:
 
         :math:`acc = 1/m \sum_{mu=1}^{m} \sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i}`
 
-        where `m = Nusers`, `Nv = number of items = number of visible units` and `s(i)` is the number of non-zero elements 
+        where `m = Nusers`, `Nv = number of items = number of visible units` and `s(i)` is the number of non-zero elements
         per row.
 
         Args:
@@ -446,7 +444,7 @@ class RBM:
 
         Returns:
             tf.Tensor: accuracy.
-            
+
         """
 
         with tf.name_scope("accuracy"):
@@ -760,7 +758,7 @@ class RBM:
             top_k (scalar, int32): the number of items to recommend.
 
         Returns:
-            numpy.ndarray, float: 
+            numpy.ndarray, float:
             - A sparse matrix containing the top_k elements ordered by their score.
             - The time taken to recommend k items.
         """
@@ -818,7 +816,7 @@ class RBM:
             the ratings of a single user.
 
         Returns:
-            numpy.ndarray, float: 
+            numpy.ndarray, float:
             - A matrix with the inferred ratings.
             - The elapsed time for predediction.
         """

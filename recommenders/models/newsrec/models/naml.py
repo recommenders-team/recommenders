@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras import layers
 

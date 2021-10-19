@@ -48,7 +48,7 @@ install_requires = [
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
-    # For Surprise, specify the tarball in order to avoid incompatibilities of compiled .pyx files with numpy versions < 1.20 
+    # For Surprise, specify the tarball in order to avoid incompatibilities of compiled .pyx files with numpy versions < 1.20
     "scikit-surprise@https://files.pythonhosted.org/packages/97/37/5d334adaf5ddd65da99fc65f6507e0e4599d092ba048f4302fe8775619e8/scikit-surprise-1.1.1.tar.gz",
     "retrying>=1.3.3",
 ]

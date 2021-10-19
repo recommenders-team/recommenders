@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras import layers
 from tensorflow.keras import backend as K
@@ -16,7 +15,7 @@ class AttLayer2(layers.Layer):
 
     def __init__(self, dim=200, seed=0, **kwargs):
         """Initialization steps for AttLayer2.
-        
+
         Args:
             dim (int): attention hidden dim
         """
@@ -74,7 +73,7 @@ class AttLayer2(layers.Layer):
             attention = K.exp(attention)
         else:
             attention = K.exp(attention) * K.cast(mask, dtype="float32")
-            
+
         attention_weight = attention / (
             K.sum(attention, axis=-1, keepdims=True) + K.epsilon()
         )
@@ -86,10 +85,10 @@ class AttLayer2(layers.Layer):
     def compute_mask(self, input, input_mask=None):
         """Compte output mask value
 
-        Args: 
+        Args:
             input (object): input tensor.
             input_mask: input mask
-        
+
         Returns:
             object: output mask.
         """
@@ -100,7 +99,7 @@ class AttLayer2(layers.Layer):
 
         Args:
             input_shape (tuple): shape of input tensor.
-        
+
         Returns:
             tuple: shape of output tensor.
         """
@@ -121,7 +120,7 @@ class SelfAttention(layers.Layer):
 
     def __init__(self, multiheads, head_dim, seed=0, mask_right=False, **kwargs):
         """Initialization steps for AttLayer2.
-        
+
         Args:
             multiheads (int): The number of heads.
             head_dim (object): Dimention of each head.
@@ -181,7 +180,7 @@ class SelfAttention(layers.Layer):
         Args:
             seq_len (object): sequence length of inputs.
             mode (str): mode of mask.
-        
+
         Returns:
             object: tensors after masking.
         """
@@ -260,7 +259,7 @@ class SelfAttention(layers.Layer):
         """ add multiheads, multiheads and mask_right into layer config.
 
         Returns:
-            dict: config of SelfAttention layer.  
+            dict: config of SelfAttention layer.
         """
         config = super(SelfAttention, self).get_config()
         config.update(
@@ -280,7 +279,7 @@ def PersonalizedAttentivePooling(dim1, dim2, dim3, seed=0):
         dim1 (int): first dimention of value shape.
         dim2 (int): second dimention of value shape.
         dim3 (int): shape of query
-    
+
     Returns:
         object: weighted summary of inputs value.
     """
@@ -325,7 +324,7 @@ class OverwriteMasking(layers.Layer):
 
     Args:
         inputs (list): value tensor and mask tensor.
-    
+
     Returns:
         object: tensor after setting values to zero.
     """

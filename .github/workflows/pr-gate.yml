@@ -62,8 +62,6 @@ jobs:
         pip install tox
 
     - name: Run flake8
-      # TODO: re-enable this flake8 block (turned off to get a draft of the pipeline infrastructure)
-      continue-on-error: true
       run: |
        tox -e flake8
     

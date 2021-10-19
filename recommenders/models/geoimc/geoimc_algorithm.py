@@ -5,15 +5,12 @@
 Module maintaining the IMC problem.
 """
 
-import os
-import itertools
-from collections import Counter, OrderedDict
 import numpy as np
-from sklearn.cluster import KMeans
-from scipy.sparse import coo_matrix, csr_matrix, isspmatrix_csr
-from numba import njit, jit, prange
+
+from scipy.sparse import csr_matrix
+from numba import njit, prange
 from pymanopt import Problem
-from pymanopt.manifolds import Stiefel, Product, PositiveDefinite, Euclidean
+from pymanopt.manifolds import Stiefel, Product, PositiveDefinite
 from pymanopt.solvers import ConjugateGradient
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 
@@ -49,25 +46,23 @@ class IMCProblem(object):
         self.W = None
         self.optima_reached = False
         self.manifold = Product([
-                            Stiefel(
-                                self.X.shape[1],
-                                self.rank
-                            ),
-                            PositiveDefinite(
-                                self.rank
-                            ),
-                            Stiefel(
-                                self.Z.shape[1],
-                                self.rank
-                            )
+            Stiefel(
+                self.X.shape[1],
+                self.rank
+            ),
+            PositiveDefinite(
+                self.rank
+            ),
+            Stiefel(
+                self.Z.shape[1],
+                self.rank
+            )
         ])
-
 
     def _loadTarget(self, ):
         """Loads target matrix from the dataset pointer.
         """
         self.Y = self.dataset.get_data()
-
 
     @staticmethod
     @njit(nogil=True, parallel=True)
@@ -82,7 +77,6 @@ class IMCProblem(object):
                     num += a[i, k] * b[k, indices[j]]
                 residual_global[j] = num - cd[j]
         return residual_global
-
 
     def _cost(self, params, residual_global):
         """Compute the cost of GeoIMC optimization problem
@@ -106,10 +100,9 @@ class IMCProblem(object):
             self.Y.indptr,
             residual_global
         )
-        cost = 0.5 * np.sum((residual_global)**2)/self.nSamples + regularizer
+        cost = 0.5 * np.sum((residual_global)**2) / self.nSamples + regularizer
 
         return cost
-
 
     def _egrad(self, params, residual_global):
         """Computes the euclidean gradient
@@ -131,25 +124,24 @@ class IMCProblem(object):
         gradU = np.dot(
             self.X.T,
             residual_global_csr.dot(self.Z.dot(V.dot(B.T)))
-        )/self.nSamples
+        ) / self.nSamples
 
         gradB = np.dot(
             (self.X.dot(U)).T,
             residual_global_csr.dot(self.Z.dot(V))
-        )/self.nSamples + self.lambda1 * B
-        gradB_sym = (gradB + gradB.T)/2
+        ) / self.nSamples + self.lambda1 * B
+        gradB_sym = (gradB + gradB.T) / 2
 
         gradV = np.dot(
             (self.X.dot(U.dot(B))).T,
             residual_global_csr.dot(self.Z)
-        ).T/self.nSamples
+        ).T / self.nSamples
 
         return [
             gradU,
             gradB_sym,
             gradV
         ]
-
 
     def solve(self, *args):
         """ Main solver of the IMC model
@@ -166,7 +158,6 @@ class IMCProblem(object):
 
         self.optima_reached = True
         return
-
 
     def _optimize(self, max_opt_time, max_opt_iter, verbosity):
         """Optimize the GeoIMC optimization problem
@@ -192,7 +183,6 @@ class IMCProblem(object):
         self.W = [solution[0], solution[1], solution[2]]
 
         return self._cost(self.W, residual_global)
-
 
     def reset(self):
         """Reset the model.

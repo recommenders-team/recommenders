@@ -2,28 +2,14 @@
 # Licensed under the MIT License.
 
 
+import random
+import re
 import tensorflow as tf
-import os
-from sklearn.metrics import (
-    roc_auc_score,
-    log_loss,
-    mean_squared_error,
-    accuracy_score,
-    f1_score,
-)
-import numpy as np
-import yaml
-import zipfile
-from recommenders.datasets.download_utils import maybe_download
+
 from recommenders.models.deeprec.deeprec_utils import (
     flat_config,
     load_yaml,
-    load_dict,
 )
-import json
-import pickle as pkl
-import random
-import re
 
 
 def check_type(config):

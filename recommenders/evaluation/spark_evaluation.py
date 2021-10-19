@@ -507,7 +507,8 @@ class SparkDiversityEvaluation:
                recommendations to all users.
         * Novelty - A more novel item indicates it is less popular, i.e. it gets recommended less frequently.
         * Diversity - The dissimilarity of items being recommended.
-        * Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used, it indicates how "pleasant surprise" of recommendations is to a user.
+        * Serendipity - The "unusualness" or "surprise" of recommendations to a user. When 'col_relevance' is used,
+            it indicates how "pleasant surprise" of recommendations is to a user.
 
         The metric definitions/formulations are based on the following references with modification:
 
@@ -531,8 +532,10 @@ class SparkDiversityEvaluation:
                 Interaction here follows the *item choice model* from Castells et al.
             reco_df (pyspark.sql.DataFrame): Recommender's prediction output, containing col_user, col_item,
                 col_relevance (optional). Assumed to not contain any duplicate user-item pairs.
-            item_feature_df (pyspark.sql.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'. It contains two columns: col_item and features (a feature vector).
-            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used. Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
+            item_feature_df (pyspark.sql.DataFrame): (Optional) It is required only when item_sim_measure='item_feature_vector'.
+                It contains two columns: col_item and features (a feature vector).
+            item_sim_measure (str): (Optional) This column indicates which item similarity measure to be used.
+                Available measures include item_cooccurrence_count (default choice) and item_feature_vector.
             col_user (str): User id column name.
             col_item (str): Item id column name.
             col_relevance (str): Optional. This column indicates whether the recommended item is actually
@@ -584,7 +587,9 @@ class SparkDiversityEvaluation:
                     )
             else:
                 raise Exception(
-                    "item_feature_df not specified! item_feature_df must be provided if choosing to use item_feature_vector to calculate item similarity. item_feature_df should have schema:"
+                    "item_feature_df not specified! item_feature_df must be provided "
+                    "if choosing to use item_feature_vector to calculate item similarity. "
+                    "item_feature_df should have schema:"
                     + str(required_schema)
                 )
 
