@@ -135,7 +135,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        java: [8]
+        java: [11]
         python: [3.6, 3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit', 'smoke'] 
@@ -145,7 +145,7 @@ jobs:
           # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
           # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
           - os: [self-hosted, Linux, nightly]
-            java: 8
+            java: 11
             python: 3.7
             test-kind: 'integration'
             test-marker: 'spark and not gpu'
@@ -179,7 +179,7 @@ jobs:
         path: .coverage*
 
 ###############################################
-################# GPU-BUILD #################
+################## GPU-BUILD ##################
 ###############################################
   build-gpu:
     runs-on: [self-hosted, Linux, gpu, nightly] # this is a union of labels to select specific self-hosted machine
