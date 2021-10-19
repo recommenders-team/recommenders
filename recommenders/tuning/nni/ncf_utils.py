@@ -47,7 +47,7 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
     all_predictions = merged[merged.rating.isnull()].drop('rating', axis=1)
 
     for metric in ranking_metrics:
-        test_results[metric] = eval(metric)(test, all_predictions, col_prediction='prediction', k=K)
+        test_results[metric] = eval(metric)(test, all_predictions, col_prediction='prediction', k=K)  # noqa: F821 undefined name 'K'
 
     return test_results
 
