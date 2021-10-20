@@ -325,7 +325,7 @@ class HParams():
         """Return the hyperparameter values as a dictionary.
 
         Returns:
-            dict: Dictionary with teh hyperparameter values.
+            dict: Dictionary with the hyperparameter values.
         """
         return self._values
 
