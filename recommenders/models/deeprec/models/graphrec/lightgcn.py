@@ -30,7 +30,7 @@ class LightGCN(object):
         """Initializing the model. Create parameters, placeholders, embeddings and loss function.
 
         Args:
-            hparams (object): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+            hparams (HParams): A HParams object, hold the entire set of hyperparameters.
             data (object): A recommenders.models.deeprec.DataModel.ImplicitCF object, load and process data.
             seed (int): Seed.
 

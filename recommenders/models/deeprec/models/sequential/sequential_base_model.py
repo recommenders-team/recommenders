@@ -22,7 +22,7 @@ class SequentialBaseModel(BaseModel):
         parameter set.
 
         Args:
-            hparams (object): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
+            hparams (HParams): A `HParams` object, hold the entire set of hyperparameters.
             iterator_creator (object): An iterator to load the data.
             graph (object): An optional graph.
             seed (int): Random seed.
