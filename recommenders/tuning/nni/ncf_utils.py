@@ -3,8 +3,10 @@
 
 import pandas as pd
 
+from recommenders.utils.constants import DEFAULT_K
 
-def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
+
+def compute_test_results(model, train, test, rating_metrics, ranking_metrics, k=DEFAULT_K):
     """Compute the test results using a trained NCF model.
 
     Args:
@@ -13,6 +15,7 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
         test (pandas.DataFrame): Test set.
         rating_metrics (list): List of rating metrics.
         ranking_metrics (list): List of ranking metrics.
+        k (int): top K recommendations
 
     Returns:
         dict: Test results.
@@ -47,7 +50,7 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics):
     all_predictions = merged[merged.rating.isnull()].drop('rating', axis=1)
 
     for metric in ranking_metrics:
-        test_results[metric] = eval(metric)(test, all_predictions, col_prediction='prediction', k=K)  # noqa: F821 undefined name 'K'
+        test_results[metric] = eval(metric)(test, all_predictions, col_prediction='prediction', k=k)
 
     return test_results
 
