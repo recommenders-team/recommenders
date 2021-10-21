@@ -380,7 +380,7 @@ class StandardVAE:
             monitor="val_loss", factor=0.2, patience=1, min_lr=0.0001
         )
 
-        if self.annealing is True:
+        if self.annealing:
             # initialise AnnealingCallback for annealing process
             anneal = AnnealingCallback(
                 self.beta, self.anneal_cap, self.total_anneal_steps
