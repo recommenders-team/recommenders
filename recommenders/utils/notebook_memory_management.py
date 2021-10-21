@@ -32,7 +32,7 @@ keep_watching = True
 watching_memory = True
 try:
     input_cells = get_ipython().user_ns["In"]
-except:  # noqa E722 do not use bare 'except'
+except Exception:
     warnings.warn("Not running on notebook")
 
 

@@ -77,7 +77,7 @@ class TfidfRecommender:
             if for_BERT is False:
                 # Lower case
                 clean = clean.lower()
-        except:  # noqa E722 do not use bare 'except'
+        except Exception:
             if verbose is True:
                 print("Cannot clean non-existent text")
             clean = ""
@@ -213,7 +213,7 @@ class TfidfRecommender:
         """
         try:
             self.tokens = self.tf.vocabulary_
-        except:  # noqa E722 do not use bare 'except'
+        except Exception:
             self.tokens = "Run .tokenize_text() and .fit_tfidf() first"
         return self.tokens
 
@@ -225,7 +225,7 @@ class TfidfRecommender:
         """
         try:
             self.stop_words = self.tf.get_stop_words()
-        except:  # noqa E722 do not use bare 'except'
+        except Exception:
             self.stop_words = "Run .tokenize_text() and .fit_tfidf() first"
         return self.stop_words
 

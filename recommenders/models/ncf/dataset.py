@@ -203,7 +203,7 @@ class Dataset(object):
                     self.col_item + "_negative"
                 ].apply(lambda x: random.sample(x, self.n_neg_test))
 
-            except:  # noqa E722 do not use bare 'except'
+            except Exception:
                 min_num = min(map(len, list(test_ratings[self.col_item + "_negative"])))
                 warnings.warn(
                     "n_neg_test is larger than negative items set size! We will set n_neg as the smallest size: %d"
@@ -251,7 +251,7 @@ class Dataset(object):
             train_ratings[self.col_item + "_negative"] = train_ratings[
                 self.col_item + "_negative"
             ].apply(lambda x: random.sample(x, self.n_neg))
-        except:  # noqa E722 do not use bare 'except'
+        except Exception:
             min_num = min(map(len, list(train_ratings[self.col_item + "_negative"])))
             warnings.warn(
                 "n_neg is larger than negative items set size! We will set n_neg as the smallest size: %d"
