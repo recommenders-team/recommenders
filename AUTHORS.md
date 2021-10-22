@@ -100,6 +100,9 @@ To contributors: please add your name to the list when you submit a patch to the
    * Windows test pipelines
 * **[Satyadev Ntv](https://github.com/satyadevntv)**
    * GeoIMC algorithm
+* **[Yan Zhang](https://github.com/YanZhangADS)**
+   * Diversity metrics including coverage, novelty, diversity, and serendipity
+   * Diversity metrics evaluation sample notebook
 * **[Yassine Khelifi](https://github.com/datashinobi)**
    * SAR notebook quickstart
 * **[Zhenhui Xu](https://github.com/motefly)**
