@@ -107,7 +107,7 @@ def dbfs_file_exists(api_client, dbfs_path):
     try:
         DbfsApi(api_client).list_files(dbfs_path=DbfsPath(dbfs_path))
         file_exists = True
-    except:
+    except Exception:
         file_exists = False
     return file_exists
 

@@ -69,7 +69,7 @@ class AttLayer2(layers.Layer):
 
         attention = K.squeeze(attention, axis=2)
 
-        if mask == None:
+        if mask is None:
             attention = K.exp(attention)
         else:
             attention = K.exp(attention) * K.cast(mask, dtype="float32")
@@ -185,7 +185,7 @@ class SelfAttention(layers.Layer):
             object: tensors after masking.
         """
 
-        if seq_len == None:
+        if seq_len is None:
             return inputs
         else:
             mask = K.one_hot(indices=seq_len[:, 0], num_classes=K.shape(inputs)[1])

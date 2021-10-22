@@ -52,7 +52,7 @@ def remove_duplicates(df, cols):
         df = df.reset_index(drop=True)
 
         # Find where the identifier variable is duplicated
-        dup_rows = np.where(df.duplicated([col]) == True)[0]
+        dup_rows = np.where(df.duplicated([col]) == True)[0]  # noqa: E712 comparison to True
 
         # Drop duplicated rows
         df = df.drop(dup_rows)
@@ -134,7 +134,7 @@ def retrieve_text(
         data = requests.get(uri, headers={"Content-type": "application/json"}).json()
         text = " ".join([paragraph["text"] for paragraph in data["body_text"]])
 
-    except:
+    except Exception:
         text = ""
 
     return text

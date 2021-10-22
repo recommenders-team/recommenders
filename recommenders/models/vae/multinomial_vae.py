@@ -253,7 +253,7 @@ class Mult_VAE:
         self.anneal_cap = anneal_cap
         self.annealing = annealing
 
-        if self.annealing == True:
+        if self.annealing:
             self.beta = K.variable(0.0)
         else:
             self.beta = beta
@@ -415,7 +415,7 @@ class Mult_VAE:
             monitor="val_loss", factor=0.2, patience=1, min_lr=0.0001
         )
 
-        if self.annealing == True:
+        if self.annealing:
             # initialise AnnealingCallback for annealing process
             anneal = AnnealingCallback(
                 self.beta, self.anneal_cap, self.total_anneal_steps
@@ -450,7 +450,7 @@ class Mult_VAE:
 
     def get_optimal_beta(self):
         """Returns the value of the optimal beta."""
-        if self.annealing == True:
+        if self.annealing:
             # find the epoch/index that had the highest NDCG@k value
             index_max_ndcg = np.argmax(self.val_ndcg)
 

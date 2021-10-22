@@ -68,7 +68,7 @@ class TfidfRecommender:
             clean = clean.replace("Â\xa0", "")  # non-breaking space
 
             # Remove all punctuation and special characters
-            clean = re.sub("([^\s\w]|_)+", "", clean)
+            clean = re.sub("([^\s\w]|_)+", "", clean)  # noqa W695 invalid escape sequence '\s'
 
             # If you want to keep some punctuation, see below commented out example
             # clean = re.sub('([^\s\w\-\_\(\)]|_)+','', clean)
@@ -77,7 +77,7 @@ class TfidfRecommender:
             if for_BERT is False:
                 # Lower case
                 clean = clean.lower()
-        except:
+        except Exception:
             if verbose is True:
                 print("Cannot clean non-existent text")
             clean = ""
@@ -213,7 +213,7 @@ class TfidfRecommender:
         """
         try:
             self.tokens = self.tf.vocabulary_
-        except:
+        except Exception:
             self.tokens = "Run .tokenize_text() and .fit_tfidf() first"
         return self.tokens
 
@@ -225,7 +225,7 @@ class TfidfRecommender:
         """
         try:
             self.stop_words = self.tf.get_stop_words()
-        except:
+        except Exception:
             self.stop_words = "Run .tokenize_text() and .fit_tfidf() first"
         return self.stop_words
 
@@ -390,7 +390,7 @@ class TfidfRecommender:
             format_ = {"url": self.__make_clickable}
             df = df.head().style.format(format_)
 
-        if verbose == True:
+        if verbose:
             df
 
         return df

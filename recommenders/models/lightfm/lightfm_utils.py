@@ -120,7 +120,7 @@ def track_model_metrics(
     metric_keys = {"prec": "Precision", "rec": "Recall"}
     fitting_metrics.metric.replace(metric_keys, inplace=True)
     # plots the performance data
-    if show_plot == True:
+    if show_plot:
         model_perf_plots(fitting_metrics)
     return fitting_metrics, model
 
