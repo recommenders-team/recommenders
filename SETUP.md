@@ -64,7 +64,7 @@ If using venv or virtualenv, see [these instructions](#using-a-virtual-environme
 
 **NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
 
-**NOTE** Spark requires Java version 8 or 11. We support Spark version 3, but versions 2.4+ with Java version 8 may also work. 
+**NOTE** Spark requires Java version 8 or 11. We support Spark versions 3.0 and 3.1, but versions 2.4+ with Java version 8 may also work. 
 
 <details> 
 <summary><strong><em>Install Java on MacOS</em></strong></summary>
@@ -235,8 +235,8 @@ sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsof
 
 ### Requirements
 
-* Databricks Runtime version >= 7 (Apache Spark >= 3.0.1, Scala 2.12)
-* Python 3
+* Databricks Runtime version >= 7, <= 9 (Apache Spark >= 3.0, <= 3.1, Scala 2.12)
+* Python 3.6 or 3.7
 
 Earlier versions of Databricks or Spark may work but this is not guaranteed.
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
@@ -364,7 +364,7 @@ You can follow instructions [here](https://docs.azuredatabricks.net/user-guide/l
 Additionally, you must install the [spark-cosmosdb connector](https://docs.databricks.com/spark/latest/data-sources/azure/cosmosdb-connector.html) on the cluster. The easiest way to manually do that is to:
 
 
-1. Download the [appropriate jar](https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar) from MAVEN. **NOTE** This is the appropriate jar for spark versions `3.1.X`, and is the appropriate version for the recommended Azure Databricks run-time detailed above.
+1. Download the [appropriate jar](https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar) from MAVEN. **NOTE** This is the appropriate jar for spark versions `3.1.X`, and is the appropriate version for the recommended Azure Databricks run-time detailed above. See the [Databricks installation script](https://github.com/microsoft/recommenders/blob/main/tools/databricks_install.py#L45) for other Databricks runtimes.
 2. Upload and install the jar by:
    1. Log into your `Azure Databricks` workspace
    2. Select the `Clusters` button on the left.
