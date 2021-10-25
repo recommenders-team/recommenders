@@ -2,14 +2,13 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import pandas as pd
-import math
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
 import time as tm
 
 
+tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
 
 
@@ -598,7 +597,7 @@ class RBM:
             self.learning_rate / self.minibatch
         )  # learning rate rescaled by the batch size
 
-        self.opt = tf.contrib.optimizer_v2.AdamOptimizer(learning_rate=rate).minimize(
+        self.opt = tf.compat.v1.train.AdamOptimizer(learning_rate=rate).minimize(
             loss=obj
         )  # Instantiate the optimizer
 
