@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import tensorflow as tf
 import tensorflow.keras as keras
 from tensorflow.keras import layers
 from tensorflow.keras import backend as K
@@ -124,8 +123,8 @@ class SelfAttention(layers.Layer):
         
         Args:
             multiheads (int): The number of heads.
-            head_dim (object): Dimention of each head.
-            mask_right (boolean): whether to mask right words.
+            head_dim (object): Dimension of each head.
+            mask_right (boolean): Whether to mask right words.
         """
 
         self.multiheads = multiheads
@@ -204,7 +203,7 @@ class SelfAttention(layers.Layer):
         """Core logic of multi-head self attention.
 
         Args:
-            QKVs (list): inputs of multi-head self attention i.e. qeury, key and value.
+            QKVs (list): inputs of multi-head self attention i.e. query, key and value.
 
         Returns:
             object: ouput tensors.

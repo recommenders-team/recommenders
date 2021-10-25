@@ -93,7 +93,6 @@ class NRMSModel(BaseModel):
             object: a model used to train.
             object: a model used to evaluate and inference.
         """
-        hparams = self.hparams
         model, scorer = self._build_nrms()
         return model, scorer
 

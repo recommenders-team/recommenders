@@ -9,9 +9,8 @@ from time import time
 import logging
 
 
+tf.compat.v1.disable_eager_execution()
 logger = logging.getLogger(__name__)
-
-
 MODEL_CHECKPOINT = "model.ckpt"
 
 
