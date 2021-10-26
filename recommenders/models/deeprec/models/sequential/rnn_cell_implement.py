@@ -141,7 +141,7 @@ class Time4LSTMCell(RNNCell):
 
         dtype = inputs.dtype
         input_size = inputs.get_shape().with_rank(2)[1]
-        if input_size.value is None:
+        if input_size is None:
             raise ValueError("Could not infer input size from inputs.get_shape()[-1]")
 
         if self._time_kernel_w1 is None:
@@ -397,7 +397,7 @@ class Time4ALSTMCell(RNNCell):
 
         dtype = inputs.dtype
         input_size = inputs.get_shape().with_rank(2)[1]
-        if input_size.value is None:
+        if input_size is None:
             raise ValueError("Could not infer input size from inputs.get_shape()[-1]")
 
         if self._time_kernel_w1 is None:
@@ -595,13 +595,13 @@ class _Linear(object):
         for shape in shapes:
             if shape.ndims != 2:
                 raise ValueError("linear is expecting 2D arguments: %s" % shapes)
-            if shape[1].value is None:
+            if shape[1] is None:
                 raise ValueError(
                     "linear expects shape[1] to be provided for shape %s, "
                     "but saw %s" % (shape, shape[1])
                 )
             else:
-                total_arg_size += shape[1].value
+                total_arg_size += shape[1]
 
         dtype = [a.dtype for a in args][0]
 

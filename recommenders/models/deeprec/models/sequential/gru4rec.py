@@ -6,7 +6,7 @@ from recommenders.models.deeprec.models.sequential.sequential_base_model import 
     SequentialBaseModel,
 )
 from tensorflow.contrib.rnn import GRUCell, LSTMCell
-from tensorflow.nn import dynamic_rnn
+from tensorflow.compat.v1.nn import dynamic_rnn
 
 __all__ = ["GRU4RecModel"]
 

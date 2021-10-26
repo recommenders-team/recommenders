@@ -279,20 +279,20 @@ class SequentialBaseModel(BaseModel):
         )
         tf.compat.v1.summary.histogram("user_embedding_output", self.user_embedding)
 
-        self.item_embedding = tf.nn.embedding_lookup(
+        self.item_embedding = tf.compat.v1.nn.embedding_lookup(
             params=self.item_lookup, ids=self.iterator.items
         )
-        self.item_history_embedding = tf.nn.embedding_lookup(
+        self.item_history_embedding = tf.compat.v1.nn.embedding_lookup(
             params=self.item_lookup, ids=self.iterator.item_history
         )
         tf.compat.v1.summary.histogram(
             "item_history_embedding_output", self.item_history_embedding
         )
 
-        self.cate_embedding = tf.nn.embedding_lookup(
+        self.cate_embedding = tf.compat.v1.nn.embedding_lookup(
             params=self.cate_lookup, ids=self.iterator.cates
         )
-        self.cate_history_embedding = tf.nn.embedding_lookup(
+        self.cate_history_embedding = tf.compat.v1.nn.embedding_lookup(
             params=self.cate_lookup, ids=self.iterator.item_cate_history
         )
         tf.compat.v1.summary.histogram(

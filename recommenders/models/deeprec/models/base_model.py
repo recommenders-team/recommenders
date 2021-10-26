@@ -7,6 +7,7 @@ import time
 import os
 import numpy as np
 import tensorflow as tf
+import tensorflow_addons as tfa
 from recommenders.models.deeprec.deeprec_utils import cal_metric
 
 
@@ -611,13 +612,13 @@ class BaseModel:
         Returns:
             object: Weighted sum after attention.
         """
-        hidden_size = inputs.shape[2].value
+        hidden_size = inputs.shape[2]
         if not attention_size:
             attention_size = hidden_size
 
         attention_mat = tf.compat.v1.get_variable(
             name="attention_mat",
-            shape=[inputs.shape[-1].value, hidden_size],
+            shape=[inputs.shape[-1], hidden_size],
             initializer=self.initializer,
         )
         att_inputs = tf.tensordot(inputs, attention_mat, [[2], [0]])

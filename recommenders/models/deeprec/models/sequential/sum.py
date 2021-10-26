@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
-from tensorflow.nn import dynamic_rnn
+from tensorflow.compat.v1.nn import dynamic_rnn
 from recommenders.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )

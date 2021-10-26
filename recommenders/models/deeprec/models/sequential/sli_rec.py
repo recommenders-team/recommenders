@@ -5,7 +5,7 @@ import tensorflow as tf
 from recommenders.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
-from tensorflow.nn import dynamic_rnn
+from tensorflow.compat.v1.nn import dynamic_rnn
 from recommenders.models.deeprec.models.sequential.rnn_cell_implement import (
     Time4LSTMCell,
 )
@@ -58,7 +58,7 @@ class SLI_RECModel(SequentialBaseModel):
                 -1,
             )
             with tf.compat.v1.variable_scope("rnn"):
-                rnn_outputs, final_state = dynamic_rnn(
+                rnn_outputs, _ = dynamic_rnn(
                     Time4LSTMCell(hparams.hidden_size),
                     inputs=item_history_embedding_new,
                     sequence_length=self.sequence_length,
@@ -107,7 +107,7 @@ class SLI_RECModel(SequentialBaseModel):
         """
         hparams = self.hparams
         with tf.compat.v1.variable_scope("attention_fcn"):
-            query_size = query.shape[1].value
+            query_size = query.shape[1]
             boolean_mask = tf.equal(self.mask, tf.ones_like(self.mask))
 
             attention_mat = tf.compat.v1.get_variable(
@@ -118,7 +118,7 @@ class SLI_RECModel(SequentialBaseModel):
             att_inputs = tf.tensordot(user_embedding, attention_mat, [[2], [0]])
 
             queries = tf.reshape(
-                tf.tile(query, [1, att_inputs.shape[1].value]), tf.shape(input=att_inputs)
+                tf.tile(query, [1, att_inputs.shape[1]]), tf.shape(input=att_inputs)
             )
             last_hidden_nn_layer = tf.concat(
                 [att_inputs, queries, att_inputs - queries, att_inputs * queries], -1
