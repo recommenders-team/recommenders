@@ -7,7 +7,6 @@ import time
 import os
 import numpy as np
 import tensorflow as tf
-import tensorflow_addons as tfa
 from recommenders.models.deeprec.deeprec_utils import cal_metric
 
 
