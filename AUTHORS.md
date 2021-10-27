@@ -68,6 +68,9 @@ To contributors: please add your name to the list when you submit a patch to the
    * AzureML documentation and support
 * **[Jeremy Reynolds](https://github.com/jreynolds01)**
    * Reference architecture
+* **[Jianjie Liu](https://github.com/laserprec/)**
+   * GitHub Action Migration
+   * Test Infrastructure Optimization
 * **[Kaisar Mussalim](https://github.com/kmussalim)**
    * Multinomial VAE algorithm
    * Standard VAE algorithm
