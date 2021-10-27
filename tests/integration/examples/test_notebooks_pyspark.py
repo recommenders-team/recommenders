@@ -14,6 +14,8 @@ TOL = 0.05
 ABS_TOL = 0.05
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.spark
 @pytest.mark.integration
 def test_als_pyspark_integration(notebooks, output_notebook, kernel_name):
@@ -38,6 +40,8 @@ def test_als_pyspark_integration(notebooks, output_notebook, kernel_name):
     assert results["rsquared"] == pytest.approx(0.4038, rel=TOL, abs=ABS_TOL)
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.spark
 @pytest.mark.integration
 @pytest.mark.skip(reason="It takes too long in the current test machine")
