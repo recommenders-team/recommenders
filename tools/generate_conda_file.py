@@ -44,7 +44,7 @@ CONDA_BASE = {
     "lightgbm": "lightgbm==2.2.1",
     "matplotlib": "matplotlib>=2.2.2",
     "nltk": "nltk>=3.4",
-    "numpy": "numpy>=1.13.3",
+    "numpy": "numpy>=1.19",
     "pandas": "pandas>1.0.3,<=1.2.2",
     "papermill": "papermill>=2.2.0",
     "pip": "pip>=19.2",
@@ -85,13 +85,15 @@ PIP_BASE = {
     "pyyaml": "pyyaml>=5.4.1,<6",
     "xlearn": "xlearn==0.40a1",
     "transformers": "transformers==2.5.0",
-    "tensorflow": "tensorflow==1.15.4",
+    "tensorflow": "tensorflow>=2.6",
+    "tf-slim": "tf-slim>=1.1.0",
     "scrapbook": "scrapbook>=0.5.0",
 }
 
 PIP_GPU = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
-    "tensorflow": "tensorflow-gpu==1.15.4",
+    "tensorflow": "tensorflow>=2.6",
+    "tf-slim": "tf-slim>=1.1.0"
 }
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 
