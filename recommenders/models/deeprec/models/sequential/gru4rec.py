@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
+from keras.layers.legacy_rnn.rnn_cell_impl import GRUCell, LSTMCell
 from recommenders.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
-from tensorflow.contrib.rnn import GRUCell, LSTMCell
 from tensorflow.compat.v1.nn import dynamic_rnn
 
 __all__ = ["GRU4RecModel"]
