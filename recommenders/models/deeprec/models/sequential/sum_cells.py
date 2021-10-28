@@ -44,7 +44,7 @@ class SUMCell(LayerRNNCell):
         if context.executing_eagerly() and context.num_gpus() > 0:
             logging.warn(
                 "%s: Note that this cell is not optimized for performance. "
-                "Please use tf.contrib.cudnn_rnn.CudnnGRU for better "
+                "Please use keras.layers.cudnn_recurrent.CuDNNGRU for better "
                 "performance on GPU.",
                 self,
             )

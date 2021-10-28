@@ -199,7 +199,6 @@ class NextItNetModel(SequentialBaseModel):
 
             return tf.squeeze(out, [1])
 
-    # tf.contrib.layers.layer_norm
     def _layer_norm(self, x, name, epsilon=1e-8, trainable=True):
         """Call a layer normalization
 
