@@ -5,6 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import tf_slim as slim
 from time import time
 import logging
 
@@ -179,7 +180,7 @@ class NCF:
 
             # MLP Layers
             for layer_size in self.layer_sizes[1:]:
-                output = tf.contrib.layers.fully_connected(
+                output = slim.layers.fully_connected(
                     output,
                     num_outputs=layer_size,
                     activation_fn=tf.nn.relu,
@@ -195,7 +196,7 @@ class NCF:
 
             if self.model_type == "gmf":
                 # GMF only
-                output = tf.contrib.layers.fully_connected(
+                output = slim.layers.fully_connected(
                     self.gmf_vector,
                     num_outputs=1,
                     activation_fn=None,
@@ -208,7 +209,7 @@ class NCF:
 
             elif self.model_type == "mlp":
                 # MLP only
-                output = tf.contrib.layers.fully_connected(
+                output = slim.layers.fully_connected(
                     self.mlp_vector,
                     num_outputs=1,
                     activation_fn=None,
@@ -223,7 +224,7 @@ class NCF:
                 # concatenate GMF and MLP vector
                 self.ncf_vector = tf.concat([self.gmf_vector, self.mlp_vector], 1)
                 # get predicted rating score
-                output = tf.contrib.layers.fully_connected(
+                output = slim.layers.fully_connected(
                     self.ncf_vector,
                     num_outputs=1,
                     activation_fn=None,
