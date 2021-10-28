@@ -61,7 +61,7 @@ class SUMModel(SequentialBaseModel):
         Returns:
             tf.Tensor, tf.Tensor: Merged user representation. Attention weights of each memory channel.
         """
-        dim_q = query.shape[-1].value
+        dim_q = query.shape[-1]
         att_weights = tf.constant(1.0, dtype=tf.float32)
         with tf.compat.v1.variable_scope("query_att"):
             if self.hparams.slots > 1:
