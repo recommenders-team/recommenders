@@ -278,8 +278,6 @@ class BaseModel:
             train_step = tf.compat.v1.train.ProximalGradientDescentOptimizer(lr)
         elif optimizer == "rmsprop":
             train_step = tf.compat.v1.train.RMSPropOptimizer(lr)
-        elif optimizer == "lazyadam":
-            train_step = tf.contrib.opt.LazyAdamOptimizer(lr)
         else:
             train_step = tf.compat.v1.train.GradientDescentOptimizer(lr)
         return train_step
