@@ -109,34 +109,35 @@ The table below lists the recommender algorithms currently available in the repo
 | LightGCN | Collaborative Filtering | Deep learning algorithm which simplifies the design of GCN for predicting implicit feedback. It works in the CPU/GPU enviroment. | [Deep dive](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) |
 | GeoIMC<sup>*</sup> | Hybrid | Matrix completion algorithm that has into account user and item features using Riemannian conjugate gradients optimization and following a geometric approach. It works in the CPU enviroment. | [Quick start](examples/00_quick_start/geoimc_movielens.ipynb) |
 | GRU4Rec | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using recurrent neural networks. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
-| Multinomial VAE | Collaborative Filtering | Generative Model for predicting user/item interactions. It works in the CPU/GPU enviroment. | [Deep dive](examples/02_model_collaborative_filtering/multi_vae_deep_dive.ipynb) |
-| Neural Recommendation with Long- and Short-term User Representations (LSTUR)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/lstur_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with long- and short-term user interest modeling |
-| Neural Recommendation with Attentive Multi-View Learning (NAML)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/naml_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with attentive multi-view learning |
-| Neural Collaborative Filtering (NCF) | [Python CPU / Python GPU](examples/00_quick_start/ncf_movielens.ipynb) | Collaborative Filtering | Deep learning algorithm with enhanced performance for implicit feedback |
-| Neural Recommendation with Personalized Attention (NPA)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/npa_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with personalized attention network |
-| Neural Recommendation with Multi-Head Self-Attention (NRMS)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/nrms_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with multi-head self-attention |
-| Next Item Recommendation (NextItNet) | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Algorithm based on dilated convolutions and residual network that aims to capture sequential patterns |
-| Restricted Boltzmann Machines (RBM) | [Python CPU / Python GPU](examples/00_quick_start/rbm_movielens.ipynb) | Collaborative Filtering | Neural network based algorithm for learning the underlying probability distribution for explicit or implicit feedback |
-| Riemannian Low-rank Matrix Completion (RLRMC)<sup>*</sup> | [Python CPU](examples/00_quick_start/rlrmc_movielens.ipynb) | Collaborative Filtering | Matrix factorization algorithm using Riemannian conjugate gradients optimization with small memory consumption. |
-| Simple Algorithm for Recommendation (SAR)<sup>*</sup> | [Python CPU](examples/00_quick_start/sar_movielens.ipynb) | Collaborative Filtering | Similarity-based algorithm for implicit feedback dataset |
-| Short-term and Long-term Preference Integrated Recommender (SLi-Rec)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism, a time-aware controller and a content-aware controller |
-| Multi-Interest-Aware Sequential User Modeling (SUM)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | An enhanced memory network-based sequential user model which aims to capture users' multiple interests. |
-| Standard VAE | [Python CPU / Python GPU](examples/02_model_collaborative_filtering/standard_vae_deep_dive.ipynb) | Collaborative Filtering | Generative Model for predicting user/item interactions |
-| Surprise/Singular Value Decomposition (SVD) | [Python CPU](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in datasets that are not very large |
-| Term Frequency - Inverse Document Frequency (TF-IDF) | [Python CPU](examples/00_quick_start/tfidf_covid.ipynb) | Content-Based Filtering | Simple similarity-based algorithm for content-based recommendations with text datasets |
-| Vowpal Wabbit (VW)<sup>*</sup> | [Python CPU (online training)](examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing |
-| Wide and Deep | [Python CPU / Python GPU](examples/00_quick_start/wide_deep_movielens.ipynb) | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
-| xLearn/Factorization Machine (FM) & Field-Aware FM (FFM) | [Python CPU](examples/02_model_hybrid/fm_deep_dive.ipynb) | Hybrid | Quick and memory efficient algorithm to predict labels with user/item features |
+| Multinomial VAE | Collaborative Filtering | Generative model for predicting user/item interactions. It works in the CPU/GPU enviroment. | [Deep dive](examples/02_model_collaborative_filtering/multi_vae_deep_dive.ipynb) |
+| Neural Recommendation with Long- and Short-term User Representations (LSTUR)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with long- and short-term user interest modeling. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/lstur_MIND.ipynb) |
+| Neural Recommendation with Attentive Multi-View Learning (NAML)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with attentive multi-view learning. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/naml_MIND.ipynb) |
+| Neural Collaborative Filtering (NCF) | Collaborative Filtering | Deep learning algorithm with enhanced performance for user/item implicit feedback. It works in the CPU/GPU enviroment.| [Quick start](examples/00_quick_start/ncf_movielens.ipynb) |
+| Neural Recommendation with Personalized Attention (NPA)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with personalized attention network. It works in the CPU/GPU enviroment. |[Quick start](examples/00_quick_start/npa_MIND.ipynb) |
+| Neural Recommendation with Multi-Head Self-Attention (NRMS)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with multi-head self-attention. It works in the CPU/GPU enviroment. |  [Quick start](examples/00_quick_start/nrms_MIND.ipynb) |
+| Next Item Recommendation (NextItNet) | Collaborative Filtering | Algorithm based on dilated convolutions and residual network that aims to capture sequential patterns. It considers both user/item interactions and features.  It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Restricted Boltzmann Machines (RBM) | Collaborative Filtering | Neural network based algorithm for learning the underlying probability distribution for explicit or implicit user/item feedback. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/rbm_movielens.ipynb) / [Deep dive](examples/02_model_collaborative_filtering/rbm_deep_dive.ipynb) |
+| Riemannian Low-rank Matrix Completion (RLRMC)<sup>*</sup> | Collaborative Filtering | Matrix factorization algorithm using Riemannian conjugate gradients optimization with small memory consumption to predice user/item interactions. It works in the CPU enviroment. | [Quick start](examples/00_quick_start/rlrmc_movielens.ipynb) |
+
+| Simple Algorithm for Recommendation (SAR)<sup>*</sup> | Collaborative Filtering | Similarity-based algorithm for implicit user/item feedback. | [Quick start](examples/00_quick_start/sar_movielens.ipynb) / [Deep dive](examples/02_model_collaborative_filtering/sar_deep_dive.ipynb) |
+| Short-term and Long-term Preference Integrated Recommender (SLi-Rec)<sup>*</sup> | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism, a time-aware controller and a content-aware controller |  [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Multi-Interest-Aware Sequential User Modeling (SUM)<sup>*</sup> | Collaborative Filtering | An enhanced memory network-based sequential user model which aims to capture users' multiple interests. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Standard VAE | Collaborative Filtering | Generative Model for predicting user/item interactions. | [Deep dive](examples/02_model_collaborative_filtering/standard_vae_deep_dive.ipynb) |
+| Surprise/Singular Value Decomposition (SVD) | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in datasets that are not very large | [Deep dive](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) |
+| Term Frequency - Inverse Document Frequency (TF-IDF) | Content-Based Filtering | Simple similarity-based algorithm for content-based recommendations with text datasets | [Quick staert](examples/00_quick_start/tfidf_covid.ipynb) |
+| Vowpal Wabbit (VW)<sup>*</sup> | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing. It uses the CPU for online learning. | [Deep dive](examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) |
+| Wide and Deep | Deep learning algorithm that can memorize feature interactions and generalize user features | [Quick start](examples/00_quick_start/wide_deep_movielens.ipynb) | Hybrid |
+| xLearn/Factorization Machine (FM) & Field-Aware FM (FFM) | Hybrid | Quick and memory efficient algorithm to predict labels with user/item features | [Deep dive](examples/02_model_hybrid/fm_deep_dive.ipynb) |
 
 **NOTE**: <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
 
 Independent or incubating algorithms and utilities are candidates for the [contrib](contrib) folder. This will house contributions which may not easily fit into the core repository or need time to refactor or mature the code and add necessary tests.
 
-| Algorithm | Environment | Type | Description |
-| --- | --- | --- | --- |
-| SARplus <sup>*</sup> | [PySpark](contrib/sarplus/README.md) | Collaborative Filtering | Optimized implementation of SAR for Spark |
+| Algorithm | Type | Description | Example |
+|-----------|------|-------------|---------|
+| SARplus <sup>*</sup> | Collaborative Filtering | Optimized implementation of SAR for Spark |  [Quick start](contrib/sarplus/README.md) |
 
-### Preliminary Comparison
+### Algorithm Comparison
 
 We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, the MovieLens dataset is split into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 P100 GPU). Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k, running the algorithms for 15 epochs.
 
@@ -150,7 +151,6 @@ We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to ill
 | [NCF](examples/02_model_hybrid/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A | N/A | N/A | N/A |
 | [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
 | [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
-
 
 ## Code of Conduct
 
