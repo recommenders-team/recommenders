@@ -2,9 +2,7 @@
 # Licensed under the MIT License.
 
 import os
-import re
 import shutil
-import warnings
 import pandas as pd
 import gzip
 import random
@@ -12,7 +10,7 @@ import logging
 import _pickle as cPickle
 
 from recommenders.utils.constants import SEED
-from recommenders.datasets.download_utils import maybe_download, download_path
+from recommenders.datasets.download_utils import maybe_download
 
 
 random.seed(SEED)
@@ -287,15 +285,15 @@ def _data_generating_no_history_expanding(
             fo = f_test
         if user_id != last_user_id or tfile == "valid" or tfile == "test":
             if last_user_id is not None:
-                history_clk_num = len(movie_id_list)
+                history_clk_num = len(movie_id_list)  # noqa: F821 undefined name 'movie_id_list'
                 cat_str = ""
                 mid_str = ""
                 dt_str = ""
-                for c1 in cate_list[:-1]:
+                for c1 in cate_list[:-1]:  # noqa: F821 undefined name 'cate_list'
                     cat_str += c1 + ","
-                for mid in movie_id_list[:-1]:
+                for mid in movie_id_list[:-1]:  # noqa: F821 undefined name 'movie_id_list'
                     mid_str += mid + ","
-                for dt_time in dt_list[:-1]:
+                for dt_time in dt_list[:-1]:  # noqa: F821 undefined name 'dt_list'
                     dt_str += dt_time + ","
                 if len(cat_str) > 0:
                     cat_str = cat_str[:-1]
@@ -322,7 +320,7 @@ def _data_generating_no_history_expanding(
                         + dt_str
                         + "\n"
                     )
-            if tfile == "train" or last_user_id == None:
+            if tfile == "train" or last_user_id is None:
                 movie_id_list = []
                 cate_list = []
                 dt_list = []

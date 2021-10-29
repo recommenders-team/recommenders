@@ -214,7 +214,7 @@ class LightGCN(object):
                 mf_loss += batch_mf_loss / n_batch
                 emb_loss += batch_emb_loss / n_batch
 
-            if np.isnan(loss) == True:
+            if np.isnan(loss):
                 print("ERROR: loss is nan.")
                 sys.exit()
             train_end = time.time()
@@ -224,7 +224,7 @@ class LightGCN(object):
                 save_path_str = os.path.join(self.model_dir, "epoch_" + str(epoch))
                 if not os.path.exists(save_path_str):
                     os.makedirs(save_path_str)
-                checkpoint_path = self.saver.save(
+                checkpoint_path = self.saver.save(  # noqa: F841
                     sess=self.sess, save_path=save_path_str
                 )
                 print("Save model to path {0}".format(os.path.abspath(save_path_str)))
@@ -268,7 +268,7 @@ class LightGCN(object):
         """
         try:
             self.saver.restore(self.sess, model_path)
-        except:
+        except Exception:
             raise IOError(
                 "Failed to find any matching files for {0}".format(model_path)
             )
@@ -358,7 +358,7 @@ class LightGCN(object):
 
         """
         data = self.data
-        if use_id == False:
+        if not use_id:
             user_ids = np.array([data.user2id[x] for x in test[data.col_user].unique()])
         else:
             user_ids = np.array(test[data.col_user].unique())

@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from os.path import join
 import abc
 import time
 import numpy as np
@@ -303,7 +302,7 @@ class BaseModel:
         group_labels = {k: [] for k in all_keys}
         group_preds = {k: [] for k in all_keys}
 
-        for l, p, k in zip(labels, preds, group_keys):
+        for l, p, k in zip(labels, preds, group_keys):  # noqa: E741 ambiguous variable name 'l'
             group_labels[k].append(l)
             group_preds[k].append(p)
 

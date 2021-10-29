@@ -298,7 +298,7 @@ def load_yaml(filename):
         return config
     except FileNotFoundError:  # for file not found
         raise
-    except Exception as e:  # for other exceptions
+    except Exception:  # for other exceptions
         raise IOError("load {0} error!".format(filename))
 
 

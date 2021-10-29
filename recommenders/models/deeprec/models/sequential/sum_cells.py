@@ -9,9 +9,7 @@ from tensorflow.python.keras import activations
 from tensorflow.python.keras import initializers
 from tensorflow.python.keras.utils import tf_utils
 from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import variable_scope as vs
 from tensorflow.python.platform import tf_logging as logging
-from tensorflow.python.util.deprecation import deprecated
 from tensorflow.python.ops import init_ops
 from tensorflow.python.framework import dtypes
 from tensorflow.python.util import nest
@@ -50,7 +48,7 @@ class SUMCell(LayerRNNCell):
             )
 
         self._input_size = input_size
-        self._slots = slots - 1  ## the last channel is reserved for the highway slot
+        self._slots = slots - 1  # the last channel is reserved for the highway slot
         self._num_units = num_units
         self._real_units = (self._num_units - input_size) // slots
         if activation:
@@ -141,9 +139,9 @@ class SUMCell(LayerRNNCell):
                 % str(inputs_shape)
             )
         _check_supported_dtypes(self.dtype)
-        d = inputs_shape[-1]
-        h = self._real_units
-        s = self._slots
+        d = inputs_shape[-1]  # noqa: F841
+        h = self._real_units  # noqa: F841
+        s = self._slots       # noqa: F841
 
         self._basic_build(inputs_shape)
 
@@ -167,7 +165,7 @@ class SUMCell(LayerRNNCell):
             state:  (a batch of) user states at time T-1
 
         returns:
-            state, state: 
+            state, state:
             - after process the user behavior at time T, returns (a batch of) new user states at time T
             - after process the user behavior at time T, returns (a batch of) new user states at time T
         """
@@ -312,7 +310,7 @@ class SUMV2Cell(SUMCell):
         h_hat = tf.reduce_sum(input_tensor=tf.multiply(state[:, : self._slots, :], att_weights), axis=1)
         h_hat = (h_hat + state[:, self._slots, :]) / 2
 
-        ## get the true writing attentions
+        # get the true writing attentions
         writing_input = tf.concat([inputs, h_hat], axis=1)
         att_weights = tf.compat.v1.nn.xw_plus_b(writing_input, self._writing_W, self._writing_b)
         att_weights = tf.nn.relu(att_weights)

@@ -86,7 +86,7 @@ def pandas_input_fn(
     for col in X_df.columns:
         values = X_df[col].values
         if isinstance(values[0], (list, np.ndarray)):
-            values = np.array([l for l in values], dtype=np.float32)
+            values = np.array([l for l in values], dtype=np.float32)  # noqa: E741 ambiguous variable name 'l'
         X[col] = values
 
     return lambda: _dataset(
@@ -222,7 +222,7 @@ def evaluation_log_hook(
         batch_size (int): Number of samples fed into the model at a time.
             Note, the batch size doesn't affect on evaluation results.
         eval_fns (iterable of functions): List of evaluation functions that have signature of
-            (true_df, prediction_df, \*\*eval_kwargs)->(float). If None, loss is calculated on true_df.
+            (true_df, prediction_df, **eval_kwargs)->(float). If None, loss is calculated on true_df.
         eval_kwargs: Evaluation function's keyword arguments.
             Note, prediction column name should be 'prediction'
 

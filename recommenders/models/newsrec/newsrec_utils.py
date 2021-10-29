@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 
-from recommenders.datasets.download_utils import maybe_download
 from recommenders.models.deeprec.deeprec_utils import (
     flat_config,
     HParams,

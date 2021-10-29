@@ -30,7 +30,6 @@ try:
         FloatType,
         LongType
     )
-    from pyspark.sql.functions import concat_ws, col
 except ImportError:
     pass  # so the environment without spark doesn't break
 

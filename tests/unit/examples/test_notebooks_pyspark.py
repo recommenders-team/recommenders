@@ -11,6 +11,8 @@ except ImportError:
 from recommenders.utils.constants import DEFAULT_RATING_COL, DEFAULT_USER_COL, DEFAULT_ITEM_COL
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.notebooks
 @pytest.mark.spark
 @pytest.mark.skipif(
@@ -34,6 +36,8 @@ def test_data_split_runs(notebooks, output_notebook, kernel_name):
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=3)
 @pytest.mark.notebooks
 @pytest.mark.spark
 @pytest.mark.skipif(
@@ -50,6 +54,8 @@ def test_als_deep_dive_runs(notebooks, output_notebook, kernel_name):
                         ))
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=3)
 @pytest.mark.notebooks
 @pytest.mark.spark
 @pytest.mark.skipif(
@@ -60,6 +66,8 @@ def test_evaluation_runs(notebooks, output_notebook, kernel_name):
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.notebooks
 @pytest.mark.spark
 def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
@@ -74,6 +82,8 @@ def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
                         ))
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.notebooks
 @pytest.mark.spark
 @pytest.mark.skipif(

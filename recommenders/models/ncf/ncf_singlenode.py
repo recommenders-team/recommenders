@@ -3,7 +3,6 @@
 
 import os
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 import tf_slim as slim
 from time import time

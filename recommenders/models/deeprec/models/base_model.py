@@ -410,7 +410,7 @@ class BaseModel:
 
         try:
             self.saver.restore(self.sess, act_path)
-        except:
+        except Exception:
             raise IOError("Failed to find any matching files for {0}".format(act_path))
 
     def fit(self, train_file, valid_file, test_file=None):
@@ -463,7 +463,7 @@ class BaseModel:
                     os.makedirs(self.hparams.MODEL_DIR)
                 if epoch % self.hparams.save_epoch == 0:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
-                    checkpoint_path = self.saver.save(
+                    self.saver.save(
                         sess=train_sess, save_path=save_path_str
                     )
 
@@ -537,7 +537,7 @@ class BaseModel:
         all_keys = list(set(group_keys))
         group_labels = {k: [] for k in all_keys}
         group_preds = {k: [] for k in all_keys}
-        for l, p, k in zip(labels, preds, group_keys):
+        for l, p, k in zip(labels, preds, group_keys):  # noqa: E741 ambiguous variable name 'l'
             group_labels[k].append(l)
             group_preds[k].append(p)
         all_labels = []

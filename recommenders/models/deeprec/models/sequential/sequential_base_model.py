@@ -175,7 +175,7 @@ class SequentialBaseModel(BaseModel):
                         sess=train_sess,
                         save_path=self.hparams.MODEL_DIR + "epoch_" + str(epoch),
                     )
-                    checkpoint_path = self.saver.save(
+                    checkpoint_path = self.saver.save(  # noqa: F841
                         sess=train_sess,
                         save_path=os.path.join(self.hparams.MODEL_DIR, "best_model"),
                     )

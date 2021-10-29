@@ -5,7 +5,7 @@ import os
 
 
 try:
-    from pyspark.sql import SparkSession
+    from pyspark.sql import SparkSession  # noqa: F401
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -14,6 +14,7 @@ MMLSPARK_REPO = "https://mmlspark.azureedge.net/maven"
 # We support Spark v3, but in case you wish to use v2, set
 # MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark_2.11:0.18.1"
 # MMLSPARK_REPO = "https://mvnrepository.com/artifact"
+
 
 def start_or_get_spark(
     app_name="Sample",
