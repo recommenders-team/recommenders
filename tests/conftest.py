@@ -331,9 +331,8 @@ def notebooks():
         ),
         # TF2.x
         "sasrec_quickstart": os.path.join(
-            folder_notebooks, "00_quick_start", "sasrec-tf2.ipynb"
+            folder_notebooks, "00_quick_start", "sasrec_amazon.ipynb"
         ),
-
     }
     return paths
 
