@@ -39,7 +39,8 @@ install_requires = [
     "memory_profiler>=0.54.0,<1",
     "nltk>=3.4,<4",
     "pydocumentdb>=2.3.3<3",  # TODO: replace with azure-cosmos
-    "pymanopt>=0.2.5,<1",
+    # Temporary fix for pymanopt, only this commit works with TF2 
+    "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
@@ -66,7 +67,9 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow>=2.6",  # compiled with CUDA 11.2, cudnn 8.1
+        "tensorflow==2.6",  # compiled with CUDA 11.2, cudnn 8.1
+        "tensorflow-estimator==2.6",
+        "tensorboard==2.6",
         "tf-slim>=1.1.0",
         "torch>=1.8",  # for CUDA 11 support
         "fastai>=1.0.46,<2",

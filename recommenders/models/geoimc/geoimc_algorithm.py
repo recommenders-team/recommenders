@@ -10,7 +10,7 @@ import numpy as np
 from scipy.sparse import csr_matrix
 from numba import njit, prange
 from pymanopt import Problem
-from pymanopt.manifolds import Stiefel, Product, PositiveDefinite
+from pymanopt.manifolds import Stiefel, Product, SymmetricPositiveDefinite
 from pymanopt.solvers import ConjugateGradient
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 
@@ -50,7 +50,7 @@ class IMCProblem(object):
                 self.X.shape[1],
                 self.rank
             ),
-            PositiveDefinite(
+            SymmetricPositiveDefinite(
                 self.rank
             ),
             Stiefel(
