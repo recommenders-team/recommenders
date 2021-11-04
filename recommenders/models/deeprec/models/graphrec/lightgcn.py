@@ -14,6 +14,7 @@ from recommenders.evaluation.python_evaluation import (
     recall_at_k,
 )
 from recommenders.utils.python_utils import get_top_k_scored_items
+tf.compat.v1.disable_eager_execution() # need to disable eager in TF2.x
 
 
 class LightGCN(object):
