@@ -137,7 +137,7 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/
     pip install --no-cache --no-binary scikit-surprise recommenders[gpu,xlearn,examples]; fi
 
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
-    pip install --no-cache --no-binary scikit-surprise recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html ; fi
+    pip install --no-cache --no-binary scikit-surprise recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html ; fi
 
 
 ############

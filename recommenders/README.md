@@ -57,7 +57,7 @@ For manual installation of the necessary requirements see [TensorFlow](https://w
 
 When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
-`pip install --no-cache --no-binary scikit-surprise recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
+`pip install --no-cache --no-binary scikit-surprise recommenders[gpu] -f https://download.pytorch.org/whl/cu111/torch_stable.html`
 
 ## Experimental dependencies
 
