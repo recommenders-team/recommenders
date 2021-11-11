@@ -67,9 +67,10 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow==2.6",  # compiled with CUDA 11.2, cudnn 8.1
+        "tensorflow~=2.6.1",  # compiled with CUDA 11.2, cudnn 8.1
         "tensorflow-estimator==2.6",
         "tensorboard==2.6",
+        "keras==2.6",
         "tf-slim>=1.1.0",
         "torch>=1.8",  # for CUDA 11 support
         "fastai>=1.0.46,<2",
