@@ -87,7 +87,7 @@ RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install --no-cache --no-binary 
 ###########
 # GPU Stage
 ###########
-FROM nvidia/cuda:11.2-cudnn8.1-runtime-ubuntu18.04 AS gpu
+FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu18.04 AS gpu
 
 ARG HOME
 ARG VIRTUAL_ENV
