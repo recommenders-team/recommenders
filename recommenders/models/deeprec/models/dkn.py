@@ -41,7 +41,7 @@ class DKN(BaseModel):
                     e_embedding = self._init_embedding(hparams.entityEmb_file)
                     W = tf.Variable(
                         tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1),
-                        trainable=True
+                        trainable=True,
                     )
                     b = tf.Variable(tf.zeros([hparams.dim]), trainable=True)
                     self.entity_embedding = tf.nn.tanh(tf.matmul(e_embedding, W) + b)
@@ -60,7 +60,7 @@ class DKN(BaseModel):
                     c_embedding = self._init_embedding(hparams.contextEmb_file)
                     W = tf.Variable(
                         tf.random.uniform([hparams.entity_dim, hparams.dim], -1, 1),
-                        trainable=True
+                        trainable=True,
                     )
                     b = tf.Variable(tf.zeros([hparams.dim]), trainable=True)
                     self.context_embedding = tf.nn.tanh(tf.matmul(c_embedding, W) + b)
@@ -117,17 +117,22 @@ class DKN(BaseModel):
         l1_loss = tf.zeros([1], dtype=tf.float32)
         # embedding_layer l2 loss
         l1_loss = tf.add(
-            l1_loss, tf.multiply(hparams.embed_l1, tf.norm(tensor=self.embedding, ord=1))
+            l1_loss,
+            tf.multiply(hparams.embed_l1, tf.norm(tensor=self.embedding, ord=1)),
         )
         if hparams.use_entity:
             l1_loss = tf.add(
                 l1_loss,
-                tf.multiply(hparams.embed_l1, tf.norm(tensor=self.entity_embedding, ord=1)),
+                tf.multiply(
+                    hparams.embed_l1, tf.norm(tensor=self.entity_embedding, ord=1)
+                ),
             )
         if hparams.use_entity and hparams.use_context:
             l1_loss = tf.add(
                 l1_loss,
-                tf.multiply(hparams.embed_l1, tf.norm(tensor=self.context_embedding, ord=1)),
+                tf.multiply(
+                    hparams.embed_l1, tf.norm(tensor=self.context_embedding, ord=1)
+                ),
             )
         params = self.layer_params
         for param in params:
@@ -169,9 +174,7 @@ class DKN(BaseModel):
         layer_idx = 0
         hidden_nn_layers = []
         hidden_nn_layers.append(nn_input)
-        with tf.compat.v1.variable_scope(
-            "nn_part", initializer=self.initializer
-        ):
+        with tf.compat.v1.variable_scope("nn_part", initializer=self.initializer):
             for idx, layer_size in enumerate(hparams.layer_sizes):
                 curr_w_nn_layer = tf.compat.v1.get_variable(
                     name="w_nn_layer" + str(layer_idx),
@@ -396,7 +399,11 @@ class DKN(BaseModel):
                     name="W" + "_filter_size_" + str(filter_size),
                     shape=filter_shape,
                     dtype=tf.float32,
-                    initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution=("uniform" if False else "truncated_normal")),
+                    initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+                        scale=1.0,
+                        mode="fan_avg",
+                        distribution=("uniform" if False else "truncated_normal"),
+                    ),
                 )
                 b = tf.compat.v1.get_variable(
                     name="b" + "_filter_size_" + str(filter_size),

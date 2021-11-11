@@ -4,7 +4,11 @@ import pytest
 
 from recommenders.datasets.movielens import MockMovielensSchema
 from recommenders.datasets.movielens import load_pandas_df, load_spark_df
-from recommenders.datasets.movielens import DATA_FORMAT, MOCK_DATA_FORMAT, DEFAULT_HEADER
+from recommenders.datasets.movielens import (
+    DATA_FORMAT,
+    MOCK_DATA_FORMAT,
+    DEFAULT_HEADER,
+)
 from recommenders.utils.constants import DEFAULT_GENRE_COL, DEFAULT_TITLE_COL
 
 from pandas.core.series import Series
@@ -19,7 +23,9 @@ def test_mock_movielens_schema__has_default_col_names(size):
 
 
 @pytest.mark.parametrize("keep_first_n_cols", [1, 2, 3, 4])
-def test_mock_movielens_schema__get_df_remove_default_col__return_success(keep_first_n_cols):
+def test_mock_movielens_schema__get_df_remove_default_col__return_success(
+    keep_first_n_cols,
+):
     df = MockMovielensSchema.get_df(size=3, keep_first_n_cols=keep_first_n_cols)
     assert len(df) > 0
     assert len(df.columns) == keep_first_n_cols
@@ -36,11 +42,15 @@ def test_mock_movielens_schema__get_df_invalid_param__return_failure(keep_first_
 @pytest.mark.parametrize("keep_first_n_cols", [None, 2])
 @pytest.mark.parametrize("seed", [-1])  # seed for pseudo-random # generation
 @pytest.mark.parametrize("size", [0, 3, 10])
-def test_mock_movielens_schema__get_df__return_success(size, seed, keep_first_n_cols, keep_title_col, keep_genre_col):
+def test_mock_movielens_schema__get_df__return_success(
+    size, seed, keep_first_n_cols, keep_title_col, keep_genre_col
+):
     df = MockMovielensSchema.get_df(
-        size=size, seed=seed,
+        size=size,
+        seed=seed,
         keep_first_n_cols=keep_first_n_cols,
-        keep_title_col=keep_title_col, keep_genre_col=keep_genre_col
+        keep_title_col=keep_title_col,
+        keep_genre_col=keep_genre_col,
     )
     assert type(df) == pandas.DataFrame
     assert len(df) == size
@@ -56,8 +66,16 @@ def test_mock_movielens_schema__get_df__return_success(size, seed, keep_first_n_
 @pytest.mark.parametrize("keep_title_col", [True, False])
 @pytest.mark.parametrize("seed", [101])  # seed for pseudo-random # generation
 @pytest.mark.parametrize("size", [0, 3, 10])
-def test_mock_movielens_schema__get_spark_df__return_success(spark, size, seed, keep_title_col, keep_genre_col):
-    df = MockMovielensSchema.get_spark_df(spark, size=size, seed=seed, keep_title_col=keep_title_col, keep_genre_col=keep_genre_col)
+def test_mock_movielens_schema__get_spark_df__return_success(
+    spark, size, seed, keep_title_col, keep_genre_col
+):
+    df = MockMovielensSchema.get_spark_df(
+        spark,
+        size=size,
+        seed=seed,
+        keep_title_col=keep_title_col,
+        keep_genre_col=keep_genre_col,
+    )
     assert df.count() == size
 
     if keep_title_col:
@@ -74,7 +92,9 @@ def test_mock_movielens_schema__get_spark_df__store_tmp_file(spark, tmp_path):
 
 
 @pytest.mark.spark
-def test_mock_movielens_schema__get_spark_df__data_serialization_default_param(spark, mocker: MockerFixture):
+def test_mock_movielens_schema__get_spark_df__data_serialization_default_param(
+    spark, mocker: MockerFixture
+):
     data_size = 3
     to_csv_spy = mocker.spy(pandas.DataFrame, "to_csv")
 
@@ -108,18 +128,22 @@ def test_load_pandas_df_mock_100__with_default_param__succeed():
 
 @pytest.mark.spark
 def test_load_spark_df_mock_100__with_custom_param__succeed(spark):
-    df = load_spark_df(spark, "mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL)
+    df = load_spark_df(
+        spark, "mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL
+    )
     assert df.schema[DEFAULT_TITLE_COL]
     assert df.schema[DEFAULT_GENRE_COL]
     assert df.count() == 100
-    assert '|' in df.take(1)[0][DEFAULT_GENRE_COL]
-    assert df.take(1)[0][DEFAULT_TITLE_COL] == 'foo'
+    assert "|" in df.take(1)[0][DEFAULT_GENRE_COL]
+    assert df.take(1)[0][DEFAULT_TITLE_COL] == "foo"
 
 
 def test_load_pandas_df_mock_100__with_custom_param__succeed():
-    df = load_pandas_df("mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL)
+    df = load_pandas_df(
+        "mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL
+    )
     assert type(df[DEFAULT_TITLE_COL]) == Series
     assert type(df[DEFAULT_GENRE_COL]) == Series
     assert len(df) == 100
-    assert '|' in df.loc[0, DEFAULT_GENRE_COL]
-    assert df.loc[0, DEFAULT_TITLE_COL] == 'foo'
+    assert "|" in df.loc[0, DEFAULT_GENRE_COL]
+    assert df.loc[0, DEFAULT_TITLE_COL] == "foo"

@@ -173,7 +173,7 @@ def build_model(
             model_dir=model_dir,
             config=config,
             feature_columns=wide_columns,
-            optimizer=linear_optimizer
+            optimizer=linear_optimizer,
         )
     elif len(wide_columns) == 0 and len(deep_columns) > 0:
         model = tf.compat.v1.estimator.DNNRegressor(
@@ -183,7 +183,7 @@ def build_model(
             hidden_units=dnn_hidden_units,
             optimizer=dnn_optimizer,
             dropout=dnn_dropout,
-            batch_norm=dnn_batch_norm
+            batch_norm=dnn_batch_norm,
         )
     elif len(wide_columns) > 0 and len(deep_columns) > 0:
         model = tf.compat.v1.estimator.DNNLinearCombinedRegressor(
@@ -197,7 +197,7 @@ def build_model(
             dnn_hidden_units=dnn_hidden_units,
             dnn_optimizer=dnn_optimizer,
             dnn_dropout=dnn_dropout,
-            batch_norm=dnn_batch_norm
+            batch_norm=dnn_batch_norm,
         )
     else:
         raise ValueError(

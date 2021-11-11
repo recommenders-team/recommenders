@@ -31,8 +31,10 @@ class XDeepFMModel(BaseModel):
         self.keep_prob_train = 1 - np.array(hparams.dropout)
         self.keep_prob_test = np.ones_like(hparams.dropout)
 
-        with tf.compat.v1.variable_scope("XDeepFM") as scope:
-            with tf.compat.v1.variable_scope("embedding", initializer=self.initializer) as escope:  # noqa: F841
+        with tf.compat.v1.variable_scope("XDeepFM") as scope:  # noqa: F841
+            with tf.compat.v1.variable_scope(
+                "embedding", initializer=self.initializer
+            ) as escope:  # noqa: F841
                 self.embedding = tf.compat.v1.get_variable(
                     name="embedding_layer",
                     shape=[hparams.FEATURE_COUNT, hparams.dim],
@@ -88,7 +90,10 @@ class XDeepFMModel(BaseModel):
             self.iterator.dnn_feat_shape,
         )
         w_fm_nn_input_orgin = tf.nn.embedding_lookup_sparse(
-            params=self.embedding, sp_ids=fm_sparse_index, sp_weights=fm_sparse_weight, combiner="sum"
+            params=self.embedding,
+            sp_ids=fm_sparse_index,
+            sp_weights=fm_sparse_weight,
+            combiner="sum",
         )
         embedding = tf.reshape(
             w_fm_nn_input_orgin, [-1, hparams.dim * hparams.FIELD_COUNT]
@@ -103,7 +108,9 @@ class XDeepFMModel(BaseModel):
         Returns:
             object: Prediction score made by linear regression.
         """
-        with tf.compat.v1.variable_scope("linear_part", initializer=self.initializer) as scope:  # noqa: F841
+        with tf.compat.v1.variable_scope(
+            "linear_part", initializer=self.initializer
+        ) as scope:  # noqa: F841
             w = tf.compat.v1.get_variable(
                 name="w", shape=[self.hparams.FEATURE_COUNT, 1], dtype=tf.float32
             )
@@ -178,7 +185,9 @@ class XDeepFMModel(BaseModel):
         hidden_nn_layers.append(nn_input)
         final_result = []
         split_tensor0 = tf.split(hidden_nn_layers[0], hparams.dim * [1], 2)
-        with tf.compat.v1.variable_scope("exfm_part", initializer=self.initializer) as scope:  # noqa: F841
+        with tf.compat.v1.variable_scope(
+            "exfm_part", initializer=self.initializer
+        ) as scope:  # noqa: F841
             for idx, layer_size in enumerate(hparams.cross_layer_sizes):
                 split_tensor = tf.split(hidden_nn_layers[-1], hparams.dim * [1], 2)
                 dot_result_m = tf.matmul(
@@ -198,9 +207,9 @@ class XDeepFMModel(BaseModel):
 
                 if is_masked and idx == 0:
                     ones = tf.ones([field_nums[0], field_nums[0]], dtype=tf.float32)
-                    mask_matrix = tf.linalg.band_part(ones, 0, -1) - tf.linalg.tensor_diag(
-                        tf.ones(field_nums[0])
-                    )
+                    mask_matrix = tf.linalg.band_part(
+                        ones, 0, -1
+                    ) - tf.linalg.tensor_diag(tf.ones(field_nums[0]))
                     mask_matrix = tf.reshape(
                         mask_matrix, shape=[1, field_nums[0] * field_nums[0]]
                     )
@@ -261,7 +270,9 @@ class XDeepFMModel(BaseModel):
             result = tf.reduce_sum(input_tensor=result, axis=-1)  # shape : (B,H)
 
             if res:
-                base_score = tf.reduce_sum(input_tensor=result, axis=1, keepdims=True)  # (B,1)
+                base_score = tf.reduce_sum(
+                    input_tensor=result, axis=1, keepdims=True
+                )  # (B,1)
             else:
                 base_score = 0
 
@@ -276,7 +287,9 @@ class XDeepFMModel(BaseModel):
             )
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
-            exFM_out = base_score + tf.compat.v1.nn.xw_plus_b(result, w_nn_output, b_nn_output)
+            exFM_out = base_score + tf.compat.v1.nn.xw_plus_b(
+                result, w_nn_output, b_nn_output
+            )
             return exFM_out
 
     def _build_fast_CIN(self, nn_input, res=False, direct=False, bias=False):
@@ -308,7 +321,9 @@ class XDeepFMModel(BaseModel):
         field_nums.append(int(field_num))
         hidden_nn_layers.append(nn_input)
         final_result = []
-        with tf.compat.v1.variable_scope("exfm_part", initializer=self.initializer) as scope:  # noqa: F841
+        with tf.compat.v1.variable_scope(
+            "exfm_part", initializer=self.initializer
+        ) as scope:  # noqa: F841
             for idx, layer_size in enumerate(hparams.cross_layer_sizes):
                 if idx == 0:
                     fast_w = tf.compat.v1.get_variable(
@@ -353,7 +368,10 @@ class XDeepFMModel(BaseModel):
                         input=nn_input, filters=fast_w, stride=1, padding="VALID"
                     )  # shape: ((B,D,d*H)
                     dot_result_2 = tf.nn.conv1d(
-                        input=hidden_nn_layers[-1], filters=fast_v, stride=1, padding="VALID"
+                        input=hidden_nn_layers[-1],
+                        filters=fast_v,
+                        stride=1,
+                        padding="VALID",
                     )  # shape: ((B,D,d*H)
                     dot_result = tf.reshape(
                         tf.multiply(dot_result_1, dot_result_2),
@@ -409,7 +427,9 @@ class XDeepFMModel(BaseModel):
             result = tf.reduce_sum(input_tensor=result, axis=1, keepdims=False)  # (B,H)
 
             if res:
-                base_score = tf.reduce_sum(input_tensor=result, axis=1, keepdims=True)  # (B,1)
+                base_score = tf.reduce_sum(
+                    input_tensor=result, axis=1, keepdims=True
+                )  # (B,1)
             else:
                 base_score = 0
 
@@ -424,7 +444,9 @@ class XDeepFMModel(BaseModel):
             )
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
-            exFM_out = tf.compat.v1.nn.xw_plus_b(result, w_nn_output, b_nn_output) + base_score
+            exFM_out = (
+                tf.compat.v1.nn.xw_plus_b(result, w_nn_output, b_nn_output) + base_score
+            )
 
         return exFM_out
 
@@ -445,7 +467,9 @@ class XDeepFMModel(BaseModel):
         layer_idx = 0
         hidden_nn_layers = []
         hidden_nn_layers.append(w_fm_nn_input)
-        with tf.compat.v1.variable_scope("nn_part", initializer=self.initializer) as scope:
+        with tf.compat.v1.variable_scope(
+            "nn_part", initializer=self.initializer
+        ) as scope:
             for idx, layer_size in enumerate(hparams.layer_sizes):
                 curr_w_nn_layer = tf.compat.v1.get_variable(
                     name="w_nn_layer" + str(layer_idx),
@@ -504,5 +528,7 @@ class XDeepFMModel(BaseModel):
             )
             self.layer_params.append(w_nn_output)
             self.layer_params.append(b_nn_output)
-            nn_output = tf.compat.v1.nn.xw_plus_b(hidden_nn_layers[-1], w_nn_output, b_nn_output)
+            nn_output = tf.compat.v1.nn.xw_plus_b(
+                hidden_nn_layers[-1], w_nn_output, b_nn_output
+            )
             return nn_output

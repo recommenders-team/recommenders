@@ -4,7 +4,9 @@
 import itertools
 import numpy as np
 import tensorflow as tf
-from tensorflow_estimator.python.estimator.export.export import build_supervised_input_receiver_fn_from_input_fn
+from tensorflow_estimator.python.estimator.export.export import (
+    build_supervised_input_receiver_fn_from_input_fn,
+)
 
 MODEL_DIR = "model_checkpoints"
 
@@ -86,7 +88,7 @@ def pandas_input_fn(
     for col in X_df.columns:
         values = X_df[col].values
         if isinstance(values[0], (list, np.ndarray)):
-            values = np.array([l for l in values], dtype=np.float32)  # noqa: E741 ambiguous variable name 'l'
+            values = np.array(values.to_list(), dtype=np.float32)
         X[col] = values
 
     return lambda: _dataset(
@@ -166,16 +168,8 @@ def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
         str: Exported model path
     """
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
-    train_rcvr_fn = (
-        build_supervised_input_receiver_fn_from_input_fn(
-            train_input_fn
-        )
-    )
-    eval_rcvr_fn = (
-        build_supervised_input_receiver_fn_from_input_fn(
-            eval_input_fn
-        )
-    )
+    train_rcvr_fn = build_supervised_input_receiver_fn_from_input_fn(train_input_fn)
+    eval_rcvr_fn = build_supervised_input_receiver_fn_from_input_fn(eval_input_fn)
     serve_rcvr_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(
         tf.feature_column.make_parse_example_spec(tf_feat_cols)
     )
@@ -276,7 +270,9 @@ class _TrainLogHook(tf.estimator.SessionRunHook):
 
     def begin(self):
         if self.model_dir is not None:
-            self.summary_writer = tf.compat.v1.summary.FileWriterCache.get(self.model_dir)
+            self.summary_writer = tf.compat.v1.summary.FileWriterCache.get(
+                self.model_dir
+            )
             self.global_step_tensor = tf.compat.v1.train.get_or_create_global_step()
         else:
             self.step = 0
@@ -331,7 +327,9 @@ class _TrainLogHook(tf.estimator.SessionRunHook):
     def _log(self, tag, value):
         self.logger.log(tag, value)
         if self.summary_writer is not None:
-            summary = tf.compat.v1.Summary(value=[tf.compat.v1.Summary.Value(tag=tag, simple_value=value)])
+            summary = tf.compat.v1.Summary(
+                value=[tf.compat.v1.Summary.Value(tag=tag, simple_value=value)]
+            )
             self.summary_writer.add_summary(summary, self.step)
 
 

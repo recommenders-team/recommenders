@@ -28,7 +28,8 @@ try:
         build_feature_columns,
     )
     import tensorflow as tf
-    tf.compat.v1.disable_eager_execution() # need to disable eager in TF2.x
+
+    tf.compat.v1.disable_eager_execution()  # need to disable eager in TF2.x
 except ImportError:
     pass  # skip this import if we are in cpu environment
 

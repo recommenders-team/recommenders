@@ -120,12 +120,16 @@ class SUMCell(LayerRNNCell):
         self._beta = self.add_variable(
             name="_beta_no_reg",
             shape=(),
-            initializer=tf.compat.v1.constant_initializer(np.array([1.02]), dtype=np.float32),
+            initializer=tf.compat.v1.constant_initializer(
+                np.array([1.02]), dtype=np.float32
+            ),
         )
         self._alpha = self.add_variable(
             name="_alpha_no_reg",
             shape=(),
-            initializer=tf.compat.v1.constant_initializer(np.array([0.98]), dtype=np.float32),
+            initializer=tf.compat.v1.constant_initializer(
+                np.array([0.98]), dtype=np.float32
+            ),
         )
 
     @tf_utils.shape_type_conversion
@@ -141,7 +145,7 @@ class SUMCell(LayerRNNCell):
         _check_supported_dtypes(self.dtype)
         d = inputs_shape[-1]  # noqa: F841
         h = self._real_units  # noqa: F841
-        s = self._slots       # noqa: F841
+        s = self._slots  # noqa: F841
 
         self._basic_build(inputs_shape)
 
@@ -181,7 +185,9 @@ class SUMCell(LayerRNNCell):
         att_weights = tf.nn.softmax(self._beta * att_logit_mat, axis=-1)
         att_weights = tf.expand_dims(att_weights, 2)
 
-        h_hat = tf.reduce_sum(input_tensor=tf.multiply(state[:, : self._slots, :], att_weights), axis=1)
+        h_hat = tf.reduce_sum(
+            input_tensor=tf.multiply(state[:, : self._slots, :], att_weights), axis=1
+        )
         h_hat = (h_hat + state[:, self._slots, :]) / 2
 
         n_a, n_b = tf.nn.l2_normalize(last, 1), tf.nn.l2_normalize(inputs, 1)
@@ -307,12 +313,16 @@ class SUMV2Cell(SUMCell):
         att_weights = tf.nn.softmax(self._beta * att_logit_mat, axis=-1)
         att_weights = tf.expand_dims(att_weights, 2)
 
-        h_hat = tf.reduce_sum(input_tensor=tf.multiply(state[:, : self._slots, :], att_weights), axis=1)
+        h_hat = tf.reduce_sum(
+            input_tensor=tf.multiply(state[:, : self._slots, :], att_weights), axis=1
+        )
         h_hat = (h_hat + state[:, self._slots, :]) / 2
 
         # get the true writing attentions
         writing_input = tf.concat([inputs, h_hat], axis=1)
-        att_weights = tf.compat.v1.nn.xw_plus_b(writing_input, self._writing_W, self._writing_b)
+        att_weights = tf.compat.v1.nn.xw_plus_b(
+            writing_input, self._writing_W, self._writing_b
+        )
         att_weights = tf.nn.relu(att_weights)
         att_weights = tf.matmul(att_weights, self._writing_W02)
         att_weights = tf.nn.softmax(att_weights, axis=-1)

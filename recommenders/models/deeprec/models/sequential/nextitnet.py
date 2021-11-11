@@ -31,12 +31,16 @@ class NextItNetModel(SequentialBaseModel):
         is_training = tf.equal(self.is_train_stage, True)
         item_history_embedding = tf.cond(
             pred=is_training,
-            true_fn=lambda: self.item_history_embedding[:: self.hparams.train_num_ngs + 1],
+            true_fn=lambda: self.item_history_embedding[
+                :: self.hparams.train_num_ngs + 1
+            ],
             false_fn=lambda: self.item_history_embedding,
         )
         cate_history_embedding = tf.cond(
             pred=is_training,
-            true_fn=lambda: self.cate_history_embedding[:: self.hparams.train_num_ngs + 1],
+            true_fn=lambda: self.cate_history_embedding[
+                :: self.hparams.train_num_ngs + 1
+            ],
             false_fn=lambda: self.cate_history_embedding,
         )
 
@@ -71,7 +75,9 @@ class NextItNetModel(SequentialBaseModel):
 
             self.dilate_input = dilate_input
             model_output = tf.cond(
-                pred=is_training, true_fn=self._training_output, false_fn=self._normal_output
+                pred=is_training,
+                true_fn=self._training_output,
+                false_fn=self._normal_output,
             )
 
             return model_output
@@ -172,10 +178,14 @@ class NextItNetModel(SequentialBaseModel):
             weight = tf.compat.v1.get_variable(
                 "weight",
                 [1, kernel_size, input_.get_shape()[-1], output_channels],
-                initializer=tf.compat.v1.truncated_normal_initializer(stddev=0.02, seed=1),
+                initializer=tf.compat.v1.truncated_normal_initializer(
+                    stddev=0.02, seed=1
+                ),
             )
             bias = tf.compat.v1.get_variable(
-                "bias", [output_channels], initializer=tf.compat.v1.constant_initializer(0.0)
+                "bias",
+                [output_channels],
+                initializer=tf.compat.v1.constant_initializer(0.0),
             )
 
             if causal:
@@ -192,7 +202,10 @@ class NextItNetModel(SequentialBaseModel):
                 input_expanded = tf.expand_dims(input_, axis=1)
                 out = (
                     tf.nn.conv2d(
-                        input=input_expanded, filters=weight, strides=[1, 1, 1, 1], padding="SAME"
+                        input=input_expanded,
+                        filters=weight,
+                        strides=[1, 1, 1, 1],
+                        padding="SAME",
                     )
                     + bias
                 )

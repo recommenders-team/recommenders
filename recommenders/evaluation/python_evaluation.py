@@ -775,8 +775,7 @@ def _check_column_dtypes_diversity_serendipity(func):
                 raise Exception(
                     "item_feature_df not specified! item_feature_df must be provided "
                     "if choosing to use item_feature_vector to calculate item similarity. "
-                    "item_feature_df should have columns: "
-                    + str(required_columns)
+                    "item_feature_df should have columns: " + str(required_columns)
                 )
         # check if reco_df contains any user_item pairs that are already shown in train_df
         count_intersection = pd.merge(

@@ -302,8 +302,8 @@ class BaseModel:
         group_labels = {k: [] for k in all_keys}
         group_preds = {k: [] for k in all_keys}
 
-        for l, p, k in zip(labels, preds, group_keys):  # noqa: E741 ambiguous variable name 'l'
-            group_labels[k].append(l)
+        for label, p, k in zip(labels, preds, group_keys):
+            group_labels[k].append(label)
             group_preds[k].append(p)
 
         all_labels = []

@@ -43,7 +43,9 @@ class NextItNetIterator(SequentialIterator):
 
         self.graph = graph
         with self.graph.as_default():
-            self.labels = tf.compat.v1.placeholder(tf.float32, [None, None], name="label")
+            self.labels = tf.compat.v1.placeholder(
+                tf.float32, [None, None], name="label"
+            )
             self.users = tf.compat.v1.placeholder(tf.int32, [None], name="users")
             self.items = tf.compat.v1.placeholder(tf.int32, [None, None], name="items")
             self.cates = tf.compat.v1.placeholder(tf.int32, [None, None], name="cates")

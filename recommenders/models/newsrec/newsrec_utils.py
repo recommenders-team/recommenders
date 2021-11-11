@@ -238,7 +238,7 @@ def create_hparams(flags):
         "epochs": 10,
         "batch_size": 1,
         # show info
-        "show_step": 1
+        "show_step": 1,
     }
     init_dict.update(flags)
     return HParams(init_dict)

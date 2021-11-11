@@ -155,10 +155,16 @@ class NCF:
 
             # get user embedding p and item embedding q
             self.gmf_p = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(params=self.embedding_gmf_P, ids=self.user_input), axis=1
+                input_tensor=tf.nn.embedding_lookup(
+                    params=self.embedding_gmf_P, ids=self.user_input
+                ),
+                axis=1,
             )
             self.gmf_q = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(params=self.embedding_gmf_Q, ids=self.item_input), axis=1
+                input_tensor=tf.nn.embedding_lookup(
+                    params=self.embedding_gmf_Q, ids=self.item_input
+                ),
+                axis=1,
             )
 
             # get gmf vector
@@ -168,10 +174,16 @@ class NCF:
 
             # get user embedding p and item embedding q
             self.mlp_p = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(params=self.embedding_mlp_P, ids=self.user_input), axis=1
+                input_tensor=tf.nn.embedding_lookup(
+                    params=self.embedding_mlp_P, ids=self.user_input
+                ),
+                axis=1,
             )
             self.mlp_q = tf.reduce_sum(
-                input_tensor=tf.nn.embedding_lookup(params=self.embedding_mlp_Q, ids=self.item_input), axis=1
+                input_tensor=tf.nn.embedding_lookup(
+                    params=self.embedding_mlp_Q, ids=self.item_input
+                ),
+                axis=1,
             )
 
             # concatenate user and item vector
@@ -184,7 +196,10 @@ class NCF:
                     num_outputs=layer_size,
                     activation_fn=tf.nn.relu,
                     weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
+                        scale=1.0,
+                        mode="fan_avg",
+                        distribution="uniform",
+                        seed=self.seed,
                     ),
                 )
             self.mlp_vector = output
@@ -201,7 +216,10 @@ class NCF:
                     activation_fn=None,
                     biases_initializer=None,
                     weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
+                        scale=1.0,
+                        mode="fan_avg",
+                        distribution="uniform",
+                        seed=self.seed,
                     ),
                 )
                 self.output = tf.sigmoid(output)
@@ -214,7 +232,10 @@ class NCF:
                     activation_fn=None,
                     biases_initializer=None,
                     weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
+                        scale=1.0,
+                        mode="fan_avg",
+                        distribution="uniform",
+                        seed=self.seed,
                     ),
                 )
                 self.output = tf.sigmoid(output)
@@ -229,7 +250,10 @@ class NCF:
                     activation_fn=None,
                     biases_initializer=None,
                     weights_initializer=tf.compat.v1.keras.initializers.VarianceScaling(
-                        scale=1.0, mode="fan_avg", distribution="uniform", seed=self.seed
+                        scale=1.0,
+                        mode="fan_avg",
+                        distribution="uniform",
+                        seed=self.seed,
                     ),
                 )
                 self.output = tf.sigmoid(output)
@@ -325,7 +349,9 @@ class NCF:
         saver.restore(self.sess, os.path.join(mlp_dir, MODEL_CHECKPOINT))
 
         # concat pretrain h_from_gmf and h_from_mlp
-        vars_list = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="ncf")
+        vars_list = tf.compat.v1.get_collection(
+            tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope="ncf"
+        )
 
         assert len(vars_list) == 1
         ncf_fc = vars_list[0]

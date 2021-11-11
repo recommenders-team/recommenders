@@ -14,7 +14,8 @@ from recommenders.evaluation.python_evaluation import (
     recall_at_k,
 )
 from recommenders.utils.python_utils import get_top_k_scored_items
-tf.compat.v1.disable_eager_execution() # need to disable eager in TF2.x
+
+tf.compat.v1.disable_eager_execution()  # need to disable eager in TF2.x
 
 
 class LightGCN(object):
@@ -75,7 +76,9 @@ class LightGCN(object):
         self.weights = self._init_weights()
         self.ua_embeddings, self.ia_embeddings = self._create_lightgcn_embed()
 
-        self.u_g_embeddings = tf.nn.embedding_lookup(params=self.ua_embeddings, ids=self.users)
+        self.u_g_embeddings = tf.nn.embedding_lookup(
+            params=self.ua_embeddings, ids=self.users
+        )
         self.pos_i_g_embeddings = tf.nn.embedding_lookup(
             params=self.ia_embeddings, ids=self.pos_items
         )
@@ -104,11 +107,15 @@ class LightGCN(object):
         )
         self.loss = self.mf_loss + self.emb_loss
 
-        self.opt = tf.compat.v1.train.AdamOptimizer(learning_rate=self.lr).minimize(self.loss)
+        self.opt = tf.compat.v1.train.AdamOptimizer(learning_rate=self.lr).minimize(
+            self.loss
+        )
         self.saver = tf.compat.v1.train.Saver(max_to_keep=1)
 
         gpu_options = tf.compat.v1.GPUOptions(allow_growth=True)
-        self.sess = tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
+        self.sess = tf.compat.v1.Session(
+            config=tf.compat.v1.ConfigProto(gpu_options=gpu_options)
+        )
         self.sess.run(tf.compat.v1.global_variables_initializer())
 
     def _init_weights(self):
@@ -119,7 +126,9 @@ class LightGCN(object):
 
         """
         all_weights = dict()
-        initializer = tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution="uniform")
+        initializer = tf.compat.v1.keras.initializers.VarianceScaling(
+            scale=1.0, mode="fan_avg", distribution="uniform"
+        )
 
         all_weights["user_embedding"] = tf.Variable(
             initializer([self.n_users, self.emb_dim]), name="user_embedding"
@@ -150,7 +159,9 @@ class LightGCN(object):
             all_embeddings += [ego_embeddings]
 
         all_embeddings = tf.stack(all_embeddings, 1)
-        all_embeddings = tf.reduce_mean(input_tensor=all_embeddings, axis=1, keepdims=False)
+        all_embeddings = tf.reduce_mean(
+            input_tensor=all_embeddings, axis=1, keepdims=False
+        )
         u_g_embeddings, i_g_embeddings = tf.split(
             all_embeddings, [self.n_users, self.n_items], 0
         )
@@ -177,7 +188,9 @@ class LightGCN(object):
             + tf.nn.l2_loss(self.neg_i_g_embeddings_pre)
         )
         regularizer = regularizer / self.batch_size
-        mf_loss = tf.reduce_mean(input_tensor=tf.nn.softplus(-(pos_scores - neg_scores)))
+        mf_loss = tf.reduce_mean(
+            input_tensor=tf.nn.softplus(-(pos_scores - neg_scores))
+        )
         emb_loss = self.decay * regularizer
         return mf_loss, emb_loss
 

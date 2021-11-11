@@ -29,5 +29,11 @@ def fake_movielens_df():
 
 def test_compute_test_results__return_success(mock_model, fake_movielens_df):
     mock_metric_func = "lambda *args, **kwargs: 0"
-    compute_test_results(mock_model, fake_movielens_df, fake_movielens_df, [mock_metric_func], [mock_metric_func])
+    compute_test_results(
+        mock_model,
+        fake_movielens_df,
+        fake_movielens_df,
+        [mock_metric_func],
+        [mock_metric_func],
+    )
     assert mock_model.predict.is_called

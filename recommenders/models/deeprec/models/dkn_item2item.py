@@ -53,7 +53,9 @@ class DKNItem2Item(DKN):
         item_embs_target = item_embs_train[:, 1:, :]
 
         item_relation = tf.math.multiply(item_embs_target, item_embs_source)
-        item_relation = tf.reduce_sum(input_tensor=item_relation, axis=-1)  # (B, neg_num + 1)
+        item_relation = tf.reduce_sum(
+            input_tensor=item_relation, axis=-1
+        )  # (B, neg_num + 1)
 
         self.pred_logits = item_relation
 
@@ -74,7 +76,11 @@ class DKNItem2Item(DKN):
                 name="W_doc_trans",
                 shape=(news_field_embed.shape[-1], self.num_filters_total),
                 dtype=tf.float32,
-                initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution=("uniform" if False else "truncated_normal")),
+                initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+                    scale=1.0,
+                    mode="fan_avg",
+                    distribution=("uniform" if False else "truncated_normal"),
+                ),
             )
             if W not in self.layer_params:
                 self.layer_params.append(W)

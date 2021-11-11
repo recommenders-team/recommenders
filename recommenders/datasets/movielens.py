@@ -28,7 +28,7 @@ try:
         StringType,
         IntegerType,
         FloatType,
-        LongType
+        LongType,
     )
 except ImportError:
     pass  # so the environment without spark doesn't break
@@ -145,7 +145,9 @@ WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
     Will only use the first four column names."""
 WARNING_HAVE_SCHEMA_AND_HEADER = """Both schema and header are provided.
     The header argument will be ignored."""
-ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m, or mock100}"
+ERROR_MOVIE_LENS_SIZE = (
+    "Invalid data size. Should be one of {100k, 1m, 10m, or 20m, or mock100}"
+)
 ERROR_HEADER = "Header error. At least user and movie column names should be provided"
 
 
@@ -214,7 +216,9 @@ def load_pandas_df(
             keep_first_n_cols=len(header),
             keep_title_col=(title_col is not None),
             keep_genre_col=(genres_col is not None),
-            **MOCK_DATA_FORMAT[size]  # supply the rest of the kwarg with the dictionary
+            **MOCK_DATA_FORMAT[
+                size
+            ],  # supply the rest of the kwarg with the dictionary
         )
 
     movie_col = header[1]
@@ -427,7 +431,9 @@ def load_spark_df(
             spark,
             keep_title_col=(title_col is not None),
             keep_genre_col=(genres_col is not None),
-            **MOCK_DATA_FORMAT[size]   # supply the rest of the kwarg with the dictionary
+            **MOCK_DATA_FORMAT[
+                size
+            ],  # supply the rest of the kwarg with the dictionary
         )
 
     schema = _get_schema(header, schema)
@@ -583,6 +589,7 @@ class MockMovielensSchema(pa.SchemaModel):
     Please see https://pandera.readthedocs.io/en/latest/schema_models.html
     for more information.
     """
+
     # Some notebooks will do a cross join with userID and itemID,
     # a sparse range for these IDs can slow down the notebook tests
     userID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
@@ -595,9 +602,11 @@ class MockMovielensSchema(pa.SchemaModel):
     @classmethod
     def get_df(
         cls,
-        size: int = 3, seed: int = 100,
+        size: int = 3,
+        seed: int = 100,
         keep_first_n_cols: Optional[int] = None,
-        keep_title_col: bool = False, keep_genre_col: bool = False,
+        keep_title_col: bool = False,
+        keep_genre_col: bool = False,
     ) -> pd.DataFrame:
         """Return fake movielens dataset as a Pandas Dataframe with specified rows.
 
@@ -614,7 +623,9 @@ class MockMovielensSchema(pa.SchemaModel):
         schema = cls.to_schema()
         if keep_first_n_cols is not None:
             if keep_first_n_cols < 1 or keep_first_n_cols > len(DEFAULT_HEADER):
-                raise ValueError(f"Invalid value for 'keep_first_n_cols': {keep_first_n_cols}. Valid range: [1-{len(DEFAULT_HEADER)}]")
+                raise ValueError(
+                    f"Invalid value for 'keep_first_n_cols': {keep_first_n_cols}. Valid range: [1-{len(DEFAULT_HEADER)}]"
+                )
             schema = schema.remove_columns(DEFAULT_HEADER[keep_first_n_cols:])
         if not keep_title_col:
             schema = schema.remove_columns([DEFAULT_TITLE_COL])
@@ -629,8 +640,10 @@ class MockMovielensSchema(pa.SchemaModel):
     def get_spark_df(
         cls,
         spark,
-        size: int = 3, seed: int = 100,
-        keep_title_col: bool = False, keep_genre_col: bool = False,
+        size: int = 3,
+        seed: int = 100,
+        keep_title_col: bool = False,
+        keep_genre_col: bool = False,
         tmp_path: Optional[str] = None,
     ):
         """Return fake movielens dataset as a Spark Dataframe with specified rows
@@ -648,14 +661,18 @@ class MockMovielensSchema(pa.SchemaModel):
         Returns:
             pyspark.sql.DataFrame: a mock dataset
         """
-        pandas_df = cls.get_df(size=size, seed=seed, keep_title_col=True, keep_genre_col=True)
+        pandas_df = cls.get_df(
+            size=size, seed=seed, keep_title_col=True, keep_genre_col=True
+        )
 
         # generate temp folder
         with download_path(tmp_path) as tmp_folder:
             filepath = os.path.join(tmp_folder, f"mock_movielens_{size}.csv")
             # serialize the pandas.df as a csv to avoid the expensive java <-> python communication
             pandas_df.to_csv(filepath, header=False, index=False)
-            spark_df = spark.read.csv(filepath, schema=cls._get_spark_deserialization_schema())
+            spark_df = spark.read.csv(
+                filepath, schema=cls._get_spark_deserialization_schema()
+            )
             # Cache and force trigger action since data-file might be removed.
             spark_df.cache()
             spark_df.count()
@@ -668,11 +685,13 @@ class MockMovielensSchema(pa.SchemaModel):
 
     @classmethod
     def _get_spark_deserialization_schema(cls):
-        return StructType([
-            StructField(DEFAULT_USER_COL, IntegerType()),
-            StructField(DEFAULT_ITEM_COL, IntegerType()),
-            StructField(DEFAULT_RATING_COL, FloatType()),
-            StructField(DEFAULT_TIMESTAMP_COL, StringType()),
-            StructField(DEFAULT_TITLE_COL, StringType()),
-            StructField(DEFAULT_GENRE_COL, StringType()),
-        ])
+        return StructType(
+            [
+                StructField(DEFAULT_USER_COL, IntegerType()),
+                StructField(DEFAULT_ITEM_COL, IntegerType()),
+                StructField(DEFAULT_RATING_COL, FloatType()),
+                StructField(DEFAULT_TIMESTAMP_COL, StringType()),
+                StructField(DEFAULT_TITLE_COL, StringType()),
+                StructField(DEFAULT_GENRE_COL, StringType()),
+            ]
+        )

@@ -558,18 +558,18 @@ class Time4ALSTMCell(RNNCell):
 class _Linear(object):
     """Linear map: sum_i(args[i] * W[i]), where W[i] is a variable.
 
-  Args:
-    args: a 2D Tensor or a list of 2D, batch x n, Tensors.
-    output_size: int, second dimension of weight variable.
-    dtype: data type for variables.
-    build_bias: boolean, whether to build a bias variable.
-    bias_initializer: starting value to initialize the bias
-      (default is all zeros).
-    kernel_initializer: starting value to initialize the weight.
+    Args:
+      args: a 2D Tensor or a list of 2D, batch x n, Tensors.
+      output_size: int, second dimension of weight variable.
+      dtype: data type for variables.
+      build_bias: boolean, whether to build a bias variable.
+      bias_initializer: starting value to initialize the bias
+        (default is all zeros).
+      kernel_initializer: starting value to initialize the weight.
 
-  Raises:
-    ValueError: if inputs_shape is wrong.
-  """
+    Raises:
+      ValueError: if inputs_shape is wrong.
+    """
 
     def __init__(
         self,

@@ -71,7 +71,9 @@ class FFMTextIterator(BaseIterator):
             self.fm_feat_values = tf.compat.v1.placeholder(
                 tf.float32, [None], name="fm_feat_values"
             )
-            self.fm_feat_shape = tf.compat.v1.placeholder(tf.int64, [None], name="fm_feat_shape")
+            self.fm_feat_shape = tf.compat.v1.placeholder(
+                tf.int64, [None], name="fm_feat_shape"
+            )
             self.dnn_feat_indices = tf.compat.v1.placeholder(
                 tf.int64, [None, 2], name="dnn_feat_indices"
             )

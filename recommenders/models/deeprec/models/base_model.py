@@ -137,12 +137,14 @@ class BaseModel:
         # embedding_layer l2 loss
         for param in self.embed_params:
             l1_loss = tf.add(
-                l1_loss, tf.multiply(self.hparams.embed_l1, tf.norm(tensor=param, ord=1))
+                l1_loss,
+                tf.multiply(self.hparams.embed_l1, tf.norm(tensor=param, ord=1)),
             )
         params = self.layer_params
         for param in params:
             l1_loss = tf.add(
-                l1_loss, tf.multiply(self.hparams.layer_l1, tf.norm(tensor=param, ord=1))
+                l1_loss,
+                tf.multiply(self.hparams.layer_l1, tf.norm(tensor=param, ord=1)),
             )
         return l1_loss
 
@@ -155,10 +157,12 @@ class BaseModel:
         cross_l_loss = tf.zeros([1], dtype=tf.float32)
         for param in self.cross_params:
             cross_l_loss = tf.add(
-                cross_l_loss, tf.multiply(self.hparams.cross_l1, tf.norm(tensor=param, ord=1))
+                cross_l_loss,
+                tf.multiply(self.hparams.cross_l1, tf.norm(tensor=param, ord=1)),
             )
             cross_l_loss = tf.add(
-                cross_l_loss, tf.multiply(self.hparams.cross_l2, tf.norm(tensor=param, ord=2))
+                cross_l_loss,
+                tf.multiply(self.hparams.cross_l2, tf.norm(tensor=param, ord=2)),
             )
         return cross_l_loss
 
@@ -176,16 +180,32 @@ class BaseModel:
                 stddev=self.hparams.init_value, seed=self.seed
             )
         elif self.hparams.init_method == "xavier_normal":
-            return tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution=("uniform" if False else "truncated_normal"), seed=self.seed)
+            return tf.compat.v1.keras.initializers.VarianceScaling(
+                scale=1.0,
+                mode="fan_avg",
+                distribution=("uniform" if False else "truncated_normal"),
+                seed=self.seed,
+            )
         elif self.hparams.init_method == "xavier_uniform":
-            return tf.compat.v1.keras.initializers.VarianceScaling(scale=1.0, mode="fan_avg", distribution=("uniform" if True else "truncated_normal"), seed=self.seed)
+            return tf.compat.v1.keras.initializers.VarianceScaling(
+                scale=1.0,
+                mode="fan_avg",
+                distribution=("uniform" if True else "truncated_normal"),
+                seed=self.seed,
+            )
         elif self.hparams.init_method == "he_normal":
             return tf.compat.v1.keras.initializers.VarianceScaling(
-                scale=2.0, mode=("FAN_IN").lower(), distribution=("uniform" if False else "truncated_normal"), seed=self.seed
+                scale=2.0,
+                mode=("FAN_IN").lower(),
+                distribution=("uniform" if False else "truncated_normal"),
+                seed=self.seed,
             )
         elif self.hparams.init_method == "he_uniform":
             return tf.compat.v1.keras.initializers.VarianceScaling(
-                scale=2.0, mode=("FAN_IN").lower(), distribution=("uniform" if True else "truncated_normal"), seed=self.seed
+                scale=2.0,
+                mode=("FAN_IN").lower(),
+                distribution=("uniform" if True else "truncated_normal"),
+                seed=self.seed,
             )
         else:
             return tf.compat.v1.truncated_normal_initializer(
@@ -463,9 +483,7 @@ class BaseModel:
                     os.makedirs(self.hparams.MODEL_DIR)
                 if epoch % self.hparams.save_epoch == 0:
                     save_path_str = join(self.hparams.MODEL_DIR, "epoch_" + str(epoch))
-                    self.saver.save(
-                        sess=train_sess, save_path=save_path_str
-                    )
+                    self.saver.save(sess=train_sess, save_path=save_path_str)
 
             eval_start = time.time()
             eval_res = self.run_eval(valid_file)
@@ -537,8 +555,8 @@ class BaseModel:
         all_keys = list(set(group_keys))
         group_labels = {k: [] for k in all_keys}
         group_preds = {k: [] for k in all_keys}
-        for l, p, k in zip(labels, preds, group_keys):  # noqa: E741 ambiguous variable name 'l'
-            group_labels[k].append(l)
+        for label, p, k in zip(labels, preds, group_keys):
+            group_labels[k].append(label)
             group_preds[k].append(p)
         all_labels = []
         all_preds = []
@@ -648,7 +666,9 @@ class BaseModel:
             layer_idx = 0
             hidden_nn_layers = []
             hidden_nn_layers.append(model_output)
-            with tf.compat.v1.variable_scope("nn_part", initializer=self.initializer) as scope:
+            with tf.compat.v1.variable_scope(
+                "nn_part", initializer=self.initializer
+            ) as scope:
                 for idx, layer_size in enumerate(layer_sizes):
                     curr_w_nn_layer = tf.compat.v1.get_variable(
                         name="w_nn_layer" + str(layer_idx),

@@ -145,7 +145,9 @@ class RBM:
         """
 
         # sample from a Bernoulli distribution with same dimensions as input distribution
-        g = tf.convert_to_tensor(value=np.random.uniform(size=pr.shape[1]), dtype=tf.float32)
+        g = tf.convert_to_tensor(
+            value=np.random.uniform(size=pr.shape[1]), dtype=tf.float32
+        )
 
         # sample the value of the hidden units
         h_sampled = tf.nn.relu(tf.sign(pr - g))
@@ -465,7 +467,11 @@ class RBM:
             corr = tf.cast(tf.equal(vd, 0), "float32")
 
             # 3) evaluate the accuracy
-            ac_score = tf.reduce_mean(input_tensor=tf.compat.v1.div(tf.reduce_sum(input_tensor=corr, axis=1), n_values))
+            ac_score = tf.reduce_mean(
+                input_tensor=tf.compat.v1.div(
+                    tf.reduce_sum(input_tensor=corr, axis=1), n_values
+                )
+            )
 
         return ac_score
 
@@ -496,7 +502,12 @@ class RBM:
 
             # evaluate the msre
             err = tf.sqrt(
-                tf.reduce_mean(input_tensor=tf.compat.v1.div(tf.reduce_sum(input_tensor=e, axis=1), n_values)) / 2
+                tf.reduce_mean(
+                    input_tensor=tf.compat.v1.div(
+                        tf.reduce_sum(input_tensor=e, axis=1), n_values
+                    )
+                )
+                / 2
             )
 
         return err

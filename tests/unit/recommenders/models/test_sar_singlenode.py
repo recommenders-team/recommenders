@@ -81,8 +81,8 @@ def test_init(header):
     assert model.col_prediction == "prediction"
     assert model.similarity_type == "jaccard"
     assert model.time_decay_half_life == 2592000
-    assert model.time_decay_flag == False
-    assert model.time_now == None
+    assert not model.time_decay_flag
+    assert model.time_now is None
     assert model.threshold == 1
 
 

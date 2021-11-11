@@ -68,7 +68,9 @@ class TfidfRecommender:
             clean = clean.replace("Â\xa0", "")  # non-breaking space
 
             # Remove all punctuation and special characters
-            clean = re.sub("([^\s\w]|_)+", "", clean)  # noqa W695 invalid escape sequence '\s'
+            clean = re.sub(
+                "([^\s\w]|_)+", "", clean  # noqa W695 invalid escape sequence '\s'
+            )
 
             # If you want to keep some punctuation, see below commented out example
             # clean = re.sub('([^\s\w\-\_\(\)]|_)+','', clean)

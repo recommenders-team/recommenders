@@ -232,7 +232,7 @@ class SelfAttention(layers.Layer):
         )
         V_seq = K.permute_dimensions(V_seq, pattern=(0, 2, 1, 3))
 
-        A = einsum('abij, abkj -> abik', Q_seq, K_seq) / K.sqrt(
+        A = einsum("abij, abkj -> abik", Q_seq, K_seq) / K.sqrt(
             K.cast(self.head_dim, dtype="float32")
         )
         A = K.permute_dimensions(
@@ -249,7 +249,7 @@ class SelfAttention(layers.Layer):
             A = A - mask
         A = K.softmax(A)
 
-        O_seq = einsum('abij, abjk -> abik', A, V_seq)
+        O_seq = einsum("abij, abjk -> abik", A, V_seq)
         O_seq = K.permute_dimensions(O_seq, pattern=(0, 2, 1, 3))
 
         O_seq = K.reshape(O_seq, shape=(-1, K.shape(O_seq)[1], self.output_dim))
@@ -257,7 +257,7 @@ class SelfAttention(layers.Layer):
         return O_seq
 
     def get_config(self):
-        """ add multiheads, multiheads and mask_right into layer config.
+        """add multiheads, multiheads and mask_right into layer config.
 
         Returns:
             dict: config of SelfAttention layer.

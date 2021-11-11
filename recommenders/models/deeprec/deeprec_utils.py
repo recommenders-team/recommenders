@@ -302,9 +302,9 @@ def load_yaml(filename):
         raise IOError("load {0} error!".format(filename))
 
 
-class HParams():
-    """Class for holding hyperparameters for DeepRec algorithms.
-    """
+class HParams:
+    """Class for holding hyperparameters for DeepRec algorithms."""
+
     def __init__(self, hparams_dict):
         """Create an HParams object from a dictionary of hyperparameter values.
 
@@ -312,8 +312,17 @@ class HParams():
             hparams_dict (dict): Dictionary with the model hyperparameters.
         """
         for val in hparams_dict.values():
-            if not (isinstance(val, int) or isinstance(val, float) or isinstance(val, str) or isinstance(val, list)):
-                raise ValueError("Hyperparameter value {} should be integer, float, string or list.".format(val))  
+            if not (
+                isinstance(val, int)
+                or isinstance(val, float)
+                or isinstance(val, str)
+                or isinstance(val, list)
+            ):
+                raise ValueError(
+                    "Hyperparameter value {} should be integer, float, string or list.".format(
+                        val
+                    )
+                )
         self._values = hparams_dict
         for hparam in hparams_dict:
             setattr(self, hparam, hparams_dict[hparam])
@@ -341,56 +350,56 @@ def create_hparams(flags):
     """
     init_dict = {
         # dkn
-        'use_entity': True,
-        'use_context': True,
+        "use_entity": True,
+        "use_context": True,
         # model
-        'cross_activation': 'identity',
-        'user_dropout': False,
-        'dropout': [0.0],
-        'attention_dropout': 0.0,
-        'load_saved_model': False,
-        'fast_CIN_d': 0,
-        'use_Linear_part': False,
-        'use_FM_part': False,
-        'use_CIN_part': False,
-        'use_DNN_part': False,
+        "cross_activation": "identity",
+        "user_dropout": False,
+        "dropout": [0.0],
+        "attention_dropout": 0.0,
+        "load_saved_model": False,
+        "fast_CIN_d": 0,
+        "use_Linear_part": False,
+        "use_FM_part": False,
+        "use_CIN_part": False,
+        "use_DNN_part": False,
         # train
-        'init_method': 'tnormal',
-        'init_value': 0.01,
-        'embed_l2': 0.0,
-        'embed_l1': 0.0,
-        'layer_l2': 0.0,
-        'layer_l1': 0.0,
-        'cross_l2': 0.0,
-        'cross_l1': 0.0,
-        'reg_kg': 0.0,
-        'learning_rate': 0.001,
-        'lr_rs': 1,
-        'lr_kg': 0.5,
-        'kg_training_interval': 5,
-        'max_grad_norm': 2,
-        'is_clip_norm': 0,
-        'dtype': 32,
-        'optimizer': 'adam',
-        'epochs': 10,
-        'batch_size': 1,
-        'enable_BN': False,
+        "init_method": "tnormal",
+        "init_value": 0.01,
+        "embed_l2": 0.0,
+        "embed_l1": 0.0,
+        "layer_l2": 0.0,
+        "layer_l1": 0.0,
+        "cross_l2": 0.0,
+        "cross_l1": 0.0,
+        "reg_kg": 0.0,
+        "learning_rate": 0.001,
+        "lr_rs": 1,
+        "lr_kg": 0.5,
+        "kg_training_interval": 5,
+        "max_grad_norm": 2,
+        "is_clip_norm": 0,
+        "dtype": 32,
+        "optimizer": "adam",
+        "epochs": 10,
+        "batch_size": 1,
+        "enable_BN": False,
         # show info
-        'show_step': 1,
-        'save_model': True,
-        'save_epoch': 5,
-        'write_tfevents': False,
+        "show_step": 1,
+        "save_model": True,
+        "save_epoch": 5,
+        "write_tfevents": False,
         # sequential
-        'train_num_ngs': 4,
-        'need_sample': True,
-        'embedding_dropout': 0.0,
-        'EARLY_STOP': 100,
+        "train_num_ngs": 4,
+        "need_sample": True,
+        "embedding_dropout": 0.0,
+        "EARLY_STOP": 100,
         # caser,
-        'min_seq_length': 1,
+        "min_seq_length": 1,
         # sum
-        'slots': 5,
-        'cell': 'SUM'
-        }
+        "slots": 5,
+        "cell": "SUM",
+    }
     init_dict.update(flags)
     return HParams(init_dict)
 

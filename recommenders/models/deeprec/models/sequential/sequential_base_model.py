@@ -38,7 +38,9 @@ class SequentialBaseModel(BaseModel):
         self.min_seq_length = (
             hparams.min_seq_length if "min_seq_length" in hparams.values() else 1
         )
-        self.hidden_size = hparams.hidden_size if "hidden_size" in hparams.values() else None
+        self.hidden_size = (
+            hparams.hidden_size if "hidden_size" in hparams.values() else None
+        )
         self.graph = tf.Graph() if not graph else graph
 
         with self.graph.as_default():
@@ -328,13 +330,17 @@ class SequentialBaseModel(BaseModel):
         self.target_item_embedding = tf.concat(
             [self.item_embedding, self.cate_embedding], -1
         )
-        tf.compat.v1.summary.histogram("target_item_embedding_output", self.target_item_embedding)
+        tf.compat.v1.summary.histogram(
+            "target_item_embedding_output", self.target_item_embedding
+        )
 
     def _add_norm(self):
         """Regularization for embedding variables and other variables."""
         all_variables, embed_variables = (
             tf.compat.v1.trainable_variables(),
-            tf.compat.v1.trainable_variables(self.sequential_scope._name + "/embedding"),
+            tf.compat.v1.trainable_variables(
+                self.sequential_scope._name + "/embedding"
+            ),
         )
         layer_params = list(set(all_variables) - set(embed_variables))
         layer_params = [a for a in layer_params if "_no_reg" not in a.name]

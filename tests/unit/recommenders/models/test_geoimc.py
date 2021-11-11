@@ -1,17 +1,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import itertools
 import collections
 import pytest
 import numpy as np
-import pandas as pd
 from scipy.sparse import csr_matrix
-from pandas.testing import assert_frame_equal
 
-from recommenders.utils.python_utils import binarize
 from recommenders.models.geoimc.geoimc_data import DataPtr
-from recommenders.models.geoimc.geoimc_predict import PlainScalarProduct, Inferer
+from recommenders.models.geoimc.geoimc_predict import Inferer
 from recommenders.models.geoimc.geoimc_algorithm import IMCProblem
 from recommenders.models.geoimc.geoimc_utils import (
     length_normalize,
@@ -36,6 +32,7 @@ _IMC_TEST_DATA = [
         ],
     ),
 ]
+
 
 # `geoimc_data` tests
 @pytest.mark.parametrize("data, entities", _IMC_TEST_DATA)
@@ -99,7 +96,7 @@ def test_imcproblem(dataPtr, rank):
     assert prblm.rank == rank
     assert prblm.lambda1 == 1e-2
     assert prblm.W is None
-    assert prblm.optima_reached == False
+    assert not prblm.optima_reached
 
     # Test solve
     prblm.solve(10, 10, 0)
@@ -109,7 +106,7 @@ def test_imcproblem(dataPtr, rank):
     # Test reset
     prblm.reset()
     assert prblm.W is None
-    assert prblm.optima_reached == False
+    assert not prblm.optima_reached
 
 
 # `geoimc_predict` tests
