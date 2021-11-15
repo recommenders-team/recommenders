@@ -62,6 +62,9 @@ jobs:
         echo "   --- BUILDING PACKAGE ---"
         rm -rf dist || exit -1
 
+        pip install -U pip setuptools || exit -1
+        pip install numpy==1.19 || exit -1
+
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
 
         echo "   --- INSTALLING WHEEL ---"
