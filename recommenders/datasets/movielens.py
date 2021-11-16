@@ -33,12 +33,9 @@ try:
 except ImportError:
     pass  # so the environment without spark doesn't break
 
-try:
-    import pandera as pa
-    from pandera import Field
-    from pandera.typing import Series
-except ImportError:
-    pass  # so the environment without recommender['dev'] doesn't break
+import pandera as pa
+from pandera import Field
+from pandera.typing import Series
 
 
 class _DataFormat:
