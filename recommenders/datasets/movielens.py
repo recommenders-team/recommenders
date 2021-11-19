@@ -34,6 +34,7 @@ except ImportError:
     pass  # so the environment without spark doesn't break
 
 import pandera as pa
+import pandera.extensions as extensions
 from pandera import Field
 from pandera.typing import Series
 
@@ -575,6 +576,11 @@ def extract_movielens(size, rating_path, item_path, zip_path):
             shutil.copyfileobj(zf, f)
 
 
+# For more information on data synthesis, see https://pandera.readthedocs.io/en/latest/data_synthesis_strategies.html
+@extensions.register_check_method(statistics=["columns"], supported_types=pd.DataFrame)
+def unique_columns(df, *, columns):
+    return not df[columns].duplicated().any()
+
 class MockMovielensSchema(pa.SchemaModel):
     """
     Mock dataset schema to generate fake data for testing purpose.
@@ -589,12 +595,15 @@ class MockMovielensSchema(pa.SchemaModel):
 
     # Some notebooks will do a cross join with userID and itemID,
     # a sparse range for these IDs can slow down the notebook tests
-    userID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
-    itemID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
-    rating: Series[float] = Field(in_range={"min_value": 1, "max_value": 5})
-    timestamp: Series[int]
-    title: Series[str] = Field(eq="foo")
-    genre: Series[str] = Field(eq="genreA|0")
+    userID: Series[int] = Field(in_range={"min_value": 1, "max_value": 50}, alias=DEFAULT_USER_COL)
+    itemID: Series[int] = Field(in_range={"min_value": 1, "max_value": 50}, alias=DEFAULT_ITEM_COL)
+    rating: Series[float] = Field(in_range={"min_value": 1, "max_value": 5}, alias=DEFAULT_RATING_COL)
+    timestamp: Series[int] = Field(alias=DEFAULT_TIMESTAMP_COL)
+    title: Series[str] = Field(eq="foo", alias=DEFAULT_TITLE_COL)
+    genre: Series[str] = Field(eq="genreA|0", alias=DEFAULT_GENRE_COL)
+
+    class Config:
+        unique_columns = ()
 
     @classmethod
     def get_df(
@@ -630,7 +639,7 @@ class MockMovielensSchema(pa.SchemaModel):
             schema = schema.remove_columns([DEFAULT_GENRE_COL])
 
         random.seed(seed)
-        # For more information on data synthesis, see https://pandera.readthedocs.io/en/latest/data_synthesis_strategies.html
+        schema.checks = [pa.Check.unique_columns([DEFAULT_USER_COL, DEFAULT_ITEM_COL])]
         return schema.example(size=size)
 
     @classmethod

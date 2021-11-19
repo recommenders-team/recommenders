@@ -8,6 +8,8 @@ from recommenders.datasets.movielens import (
     DATA_FORMAT,
     MOCK_DATA_FORMAT,
     DEFAULT_HEADER,
+    DEFAULT_ITEM_COL,
+    DEFAULT_USER_COL
 )
 from recommenders.utils.constants import DEFAULT_GENRE_COL, DEFAULT_TITLE_COL
 
@@ -124,6 +126,7 @@ def test_load_pandas_df_mock_100__with_default_param__succeed():
     df = load_pandas_df("mock100")
     assert type(df) == pandas.DataFrame
     assert len(df) == 100
+    assert not df[[DEFAULT_USER_COL, DEFAULT_ITEM_COL]].duplicated().any()
 
 
 @pytest.mark.spark
