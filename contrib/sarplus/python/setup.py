@@ -1,3 +1,4 @@
+import os
 import sysconfig
 
 from setuptools import setup
@@ -13,10 +14,17 @@ class get_pybind_include(object):
 
         return pybind11.get_include(self.user)
 
+DEPENDENCIES = [
+    "numpy",
+    "pandas",
+    # "pyarrow==0.13.0",
+    "pybind11>=2.2",
+    "pyspark>=3.0.0"
+]
 
 setup(
     name="pysarplus",
-    version="0.2.6",
+    version=os.environ["VERSION"],
     description="SAR prediction for use with PySpark",
     url="https://github.com/Microsoft/Recommenders/contrib/sarplus",
     author="Markus Cozowicz",
@@ -33,7 +41,7 @@ setup(
         "Topic :: Scientific/Engineering :: Mathematics",
     ],
     setup_requires=["pytest-runner"],
-    install_requires=["pybind11>=2.2"],
+    install_requires=DEPENDENCIES,
     tests_require=["pytest"],
     packages=["pysarplus"],
     ext_modules=[
@@ -41,8 +49,7 @@ setup(
             "pysarplus_cpp",
             ["src/pysarplus.cpp"],
             include_dirs=[get_pybind_include(), get_pybind_include(user=True)],
-            extra_compile_args=sysconfig.get_config_var("CFLAGS").split()
-            + ["-std=c++11", "-Wall", "-Wextra"],
+            extra_compile_args=sysconfig.get_config_var("CFLAGS").split() + ["-std=c++11", "-Wall", "-Wextra"],
             libraries=["stdc++"],
             language="c++11",
         )
