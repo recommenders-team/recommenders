@@ -39,3 +39,33 @@ sbt test
 ```
 
 (use ~test and it will automatically check for changes in source files, but not build.sbt)
+
+
+## Notes for Spark 3.x  ##
+
+The code now has been modified to support Spark 3.x, and has been
+tested under different versions of Databricks Runtime (including 6.4
+Extended Support, 7.3 LTS, 9.1 LTS, 10.0 and 10.1) on Azure Databricks
+Service.  But now manual packaging is needed:
+
+
+```bash
+export VERSION=0.5.0
+cd python
+python setup.py bdist_wheel  # => dist/pysarplus-0.5.0-cp38-cp38-linux_x86_64.whl
+
+export SPARK_VERSION=3.2.0
+export HADOOP_VERSION=3.3.1
+export SCALA_VERSION=2.12.14
+cd scala
+sbt ++${SCALA_VERSION} package  # => target/scala-2.12/sarplus_2.12.14_s3.2.0_h3.3.1-0.5.0.jar
+```
+
+where `VERSION`, `SPARK_VERSION`, `HADOOP_VERSION`, `SCALA_VERSION`
+should be customized as needed.  When running on Spark 3.x, extra
+configurations are also required:
+
+```
+spark.sql.sources.default parquet
+spark.sql.legacy.createHiveTableByDefault true
+```

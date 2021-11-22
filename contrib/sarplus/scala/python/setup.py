@@ -1,6 +1,9 @@
 from distutils.core import setup
 import os
 
+version = os.getenv("VERSION")
+if version is None:
+    version = "0.5.0"
 
 setup(
     name="pysarplus_dummy",

@@ -10,56 +10,20 @@ licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
 
 lazy val sparkVer = settingKey[String]("spark version")
 lazy val hadoopVer = settingKey[String]("hadoop version")
-lazy val commonsIoVer = settingKey[String]("commons-io version")
-lazy val jacksonDatabindVer = settingKey[String]("jackson-databind version")
 
 lazy val commonSettings = Seq(
   organization := "sarplus.microsoft",
   version := sys.env.getOrElse("VERSION", "0.5.0"),
-  crossScalaVersions := Seq("2.11.12", "2.12.10", "2.12.14"),
   resolvers ++= Seq(
     Resolver.sonatypeRepo("snapshots"),
     Resolver.sonatypeRepo("releases"),
   ),
   addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
-  sparkVer := {
-    scalaVersion.value match {
-      case "2.11.12" => "2.4.5"
-      case "2.12.10" => "3.1.2"
-      case "2.12.14" => "3.2.0"
-      case _         => "3.2.0"
-    }
-  },
-
-  hadoopVer := {
-    scalaVersion.value match {
-      case "2.11.12" => "2.7.3"
-      case "2.12.10" => "2.7.4"
-      case "2.12.14" => "3.3.1"
-      case _         => "3.3.1"
-    }
-  },
-
-  commonsIoVer := {
-    scalaVersion.value match {
-      case "2.11.12" => "2.4"
-      case "2.12.10" => "2.4"
-      case "2.12.14" => "2.8.0"
-      case _         => "2.8.0"
-    }
-  },
-
-  jacksonDatabindVer := {
-    scalaVersion.value match {
-      case "2.11.12" => "2.6.7.1"
-      case "2.12.10" => "2.10.0"
-      case "2.12.14" => "2.12.2"
-      case _         => "2.12.2"
-    }
-  },
+  sparkVer := sys.env.getOrElse("SPARK_VERSION", "3.2.0"),
+  hadoopVer := sys.env.getOrElse("HADOOP_VERSION", "3.3.1"),
   libraryDependencies ++= Seq(
-    "com.fasterxml.jackson.core" % "jackson-databind" % jacksonDatabindVer.value,
-    "commons-io" % "commons-io" % commonsIoVer.value,
+    "com.fasterxml.jackson.core" % "jackson-databind" % "2.12.2",
+    "commons-io" % "commons-io" % "2.8.0",
     "org.apache.hadoop" % "hadoop-common" % hadoopVer.value,
     "org.apache.hadoop" % "hadoop-hdfs" % hadoopVer.value,
     "org.apache.spark" %% "spark-core" % sparkVer.value,
@@ -73,7 +37,7 @@ lazy val commonSettings = Seq(
   ),
   artifactName := {
     (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
-      artifact.name + "_" + sv.full + "_" + sparkVer.value + "-" + module.revision + "." + artifact.extension
+      artifact.name + "_" + sv.full + "_s" + sparkVer.value + "_h" + hadoopVer.value + "-" + module.revision + "." + artifact.extension
   },
 )
 
