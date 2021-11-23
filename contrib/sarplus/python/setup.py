@@ -26,7 +26,7 @@ setup(
     name="pysarplus",
     version=os.environ["VERSION"],
     description="SAR prediction for use with PySpark",
-    url="https://github.com/Microsoft/Recommenders/contrib/sarplus",
+    url="https://github.com/microsoft/recommenders/tree/main/contrib/sarplus",
     author="Markus Cozowicz",
     author_email="marcozo@microsoft.com",
     license="MIT",
