@@ -24,7 +24,7 @@ def test_mock_movielens_schema__has_default_col_names(size):
         assert col_name in df.columns
 
 
-@pytest.mark.parametrize("keep_first_n_cols", [1, 2, 3, 4])
+@pytest.mark.parametrize("keep_first_n_cols", [2, 3, 4])
 def test_mock_movielens_schema__get_df_remove_default_col__return_success(
     keep_first_n_cols,
 ):
