@@ -581,6 +581,7 @@ def extract_movielens(size, rating_path, item_path, zip_path):
 def unique_columns(df, *, columns):
     return not df[columns].duplicated().any()
 
+
 class MockMovielensSchema(pa.SchemaModel):
     """
     Mock dataset schema to generate fake data for testing purpose.
