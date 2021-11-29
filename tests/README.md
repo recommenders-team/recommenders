@@ -138,12 +138,6 @@ Several of the tests are skipped for various reasons which are noted below.
 <td>Linux</td>
 <td>NNI pip package has installation incompatibilities</td>
 </tr>
-<tr>
-<td>integration/examples/test_notebooks_python</td>
-<td>test_xlearn*</td>
-<td>Linux</td>
-<td>xLearn pip package has installation incompatibilities</td>
-</tr>
 </table>
 
 In order to skip a test because there is an OS or upstream issue which cannot be resolved you can use pytest [annotations](https://docs.pytest.org/en/latest/skipping.html).
