@@ -64,6 +64,8 @@ jobs:
 
         python setup.py sdist bdist_wheel --plat-name=$PLATFORM || exit -1
 
+        pip install numpy cython
+
         echo "   --- INSTALLING WHEEL ---"
         pip install dist/recommenders-$RELEASE_VERSION-py3-none-$PLATFORM.whl${{ parameters.pip_opts }} || exit -1
       else

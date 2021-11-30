@@ -32,6 +32,6 @@ extends:
     timeout: 240
     conda_env: "nightly_linux_gpu"
     conda_opts: "python=3.6 -c conda-forge cudatoolkit=11.2 cudnn=8.1"
-    pip_opts: "[gpu,examples,dev] --no-cache --no-binary scikit-surprise -f https://download.pytorch.org/whl/cu111/torch_stable.html"
+    pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "not spark and gpu"
     pytest_params: "-x"
