@@ -27,7 +27,7 @@ class SUMModel(SequentialBaseModel):
         Returns:
             object: The output of SUM section, which is a concatenation of user vector and target item vector.
         """
-        hparams = self.hparams
+        hparams = self.hparams  # noqa: F841
         with tf.variable_scope("sum"):
             self.history_embedding = tf.concat(
                 [self.item_history_embedding, self.cate_history_embedding], 2

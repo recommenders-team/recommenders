@@ -2,17 +2,15 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from recommenders.evaluation.python_evaluation import ndcg_at_k
 
 import tensorflow as tf
-import bottleneck as bn
 from tensorflow.keras.layers import *
 from tensorflow.keras.models import Model
 from tensorflow.keras import backend as K
-from tensorflow.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint, Callback
+from tensorflow.keras.callbacks import ReduceLROnPlateau, Callback
 
 
 class LossHistory(Callback):
@@ -255,7 +253,7 @@ class Mult_VAE:
         self.anneal_cap = anneal_cap
         self.annealing = annealing
 
-        if self.annealing == True:
+        if self.annealing:
             self.beta = K.variable(0.0)
         else:
             self.beta = beta
@@ -326,7 +324,7 @@ class Mult_VAE:
         """Calculate negative ELBO (NELBO)."""
         log_softmax_var = tf.nn.log_softmax(x_bar)
         self.neg_ll = -tf.reduce_mean(tf.reduce_sum(log_softmax_var * x, axis=-1))
-        a = tf.keras.backend.print_tensor(self.neg_ll)
+        a = tf.keras.backend.print_tensor(self.neg_ll)  # noqa: F841
         # calculate positive Kullback–Leibler divergence  divergence term
         kl_loss = K.mean(
             0.5
@@ -417,7 +415,7 @@ class Mult_VAE:
             monitor="val_loss", factor=0.2, patience=1, min_lr=0.0001
         )
 
-        if self.annealing == True:
+        if self.annealing:
             # initialise AnnealingCallback for annealing process
             anneal = AnnealingCallback(
                 self.beta, self.anneal_cap, self.total_anneal_steps
@@ -452,7 +450,7 @@ class Mult_VAE:
 
     def get_optimal_beta(self):
         """Returns the value of the optimal beta."""
-        if self.annealing == True:
+        if self.annealing:
             # find the epoch/index that had the highest NDCG@k value
             index_max_ndcg = np.argmax(self.val_ndcg)
 

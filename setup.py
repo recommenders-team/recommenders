@@ -1,12 +1,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+from os import environ
 from pathlib import Path
 from setuptools import setup, find_packages
+import site
+import sys
 import time
-from os import environ
 
-# Version
+# workround for enabling editable user pip installs
+site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
+
+# version
 here = Path(__file__).absolute().parent
 version_data = {}
 with open(here.joinpath("recommenders", "__init__.py"), "r") as f:
@@ -22,7 +27,7 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "numpy>=1.14",
+    "numpy>=1.19",
     "pandas>1.0.3,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
@@ -39,11 +44,12 @@ install_requires = [
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
-    "jinja2>=2,<3",
+    "jinja2>=2,<4",
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
-    "scikit-surprise>=0.19.1,<=1.1.1",
+    # For Surprise, specify the tarball in order to avoid incompatibilities of compiled .pyx files with numpy versions < 1.20
+    "scikit-surprise@https://files.pythonhosted.org/packages/97/37/5d334adaf5ddd65da99fc65f6507e0e4599d092ba048f4302fe8775619e8/scikit-surprise-1.1.1.tar.gz",
     "retrying>=1.3.3",
 ]
 
@@ -52,7 +58,7 @@ extras_require = {
     "examples": [
         "azure.mgmt.cosmosdb>=0.8.0,<1",
         "hyperopt>=0.1.2,<1",
-        "ipykernel>=4.6.1,<5",
+        "ipykernel>=4.6.1,<7",
         "jupyter>=1,<2",
         "locust>=1,<2",
         "papermill>=2.1.2,<3",
@@ -66,14 +72,21 @@ extras_require = {
     ],
     "spark": [
         "databricks_cli>=0.8.6,<1",
-        "pyarrow>=0.8.0,<7.0.0",
-        "pyspark>=2.4.5,<3.0.0",
+        "pyarrow>=0.12.1,<7.0.0",
+        "pyspark>=2.4.5,<3.2.0",
     ],
     "xlearn": [
         "cmake>=3.18.4.post1",
         "xlearn==0.40a1",
     ],
-    "dev": ["black>=18.6b4,<21", "pytest>=3.6.4", "pytest-cov>=2.12.1"],
+    "dev": [
+        "black>=18.6b4,<21",
+        "pandera[strategies]>=0.6.5",  # For generating fake datasets
+        "pytest>=3.6.4",
+        "pytest-cov>=2.12.1",
+        "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
+        "pytest-rerunfailures>=10.2",  # to mark flaky tests
+    ],
 }
 # for the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
@@ -117,6 +130,6 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    packages=find_packages(where=".", exclude=["tests", "tools", "examples"]),
-    python_requires=">=3.6, <3.8",
+    python_requires=">=3.6, <3.9",     # latest Databricks versions come with Python 3.8 installed
+    packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
 )

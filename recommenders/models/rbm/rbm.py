@@ -2,8 +2,6 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import pandas as pd
-import math
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
@@ -196,7 +194,7 @@ class RBM:
             r (float): rating scale, corresponding to the number of classes
 
         Returns:
-            tf.Tensor: 
+            tf.Tensor:
             - A tensor of shape (r, m, Nv): This needs to be reshaped as (m, Nv, r) in the last step to allow for faster sampling when used in the multinomial function.
 
         """
@@ -247,9 +245,9 @@ class RBM:
             Nh (int): number of hidden units (latent variables of the model)
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor: 
-            - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv. 
-            - `bv` of size (1, Nvisible): visible units' bias, initialized to zero. 
+            tf.Tensor, tf.Tensor, tf.Tensor:
+            - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv.
+            - `bv` of size (1, Nvisible): visible units' bias, initialized to zero.
             - `bh` of size (1, Nhidden): hidden units' bias, initiliazed to zero.
         """
         with tf.variable_scope("Network_parameters"):
@@ -291,8 +289,8 @@ class RBM:
             vv (tf.Tensor, float32): visible units
 
         Returns:
-            tf.Tensor, tf.Tensor: 
-            - `phv`: The activation probability of the hidden unit. 
+            tf.Tensor, tf.Tensor:
+            - `phv`: The activation probability of the hidden unit.
             - `h_`: The sampled value of the hidden unit from a Bernoulli distributions having success probability `phv`.
         """
 
@@ -329,7 +327,7 @@ class RBM:
             h (tf.Tensor, float32): visible units.
 
         Returns:
-            tf.Tensor, tf.Tensor: 
+            tf.Tensor, tf.Tensor:
             - `pvh`: The activation probability of the visible unit given the hidden.
             - `v_`: The sampled value of the visible unit from a Multinomial distributions having success probability `pvh`.
         """
@@ -390,7 +388,7 @@ class RBM:
             v_k (tf.Tensor, float32): sampled visible units at step k
 
         Returns:
-            object: 
+            object:
             - Objective function of Contrastive divergence: the difference between the free energy clamped on the data (v) and the model Free energy (v_k).
         """
 
@@ -424,13 +422,14 @@ class RBM:
                     and epoch_percentage <= self.sampling_protocol[self.l + 1]
                 ):
                     self.k += 1
-                    self.l += 1
+                    self.l += 1  # noqa: E741 ambiguous variable name 'l'
                     self.gibbs_sampling()
 
             if self.debug:
                 log.info("percentage of epochs covered so far %f2" % (epoch_percentage))
 
     def accuracy(self, vp):
+        # flake8: noqa W695 invalid escape sequence '\s'
         """Train/Test Mean average precision
 
         Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on
@@ -438,7 +437,7 @@ class RBM:
 
         :math:`acc = 1/m \sum_{mu=1}^{m} \sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i}`
 
-        where `m = Nusers`, `Nv = number of items = number of visible units` and `s(i)` is the number of non-zero elements 
+        where `m = Nusers`, `Nv = number of items = number of visible units` and `s(i)` is the number of non-zero elements
         per row.
 
         Args:
@@ -446,7 +445,7 @@ class RBM:
 
         Returns:
             tf.Tensor: accuracy.
-            
+
         """
 
         with tf.name_scope("accuracy"):
@@ -588,7 +587,8 @@ class RBM:
         # --------------Initialize protocol for Gibbs sampling------------------
         log.info("Initialize Gibbs protocol")
         self.k = 1  # initialize the G_sampling step
-        self.l = 0  # initialize epoch_sample index
+        # initialize epoch_sample index
+        self.l = 0  # noqa: E741 ambiguous variable name 'l'
         self.gibbs_sampling()  # returns the sampled value of the visible units
 
         # ---Instantiate loss function and optimizer----------------------------
@@ -642,14 +642,15 @@ class RBM:
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
 
         if self.with_metrics:
-
-            for l in range(num_minibatches):  # minibatch loop
+            # minibatch loop
+            for l in range(num_minibatches):  # noqa: E741 ambiguous variable name 'l'
                 _, batch_err = self.sess.run([self.opt, self.Rmse])
                 # average msr error per minibatch
                 epoch_tr_err += batch_err / num_minibatches
 
         else:
-            for l in range(num_minibatches):  # minibatch loop
+            # minibatch loop
+            for l in range(num_minibatches):  # noqa: E741 ambiguous variable name 'l'
                 _ = self.sess.run(self.opt)
 
         return epoch_tr_err
@@ -701,7 +702,7 @@ class RBM:
             self.gibbs_protocol(i)  # Gibbs sampling update
             epoch_tr_err = self.batch_training(num_minibatches)  # model train
 
-            if self.with_metrics == True and i % self.display == 0:
+            if self.with_metrics and i % self.display == 0:
                 log.info("training epoch %i rmse %f" % (i, epoch_tr_err))
 
             Rmse_train.append(epoch_tr_err)  # mse training error per training epoch
@@ -760,7 +761,7 @@ class RBM:
             top_k (scalar, int32): the number of items to recommend.
 
         Returns:
-            numpy.ndarray, float: 
+            numpy.ndarray, float:
             - A sparse matrix containing the top_k elements ordered by their score.
             - The time taken to recommend k items.
         """
@@ -818,7 +819,7 @@ class RBM:
             the ratings of a single user.
 
         Returns:
-            numpy.ndarray, float: 
+            numpy.ndarray, float:
             - A matrix with the inferred ratings.
             - The elapsed time for predediction.
         """

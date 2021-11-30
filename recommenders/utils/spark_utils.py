@@ -2,13 +2,18 @@
 # Licensed under the MIT License.
 
 import os
-import sys
 
 
 try:
-    from pyspark.sql import SparkSession
+    from pyspark.sql import SparkSession  # noqa: F401
 except ImportError:
     pass  # skip this import if we are in pure python environment
+
+MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark:1.0.0-rc3-184-3314e164-SNAPSHOT"
+MMLSPARK_REPO = "https://mmlspark.azureedge.net/maven"
+# We support Spark v3, but in case you wish to use v2, set
+# MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark_2.11:0.18.1"
+# MMLSPARK_REPO = "https://mvnrepository.com/artifact"
 
 
 def start_or_get_spark(
@@ -18,18 +23,18 @@ def start_or_get_spark(
     config=None,
     packages=None,
     jars=None,
-    repository=None,
+    repositories=None,
 ):
     """Start Spark if not started
 
     Args:
-        app_name (str): Set name of the application
+        app_name (str): set name of the application
         url (str): URL for spark master
-        memory (str): Size of memory for spark driver
+        memory (str): size of memory for spark driver
         config (dict): dictionary of configuration options
         packages (list): list of packages to install
         jars (list): list of jar files to add
-        repository (str): The maven repository
+        repositories (list): list of maven repositories
 
     Returns:
         object: Spark context.
@@ -40,8 +45,8 @@ def start_or_get_spark(
         submit_args = "--packages {} ".format(",".join(packages))
     if jars is not None:
         submit_args += "--jars {} ".format(",".join(jars))
-    if repository is not None:
-        submit_args += "--repositories {}".format(repository)
+    if repositories is not None:
+        submit_args += "--repositories {}".format(",".join(repositories))
     if submit_args:
         os.environ["PYSPARK_SUBMIT_ARGS"] = "{} pyspark-shell".format(submit_args)
 

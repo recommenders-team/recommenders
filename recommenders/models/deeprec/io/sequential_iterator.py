@@ -3,11 +3,7 @@
 
 import tensorflow as tf
 import numpy as np
-import json
-import pickle as pkl
 import random
-import os
-import time
 
 from recommenders.models.deeprec.io.iterator import BaseIterator
 from recommenders.models.deeprec.deeprec_utils import load_dict
@@ -89,7 +85,10 @@ class SequentialIterator(BaseIterator):
         """Parse one string line into feature values.
 
         Args:
-            line (str): a string indicating one instance. This string contains tab-separated values including: label, user_hash, item_hash, item_cate, operation_time, item_history_sequence, item_cate_history_sequence, and time_history_sequence.
+            line (str): a string indicating one instance.
+                This string contains tab-separated values including:
+                label, user_hash, item_hash, item_cate, operation_time, item_history_sequence,
+                item_cate_history_sequence, and time_history_sequence.
 
         Returns:
             list: Parsed results including `label`, `user_id`, `item_id`, `item_cate`, `item_history_sequence`, `cate_history_sequence`,

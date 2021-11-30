@@ -3,32 +3,42 @@
 
 import os
 import re
+import random
 import shutil
 import warnings
 import pandas as pd
+from typing import Optional
 from zipfile import ZipFile
 from recommenders.datasets.download_utils import maybe_download, download_path
 from recommenders.utils.notebook_utils import is_databricks
 from recommenders.utils.constants import (
-    DEFAULT_USER_COL,
+    DEFAULT_HEADER,
     DEFAULT_ITEM_COL,
+    DEFAULT_USER_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
+    DEFAULT_TITLE_COL,
+    DEFAULT_GENRE_COL,
 )
 
 try:
     from pyspark.sql.types import (
         StructType,
         StructField,
+        StringType,
         IntegerType,
         FloatType,
-        DoubleType,
-        LongType,
-        StringType,
+        LongType
     )
-    from pyspark.sql.functions import concat_ws, col
 except ImportError:
     pass  # so the environment without spark doesn't break
+
+try:
+    import pandera as pa
+    from pandera import Field
+    from pandera.typing import Series
+except ImportError:
+    pass  # so the environment without recommender['dev'] doesn't break
 
 
 class _DataFormat:
@@ -100,6 +110,11 @@ DATA_FORMAT = {
     "20m": _DataFormat(",", "ml-20m/ratings.csv", True, ",", "ml-20m/movies.csv", True),
 }
 
+# Fake data for testing only
+MOCK_DATA_FORMAT = {
+    "mock100": {"size": 100, "seed": 6},
+}
+
 # 100K data genres index to string mapper. For 1m, 10m, and 20m, the genres labels are already in the dataset.
 GENRES = (
     "unknown",
@@ -123,12 +138,6 @@ GENRES = (
     "Western",
 )
 
-DEFAULT_HEADER = (
-    DEFAULT_USER_COL,
-    DEFAULT_ITEM_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
-)
 
 # Warning and error messages
 WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
@@ -136,7 +145,7 @@ WARNING_MOVIE_LENS_HEADER = """MovieLens rating dataset has four columns
     Will only use the first four column names."""
 WARNING_HAVE_SCHEMA_AND_HEADER = """Both schema and header are provided.
     The header argument will be ignored."""
-ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m}"
+ERROR_MOVIE_LENS_SIZE = "Invalid data size. Should be one of {100k, 1m, 10m, or 20m, or mock100}"
 ERROR_HEADER = "Header error. At least user and movie column names should be provided"
 
 
@@ -154,14 +163,17 @@ def load_pandas_df(
     To load movie information only, you can use load_item_df function.
 
     Args:
-        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m", "mock100").
         header (list or tuple or None): Rating dataset header.
+            If `size` is set to any of 'MOCK_DATA_FORMAT', this parameter is ignored and data is rendered using the 'DEFAULT_HEADER' instead.
         local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
+            If `size` is set to any of 'MOCK_DATA_FORMAT', this parameter is ignored.
         title_col (str): Movie title column name. If None, the column will not be loaded.
         genres_col (str): Genres column name. Genres are '|' separated string.
             If None, the column will not be loaded.
         year_col (str): Movie release year column name. If None, the column will not be loaded.
+            If `size` is set to any of 'MOCK_DATA_FORMAT', this parameter is ignored.
 
     Returns:
         pandas.DataFrame: Movie rating dataset.
@@ -185,7 +197,7 @@ def load_pandas_df(
         )
     """
     size = size.lower()
-    if size not in DATA_FORMAT:
+    if size not in DATA_FORMAT and size not in MOCK_DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
     if header is None:
@@ -195,6 +207,15 @@ def load_pandas_df(
     elif len(header) > 4:
         warnings.warn(WARNING_MOVIE_LENS_HEADER)
         header = header[:4]
+
+    if size in MOCK_DATA_FORMAT:
+        # generate fake data
+        return MockMovielensSchema.get_df(
+            keep_first_n_cols=len(header),
+            keep_title_col=(title_col is not None),
+            keep_genre_col=(genres_col is not None),
+            **MOCK_DATA_FORMAT[size]  # supply the rest of the kwarg with the dictionary
+        )
 
     movie_col = header[1]
 
@@ -349,17 +370,20 @@ def load_spark_df(
 
     Args:
         spark (pyspark.SparkSession): Spark session.
-        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m").
+        size (str): Size of the data to load. One of ("100k", "1m", "10m", "20m", "mock100").
         header (list or tuple): Rating dataset header.
-            If schema is provided, this argument is ignored.
+            If `schema` is provided or `size` is set to any of 'MOCK_DATA_FORMAT', this argument is ignored.
         schema (pyspark.StructType): Dataset schema.
+            If `size` is set to any of 'MOCK_DATA_FORMAT', data is rendered in the 'MockMovielensSchema' instead.
         local_cache_path (str): Path (directory or a zip file) to cache the downloaded zip file.
             If None, all the intermediate files will be stored in a temporary directory and removed after use.
         dbutils (Databricks.dbutils): Databricks utility object
+            If `size` is set to any of 'MOCK_DATA_FORMAT', this parameter is ignored.
         title_col (str): Title column name. If None, the column will not be loaded.
         genres_col (str): Genres column name. Genres are '|' separated string.
             If None, the column will not be loaded.
         year_col (str): Movie release year column name. If None, the column will not be loaded.
+            If `size` is set to any of 'MOCK_DATA_FORMAT', this parameter is ignored.
 
     Returns:
         pyspark.sql.DataFrame: Movie rating dataset.
@@ -394,8 +418,17 @@ def load_spark_df(
         spark_df = load_spark_df(spark, dbutils=dbutils)
     """
     size = size.lower()
-    if size not in DATA_FORMAT:
+    if size not in DATA_FORMAT and size not in MOCK_DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
+
+    if size in MOCK_DATA_FORMAT:
+        # generate fake data
+        return MockMovielensSchema.get_spark_df(
+            spark,
+            keep_title_col=(title_col is not None),
+            keep_genre_col=(genres_col is not None),
+            **MOCK_DATA_FORMAT[size]   # supply the rest of the kwarg with the dictionary
+        )
 
     schema = _get_schema(header, schema)
     if len(schema) < 2:
@@ -537,3 +570,109 @@ def extract_movielens(size, rating_path, item_path, zip_path):
             shutil.copyfileobj(zf, f)
         with z.open(DATA_FORMAT[size].item_path) as zf, open(item_path, "wb") as f:
             shutil.copyfileobj(zf, f)
+
+
+class MockMovielensSchema(pa.SchemaModel):
+    """
+    Mock dataset schema to generate fake data for testing purpose.
+    This schema is configured to mimic the Movielens dataset
+
+    http://files.grouplens.org/datasets/movielens/ml-100k/
+
+    Dataset schema and generation is configured using pandera.
+    Please see https://pandera.readthedocs.io/en/latest/schema_models.html
+    for more information.
+    """
+    # Some notebooks will do a cross join with userID and itemID,
+    # a sparse range for these IDs can slow down the notebook tests
+    userID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
+    itemID: Series[int] = Field(in_range={"min_value": 1, "max_value": 10})
+    rating: Series[float] = Field(in_range={"min_value": 1, "max_value": 5})
+    timestamp: Series[int]
+    title: Series[str] = Field(eq="foo")
+    genre: Series[str] = Field(eq="genreA|0")
+
+    @classmethod
+    def get_df(
+        cls,
+        size: int = 3, seed: int = 100,
+        keep_first_n_cols: Optional[int] = None,
+        keep_title_col: bool = False, keep_genre_col: bool = False,
+    ) -> pd.DataFrame:
+        """Return fake movielens dataset as a Pandas Dataframe with specified rows.
+
+        Args:
+            size (int): number of rows to generate
+            seed (int, optional): seeding the pseudo-number generation. Defaults to 100.
+            keep_first_n_cols (int, optional): keep the first n default movielens columns.
+            keep_title_col (bool): remove the title column if False. Defaults to True.
+            keep_genre_col (bool): remove the genre column if False. Defaults to True.
+
+        Returns:
+            pandas.DataFrame: a mock dataset
+        """
+        schema = cls.to_schema()
+        if keep_first_n_cols is not None:
+            if keep_first_n_cols < 1 or keep_first_n_cols > len(DEFAULT_HEADER):
+                raise ValueError(f"Invalid value for 'keep_first_n_cols': {keep_first_n_cols}. Valid range: [1-{len(DEFAULT_HEADER)}]")
+            schema = schema.remove_columns(DEFAULT_HEADER[keep_first_n_cols:])
+        if not keep_title_col:
+            schema = schema.remove_columns([DEFAULT_TITLE_COL])
+        if not keep_genre_col:
+            schema = schema.remove_columns([DEFAULT_GENRE_COL])
+
+        random.seed(seed)
+        # For more information on data synthesis, see https://pandera.readthedocs.io/en/latest/data_synthesis_strategies.html
+        return schema.example(size=size)
+
+    @classmethod
+    def get_spark_df(
+        cls,
+        spark,
+        size: int = 3, seed: int = 100,
+        keep_title_col: bool = False, keep_genre_col: bool = False,
+        tmp_path: Optional[str] = None,
+    ):
+        """Return fake movielens dataset as a Spark Dataframe with specified rows
+
+        Args:
+            spark (SparkSession): spark session to load the dataframe into
+            size (int): number of rows to generate
+            seed (int): seeding the pseudo-number generation. Defaults to 100.
+            keep_title_col (bool): remove the title column if False. Defaults to False.
+            keep_genre_col (bool): remove the genre column if False. Defaults to False.
+            tmp_path (str, optional): path to store files for serialization purpose
+                when transferring data from python to java.
+                If None, a temporal path is used instead
+
+        Returns:
+            pyspark.sql.DataFrame: a mock dataset
+        """
+        pandas_df = cls.get_df(size=size, seed=seed, keep_title_col=True, keep_genre_col=True)
+
+        # generate temp folder
+        with download_path(tmp_path) as tmp_folder:
+            filepath = os.path.join(tmp_folder, f"mock_movielens_{size}.csv")
+            # serialize the pandas.df as a csv to avoid the expensive java <-> python communication
+            pandas_df.to_csv(filepath, header=False, index=False)
+            spark_df = spark.read.csv(filepath, schema=cls._get_spark_deserialization_schema())
+            # Cache and force trigger action since data-file might be removed.
+            spark_df.cache()
+            spark_df.count()
+
+        if not keep_title_col:
+            spark_df = spark_df.drop(DEFAULT_TITLE_COL)
+        if not keep_genre_col:
+            spark_df = spark_df.drop(DEFAULT_GENRE_COL)
+        return spark_df
+
+    @classmethod
+    def _get_spark_deserialization_schema(cls):
+        return StructType([
+            StructField(DEFAULT_USER_COL, IntegerType()),
+            StructField(DEFAULT_ITEM_COL, IntegerType()),
+            StructField(DEFAULT_RATING_COL, FloatType()),
+            StructField(DEFAULT_TIMESTAMP_COL, StringType()),
+            StructField(DEFAULT_TITLE_COL, StringType()),
+            StructField(DEFAULT_GENRE_COL, StringType()),
+        ])
