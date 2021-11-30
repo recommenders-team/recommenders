@@ -43,7 +43,6 @@ runs:
     shell: bash
     run: |
       python -m pip install --upgrade pip setuptools wheel
-      python -m pip install numpy cython
       pip install tox
   
   - name: Run ${{ inputs.test-kind }} tests ('${{ inputs.test-marker }}')

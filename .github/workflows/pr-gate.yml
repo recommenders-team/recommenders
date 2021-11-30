@@ -99,9 +99,6 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python }}
-    - name: Install dependencies (numpy, cython)
-      run: |
-        python -m pip install numpy cython
     # There are little documentation on how to call **local** actions
     # https://docs.github.com/en/actions/creating-actions/about-actions#choosing-a-location-for-your-action
     # but there is some working insights from this discussion:
