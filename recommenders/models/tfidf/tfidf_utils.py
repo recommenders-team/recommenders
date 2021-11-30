@@ -238,14 +238,20 @@ class TfidfRecommender:
 
         # Similarity measure
         cosine_sim = linear_kernel(self.tfidf_matrix, self.tfidf_matrix)
+        
+        # _sorted_idx has the indices that would sort the array.
+        _sorted_idx = np.argsort(cosine_sim, axis=1)
+
+        _data = list(df_clean[self.id_col].values)
+        _len_df_clean = len(df_clean)
 
         results = {}
-        for idx, row in df_clean.iterrows():
-            similar_indices = cosine_sim[idx].argsort()[: -(len(df_clean) + 1) : -1]
+        for idx, row in zip(range(0, _len_df_clean), _data):
+            similar_indices = _sorted_idx[idx][: -(_len_df_clean + 1) : -1]
             similar_items = [
-                (cosine_sim[idx][i], df_clean[self.id_col][i]) for i in similar_indices
+                (cosine_sim[idx][i], _data[i]) for i in similar_indices
             ]
-            results[row[self.id_col]] = similar_items[1:]
+            results[row] = similar_items[1:]
 
         # Save to class
         self.recommendations = results
@@ -264,17 +270,12 @@ class TfidfRecommender:
         rec_item_id = list()
 
         # For each item
-        for idx in range(0, len(self.recommendations)):
+        for _item_id in self.recommendations:
             # Information about the item we are basing recommendations off of
-            rec_based_on = list(self.recommendations.keys())[idx]
-            tmp_item_id = str(
-                df_clean.loc[df_clean[self.id_col] == rec_based_on][self.id_col].values[
-                    0
-                ]
-            )
+            rec_based_on = tmp_item_id = _item_id
 
             # Get all scores and IDs for items recommended for this current item
-            rec_array = self.recommendations[rec_based_on]
+            rec_array = self.recommendations.get(rec_based_on)
             tmp_rec_score = list(map(lambda x: x[0], rec_array))
             tmp_rec_id = list(map(lambda x: x[1], rec_array))
 
