@@ -68,10 +68,12 @@ class TfidfRecommender:
             clean = clean.replace("Â\xa0", "")  # non-breaking space
 
             # Remove all punctuation and special characters
-            clean = re.sub("([^\s\w]|_)+", "", clean)  # noqa W695 invalid escape sequence '\s'
+            clean = re.sub(
+                r"([^\s\w]|_)+", "", clean
+            )  # noqa W695 invalid escape sequence '\s'
 
             # If you want to keep some punctuation, see below commented out example
-            # clean = re.sub('([^\s\w\-\_\(\)]|_)+','', clean)
+            # clean = re.sub(r'([^\s\w\-\_\(\)]|_)+','', clean)
 
             # Skip further processing if the text will be used in BERT tokenization
             if for_BERT is False:
@@ -238,7 +240,7 @@ class TfidfRecommender:
 
         # Similarity measure
         cosine_sim = linear_kernel(self.tfidf_matrix, self.tfidf_matrix)
-        
+
         # _sorted_idx has the indices that would sort the array.
         _sorted_idx = np.argsort(cosine_sim, axis=1)
 
@@ -248,9 +250,7 @@ class TfidfRecommender:
         results = {}
         for idx, row in zip(range(0, _len_df_clean), _data):
             similar_indices = _sorted_idx[idx][: -(_len_df_clean + 1) : -1]
-            similar_items = [
-                (cosine_sim[idx][i], _data[i]) for i in similar_indices
-            ]
+            similar_items = [(cosine_sim[idx][i], _data[i]) for i in similar_indices]
             results[row] = similar_items[1:]
 
         # Save to class
