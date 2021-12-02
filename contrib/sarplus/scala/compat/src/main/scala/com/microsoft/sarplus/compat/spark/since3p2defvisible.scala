@@ -17,7 +17,10 @@ object since3p2defvisibleMacro {
     annottees match {
       case q"$mods def $name[..$tparams](...$paramss): $tpt = $body" :: tail =>
         // NOTE: There seems no way to find out the Spark version.
-        if (versionNumberString.startsWith("2.12.14")) {
+        val major = versionNumberString.split('.')(0).toInt
+        val minor = versionNumberString.split('.')(1).toInt
+        val patch = versionNumberString.split('.')(2).toInt
+        if (major >= 2 && minor >= 12 && patch >= 14) {
           q"""
             $mods def $name[..$tparams](...$paramss): $tpt =
               $body

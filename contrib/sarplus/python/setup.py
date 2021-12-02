@@ -14,10 +14,11 @@ class get_pybind_include(object):
 
         return pybind11.get_include(self.user)
 
+
 DEPENDENCIES = [
     "numpy",
     "pandas",
-    # "pyarrow==0.13.0",
+    "pyarrow>=1.0.0",
     "pybind11>=2.2",
     "pyspark>=3.0.0"
 ]

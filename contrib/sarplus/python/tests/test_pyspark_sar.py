@@ -20,6 +20,14 @@ def assert_compare(expected_id, expected_score, actual_prediction):
 
 
 @pytest.fixture(scope="module")
+def token(request):
+    if request.config.getoption("--token") == "":
+        return ""
+    else:
+        return "?" + request.config.getoption("--token")
+
+
+@pytest.fixture(scope="module")
 def spark(tmp_path_factory, app_name="Sample", url="local[*]", memory="1G"):
     """Start Spark if not started
     Args:
@@ -198,9 +206,9 @@ def train_test_dummy_timestamp(pandas_dummy_timestamp):
 
 
 @pytest.fixture(scope="module")
-def demo_usage_data(header, sar_settings):
+def demo_usage_data(header, sar_settings, token):
     # load the data
-    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv")
+    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv" + token)
     data["rating"] = pd.Series([1] * data.shape[0])
     data = data.rename(
         columns={
@@ -234,7 +242,7 @@ def sar_settings():
         # absolute tolerance parameter for matrix equivalence in SAR tests
         "ATOL": 1e-8,
         # directory of the current file - used to link unit test data
-        "FILE_DIR": "http://recodatasets.blob.core.windows.net/sarunittest/",
+        "FILE_DIR": "https://recodatasets.blob.core.windows.net/sarunittest/",
         # user ID used in the test files (they are designed for this user ID, this is part of the test)
         "TEST_USER_ID": "0003000098E85347",
     }
@@ -271,7 +279,7 @@ Main SAR tests are below - load test files which are used for both Scala SAR and
         (3, "lift", "lift"),
     ],
 )
-def test_sar_item_similarity(spark, threshold, similarity_type, file, demo_usage_data, sar_settings, header):
+def test_sar_item_similarity(spark, threshold, similarity_type, file, demo_usage_data, sar_settings, header, token):
 
     model = SARPlus(
         spark,
@@ -287,7 +295,7 @@ def test_sar_item_similarity(spark, threshold, similarity_type, file, demo_usage
     model.fit(df)
 
     # reference
-    item_similarity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv")
+    item_similarity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv" + token)
 
     item_similarity_ref = pd.melt(
         item_similarity_ref, item_similarity_ref.columns[0], item_similarity_ref.columns[1:], "i2", "value",
@@ -309,7 +317,7 @@ def test_sar_item_similarity(spark, threshold, similarity_type, file, demo_usage
 
 
 # Test 7
-def test_user_affinity(spark, demo_usage_data, sar_settings, header):
+def test_user_affinity(spark, demo_usage_data, sar_settings, header, token):
     time_now = demo_usage_data[header["col_timestamp"]].max()
 
     model = SARPlus(
@@ -324,7 +332,7 @@ def test_user_affinity(spark, demo_usage_data, sar_settings, header):
     df = spark.createDataFrame(demo_usage_data)
     model.fit(df)
 
-    user_affinity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "user_aff.csv")
+    user_affinity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "user_aff.csv" + token)
     user_affinity_ref = pd.melt(
         user_affinity_ref, user_affinity_ref.columns[0], user_affinity_ref.columns[1:], "ItemId", "Rating",
     )
@@ -346,7 +354,7 @@ def test_user_affinity(spark, demo_usage_data, sar_settings, header):
 @pytest.mark.parametrize(
     "threshold,similarity_type,file", [(3, "cooccurrence", "count"), (3, "jaccard", "jac"), (3, "lift", "lift")],
 )
-def test_userpred(spark, tmp_path, threshold, similarity_type, file, header, sar_settings, demo_usage_data):
+def test_userpred(spark, tmp_path, threshold, similarity_type, file, header, sar_settings, demo_usage_data, token):
     time_now = demo_usage_data[header["col_timestamp"]].max()
 
     test_id = "{0}_{1}_{2}".format(threshold, similarity_type, file)
@@ -365,7 +373,7 @@ def test_userpred(spark, tmp_path, threshold, similarity_type, file, header, sar
     df = spark.createDataFrame(demo_usage_data)
     model.fit(df)
 
-    url = sar_settings["FILE_DIR"] + "userpred_" + file + str(threshold) + "_userid_only.csv"
+    url = sar_settings["FILE_DIR"] + "userpred_" + file + str(threshold) + "_userid_only.csv" + token
 
     pred_ref = pd.read_csv(url)
     pred_ref = (
