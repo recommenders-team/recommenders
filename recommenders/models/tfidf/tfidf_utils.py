@@ -241,16 +241,16 @@ class TfidfRecommender:
         # Similarity measure
         cosine_sim = linear_kernel(self.tfidf_matrix, self.tfidf_matrix)
 
-        # _sorted_idx has the indices that would sort the array.
-        _sorted_idx = np.argsort(cosine_sim, axis=1)
+        # sorted_idx has the indices that would sort the array.
+        sorted_idx = np.argsort(cosine_sim, axis=1)
 
-        _data = list(df_clean[self.id_col].values)
-        _len_df_clean = len(df_clean)
+        data = list(df_clean[self.id_col].values)
+        len_df_clean = len(df_clean)
 
         results = {}
-        for idx, row in zip(range(0, _len_df_clean), _data):
-            similar_indices = _sorted_idx[idx][: -(_len_df_clean + 1) : -1]
-            similar_items = [(cosine_sim[idx][i], _data[i]) for i in similar_indices]
+        for idx, row in zip(range(0, len_df_clean), data):
+            similar_indices = sorted_idx[idx][: -(len_df_clean + 1) : -1]
+            similar_items = [(cosine_sim[idx][i], data[i]) for i in similar_indices]
             results[row] = similar_items[1:]
 
         # Save to class
