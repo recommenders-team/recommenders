@@ -6,7 +6,7 @@ import psutil
 
 
 def invert_dictionary(dictionary):
-    """Invert a dictionary
+    """Invert a dictionary.
 
     .. note::
 
