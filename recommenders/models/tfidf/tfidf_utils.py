@@ -68,10 +68,12 @@ class TfidfRecommender:
             clean = clean.replace("Â\xa0", "")  # non-breaking space
 
             # Remove all punctuation and special characters
-            clean = re.sub("([^\s\w]|_)+", "", clean)  # noqa W695 invalid escape sequence '\s'
+            clean = re.sub(
+                r"([^\s\w]|_)+", "", clean
+            )  # noqa W695 invalid escape sequence '\s'
 
             # If you want to keep some punctuation, see below commented out example
-            # clean = re.sub('([^\s\w\-\_\(\)]|_)+','', clean)
+            # clean = re.sub(r'([^\s\w\-\_\(\)]|_)+','', clean)
 
             # Skip further processing if the text will be used in BERT tokenization
             if for_BERT is False:
@@ -239,13 +241,17 @@ class TfidfRecommender:
         # Similarity measure
         cosine_sim = linear_kernel(self.tfidf_matrix, self.tfidf_matrix)
 
+        # sorted_idx has the indices that would sort the array.
+        sorted_idx = np.argsort(cosine_sim, axis=1)
+
+        data = list(df_clean[self.id_col].values)
+        len_df_clean = len(df_clean)
+
         results = {}
-        for idx, row in df_clean.iterrows():
-            similar_indices = cosine_sim[idx].argsort()[: -(len(df_clean) + 1) : -1]
-            similar_items = [
-                (cosine_sim[idx][i], df_clean[self.id_col][i]) for i in similar_indices
-            ]
-            results[row[self.id_col]] = similar_items[1:]
+        for idx, row in zip(range(0, len_df_clean), data):
+            similar_indices = sorted_idx[idx][: -(len_df_clean + 1) : -1]
+            similar_items = [(cosine_sim[idx][i], data[i]) for i in similar_indices]
+            results[row] = similar_items[1:]
 
         # Save to class
         self.recommendations = results
@@ -264,17 +270,12 @@ class TfidfRecommender:
         rec_item_id = list()
 
         # For each item
-        for idx in range(0, len(self.recommendations)):
+        for _item_id in self.recommendations:
             # Information about the item we are basing recommendations off of
-            rec_based_on = list(self.recommendations.keys())[idx]
-            tmp_item_id = str(
-                df_clean.loc[df_clean[self.id_col] == rec_based_on][self.id_col].values[
-                    0
-                ]
-            )
+            rec_based_on = tmp_item_id = _item_id
 
             # Get all scores and IDs for items recommended for this current item
-            rec_array = self.recommendations[rec_based_on]
+            rec_array = self.recommendations.get(rec_based_on)
             tmp_rec_score = list(map(lambda x: x[0], rec_array))
             tmp_rec_id = list(map(lambda x: x[1], rec_array))
 
