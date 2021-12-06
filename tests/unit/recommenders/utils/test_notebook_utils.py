@@ -28,9 +28,9 @@ def test_is_jupyter(output_notebook, kernel_name):
     nb = sb.read_notebook(output_notebook)
     df = nb.scraps.dataframe
     result_is_jupyter = df.loc[df["name"] == "is_jupyter", "data"].values[0]
-    assert result_is_jupyter == True  # is True not allowed
+    assert result_is_jupyter  # is True not allowed
     result_is_databricks = df.loc[df["name"] == "is_databricks", "data"].values[0]
-    assert result_is_databricks == False
+    assert not result_is_databricks
 
 
 # @pytest.mark.notebooks

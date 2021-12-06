@@ -27,7 +27,7 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "numpy>=1.19",
+    "numpy>=1.19",  # 1.19 required by tensorflow
     "pandas>1.0.3,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
@@ -39,7 +39,8 @@ install_requires = [
     "memory_profiler>=0.54.0,<1",
     "nltk>=3.4,<4",
     "pydocumentdb>=2.3.3<3",  # TODO: replace with azure-cosmos
-    "pymanopt>=0.2.5,<1",
+    # Temporary fix for pymanopt, only this commit works with TF2
+    "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
@@ -48,9 +49,8 @@ install_requires = [
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
-    # For Surprise, specify the tarball in order to avoid incompatibilities of compiled .pyx files with numpy versions < 1.20
-    "scikit-surprise@https://files.pythonhosted.org/packages/97/37/5d334adaf5ddd65da99fc65f6507e0e4599d092ba048f4302fe8775619e8/scikit-surprise-1.1.1.tar.gz",
     "retrying>=1.3.3",
+    "pandera[strategies]>=0.6.5",  # For generating fake datasets
 ]
 
 # shared dependencies
@@ -66,8 +66,12 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow-gpu>=1.15.0,<2",  # compiled with CUDA 10.0
-        "torch==1.2.0",  # last os-common version with CUDA 10.0 support
+        "tensorflow~=2.6.1",  # compiled with CUDA 11.2, cudnn 8.1
+        "tensorflow-estimator==2.6",
+        "tensorboard==2.6",
+        "keras==2.6",
+        "tf-slim>=1.1.0",
+        "torch>=1.8",  # for CUDA 11 support
         "fastai>=1.0.46,<2",
     ],
     "spark": [
@@ -75,13 +79,8 @@ extras_require = {
         "pyarrow>=0.12.1,<6.0.0",
         "pyspark>=2.4.5,<3.2.0",
     ],
-    "xlearn": [
-        "cmake>=3.18.4.post1",
-        "xlearn==0.40a1",
-    ],
     "dev": [
         "black>=18.6b4,<21",
-        "pandera[strategies]>=0.6.5",  # For generating fake datasets
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
@@ -93,7 +92,16 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 
 # the following dependencies need additional testing
 extras_require["experimental"] = [
+    # xlearn requires cmake to be pre-installed
+    "xlearn==0.40a1",
+    # Surprise needs to be built from source because of the numpy <= 1.19 incompatibility
+    # Requires pip to be run with the --no-binary option
+    "scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz",
+    # VW C++ binary needs to be installed manually for some code to work
     "vowpalwabbit>=8.9.0,<9",
+]
+extras_require["nni"] = [
+    # nni needs to be upgraded
     "nni==1.5",
 ]
 
@@ -132,4 +140,5 @@ setup(
     package_dir={"recommenders": "recommenders"},
     python_requires=">=3.6, <3.9",     # latest Databricks versions come with Python 3.8 installed
     packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
+    setup_requires=["numpy>=1.15"]
 )

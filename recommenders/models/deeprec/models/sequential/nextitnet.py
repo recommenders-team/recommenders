@@ -30,17 +30,21 @@ class NextItNetModel(SequentialBaseModel):
         hparams = self.hparams
         is_training = tf.equal(self.is_train_stage, True)
         item_history_embedding = tf.cond(
-            is_training,
-            lambda: self.item_history_embedding[:: self.hparams.train_num_ngs + 1],
-            lambda: self.item_history_embedding,
+            pred=is_training,
+            true_fn=lambda: self.item_history_embedding[
+                :: self.hparams.train_num_ngs + 1
+            ],
+            false_fn=lambda: self.item_history_embedding,
         )
         cate_history_embedding = tf.cond(
-            is_training,
-            lambda: self.cate_history_embedding[:: self.hparams.train_num_ngs + 1],
-            lambda: self.cate_history_embedding,
+            pred=is_training,
+            true_fn=lambda: self.cate_history_embedding[
+                :: self.hparams.train_num_ngs + 1
+            ],
+            false_fn=lambda: self.cate_history_embedding,
         )
 
-        with tf.variable_scope("nextitnet", reuse=tf.AUTO_REUSE):
+        with tf.compat.v1.variable_scope("nextitnet", reuse=tf.compat.v1.AUTO_REUSE):
 
             dilate_input = tf.concat(
                 [item_history_embedding, cate_history_embedding], 2
@@ -48,8 +52,8 @@ class NextItNetModel(SequentialBaseModel):
 
             for layer_id, dilation in enumerate(hparams.dilations):
                 dilate_input = tf.cond(
-                    is_training,
-                    lambda: self._nextitnet_residual_block_one(
+                    pred=is_training,
+                    true_fn=lambda: self._nextitnet_residual_block_one(
                         dilate_input,
                         dilation,
                         layer_id,
@@ -58,7 +62,7 @@ class NextItNetModel(SequentialBaseModel):
                         causal=True,
                         train=True,
                     ),
-                    lambda: self._nextitnet_residual_block_one(
+                    false_fn=lambda: self._nextitnet_residual_block_one(
                         dilate_input,
                         dilation,
                         layer_id,
@@ -71,7 +75,9 @@ class NextItNetModel(SequentialBaseModel):
 
             self.dilate_input = dilate_input
             model_output = tf.cond(
-                is_training, self._training_output, self._normal_output
+                pred=is_training,
+                true_fn=self._training_output,
+                false_fn=self._normal_output,
             )
 
             return model_output
@@ -90,7 +96,7 @@ class NextItNetModel(SequentialBaseModel):
                 model_output.get_shape()[-1],
             ),
         )
-        model_output = tf.transpose(model_output, [0, 2, 1, 3])
+        model_output = tf.transpose(a=model_output, perm=[0, 2, 1, 3])
         model_output = tf.reshape(model_output, (-1, model_output.get_shape()[-1]))
         return model_output
 
@@ -129,7 +135,7 @@ class NextItNetModel(SequentialBaseModel):
         resblock_name = "nextitnet_residual_block_one_{}_layer_{}_{}".format(
             resblock_type, layer_id, dilation
         )
-        with tf.variable_scope(resblock_name):
+        with tf.compat.v1.variable_scope(resblock_name):
             input_ln = self._layer_norm(input_, name="layer_norm1", trainable=train)
             relu1 = tf.nn.relu(input_ln)
             conv1 = self._conv1d(
@@ -168,20 +174,24 @@ class NextItNetModel(SequentialBaseModel):
         Returns:
             object: The output of dilated CNN layers.
         """
-        with tf.variable_scope(name):
-            weight = tf.get_variable(
+        with tf.compat.v1.variable_scope(name):
+            weight = tf.compat.v1.get_variable(
                 "weight",
                 [1, kernel_size, input_.get_shape()[-1], output_channels],
-                initializer=tf.truncated_normal_initializer(stddev=0.02, seed=1),
+                initializer=tf.compat.v1.truncated_normal_initializer(
+                    stddev=0.02, seed=1
+                ),
             )
-            bias = tf.get_variable(
-                "bias", [output_channels], initializer=tf.constant_initializer(0.0)
+            bias = tf.compat.v1.get_variable(
+                "bias",
+                [output_channels],
+                initializer=tf.compat.v1.constant_initializer(0.0),
             )
 
             if causal:
                 padding = [[0, 0], [(kernel_size - 1) * dilation, 0], [0, 0]]
-                padded = tf.pad(input_, padding)
-                input_expanded = tf.expand_dims(padded, dim=1)
+                padded = tf.pad(tensor=input_, paddings=padding)
+                input_expanded = tf.expand_dims(padded, axis=1)
                 out = (
                     tf.nn.atrous_conv2d(
                         input_expanded, weight, rate=dilation, padding="VALID"
@@ -189,39 +199,41 @@ class NextItNetModel(SequentialBaseModel):
                     + bias
                 )
             else:
-                input_expanded = tf.expand_dims(input_, dim=1)
+                input_expanded = tf.expand_dims(input_, axis=1)
                 out = (
                     tf.nn.conv2d(
-                        input_expanded, weight, strides=[1, 1, 1, 1], padding="SAME"
+                        input=input_expanded,
+                        filters=weight,
+                        strides=[1, 1, 1, 1],
+                        padding="SAME",
                     )
                     + bias
                 )
 
             return tf.squeeze(out, [1])
 
-    # tf.contrib.layers.layer_norm
     def _layer_norm(self, x, name, epsilon=1e-8, trainable=True):
         """Call a layer normalization
 
         Returns:
             object: Normalized data
         """
-        with tf.variable_scope(name):
+        with tf.compat.v1.variable_scope(name):
             shape = x.get_shape()
-            beta = tf.get_variable(
+            beta = tf.compat.v1.get_variable(
                 "beta",
                 [int(shape[-1])],
-                initializer=tf.constant_initializer(0),
+                initializer=tf.compat.v1.constant_initializer(0),
                 trainable=trainable,
             )
-            gamma = tf.get_variable(
+            gamma = tf.compat.v1.get_variable(
                 "gamma",
                 [int(shape[-1])],
-                initializer=tf.constant_initializer(1),
+                initializer=tf.compat.v1.constant_initializer(1),
                 trainable=trainable,
             )
 
-            mean, variance = tf.nn.moments(x, axes=[len(shape) - 1], keep_dims=True)
+            mean, variance = tf.nn.moments(x=x, axes=[len(shape) - 1], keepdims=True)
 
             x = (x - mean) / tf.sqrt(variance + epsilon)
 

@@ -33,15 +33,15 @@ class A2SVDModel(SequentialBaseModel):
             object: The output of A2SVD section.
         """
         hparams = self.hparams
-        with tf.variable_scope("a2svd"):
+        with tf.compat.v1.variable_scope("a2svd"):
             hist_input = tf.concat(
                 [self.item_history_embedding, self.cate_history_embedding], 2
             )
-            with tf.variable_scope("Attention_layer"):
+            with tf.compat.v1.variable_scope("Attention_layer"):
                 att_outputs1 = self._attention(hist_input, hparams.attention_size)
-                asvd_output = tf.reduce_sum(att_outputs1, 1)
-                tf.summary.histogram("a2svd_output", asvd_output)
+                asvd_output = tf.reduce_sum(input_tensor=att_outputs1, axis=1)
+                tf.compat.v1.summary.histogram("a2svd_output", asvd_output)
             model_output = tf.concat([asvd_output, self.target_item_embedding], 1)
             self.model_output = model_output
-            tf.summary.histogram("model_output", model_output)
+            tf.compat.v1.summary.histogram("model_output", model_output)
             return model_output

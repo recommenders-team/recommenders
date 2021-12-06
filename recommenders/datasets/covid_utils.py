@@ -12,7 +12,7 @@ def load_pandas_df(
     container_name="covid19temp",
     metadata_filename="metadata.csv",
 ):
-    """ Loads the Azure Open Research COVID-19 dataset as a pd.DataFrame.
+    """Loads the Azure Open Research COVID-19 dataset as a pd.DataFrame.
 
     The Azure COVID-19 Open Research Dataset may be found at https://azure.microsoft.com/en-us/services/open-datasets/catalog/covid-19-open-research/
 
@@ -31,13 +31,13 @@ def load_pandas_df(
         acct=azure_storage_account_name,
         container=container_name,
         filename=metadata_filename,
-        sas=azure_storage_sas_token
+        sas=azure_storage_sas_token,
     )
     return pd.read_csv(uri)
 
 
 def remove_duplicates(df, cols):
-    """ Remove duplicated entries.
+    """Remove duplicated entries.
 
     Args:
         df (pd.DataFrame): Pandas dataframe.
@@ -52,7 +52,7 @@ def remove_duplicates(df, cols):
         df = df.reset_index(drop=True)
 
         # Find where the identifier variable is duplicated
-        dup_rows = np.where(df.duplicated([col]) == True)[0]  # noqa: E712 comparison to True
+        dup_rows = np.where(df.duplicated([col]))[0]
 
         # Drop duplicated rows
         df = df.drop(dup_rows)
@@ -61,7 +61,7 @@ def remove_duplicates(df, cols):
 
 
 def remove_nan(df, cols):
-    """ Remove rows with NaN values in specified column.
+    """Remove rows with NaN values in specified column.
 
     Args:
         df (pandas.DataFrame): Pandas dataframe.
@@ -82,7 +82,7 @@ def remove_nan(df, cols):
 
 
 def clean_dataframe(df):
-    """ Clean up the dataframe.
+    """Clean up the dataframe.
 
     Args:
         df (pandas.DataFrame): Pandas dataframe.
@@ -103,12 +103,12 @@ def clean_dataframe(df):
 
 
 def retrieve_text(
-        entry,
-        container_name,
-        azure_storage_account_name="azureopendatastorage",
-        azure_storage_sas_token="",
+    entry,
+    container_name,
+    azure_storage_account_name="azureopendatastorage",
+    azure_storage_sas_token="",
 ):
-    """ Retrieve body text from article of interest.
+    """Retrieve body text from article of interest.
 
     Args:
         entry (pd.Series): A single row from the dataframe (df.iloc[n]).
@@ -128,7 +128,7 @@ def retrieve_text(
             acct=azure_storage_account_name,
             container=container_name,
             filename=filename,
-            sas=azure_storage_sas_token
+            sas=azure_storage_sas_token,
         )
 
         data = requests.get(uri, headers={"Content-type": "application/json"}).json()
@@ -146,7 +146,7 @@ def get_public_domain_text(
     azure_storage_account_name="azureopendatastorage",
     azure_storage_sas_token="",
 ):
-    """ Get all public domain text.
+    """Get all public domain text.
 
     Args:
         df (pandas.DataFrame): Metadata dataframe for public domain text.
@@ -163,11 +163,9 @@ def get_public_domain_text(
     # Add in full_text
     df["full_text"] = df.apply(
         lambda row: retrieve_text(
-            row,
-            container_name,
-            azure_storage_account_name,
-            azure_storage_sas_token
-        ), axis=1
+            row, container_name, azure_storage_account_name, azure_storage_sas_token
+        ),
+        axis=1,
     )
 
     # Remove rows with empty full_text
