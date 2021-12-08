@@ -1,12 +1,7 @@
 name := "sarplus"
-licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
-// credentials += Credentials(Path.userHome / ".m2" / ".sbtcredentials")
-// publishTo := {
-//   val org = sys.env.getOrElse("ORG", "")
-//   val project = sys.env.getOrElse("PROJECT", "")
-//   val feed = sys.env.getOrElse("FEED", "")
-//   Some("releases" at "https://pkgs.dev.azure.com/%s/%s/_packaging/%s/Maven/v1".format(org, project, feed))
-// }
+
+
+// Denpendency configuration
 
 lazy val sparkVer = settingKey[String]("spark version")
 lazy val hadoopVer = settingKey[String]("hadoop version")
@@ -49,4 +44,44 @@ lazy val root = (project in file("."))
     commonSettings,
   )
 
-// aetherPublishBothSettings
+
+// POM metadata configuration.  See https://www.scala-sbt.org/release/docs/Using-Sonatype.html
+
+organization := "com.microsoft.sarplus"
+organizationName := "microsoft"
+organizationHomepage := Some(url("https://microsoft.com"))
+
+scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/microsoft/recommenders/tree/main/contrib/sarplus"),
+    "scm:git@github.com:microsoft/recommenders.git"
+  )
+)
+
+developers := List(
+  Developer(
+    name = "Markus Cozowicz",
+    email = "marcozo@microsoft.com"
+  )
+)
+
+description := "sarplus"
+licenses := Seq("MIT" -> url("http://opensource.org/licenses/MIT"))
+homepage := Some(url("https://github.com/microsoft/recommenders/tree/main/contrib/sarplus"))
+pomIncludeRepository := { _ => false }
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+  else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
+publishMavenStyle := true
+
+
+// PGP configuration
+
+credentials += Credentials(
+  "GnuPG Key ID",
+  "gpg",
+  "C72E596B384EC14CFA65D80A36CB250AF1C18ECE",
+  "ignored"
+)
