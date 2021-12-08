@@ -3,11 +3,15 @@
 # Refenreces:
 #   * [GitHub Actions doc](https://docs.github.com/en/actions)
 #   * GitHub Actions workflow templates
-#     + [python package](https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml)
-#     + [python publish](https://github.com/actions/starter-workflows/blob/main/ci/python-publish.yml)
-#     + [scala](https://github.com/actions/starter-workflows/blob/main/ci/scala.yml)
+#       + [python package](https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml)
+#       + [python publish](https://github.com/actions/starter-workflows/blob/main/ci/python-publish.yml)
+#       + [scala](https://github.com/actions/starter-workflows/blob/main/ci/scala.yml)
 #   * [GitHub hosted runner - Ubuntu 20.04 LTS](https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md)
 #   * [Azure Databirkcs runtime releases](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/releases)
+#   * Package publish
+#       + [Publishing package distribution releases using GitHub Actions CI/CD workflows](https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
+#       + [pypa/gh-action-pypy-publish](https://github.com/pypa/gh-action-pypi-publish)
+
 
 name: sarplus package
 
@@ -39,8 +43,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install flake8 pybind11 pytest pytest-cov scikit-learn wheel
+          python -m pip install -U build pip twine
+          python -m pip install -U flake8 pytest pytest-cov scikit-learn
 
       - name: Lint with flake8
         run: |
@@ -48,17 +52,19 @@ jobs:
           # See https://flake8.pycqa.org/en/latest/user/index.html
           flake8 .
 
-      - name: Package
+      - name: Package and check
         run: |
           cd "${PYTHON_ROOT}"
-          VERSION="${SARPLUS_VERSION}" python setup.py bdist_wheel
+          sed -i -E "s/version[[:space:]]*=[[:space:]]*.*,/version=\"${SARPLUS_VERSION}\",/" setup.py
+          python -m build --sdist
+          python -m twine check dist/*
 
       - name: Testing
         env:
           ACCESS_TOKEN: ${{ secrets.SARPLUS_TESTDATA_ACCESS_TOKEN }}
         run: |
           cd "${PYTHON_ROOT}"
-          python -m pip install --use-feature=2020-resolver dist/*.whl
+          python -m pip install dist/*.gz
 
           cd "${SCALA_ROOT}"
           export SPARK_VERSION=$(python -m pip show pyspark | grep -i version | cut -d ' ' -f 2)
@@ -75,14 +81,15 @@ jobs:
           cd "${PYTHON_ROOT}"
           pytest --token "${ACCESS_TOKEN}" ./tests
 
-      - name: Upload Python package
-        uses: actions/upload-artifact@v2
+      - name: Publish package to PyPI
+        if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          name: pysarplus-${{ env.SARPLUS_VERSION }}-cp${{ matrix.python-version }}
-          path: ${{ env.PYTHON_ROOT }}/dist/pysarplus-*.whl
-#       - name: Publish Python package
-#         if: github.ref == 'refs/heads/main'
-#         run: 
+          user: __token__
+          password: ${{ secrets.SARPLUS_TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          packages_dir: ${{ env.PYTHON_ROOT }}/dist/
+          skip_existing: true
 
   scala:
     runs-on: ubuntu-latest
@@ -107,14 +114,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # TODO: Add testing
-
-      - name: Package
+      - name: Testing and Packaging
         run: |
           cd "${SCALA_ROOT}"
           export VERSION="${SARPLUS_VERSION}"
           export SPARK_VERSION="${{ matrix.spark-version }}"
           export HADOOP_VERSION="${{ matrix.hadoop-version }}"
+          sbt ++${{ matrix.scala-version }}! test
           sbt ++${{ matrix.scala-version }}! package
           SCALA_VERSION=${{ matrix.scala-version }}
           echo "scala_binary_version=${SCALA_VERSION%.*}" >> $GITHUB_ENV
