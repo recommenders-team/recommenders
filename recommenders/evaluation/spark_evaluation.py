@@ -589,8 +589,7 @@ class SparkDiversityEvaluation:
                 raise Exception(
                     "item_feature_df not specified! item_feature_df must be provided "
                     "if choosing to use item_feature_vector to calculate item similarity. "
-                    "item_feature_df should have schema:"
-                    + str(required_schema)
+                    "item_feature_df should have schema:" + str(required_schema)
                 )
 
         # check if reco_df contains any user_item pairs that are already shown in train_df

@@ -285,13 +285,17 @@ def _data_generating_no_history_expanding(
             fo = f_test
         if user_id != last_user_id or tfile == "valid" or tfile == "test":
             if last_user_id is not None:
-                history_clk_num = len(movie_id_list)  # noqa: F821 undefined name 'movie_id_list'
+                history_clk_num = len(
+                    movie_id_list  # noqa: F821 undefined name 'movie_id_list'
+                )
                 cat_str = ""
                 mid_str = ""
                 dt_str = ""
                 for c1 in cate_list[:-1]:  # noqa: F821 undefined name 'cate_list'
                     cat_str += c1 + ","
-                for mid in movie_id_list[:-1]:  # noqa: F821 undefined name 'movie_id_list'
+                for mid in movie_id_list[  # noqa: F821 undefined name 'movie_id_list'
+                    :-1
+                ]:
                     mid_str += mid + ","
                 for dt_time in dt_list[:-1]:  # noqa: F821 undefined name 'dt_list'
                     dt_str += dt_time + ","

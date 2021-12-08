@@ -20,7 +20,7 @@ class DKNItem2Item(DKN):
 
     def _compute_data_loss(self):
         logits = self.pred
-        data_loss = -1 * tf.reduce_sum(tf.math.log(logits[:, 0] + 1e-10))
+        data_loss = -1 * tf.reduce_sum(input_tensor=tf.math.log(logits[:, 0] + 1e-10))
         return data_loss
 
     def _build_dkn(self):
@@ -53,7 +53,9 @@ class DKNItem2Item(DKN):
         item_embs_target = item_embs_train[:, 1:, :]
 
         item_relation = tf.math.multiply(item_embs_target, item_embs_source)
-        item_relation = tf.reduce_sum(item_relation, -1)  # (B, neg_num + 1)
+        item_relation = tf.reduce_sum(
+            input_tensor=item_relation, axis=-1
+        )  # (B, neg_num + 1)
 
         self.pred_logits = item_relation
 
@@ -66,15 +68,19 @@ class DKNItem2Item(DKN):
         """
         To make the document embedding be dense, we add one tanh layer on top of the `kims_cnn` module.
         """
-        with tf.variable_scope("kcnn", initializer=self.initializer):
+        with tf.compat.v1.variable_scope("kcnn", initializer=self.initializer):
             news_field_embed = self._kims_cnn(
                 candidate_word_batch, candidate_entity_batch, self.hparams
             )
-            W = tf.get_variable(
+            W = tf.compat.v1.get_variable(
                 name="W_doc_trans",
                 shape=(news_field_embed.shape[-1], self.num_filters_total),
                 dtype=tf.float32,
-                initializer=tf.contrib.layers.xavier_initializer(uniform=False),
+                initializer=tf.compat.v1.keras.initializers.VarianceScaling(
+                    scale=1.0,
+                    mode="fan_avg",
+                    distribution=("uniform" if False else "truncated_normal"),
+                ),
             )
             if W not in self.layer_params:
                 self.layer_params.append(W)

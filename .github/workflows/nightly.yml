@@ -96,7 +96,7 @@ jobs:
           - os: [self-hosted, Linux, nightly]
             python: 3.7
             test-kind: 'integration'
-            test-marker: 'not spark and not gpu'
+            test-marker: 'not spark and not gpu and not experimental'
 
     steps:
     - uses: actions/checkout@v2
@@ -146,7 +146,7 @@ jobs:
             java: 11
             python: 3.7
             test-kind: 'integration'
-            test-marker: 'spark and not gpu'
+            test-marker: 'spark and not gpu and not experimental'
 
     steps:
     - uses: actions/checkout@v2
@@ -188,7 +188,7 @@ jobs:
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit', 'smoke', 'integration'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['gpu and not spark']
+        test-marker: ['gpu and not spark and not experimental']
 
     steps:
     - uses: actions/checkout@v2

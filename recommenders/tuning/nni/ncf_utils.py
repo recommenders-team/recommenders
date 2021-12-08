@@ -6,7 +6,9 @@ import pandas as pd
 from recommenders.utils.constants import DEFAULT_K
 
 
-def compute_test_results(model, train, test, rating_metrics, ranking_metrics, k=DEFAULT_K):
+def compute_test_results(
+    model, train, test, rating_metrics, ranking_metrics, k=DEFAULT_K
+):
     """Compute the test results using a trained NCF model.
 
     Args:
@@ -29,8 +31,10 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics, k=
         for (_, row) in test.iterrows()
     ]
 
-    predictions = pd.DataFrame(predictions, columns=['userID', 'itemID', 'prediction'])
-    predictions = predictions.astype({'userID': 'int64', 'itemID': 'int64', 'prediction': 'float64'})
+    predictions = pd.DataFrame(predictions, columns=["userID", "itemID", "prediction"])
+    predictions = predictions.astype(
+        {"userID": "int64", "itemID": "int64", "prediction": "float64"}
+    )
 
     for metric in rating_metrics:
         test_results[metric] = eval(metric)(test, predictions)
@@ -44,13 +48,17 @@ def compute_test_results(model, train, test, rating_metrics, ranking_metrics, k=
         items.extend(item)
         preds.extend(list(model.predict(user, item, is_list=True)))
 
-    all_predictions = pd.DataFrame(data={"userID": users, "itemID": items, "prediction": preds})
+    all_predictions = pd.DataFrame(
+        data={"userID": users, "itemID": items, "prediction": preds}
+    )
 
     merged = pd.merge(train, all_predictions, on=["userID", "itemID"], how="outer")
-    all_predictions = merged[merged.rating.isnull()].drop('rating', axis=1)
+    all_predictions = merged[merged.rating.isnull()].drop("rating", axis=1)
 
     for metric in ranking_metrics:
-        test_results[metric] = eval(metric)(test, all_predictions, col_prediction='prediction', k=k)
+        test_results[metric] = eval(metric)(
+            test, all_predictions, col_prediction="prediction", k=k
+        )
 
     return test_results
 
