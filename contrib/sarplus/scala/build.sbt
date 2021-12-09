@@ -30,9 +30,20 @@ lazy val commonSettings = Seq(
     "org.scalatest" %% "scalatest" % "3.0.8" % "test",
     "xerces" % "xercesImpl" % "2.12.1",
   ),
-  artifactName := {
-    (sv: ScalaVersion, module: ModuleID, artifact: Artifact) =>
-      artifact.name + "_" + sv.full + "_s" + sparkVer.value + "_h" + hadoopVer.value + "-" + module.revision + "." + artifact.extension
+  Compile / packageBin / artifact := {
+    val prev: Artifact = (Compile / packageBin / artifact).value
+    prev.withClassifier(
+        prev.classifier match {
+          case None => {
+            val splitVer = sparkVer.value.split('.')
+            val major = splitVer(0).toInt
+            val minor = splitVer(1).toInt
+            if (major >=3 && minor >= 2) Some("spark32") else None
+          }
+          case Some(s: String) => Some(s)
+          
+        }
+    )
   },
 )
 
@@ -60,8 +71,10 @@ scmInfo := Some(
 
 developers := List(
   Developer(
+    id = "eisber",
     name = "Markus Cozowicz",
-    email = "marcozo@microsoft.com"
+    email = "marcozo@microsoft.com",
+    url = url("https://github.com/eisber")
   )
 )
 
@@ -77,7 +90,7 @@ publishTo := {
 publishMavenStyle := true
 
 
-// PGP configuration
+// PGP key configuration
 
 credentials += Credentials(
   "GnuPG Key ID",
@@ -85,3 +98,4 @@ credentials += Credentials(
   "C72E596B384EC14CFA65D80A36CB250AF1C18ECE",
   "ignored"
 )
+// credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")

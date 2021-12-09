@@ -81,6 +81,13 @@ jobs:
           cd "${PYTHON_ROOT}"
           pytest --token "${ACCESS_TOKEN}" ./tests
 
+      - name: Upload Python package
+        if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
+        uses: actions/upload-artifact@v2
+        with:
+          name: pysarplus-${{ env.SARPLUS_VERSION }}
+          path: ${{ env.PYTHON_ROOT }}/dist/*.gz
+
       - name: Publish package to PyPI
         if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
         uses: pypa/gh-action-pypi-publish@release/v1
@@ -91,7 +98,7 @@ jobs:
           packages_dir: ${{ env.PYTHON_ROOT }}/dist/
           skip_existing: true
 
-  scala:
+  scala-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -114,21 +121,48 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Testing and Packaging
+      - name: Test
         run: |
           cd "${SCALA_ROOT}"
           export VERSION="${SARPLUS_VERSION}"
           export SPARK_VERSION="${{ matrix.spark-version }}"
           export HADOOP_VERSION="${{ matrix.hadoop-version }}"
           sbt ++${{ matrix.scala-version }}! test
-          sbt ++${{ matrix.scala-version }}! package
-          SCALA_VERSION=${{ matrix.scala-version }}
-          echo "scala_binary_version=${SCALA_VERSION%.*}" >> $GITHUB_ENV
-      - name: Upload Scala package
+
+  scala-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Package
+        env:
+          GPG_KEY: ${{ secrets.SARPLUS_GPG_PRI_KEY_ASC }}
+        run: |
+          # generate artifacts
+          cd "${SCALA_ROOT}"
+          export VERSION="${SARPLUS_VERSION}"
+          export SPARK_VERSION="3.1.2"
+          export HADOOP_VERSION="2.7.4"
+          export SCALA_VERSION=2.12.10
+          sbt ++${SCALA_VERSION}! package
+          sbt ++${SCALA_VERSION}! packageDoc
+          sbt ++${SCALA_VERSION}! packageSrc
+          sbt ++${SCALA_VERSION}! makePom
+          export SPARK_VERSION="3.2.0"
+          export HADOOP_VERSION="3.3.1"
+          export SCALA_VERSION=2.12.14
+          sbt ++${SCALA_VERSION}! package
+
+          # sign with GPG
+          cd target/scala-2.12
+          gpg --import <(cat <<< "${GPG_KEY}")
+          for file in {*.jar,*.pom}; do gpg -ab "${file}"; done
+
+          # bundle
+          jar cvf sarplus-bundle_2.12-${SARPLUS_VERSION}.jar *.jar *.pom *.asc
+          
+      - name: Upload Scala bundle
         uses: actions/upload-artifact@v2
         with:
-          name: scala_${{ matrix.scala-version }}_s${{ matrix.spark-version }}_h${{ matrix.hadoop-version }}-${{ env.SARPLUS_VERSION }} (${{ matrix.databricks-runtime }})
-          path: ${{ env.SCALA_ROOT }}/target/scala-${{ env.scala_binary_version }}/*.jar
-#       - name: Publish Scala package
-#         if: github.ref == 'refs/heads/main'
-#         run: 
+          name: scala-bundle_2.12-${{ env.SARPLUS_VERSION }}
+          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/sarplus-bundle_2.12-${{ env.SARPLUS_VERSION }}.jar

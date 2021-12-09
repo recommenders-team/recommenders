@@ -41,7 +41,7 @@ def spark(tmp_path_factory, app_name="Sample", url="local[*]", memory="1G"):
             Path(__file__)
             .parents[2]
             .joinpath("scala", "target")
-            .glob(f"**/*{os.environ.get('VERSION', '')}.jar")).absolute()
+            .glob(f"**/sarplus*{os.environ.get('VERSION', '')}*.jar")).absolute()
     except StopIteration:
         raise Exception("Could not find Sarplus JAR file")
 
