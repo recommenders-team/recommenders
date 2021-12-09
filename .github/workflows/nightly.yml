@@ -91,7 +91,7 @@ jobs:
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit', 'smoke']
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['not spark and not gpu']
+        test-marker: ['not spark and not gpu and not experimental']
         include:
           # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
           # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
@@ -140,7 +140,7 @@ jobs:
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit', 'smoke'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['spark and not gpu']
+        test-marker: ['spark and not gpu and not experimental']
         include:
           # Integration tests need a powerful machine with more memory. GitHub-hosted agents only have 7GB memory.
           # TODO: Optimization/refactoring should be done to ensure that these test can run in the default CI agent (#1507)
