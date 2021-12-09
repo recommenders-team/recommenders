@@ -164,5 +164,5 @@ jobs:
       - name: Upload Scala bundle
         uses: actions/upload-artifact@v2
         with:
-          name: scala-bundle_2.12-${{ env.SARPLUS_VERSION }}
+          name: sarplus-bundle_2.12-${{ env.SARPLUS_VERSION }}
           path: ${{ env.SCALA_ROOT }}/target/scala-2.12/sarplus-bundle_2.12-${{ env.SARPLUS_VERSION }}.jar
