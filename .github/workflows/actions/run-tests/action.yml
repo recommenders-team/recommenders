@@ -29,7 +29,7 @@ inputs:
   test-marker:
     description: "Finer filter for selecting the tests to run with pytest markers.
       See https://docs.pytest.org/en/6.2.x/example/markers.html"
-    default: 'not gpu and not notebooks and not spark'
+    default: 'not gpu and not notebooks and not spark and not experimental'
 outputs:
   cov-report-filename:
     description: "Filename of the code coverage report"
