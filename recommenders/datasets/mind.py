@@ -410,8 +410,8 @@ def load_glove_matrix(path_emb, word_dict, word_embedding_dim):
     exist_word = []
 
     with open(os.path.join(path_emb, f"glove.6B.{word_embedding_dim}d.txt"), "rb") as f:
-        for l in tqdm(f):
-            l = l.split()
+        for l in tqdm(f):  # noqa: E741 ambiguous variable name 'l'
+            l = l.split()  # noqa: E741 ambiguous variable name 'l'
             word = l[0].decode()
             if len(word) != 0:
                 if word in word_dict:

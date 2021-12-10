@@ -1,6 +1,6 @@
 One possible way to use the repository is to run all the recommender utilities directly from a local copy of the source code (without building the package). This requires installing all the necessary dependencies from Anaconda and PyPI.
 
-To this end we provide a script, [generate_conda_file.py](tools/generate_conda_file.py), to generate a conda-environment yaml file which you can use to create the target environment using Python 3.6 with all the correct dependencies.
+To this end we provide a script, [generate_conda_file.py](tools/generate_conda_file.py), to generate a conda-environment yaml file which you can use to create the target environment using Python with all the correct dependencies.
 
 Assuming the repo is cloned as `Recommenders` in the local system, to install **a default (Python CPU) environment**:
 
@@ -34,7 +34,7 @@ To install the PySpark environment:
 
 Additionally, if you want to test a particular version of spark, you may pass the `--pyspark-version` argument:
 
-    python tools/generate_conda_file.py --pyspark-version 2.4.5
+    python tools/generate_conda_file.py --pyspark-version 3.1.1
 
 </details>
 

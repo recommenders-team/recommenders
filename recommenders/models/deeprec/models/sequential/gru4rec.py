@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
+from keras.layers.legacy_rnn.rnn_cell_impl import GRUCell, LSTMCell
 from recommenders.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
-from tensorflow.contrib.rnn import GRUCell, LSTMCell
-from tensorflow.nn import dynamic_rnn
+from tensorflow.compat.v1.nn import dynamic_rnn
 
 __all__ = ["GRU4RecModel"]
 
@@ -26,11 +26,11 @@ class GRU4RecModel(SequentialBaseModel):
         Returns:
             object:the output of GRU4Rec section.
         """
-        with tf.variable_scope("gru4rec"):
+        with tf.compat.v1.variable_scope("gru4rec"):
             # final_state = self._build_lstm()
             final_state = self._build_gru()
             model_output = tf.concat([final_state, self.target_item_embedding], 1)
-            tf.summary.histogram("model_output", model_output)
+            tf.compat.v1.summary.histogram("model_output", model_output)
             return model_output
 
     def _build_lstm(self):
@@ -39,9 +39,9 @@ class GRU4RecModel(SequentialBaseModel):
         Returns:
             object: The output of LSTM section.
         """
-        with tf.name_scope("lstm"):
+        with tf.compat.v1.name_scope("lstm"):
             self.mask = self.iterator.mask
-            self.sequence_length = tf.reduce_sum(self.mask, 1)
+            self.sequence_length = tf.reduce_sum(input_tensor=self.mask, axis=1)
             self.history_embedding = tf.concat(
                 [self.item_history_embedding, self.cate_history_embedding], 2
             )
@@ -52,7 +52,7 @@ class GRU4RecModel(SequentialBaseModel):
                 dtype=tf.float32,
                 scope="lstm",
             )
-            tf.summary.histogram("LSTM_outputs", rnn_outputs)
+            tf.compat.v1.summary.histogram("LSTM_outputs", rnn_outputs)
             return final_state[1]
 
     def _build_gru(self):
@@ -61,9 +61,9 @@ class GRU4RecModel(SequentialBaseModel):
         Returns:
             object: The output of GRU section.
         """
-        with tf.name_scope("gru"):
+        with tf.compat.v1.name_scope("gru"):
             self.mask = self.iterator.mask
-            self.sequence_length = tf.reduce_sum(self.mask, 1)
+            self.sequence_length = tf.reduce_sum(input_tensor=self.mask, axis=1)
             self.history_embedding = tf.concat(
                 [self.item_history_embedding, self.cate_history_embedding], 2
             )
@@ -74,5 +74,5 @@ class GRU4RecModel(SequentialBaseModel):
                 dtype=tf.float32,
                 scope="gru",
             )
-            tf.summary.histogram("GRU_outputs", rnn_outputs)
+            tf.compat.v1.summary.histogram("GRU_outputs", rnn_outputs)
             return final_state

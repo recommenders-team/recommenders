@@ -93,12 +93,12 @@ class SARPlus:
             query = self.f(
                 """
             SELECT
-                 {col_user}, {col_item}, 
+                 {col_user}, {col_item},
                  SUM({col_rating} * EXP(-log(2) * (latest_timestamp - CAST({col_timestamp} AS long)) / ({time_decay_coefficient} * 3600 * 24))) as {col_rating}
             FROM {prefix}df_train_input,
                  (SELECT CAST(MAX({col_timestamp}) AS long) latest_timestamp FROM {prefix}df_train_input)
-            GROUP BY {col_user}, {col_item} 
-            CLUSTER BY {col_user} 
+            GROUP BY {col_user}, {col_item}
+            CLUSTER BY {col_user}
             """
             )
 

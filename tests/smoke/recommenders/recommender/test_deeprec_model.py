@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import os
-import papermill as pm
 import pytest
 
 try:
@@ -88,7 +87,6 @@ def test_model_dkn(deeprec_resource_path):
     yaml_file = os.path.join(data_path, r"dkn.yaml")
     train_file = os.path.join(data_path, r"train_mind_demo.txt")
     valid_file = os.path.join(data_path, r"valid_mind_demo.txt")
-    test_file = os.path.join(data_path, r"test_mind_demo.txt")
     news_feature_file = os.path.join(data_path, r"doc_feature.txt")
     user_history_file = os.path.join(data_path, r"user_history.txt")
     wordEmb_file = os.path.join(data_path, r"word_embeddings_100.npy")

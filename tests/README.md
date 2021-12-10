@@ -138,12 +138,6 @@ Several of the tests are skipped for various reasons which are noted below.
 <td>Linux</td>
 <td>NNI pip package has installation incompatibilities</td>
 </tr>
-<tr>
-<td>integration/examples/test_notebooks_python</td>
-<td>test_xlearn*</td>
-<td>Linux</td>
-<td>xLearn pip package has installation incompatibilities</td>
-</tr>
 </table>
 
 In order to skip a test because there is an OS or upstream issue which cannot be resolved you can use pytest [annotations](https://docs.pytest.org/en/latest/skipping.html).
@@ -156,6 +150,28 @@ Example:
         assert False
 
 </details>
+
+### Test execution with tox
+
+[Tox](https://tox.readthedocs.io/en/latest/) is a great tool for both virtual environment management and test execution. Tox acts like a front-end for our CI workflows. Our existing [CI pipelines](https://github.com/microsoft/recommenders/actions) in GitHub is leveraging it to orchestrate the build. This way we can provide a **parity** in both local and remote execution environments if both run tox. Run tox and no more **"tests run fine in my dev box but fail in the remote build"**! 
+
+1. If you haven't, `pip install tox`
+2. To run static analysis: `tox -e flake8`
+3. To run any of our test suites:
+    `tox -e {TOX_ENV} -- {PYTEST_PARAM}`
+
+    where 
+    - `TOX_ENV` can be `cpu|gpu|spark|all`, each env maps to the "extra" dependency, for example recommenders[gpu], and recommenders[spark]. It can also be any of the [default envs](https://tox.readthedocs.io/en/latest/config.html#tox-environments): `py|pyNM`
+    - `PYTEST_PARAM` are any standard parameters to supply to `pytest` cli.
+
+    For example:
+    
+    1. `tox -e cpu -- tests/unit -m "not notebook and not spark and not gpu` (runs the unit tests with `recommenders[dev,example]` dependencies)
+    2. `tox -e gpu -- tests/unit -m "gpu and notebook"` (runs the gpu notebook tests with `recommenders[dev,example,gpu]` dependencies)
+    3. `tox -e spark -- tests/unit -m "spark and notebook"` (runs the spark notebook tests with `recommenders[dev,example,spark]` dependencies)
+    4. `tox -e all -- tests/unit` (to run all of the unit tests with `recommenders[all]` dependencies)
+    5. `tox -e py -- tests/unit` (runs the unit tests under the default python interpreter with `recommenders[all]`)
+    6. `tox -e py37 -- tests/unit` (runs the unit tests under Python3.7 with `recommenders[all]` )
 
 ## How to create tests on notebooks with Papermill
 

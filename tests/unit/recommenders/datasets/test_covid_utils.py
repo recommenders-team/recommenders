@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 import pytest
 from recommenders.datasets.covid_utils import (
     remove_duplicates,

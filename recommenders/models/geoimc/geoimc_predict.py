@@ -3,9 +3,7 @@
 
 import numpy as np
 from scipy.linalg import sqrtm
-from numba import njit, jit, prange
 
-from .geoimc_utils import length_normalize
 from recommenders.utils.python_utils import binarize as conv_binary
 
 

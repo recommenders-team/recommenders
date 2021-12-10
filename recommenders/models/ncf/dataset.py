@@ -203,7 +203,7 @@ class Dataset(object):
                     self.col_item + "_negative"
                 ].apply(lambda x: random.sample(x, self.n_neg_test))
 
-            except:
+            except Exception:
                 min_num = min(map(len, list(test_ratings[self.col_item + "_negative"])))
                 warnings.warn(
                     "n_neg_test is larger than negative items set size! We will set n_neg as the smallest size: %d"
@@ -251,7 +251,7 @@ class Dataset(object):
             train_ratings[self.col_item + "_negative"] = train_ratings[
                 self.col_item + "_negative"
             ].apply(lambda x: random.sample(x, self.n_neg))
-        except:
+        except Exception:
             min_num = min(map(len, list(train_ratings[self.col_item + "_negative"])))
             warnings.warn(
                 "n_neg is larger than negative items set size! We will set n_neg as the smallest size: %d"
@@ -307,9 +307,9 @@ class Dataset(object):
         """Feed leave-one-out data every user
 
         Generate test batch by every positive test instance,
-        (eg. \[1, 2, 1\] is a positive user & item pair in test set
-        (\[userID, itemID, rating\] for this tuple). This function
-        returns like \[\[1, 2, 1\], \[1, 3, 0\], \[1,6, 0\], ...\],
+        (eg. [1, 2, 1] is a positive user & item pair in test set
+        ([userID, itemID, rating] for this tuple). This function
+        returns like [[1, 2, 1], [1, 3, 0], [1,6, 0], ...],
         ie. following our *leave-one-out* evaluation protocol.
 
         Returns:
