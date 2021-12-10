@@ -1,11 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-import copy
 import random
 import tensorflow as tf
 import numpy as np
 from tqdm import tqdm
-import time
 
 from recommenders.utils.timer import Timer
 
@@ -231,8 +229,6 @@ class Encoder(tf.keras.layers.Layer):
         self.dropout = tf.keras.layers.Dropout(dropout_rate)
 
     def call(self, x, training, mask):
-
-        seq_len = tf.shape(x)[1]
 
         for i in range(self.num_layers):
             x = self.enc_layers[i](x, training, mask)
