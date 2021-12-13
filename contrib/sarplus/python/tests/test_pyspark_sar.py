@@ -449,14 +449,7 @@ def test_userpred(
     df = spark.createDataFrame(demo_usage_data)
     model.fit(df)
 
-    url = (
-        sar_settings["FILE_DIR"]
-        + "userpred_"
-        + file
-        + str(threshold)
-        + "_userid_only.csv"
-        + token
-    )
+    url = sar_settings["FILE_DIR"] + "userpred_" + file + str(threshold) + "_userid_only.csv" + token
 
     pred_ref = pd.read_csv(url)
     pred_ref = (
