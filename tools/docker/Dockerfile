@@ -17,9 +17,9 @@ WORKDIR ${HOME}
 RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "${VIRTUAL_ENV}" != "virtualenv" ]; then \
     echo 'VIRTUAL_ENV argument should be either "conda", "venv" or "virtualenv"'; exit 1; fi
 
-# Install base dependencies, cmake (for xlearn) and libpython (for cornac)
+# Install base dependencies and libpython (for cornac)
 RUN apt-get update && \
-    apt-get install -y curl build-essential cmake
+    apt-get install -y curl build-essential
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.7; fi
 
@@ -61,8 +61,8 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/
 FROM base AS cpu
 
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install recommenders[xlearn,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[xlearn,examples]; fi
+    pip install recommenders[examples]; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[examples]; fi
 
 
 ###############
@@ -80,14 +80,14 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
 
 # Install dependencies in virtual environment
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install recommenders[spark,xlearn,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,xlearn,examples]; fi
+    pip install recommenders[spark,examples]; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,examples]; fi
 
 
 ###########
 # GPU Stage
 ###########
-FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04 AS gpu
+FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu18.04 AS gpu
 
 ARG HOME
 ARG VIRTUAL_ENV
@@ -99,7 +99,7 @@ RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "$
     echo 'VIRTUAL_ENV argument should be either "conda", "venv" or "virtualenv"'; exit 1; fi
 
 RUN apt-get update && \
-    apt-get install -y curl build-essential cmake
+    apt-get install -y curl build-essential
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.7; fi
 
@@ -129,15 +129,15 @@ RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv --system-site-pack
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; \
-    pip install recommenders[gpu,xlearn,examples]; fi
+    pip install recommenders[gpu,examples]; fi
 RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
     pip install --upgrade setuptools; \
-    pip install recommenders[gpu,xlearn,examples]; fi
+    pip install recommenders[gpu,examples]; fi
 
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
-    pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html ; fi
+    pip install recommenders[gpu,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html ; fi
 
 
 ############

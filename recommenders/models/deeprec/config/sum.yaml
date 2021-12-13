@@ -33,7 +33,7 @@ train:
     cross_l1 : 0.000   # l1 regularization for cross layer parameters
     learning_rate : 0.001
     loss : softmax    # pointwise: log_loss, cross_entropy_loss, square_loss  pairwise: softmax
-    optimizer : lazyadam  # adam, adadelta, sgd, ftrl, gd, padagrad, pgd, rmsprop, lazyadam
+    optimizer : adam  # adam, adadelta, sgd, ftrl, gd, padagrad, pgd, rmsprop
     epochs : 50  #   number of epoch for training
     batch_size : 400  # batch size, should be constrained as an integer multiple of the number of (1 + train_num_ngs) when need_sample is True
     enable_BN : True  # whether to use batch normalization in hidden layers

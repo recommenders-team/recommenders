@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import tensorflow.keras as keras
-from tensorflow.keras import layers
-from tensorflow.keras import backend as K
+import tensorflow.compat.v1.keras as keras
+from tensorflow.compat.v1.linalg import einsum
+from tensorflow.compat.v1.keras import layers
+from tensorflow.compat.v1.keras import backend as K
 
 
 class AttLayer2(layers.Layer):
@@ -123,8 +124,8 @@ class SelfAttention(layers.Layer):
 
         Args:
             multiheads (int): The number of heads.
-            head_dim (object): Dimention of each head.
-            mask_right (boolean): whether to mask right words.
+            head_dim (object): Dimension of each head.
+            mask_right (boolean): Whether to mask right words.
         """
 
         self.multiheads = multiheads
@@ -203,7 +204,7 @@ class SelfAttention(layers.Layer):
         """Core logic of multi-head self attention.
 
         Args:
-            QKVs (list): inputs of multi-head self attention i.e. qeury, key and value.
+            QKVs (list): inputs of multi-head self attention i.e. query, key and value.
 
         Returns:
             object: ouput tensors.
@@ -231,7 +232,7 @@ class SelfAttention(layers.Layer):
         )
         V_seq = K.permute_dimensions(V_seq, pattern=(0, 2, 1, 3))
 
-        A = K.batch_dot(Q_seq, K_seq, axes=[3, 3]) / K.sqrt(
+        A = einsum("abij, abkj -> abik", Q_seq, K_seq) / K.sqrt(
             K.cast(self.head_dim, dtype="float32")
         )
         A = K.permute_dimensions(
@@ -248,7 +249,7 @@ class SelfAttention(layers.Layer):
             A = A - mask
         A = K.softmax(A)
 
-        O_seq = K.batch_dot(A, V_seq, axes=[3, 2])
+        O_seq = einsum("abij, abjk -> abik", A, V_seq)
         O_seq = K.permute_dimensions(O_seq, pattern=(0, 2, 1, 3))
 
         O_seq = K.reshape(O_seq, shape=(-1, K.shape(O_seq)[1], self.output_dim))
@@ -256,7 +257,7 @@ class SelfAttention(layers.Layer):
         return O_seq
 
     def get_config(self):
-        """ add multiheads, multiheads and mask_right into layer config.
+        """add multiheads, multiheads and mask_right into layer config.
 
         Returns:
             dict: config of SelfAttention layer.

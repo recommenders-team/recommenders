@@ -16,9 +16,6 @@ try:
         StructType,
         StructField,
         IntegerType,
-        StringType,
-        FloatType,
-        DoubleType,
     )
     from pyspark.sql.functions import col
 except ImportError:
