@@ -25,7 +25,8 @@ Package](https://spark-packages.org/).  Steps to install
    [Scala formatter](scala/src/main/scala/microsoft/sarplus) and
    references the pip package (see below)
 3. Upload the zipped Scala package bundle to [Nexus Repository
-   Manager](https://oss.sonatype.org/) through a browser.
+   Manager](https://oss.sonatype.org/) through a browser (See [publish
+   manul](https://central.sonatype.org/publish/publish-manual/)).
 
 ```bash
 export SPARK_VERSION="3.1.2"
