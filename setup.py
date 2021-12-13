@@ -27,7 +27,7 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "numpy>=1.19",  # 1.19 required by tensorflow
+    "numpy>=1.19",  # 1.19 required by tensorflow 2.6
     "pandas>1.0.3,<2",
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
@@ -66,10 +66,9 @@ extras_require = {
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        "tensorflow~=2.6.1",  # compiled with CUDA 11.2, cudnn 8.1
-        "tensorflow-estimator==2.6",
-        "tensorboard==2.6",
-        "keras==2.6",
+        # TensorFlow compiled with CUDA 11.2, cudnn 8.1
+        "tensorflow~=2.6.1;python_version=='3.6'",
+        "tensorflow~=2.7.0;python_version>='3.7'",
         "tf-slim>=1.1.0",
         "torch>=1.8",  # for CUDA 11 support
         "fastai>=1.0.46,<2",
