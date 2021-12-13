@@ -4,6 +4,7 @@
 import os
 import sysconfig
 
+from pathlib import Path
 from setuptools import setup
 from setuptools.extension import Extension
 
@@ -30,6 +31,8 @@ setup(
     name="pysarplus",
     version=os.environ["VERSION"],
     description="SAR prediction for use with PySpark",
+    long_description=(Path(__file__).parent / "README.md").read_text(),
+    long_description_content_type='text/markdown',
     url="https://github.com/microsoft/recommenders/tree/main/contrib/sarplus",
     author="Markus Cozowicz",
     author_email="marcozo@microsoft.com",
