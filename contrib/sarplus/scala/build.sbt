@@ -91,13 +91,3 @@ publishTo := {
   else Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 publishMavenStyle := true
-
-
-// PGP key configuration
-
-credentials += Credentials(
-  "GnuPG Key ID",
-  "gpg",
-  "C72E596B384EC14CFA65D80A36CB250AF1C18ECE",
-  "ignored"
-)
