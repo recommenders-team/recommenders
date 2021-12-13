@@ -3,18 +3,9 @@
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
 ## What's New 
-### (September 27, 2021)
+### (December 17, 2021)
 
-We have a new release [Recommenders 0.7.0](https://github.com/microsoft/recommenders/releases/tag/0.7.0)!
-We have changed the names of the folders which contain the source code, so that they are more informative. This implies that you will need to change any import statements that reference the recommenders package. Specifically, the folder `reco_utils` has been renamed to `recommenders` and its subfolders have been renamed according to [issue 1390](https://github.com/microsoft/recommenders/issues/1390).  
-
-The previous release ([0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)) is compatible with the old style of naming of modules. 
-
-The recommenders package now supports three types of environments: [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) with Python versions 3.6 and 3.7.
-
-We have also added new evaluation metrics: _novelty, serendipity, diversity and coverage_ (see the [evalution notebooks](examples/03_evaluate/README.md)).
-
-Code coverage reports are now generated for every PR, using [Codecov](https://about.codecov.io/).
+We have a new release [Recommenders 1.0.0](https://github.com/microsoft/recommenders/releases/tag/1.0.0)! The major changes in this release are the migration of the code to TensorFlow versions 2.6 / 2.7 and to Spark version 3. In addition, we have made a few changes in the dependencies and extras installed by `pip` (see [this guide](recommenders/README.md#optional-dependencies)). We have also made improvements in the code and the CI / CD pipelines.
 
 Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
 
