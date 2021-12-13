@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import os
 import sysconfig
 
 from pathlib import Path
@@ -38,10 +37,8 @@ setup(
     author_email="recodevteam@service.microsoft.com",
     license="MIT",
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.4",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
@@ -55,6 +52,7 @@ setup(
     install_requires=DEPENDENCIES,
     tests_require=["pytest"],
     packages=["pysarplus"],
+    include_package_data=True,
     ext_modules=[
         Extension(
             "pysarplus_cpp",
