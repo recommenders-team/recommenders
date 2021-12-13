@@ -16,6 +16,7 @@ on:
       - contrib/sarplus/python/**
       - contrib/sarplus/scala/**
       - contrib/sarplus/VERSION
+      - .github/workflows/sarplus.yml
 
 env:
   PYTHON_ROOT: ${{ github.workspace }}/contrib/sarplus/python
