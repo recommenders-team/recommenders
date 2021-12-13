@@ -29,9 +29,9 @@ DEPENDENCIES = [
 
 setup(
     name="pysarplus",
-    version=os.environ["VERSION"],
+    version=(Path(__file__).resolve().parent / "VERSION").read_text().strip(),
     description="SAR prediction for use with PySpark",
-    long_description=(Path(__file__).parent / "README.md").read_text(),
+    long_description=(Path(__file__).resolve().parent / "README.md").read_text(),
     long_description_content_type='text/markdown',
     url="https://github.com/microsoft/recommenders/tree/main/contrib/sarplus",
     author="Markus Cozowicz",

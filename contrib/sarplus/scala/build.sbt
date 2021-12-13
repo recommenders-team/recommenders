@@ -12,7 +12,7 @@ lazy val hadoopVer = settingKey[String]("hadoop version")
 
 lazy val commonSettings = Seq(
   organization := "sarplus.microsoft",
-  version := sys.env.getOrElse("VERSION", "0.5.0"),
+  version := IO.read(new File("../VERSION")),
   resolvers ++= Seq(
     Resolver.sonatypeRepo("snapshots"),
     Resolver.sonatypeRepo("releases"),

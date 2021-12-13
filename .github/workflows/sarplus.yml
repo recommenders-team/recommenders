@@ -25,7 +25,6 @@ on:
 env:
   PYTHON_ROOT: ${{ github.workspace }}/contrib/sarplus/python
   SCALA_ROOT: ${{ github.workspace }}/contrib/sarplus/scala
-  SARPLUS_VERSION: 0.5.0
 
 jobs:
   python:
@@ -55,7 +54,7 @@ jobs:
       - name: Package and check
         run: |
           cd "${PYTHON_ROOT}"
-          sed -i -E "s/version[[:space:]]*=[[:space:]]*.*,/version=\"${SARPLUS_VERSION}\",/" setup.py
+          cp ../VERSION ./
           python -m build --sdist
           python -m twine check dist/*
 
@@ -75,17 +74,17 @@ jobs:
           export SCALA_VERSION=${SCALA_VERSION%.*}
           HADOOP_VERSION=${HADOOP_JAR##*-}
           export HADOOP_VERSION=${HADOOP_VERSION%.*}
-          export VERSION="${SARPLUS_VERSION}"
           sbt ++"${SCALA_VERSION}"! package
 
           cd "${PYTHON_ROOT}"
           pytest --token "${ACCESS_TOKEN}" ./tests
+          echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
 
       - name: Upload Python package
         if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
         uses: actions/upload-artifact@v2
         with:
-          name: pysarplus-${{ env.SARPLUS_VERSION }}
+          name: pysarplus-${{ env.sarplus_version }}
           path: ${{ env.PYTHON_ROOT }}/dist/*.gz
 
       - name: Publish package to PyPI
@@ -124,7 +123,6 @@ jobs:
       - name: Test
         run: |
           cd "${SCALA_ROOT}"
-          export VERSION="${SARPLUS_VERSION}"
           export SPARK_VERSION="${{ matrix.spark-version }}"
           export HADOOP_VERSION="${{ matrix.hadoop-version }}"
           sbt ++${{ matrix.scala-version }}! test
@@ -140,7 +138,6 @@ jobs:
         run: |
           # generate artifacts
           cd "${SCALA_ROOT}"
-          export VERSION="${SARPLUS_VERSION}"
           export SPARK_VERSION="3.1.2"
           export HADOOP_VERSION="2.7.4"
           export SCALA_VERSION=2.12.10
@@ -159,10 +156,11 @@ jobs:
           for file in {*.jar,*.pom}; do gpg -ab "${file}"; done
 
           # bundle
-          jar cvf sarplus-bundle_2.12-${SARPLUS_VERSION}.jar *.jar *.pom *.asc
+          jar cvf sarplus-bundle_2.12-$(cat ../VERSION).jar *.jar *.pom *.asc
+          echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
           
       - name: Upload Scala bundle
         uses: actions/upload-artifact@v2
         with:
-          name: sarplus-bundle_2.12-${{ env.SARPLUS_VERSION }}
-          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/sarplus-bundle_2.12-${{ env.SARPLUS_VERSION }}.jar
+          name: sarplus-bundle_2.12-${{ env.sarplus_version }}
+          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/sarplus-bundle_2.12-${{ env.sarplus_version }}.jar
