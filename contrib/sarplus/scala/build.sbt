@@ -74,10 +74,10 @@ scmInfo := Some(
 
 developers := List(
   Developer(
-    id = "eisber",
-    name = "Markus Cozowicz",
-    email = "marcozo@microsoft.com",
-    url = url("https://github.com/eisber")
+    id = "recodev",
+    name = "RecoDev Team at Microsoft",
+    email = "recodevteam@service.microsoft.com",
+    url = url("https://github.com/microsoft/recommenders/")
   )
 )
 

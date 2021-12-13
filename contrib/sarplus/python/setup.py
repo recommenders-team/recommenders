@@ -34,8 +34,8 @@ setup(
     long_description=(Path(__file__).resolve().parent / "README.md").read_text(),
     long_description_content_type='text/markdown',
     url="https://github.com/microsoft/recommenders/tree/main/contrib/sarplus",
-    author="Markus Cozowicz",
-    author_email="marcozo@microsoft.com",
+    author="RecoDev Team at Microsoft",
+    author_email="recodevteam@service.microsoft.com",
     license="MIT",
     classifiers=[
         "Development Status :: 4 - Beta",
