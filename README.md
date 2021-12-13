@@ -127,6 +127,8 @@ The table below lists the recommender algorithms currently available in the repo
 | Vowpal Wabbit (VW)<sup>*</sup> | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing. It uses the CPU for online learning. | [Deep dive](examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) |
 | Wide and Deep | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/wide_deep_movielens.ipynb) |
 | xLearn/Factorization Machine (FM) & Field-Aware FM (FFM) | Hybrid | Quick and memory efficient algorithm to predict labels with user/item features. It works in the CPU/GPU environment. | [Deep dive](examples/02_model_hybrid/fm_deep_dive.ipynb) |
+| SASRec | Sequential | Transformer based algorithm for sequential recommendation. It works in the CPU/GPU environment. | [Deep dive](examples/00_quick_start/sasrec_amazon.ipynb) |
+| SSEPT | Sequential | Transformer based algorithm for sequential recommendation with User embedding. It works in the CPU/GPU environment. | [Deep dive](examples/00_quick_start/sasrec_amazon.ipynb) |
 
 **NOTE**: <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
 
