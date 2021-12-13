@@ -45,7 +45,7 @@ lazy val commonSettings = Seq(
             if (major >=3 && minor >= 2) Some("spark32") else None
           }
           case Some(s: String) => Some(s)
-          
+
         }
     )
   },
