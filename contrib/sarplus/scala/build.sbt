@@ -45,7 +45,6 @@ lazy val commonSettings = Seq(
             if (major >=3 && minor >= 2) Some("spark32") else None
           }
           case Some(s: String) => Some(s)
-
         }
     )
   },
@@ -102,4 +101,3 @@ credentials += Credentials(
   "C72E596B384EC14CFA65D80A36CB250AF1C18ECE",
   "ignored"
 )
-// credentials += Credentials(Path.userHome / ".sbt" / "sonatype_credentials")
