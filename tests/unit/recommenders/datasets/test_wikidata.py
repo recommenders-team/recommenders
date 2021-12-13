@@ -5,7 +5,6 @@ import pytest
 
 
 from recommenders.datasets.wikidata import (
-    search_wikidata,
     find_wikidata_id,
     query_entity_links,
     read_linked_entities,

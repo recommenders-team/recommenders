@@ -22,7 +22,7 @@ class SequentialBaseModel(BaseModel):
         parameter set.
 
         Args:
-            hparams (object): A `tf.contrib.training.HParams` object, hold the entire set of hyperparameters.
+            hparams (HParams): A `HParams` object, hold the entire set of hyperparameters.
             iterator_creator (object): An iterator to load the data.
             graph (object): An optional graph.
             seed (int): Random seed.
@@ -36,13 +36,15 @@ class SequentialBaseModel(BaseModel):
                 "Please confirm the number of negative samples for each positive instance."
             )
         self.min_seq_length = (
-            hparams.min_seq_length if "min_seq_length" in hparams else 1
+            hparams.min_seq_length if "min_seq_length" in hparams.values() else 1
         )
-        self.hidden_size = hparams.hidden_size if "hidden_size" in hparams else None
+        self.hidden_size = (
+            hparams.hidden_size if "hidden_size" in hparams.values() else None
+        )
         self.graph = tf.Graph() if not graph else graph
 
         with self.graph.as_default():
-            self.sequence_length = tf.placeholder(
+            self.sequence_length = tf.compat.v1.placeholder(
                 tf.int32, [None], name="sequence_length"
             )
 
@@ -63,7 +65,7 @@ class SequentialBaseModel(BaseModel):
         self.keep_prob_train = 1 - np.array(hparams.dropout)
         self.keep_prob_test = np.ones_like(hparams.dropout)
 
-        with tf.variable_scope("sequential") as self.sequential_scope:
+        with tf.compat.v1.variable_scope("sequential") as self.sequential_scope:
             self._build_embedding()
             self._lookup_from_embedding()
             model_output = self._build_seq_graph()
@@ -108,7 +110,7 @@ class SequentialBaseModel(BaseModel):
             if not os.path.exists(self.hparams.SUMMARIES_DIR):
                 os.makedirs(self.hparams.SUMMARIES_DIR)
 
-            self.writer = tf.summary.FileWriter(
+            self.writer = tf.compat.v1.summary.FileWriter(
                 self.hparams.SUMMARIES_DIR, self.sess.graph
             )
 
@@ -234,7 +236,7 @@ class SequentialBaseModel(BaseModel):
         """
 
         load_sess = self.sess
-        with tf.gfile.GFile(outfile_name, "w") as wt:
+        with tf.io.gfile.GFile(outfile_name, "w") as wt:
             for batch_data_input in self.iterator.load_data_from_file(
                 infile_name, batch_num_ngs=0
             ):
@@ -255,18 +257,18 @@ class SequentialBaseModel(BaseModel):
         self.item_embedding_dim = hparams.item_embedding_dim
         self.cate_embedding_dim = hparams.cate_embedding_dim
 
-        with tf.variable_scope("embedding", initializer=self.initializer):
-            self.user_lookup = tf.get_variable(
+        with tf.compat.v1.variable_scope("embedding", initializer=self.initializer):
+            self.user_lookup = tf.compat.v1.get_variable(
                 name="user_embedding",
                 shape=[self.user_vocab_length, self.user_embedding_dim],
                 dtype=tf.float32,
             )
-            self.item_lookup = tf.get_variable(
+            self.item_lookup = tf.compat.v1.get_variable(
                 name="item_embedding",
                 shape=[self.item_vocab_length, self.item_embedding_dim],
                 dtype=tf.float32,
             )
-            self.cate_lookup = tf.get_variable(
+            self.cate_lookup = tf.compat.v1.get_variable(
                 name="cate_embedding",
                 shape=[self.cate_vocab_length, self.cate_embedding_dim],
                 dtype=tf.float32,
@@ -275,27 +277,27 @@ class SequentialBaseModel(BaseModel):
     def _lookup_from_embedding(self):
         """Lookup from embedding variables. A dropout layer follows lookup operations."""
         self.user_embedding = tf.nn.embedding_lookup(
-            self.user_lookup, self.iterator.users
+            params=self.user_lookup, ids=self.iterator.users
         )
-        tf.summary.histogram("user_embedding_output", self.user_embedding)
+        tf.compat.v1.summary.histogram("user_embedding_output", self.user_embedding)
 
-        self.item_embedding = tf.nn.embedding_lookup(
-            self.item_lookup, self.iterator.items
+        self.item_embedding = tf.compat.v1.nn.embedding_lookup(
+            params=self.item_lookup, ids=self.iterator.items
         )
-        self.item_history_embedding = tf.nn.embedding_lookup(
-            self.item_lookup, self.iterator.item_history
+        self.item_history_embedding = tf.compat.v1.nn.embedding_lookup(
+            params=self.item_lookup, ids=self.iterator.item_history
         )
-        tf.summary.histogram(
+        tf.compat.v1.summary.histogram(
             "item_history_embedding_output", self.item_history_embedding
         )
 
-        self.cate_embedding = tf.nn.embedding_lookup(
-            self.cate_lookup, self.iterator.cates
+        self.cate_embedding = tf.compat.v1.nn.embedding_lookup(
+            params=self.cate_lookup, ids=self.iterator.cates
         )
-        self.cate_history_embedding = tf.nn.embedding_lookup(
-            self.cate_lookup, self.iterator.item_cate_history
+        self.cate_history_embedding = tf.compat.v1.nn.embedding_lookup(
+            params=self.cate_lookup, ids=self.iterator.item_cate_history
         )
-        tf.summary.histogram(
+        tf.compat.v1.summary.histogram(
             "cate_history_embedding_output", self.cate_history_embedding
         )
 
@@ -308,7 +310,7 @@ class SequentialBaseModel(BaseModel):
         )
         self.involved_items, _ = tf.unique(involved_items)
         involved_item_embedding = tf.nn.embedding_lookup(
-            self.item_lookup, self.involved_items
+            params=self.item_lookup, ids=self.involved_items
         )
         self.embed_params.append(involved_item_embedding)
 
@@ -321,20 +323,24 @@ class SequentialBaseModel(BaseModel):
         )
         self.involved_cates, _ = tf.unique(involved_cates)
         involved_cate_embedding = tf.nn.embedding_lookup(
-            self.cate_lookup, self.involved_cates
+            params=self.cate_lookup, ids=self.involved_cates
         )
         self.embed_params.append(involved_cate_embedding)
 
         self.target_item_embedding = tf.concat(
             [self.item_embedding, self.cate_embedding], -1
         )
-        tf.summary.histogram("target_item_embedding_output", self.target_item_embedding)
+        tf.compat.v1.summary.histogram(
+            "target_item_embedding_output", self.target_item_embedding
+        )
 
     def _add_norm(self):
         """Regularization for embedding variables and other variables."""
         all_variables, embed_variables = (
-            tf.trainable_variables(),
-            tf.trainable_variables(self.sequential_scope._name + "/embedding"),
+            tf.compat.v1.trainable_variables(),
+            tf.compat.v1.trainable_variables(
+                self.sequential_scope._name + "/embedding"
+            ),
         )
         layer_params = list(set(all_variables) - set(embed_variables))
         layer_params = [a for a in layer_params if "_no_reg" not in a.name]

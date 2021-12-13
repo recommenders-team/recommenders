@@ -20,10 +20,6 @@ They have admin access to the repo and provide support reviewing issues and pull
    * ALS notebook
    * Wide & Deep algorithm
    * Hyperparameter tuning notebooks
-* **[Le Zhang](https://github.com/yueguoguo)**
-   * Reco utils
-   * Continuous integration build / test setup
-   * Quickstart, deep dive, algorithm comparison, notebooks
 * **[Miguel González-Fierro](https://github.com/miguelfierro)**
    * Recommendation algorithms review, development and optimization.
    * Reco utils review, development and optimization.
@@ -74,6 +70,10 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Kaisar Mussalim](https://github.com/kmussalim)**
    * Multinomial VAE algorithm
    * Standard VAE algorithm
+* **[Le Zhang](https://github.com/yueguoguo)**
+   * Reco utils
+   * Continuous integration build / test setup
+   * Quickstart, deep dive, algorithm comparison, notebooks
 * **[Markus Cozowicz](https://github.com/eisber)**
    * SAR improvements on Spark
 * **[Max Kaznady](https://github.com/maxkazmsft)**

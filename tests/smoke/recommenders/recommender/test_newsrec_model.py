@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import os
-import papermill as pm
 import pytest
 
 try:
@@ -12,7 +11,6 @@ try:
     from recommenders.models.newsrec.models.nrms import NRMSModel
     from recommenders.models.newsrec.models.naml import NAMLModel
     from recommenders.models.newsrec.models.lstur import LSTURModel
-    from recommenders.models.newsrec.models.npa import NPAModel
     from recommenders.models.newsrec.io.mind_iterator import MINDIterator
     from recommenders.models.newsrec.io.mind_all_iterator import MINDAllIterator
 except ImportError:
