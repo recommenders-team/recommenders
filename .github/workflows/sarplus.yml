@@ -1,26 +1,21 @@
 # This workflow will run tests and do packaging for contrib/sarplus.
 #
-# Refenreces:
-#   * [GitHub Actions doc](https://docs.github.com/en/actions)
+# References:
 #   * GitHub Actions workflow templates
 #       + [python package](https://github.com/actions/starter-workflows/blob/main/ci/python-package.yml)
-#       + [python publish](https://github.com/actions/starter-workflows/blob/main/ci/python-publish.yml)
 #       + [scala](https://github.com/actions/starter-workflows/blob/main/ci/scala.yml)
 #   * [GitHub hosted runner - Ubuntu 20.04 LTS](https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md)
-#   * [Azure Databirkcs runtime releases](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/releases)
-#   * Package publish
-#       + [Publishing package distribution releases using GitHub Actions CI/CD workflows](https://packaging.python.org/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/)
-#       + [pypa/gh-action-pypy-publish](https://github.com/pypa/gh-action-pypi-publish)
+#   * [Azure Databricks runtime releases](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/releases)
 
 
-name: sarplus package
+name: sarplus test and package
 
 on:
   push:
     paths:
       - contrib/sarplus/python/**
       - contrib/sarplus/scala/**
-      - .github/workflows/sarplus.yml
+      - contrib/sarplus/VERSION
 
 env:
   PYTHON_ROOT: ${{ github.workspace }}/contrib/sarplus/python
@@ -28,6 +23,9 @@ env:
 
 jobs:
   python:
+    # Test pysarplus with different versions of Python.
+    # Package pysarplus and upload as GitHub workflow artifact when merged into
+    # the main branch.
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -58,7 +56,7 @@ jobs:
           python -m build --sdist
           python -m twine check dist/*
 
-      - name: Testing
+      - name: Test
         env:
           ACCESS_TOKEN: ${{ secrets.SARPLUS_TESTDATA_ACCESS_TOKEN }}
         run: |
@@ -80,24 +78,16 @@ jobs:
           pytest --token "${ACCESS_TOKEN}" ./tests
           echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
 
-      - name: Upload Python package
+      - name: Upload Python package as GitHub artifact
         if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
         uses: actions/upload-artifact@v2
         with:
           name: pysarplus-${{ env.sarplus_version }}
           path: ${{ env.PYTHON_ROOT }}/dist/*.gz
 
-      - name: Publish package to PyPI
-        if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          user: __token__
-          password: ${{ secrets.SARPLUS_TEST_PYPI_API_TOKEN }}
-          repository_url: https://test.pypi.org/legacy/
-          packages_dir: ${{ env.PYTHON_ROOT }}/dist/
-          skip_existing: true
-
   scala-test:
+    # Test sarplus with different versions of Databricks runtime, 2 LTSs and 1
+    # latest.
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -128,6 +118,10 @@ jobs:
           sbt ++${{ matrix.scala-version }}! test
 
   scala-package:
+    # Package sarplus and upload as GitHub workflow artifact when merged into
+    # the main branch.
+    needs: scala-test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -159,7 +153,7 @@ jobs:
           jar cvf sarplus-bundle_2.12-$(cat ../VERSION).jar *.jar *.pom *.asc
           echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
           
-      - name: Upload Scala bundle
+      - name: Upload Scala bundle  as GitHub artifact
         uses: actions/upload-artifact@v2
         with:
           name: sarplus-bundle_2.12-${{ env.sarplus_version }}
