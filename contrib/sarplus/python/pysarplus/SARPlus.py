@@ -39,6 +39,21 @@ class SARPlus:
         timedecay_formula=False,
         threshold=1,
     ):
+
+        """Initialize model parameters
+        Args:
+            spark (pyspark.sql.SparkSession): Spark session
+            col_user (str): user column name
+            col_item (str): item column name
+            col_rating (str): rating column name
+            col_timestamp (str): timestamp column name
+            table_prefix (str): name prefix of the generated tables
+            similarity_type (str): ['cooccurrence', 'jaccard', 'lift'] option for computing item-item similarity
+            time_decay_coefficient (float): number of days till ratings are decayed by 1/2
+            time_now (int | None): current time for time decay calculation
+            timedecay_formula (bool): flag to apply time decay
+            threshold (int): item-item co-occurrences below this threshold will be removed
+        """
         assert threshold > 0
 
         self.spark = spark
