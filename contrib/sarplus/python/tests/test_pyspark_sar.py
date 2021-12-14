@@ -24,14 +24,6 @@ def assert_compare(expected_id, expected_score, actual_prediction):
 
 
 @pytest.fixture(scope="module")
-def token(request):
-    if request.config.getoption("--token") == "":
-        return ""
-    else:
-        return "?" + request.config.getoption("--token")
-
-
-@pytest.fixture(scope="module")
 def spark(tmp_path_factory, app_name="Sample", url="local[*]", memory="1G"):
     """Start Spark if not started
     Args:
@@ -76,17 +68,6 @@ def sample_cache(spark):
     df.coalesce(1).write.format("com.microsoft.sarplus").mode("overwrite").save(path)
 
     return path
-
-
-@pytest.fixture(scope="module")
-def header():
-    header = {
-        "col_user": "UserId",
-        "col_item": "MovieId",
-        "col_rating": "Rating",
-        "col_timestamp": "Timestamp",
-    }
-    return header
 
 
 @pytest.fixture(scope="module")
@@ -196,78 +177,6 @@ def test_e2e(spark, pandas_dummy_dataset, header):
     assert np.allclose(r1.score.values, r2.score.values, 1e-3)
 
 
-@pytest.fixture(scope="module")
-def pandas_dummy(header):
-    ratings_dict = {
-        header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2, 2, 2],
-        header["col_item"]: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-        header["col_rating"]: [1, 2, 3, 4, 5, 1, 2, 3, 4, 5],
-    }
-    df = pd.DataFrame(ratings_dict)
-    return df
-
-
-@pytest.fixture(scope="module")
-def pandas_dummy_timestamp(pandas_dummy, header):
-    time = 1535133442
-    time_series = [time + 20 * i for i in range(10)]
-    df = pandas_dummy
-    df[header["col_timestamp"]] = time_series
-    return df
-
-
-@pytest.fixture(scope="module")
-def train_test_dummy_timestamp(pandas_dummy_timestamp):
-    return train_test_split(pandas_dummy_timestamp, test_size=0.2, random_state=0)
-
-
-@pytest.fixture(scope="module")
-def demo_usage_data(header, sar_settings, token):
-    # load the data
-    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv" + token)
-    data["rating"] = pd.Series([1] * data.shape[0])
-    data = data.rename(
-        columns={
-            "userId": header["col_user"],
-            "productId": header["col_item"],
-            "rating": header["col_rating"],
-            "timestamp": header["col_timestamp"],
-        }
-    )
-
-    # convert timestamp
-    data[header["col_timestamp"]] = data[header["col_timestamp"]].apply(
-        lambda s: float(
-            calendar.timegm(
-                datetime.datetime.strptime(s, "%Y/%m/%dT%H:%M:%S").timetuple()
-            )
-        )
-    )
-
-    return data
-
-
-@pytest.fixture(scope="module")
-def demo_usage_data_spark(spark, demo_usage_data, header):
-    data_local = demo_usage_data[[x[1] for x in header.items()]]
-    # TODO: install pyArrow in DS VM
-    # spark.conf.set("spark.sql.execution.arrow.enabled", "true")
-    data = spark.createDataFrame(data_local)
-    return data
-
-
-@pytest.fixture(scope="module")
-def sar_settings():
-    return {
-        # absolute tolerance parameter for matrix equivalence in SAR tests
-        "ATOL": 1e-8,
-        # directory of the current file - used to link unit test data
-        "FILE_DIR": "https://recodatasets.blob.core.windows.net/sarunittest/",
-        # user ID used in the test files (they are designed for this user ID, this is part of the test)
-        "TEST_USER_ID": "0003000098E85347",
-    }
-
-
 @pytest.mark.parametrize(
     "similarity_type, timedecay_formula", [("jaccard", False), ("lift", True)]
 )
@@ -316,7 +225,6 @@ def test_sar_item_similarity(
     demo_usage_data,
     sar_settings,
     header,
-    token,
 ):
 
     model = SARPlus(
@@ -334,7 +242,7 @@ def test_sar_item_similarity(
 
     # reference
     item_similarity_ref = pd.read_csv(
-        sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv" + token
+        sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
     )
 
     item_similarity_ref = pd.melt(
@@ -366,12 +274,14 @@ def test_sar_item_similarity(
         )
 
         assert np.allclose(
-            item_similarity.value.values, item_similarity_ref.value.values
+            item_similarity.value.values,
+            item_similarity_ref.value.values,
+            atol=sar_settings["ATOL"],
         )
 
 
 # Test 7
-def test_user_affinity(spark, demo_usage_data, sar_settings, header, token):
+def test_user_affinity(spark, demo_usage_data, sar_settings, header):
     time_now = demo_usage_data[header["col_timestamp"]].max()
 
     model = SARPlus(
@@ -386,7 +296,7 @@ def test_user_affinity(spark, demo_usage_data, sar_settings, header, token):
     df = spark.createDataFrame(demo_usage_data)
     model.fit(df)
 
-    user_affinity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "user_aff.csv" + token)
+    user_affinity_ref = pd.read_csv(sar_settings["FILE_DIR"] + "user_aff.csv")
     user_affinity_ref = pd.melt(
         user_affinity_ref,
         user_affinity_ref.columns[0],
@@ -428,7 +338,6 @@ def test_userpred(
     header,
     sar_settings,
     demo_usage_data,
-    token,
 ):
     time_now = demo_usage_data[header["col_timestamp"]].max()
 
@@ -448,7 +357,7 @@ def test_userpred(
     df = spark.createDataFrame(demo_usage_data)
     model.fit(df)
 
-    url = sar_settings["FILE_DIR"] + "userpred_" + file + str(threshold) + "_userid_only.csv" + token
+    url = sar_settings["FILE_DIR"] + "userpred_" + file + str(threshold) + "_userid_only.csv"
 
     pred_ref = pd.read_csv(url)
     pred_ref = (
@@ -457,7 +366,7 @@ def test_userpred(
         .reset_index(drop=True)
     )
 
-    # Note: it's important to have a separate cache_path for each run as they're interferring with each other
+    # Note: it's important to have a separate cache_path for each run as they're interfering with each other
     pred = model.recommend_k_items(
         spark.createDataFrame(
             demo_usage_data[

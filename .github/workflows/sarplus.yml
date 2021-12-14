@@ -58,8 +58,6 @@ jobs:
           python -m twine check dist/*
 
       - name: Test
-        env:
-          ACCESS_TOKEN: ${{ secrets.SARPLUS_TESTDATA_ACCESS_TOKEN }}
         run: |
           cd "${PYTHON_ROOT}"
           python -m pip install dist/*.gz
@@ -76,7 +74,7 @@ jobs:
           sbt ++"${SCALA_VERSION}"! package
 
           cd "${PYTHON_ROOT}"
-          pytest --token "${ACCESS_TOKEN}" ./tests
+          pytest ./tests
           echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
 
       - name: Upload Python package as GitHub artifact

@@ -65,9 +65,6 @@ customized as needed.
 To test the python UDF + C++ backend
 
 ```bash
-# access token for https://recodatasets.blob.core.windows.net/sarunittest/
-ACCESS_TOKEN="<test-data-blob-access-token>"
-
 # build dependencies
 python -m pip install -U build pip twine
 
@@ -77,7 +74,7 @@ cp ../VERSION ./pysarplus/  # version file
 python -m build --sdist
 
 # test
-pytest --token "${ACCESS_TOKEN}" ./tests
+pytest ./tests
 ```
 
 To test the Scala formatter
