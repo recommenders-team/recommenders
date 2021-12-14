@@ -554,7 +554,7 @@ class RBM:
 
             self.sess.run(
                 self.iter.initializer,
-                feed_dict={self.vu: xtst, self.batch_size: xtst.shape[0]},
+                feed_dict={self.vu: xtst, self.batch_size: self.minibatch},
             )
 
             precision_test = self.sess.run(self.Clacc)
