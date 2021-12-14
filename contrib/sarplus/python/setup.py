@@ -28,7 +28,7 @@ DEPENDENCIES = [
 
 setup(
     name="pysarplus",
-    version=(Path(__file__).resolve().parent / "VERSION").read_text().strip(),
+    version=(Path(__file__).resolve().parent / "pysarplus" / "VERSION").read_text().strip(),
     description="SAR prediction for use with PySpark",
     long_description=(Path(__file__).resolve().parent / "README.md").read_text(),
     long_description_content_type='text/markdown',
@@ -52,7 +52,7 @@ setup(
     install_requires=DEPENDENCIES,
     tests_require=["pytest"],
     packages=["pysarplus"],
-    include_package_data=True,
+    package_data={"": ["VERSION"]},
     ext_modules=[
         Extension(
             "pysarplus_cpp",

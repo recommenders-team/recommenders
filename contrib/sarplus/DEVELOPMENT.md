@@ -11,7 +11,7 @@ must take a detour through [pypi](https://pypi.org/).  Use
 python -m pip install -U build pip twine
 
 cd python
-cp ../VERSION ./  # version file
+cp ../VERSION ./pysarplus/  # version file
 python -m build --sdist
 python -m twine upload dist/*
 ```
@@ -73,7 +73,7 @@ python -m pip install -U build pip twine
 
 # build
 cd python
-cp ../VERSION ./  # version file
+cp ../VERSION ./pysarplus/  # version file
 python -m build --sdist
 
 # test

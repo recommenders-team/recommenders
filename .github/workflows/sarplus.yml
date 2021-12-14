@@ -53,7 +53,7 @@ jobs:
       - name: Package and check
         run: |
           cd "${PYTHON_ROOT}"
-          cp ../VERSION ./
+          cp ../VERSION ./pysarplus/
           python -m build --sdist
           python -m twine check dist/*
 

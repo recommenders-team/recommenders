@@ -4,7 +4,6 @@
 import calendar
 import datetime
 import math
-import os
 from pathlib import Path
 
 import numpy as np
@@ -46,7 +45,7 @@ def spark(tmp_path_factory, app_name="Sample", url="local[*]", memory="1G"):
             Path(__file__)
             .parents[2]
             .joinpath("scala", "target")
-            .glob(f"**/sarplus*{os.environ.get('VERSION', '')}*.jar")
+            .glob("**/sarplus*.jar")
         ).absolute()
     except StopIteration:
         raise Exception("Could not find Sarplus JAR file")
