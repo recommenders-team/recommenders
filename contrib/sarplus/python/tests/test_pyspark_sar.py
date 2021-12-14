@@ -1,8 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import calendar
-import datetime
 import math
 from pathlib import Path
 
@@ -10,8 +8,6 @@ import numpy as np
 import pandas as pd
 from pyspark.sql import SparkSession
 import pytest
-from sklearn.model_selection import train_test_split
-
 
 from pysarplus import SARPlus, SARModel
 
