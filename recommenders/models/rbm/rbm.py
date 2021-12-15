@@ -618,7 +618,7 @@ class RBM:
         """Config GPU memory"""
 
         self.config_gpu = tf.compat.v1.ConfigProto(
-            log_device_placement=True, allow_soft_placement=True
+            log_device_placement=False, allow_soft_placement=True
         )
         self.config_gpu.gpu_options.allow_growth = True  # dynamic memory allocation
 
