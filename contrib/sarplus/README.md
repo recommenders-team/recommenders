@@ -5,7 +5,13 @@ Pronounced surplus as it's simply better if not best!
 [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/contrib%20sarplus?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=107&branchName=master)
 [![PyPI version](https://badge.fury.io/py/pysarplus.svg)](https://badge.fury.io/py/pysarplus)
 
-Simple Algorithm for Recommendation (SAR) is a neighborhood based algorithm for personalized recommendations based on user transaction history. SAR recommends items that are most **similar** to the ones that the user already has an existing **affinity** for. Two items are **similar** if the users that interacted with one item are also likely to have interacted with the other. A user has an **affinity** to an item if they have interacted with it in the past.
+Simple Algorithm for Recommendation (SAR) is a neighborhood based
+algorithm for personalized recommendations based on user transaction
+history. SAR recommends items that are most **similar** to the ones
+that the user already has an existing **affinity** for. Two items are
+**similar** if the users that interacted with one item are also likely
+to have interacted with the other. A user has an **affinity** to an
+item if they have interacted with it in the past.
 
 SARplus is an efficient implementation of this algorithm for Spark.
 
@@ -13,7 +19,8 @@ Features:
 
 * Scalable PySpark based [implementation](python/pysarplus/SARPlus.py)
 * Fast C++ based [predictions](python/src/pysarplus.cpp)
-* Reduced memory consumption: similarity matrix cached in-memory once per worker, shared accross python executors 
+* Reduced memory consumption: similarity matrix cached in-memory once
+  per worker, shared accross python executors
 
 ## Benchmarks
 
@@ -25,15 +32,23 @@ Features:
 
 There are a couple of key optimizations:
 
-* map item ids (e.g. strings) to a continuous set of indexes to optmize storage and simplify access
-* convert similarity matrix to exactly the representation the C++ component needs, thus enabling simple shared, memory mapping of the cache file and avoid parsing. This requires a customer formatter, written in Scala
-* shared read-only memory mapping allows us to re-use the same memory from multiple python executors on the same worker node
-* partition the input test users and past seen items by users, allowing for scale out
+* map item ids (e.g. strings) to a continuous set of indexes to
+  optmize storage and simplify access
+* convert similarity matrix to exactly the representation the C++
+  component needs, thus enabling simple shared, memory mapping of the
+  cache file and avoid parsing. This requires a customer formatter,
+  written in Scala
+* shared read-only memory mapping allows us to re-use the same memory
+  from multiple python executors on the same worker node
+* partition the input test users and past seen items by users,
+  allowing for scale out
 * perform as much of the work as possible in PySpark (way simpler)
 * top-k computation
-** reverse the join by summing reverse joining the users past seen items with any related items
-** make sure to always just keep top-k items in-memory
-** use standard join using binary search between users past seen items and the related items
+    + reverse the join by summing reverse joining the users past seen
+      items with any related items
+    + make sure to always just keep top-k items in-memory
+    + use standard join using binary search between users past seen
+      items and the related items
 
 ![Image of sarplus top-k recommendation optimization](https://recodatasets.z20.web.core.windows.net/images/sarplus_udf.svg)
 
@@ -76,7 +91,7 @@ Insert this cell prior to the code above.
 ```python
 import os
 
-SUBMIT_ARGS = "--packages eisber:sarplus:0.2.6 pyspark-shell"
+SUBMIT_ARGS = "--packages com.microsoft.sarplus:sarplus:0.5.0 pyspark-shell"
 os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
 from pyspark.sql import SparkSession
@@ -96,21 +111,26 @@ spark = (
 
 ```bash
 pip install pysarplus
-pyspark --packages eisber:sarplus:0.2.6 --conf spark.sql.crossJoin.enabled=true
+pyspark --packages com.microsoft.sarplus:sarplus:0.5.0 --conf spark.sql.crossJoin.enabled=true
 ```
 
 ### Databricks
 
-One must set the crossJoin property to enable calculation of the similarity matrix (Clusters / &lt; Cluster &gt; / Configuration / Spark Config)
+One must set the crossJoin property to enable calculation of the
+similarity matrix (Clusters / &lt; Cluster &gt; / Configuration /
+Spark Config)
 
 ```
 spark.sql.crossJoin.enabled true
+spark.sql.sources.default parquet
+spark.sql.legacy.createHiveTableByDefault true
 ```
 
 1. Navigate to your workspace 
 2. Create library
 3. Under 'Source' select 'Maven Coordinate'
-4. Enter 'eisber:sarplus:0.2.5' or 'eisber:sarplus:0.2.6' if you're on Spark 2.4.1
+4. Enter com.microsoft:sarplus:0.5.0' or
+   microsoft:sarplus:0.5.0:spark32' if you're on Spark 3.2+
 5. Hit 'Create Library'
 6. Attach to your cluster
 7. Create 2nd library
@@ -130,10 +150,10 @@ You'll also have to mount shared storage
 2. Generate new token: enter 'sarplus'
 3. Use databricks shell (installation here)
 4. databricks configure --token
-4.1. Host: e.g. https://westus.azuredatabricks.net
+    1. Host: e.g. https://westus.azuredatabricks.net
 5. databricks secrets create-scope --scope all --initial-manage-principal users
 6. databricks secrets put --scope all --key sarpluscache
-6.1. enter Azure Storage Blob key of Azure Storage created before
+    1. enter Azure Storage Blob key of Azure Storage created before
 7. Run mount code
 
 
@@ -153,4 +173,5 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
 
 ## Development
 
-See [DEVELOPMENT.md](DEVELOPMENT.md) for implementation details and development information.
+See [DEVELOPMENT.md](DEVELOPMENT.md) for implementation details and
+development information.

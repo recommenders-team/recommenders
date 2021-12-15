@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 package com.microsoft.sarplus
 
 import java.io.{DataOutputStream, FileInputStream, FileOutputStream, BufferedOutputStream, OutputStream}
@@ -11,8 +16,10 @@ import org.apache.spark.sql.types._
 import org.apache.commons.io.IOUtils
 import com.google.common.io.LittleEndianDataOutputStream
 
+import com.microsoft.sarplus.spark.since3p2defvisible
+
 class SARCacheOutputWriter(
-    path: String,
+    filePath: String,
     outputStream: OutputStream,
     schema: StructType) extends OutputWriter
 {
@@ -20,8 +27,8 @@ class SARCacheOutputWriter(
   if (schema.length < 3)
     throw new IllegalArgumentException("Schema must have at least 3 fields")
 
-  val pathOffset = path + ".offsets"
-  val pathRelated = path + ".related"
+  val pathOffset = filePath + ".offsets"
+  val pathRelated = filePath + ".related"
 
   // temporary output files
   val tempOutputOffset = new LittleEndianDataOutputStream(new BufferedOutputStream(new FileOutputStream(pathOffset), 8*1024))
@@ -44,7 +51,7 @@ class SARCacheOutputWriter(
 
     if(lastId != i1)
     {
-        tempOutputOffset.writeLong(rowNumber) 
+        tempOutputOffset.writeLong(rowNumber)
         offsetCount += 1
         lastId = i1
     }
@@ -64,7 +71,7 @@ class SARCacheOutputWriter(
 
     if(lastId != i1)
     {
-        tempOutputOffset.writeLong(rowNumber) 
+        tempOutputOffset.writeLong(rowNumber)
         offsetCount += 1
         lastId = i1
     }
@@ -75,7 +82,7 @@ class SARCacheOutputWriter(
     rowNumber += 1
   }
 
-  override def close(): Unit = 
+  override def close(): Unit =
   {
       tempOutputOffset.writeLong(rowNumber)
       offsetCount += 1
@@ -94,5 +101,8 @@ class SARCacheOutputWriter(
       input.close
 
       outputFinal.close
-  } 
+  }
+
+  @since3p2defvisible
+  override def path(): String = filePath
 }
