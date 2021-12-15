@@ -1,13 +1,10 @@
-"""
-This is the one and only (to rule them all) implementation of SAR.
-"""
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+"""This is the implementation of SAR."""
 
 import logging
-import pyspark.sql.functions as F
 import pandas as pd
 from pyspark.sql.types import (
-    StringType,
-    DoubleType,
     StructType,
     StructField,
     IntegerType,
@@ -15,6 +12,7 @@ from pyspark.sql.types import (
 )
 from pyspark.sql.functions import pandas_udf, PandasUDFType
 from pysarplus import SARModel
+
 
 SIM_COOCCUR = "cooccurrence"
 SIM_JACCARD = "jaccard"
@@ -25,7 +23,7 @@ log = logging.getLogger("sarplus")
 
 
 class SARPlus:
-    """SAR implementation for PySpark"""
+    """SAR implementation for PySpark."""
 
     def __init__(
         self,
@@ -41,6 +39,21 @@ class SARPlus:
         timedecay_formula=False,
         threshold=1,
     ):
+
+        """Initialize model parameters
+        Args:
+            spark (pyspark.sql.SparkSession): Spark session
+            col_user (str): user column name
+            col_item (str): item column name
+            col_rating (str): rating column name
+            col_timestamp (str): timestamp column name
+            table_prefix (str): name prefix of the generated tables
+            similarity_type (str): ['cooccurrence', 'jaccard', 'lift'] option for computing item-item similarity
+            time_decay_coefficient (float): number of days till ratings are decayed by 1/2
+            time_now (int | None): current time for time decay calculation
+            timedecay_formula (bool): flag to apply time decay
+            threshold (int): item-item co-occurrences below this threshold will be removed
+        """
         assert threshold > 0
 
         self.spark = spark
@@ -66,13 +79,15 @@ class SARPlus:
     # current time for time decay calculation
     # cooccurrence matrix threshold
     def fit(self, df):
-        """Main fit method for SAR. Expects the dataframes to have row_id, col_id columns which are indexes,
+        """Main fit method for SAR.
+
+        Expects the dataframes to have row_id, col_id columns which are indexes,
         i.e. contain the sequential integer index of the original alphanumeric user and item IDs.
         Dataframe also contains rating and timestamp as floats; timestamp is in seconds since Epoch by default.
 
         Arguments:
-            df (pySpark.DataFrame): input dataframe which contains the index of users and items. """
-
+            df (pySpark.DataFrame): input dataframe which contains the index of users and items.
+        """
         # threshold - items below this number get set to zero in coocurrence counts
 
         df.createOrReplaceTempView(self.f("{prefix}df_train_input"))
@@ -93,12 +108,12 @@ class SARPlus:
             query = self.f(
                 """
             SELECT
-                 {col_user}, {col_item},
+                 {col_user}, {col_item}, 
                  SUM({col_rating} * EXP(-log(2) * (latest_timestamp - CAST({col_timestamp} AS long)) / ({time_decay_coefficient} * 3600 * 24))) as {col_rating}
             FROM {prefix}df_train_input,
                  (SELECT CAST(MAX({col_timestamp}) AS long) latest_timestamp FROM {prefix}df_train_input)
-            GROUP BY {col_user}, {col_item}
-            CLUSTER BY {col_user}
+            GROUP BY {col_user}, {col_item} 
+            CLUSTER BY {col_user} 
             """
             )
 
