@@ -185,14 +185,13 @@ class RBM:
         )  # normalize and convert to tensor
 
         samp = tf.nn.relu(tf.sign(pr - f))  # apply rejection method
-        # v_samp = tf.cast(
-        #     tf.argmax(input=samp, axis=2) + 1, "float32"
-        # )  # select sampled element
+        
+        # get integer index of the rating to be sampled
         v_argmax = tf.cast(
             tf.argmax(input=samp, axis=2), "int32"
-        )  # select sampled element
-        # print("v_argmax ", v_argmax)
+        )
 
+        # lookup the rating using integer index
         v_samp = tf.cast(
             self.ratings_lookup_table.lookup(v_argmax), "float32"
         )
@@ -212,11 +211,6 @@ class RBM:
 
         """
 
-        # print("phi shape ", phi.shape) # phi shape  (None, 1682)
-        # numerator = [
-        #     tf.exp(tf.multiply(tf.constant(k, dtype="float32"), phi))
-        #     for k in range(1, self.ratings + 1)
-        # ]
         numerator = [
             tf.exp(tf.multiply(tf.constant(k, dtype="float32"), phi))
             for k in self.possible_ratings
@@ -225,7 +219,6 @@ class RBM:
         denominator = tf.reduce_sum(input_tensor=numerator, axis=0)
 
         prob = tf.compat.v1.div(numerator, denominator)
-        # print("prob shape ", prob.shape) # prob shape  (5, None, 1682)
 
         return tf.transpose(a=prob, perm=[1, 2, 0])
 
@@ -720,9 +713,10 @@ class RBM:
 
         # ----------------------Initializers-------------------------------------
         
+        # create a sorted list of all the unique ratings (of float type)
         self.possible_ratings = np.sort(np.setdiff1d(np.unique(xtr), np.array([0])))
-        print(list(range(len(self.possible_ratings))))
-        print(list(self.possible_ratings))
+
+        # create a lookup table to map integer indices to float ratings
         self.ratings_lookup_table = tf.lookup.StaticHashTable(
                 tf.lookup.KeyValueTensorInitializer(
                     tf.constant(list(range(len(self.possible_ratings))), dtype=tf.int32),
