@@ -2,19 +2,9 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New 
-### (September 27, 2021)
+## What's New (December 17, 2021)
 
-We have a new release [Recommenders 0.7.0](https://github.com/microsoft/recommenders/releases/tag/0.7.0)!
-We have changed the names of the folders which contain the source code, so that they are more informative. This implies that you will need to change any import statements that reference the recommenders package. Specifically, the folder `reco_utils` has been renamed to `recommenders` and its subfolders have been renamed according to [issue 1390](https://github.com/microsoft/recommenders/issues/1390).  
-
-The previous release ([0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)) is compatible with the old style of naming of modules. 
-
-The recommenders package now supports three types of environments: [venv](https://docs.python.org/3/library/venv.html) and [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) with Python 3.6, [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) with Python versions 3.6 and 3.7.
-
-We have also added new evaluation metrics: _novelty, serendipity, diversity and coverage_ (see the [evalution notebooks](examples/03_evaluate/README.md)).
-
-Code coverage reports are now generated for every PR, using [Codecov](https://about.codecov.io/).
+We have a new release [Recommenders 1.0.0](https://github.com/microsoft/recommenders/releases/tag/1.0.0)! The codebase has now migrated to TensorFlow versions 2.6 / 2.7 and to Spark version 3. In addition, there are a few changes in the dependencies and extras installed by `pip` (see [this guide](recommenders/README.md#optional-dependencies)). We have also made improvements in the code and the CI / CD pipelines.
 
 Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
 
@@ -42,8 +32,7 @@ For a more detailed overview of the repository, please see the documents on the 
 Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
 The installation of the recommenders package has been tested with 
-- Python version 3.6 and [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)
-- Python versions 3.6, 3.7 and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
+- Python versions 3.6, 3.7 and [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) or [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) 
 
 and currently does not support version 3.8 and above. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment), [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)).
 
@@ -68,11 +57,6 @@ pip install --upgrade pip
 pip install --upgrade setuptools
 pip install recommenders[examples]
 ```
-In the case of conda, you also need to 
-```bash
-conda install numpy-base
-```
-after the pip installation.
 
 4. Register your (conda or virtual) environment with Jupyter:
 
@@ -98,51 +82,51 @@ For additional options to install the package (support for GPU, Spark etc.) see 
 
 ## Algorithms
 
-The table below lists the recommender algorithms currently available in the repository. Notebooks are linked under the Environment column when different implementations are available.
+The table below lists the recommender algorithms currently available in the repository. Notebooks are linked under the Example column as Quick start, showcasing an easy to run example of the algorithm, or as Deep dive, explaining in detail the math and implementation of the algorithm.
 
-| Algorithm | Environment | Type | Description |
-| --- | --- | --- | --- |
-| Alternating Least Squares (ALS) | [PySpark](examples/00_quick_start/als_movielens.ipynb) | Collaborative Filtering | Matrix factorization algorithm for explicit or implicit feedback in large datasets, optimized by Spark MLLib for scalability and distributed computing capability |
-| Attentive Asynchronous Singular Value Decomposition (A2SVD)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism |
-| Cornac/Bayesian Personalized Ranking (BPR) | [Python CPU](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) | Collaborative Filtering | Matrix factorization algorithm for predicting item ranking with implicit feedback |
-| Cornac/Bilateral Variational Autoencoder (BiVAE) | [Python CPU / Python GPU](examples/02_model_collaborative_filtering/cornac_bivae_deep_dive.ipynb) | Collaborative Filtering | Generative model for dyadic data (e.g., user-item interactions) |
-| Convolutional Sequence Embedding Recommendation (Caser) | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Algorithm based on convolutions that aim to capture both user’s general preferences and sequential patterns |
-| Deep Knowledge-Aware Network (DKN)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/dkn_MIND.ipynb) | Content-Based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings to provide powerful news or article recommendations |
-| Extreme Deep Factorization Machine (xDeepFM)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/xdeepfm_criteo.ipynb) | Hybrid | Deep learning based algorithm for implicit and explicit feedback with user/item features |
-| FastAI Embedding Dot Bias (FAST) | [Python CPU / Python GPU](examples/00_quick_start/fastai_movielens.ipynb) | Collaborative Filtering | General purpose algorithm with embeddings and biases for users and items |
-| LightFM/Hybrid Matrix Factorization | [Python CPU](examples/02_model_hybrid/lightfm_deep_dive.ipynb) | Hybrid | Hybrid matrix factorization algorithm for both implicit and explicit feedbacks |
-| LightGBM/Gradient Boosting Tree<sup>*</sup> | [Python CPU](examples/00_quick_start/lightgbm_tinycriteo.ipynb) / [PySpark](examples/02_model_content_based_filtering/mmlspark_lightgbm_criteo.ipynb) | Content-Based Filtering | Gradient Boosting Tree algorithm for fast training and low memory usage in content-based problems |
-| LightGCN | [Python CPU / Python GPU](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) | Collaborative Filtering | Deep learning algorithm which simplifies the design of GCN for predicting implicit feedback |
-| GeoIMC<sup>*</sup> | [Python CPU](examples/00_quick_start/geoimc_movielens.ipynb) | Hybrid | Matrix completion algorithm that has into account user and item features using Riemannian conjugate gradients optimization and following a geometric approach. |
-| GRU4Rec | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using recurrent neural networks |
-| Multinomial VAE | [Python CPU / Python GPU](examples/02_model_collaborative_filtering/multi_vae_deep_dive.ipynb) | Collaborative Filtering | Generative Model for predicting user/item interactions |
-| Neural Recommendation with Long- and Short-term User Representations (LSTUR)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/lstur_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with long- and short-term user interest modeling |
-| Neural Recommendation with Attentive Multi-View Learning (NAML)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/naml_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with attentive multi-view learning |
-| Neural Collaborative Filtering (NCF) | [Python CPU / Python GPU](examples/00_quick_start/ncf_movielens.ipynb) | Collaborative Filtering | Deep learning algorithm with enhanced performance for implicit feedback |
-| Neural Recommendation with Personalized Attention (NPA)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/npa_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with personalized attention network |
-| Neural Recommendation with Multi-Head Self-Attention (NRMS)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/nrms_MIND.ipynb) | Content-Based Filtering | Neural recommendation algorithm with multi-head self-attention |
-| Next Item Recommendation (NextItNet) | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Algorithm based on dilated convolutions and residual network that aims to capture sequential patterns |
-| Restricted Boltzmann Machines (RBM) | [Python CPU / Python GPU](examples/00_quick_start/rbm_movielens.ipynb) | Collaborative Filtering | Neural network based algorithm for learning the underlying probability distribution for explicit or implicit feedback |
-| Riemannian Low-rank Matrix Completion (RLRMC)<sup>*</sup> | [Python CPU](examples/00_quick_start/rlrmc_movielens.ipynb) | Collaborative Filtering | Matrix factorization algorithm using Riemannian conjugate gradients optimization with small memory consumption. |
-| Simple Algorithm for Recommendation (SAR)<sup>*</sup> | [Python CPU](examples/00_quick_start/sar_movielens.ipynb) | Collaborative Filtering | Similarity-based algorithm for implicit feedback dataset |
-| Short-term and Long-term Preference Integrated Recommender (SLi-Rec)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism, a time-aware controller and a content-aware controller |
-| Multi-Interest-Aware Sequential User Modeling (SUM)<sup>*</sup> | [Python CPU / Python GPU](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) | Collaborative Filtering | An enhanced memory network-based sequential user model which aims to capture users' multiple interests. |
-| Standard VAE | [Python CPU / Python GPU](examples/02_model_collaborative_filtering/standard_vae_deep_dive.ipynb) | Collaborative Filtering | Generative Model for predicting user/item interactions |
-| Surprise/Singular Value Decomposition (SVD) | [Python CPU](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in datasets that are not very large |
-| Term Frequency - Inverse Document Frequency (TF-IDF) | [Python CPU](examples/00_quick_start/tfidf_covid.ipynb) | Content-Based Filtering | Simple similarity-based algorithm for content-based recommendations with text datasets |
-| Vowpal Wabbit (VW)<sup>*</sup> | [Python CPU (online training)](examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing |
-| Wide and Deep | [Python CPU / Python GPU](examples/00_quick_start/wide_deep_movielens.ipynb) | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features |
-| xLearn/Factorization Machine (FM) & Field-Aware FM (FFM) | [Python CPU](examples/02_model_hybrid/fm_deep_dive.ipynb) | Hybrid | Quick and memory efficient algorithm to predict labels with user/item features |
+| Algorithm | Type | Description | Example |
+|-----------|------|-------------|---------|
+| Alternating Least Squares (ALS) | Collaborative Filtering | Matrix factorization algorithm for explicit or implicit feedback in large datasets, optimized for scalability and distributed computing capability. It works in the PySpark environment. | [Quick start](examples/00_quick_start/als_movielens.ipynb) / [Deep dive](examples/02_model_collaborative_filtering/als_deep_dive.ipynb) |
+| Attentive Asynchronous Singular Value Decomposition (A2SVD)<sup>*</sup> | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Cornac/Bayesian Personalized Ranking (BPR) | Collaborative Filtering | Matrix factorization algorithm for predicting item ranking with implicit feedback. It works in the CPU environment. | [Deep dive](examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb) |
+| Cornac/Bilateral Variational Autoencoder (BiVAE) | Collaborative Filtering | Generative model for dyadic data (e.g., user-item interactions). It works in the CPU/GPU enviroment. | [Deep dive](examples/02_model_collaborative_filtering/cornac_bivae_deep_dive.ipynb) |
+| Convolutional Sequence Embedding Recommendation (Caser) | Collaborative Filtering | Algorithm based on convolutions that aim to capture both user’s general preferences and sequential patterns. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Deep Knowledge-Aware Network (DKN)<sup>*</sup> | Content-Based Filtering | Deep learning algorithm incorporating a knowledge graph and article embeddings for providing news or article recommendations. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/dkn_MIND.ipynb) / [Deep dive](examples/02_model_content_based_filtering/dkn_deep_dive.ipynb) |
+| Extreme Deep Factorization Machine (xDeepFM)<sup>*</sup> | Hybrid | Deep learning based algorithm for implicit and explicit feedback with user/item features. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/xdeepfm_criteo.ipynb) |
+| FastAI Embedding Dot Bias (FAST) | Collaborative Filtering | General purpose algorithm with embeddings and biases for users and items. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/fastai_movielens.ipynb) |
+| LightFM/Hybrid Matrix Factorization | Hybrid | Hybrid matrix factorization algorithm for both implicit and explicit feedbacks. It works in the CPU environment. | [Quick start](examples/02_model_hybrid/lightfm_deep_dive.ipynb) |
+| LightGBM/Gradient Boosting Tree<sup>*</sup> | Content-Based Filtering | Gradient Boosting Tree algorithm for fast training and low memory usage in content-based problems. It works in the CPU/GPU/PySpark environments. | [Quick start in CPU](examples/00_quick_start/lightgbm_tinycriteo.ipynb) / [Deep dive in PySpark](examples/02_model_content_based_filtering/mmlspark_lightgbm_criteo.ipynb) |
+| LightGCN | Collaborative Filtering | Deep learning algorithm which simplifies the design of GCN for predicting implicit feedback. It works in the CPU/GPU enviroment. | [Deep dive](examples/02_model_collaborative_filtering/lightgcn_deep_dive.ipynb) |
+| GeoIMC<sup>*</sup> | Hybrid | Matrix completion algorithm that has into account user and item features using Riemannian conjugate gradients optimization and following a geometric approach. It works in the CPU enviroment. | [Quick start](examples/00_quick_start/geoimc_movielens.ipynb) |
+| GRU4Rec | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using recurrent neural networks. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Multinomial VAE | Collaborative Filtering | Generative model for predicting user/item interactions. It works in the CPU/GPU enviroment. | [Deep dive](examples/02_model_collaborative_filtering/multi_vae_deep_dive.ipynb) |
+| Neural Recommendation with Long- and Short-term User Representations (LSTUR)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with long- and short-term user interest modeling. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/lstur_MIND.ipynb) |
+| Neural Recommendation with Attentive Multi-View Learning (NAML)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with attentive multi-view learning. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/naml_MIND.ipynb) |
+| Neural Collaborative Filtering (NCF) | Collaborative Filtering | Deep learning algorithm with enhanced performance for user/item implicit feedback. It works in the CPU/GPU enviroment.| [Quick start](examples/00_quick_start/ncf_movielens.ipynb) |
+| Neural Recommendation with Personalized Attention (NPA)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with personalized attention network. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/npa_MIND.ipynb) |
+| Neural Recommendation with Multi-Head Self-Attention (NRMS)<sup>*</sup> | Content-Based Filtering | Neural recommendation algorithm for recommending news articles with multi-head self-attention. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/nrms_MIND.ipynb) |
+| Next Item Recommendation (NextItNet) | Collaborative Filtering | Algorithm based on dilated convolutions and residual network that aims to capture sequential patterns. It considers both user/item interactions and features.  It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Restricted Boltzmann Machines (RBM) | Collaborative Filtering | Neural network based algorithm for learning the underlying probability distribution for explicit or implicit user/item feedback. It works in the CPU/GPU enviroment. | [Quick start](examples/00_quick_start/rbm_movielens.ipynb) / [Deep dive](examples/02_model_collaborative_filtering/rbm_deep_dive.ipynb) |
+| Riemannian Low-rank Matrix Completion (RLRMC)<sup>*</sup> | Collaborative Filtering | Matrix factorization algorithm using Riemannian conjugate gradients optimization with small memory consumption to predice user/item interactions. It works in the CPU enviroment. | [Quick start](examples/00_quick_start/rlrmc_movielens.ipynb) |
+| Simple Algorithm for Recommendation (SAR)<sup>*</sup> | Collaborative Filtering | Similarity-based algorithm for implicit user/item feedback.  It works in the CPU environment. | [Quick start](examples/00_quick_start/sar_movielens.ipynb) / [Deep dive](examples/02_model_collaborative_filtering/sar_deep_dive.ipynb) |
+| Short-term and Long-term Preference Integrated Recommender (SLi-Rec)<sup>*</sup> | Collaborative Filtering | Sequential-based algorithm that aims to capture both long and short-term user preferences using attention mechanism, a time-aware controller and a content-aware controller. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Multi-Interest-Aware Sequential User Modeling (SUM)<sup>*</sup> | Collaborative Filtering | An enhanced memory network-based sequential user model which aims to capture users' multiple interests. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/sequential_recsys_amazondataset.ipynb) |
+| Standard VAE | Collaborative Filtering | Generative Model for predicting user/item interactions.  It works in the CPU/GPU environment. | [Deep dive](examples/02_model_collaborative_filtering/standard_vae_deep_dive.ipynb) |
+| Surprise/Singular Value Decomposition (SVD) | Collaborative Filtering | Matrix factorization algorithm for predicting explicit rating feedback in small datasets. It works in the CPU/GPU environment. | [Deep dive](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) |
+| Term Frequency - Inverse Document Frequency (TF-IDF) | Content-Based Filtering | Simple similarity-based algorithm for content-based recommendations with text datasets. It works in the CPU environment. | [Quick staert](examples/00_quick_start/tfidf_covid.ipynb) |
+| Vowpal Wabbit (VW)<sup>*</sup> | Content-Based Filtering | Fast online learning algorithms, great for scenarios where user features / context are constantly changing. It uses the CPU for online learning. | [Deep dive](examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) |
+| Wide and Deep | Hybrid | Deep learning algorithm that can memorize feature interactions and generalize user features. It works in the CPU/GPU environment. | [Quick start](examples/00_quick_start/wide_deep_movielens.ipynb) |
+| xLearn/Factorization Machine (FM) & Field-Aware FM (FFM) | Hybrid | Quick and memory efficient algorithm to predict labels with user/item features. It works in the CPU/GPU environment. | [Deep dive](examples/02_model_hybrid/fm_deep_dive.ipynb) |
 
 **NOTE**: <sup>*</sup> indicates algorithms invented/contributed by Microsoft.
 
 Independent or incubating algorithms and utilities are candidates for the [contrib](contrib) folder. This will house contributions which may not easily fit into the core repository or need time to refactor or mature the code and add necessary tests.
 
-| Algorithm | Environment | Type | Description |
-| --- | --- | --- | --- |
-| SARplus <sup>*</sup> | [PySpark](contrib/sarplus/README.md) | Collaborative Filtering | Optimized implementation of SAR for Spark |
+| Algorithm | Type | Description | Example |
+|-----------|------|-------------|---------|
+| SARplus <sup>*</sup> | Collaborative Filtering | Optimized implementation of SAR for Spark |  [Quick start](contrib/sarplus/README.md) |
 
-### Preliminary Comparison
+### Algorithm Comparison
 
 We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to illustrate how different algorithms could be evaluated and compared. In this notebook, the MovieLens dataset is split into training/test sets at a 75/25 ratio using a stratified split. A recommendation model is trained using each of the collaborative filtering algorithms below. We utilize empirical parameter values reported in literature [here](http://mymedialite.net/examples/datasets.html). For ranking metrics we use `k=10` (top 10 recommended items). We run the comparison on a Standard NC6s_v2 [Azure DSVM](https://azure.microsoft.com/en-us/services/virtual-machines/data-science-virtual-machines/) (6 vCPUs, 112 GB memory and 1 P100 GPU). Spark ALS is run in local standalone mode. In this table we show the results on Movielens 100k, running the algorithms for 15 epochs.
 
@@ -156,7 +140,6 @@ We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to ill
 | [NCF](examples/02_model_hybrid/ncf_deep_dive.ipynb) | 0.107720	| 0.396118 |	0.347296 |	0.180775 | N/A | N/A | N/A | N/A |
 | [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
 | [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
-
 
 ## Code of Conduct
 

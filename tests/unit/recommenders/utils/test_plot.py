@@ -2,11 +2,10 @@
 # Licensed under the MIT License.
 
 import matplotlib
+import matplotlib.pyplot as plt
+from recommenders.utils.plot import line_graph
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import pytest
-from recommenders.utils.plot import line_graph
 
 
 def test_line_graph():

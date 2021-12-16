@@ -16,7 +16,6 @@ from recommenders.utils.gpu_utils import (
     get_cudnn_version,
     get_gpu_info,
     get_number_gpus,
-    clear_memory_all_gpus,
 )
 
 

@@ -10,7 +10,6 @@ from contextlib import contextmanager
 from tempfile import TemporaryDirectory
 from tqdm import tqdm
 from retrying import retry
-import logging
 
 
 log = logging.getLogger(__name__)

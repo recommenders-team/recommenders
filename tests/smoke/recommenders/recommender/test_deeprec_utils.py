@@ -13,15 +13,12 @@ try:
     from recommenders.models.deeprec.deeprec_utils import (
         prepare_hparams,
         download_deeprec_resources,
-        load_yaml,
     )
     from recommenders.models.deeprec.io.dkn_iterator import DKNTextIterator
     from recommenders.models.deeprec.io.dkn_item2item_iterator import (
         DKNItem2itemTextIterator,
     )
-    from recommenders.models.deeprec.io.iterator import FFMTextIterator
     from recommenders.models.deeprec.io.sequential_iterator import SequentialIterator
-    from recommenders.models.deeprec.models.sequential.sli_rec import SLI_RECModel
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 
@@ -56,7 +53,7 @@ def test_DKN_iterator(deeprec_resource_path):
     for res, impression, data_size in iterator.load_data_from_file(data_file):
         assert isinstance(res, dict)
 
-    ###  test DKN item2item iterator
+    # test DKN item2item iterator
     hparams = prepare_hparams(
         yaml_file,
         news_feature_file=news_feature_file,

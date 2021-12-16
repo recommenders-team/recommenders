@@ -7,7 +7,7 @@ import logging
 from pymanopt import Problem
 from recommenders.models.rlrmc.conjugate_gradient_ms import ConjugateGradientMS
 from pymanopt.solvers.linesearch import LineSearchBackTracking
-from pymanopt.manifolds import Stiefel, PositiveDefinite, Product
+from pymanopt.manifolds import Stiefel, SymmetricPositiveDefinite, Product
 from math import sqrt
 from scipy.sparse import csr_matrix
 from scipy.sparse.linalg import svds
@@ -95,7 +95,9 @@ class RLRMCalgorithm(object):
         # residual variable
         residual_global = np.zeros(RLRMCdata.train.data.shape, dtype=np.float64)
 
-        ###################Riemannian first-order algorithm######################
+        ####################################
+        # Riemannian first-order algorithm #
+        ####################################
 
         solver = ConjugateGradientMS(
             maxtime=self.max_time,
@@ -107,7 +109,7 @@ class RLRMCalgorithm(object):
             [
                 Stiefel(self.model_param.get("num_row"), self.rank),
                 Stiefel(self.model_param.get("num_col"), self.rank),
-                PositiveDefinite(self.rank),
+                SymmetricPositiveDefinite(self.rank),
             ]
         )
         problem = Problem(

@@ -33,6 +33,6 @@ extends:
     timeout: 180 
     conda_env: "nightly_linux_cpu"
     conda_opts: "python=3.6"
-    pip_opts: "[examples]"
+    pip_opts: "[examples,dev,experimental] --no-cache --no-binary scikit-surprise"
     pytest_markers: "not spark and not gpu"
     pytest_params: "-x"

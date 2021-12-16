@@ -1,6 +1,12 @@
 [build-system]
 requires = [
     "setuptools>=52",
-    "wheel>=0.36"
+    "wheel>=0.36",
+    "numpy>=1.15",
+]
+dependencies = [
+    "setuptools>=52",
+    "wheel>=0.36",
+    "numpy>=1.15",
 ]
 build-backend = "setuptools.build_meta"

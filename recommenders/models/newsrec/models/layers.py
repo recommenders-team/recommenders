@@ -1,10 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import tensorflow as tf
-import tensorflow.keras as keras
-from tensorflow.keras import layers
-from tensorflow.keras import backend as K
+import tensorflow.compat.v1.keras as keras
+from tensorflow.compat.v1.linalg import einsum
+from tensorflow.compat.v1.keras import layers
+from tensorflow.compat.v1.keras import backend as K
 
 
 class AttLayer2(layers.Layer):
@@ -16,7 +16,7 @@ class AttLayer2(layers.Layer):
 
     def __init__(self, dim=200, seed=0, **kwargs):
         """Initialization steps for AttLayer2.
-        
+
         Args:
             dim (int): attention hidden dim
         """
@@ -70,11 +70,11 @@ class AttLayer2(layers.Layer):
 
         attention = K.squeeze(attention, axis=2)
 
-        if mask == None:
+        if mask is None:
             attention = K.exp(attention)
         else:
             attention = K.exp(attention) * K.cast(mask, dtype="float32")
-            
+
         attention_weight = attention / (
             K.sum(attention, axis=-1, keepdims=True) + K.epsilon()
         )
@@ -86,10 +86,10 @@ class AttLayer2(layers.Layer):
     def compute_mask(self, input, input_mask=None):
         """Compte output mask value
 
-        Args: 
+        Args:
             input (object): input tensor.
             input_mask: input mask
-        
+
         Returns:
             object: output mask.
         """
@@ -100,7 +100,7 @@ class AttLayer2(layers.Layer):
 
         Args:
             input_shape (tuple): shape of input tensor.
-        
+
         Returns:
             tuple: shape of output tensor.
         """
@@ -121,11 +121,11 @@ class SelfAttention(layers.Layer):
 
     def __init__(self, multiheads, head_dim, seed=0, mask_right=False, **kwargs):
         """Initialization steps for AttLayer2.
-        
+
         Args:
             multiheads (int): The number of heads.
-            head_dim (object): Dimention of each head.
-            mask_right (boolean): whether to mask right words.
+            head_dim (object): Dimension of each head.
+            mask_right (boolean): Whether to mask right words.
         """
 
         self.multiheads = multiheads
@@ -181,12 +181,12 @@ class SelfAttention(layers.Layer):
         Args:
             seq_len (object): sequence length of inputs.
             mode (str): mode of mask.
-        
+
         Returns:
             object: tensors after masking.
         """
 
-        if seq_len == None:
+        if seq_len is None:
             return inputs
         else:
             mask = K.one_hot(indices=seq_len[:, 0], num_classes=K.shape(inputs)[1])
@@ -204,7 +204,7 @@ class SelfAttention(layers.Layer):
         """Core logic of multi-head self attention.
 
         Args:
-            QKVs (list): inputs of multi-head self attention i.e. qeury, key and value.
+            QKVs (list): inputs of multi-head self attention i.e. query, key and value.
 
         Returns:
             object: ouput tensors.
@@ -232,7 +232,7 @@ class SelfAttention(layers.Layer):
         )
         V_seq = K.permute_dimensions(V_seq, pattern=(0, 2, 1, 3))
 
-        A = K.batch_dot(Q_seq, K_seq, axes=[3, 3]) / K.sqrt(
+        A = einsum("abij, abkj -> abik", Q_seq, K_seq) / K.sqrt(
             K.cast(self.head_dim, dtype="float32")
         )
         A = K.permute_dimensions(
@@ -249,7 +249,7 @@ class SelfAttention(layers.Layer):
             A = A - mask
         A = K.softmax(A)
 
-        O_seq = K.batch_dot(A, V_seq, axes=[3, 2])
+        O_seq = einsum("abij, abjk -> abik", A, V_seq)
         O_seq = K.permute_dimensions(O_seq, pattern=(0, 2, 1, 3))
 
         O_seq = K.reshape(O_seq, shape=(-1, K.shape(O_seq)[1], self.output_dim))
@@ -257,10 +257,10 @@ class SelfAttention(layers.Layer):
         return O_seq
 
     def get_config(self):
-        """ add multiheads, multiheads and mask_right into layer config.
+        """add multiheads, multiheads and mask_right into layer config.
 
         Returns:
-            dict: config of SelfAttention layer.  
+            dict: config of SelfAttention layer.
         """
         config = super(SelfAttention, self).get_config()
         config.update(
@@ -280,7 +280,7 @@ def PersonalizedAttentivePooling(dim1, dim2, dim3, seed=0):
         dim1 (int): first dimention of value shape.
         dim2 (int): second dimention of value shape.
         dim3 (int): shape of query
-    
+
     Returns:
         object: weighted summary of inputs value.
     """
@@ -325,7 +325,7 @@ class OverwriteMasking(layers.Layer):
 
     Args:
         inputs (list): value tensor and mask tensor.
-    
+
     Returns:
         object: tensor after setting values to zero.
     """

@@ -107,10 +107,10 @@ def load_spark_df(
             try:
                 # Driver node's file path
                 node_path = "file:" + filepath
-                ## needs to be on dbfs to load
+                # needs to be on dbfs to load
                 dbutils.fs.cp(node_path, dbfs_datapath, recurse=True)
                 path = dbfs_datapath
-            except:
+            except Exception:
                 raise ValueError(
                     "To use on a Databricks notebook, dbutils object should be passed as an argument"
                 )
@@ -172,13 +172,13 @@ def get_spark_schema(header=DEFAULT_HEADER):
     Returns:
         pyspark.sql.types.StructType: Spark schema.
     """
-    ## create schema
+    # create schema
     schema = StructType()
-    ## do label + ints
+    # do label + ints
     n_ints = 14
     for i in range(n_ints):
         schema.add(StructField(header[i], IntegerType()))
-    ## do categoricals
+    # do categoricals
     for i in range(26):
         schema.add(StructField(header[i + n_ints], StringType()))
     return schema

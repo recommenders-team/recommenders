@@ -1,16 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import warnings
 import logging
-from scipy.io import loadmat
 import pandas as pd
 import numpy as np
 from scipy.sparse import coo_matrix, isspmatrix_csr
 from sklearn.model_selection import train_test_split
-from sklearn import datasets
 from sklearn.preprocessing import normalize
-from numba import jit, prange
 
 from recommenders.utils.python_utils import binarize
 from .geoimc_utils import length_normalize, reduce_dims
@@ -95,7 +91,7 @@ class Dataset:
         if self.feat_normalize:
             for i in range(len(self.entities)):
                 if isspmatrix_csr(self.entities[i]):
-                    logger.info(f"Normalizing CSR matrix")
+                    logger.info("Normalizing CSR matrix")
                     self.entities[i] = normalize(self.entities[i])
                 else:
                     self.entities[i] = length_normalize(self.entities[i])
@@ -126,7 +122,7 @@ class Dataset:
         if self.features_dim != 0:
             self.entities[0] = reduce_dims(self.entities[0], self.features_dim)
             self.entities[1] = reduce_dims(self.entities[1], self.features_dim)
-            logger.info(f"Dimensionality reduced ...")
+            logger.info("Dimensionality reduced ...")
 
 
 class ML_100K(Dataset):
