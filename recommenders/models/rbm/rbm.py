@@ -7,8 +7,6 @@ import tensorflow as tf
 import logging
 import time as tm
 
-from tensorflow.python import tf2
-
 
 tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
