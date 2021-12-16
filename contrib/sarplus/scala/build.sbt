@@ -3,6 +3,8 @@
  * Licensed under the MIT License.
  */
 
+import Utils._
+
 name := "sarplus"
 
 // Denpendency configuration
@@ -11,7 +13,6 @@ lazy val sparkVer = settingKey[String]("spark version")
 lazy val hadoopVer = settingKey[String]("hadoop version")
 
 lazy val commonSettings = Seq(
-  organization := "sarplus.microsoft",
   version := IO.read(new File("../VERSION")),
   resolvers ++= Seq(
     Resolver.sonatypeRepo("snapshots"),
@@ -36,27 +37,28 @@ lazy val commonSettings = Seq(
   ),
   Compile / packageBin / artifact := {
     val prev: Artifact = (Compile / packageBin / artifact).value
-    prev.withClassifier(
-        prev.classifier match {
-          case None => {
-            val splitVer = sparkVer.value.split('.')
-            val major = splitVer(0).toInt
-            val minor = splitVer(1).toInt
-            if (major >=3 && minor >= 2) Some("spark32") else None
-          }
-          case Some(s: String) => Some(s)
-        }
-    )
+    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
+  },
+  Compile / packageDoc / artifact := {
+    val prev: Artifact = (Compile / packageDoc / artifact).value
+    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
+  },
+  Compile / packageSrc / artifact := {
+    val prev: Artifact = (Compile / packageSrc / artifact).value
+    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
+  },
+  makePom / artifact := {
+    val prev: Artifact = (makePom / artifact).value
+    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
   },
 )
 
 lazy val compat = project.settings(commonSettings)
-lazy val root = (project in file("."))
-  .dependsOn(compat)
-  .settings(
-    name := "sarplus",
-    commonSettings,
-  )
+lazy val root = (project in file(".")).dependsOn(compat % "compile-internal").settings(
+  commonSettings,
+  Compile / packageBin / mappings ++= (compat / Compile / packageBin / mappings).value,
+  Compile / packageSrc / mappings ++= (compat / Compile / packageSrc / mappings).value,
+)
 
 
 // POM metadata configuration.  See https://www.scala-sbt.org/release/docs/Using-Sonatype.html
