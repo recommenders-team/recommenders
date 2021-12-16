@@ -7,6 +7,8 @@ import tensorflow as tf
 import logging
 import time as tm
 
+from tensorflow.python import tf2
+
 
 tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
@@ -183,9 +185,17 @@ class RBM:
         )  # normalize and convert to tensor
 
         samp = tf.nn.relu(tf.sign(pr - f))  # apply rejection method
-        v_samp = tf.cast(
-            tf.argmax(input=samp, axis=2) + 1, "float32"
+        # v_samp = tf.cast(
+        #     tf.argmax(input=samp, axis=2) + 1, "float32"
+        # )  # select sampled element
+        v_argmax = tf.cast(
+            tf.argmax(input=samp, axis=2), "int32"
         )  # select sampled element
+        # print("v_argmax ", v_argmax)
+
+        v_samp = tf.cast(
+            self.ratings_lookup_table.lookup(v_argmax), "float32"
+        )
 
         return v_samp
 
@@ -202,14 +212,20 @@ class RBM:
 
         """
 
+        # print("phi shape ", phi.shape) # phi shape  (None, 1682)
+        # numerator = [
+        #     tf.exp(tf.multiply(tf.constant(k, dtype="float32"), phi))
+        #     for k in range(1, self.ratings + 1)
+        # ]
         numerator = [
             tf.exp(tf.multiply(tf.constant(k, dtype="float32"), phi))
-            for k in range(1, self.ratings + 1)
+            for k in self.possible_ratings
         ]
 
         denominator = tf.reduce_sum(input_tensor=numerator, axis=0)
 
         prob = tf.compat.v1.div(numerator, denominator)
+        # print("prob shape ", prob.shape) # prob shape  (5, None, 1682)
 
         return tf.transpose(a=prob, perm=[1, 2, 0])
 
@@ -640,6 +656,8 @@ class RBM:
             feed_dict={self.vu: xtr, self.batch_size: self.minibatch},
         )
 
+        self.sess.run(tf.compat.v1.tables_initializer())
+
     def batch_training(self, num_minibatches):
         """Perform training over input minibatches. If `self.with_metrics` is False,
         no online metrics are evaluated.
@@ -701,6 +719,17 @@ class RBM:
         tf.compat.v1.reset_default_graph()
 
         # ----------------------Initializers-------------------------------------
+        
+        self.possible_ratings = np.sort(np.setdiff1d(np.unique(xtr), np.array([0])))
+        print(list(range(len(self.possible_ratings))))
+        print(list(self.possible_ratings))
+        self.ratings_lookup_table = tf.lookup.StaticHashTable(
+                tf.lookup.KeyValueTensorInitializer(
+                    tf.constant(list(range(len(self.possible_ratings))), dtype=tf.int32),
+                    tf.constant(list(self.possible_ratings), dtype=tf.float32),
+                ), default_value=0
+        )
+
         self.generate_graph()
         self.init_metrics()
         self.init_gpu()
