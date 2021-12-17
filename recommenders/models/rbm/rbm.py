@@ -554,7 +554,7 @@ class RBM:
 
             self.sess.run(
                 self.iter.initializer,
-                feed_dict={self.vu: xtst, self.batch_size: xtst.shape[0]},
+                feed_dict={self.vu: xtst, self.batch_size: self.minibatch},
             )
 
             precision_test = self.sess.run(self.Clacc)
@@ -618,7 +618,7 @@ class RBM:
         """Config GPU memory"""
 
         self.config_gpu = tf.compat.v1.ConfigProto(
-            log_device_placement=True, allow_soft_placement=True
+            log_device_placement=False, allow_soft_placement=True
         )
         self.config_gpu.gpu_options.allow_growth = True  # dynamic memory allocation
 
