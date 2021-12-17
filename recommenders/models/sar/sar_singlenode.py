@@ -204,7 +204,7 @@ class SARSingleNode:
 
     def fit(self, df):
         """Main fit method for SAR.
-        
+
         .. note::
 
         Please make sure that `df` has no duplicates.
@@ -212,7 +212,6 @@ class SARSingleNode:
         Args:
             df (pandas.DataFrame): User item rating dataframe (without duplicates).
         """
-
         # generate continuous indices if this hasn't been done
         if self.index2item is None:
             self.set_index(df)
