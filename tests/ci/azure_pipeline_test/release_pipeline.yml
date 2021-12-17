@@ -103,7 +103,7 @@ jobs:
     - smoke
     - integration
     task_name: "Test - Nightly Linux GPU"
-    timeout: 240
+    timeout: 360
     conda_env: "release_nightly_linux_gpu"
     conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
     pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
