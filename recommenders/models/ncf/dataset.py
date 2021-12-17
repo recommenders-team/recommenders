@@ -1,7 +1,18 @@
+# Read from disk, sample in memory, scan dataset with ordereddict of users and file locations
+# Original code samples training examples WITH REPLACEMENT (because it samples repetitively for each positive example). However in paper it samples without replacement,
+# 4 negative examples for each positive example. For training samples, the original code samples 100 negatives for each positive example which corresponds to the paper (although the paper
+# only has one positive example for each user in the test set)
+# Somehow original code can generate predictions for test items that did not appear in training set. It does this because embeddings are created for all items across both training and test. All users appear in both sets so it is unclear whether the same is try for users.
+# Original code can sample from items that only appear in test set when generating negative samples in training. This could be seen as unrealistic as it does not match a real world situation
+# where the test set is completely unseen.
+
+from collections import OrderedDict
 import random
 import numpy as np
 import pandas as pd
 import warnings
+import math
+import csv
 
 from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
@@ -16,8 +27,6 @@ class Dataset(object):
 
     def __init__(
         self,
-        train,
-        test=None,
         n_neg=4,
         n_neg_test=100,
         col_user=DEFAULT_USER_COL,
@@ -26,9 +35,13 @@ class Dataset(object):
         col_timestamp=DEFAULT_TIMESTAMP_COL,
         binary=True,
         seed=None,
+        train_file=None,
+        test_file=None,
+        write_test_file=False,
+        sample_with_replacement = False,
+        print_warnings=True
     ):
         """Constructor
-
         Args:
             train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
             test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating). test can be None,
@@ -41,11 +54,7 @@ class Dataset(object):
             col_timestamp (str): Timestamp column name.
             binary (bool): If true, set rating > 0 to rating = 1.
             seed (int): Seed.
-
         """
-        # initialize user and item index
-        self.user_idx = None
-        self.item_idx = None
         # set negative sampling for training and test
         self.n_neg = n_neg
         self.n_neg_test = n_neg_test
@@ -54,268 +63,281 @@ class Dataset(object):
         self.col_item = col_item
         self.col_rating = col_rating
         self.col_timestamp = col_timestamp
+        self.binary = binary
+        self.train_file = train_file
+        self.test_file = test_file
+        self.write_test_file = write_test_file
+        self.sample_with_replacement = sample_with_replacement
+        self.print_warnings = print_warnings
+        
+        self._sample = self._sample_negatives_with_replacement if self.sample_with_replacement else self._sample_negatives_without_replacement
+
         # data preprocessing for training and test data
-        self.train, self.test = self._data_processing(train, test, binary)
-        # initialize negative sampling for training and test data
-        self._init_train_data()
-        self._init_test_data()
+        self.train_user_pool, self.train_item_pool, self.train_len, self.user2id, self.item2id = self._process_dataset(self.train_file)
+        
+        self.n_users = len(self.train_user_pool)
+        self.n_items = len(self.train_item_pool)
+            
+        if test_file:
+            if self.write_test_file:
+                self.test_file_full = os.path.splitext(self.test_file)[0] + "_full.csv"
+            self.test_user_pool, self._test_item_pool, self.test_len, _, _ = self._process_dataset(self.test_file)
+            self._create_test_set()
+            
+        self.id2item = {self.item2id[k]: k for k in self.item2id}
+        self.id2user = {self.user2id[k]: k for k in self.user2id}
+        
         # set random seed
         random.seed(seed)
+    
+    def _extract_row_data(self, row):
+        user = int(row[self.col_user])
+        item = int(row[self.col_item])
+        rating = float(row[self.col_rating])
+        if self.binary:
+            rating = float(rating > 0)
+        surplus_data = {k:v for k, v in row.items() if k not in [self.col_user, self.col_item, self.col_rating]}
+        return user, item, rating, surplus_data
+    
+    def _process_dataset(self, filename):
+                
+        with open(filename, 'r', encoding='UTF8') as f:
+            
+            reader = csv.DictReader(f)
+            
+            missing_fields = set([self.col_user, self.col_item, self.col_rating]).difference(set(reader.fieldnames))
+            if len(missing_fields):
+                raise ValueError("Columns {} not in file header".format(missing_fields))
+            
+            row = next(reader, None)
+            if not row:
+                raise("File {} is empty".format(filename))
+            user, item, rating, _ = self._extract_row_data(row)
+            current_user = user
+            current_user_items = []
+            user_line_start = reader.line_num # starts at 2
+            user_pool = OrderedDict()
+            item_pool = [item]
+            item2id, user2id = {item: 0}, {user: 0}
+            
+            while row:
+                row = next(reader, None)
+                if row:
+                    user, item, rating, _ = self._extract_row_data(row)
+                
+                    if item not in item_pool:
+                        item_pool.append(item)
+                        item2id[item] = len(item2id)
 
-    def _data_processing(self, train, test, binary):
-        """Process the dataset to reindex userID and itemID, also set rating as binary feedback
+                    current_user_items.append(item)
+                
+                if (user != current_user) or not row:
+                    user_line_end = reader.line_num - 1
+                    
+                    # if last line of file
+                    if not row:
+                        current_user = user
+                        user_line_end = reader.line_num
+                        
+                    if current_user in user_pool:
+                        raise ValueError("DataFrame is not sorted by user")
 
-        Args:
-            train (pandas.DataFrame): Training data with at least columns (col_user, col_item, col_rating).
-            test (pandas.DataFrame): Test data with at least columns (col_user, col_item, col_rating)
-                    test can be None, if so, we only process the training data.
-            binary (bool): If true, set rating>0 to rating = 1.
+                    user_info = {
+                        'user_line_start': user_line_start, 'user_line_end': user_line_end
+                    }
+                    user_pool[current_user] = user_info
+                    user2id[current_user] = len(user2id)
+                    
+                    current_user = user
+                    current_user_items = []
+                    user_line_start = reader.line_num
+                    
+            data_len = reader.line_num - 1
+    
+        return user_pool, item_pool, data_len, user2id, item2id
+    
+    def _sample_negatives_with_replacement(self, user_negatives, n_samples):
+        return random.choices(user_negatives, k=n_samples)
+    
+    def _sample_negatives_without_replacement(self, user_negatives, n_samples):
+        n_neg = min(n_samples, len(user_negatives))
+        return random.sample(user_negatives, k=n_neg)
 
-        Returns:
-            list: train and test pandas.DataFrame Dataset, which have been reindexed.
+    def _sample_negatives(self, user_positive_items, n_samples):
+        user_negatives = list(set(self.train_item_pool) - user_positive_items)
+        return self._sample(user_negatives, n_samples)
+    
+    def _get_negative_examples(self, user, user_positive_items, n_samples):
+        user_negative_samples = self._sample_negatives(user_positive_items, n_samples)
+        return pd.DataFrame({
+            self.col_user: [user] * len(user_negative_samples),
+            self.col_item: user_negative_samples,
+            self.col_rating: [0.0] * len(user_negative_samples)
+        })
 
-        """
-        # If testing dataset is None
-        df = train if test is None else train.append(test)
+    def _load_user_data(self, user_line_indices, reader):
+        user_line_start, user_line_end = user_line_indices["user_line_start"], user_line_indices["user_line_end"]
+        user_records = []
+        while reader.line_num < user_line_end:
+            row = next(reader)
+            if reader.line_num >= user_line_start:
+                user, item, rating, _ = self._extract_row_data(row)
+                user_records.append({self.col_user: user, self.col_item: item, self.col_rating: rating})
+            
+        return pd.DataFrame.from_records(user_records)
+    
+    def _create_test_set(self):
+    
+        if self.write_test_file:
+            pd.DataFrame(
+                columns=[self.col_user, self.col_item, self.col_rating, "batch"]
+            ).to_csv(self.test_file_full, index=False)
+        else:
+            user_test_dfs = []
+            
+        batch_idx = 0
 
-        # Reindex user and item index
-        if self.user_idx is None:
-            # Map user id
-            user_idx = df[[self.col_user]].drop_duplicates().reindex()
-            user_idx[self.col_user + "_idx"] = np.arange(len(user_idx))
-            self.n_users = len(user_idx)
-            self.user_idx = user_idx
+        with open(self.train_file, 'r', encoding='UTF8') as train_f:
+            with open(self.test_file, 'r', encoding='UTF8') as test_f:
+                train_reader, test_reader = csv.DictReader(train_f), csv.DictReader(test_f) 
 
-            self.user2id = dict(
-                zip(user_idx[self.col_user], user_idx[self.col_user + "_idx"])
-            )
-            self.id2user = {self.user2id[k]: k for k in self.user2id}
+                for user in self.test_user_pool.keys():
+                    if user in self.train_user_pool:
+                        user_test_data = self._load_user_data(self.test_user_pool[user], test_reader)
+                        user_train_data = self._load_user_data(self.train_user_pool[user], train_reader)
+                        user_positive_items = set(
+                            user_test_data[self.col_item].unique()).union(user_train_data[self.col_item].unique()
+                        )
+                        n_samples = self.n_neg_test
+                        if self.print_warnings and not self.sample_with_replacement:
+                            max_n_neg_test = self.n_items - len(user_positive_items)
+                            if n_samples > max_n_neg_test:
+                                warnings.warn("The population of negative items to sample from is too small for user {}. \
+    The number of negative samples in the test set will not be equal for all users. Set n_neg_test to a maximum of {} \
+    or sample with replacement if an equal number of negative samples for each user is required. \
+    This warning can be turned off by setting print_warnings=False".format(user, max_n_neg_test)
+                                )
+                        user_examples_dfs = []
+                        for positive_example in np.array_split(user_test_data, user_test_data.shape[0]):
+                            negative_examples = self._get_negative_examples(user, user_positive_items, n_samples)
+                            examples = pd.concat([positive_example, negative_examples])
+                            examples["batch"] = batch_idx
+                            user_examples_dfs.append(examples)
+                            batch_idx += 1
+                            
+                        user_examples = pd.concat(user_examples_dfs)
+                        
+                        if self.write_test_file:
+                            user_examples.to_csv(self.test_file_full, mode='a', index=False, header=False)
+                        else:
+                            user_test_dfs.append(user_examples)
+                if not self.write_test_file:
+                    self.test_set_full = pd.concat(user_test_dfs).reset_index(drop=True)
+    
+    def _split_into_batches(self, shuffle_buffer, batch_size):
+        for i in range(0, len(shuffle_buffer), batch_size): 
+            yield shuffle_buffer[i:i + batch_size]
 
-        if self.item_idx is None:
-            # Map item id
-            item_idx = df[[self.col_item]].drop_duplicates()
-            item_idx[self.col_item + "_idx"] = np.arange(len(item_idx))
-            self.n_items = len(item_idx)
-            self.item_idx = item_idx
-
-            self.item2id = dict(
-                zip(item_idx[self.col_item], item_idx[self.col_item + "_idx"])
-            )
-            self.id2item = {self.item2id[k]: k for k in self.item2id}
-
-        return self._reindex(train, binary), self._reindex(test, binary)
-
-    def _reindex(self, df, binary):
-        """Process dataset to reindex userID and itemID, also set rating as binary feedback
-
-        Args:
-            df (pandas.DataFrame): dataframe with at least columns (col_user, col_item, col_rating)
-            binary (bool): if true, set rating>0 to rating = 1
-
-        Returns:
-            list: train and test pandas.DataFrame Dataset, which have been reindexed.
-
-        """
-
-        # If testing dataset is None
-        if df is None:
-            return None
-
-        # Map user_idx and item_idx
-        df = pd.merge(df, self.user_idx, on=self.col_user, how="left")
-        df = pd.merge(df, self.item_idx, on=self.col_item, how="left")
-
-        # If binary feedback, set rating as 1.0 or 0.0
-        if binary:
-            df[self.col_rating] = df[self.col_rating].apply(lambda x: float(x > 0))
-
-        # Select relevant columns
-        df_reindex = df[
-            [self.col_user + "_idx", self.col_item + "_idx", self.col_rating]
+    def _prepare_batch_with_id(self, batch):
+        return [
+            [self.user2id[user] for user in batch[self.col_user].values],
+            [self.item2id[item] for item in batch[self.col_item].values],
+            batch[self.col_rating].values
         ]
-        df_reindex.columns = [self.col_user, self.col_item, self.col_rating]
+    
+    def _prepare_batch_without_id(self, batch):
+        return [
+            batch[self.col_user].values.tolist(),
+            batch[self.col_item].values.tolist(),
+            batch[self.col_rating].values.tolist()
+        ]
 
-        return df_reindex
-
-    def _init_train_data(self):
-        """Return all negative items (in train dataset) and store them in self.interact_status[self.col_item + '_negative']
-        store train dataset in self.users, self.items and self.ratings
-
-        """
-
-        self.item_pool = set(self.train[self.col_item].unique())
-        self.interact_status = (
-            self.train.groupby(self.col_user)[self.col_item]
-            .apply(set)
-            .reset_index()
-            .rename(columns={self.col_item: self.col_item + "_interacted"})
-        )
-        self.interact_status[self.col_item + "_negative"] = self.interact_status[
-            self.col_item + "_interacted"
-        ].apply(lambda x: self.item_pool - x)
-
-        self.users, self.items, self.ratings = [], [], []
-
-        # sample n_neg negative samples for training
-        for row in self.train.itertuples():
-            self.users.append(int(getattr(row, self.col_user)))
-            self.items.append(int(getattr(row, self.col_item)))
-            self.ratings.append(float(getattr(row, self.col_rating)))
-
-        self.users = np.array(self.users)
-        self.items = np.array(self.items)
-        self.ratings = np.array(self.ratings)
-
-    def _init_test_data(self):
-        """Initialize self.test using 'leave-one-out' evaluation protocol in
-        paper https://www.comp.nus.edu.sg/~xiangnan/papers/ncf.pdf
-        """
-        if self.test is not None:
-            # get test positive set for every user
-            test_interact_status = (
-                self.test.groupby(self.col_user)[self.col_item]
-                .apply(set)
-                .reset_index()
-                .rename(columns={self.col_item: self.col_item + "_interacted_test"})
-            )
-
-            # get negative pools for every user based on training and test interactions
-            test_interact_status = pd.merge(
-                test_interact_status, self.interact_status, on=self.col_user, how="left"
-            )
-            test_interact_status[
-                self.col_item + "_negative"
-            ] = test_interact_status.apply(
-                lambda row: row[self.col_item + "_negative"]
-                - row[self.col_item + "_interacted_test"],
-                axis=1,
-            )
-            test_ratings = pd.merge(
-                self.test,
-                test_interact_status[[self.col_user, self.col_item + "_negative"]],
-                on=self.col_user,
-                how="left",
-            )
-
-            # sample n_neg_test negative samples for testing
-            try:
-                test_ratings[self.col_item + "_negative"] = test_ratings[
-                    self.col_item + "_negative"
-                ].apply(lambda x: random.sample(x, self.n_neg_test))
-
-            except Exception:
-                min_num = min(map(len, list(test_ratings[self.col_item + "_negative"])))
-                warnings.warn(
-                    "n_neg_test is larger than negative items set size! We will set n_neg as the smallest size: %d"
-                    % min_num
+    def _release_shuffle_buffer(self, shuffle_buffer, batch_size, yield_id, write_to = None):
+        prepare_batch = self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
+        shuffle_buffer_df = pd.concat(shuffle_buffer)
+        shuffle_buffer_df = shuffle_buffer_df.sample(shuffle_buffer_df.shape[0])
+        for batch in self._split_into_batches(shuffle_buffer_df, batch_size):
+            if batch.shape[0] == batch_size:
+                if write_to:
+                    batch.to_csv(write_to, mode='a', header=False, index=False)
+                yield prepare_batch(batch)
+            else:
+                return batch
+            
+    def train_loader(self, batch_size, shuffle_size=None, yield_id=True, write_to=False):
+        
+        if shuffle_size is None:
+            shuffle_size = (self.train_len * (self.n_neg + 1))
+        
+        if write_to:
+            pd.DataFrame(columns=[self.col_user, self.col_item, self.col_rating]).to_csv(write_to, header=True, index=False)
+        
+        shuffle_buffer = []
+        
+        with open(self.train_file, 'r', encoding='UTF8') as f:
+            reader = csv.DictReader(f)
+            for user, file_indices in self.train_user_pool.items():
+                user_positive_examples = self._load_user_data(file_indices, reader)
+                user_positive_items = set(user_positive_examples[self.col_item].unique())
+                n_samples = self.n_neg * user_positive_examples.shape[0]
+                if self.print_warnings and not self.sample_with_replacement:
+                    negative_sample_pool_size = self.n_items - len(user_positive_examples)
+                    if n_samples > negative_sample_pool_size:
+                        max_n_neg = negative_sample_pool_size // user_positive_examples.shape[0]
+                        warnings.warn("The population of negative items to sample from is too small for user {}. \
+The ratio of positive to negative samples in the train set will not be equal for all users. Set n_neg to a maximum of {} \
+or sample with replacement if an equal ratio for each user is required. \
+This warning can be turned off by setting print_warnings=False".format(user, max_n_neg)
+                                )
+                user_negative_examples = self._get_negative_examples(user, user_positive_items, n_samples)
+                user_examples = pd.concat([user_positive_examples, user_negative_examples])
+                shuffle_buffer.append(user_examples)
+                shuffle_buffer_len = sum([df.shape[0] for df in shuffle_buffer])
+                if (shuffle_buffer_len >= shuffle_size):
+                    buffer_remainder = yield from self._release_shuffle_buffer(shuffle_buffer, batch_size, yield_id, write_to)
+                    shuffle_buffer = [buffer_remainder] if buffer_remainder is not None else []
+            
+            # yield remaining buffer
+            yield from self._release_shuffle_buffer(shuffle_buffer, batch_size, yield_id, write_to)
+                    
+    def test_loader(self, yield_id=True):
+        prepare_batch = self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
+        if not self.write_test_file:
+            for i, batch in self.test_set_full.groupby("batch"):
+                yield prepare_batch(batch)
+            
+        else:
+            
+            with open(self.test_file_full, 'r', encoding='UTF8') as f:
+                reader = csv.DictReader(f)
+                batch_users, batch_items, batch_ratings = [], [], []
+                batch_idx = 0
+                for row in reader:
+                    user, item, rating, surplus_data = self._extract_row_data(row)
+                    row_batch = int(surplus_data["batch"])
+                    if row_batch != batch_idx:
+                        yield prepare_batch(
+                            pd.DataFrame(
+                                    {
+                                        self.col_user: batch_users,
+                                        self.col_item: batch_items,
+                                        self.col_rating: batch_ratings
+                                    }
+                            )
+                        )
+                        batch_users, batch_items, batch_ratings = [], [], []
+                        batch_idx += 1
+                    batch_users.append(user)
+                    batch_items.append(item)
+                    batch_ratings.append(rating)
+                
+                # yield final batch
+                yield prepare_batch(
+                    pd.DataFrame(
+                            {
+                                self.col_user: batch_users,
+                                self.col_item: batch_items,
+                                self.col_rating: batch_ratings
+                            }
+                    )
                 )
-                test_ratings[self.col_item + "_negative"] = test_ratings[
-                    self.col_item + "_negative"
-                ].apply(lambda x: random.sample(x, min_num))
-
-            self.test_data = []
-
-            # generate test data
-            for row in test_ratings.itertuples():
-                self.test_users, self.test_items, self.test_ratings = [], [], []
-
-                self.test_users.append(int(getattr(row, self.col_user)))
-                self.test_items.append(int(getattr(row, self.col_item)))
-                self.test_ratings.append(float(getattr(row, self.col_rating)))
-
-                for i in getattr(row, self.col_item + "_negative"):
-                    self.test_users.append(int(getattr(row, self.col_user)))
-                    self.test_items.append(int(i))
-                    self.test_ratings.append(float(0))
-
-                self.test_data.append(
-                    [
-                        [self.id2user[x] for x in self.test_users],
-                        [self.id2item[x] for x in self.test_items],
-                        self.test_ratings,
-                    ]
-                )
-
-    def negative_sampling(self):
-        """Sample n_neg negative items per positive item, this function should be called every epoch."""
-        self.users, self.items, self.ratings = [], [], []
-
-        # sample n_neg negative samples for training
-        train_ratings = pd.merge(
-            self.train,
-            self.interact_status[[self.col_user, self.col_item + "_negative"]],
-            on=self.col_user,
-        )
-
-        try:
-            train_ratings[self.col_item + "_negative"] = train_ratings[
-                self.col_item + "_negative"
-            ].apply(lambda x: random.sample(x, self.n_neg))
-        except Exception:
-            min_num = min(map(len, list(train_ratings[self.col_item + "_negative"])))
-            warnings.warn(
-                "n_neg is larger than negative items set size! We will set n_neg as the smallest size: %d"
-                % min_num
-            )
-            train_ratings[self.col_item + "_negative"] = train_ratings[
-                self.col_item + "_negative"
-            ].apply(lambda x: random.sample(x, min_num))
-
-        # generate training data
-        for row in train_ratings.itertuples():
-            self.users.append(int(getattr(row, self.col_user)))
-            self.items.append(int(getattr(row, self.col_item)))
-            self.ratings.append(float(getattr(row, self.col_rating)))
-            for i in getattr(row, self.col_item + "_negative"):
-                self.users.append(int(getattr(row, self.col_user)))
-                self.items.append(int(i))
-                self.ratings.append(float(0))
-
-        self.users = np.array(self.users)
-        self.items = np.array(self.items)
-        self.ratings = np.array(self.ratings)
-
-    def train_loader(self, batch_size, shuffle=True):
-        """Feed train data every batch.
-
-        Args:
-            batch_size (int): Batch size.
-            shuffle (bool): Ff true, train data will be shuffled.
-
-        Yields:
-            list: A list of userID list, itemID list, and rating list. Public data loader returns the userID, itemID consistent with raw data.
-        """
-        # yield batch of training data with `shuffle`
-        indices = np.arange(len(self.users))
-        if shuffle:
-            random.shuffle(indices)
-        for i in range(len(indices) // batch_size):
-            begin_idx = i * batch_size
-            end_idx = (i + 1) * batch_size
-            batch_indices = indices[begin_idx:end_idx]
-
-            # train_loader() could be called and used by our users in other situations,
-            # who expect the not re-indexed data. So we convert id --> original user and item
-            # when returning batch
-            yield [
-                [self.id2user[x] for x in self.users[batch_indices]],
-                [self.id2item[x] for x in self.items[batch_indices]],
-                self.ratings[batch_indices],
-            ]
-
-    def test_loader(self):
-        """Feed leave-one-out data every user
-
-        Generate test batch by every positive test instance,
-        (eg. [1, 2, 1] is a positive user & item pair in test set
-        ([userID, itemID, rating] for this tuple). This function
-        returns like [[1, 2, 1], [1, 3, 0], [1,6, 0], ...],
-        ie. following our *leave-one-out* evaluation protocol.
-
-        Returns:
-            list: userID list, itemID list, rating list.
-            public data loader return the userID, itemID consistent with raw data
-            the first (userID, itemID, rating) is the positive one
-        """
-        for test in self.test_data:
-            yield test
