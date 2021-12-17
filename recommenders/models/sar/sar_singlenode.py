@@ -204,9 +204,13 @@ class SARSingleNode:
 
     def fit(self, df):
         """Main fit method for SAR.
+        
+        .. note::
+
+        Please make sure that `df` has no duplicates.
 
         Args:
-            df (pandas.DataFrame): User item rating dataframe
+            df (pandas.DataFrame): User item rating dataframe (without duplicates).
         """
 
         # generate continuous indices if this hasn't been done
@@ -226,12 +230,6 @@ class SARSingleNode:
         if self.time_decay_flag:
             logger.info("Calculating time-decayed affinities")
             temp_df = self.compute_time_decay(df=temp_df, decay_column=self.col_rating)
-        else:
-            # without time decay use the latest user-item rating in the dataset as the affinity score
-            logger.info("De-duplicating the user-item counts")
-            temp_df = temp_df.drop_duplicates(
-                [self.col_user, self.col_item], keep="last"
-            )
 
         logger.info("Creating index columns")
         # add mapping of user and item ids to indices
