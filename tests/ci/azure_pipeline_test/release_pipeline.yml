@@ -23,7 +23,7 @@ jobs:
     task_name: "Test - Unit Linux CPU"
     conda_env: "release_unit_linux_cpu"
     conda_opts: "python=3.6"
-    pip_opts: "[experimental] --no-cache --no-binary scikit-surprise"
+    pip_opts: "[experimental,dev] --no-cache --no-binary scikit-surprise"
     pytest_markers: "not notebooks and not spark and not gpu"
     install: "release"
     package: "publish" 
@@ -35,7 +35,7 @@ jobs:
     task_name: "Test - Unit Notebook Linux CPU"
     conda_env: "release_unit_notebook_linux_cpu"
     conda_opts: "python=3.6"
-    pip_opts: "[experimental,examples] --no-cache --no-binary scikit-surprise"
+    pip_opts: "[experimental,examples,dev] --no-cache --no-binary scikit-surprise"
     pytest_markers: "notebooks and not spark and not gpu"
     install: "release"
 
@@ -46,7 +46,7 @@ jobs:
     task_name: "Test - Unit Linux GPU"
     conda_env: "release_unit_linux_gpu"
     conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
-    pip_opts: "[gpu] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
+    pip_opts: "[gpu,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "not notebooks and not spark and gpu"
     install: "release"
 
@@ -57,7 +57,7 @@ jobs:
     task_name: "Test - Unit Notebook Linux GPU"
     conda_env: "release_unit_notebook_linux_gpu"
     conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
-    pip_opts: "[gpu,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
+    pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "notebooks and not spark and gpu"
     install: "release"
 
@@ -68,7 +68,7 @@ jobs:
     task_name: "Test - Unit Linux Spark"
     conda_env: "release_unit_linux_spark"
     conda_opts: "python=3.6"
-    pip_opts: "[spark]"
+    pip_opts: "[spark,dev]"
     pytest_markers: "not notebooks and spark and not gpu"
     install: "release"
 
@@ -79,7 +79,7 @@ jobs:
     task_name: "Test - Unit Notebook Linux Spark"
     conda_env: "release_unit_notebook_linux_spark"
     conda_opts: "python=3.6"
-    pip_opts: "[spark,examples]"
+    pip_opts: "[spark,examples,dev]"
     pytest_markers: "notebooks and spark and not gpu"
     install: "release"
 
@@ -93,7 +93,7 @@ jobs:
     timeout: 180 
     conda_env: "release_nightly_linux_cpu"
     conda_opts: "python=3.6"
-    pip_opts: "[experimental,examples] --no-cache --no-binary scikit-surprise"
+    pip_opts: "[experimental,examples,dev] --no-cache --no-binary scikit-surprise"
     pytest_markers: "not spark and not gpu"
     install: "release"
 
@@ -106,7 +106,7 @@ jobs:
     timeout: 240
     conda_env: "release_nightly_linux_gpu"
     conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
-    pip_opts: "[gpu,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
+    pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "not spark and gpu"
     install: "release"
 
@@ -119,7 +119,7 @@ jobs:
     timeout: 180
     conda_env: "release_nightly_linux_spark"
     conda_opts: "python=3.6"
-    pip_opts: "[spark,examples]"
+    pip_opts: "[spark,examples,dev]"
     pytest_markers: "spark and not gpu"
     install: "release"
 
