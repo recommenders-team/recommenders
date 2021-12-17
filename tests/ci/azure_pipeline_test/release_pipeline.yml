@@ -45,7 +45,7 @@ jobs:
     - unit
     task_name: "Test - Unit Linux GPU"
     conda_env: "release_unit_linux_gpu"
-    conda_opts: "python=3.6 -c conda-forge cudatoolkit=11.2 cudnn=8.1"
+    conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
     pip_opts: "[gpu] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "not notebooks and not spark and gpu"
     install: "release"
@@ -56,7 +56,7 @@ jobs:
     - unit
     task_name: "Test - Unit Notebook Linux GPU"
     conda_env: "release_unit_notebook_linux_gpu"
-    conda_opts: "python=3.6 -c conda-forge cudatoolkit=11.2 cudnn=8.1"
+    conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
     pip_opts: "[gpu,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "notebooks and not spark and gpu"
     install: "release"
@@ -105,7 +105,7 @@ jobs:
     task_name: "Test - Nightly Linux GPU"
     timeout: 240
     conda_env: "release_nightly_linux_gpu"
-    conda_opts: "python=3.6 -c conda-forge cudatoolkit=11.2 cudnn=8.1"
+    conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
     pip_opts: "[gpu,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "not spark and gpu"
     install: "release"
