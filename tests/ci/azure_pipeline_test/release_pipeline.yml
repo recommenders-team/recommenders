@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 # Pull request against these branches will trigger this build
-pr:
-  - release/hotfix
+pr: none
 
 # A new tag will trigger the build
 trigger:
+  - release/hotfix
   tags:
     include:
     - 0.*
