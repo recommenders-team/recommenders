@@ -72,6 +72,7 @@ jobs:
     pip_opts: "[spark,dev]"
     pytest_markers: "not notebooks and spark and not gpu"
     install: "release"
+    package: "publish"
 
 # - template: dsvm_linux_template.yml
 #   parameters:
