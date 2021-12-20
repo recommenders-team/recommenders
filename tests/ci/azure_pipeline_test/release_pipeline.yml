@@ -6,61 +6,60 @@ pr: none
 
 # A new tag will trigger the build
 trigger:
-  - release/hotfix
-  # tags:
-  #   include:
-  #   - 0.*
-  #   - 1.*
+  tags:
+    include:
+    - 0.*
+    - 1.*
 
 variables:
 - group: LinuxAgentPool
 
 jobs:
 # ====== Unit tests ======
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Linux CPU"
-#     conda_env: "release_unit_linux_cpu"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[experimental,dev] --no-cache --no-binary scikit-surprise"
-#     pytest_markers: "not notebooks and not spark and not gpu"
-#     install: "release"
-#     package: "publish" 
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux CPU"
+    conda_env: "release_unit_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: "[experimental,dev] --no-cache --no-binary scikit-surprise"
+    pytest_markers: "not notebooks and not spark and not gpu"
+    install: "release"
+    package: "publish" 
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Notebook Linux CPU"
-#     conda_env: "release_unit_notebook_linux_cpu"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[experimental,examples,dev] --no-cache --no-binary scikit-surprise"
-#     pytest_markers: "notebooks and not spark and not gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux CPU"
+    conda_env: "release_unit_notebook_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: "[experimental,examples,dev] --no-cache --no-binary scikit-surprise"
+    pytest_markers: "notebooks and not spark and not gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Linux GPU"
-#     conda_env: "release_unit_linux_gpu"
-#     conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
-#     pip_opts: "[gpu,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
-#     pytest_markers: "not notebooks and not spark and gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Linux GPU"
+    conda_env: "release_unit_linux_gpu"
+    conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
+    pip_opts: "[gpu,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
+    pytest_markers: "not notebooks and not spark and gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Notebook Linux GPU"
-#     conda_env: "release_unit_notebook_linux_gpu"
-#     conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
-#     pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
-#     pytest_markers: "notebooks and not spark and gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux GPU"
+    conda_env: "release_unit_notebook_linux_gpu"
+    conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
+    pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
+    pytest_markers: "notebooks and not spark and gpu"
+    install: "release"
 
 - template: dsvm_linux_template.yml
   parameters:
@@ -72,85 +71,84 @@ jobs:
     pip_opts: "[spark,dev]"
     pytest_markers: "not notebooks and spark and not gpu"
     install: "release"
-    package: "publish"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - unit
-#     task_name: "Test - Unit Notebook Linux Spark"
-#     conda_env: "release_unit_notebook_linux_spark"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[spark,examples,dev]"
-#     pytest_markers: "notebooks and spark and not gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - unit
+    task_name: "Test - Unit Notebook Linux Spark"
+    conda_env: "release_unit_notebook_linux_spark"
+    conda_opts: "python=3.6"
+    pip_opts: "[spark,examples,dev]"
+    pytest_markers: "notebooks and spark and not gpu"
+    install: "release"
 
 # ====== Nightly tests ======
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - smoke
-#     - integration
-#     task_name: "Test - Nightly Linux CPU"
-#     timeout: 180 
-#     conda_env: "release_nightly_linux_cpu"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[experimental,examples,dev] --no-cache --no-binary scikit-surprise"
-#     pytest_markers: "not spark and not gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - smoke
+    - integration
+    task_name: "Test - Nightly Linux CPU"
+    timeout: 180 
+    conda_env: "release_nightly_linux_cpu"
+    conda_opts: "python=3.6"
+    pip_opts: "[experimental,examples,dev] --no-cache --no-binary scikit-surprise"
+    pytest_markers: "not spark and not gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - smoke
-#     - integration
-#     task_name: "Test - Nightly Linux GPU"
-#     timeout: 360
-#     conda_env: "release_nightly_linux_gpu"
-#     conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
-#     pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
-#     pytest_markers: "not spark and gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - smoke
+    - integration
+    task_name: "Test - Nightly Linux GPU"
+    timeout: 360
+    conda_env: "release_nightly_linux_gpu"
+    conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
+    pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
+    pytest_markers: "not spark and gpu"
+    install: "release"
 
-# - template: dsvm_linux_template.yml
-#   parameters:
-#     test_types:
-#     - smoke
-#     - integration
-#     task_name: "Test - Nightly Linux Spark"
-#     timeout: 180
-#     conda_env: "release_nightly_linux_spark"
-#     conda_opts: "python=3.6"
-#     pip_opts: "[spark,examples,dev]"
-#     pytest_markers: "spark and not gpu"
-#     install: "release"
+- template: dsvm_linux_template.yml
+  parameters:
+    test_types:
+    - smoke
+    - integration
+    task_name: "Test - Nightly Linux Spark"
+    timeout: 180
+    conda_env: "release_nightly_linux_spark"
+    conda_opts: "python=3.6"
+    pip_opts: "[spark,examples,dev]"
+    pytest_markers: "spark and not gpu"
+    install: "release"
 
 # ====== Publish release ======
 - job: Package
   pool:
     name: $(Agent_Pool)
   dependsOn:
-  # - release_unit_linux_cpu
-  # - release_unit_notebook_linux_cpu
-  # - release_unit_linux_gpu
-  # - release_unit_notebook_linux_gpu
+  - release_unit_linux_cpu
+  - release_unit_notebook_linux_cpu
+  - release_unit_linux_gpu
+  - release_unit_notebook_linux_gpu
   - release_unit_linux_spark
-  # - release_unit_notebook_linux_spark
-  # - release_nightly_linux_cpu
-  # - release_nightly_linux_gpu
-  # - release_nightly_linux_spark
+  - release_unit_notebook_linux_spark
+  - release_nightly_linux_cpu
+  - release_nightly_linux_gpu
+  - release_nightly_linux_spark
   condition: succeeded()
   steps:
   - task: DownloadPipelineArtifact@2 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/artifacts/pipeline-artifacts?view=azure-devops&tabs=yaml-task
     displayName: 'Download Artifacts from Shared Storage'
-    condition: succeeded() # and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))    
     inputs:
       artifact: PackageAssets
       path: $(Build.SourcesDirectory)/binaries
   
   - task: GitHubRelease@0 # Documentation: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/utility/github-release?view=azure-devops
     displayName: 'Create GitHub Draft Release'
-    condition: succeeded() # and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
       gitHubConnection: miguelgfierro
       repositoryName: '$(Build.Repository.Name)'
