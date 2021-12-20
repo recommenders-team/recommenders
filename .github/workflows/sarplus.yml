@@ -149,6 +149,8 @@ jobs:
           export HADOOP_VERSION="3.3.1"
           export SCALA_VERSION="2.12.14"
           sbt ++${SCALA_VERSION}! package
+          sbt ++${SCALA_VERSION}! packageDoc
+          sbt ++${SCALA_VERSION}! packageSrc
           sbt ++${SCALA_VERSION}! makePom
 
           # sign with GPG
