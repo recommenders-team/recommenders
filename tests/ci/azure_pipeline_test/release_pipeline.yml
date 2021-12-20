@@ -7,10 +7,10 @@ pr: none
 # A new tag will trigger the build
 trigger:
   - release/hotfix
-  tags:
-    include:
-    - 0.*
-    - 1.*
+  # tags:
+  #   include:
+  #   - 0.*
+  #   - 1.*
 
 variables:
 - group: LinuxAgentPool
