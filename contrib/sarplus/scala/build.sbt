@@ -5,8 +5,6 @@
 
 import Utils._
 
-name := "sarplus"
-
 // Denpendency configuration
 
 lazy val sparkVer = settingKey[String]("spark version")
@@ -35,22 +33,12 @@ lazy val commonSettings = Seq(
     "org.scalatest" %% "scalatest" % "3.0.8" % "test",
     "xerces" % "xercesImpl" % "2.12.1",
   ),
-  Compile / packageBin / artifact := {
-    val prev: Artifact = (Compile / packageBin / artifact).value
-    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
-  },
-  Compile / packageDoc / artifact := {
-    val prev: Artifact = (Compile / packageDoc / artifact).value
-    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
-  },
-  Compile / packageSrc / artifact := {
-    val prev: Artifact = (Compile / packageSrc / artifact).value
-    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
-  },
-  makePom / artifact := {
-    val prev: Artifact = (makePom / artifact).value
-    prev.withClassifier(spark32classifer(prev.classifier, sparkVer.value))
-  },
+  name := {
+    val splitVer = sparkVer.value.split('.')
+    val major = splitVer(0).toInt
+    val minor = splitVer(1).toInt
+    if (major >=3 && minor >= 2) "sarplus-spark-3.2-plus" else "sarplus"
+  }
 )
 
 lazy val compat = project.settings(commonSettings)

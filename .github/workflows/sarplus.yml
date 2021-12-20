@@ -159,7 +159,8 @@ jobs:
           for file in {*.jar,*.pom}; do gpg -ab "${file}"; done
 
           # bundle
-          jar cvf sarplus-bundle_2.12-${SARPLUS_VERSION}.jar *.jar *.pom *.asc
+          jar cvf sarplus-bundle_2.12-${SARPLUS_VERSION}.jar sarplus_*.jar sarplus_*.pom sarplus_*.asc
+          jar cvf sarplus-spark-3.2-plus-bundle_2.12-${SARPLUS_VERSION}.jar sarplus-spark*.jar sarplus-spark*.pom sarplus-spark*.asc
 
           # set sarplus_version
           echo "sarplus_version=${SARPLUS_VERSION}" >> $GITHUB_ENV
@@ -168,4 +169,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: sarplus-bundle_2.12-${{ env.sarplus_version }}
-          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/sarplus-bundle_2.12-${{ env.sarplus_version }}.jar
+          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/*bundle*.jar
