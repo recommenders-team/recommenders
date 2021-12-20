@@ -151,7 +151,7 @@ jobs:
     displayName: 'Create GitHub Draft Release'
     condition: succeeded() # and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     inputs:
-      gitHubConnection: microsoft
+      gitHubConnection: miguelgfierro
       repositoryName: '$(Build.Repository.Name)'
       action: 'create'
       target: '$(Build.SourceVersion)'
