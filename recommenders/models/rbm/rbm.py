@@ -5,7 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
-import time as tm
+from recommenders.evaluation.tf_evaluation import rmse, accuracy
+from recommenders.utils.timer import Timer
 
 
 tf.compat.v1.disable_eager_execution()
@@ -36,13 +37,13 @@ class RBM:
         https://www.cs.toronto.edu/~rsalakhu/papers/rbmcf.pdf
 
         In this implementation we use multinomial units instead of the one-hot-encoded used in
-        the paper.This means that the weights are rank 2 (matrices) instead of rank 3 tensors.
+        the paper. This means that the weights are rank 2 (matrices) instead of rank 3 tensors.
 
         Basic mechanics:
 
-        1) A computational graph is created when the RBM class is instantiated;
+        1) A computational graph is created when the RBM class is instantiated.
         For an item based recommender this consists of:
-        visible units: The number Nv of visible units equals the number of items
+        visible units: The number n_visible of visible units equals the number of items
         hidden units : hyperparameter to fix during training
 
         2) Gibbs Sampling:
@@ -53,7 +54,7 @@ class RBM:
         the visibles, is evaluated P(h=1|phi_v). The latter is then used to sample the
         value of the hidden units.
 
-        2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the rates (e.g.
+        2.3) The probability P(v=l|phi_h) is evaluated, where l=1,..,r are the ratings (e.g.
         r=5 for the movielens dataset). In general, this is a multinomial distribution,
         from which we sample the value of v.
 
@@ -71,7 +72,7 @@ class RBM:
         """
 
         # RBM parameters
-        self.Nhidden = hidden_units  # number of hidden units
+        self.n_hidden = hidden_units  # number of hidden units
         self.keep = keep_prob  # keep probability for dropout regularization
 
         # standard deviation used to initialize the weights matrices
@@ -80,8 +81,8 @@ class RBM:
         # learning rate used in the update method of the optimizer
         self.learning_rate = learning_rate
 
-        # size of the minibatch used in the random minibatches training; setting to 1 correspoNds to
-        # stochastic gradient descent, and it is considerably slower.Good performance is achieved
+        # size of the minibatch used in the random minibatches training; setting to 1 corresponds to
+        # stochastic gradient descent, and it is considerably slower. Good performance is achieved
         # for a size of ~100.
         self.minibatch = minibatch_size
         self.epochs = training_epoch + 1  # number of epochs used to train the model
@@ -99,31 +100,13 @@ class RBM:
         # if true, compute msre and accuracy during training
         self.with_metrics = with_metrics
 
-        # Initialize the start time
-        self.start_time = None
+        # Initialize timer
+        self.timer = Timer()
 
         # Seed
         self.seed = seed
         np.random.seed(self.seed)
         tf.compat.v1.set_random_seed(self.seed)
-
-    def time(self):
-        """Time a particular section of the code - call this once to set the state somewhere
-        in the code, then call it again to return the elapsed time since last call.
-        Call again to set the time and so on...
-
-        Returns:
-            float: if timer started time in seconds since the last time time function was called
-        """
-
-        if self.start_time is None:
-            self.start_time = tm.time()
-            return False
-        else:
-            answer = tm.time() - self.start_time
-            # reset state
-            self.start_time = None
-            return answer
 
     def binomial_sampling(self, pr):
         """Binomial sampling of hidden units activations using a rejection method.
@@ -242,7 +225,7 @@ class RBM:
 
     def placeholder(self):
         """Initialize the placeholders for the visible units"""
-        self.vu = tf.compat.v1.placeholder(shape=[None, self.Nvisible], dtype="float32")
+        self.vu = tf.compat.v1.placeholder(shape=[None, self.n_visible], dtype="float32")
 
     def init_parameters(self):
         """Initialize the parameters of the model.
@@ -257,14 +240,14 @@ class RBM:
         Returns:
             tf.Tensor, tf.Tensor, tf.Tensor:
             - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv.
-            - `bv` of size (1, Nvisible): visible units' bias, initialized to zero.
-            - `bh` of size (1, Nhidden): hidden units' bias, initiliazed to zero.
+            - `bv` of size (1, n_visible): visible units' bias, initialized to zero.
+            - `bh` of size (1, n_hidden): hidden units' bias, initiliazed to zero.
         """
         with tf.compat.v1.variable_scope("Network_parameters"):
 
             self.w = tf.compat.v1.get_variable(
                 "weight",
-                [self.Nvisible, self.Nhidden],
+                [self.n_visible, self.n_hidden],
                 initializer=tf.compat.v1.random_normal_initializer(
                     stddev=self.stdv, seed=self.seed
                 ),
@@ -273,14 +256,14 @@ class RBM:
 
             self.bv = tf.compat.v1.get_variable(
                 "v_bias",
-                [1, self.Nvisible],
+                [1, self.n_visible],
                 initializer=tf.compat.v1.zeros_initializer(),
                 dtype="float32",
             )
 
             self.bh = tf.compat.v1.get_variable(
                 "h_bias",
-                [1, self.Nhidden],
+                [1, self.n_hidden],
                 initializer=tf.compat.v1.zeros_initializer(),
                 dtype="float32",
             )
@@ -438,87 +421,6 @@ class RBM:
             if self.debug:
                 log.info("percentage of epochs covered so far %f2" % (epoch_percentage))
 
-    def accuracy(self, vp):
-        # flake8: noqa W695 invalid escape sequence '\s'
-        """Train/Test Mean average precision
-
-        Evaluates MAP over the train/test set in online mode. Note that this needs to be evaluated on
-        the rated items only.
-
-        :math:`acc = 1/m \sum_{mu=1}^{m} \sum{i=1}^Nv 1/s(i) I(v-vp = 0)_{mu,i}`
-
-        where `m = Nusers`, `Nv = number of items = number of visible units` and `s(i)` is the number of non-zero elements
-        per row.
-
-        Args:
-            vp (tf.Tensor, float32): Inferred output (Network prediction)
-
-        Returns:
-            tf.Tensor: accuracy.
-
-        """
-
-        with tf.compat.v1.name_scope("accuracy"):
-
-            # 1) define and apply the mask
-            mask = tf.not_equal(self.v, 0)
-            n_values = tf.reduce_sum(input_tensor=tf.cast(mask, "float32"), axis=1)
-
-            # 2) Take the difference between the input data and the inferred ones. This value is zero whenever
-            #    the two values coincides
-            vd = tf.compat.v1.where(
-                mask, x=tf.abs(tf.subtract(self.v, vp)), y=tf.ones_like(self.v)
-            )
-
-            # correct values: find the location where v = vp
-            corr = tf.cast(tf.equal(vd, 0), "float32")
-
-            # 3) evaluate the accuracy
-            ac_score = tf.reduce_mean(
-                input_tensor=tf.compat.v1.div(
-                    tf.reduce_sum(input_tensor=corr, axis=1), n_values
-                )
-            )
-
-        return ac_score
-
-    def rmse(self, vp):
-        """Root Mean Square Error
-
-        Note that this needs to be evaluated on the rated items only
-
-        Args:
-            vp (tf.Tensor, float32): Inferred output (Network prediction)
-
-        Returns:
-            tf.Tensor: root mean square error.
-
-        """
-
-        with tf.compat.v1.name_scope("re"):
-
-            mask = tf.not_equal(self.v, 0)  # selects only the rated items
-            n_values = tf.reduce_sum(
-                input_tensor=tf.cast(mask, "float32"), axis=1
-            )  # number of rated items
-
-            # evaluate the square difference between the inferred and the input data on the rated items
-            e = tf.compat.v1.where(
-                mask, x=tf.math.squared_difference(self.v, vp), y=tf.zeros_like(self.v)
-            )
-
-            # evaluate the msre
-            err = tf.sqrt(
-                tf.reduce_mean(
-                    input_tensor=tf.compat.v1.div(
-                        tf.reduce_sum(input_tensor=e, axis=1), n_values
-                    )
-                )
-                / 2
-            )
-
-        return err
-
     def data_pipeline(self):
         """Define the data pipeline"""
 
@@ -542,8 +444,8 @@ class RBM:
         """Initialize metrics"""
 
         if self.with_metrics:  # if true (default) returns evaluation metrics
-            self.Rmse = self.rmse(self.v_k)
-            self.Clacc = self.accuracy(self.v_k)
+            self.rmse = rmse(self.v, self.v_k)
+            self.accuracy = accuracy(self.v, self.v_k)
 
     def train_test_precision(self, xtst):
         """Evaluates precision on the train and test set
@@ -557,14 +459,14 @@ class RBM:
 
         if self.with_metrics:
 
-            precision_train = self.sess.run(self.Clacc)
+            precision_train = self.sess.run(self.accuracy)
 
             self.sess.run(
                 self.iter.initializer,
                 feed_dict={self.vu: xtst, self.batch_size: self.minibatch},
             )
 
-            precision_test = self.sess.run(self.Clacc)
+            precision_test = self.sess.run(self.accuracy)
 
         else:
             precision_train = None
@@ -665,7 +567,7 @@ class RBM:
         if self.with_metrics:
             # minibatch loop
             for l in range(num_minibatches):  # noqa: E741 ambiguous variable name 'l'
-                _, batch_err = self.sess.run([self.opt, self.Rmse])
+                _, batch_err = self.sess.run([self.opt, self.rmse])
                 # average msr error per minibatch
                 epoch_tr_err += batch_err / num_minibatches
 
@@ -694,17 +596,17 @@ class RBM:
         Args:
             xtr (numpy.ndarray, integers): the user/affinity matrix for the train set
             xtst (numpy.ndarray, integers): the user/affinity matrix for the test set
-
-        Returns:
-            float: elapsed time during training
         """
 
         # keep the position of the items in the train set so that they can be optionally exluded from recommendation
         self.seen_mask = np.not_equal(xtr, 0)
-        self.time()
+
+        # start the timer
+        self.timer.start()
+        
         self.ratings = xtr.max()  # obtain the rating scale, e.g. 1 to 5
 
-        m, self.Nvisible = xtr.shape  # m= # users, Nvisible= # items
+        m, self.n_visible = xtr.shape  # m= # users, n_visible= # items
         num_minibatches = int(m / self.minibatch)  # number of minibatches
 
         tf.compat.v1.reset_default_graph()
@@ -742,13 +644,13 @@ class RBM:
 
         # optionally evaluate precision metrics
         precision_train, precision_test = self.train_test_precision(xtst)
-        elapsed = self.time()
+        
+        # stop the timer
+        self.timer.stop()
 
-        log.info("done training, Training time %f2" % elapsed)
+        log.info("done training, Training time %f2" % self.timer.interval)
 
         self.display_metrics(Rmse_train, precision_train, precision_test)
-
-        return elapsed
 
     def eval_out(self):
         """Implement multinomial sampling from a trained model"""
@@ -799,7 +701,9 @@ class RBM:
             - The time taken to recommend k items.
         """
 
-        self.time()
+        # start the timer
+        self.timer.start()
+
         # evaluate the ratings and the associated probabilities
         v_, pvh_ = self.eval_out()
 
@@ -831,10 +735,13 @@ class RBM:
         ] = 0  # set to zero the top_k elements
 
         top_scores = score - score_c  # set to zeros all elements other then the top_k
-        elapsed = self.time()
+        
+        # stop the timer
+        self.timer.stop()
 
-        log.info("Done recommending items, time %f2" % elapsed)
-        return top_scores, elapsed
+        log.info("Done recommending items, time %f2" % self.timer.interval)
+        
+        return top_scores
 
     def predict(self, x, maps):
         """Returns the inferred ratings. This method is similar to recommend_k_items() with the
@@ -857,12 +764,15 @@ class RBM:
             - The elapsed time for predediction.
         """
 
-        self.time()
+        # start the timer
+        self.timer.start()
 
         v_, _ = self.eval_out()  # evaluate the ratings and the associated probabilities
         vp = self.sess.run(v_, feed_dict={self.vu: x})
-        elapsed = self.time()
+        
+        # stop the timer
+        self.timer.stop()
 
-        log.info("Done inference, time %f2" % elapsed)
+        log.info("Done inference, time %f2" % self.timer.interval)
 
-        return vp, elapsed
+        return vp, self.timer.interval
