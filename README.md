@@ -45,7 +45,7 @@ To set up on your local machine:
     1. Ensure software required for compilation and Python libraries
        is installed.
 
-       * On Linux this can be supported by adding:
+       + On Linux this can be supported by adding:
 
          ```bash
          sudo apt-get install -y build-essential libpython<version>
@@ -53,7 +53,7 @@ To set up on your local machine:
 
          where `<version>` should be `3.6` or `3.7` as appropriate.
 
-       * On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
+       + On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 
     2. Create a conda or virtual environment.  See the
        [setup guide](SETUP.md) for more details.
