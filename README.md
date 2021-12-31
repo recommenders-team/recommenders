@@ -43,7 +43,7 @@ To set up on your local machine:
 * To install core utilities, CPU-based algorithms, and dependencies:
 
     1. Ensure software required for compilation and Python libraries
-       is installed. On Linux this can be supported by adding:
+       is installed.  On Linux this can be supported by adding:
     
        ```bash
        sudo apt-get install -y build-essential libpython<version>
@@ -78,8 +78,8 @@ To set up on your local machine:
        ```
     
     6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb)
-       notebook under the `00_quick_start` folder. Make sure to change
-       the kernel to "Python (reco)".
+       notebook under the `00_quick_start` folder.  Make sure to
+       change the kernel to "Python (reco)".
 
 * For additional options to install the package (support for GPU,
   Spark etc.) see [this guide](recommenders/README.md).
