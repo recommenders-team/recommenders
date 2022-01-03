@@ -743,7 +743,7 @@ class RBM:
         
         return top_scores
 
-    def predict(self, x, maps):
+    def predict(self, x):
         """Returns the inferred ratings. This method is similar to recommend_k_items() with the
         exceptions that it returns all the inferred ratings
 
@@ -775,4 +775,4 @@ class RBM:
 
         log.info("Done inference, time %f2" % self.timer.interval)
 
-        return vp, self.timer.interval
+        return vp
