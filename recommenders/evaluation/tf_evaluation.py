@@ -1,4 +1,8 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
 import tensorflow as tf
+
 
 def rmse(rating_true, rating_pred):
     """Root Mean Square Error
@@ -37,6 +41,7 @@ def rmse(rating_true, rating_pred):
         )
 
     return err
+
 
 def accuracy(rating_true, rating_pred):
     """Accuracy
