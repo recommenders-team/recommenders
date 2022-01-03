@@ -166,7 +166,7 @@ class RBM:
         )  # normalize and convert to tensor
 
         samp = tf.nn.relu(tf.sign(pr - f))  # apply rejection method
-        
+
         # get integer index of the rating to be sampled
         v_argmax = tf.cast(
             tf.argmax(input=samp, axis=2), "int32"
@@ -603,7 +603,7 @@ class RBM:
 
         # start the timer
         self.timer.start()
-        
+
         self.ratings = xtr.max()  # obtain the rating scale, e.g. 1 to 5
 
         m, self.n_visible = xtr.shape  # m= # users, n_visible= # items
@@ -612,16 +612,16 @@ class RBM:
         tf.compat.v1.reset_default_graph()
 
         # ----------------------Initializers-------------------------------------
-        
+
         # create a sorted list of all the unique ratings (of float type)
         self.possible_ratings = np.sort(np.setdiff1d(np.unique(xtr), np.array([0])))
 
         # create a lookup table to map integer indices to float ratings
         self.ratings_lookup_table = tf.lookup.StaticHashTable(
-                tf.lookup.KeyValueTensorInitializer(
-                    tf.constant(list(range(len(self.possible_ratings))), dtype=tf.int32),
-                    tf.constant(list(self.possible_ratings), dtype=tf.float32),
-                ), default_value=0
+            tf.lookup.KeyValueTensorInitializer(
+                tf.constant(list(range(len(self.possible_ratings))), dtype=tf.int32),
+                tf.constant(list(self.possible_ratings), dtype=tf.float32),
+            ), default_value=0
         )
 
         self.generate_graph()
@@ -644,7 +644,7 @@ class RBM:
 
         # optionally evaluate precision metrics
         precision_train, precision_test = self.train_test_precision(xtst)
-        
+
         # stop the timer
         self.timer.stop()
 
@@ -735,12 +735,12 @@ class RBM:
         ] = 0  # set to zero the top_k elements
 
         top_scores = score - score_c  # set to zeros all elements other then the top_k
-        
+
         # stop the timer
         self.timer.stop()
 
         log.info("Done recommending items, time %f2" % self.timer.interval)
-        
+
         return top_scores
 
     def predict(self, x):
@@ -769,7 +769,7 @@ class RBM:
 
         v_, _ = self.eval_out()  # evaluate the ratings and the associated probabilities
         vp = self.sess.run(v_, feed_dict={self.vu: x})
-        
+
         # stop the timer
         self.timer.stop()
 

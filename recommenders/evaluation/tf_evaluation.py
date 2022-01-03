@@ -44,7 +44,7 @@ def rmse(rating_true, rating_pred):
 
 
 def accuracy(rating_true, rating_pred):
-    """Accuracy
+    r"""Accuracy
 
     Evaluates accuracy evaluated on the rated items only (rated items are the ones with non-zero ratings).
 
