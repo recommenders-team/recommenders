@@ -38,7 +38,7 @@ def test_class_init(init_rbm):
     )
 
     # number of hidden units
-    assert model.Nhidden == init_rbm["n_hidden"]
+    assert model.n_hidden == init_rbm["n_hidden"]
     # number of training epochs
     assert model.epochs == init_rbm["epochs"] + 1
     # minibatch size
