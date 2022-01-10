@@ -234,12 +234,12 @@ class RBM:
         two bias vectors to initialize.
 
         Args:
-            Nv (int): number of visible units (input layer)
-            Nh (int): number of hidden units (latent variables of the model)
+            n_visible (int): number of visible units (input layer)
+            n_hidden (int): number of hidden units (latent variables of the model)
 
         Returns:
             tf.Tensor, tf.Tensor, tf.Tensor:
-            - `w` of size (Nv, Nh): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv.
+            - `w` of size (n_visible, n_hidden): correlation matrix initialized by sampling from a normal distribution with zero mean and given variance init_stdv.
             - `bv` of size (1, n_visible): visible units' bias, initialized to zero.
             - `bh` of size (1, n_hidden): hidden units' bias, initiliazed to zero.
         """
@@ -474,12 +474,12 @@ class RBM:
 
         return precision_train, precision_test
 
-    def display_metrics(self, Rmse_train, precision_train, precision_test):
+    def display_metrics(self, rmse_train, precision_train, precision_test):
         """Display training/test metrics and plots the rmse error as a function
         of the training epochs
 
         Args:
-            Rmse_train (list, float32): Per epoch rmse on the train set.
+            rmse_train (list, float32): Per epoch rmse on the train set.
             precision_train (float): Precision on the train set.
             precision_test  (float): Precision on the test set.
         """
@@ -487,7 +487,7 @@ class RBM:
         if self.with_metrics:
 
             # Display training error as a function of epochs
-            plt.plot(Rmse_train, label="train")
+            plt.plot(rmse_train, label="train")
             plt.ylabel("rmse", size="x-large")
             plt.xlabel("epochs", size="x-large")
             plt.legend(ncol=1)
@@ -604,8 +604,6 @@ class RBM:
         # start the timer
         self.timer.start()
 
-        self.ratings = xtr.max()  # obtain the rating scale, e.g. 1 to 5
-
         m, self.n_visible = xtr.shape  # m= # users, n_visible= # items
         num_minibatches = int(m / self.minibatch)  # number of minibatches
 
@@ -629,7 +627,7 @@ class RBM:
         self.init_gpu()
         self.init_training_session(xtr)
 
-        Rmse_train = []  # List to collect the metrics across epochs
+        rmse_train = []  # List to collect the metrics across epochs
 
         # start loop over training epochs
         for i in range(self.epochs):
@@ -640,7 +638,7 @@ class RBM:
             if self.with_metrics and i % self.display == 0:
                 log.info("training epoch %i rmse %f" % (i, epoch_tr_err))
 
-            Rmse_train.append(epoch_tr_err)  # mse training error per training epoch
+            rmse_train.append(epoch_tr_err)  # mse training error per training epoch
 
         # optionally evaluate precision metrics
         precision_train, precision_test = self.train_test_precision(xtst)
@@ -650,7 +648,7 @@ class RBM:
 
         log.info("done training, Training time %f2" % self.timer.interval)
 
-        self.display_metrics(Rmse_train, precision_train, precision_test)
+        self.display_metrics(rmse_train, precision_train, precision_test)
 
     def eval_out(self):
         """Implement multinomial sampling from a trained model"""
