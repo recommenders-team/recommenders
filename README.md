@@ -40,41 +40,51 @@ and currently does not support version 3.8 and above. It is recommended to insta
 
 To set up on your local machine:
 
-To install core utilities, CPU-based algorithms, and dependencies:
+* To install core utilities, CPU-based algorithms, and dependencies:
 
-1. Ensure software required for compilation and Python libraries is installed. On Linux this can be supported by adding:
-```bash
-sudo apt-get install -y build-essential libpython<version>
-``` 
-where `<version>` should be `3.6` or `3.7` as appropriate.
+    1. Ensure software required for compilation and Python libraries
+       is installed.
 
-On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-  
-2. Create a conda or virtual environment. See the [setup guide](SETUP.md) for more details.
+       + On Linux this can be supported by adding:
 
-3. Within the created environment, install the package from [PyPI](https://pypi.org):
+         ```bash
+         sudo apt-get install -y build-essential libpython<version>
+         ``` 
 
-```bash
-pip install --upgrade pip
-pip install --upgrade setuptools
-pip install recommenders[examples]
-```
+         where `<version>` should be `3.6` or `3.7` as appropriate.
 
-4. Register your (conda or virtual) environment with Jupyter:
+       + On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 
-```bash
-python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
-```
+    2. Create a conda or virtual environment.  See the
+       [setup guide](SETUP.md) for more details.
 
-5. Start the Jupyter notebook server
+    3. Within the created environment, install the package from
+       [PyPI](https://pypi.org):
 
-```bash
-jupyter notebook
-```
+       ```bash
+       pip install --upgrade pip
+       pip install --upgrade setuptools
+       pip install recommenders[examples]
+       ```
 
-6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
+    4. Register your (conda or virtual) environment with Jupyter:
 
-For additional options to install the package (support for GPU, Spark etc.) see [this guide](recommenders/README.md).
+       ```bash
+       python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
+       ```
+
+    5. Start the Jupyter notebook server
+
+       ```bash
+       jupyter notebook
+       ```
+
+    6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb)
+       notebook under the `00_quick_start` folder.  Make sure to
+       change the kernel to "Python (reco)".
+
+* For additional options to install the package (support for GPU,
+  Spark etc.) see [this guide](recommenders/README.md).
 
 **NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
 
