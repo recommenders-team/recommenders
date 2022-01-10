@@ -236,6 +236,7 @@ def test_cornac_bpr_integration(
 
 
 @pytest.mark.integration
+@pytest.mark.experimental
 @pytest.mark.parametrize(
     "expected_values",
     [({"rmse": 0.4969, "mae": 0.4761})],
