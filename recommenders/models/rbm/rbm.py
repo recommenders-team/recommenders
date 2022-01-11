@@ -374,15 +374,14 @@ class RBM:
                 _, self.v_k = self.sample_visible_units(h_k)
 
     def losses(self, vv):
-        """Loss functions.
+        """Calculate contrastive divergence, which is the difference between
+        the free energy clamped on the data (v) and the model Free energy (v_k).
 
         Args:
-            v (tf.Tensor, float32): empirical input
-            v_k (tf.Tensor, float32): sampled visible units at step k
+            vv (tf.Tensor, float32): empirical input
 
         Returns:
-            object:
-            - Objective function of Contrastive divergence: the difference between the free energy clamped on the data (v) and the model Free energy (v_k).
+            obj: contrastive divergence
         """
 
         with tf.compat.v1.variable_scope("losses"):
