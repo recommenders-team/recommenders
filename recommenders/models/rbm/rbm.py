@@ -6,8 +6,6 @@ import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
 from recommenders.evaluation.tf_evaluation import rmse, accuracy
-from recommenders.utils.timer import Timer
-
 
 tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
@@ -559,16 +557,16 @@ class RBM:
         """
 
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
-        
+
         # minibatch loop
         for _ in range(num_minibatches):
-            
+
             if self.with_metrics:
                 _, batch_err = self.sess.run([self.opt, self.rmse])
-                
+
                 # average msr error per minibatch
                 epoch_tr_err += batch_err / num_minibatches
-            
+
             else:
                 _ = self.sess.run(self.opt)
 
