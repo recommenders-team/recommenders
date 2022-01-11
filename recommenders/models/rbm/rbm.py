@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import numpy as np
-import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
 from recommenders.evaluation.tf_evaluation import rmse
