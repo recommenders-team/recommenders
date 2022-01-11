@@ -5,7 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
 import logging
-from recommenders.evaluation.tf_evaluation import rmse, accuracy
+from recommenders.evaluation.tf_evaluation import rmse
 
 tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
@@ -439,56 +439,6 @@ class RBM:
 
         if self.with_metrics:  # if true (default) returns evaluation metrics
             self.rmse = rmse(self.v, self.v_k)
-            self.accuracy = accuracy(self.v, self.v_k)
-
-    def train_test_precision(self, xtst):
-        """Evaluates precision on the train and test set
-
-        Args:
-            xtst (numpy.ndarray, integer32): The user/affinity matrix for the test set
-
-        Returns:
-            float, float: Precision on the train and test sets.
-        """
-
-        if self.with_metrics:
-
-            precision_train = self.sess.run(self.accuracy)
-
-            self.sess.run(
-                self.iter.initializer,
-                feed_dict={self.vu: xtst, self.batch_size: self.minibatch},
-            )
-
-            precision_test = self.sess.run(self.accuracy)
-
-        else:
-            precision_train = None
-            precision_test = None
-
-        return precision_train, precision_test
-
-    def display_metrics(self, rmse_train, precision_train, precision_test):
-        """Display training/test metrics and plots the rmse error as a function
-        of the training epochs
-
-        Args:
-            rmse_train (list, float32): Per epoch rmse on the train set.
-            precision_train (float): Precision on the train set.
-            precision_test  (float): Precision on the test set.
-        """
-
-        if self.with_metrics:
-
-            # Display training error as a function of epochs
-            plt.plot(rmse_train, label="train")
-            plt.ylabel("rmse", size="x-large")
-            plt.xlabel("epochs", size="x-large")
-            plt.legend(ncol=1)
-
-            # Final precision scores
-            log.info("Train set accuracy %f2" % precision_train)
-            log.info("Test set accuracy %f2" % precision_test)
 
     def generate_graph(self):
         """Call the different RBM modules to generate the computational graph"""
@@ -631,10 +581,7 @@ class RBM:
 
             rmse_train.append(epoch_tr_err)  # mse training error per training epoch
 
-        # optionally evaluate precision metrics
-        precision_train, precision_test = self.train_test_precision(xtst)
-
-        self.display_metrics(rmse_train, precision_train, precision_test)
+        self.rmse_train = rmse_train
 
     def eval_out(self):
         """Implement multinomial sampling from a trained model"""
