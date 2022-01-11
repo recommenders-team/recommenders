@@ -22,7 +22,7 @@ def rmse(rating_true, rating_pred):
 
         mask = tf.not_equal(rating_true, 0)  # selects only the rated items
         n_values = tf.reduce_sum(
-            input_tensor=tf.cast(mask, "float32"), axis=1
+            input_tensor=tf.cast(mask, dtype="float32"), axis=1
         )  # number of rated items
 
         # evaluate the square difference between the inferred and the input data on the rated items
@@ -66,7 +66,7 @@ def accuracy(rating_true, rating_pred):
 
         # define and apply the mask
         mask = tf.not_equal(rating_true, 0)
-        n_values = tf.reduce_sum(input_tensor=tf.cast(mask, "float32"), axis=1)
+        n_values = tf.reduce_sum(input_tensor=tf.cast(mask, dtype="float32"), axis=1)
 
         # Take the difference between the input data and the inferred ones. This value is zero whenever
         # the two values coincides
@@ -75,7 +75,7 @@ def accuracy(rating_true, rating_pred):
         )
 
         # correct values: find the location where rating_true = rating_pred
-        corr = tf.cast(tf.equal(vd, 0), "float32")
+        corr = tf.cast(tf.equal(vd, 0), dtype="float32")
 
         # evaluate accuracy
         accuracy_score = tf.reduce_mean(

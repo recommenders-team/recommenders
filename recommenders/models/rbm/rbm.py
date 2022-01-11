@@ -88,7 +88,7 @@ class RBM:
         self.epochs = training_epoch + 1  # number of epochs used to train the model
 
         # number of epochs to show the mse error during training
-        self.display = display_epoch
+        self.display_epoch = display_epoch
 
         # protocol to increase Gibbs sampling's step. Array containing the
         # percentage of the total training epoch when the step increases by 1
@@ -562,17 +562,17 @@ class RBM:
         """
 
         epoch_tr_err = 0  # initialize the training error for each epoch to zero
-
-        if self.with_metrics:
-            # minibatch loop
-            for l in range(num_minibatches):  # noqa: E741 ambiguous variable name 'l'
+        
+        # minibatch loop
+        for _ in range(num_minibatches):
+            
+            if self.with_metrics:
                 _, batch_err = self.sess.run([self.opt, self.rmse])
+                
                 # average msr error per minibatch
                 epoch_tr_err += batch_err / num_minibatches
-
-        else:
-            # minibatch loop
-            for l in range(num_minibatches):  # noqa: E741 ambiguous variable name 'l'
+            
+            else:
                 _ = self.sess.run(self.opt)
 
         return epoch_tr_err
@@ -634,7 +634,7 @@ class RBM:
             self.gibbs_protocol(i)  # Gibbs sampling update
             epoch_tr_err = self.batch_training(num_minibatches)  # model train
 
-            if self.with_metrics and i % self.display == 0:
+            if self.with_metrics and i % self.display_epoch == 0:
                 log.info("training epoch %i rmse %f" % (i, epoch_tr_err))
 
             rmse_train.append(epoch_tr_err)  # mse training error per training epoch
