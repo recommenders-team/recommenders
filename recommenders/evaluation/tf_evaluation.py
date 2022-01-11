@@ -48,7 +48,7 @@ def accuracy(rating_true, rating_pred):
 
     Evaluates accuracy evaluated on the rated items only (rated items are the ones with non-zero ratings).
 
-    :math:`accuracy = 1/m \sum_{mu=1}^{m} \sum{i=1}^Nv 1/s(i) I(rating_true - rating_pred = 0)_{mu,i}`
+    :math:`accuracy = 1/m \\sum_{mu=1}^{m} \\sum{i=1}^Nv 1/s(i) I(rating_true - rating_pred = 0)_{mu,i}`
 
     where `m = Nusers`, `Nv = number of items = number of visible units` and `s(i)` is the number of non-zero elements
     per row.
