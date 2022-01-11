@@ -100,9 +100,6 @@ class RBM:
         # if true, compute msre and accuracy during training
         self.with_metrics = with_metrics
 
-        # Initialize timer
-        self.timer = Timer()
-
         # Seed
         self.seed = seed
         np.random.seed(self.seed)
@@ -600,9 +597,6 @@ class RBM:
         # keep the position of the items in the train set so that they can be optionally exluded from recommendation
         self.seen_mask = np.not_equal(xtr, 0)
 
-        # start the timer
-        self.timer.start()
-
         m, self.n_visible = xtr.shape  # m= # users, n_visible= # items
         num_minibatches = int(m / self.minibatch)  # number of minibatches
 
@@ -641,11 +635,6 @@ class RBM:
 
         # optionally evaluate precision metrics
         precision_train, precision_test = self.train_test_precision(xtst)
-
-        # stop the timer
-        self.timer.stop()
-
-        log.info("done training, Training time %f2" % self.timer.interval)
 
         self.display_metrics(rmse_train, precision_train, precision_test)
 
@@ -698,9 +687,6 @@ class RBM:
             - The time taken to recommend k items.
         """
 
-        # start the timer
-        self.timer.start()
-
         # evaluate the ratings and the associated probabilities
         v_, pvh_ = self.eval_out()
 
@@ -733,11 +719,6 @@ class RBM:
 
         top_scores = score - score_c  # set to zeros all elements other then the top_k
 
-        # stop the timer
-        self.timer.stop()
-
-        log.info("Done recommending items, time %f2" % self.timer.interval)
-
         return top_scores
 
     def predict(self, x):
@@ -761,15 +742,7 @@ class RBM:
             - The elapsed time for predediction.
         """
 
-        # start the timer
-        self.timer.start()
-
         v_, _ = self.eval_out()  # evaluate the ratings and the associated probabilities
         vp = self.sess.run(v_, feed_dict={self.vu: x})
-
-        # stop the timer
-        self.timer.stop()
-
-        log.info("Done inference, time %f2" % self.timer.interval)
 
         return vp
