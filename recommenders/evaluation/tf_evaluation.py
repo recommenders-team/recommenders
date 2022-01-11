@@ -5,7 +5,7 @@ import tensorflow as tf
 
 
 def rmse(rating_true, rating_pred):
-    """Root Mean Square Error
+    """Root Mean Square Error using Tensorflow
 
     Note that this needs to be evaluated on the rated items only
 
@@ -44,7 +44,7 @@ def rmse(rating_true, rating_pred):
 
 
 def accuracy(rating_true, rating_pred):
-    r"""Accuracy
+    """Accuracy using Tensorflow
 
     Evaluates accuracy evaluated on the rated items only (rated items are the ones with non-zero ratings).
 
