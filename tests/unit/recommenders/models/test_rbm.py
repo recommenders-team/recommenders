@@ -20,7 +20,7 @@ def init_rbm():
         "learning_rate": 0.002,
         "init_stdv": 0.01,
         "sampling_protocol": [30, 50, 80, 90, 100],
-        "display": 20,
+        "display_epoch": 20,
     }
 
 
@@ -34,7 +34,7 @@ def test_class_init(init_rbm):
         learning_rate=init_rbm["learning_rate"],
         init_stdv=init_rbm["init_stdv"],
         sampling_protocol=init_rbm["sampling_protocol"],
-        display_epoch=init_rbm["display"],
+        display_epoch=init_rbm["display_epoch"],
     )
 
     # number of hidden units
@@ -52,7 +52,7 @@ def test_class_init(init_rbm):
     # sampling protocol used to increase the number of steps in Gibbs sampling
     assert model.sampling_protocol == init_rbm["sampling_protocol"]
     # number of epochs after which the rmse is displayed
-    assert model.display == init_rbm["display"]
+    assert model.display_epoch == init_rbm["display_epoch"]
 
 
 @pytest.mark.gpu
