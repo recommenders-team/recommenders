@@ -6,7 +6,6 @@ This document describes how to setup all the dependencies to run the notebooks i
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
 * Docker container
 
-
 ## Table of Contents
 
   - [Compute environments](#compute-environments)
