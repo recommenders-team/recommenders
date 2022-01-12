@@ -6,6 +6,9 @@
 # Original code can sample from items that only appear in test set when generating negative samples in training. This could be seen as unrealistic as it does not match a real world situation
 # where the test set is completely unseen.
 
+import sys
+import os # DELETE
+sys.path.append("/home/anta/notebooks/recommenders") # DELETE
 from collections import OrderedDict
 import random
 import numpy as np
@@ -111,7 +114,7 @@ class Dataset(object):
     
 
     def _check_for_missing_fields(self, fields_to_check, filename, reader):
-        missing_fields = set([fields_to_check).difference(set(reader.fieldnames))
+        missing_fields = set(fields_to_check).difference(set(reader.fieldnames))
         if len(missing_fields):
             raise ValueError("Columns {} not in header of file {}".format(missing_fields, filename))
 
@@ -134,7 +137,7 @@ class Dataset(object):
             
             reader = csv.DictReader(f)
             
-            self._check_for_missing_fields([self.col_user, self.col_item, self.col_rating], reader, filename)
+            self._check_for_missing_fields([self.col_user, self.col_item, self.col_rating], filename, reader)
             
             row = next(reader, None)
             if not row:
@@ -167,7 +170,7 @@ class Dataset(object):
                         user_line_end = reader.line_num
                         
                     if current_user in user_pool:
-                        dataset_name = "training" if training_set else "test"
+                        dataset_name = "training" if train_set else "test"
                         raise ValueError("{} dataset is not sorted by user".format(dataset_name))
 
                     user_info = {
@@ -443,3 +446,12 @@ class Dataset(object):
                         }
                 )
             )
+
+
+if __name__ == "__main__":
+
+    dirname = "/home/anta/notebooks/recommenders/examples/02_model_hybrid/"
+    train_file = os.path.join(dirname, "train.csv")
+    test_file = os.path.join(dirname, "test.csv")
+
+    data = Dataset(train_file=train_file, test_file=test_file)
