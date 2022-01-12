@@ -103,6 +103,7 @@ def test_wikidata_runs(notebooks, output_notebook, kernel_name, tmp):
     )
 
 
+@pytest.mark.experimental
 @pytest.mark.notebooks
 def test_rlrmc_quickstart_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["rlrmc_quickstart"]
