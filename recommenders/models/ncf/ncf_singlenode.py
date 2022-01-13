@@ -384,7 +384,7 @@ class NCF:
 
             # negative sampling for training
             train_begin = time()
-            data.negative_sampling()
+            # data.negative_sampling()
 
             # initialize
             train_loss = []

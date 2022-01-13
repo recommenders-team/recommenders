@@ -1,11 +1,3 @@
-# Read from disk, sample in memory, scan dataset with ordereddict of users and file locations
-# Original code samples training examples WITH REPLACEMENT (because it samples repetitively for each positive example). However in paper it samples without replacement,
-# 4 negative examples for each positive example. For training samples, the original code samples 100 negatives for each positive example which corresponds to the paper (although the paper
-# only has one positive example for each user in the test set)
-# Somehow original code can generate predictions for test items that did not appear in training set. It does this because embeddings are created for all items across both training and test. All users appear in both sets so it is unclear whether the same is try for users.
-# Original code can sample from items that only appear in test set when generating negative samples in training. This could be seen as unrealistic as it does not match a real world situation
-# where the test set is completely unseen.
-
 import sys
 import os # DELETE
 sys.path.append("/home/anta/notebooks/recommenders") # DELETE
@@ -20,9 +12,171 @@ import csv
 from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
-    DEFAULT_RATING_COL,
-    DEFAULT_TIMESTAMP_COL,
+    DEFAULT_RATING_COL
 )
+
+
+class DataFile():
+
+    def __init__(
+        self, filename, col_user, col_item, col_rating, col_test_batch=None,
+        binary=True, index_data=True, batch_indices=None
+    ):
+        self.filename = filename
+        self.col_user = col_user
+        self.col_item = col_item
+        self.col_rating = col_rating
+        self.col_test_batch = col_test_batch
+        self.expected_fields = [self.col_user, self.col_item, self.col_rating]
+        if self.col_test_batch is not None:
+            self.expected_fields.append(self.col_test_batch)
+        self.binary = binary
+        self.batch_indices= batch_indices
+        if index_data:
+            self._index_data()
+
+
+    def _index_data(self):
+
+        print("Indexing file {} ...".format(self.filename))
+
+        with self:
+            current_user = None
+            current_user_items = []
+            user_line_start = 1
+            self.users = OrderedDict()
+            self.items = []
+            self.item2id, self.user2id = {}, {}
+            for user, item, _, _ in self:
+                if self.line_num == 1:
+                    current_user = user
+                if item not in self.items:
+                    self.items.append(item)
+                    self.item2id[item] = len(self.item2id)
+
+                current_user_items.append(item)
+
+                if (user != current_user) or self.EOF:
+                    user_line_end = self.line_num - 1
+                    
+                    # if last line of file
+                    if self.EOF:
+                        current_user = user
+                        user_line_end = self.line_num
+                        
+                    if current_user in self.users:
+                        raise ValueError("File {} is not sorted by user".format(self.filename))
+
+                    self.users[current_user] = (user_line_start, user_line_end)
+                    self.user2id[current_user] = len(self.user2id)
+                    
+                    current_user = user
+                    current_user_items = []
+                    user_line_start = self.line_num
+                        
+                self.data_len = self.line_num - 1
+
+
+    def _check_for_missing_fields(self, fields_to_check):
+        missing_fields = set(fields_to_check).difference(set(self.reader.fieldnames))
+        if len(missing_fields):
+            raise ValueError("Columns {} not in header of file {}".format(missing_fields, self.filename))
+
+
+    def __iter__(self):
+        return self
+    
+
+    def __next__(self):
+        if self.EOF:
+            raise StopIteration
+        if self.line_num == 0:
+            self.last_row = next(self.reader, None)
+            if self.last_row is None:
+                raise Exception("{} is empty.".format(self.filename))
+        else:
+            self.last_row = self.current_row
+        self.current_row = next(self.reader, None)
+        self.line_num += 1
+        if self.current_row is None:
+            self.EOF = True
+
+        return self._extract_row_data(self.last_row)
+
+
+    def open(self):
+        self.file = open(self.filename, 'r', encoding='UTF8')
+        self.reader = csv.DictReader(self.file)
+        self._check_for_missing_fields(self.expected_fields)
+        self.EOF = False
+        self.line_num = 0
+        return self
+    
+
+    def close(self):
+        self.file.close()
+        self.reader = None
+
+
+    def __enter__(self, *args):
+        return self.open()
+
+
+    def __exit__(self, *args):
+        self.close()
+
+
+    def _extract_row_data(self, row):
+        user = int(row[self.col_user])
+        item = int(row[self.col_item])
+        rating = float(row[self.col_rating])
+        if self.binary:
+            rating = float(rating > 0)
+        test_batch = None
+        if self.col_test_batch:
+            test_batch = int(row[self.col_test_batch])
+        return user, item, rating, test_batch
+
+
+    def _load_data(self, line_start, line_end):
+        records = []
+        while self.line_num < line_end:
+            user, item, rating, test_batch = next(self)
+            if self.line_num >= line_start:
+                record = {self.col_user: user, self.col_item: item, self.col_rating: rating}
+                if test_batch is not None:
+                    record[self.col_test_batch] = test_batch
+                records.append(record)
+            
+        return pd.DataFrame.from_records(records)
+
+
+    def load_user_data(self, user):
+        try:
+            line_start, line_end = self.users[user]
+        except:
+            raise Exception("User {} not in dataset".format(user))
+
+        user_data = self._load_data(line_start, line_end)
+        if not user_data.shape[0] or not all(x == user for x in user_data[self.col_user]):
+            raise Exception("User {} not found in expected location in file. Perhaps the file has changed.".format(user))
+        
+        return user_data
+
+    
+    def load_batch_index(self, batch_index):
+        try:
+            line_start, line_end = self.batch_indices[batch_index]
+        except:
+            raise Exception("Batch index {} not in dataset".format(batch_index))
+
+        batch_data = self._load_data(line_start, line_end)
+        if not batch_data.shape[0] or not all(x == batch_index for x in batch_data[self.col_test_batch]):
+            raise Exception("Batch index {} not found in expected location in file. Perhaps the file has changed.".format(batch_index))
+
+        del batch_data[self.col_test_batch]
+        
+        return batch_data
 
 
 class Dataset(object):
@@ -39,7 +193,6 @@ class Dataset(object):
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_timestamp=DEFAULT_TIMESTAMP_COL,
         binary=True,
         seed=None,
         sample_with_replacement=False,
@@ -56,7 +209,6 @@ class Dataset(object):
             col_user (str): User column name.
             col_item (str): Item column name.
             col_rating (str): Rating column name.
-            col_timestamp (str): Timestamp column name.
             binary (bool): If true, set rating > 0 to rating = 1.
             seed (int): Seed.
             sample_with_replacement (bool): If true, sample negative examples with replacement,
@@ -73,7 +225,6 @@ class Dataset(object):
         self.col_user = col_user
         self.col_item = col_item
         self.col_rating = col_rating
-        self.col_timestamp = col_timestamp
         self.binary = binary
         self.sample_with_replacement = sample_with_replacement
         self.print_warnings = print_warnings
@@ -87,136 +238,73 @@ class Dataset(object):
             self._sample = self._sample_negatives_without_replacement
 
         # data preprocessing for training and test data
-        (
-            self.train_user_pool, self.train_item_pool, self.train_len,
-            self.user2id, self.item2id
-        ) = self._process_dataset(self.train_file, train_set=True)
-        
-        self.n_users = len(self.train_user_pool)
-        self.n_items = len(self.train_item_pool)
+        self.train_datafile = DataFile(
+            filename=self.train_file,
+            col_user=self.col_user,
+            col_item=self.col_item,
+            col_rating=self.col_rating,
+            binary=self.binary
+        )
+
+        self.n_users = len(self.train_datafile.users)
+        self.n_items = len(self.train_datafile.items)
+        self.user2id = self.train_datafile.user2id
+        self.item2id = self.train_datafile.item2id
+        self.id2user = {self.user2id[k]: k for k in self.user2id}
+        self.id2item = {self.item2id[k]: k for k in self.item2id}
+        self.train_len = self.train_datafile.data_len
             
-        if test_file:
+        if self.test_file is not None:
+            self.test_datafile = DataFile(
+                filename=self.test_file,
+                col_user=self.col_user,
+                col_item=self.col_item,
+                col_rating=self.col_rating,
+                binary=self.binary
+            )
             if self.test_file_full is None:
                 self.test_file_full = os.path.splitext(self.test_file)[0] + "_full.csv"
-            self.test_user_pool, self._test_item_pool, self.test_len, _, _ = self._process_dataset(
-                self.test_file, train_set=False
-            )
-            if os.path.isfile(self.test_file_full):
+            if os.path.isfile(self.test_file_full) and not self.overwrite_test_file_full:
                 self._validate_test_file()
             else:
                 self._create_test_set()
-            
-        self.id2item = {self.item2id[k]: k for k in self.item2id}
-        self.id2user = {self.user2id[k]: k for k in self.user2id}
         
         # set random seed
         random.seed(seed)
-    
-
-    def _check_for_missing_fields(self, fields_to_check, filename, reader):
-        missing_fields = set(fields_to_check).difference(set(reader.fieldnames))
-        if len(missing_fields):
-            raise ValueError("Columns {} not in header of file {}".format(missing_fields, filename))
-
-
-    def _extract_row_data(self, row):
-        user = int(row[self.col_user])
-        item = int(row[self.col_item])
-        rating = float(row[self.col_rating])
-        if self.binary:
-            rating = float(rating > 0)
-        surplus_data = {k:v for k, v in row.items() if k not in [self.col_user, self.col_item, self.col_rating]}
-        return user, item, rating, surplus_data
-
-
-    def _process_dataset(self, filename, train_set=True):
-        # Scan dataset, record the users present and line location in file, record the items present in file,
-        # and validate that the dataset is sorted by user.
-                
-        with open(filename, 'r', encoding='UTF8') as f:
-            
-            reader = csv.DictReader(f)
-            
-            self._check_for_missing_fields([self.col_user, self.col_item, self.col_rating], filename, reader)
-            
-            row = next(reader, None)
-            if not row:
-                raise("File {} is empty".format(filename))
-            user, item, rating, _ = self._extract_row_data(row)
-            current_user = user
-            current_user_items = []
-            user_line_start = reader.line_num # starts at 2
-            user_pool = OrderedDict()
-            item_pool = [item]
-            item2id, user2id = {item: 0}, {user: 0}
-            
-            while row:
-                row = next(reader, None)
-                if row:
-                    user, item, rating, _ = self._extract_row_data(row)
-                
-                    if item not in item_pool:
-                        item_pool.append(item)
-                        item2id[item] = len(item2id)
-
-                    current_user_items.append(item)
-                
-                if (user != current_user) or not row:
-                    user_line_end = reader.line_num - 1
-                    
-                    # if last line of file
-                    if not row:
-                        current_user = user
-                        user_line_end = reader.line_num
-                        
-                    if current_user in user_pool:
-                        dataset_name = "training" if train_set else "test"
-                        raise ValueError("{} dataset is not sorted by user".format(dataset_name))
-
-                    user_info = {
-                        'user_line_start': user_line_start, 'user_line_end': user_line_end
-                    }
-                    user_pool[current_user] = user_info
-                    user2id[current_user] = len(user2id)
-                    
-                    current_user = user
-                    current_user_items = []
-                    user_line_start = reader.line_num
-                    
-            data_len = reader.line_num - 1
-    
-        return user_pool, item_pool, data_len, user2id, item2id
 
 
     def _validate_test_file(self):
-        current_row_batch = 0
-        with open(self.test_file_full, 'r', encoding='UTF8') as f:
-            reader = csv.DictReader(f)
 
-            row = next(reader, None)
-            if not row:
-                raise("File {} is empty".format(self.test_file_full))
+        print("Validating existing test file full {} ...".format(self.test_file_full))
+        self.test_full_datafile = DataFile(
+            filename=self.test_file_full,
+            col_user=self.col_user,
+            col_item=self.col_item,
+            col_rating=self.col_rating,
+            col_test_batch=self.col_test_batch,
+            binary=self.binary,
+            index_data=False
+        )
 
-            self._check_for_missing_fields(
-                [self.col_user, self.col_item, self.col_rating, self.col_test_batch],
-                reader, self.test_file_full
-            )
-
-            user, item, rating, surplus_data = self._extract_row_data(row)
-            current_user = user
-            while row:
-                row = next(reader, None)
-                if row:
-                    user, item, rating, surplus_data = self._extract_row_data(row)
-                    row_batch = int(surplus_data[self.col_test_batch])
-                    if user not in self.train_user_pool:
-                        raise ValueError("User {} in test set but not in training set".format(user))
-                    if user not in self.train_item_pool:
-                        raise ValueError("Item {} in test set but not in training set".format(item))
-                    if (row_batch != current_row_batch) or not row:
-                        if not row_batch == current_row_batch + 1:
-                            raise ValueError("Test file full not sorted by batch number")
-                        current_row_batch = row_batch
+        current_test_batch = 0
+        batch_line_start = 1
+        batch_line_end = 0
+        batch_indices = OrderedDict()
+        with self.test_full_datafile as test_full_datafile:
+            for user, item, _, test_batch in self.test_full_datafile:
+                if user not in self.train_datafile.users:
+                    raise ValueError("User {} in test set but not in training set".format(user))
+                if item not in self.train_datafile.items:
+                    raise ValueError("Item {} in test set but not in training set".format(item))
+                if (test_batch != current_test_batch) or test_full_datafile.EOF:
+                    if not (test_batch == current_test_batch + 1) and not test_full_datafile.EOF:
+                        raise ValueError("Test file full not sorted by batch number")
+                    batch_line_end = test_full_datafile.line_num - 1
+                    batch_indices[current_test_batch] = (batch_line_start, batch_line_end)
+                    batch_line_start = test_full_datafile.line_num
+                    current_test_batch = test_batch
+            
+            test_full_datafile.batch_indices = batch_indices
 
 
     def _sample_negatives_with_replacement(self, user_negative_item_pool, n_samples):
@@ -229,7 +317,7 @@ class Dataset(object):
 
     def _get_user_negatives_pool(self, user_positive_item_pool):
         # get list of items user has not interacted with
-        return list(set(self.train_item_pool) - user_positive_item_pool)
+        return list(set(self.train_datafile.items) - user_positive_item_pool)
 
 
     def _get_negative_examples(self, user, user_negative_item_pool, n_samples):
@@ -241,19 +329,6 @@ class Dataset(object):
             self.col_rating: [0.0] * n_samples
         })
 
-
-    def _load_user_data(self, user_line_indices, reader):
-        # load user data from file according to line location and return a dataframe
-        user_line_start, user_line_end = user_line_indices["user_line_start"], user_line_indices["user_line_end"]
-        user_records = []
-        while reader.line_num < user_line_end:
-            row = next(reader)
-            if reader.line_num >= user_line_start:
-                user, item, rating, _ = self._extract_row_data(row)
-                user_records.append({self.col_user: user, self.col_item: item, self.col_rating: rating})
-            
-        return pd.DataFrame.from_records(user_records)
-            
     
     def _check_sample_size(self, n_samples, population_size, user, max_n_neg, train_set=True):
         if n_samples > population_size:
@@ -273,25 +348,29 @@ class Dataset(object):
         
         return n_samples
         
-
-    def _create_test_set(self):
     
+    def _create_test_set(self):
+
+        print("Creating full test set file {} ...".format(self.test_file_full))
+
         # create empty test_file_full
         pd.DataFrame(
             columns=[self.col_user, self.col_item, self.col_rating, self.col_test_batch]
         ).to_csv(self.test_file_full, index=False)
             
         batch_idx = 0
+        batch_line_start = 1
+        batch_line_end = 0
+        batch_indices = OrderedDict()
 
-        with open(self.train_file, 'r', encoding='UTF8') as train_f:
-            with open(self.test_file, 'r', encoding='UTF8') as test_f:
-                train_reader, test_reader = csv.DictReader(train_f), csv.DictReader(test_f) 
-
-                # for each user, sample n_neg_test negatives for each positive example
-                for user in self.test_user_pool.keys():
-                    if user in self.train_user_pool:
-                        user_test_data = self._load_user_data(self.test_user_pool[user], test_reader)
-                        user_train_data = self._load_user_data(self.train_user_pool[user], train_reader)
+        self.train_datafile.open()
+        self.test_datafile.open()
+        with self.train_datafile as train_datafile:
+            with self.test_datafile as test_datafile:
+                for user in test_datafile.users.keys():
+                    if user in train_datafile.users:
+                        user_test_data = test_datafile.load_user_data(user)
+                        user_train_data = train_datafile.load_user_data(user)
                         user_positive_item_pool = set(
                             user_test_data[self.col_item].unique()).union(user_train_data[self.col_item].unique()
                         )
@@ -312,12 +391,26 @@ class Dataset(object):
                             examples = pd.concat([positive_example, negative_examples])
                             examples[self.col_test_batch] = batch_idx
                             user_examples_dfs.append(examples)
+                            batch_line_end = batch_line_start + examples.shape[0] - 1
+                            batch_indices[batch_idx] = (batch_line_start, batch_line_end)
                             batch_idx += 1
+                            batch_line_start = batch_line_end + 1
                             
                         user_examples = pd.concat(user_examples_dfs)
                         
                         user_examples.to_csv(self.test_file_full, mode='a', index=False, header=False)
-    
+   
+        self.test_full_datafile = DataFile(
+            filename=self.test_file_full,
+            col_user=self.col_user,
+            col_item=self.col_item,
+            col_rating=self.col_rating,
+            col_test_batch=self.col_test_batch,
+            binary=self.binary,
+            batch_indices=batch_indices,
+            index_data=False
+        )
+
 
     def _split_into_batches(self, shuffle_buffer, batch_size):
         for i in range(0, len(shuffle_buffer), batch_size): 
@@ -328,7 +421,7 @@ class Dataset(object):
         return [
             [self.user2id[user] for user in batch[self.col_user].values],
             [self.item2id[item] for item in batch[self.col_item].values],
-            batch[self.col_rating].values
+            batch[self.col_rating].values.tolist()
         ]
     
 
@@ -353,7 +446,7 @@ class Dataset(object):
                 return batch
 
 
-    def train_loader(self, batch_size, shuffle_size=None, yield_id=True, write_to=None):
+    def train_loader(self, batch_size, shuffle_size=None, yield_id=False, write_to=None):
         """
         Generator for serving batches of training data. Positive examples are loaded from the
         original training file, to which negative samples are added. Data is loaded in memory into a
@@ -376,10 +469,9 @@ class Dataset(object):
         
         shuffle_buffer = []
         
-        with open(self.train_file, 'r', encoding='UTF8') as f:
-            reader = csv.DictReader(f)
-            for user, file_indices in self.train_user_pool.items():
-                user_positive_examples = self._load_user_data(file_indices, reader)
+        with self.train_datafile as train_datafile:
+            for user in train_datafile.users:
+                user_positive_examples = train_datafile.load_user_data(user)
                 user_positive_item_pool = set(user_positive_examples[self.col_item].unique())
                 user_negative_item_pool = self._get_user_negatives_pool(user_positive_item_pool)
                 n_samples = self.n_neg * user_positive_examples.shape[0]
@@ -392,7 +484,7 @@ class Dataset(object):
                         n_samples, population_size, user, max_n_neg, train_set=True
                     )
 
-                user_negative_examples = self._get_negative_examples(user, user_positive_item_pool, n_samples)
+                user_negative_examples = self._get_negative_examples(user, user_negative_item_pool, n_samples)
                 user_examples = pd.concat([user_positive_examples, user_negative_examples])
                 shuffle_buffer.append(user_examples)
                 shuffle_buffer_len = sum([df.shape[0] for df in shuffle_buffer])
@@ -402,9 +494,9 @@ class Dataset(object):
             
             # yield remaining buffer
             yield from self._release_shuffle_buffer(shuffle_buffer, batch_size, yield_id, write_to)
-                    
 
-    def test_loader(self, yield_id=True):
+
+    def test_loader(self, yield_id=False):
         """
         Generator for serving batches of test data. Data is loaded from test_file_full file.
 
@@ -412,40 +504,11 @@ class Dataset(object):
             yield_id (bool): If true, return assigned user and item IDs, else return original values.
         """
         prepare_batch = self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
-            
-        with open(self.test_file_full, 'r', encoding='UTF8') as f:
-            reader = csv.DictReader(f)
-            batch_users, batch_items, batch_ratings = [], [], []
-            batch_idx = 0
-            for row in reader:
-                user, item, rating, surplus_data = self._extract_row_data(row)
-                row_batch = int(surplus_data[self.col_test_batch])
-                if row_batch != batch_idx:
-                    yield prepare_batch(
-                        pd.DataFrame(
-                                {
-                                    self.col_user: batch_users,
-                                    self.col_item: batch_items,
-                                    self.col_rating: batch_ratings
-                                }
-                        )
-                    )
-                    batch_users, batch_items, batch_ratings = [], [], []
-                    batch_idx += 1
-                batch_users.append(user)
-                batch_items.append(item)
-                batch_ratings.append(rating)
-            
-            # yield final batch
-            yield prepare_batch(
-                pd.DataFrame(
-                        {
-                            self.col_user: batch_users,
-                            self.col_item: batch_items,
-                            self.col_rating: batch_ratings
-                        }
-                )
-            )
+
+        with self.test_full_datafile as test_full_datafile:
+            for test_batch_idx in test_full_datafile.batch_indices:
+                test_batch_data = test_full_datafile.load_batch_index(test_batch_idx)
+                yield prepare_batch(test_batch_data)
 
 
 if __name__ == "__main__":
@@ -453,5 +516,86 @@ if __name__ == "__main__":
     dirname = "/home/anta/notebooks/recommenders/examples/02_model_hybrid/"
     train_file = os.path.join(dirname, "train.csv")
     test_file = os.path.join(dirname, "test.csv")
+    test_file_full = os.path.join(dirname, "test_full.csv")
 
-    data = Dataset(train_file=train_file, test_file=test_file)
+    data = Dataset(train_file, test_file, test_file_full=test_file_full, overwrite_test_file_full=True)
+    # data = Dataset(train_file)
+
+    with data.train_datafile as f:
+        # data.train_datafile.open()
+        x = f.load_user_data(1)
+        print(x.head(1))  # should have item 168
+        print(x.tail(1)) # should have item 21
+        x = f.load_user_data(943)
+        print(x.head(1))  # should have item 64
+        print(x.tail(1)) # should have item 27
+
+    if not data.train_datafile.file.closed:
+        raise Exception("Not closed")
+
+    # with data.test_datafile as f:
+    #     x = f.load_user_data(1)
+    #     print(x.head(1))  # should have item 149
+    #     print(x.tail(1)) # should have item 74
+    #     x = f.load_user_data(943)
+    #     print(x.head(1))  # should have item 54
+    #     print(x.tail(1)) # should have item 234
+
+    # with data.test_full_datafile as f:
+    #     x = f.load_batch_index(0)
+    #     print(x.head(1)) # 149
+    #     x = f.load_batch_index(24890)
+    #     print(x.head(1)) # 234
+
+    # data = Dataset(train_file, test_file, test_file_full=test_file_full, overwrite_test_file_full=False)
+
+    # with data.test_full_datafile as f:
+    #     x = f.load_batch_index(0)
+    #     print(x.head(1)) # 149
+    #     x = f.load_batch_index(24890)
+    #     print(x.head(1)) # 234
+
+    for i, x in enumerate(data.train_loader(32, shuffle_size=None, yield_id=True, write_to="./train_full.csv")):
+        if i % 1000 == 0:
+            print(i)
+            print(x)
+            print(" ")
+
+    print("test loader")
+    for i, x in enumerate(data.test_loader(yield_id=True)):
+        if i % 1000 == 0:
+            print(i)
+            print(x)
+            print(" ")
+
+    # reader = CsvReader(test_file, expected_fields=["userID", "itemID", "rating"])
+    # print(reader.line_num)
+    # row = next(reader)
+    # print(reader.line_num, reader.EOF, row)
+    # for row in reader:
+    #     print(reader.line_num, reader.EOF, row)
+
+    # test_datafile = DataFile(
+    #     test_file, expected_fields=["userID", "itemID", "rating"],
+    #     col_user="userID", col_item="itemID", col_rating="rating",
+    #     binary=True
+    # )
+
+
+    # test_datafile.open()
+
+    # print(test_datafile.load_user_data(943))
+    # user, item, rating, _ = next(test_datafile)
+    # print(user, item, rating)
+
+    # test_datafile.close()
+
+    # for user, item, rating, _ in test_datafile:
+    #     print(test_datafile.reader.line_num, user, item, rating)
+
+    # test_datafile.close()
+
+    # row = next(reader)
+    # print(reader.line_num, reader.EOF, row)
+
+    # data = Dataset(train_file=train_file, test_file=test_file)
