@@ -74,7 +74,7 @@ extras_require = {
     "spark": [
         "databricks_cli>=0.8.6,<1",
         "pyarrow>=0.12.1,<7.0.0",
-        "pyspark>=2.4.5,<3.2.0",
+        "pyspark>=2.4.5,<4.0.0",
     ],
     "dev": [
         "black>=18.6b4,<21",
