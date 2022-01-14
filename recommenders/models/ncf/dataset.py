@@ -6,7 +6,7 @@ import random
 import numpy as np
 import pandas as pd
 import warnings
-import math
+import math # DELETE?
 import csv
 
 from recommenders.utils.constants import (
@@ -31,7 +31,7 @@ class DataFile():
         if self.col_test_batch is not None:
             self.expected_fields.append(self.col_test_batch)
         self.binary = binary
-        self.batch_indices= batch_indices
+        self.batch_indices = batch_indices
         if index_data:
             self._index_data()
 
@@ -59,7 +59,6 @@ class DataFile():
                 if (user != current_user) or self.EOF:
                     user_line_end = self.line_num - 1
                     
-                    # if last line of file
                     if self.EOF:
                         current_user = user
                         user_line_end = self.line_num
@@ -81,6 +80,18 @@ class DataFile():
         missing_fields = set(fields_to_check).difference(set(self.reader.fieldnames))
         if len(missing_fields):
             raise ValueError("Columns {} not in header of file {}".format(missing_fields, self.filename))
+    def __enter__(self, *args):
+        self.file = open(self.filename, 'r', encoding='UTF8')
+        self.reader = csv.DictReader(self.file)
+        self._check_for_missing_fields(self.expected_fields)
+        self.EOF = False
+        self.line_num = 0
+        return self
+
+
+    def __exit__(self, *args):
+        self.file.close()
+        self.reader = None
 
 
     def __iter__(self):
@@ -102,28 +113,6 @@ class DataFile():
             self.EOF = True
 
         return self._extract_row_data(self.last_row)
-
-
-    def open(self):
-        self.file = open(self.filename, 'r', encoding='UTF8')
-        self.reader = csv.DictReader(self.file)
-        self._check_for_missing_fields(self.expected_fields)
-        self.EOF = False
-        self.line_num = 0
-        return self
-    
-
-    def close(self):
-        self.file.close()
-        self.reader = None
-
-
-    def __enter__(self, *args):
-        return self.open()
-
-
-    def __exit__(self, *args):
-        self.close()
 
 
     def _extract_row_data(self, row):
@@ -237,7 +226,6 @@ class Dataset(object):
         else:
             self._sample = self._sample_negatives_without_replacement
 
-        # data preprocessing for training and test data
         self.train_datafile = DataFile(
             filename=self.train_file,
             col_user=self.col_user,
@@ -265,17 +253,17 @@ class Dataset(object):
             if self.test_file_full is None:
                 self.test_file_full = os.path.splitext(self.test_file)[0] + "_full.csv"
             if os.path.isfile(self.test_file_full) and not self.overwrite_test_file_full:
-                self._validate_test_file()
+                self._load_test_file()
             else:
-                self._create_test_set()
+                self._create_test_file()
         
         # set random seed
         random.seed(seed)
 
 
-    def _validate_test_file(self):
+    def _load_test_file(self):
 
-        print("Validating existing test file full {} ...".format(self.test_file_full))
+        print("Loading existing test file full {} ...".format(self.test_file_full))
         self.test_full_datafile = DataFile(
             filename=self.test_file_full,
             col_user=self.col_user,
@@ -349,7 +337,7 @@ class Dataset(object):
         return n_samples
         
     
-    def _create_test_set(self):
+    def _create_test_file(self):
 
         print("Creating full test set file {} ...".format(self.test_file_full))
 
@@ -363,8 +351,6 @@ class Dataset(object):
         batch_line_end = 0
         batch_indices = OrderedDict()
 
-        self.train_datafile.open()
-        self.test_datafile.open()
         with self.train_datafile as train_datafile:
             with self.test_datafile as test_datafile:
                 for user in test_datafile.users.keys():
@@ -465,7 +451,8 @@ class Dataset(object):
             shuffle_size = (self.train_len * (self.n_neg + 1))
         
         if write_to:
-            pd.DataFrame(columns=[self.col_user, self.col_item, self.col_rating]).to_csv(write_to, header=True, index=False)
+            pd.DataFrame(columns=[self.col_user, self.col_item, self.col_rating]) \
+                .to_csv(write_to, header=True, index=False)
         
         shuffle_buffer = []
         
@@ -484,12 +471,16 @@ class Dataset(object):
                         n_samples, population_size, user, max_n_neg, train_set=True
                     )
 
-                user_negative_examples = self._get_negative_examples(user, user_negative_item_pool, n_samples)
+                user_negative_examples = self._get_negative_examples(
+                    user, user_negative_item_pool, n_samples
+                )
                 user_examples = pd.concat([user_positive_examples, user_negative_examples])
                 shuffle_buffer.append(user_examples)
                 shuffle_buffer_len = sum([df.shape[0] for df in shuffle_buffer])
                 if (shuffle_buffer_len >= shuffle_size):
-                    buffer_remainder = yield from self._release_shuffle_buffer(shuffle_buffer, batch_size, yield_id, write_to)
+                    buffer_remainder = yield from self._release_shuffle_buffer(
+                        shuffle_buffer, batch_size, yield_id, write_to
+                    )
                     shuffle_buffer = [buffer_remainder] if buffer_remainder is not None else []
             
             # yield remaining buffer
@@ -498,7 +489,7 @@ class Dataset(object):
 
     def test_loader(self, yield_id=False):
         """
-        Generator for serving batches of test data. Data is loaded from test_file_full file.
+        Generator for serving batches of test data. Data is loaded from test_file_full.
 
         Args:
             yield_id (bool): If true, return assigned user and item IDs, else return original values.
@@ -522,7 +513,6 @@ if __name__ == "__main__":
     # data = Dataset(train_file)
 
     with data.train_datafile as f:
-        # data.train_datafile.open()
         x = f.load_user_data(1)
         print(x.head(1))  # should have item 168
         print(x.tail(1)) # should have item 21
