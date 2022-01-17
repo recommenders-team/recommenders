@@ -129,15 +129,15 @@ class LibffmConverter:
                 'field3': [1.0, 2.0, 3.0, 4.0, 5.0],
                 'field4': ['1', '2', '3', '4', '5']
             })
-        >>> converter = LibffmConveter().fit(df_feature, col_rating='rating')
+        >>> converter = LibffmConverter().fit(df_feature, col_rating='rating')
         >>> df_out = converter.transform(df_feature)
         >>> df_out
             rating field1 field2   field3 field4
-        0       1  1:1:1  2:4:3  3:5:1.0  4:4:1
-        1       0  1:2:1  2:4:4  3:5:2.0  4:5:1
-        2       0  1:3:1  2:4:5  3:5:3.0  4:6:1
-        3       1  1:3:1  2:4:6  3:5:4.0  4:7:1
-        4       1  1:3:1  2:4:7  3:5:5.0  4:8:1
+        0       1  1:1:1  2:4:3  3:5:1.0  4:6:1
+        1       0  1:2:1  2:4:4  3:5:2.0  4:7:1
+        2       0  1:3:1  2:4:5  3:5:3.0  4:8:1
+        3       1  1:3:1  2:4:6  3:5:4.0  4:9:1
+        4       1  1:3:1  2:4:7  3:5:5.0  4:10:1
     """
 
     def __init__(self, filepath=None):
