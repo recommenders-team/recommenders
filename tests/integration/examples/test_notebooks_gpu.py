@@ -615,7 +615,6 @@ def test_cornac_bivae_integration(
         )
     ],
 )
-# @pytest.mark.skipif(tf.__versoin__ > "2.0", reason="We are currently on TF 1.5")
 def test_sasrec_quickstart_integration(
     notebooks,
     output_notebook,

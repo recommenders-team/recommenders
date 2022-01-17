@@ -157,6 +157,10 @@ class SSEPT(SASREC):
         return pos_logits, neg_logits, istarget
 
     def predict(self, inputs):
+        """
+        Model prediction for candidate (negative) items
+
+        """
         training = False
         user = inputs["user"]
         input_seq = inputs["input_seq"]

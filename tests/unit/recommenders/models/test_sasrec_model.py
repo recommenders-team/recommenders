@@ -20,6 +20,22 @@ except ImportError:
     pass  # skip if in cpu environment
 
 
+@pytest.fixture()
+def model_parameters():
+    params = {
+        "itemnum": 85930,
+        "usernum": 63114,
+        "maxlen": 50,
+        "num_blocks": 2,
+        "hidden_units": 100,
+        "num_heads": 1,
+        "dropout_rate": 0.1,
+        "l2_emb": 0.0,
+        "num_neg_test": 100,
+    }
+    return params
+
+
 def data_process_with_time(fname, pname, K=10, sep=" ", item_set=None, add_time=False):
     User = defaultdict(list)
     Users = set()
@@ -163,28 +179,21 @@ def test_sampler():
 
 
 @pytest.mark.gpu
-def test_sasrec():
-    # Amazon Electronics Data
-    itemnum = 85930
-    maxlen = 50
-    num_blocks = 2
-    hidden_units = 100
-    num_heads = 1
-    dropout_rate = 0.1
-    l2_emb = 0.0
-    num_neg_test = 100
+def test_sasrec(model_parameters):
+
+    params = model_parameters
 
     model = SASREC(
-        item_num=itemnum,
-        seq_max_len=maxlen,
-        num_blocks=num_blocks,
-        embedding_dim=hidden_units,
-        attention_dim=hidden_units,
-        attention_num_heads=num_heads,
-        dropout_rate=dropout_rate,
+        item_num=params["itemnum"],
+        seq_max_len=params["maxlen"],
+        num_blocks=params["num_blocks"],
+        embedding_dim=params["hidden_units"],
+        attention_dim=params["hidden_units"],
+        attention_num_heads=params["num_heads"],
+        dropout_rate=params["dropout_rate"],
         conv_dims=[100, 100],
-        l2_reg=l2_emb,
-        num_neg_test=num_neg_test,
+        l2_reg=params["l2_emb"],
+        num_neg_test=params["num_neg_test"],
     )
 
     assert model.encoder is not None
@@ -192,32 +201,23 @@ def test_sasrec():
 
 
 @pytest.mark.gpu
-def test_ssept():
-    # Amazon Electronics Data
-    itemnum = 85930
-    usernum = 63114
-    maxlen = 50
-    num_blocks = 2
-    hidden_units = 100
-    num_heads = 1
-    dropout_rate = 0.1
-    l2_emb = 0.0
-    num_neg_test = 100
+def test_ssept(model_parameters):
+
+    params = model_parameters
 
     model = SSEPT(
-        item_num=itemnum,
-        user_num=usernum,
-        seq_max_len=maxlen,
-        num_blocks=num_blocks,
-        # embedding_dim=hidden_units,  # optional
-        user_embedding_dim=hidden_units,
-        item_embedding_dim=hidden_units,
-        attention_dim=hidden_units,
-        attention_num_heads=num_heads,
-        dropout_rate=dropout_rate,
+        item_num=params["itemnum"],
+        user_num=params["usernum"],
+        seq_max_len=params["maxlen"],
+        num_blocks=params["num_blocks"],
+        user_embedding_dim=params["hidden_units"],
+        item_embedding_dim=params["hidden_units"],
+        attention_dim=params["hidden_units"],
+        attention_num_heads=params["num_heads"],
+        dropout_rate=params["dropout_rate"],
         conv_dims=[200, 200],
-        l2_reg=l2_emb,
-        num_neg_test=num_neg_test,
+        l2_reg=params["l2_emb"],
+        num_neg_test=params["num_neg_test"],
     )
 
     assert model.encoder is not None
