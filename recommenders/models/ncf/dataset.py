@@ -1,6 +1,3 @@
-import sys
-import os # DELETE
-sys.path.append("/home/anta/notebooks/recommenders") # DELETE
 from collections import OrderedDict
 import random
 import numpy as np
@@ -113,6 +110,7 @@ class DataFile():
     def _init_data(self):
         # Compile lists of unique users and items, assign IDs to users and items,
         # and ensure file is sorted by user (and batch index if test set)
+        print("Indexing {} ...".format(self.filename))
         with self:
             user_items = []
             self.item2id, self.user2id = OrderedDict(), OrderedDict()
@@ -194,7 +192,7 @@ class Dataset(object):
         binary=True,
         seed=None,
         sample_with_replacement=False,
-        print_warnings=True
+        print_warnings=False
     ):
         """Constructor
         Args:
@@ -315,9 +313,10 @@ class Dataset(object):
                     warning_string = (
                         "The population of negative items to sample from is too small for user {}. "
                         "Samples needed = {}, negative items = {}. "
+                        "Reducing samples to {} for this user."
                         "If an equal number of negative samples for each user is required in the {} set, sample with replacement or reduce {}. "
                         "This warning can be turned off by setting print_warnings=False"
-                        .format(user, n_samples, population_size, dataset_name, n_neg_var)
+                        .format(user, n_samples, population_size, population_size, dataset_name, n_neg_var)
                     )
                     warnings.warn(
                          warning_string
@@ -461,81 +460,3 @@ class Dataset(object):
             for test_batch_idx in test_full_datafile.batch_indices_range:
                 test_batch_data = test_full_datafile.load_data(test_batch_idx, by_user=False)
                 yield prepare_batch(test_batch_data)
-
-
-if __name__ == "__main__":
-
-    dirname = "/home/anta/notebooks/recommenders/examples/02_model_hybrid/"
-    train_file = os.path.join(dirname, "train.csv")
-    test_file = os.path.join(dirname, "test.csv")
-    test_file_full = os.path.join(dirname, "test_full.csv")
-
-    # test_datafile = DataFile(
-    #     test_file,
-    #     col_user="userID", col_item="itemID", col_rating="rating",
-    #     binary=True
-    # )
-
-    # with test_datafile as f:
-    #     # for i, row in enumerate(f):
-    #     #     if i in [0,1]:
-    #     #         print(row["userID"], row["itemID"], row["rating"])
-    #     #     if i in [24889, 24890]:
-    #     #         print(row["userID"], row["itemID"], row["rating"])
-    #     print(f.load_data(1))
-    #     print(" ")
-    #     print(f.load_data(2))
-    #     print(" ")
-    #     print(f.load_data(943))
-
-
-    data = Dataset(train_file, test_file, test_file_full=test_file_full, overwrite_test_file_full=True, print_warnings=True)
-    data = Dataset(train_file, test_file, test_file_full=test_file_full, overwrite_test_file_full=False, print_warnings=True)
-    # print("hello")
-    # data = Dataset(train_file)
-
-    # with data.train_datafile as f:
-    #     x = f.load_user_data(1)
-    #     print(x.head(1))  # should have item 168
-    #     print(x.tail(1)) # should have item 21
-    #     x = f.load_user_data(943)
-    #     print(x.head(1))  # should have item 64
-    #     print(x.tail(1)) # should have item 27
-
-    # if not data.train_datafile.file.closed:
-    #     raise Exception("Not closed")
-
-    # with data.test_datafile as f:
-    #     x = f.load_user_data(1)
-    #     print(x.head(1))  # should have item 149
-    #     print(x.tail(1)) # should have item 74
-    #     x = f.load_user_data(943)
-    #     print(x.head(1))  # should have item 54
-    #     print(x.tail(1)) # should have item 234
-
-    # with data.test_full_datafile as f:
-    #     x = f.load_batch_index(0)
-    #     print(x.head(1)) # 149
-    #     x = f.load_batch_index(24890)
-    #     print(x.head(1)) # 234
-
-    # data = Dataset(train_file, test_file, test_file_full=test_file_full, overwrite_test_file_full=False)
-
-    # with data.test_full_datafile as f:
-    #     x = f.load_batch_index(0)
-    #     print(x.head(1)) # 149
-    #     x = f.load_batch_index(24890)
-    #     print(x.head(1)) # 234
-
-    for i, x in enumerate(data.train_loader(32, shuffle_size=None, yield_id=True, write_to="./train_full.csv")):
-        if i % 1000 == 0:
-            print(i)
-            print(x)
-            print(" ")
-
-    print("test loader")
-    for i, x in enumerate(data.test_loader(yield_id=False)):
-        if i % 10000 == 0:
-            print(i)
-            print(x)
-            print(" ")
