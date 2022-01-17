@@ -2,26 +2,15 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New 
-### (September 27, 2021)
+## What's New (January 13, 2022)
 
-We have a new release [Recommenders 0.7.0](https://github.com/microsoft/recommenders/releases/tag/0.7.0)!
-We have changed the names of the folders which contain the source code, so that they are more informative. This implies that you will need to change any import statements that reference the recommenders package. Specifically, the folder `reco_utils` has been renamed to `recommenders` and its subfolders have been renamed according to [issue 1390](https://github.com/microsoft/recommenders/issues/1390).  
-
-The previous release ([0.6.0](https://github.com/microsoft/recommenders/releases/tag/0.6.0)) is compatible with the old style of naming of modules. 
-
-The recommenders package now supports three types of environments: [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) and [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) with Python versions 3.6 and 3.7.
-
-We have also added new evaluation metrics: _novelty, serendipity, diversity and coverage_ (see the [evalution notebooks](examples/03_evaluate/README.md)).
-
-Code coverage reports are now generated for every PR, using [Codecov](https://about.codecov.io/).
+We have a new release [Recommenders 1.0.0](https://github.com/microsoft/recommenders/releases/tag/1.0.0)! The codebase has now migrated to TensorFlow versions 2.6 / 2.7 and to Spark version 3. In addition, there are a few changes in the dependencies and extras installed by `pip` (see [this guide](recommenders/README.md#optional-dependencies)). We have also made improvements in the code and the CI / CD pipelines.
 
 Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
 
 Here you can find the PyPi page: https://pypi.org/project/recommenders/
 
 Here you can find the package documentation: https://microsoft-recommenders.readthedocs.io/en/latest/
-
 
 ## Introduction
 
@@ -48,41 +37,51 @@ and currently does not support version 3.8 and above. It is recommended to insta
 
 To set up on your local machine:
 
-To install core utilities, CPU-based algorithms, and dependencies:
+* To install core utilities, CPU-based algorithms, and dependencies:
 
-1. Ensure software required for compilation and Python libraries is installed. On Linux this can be supported by adding:
-```bash
-sudo apt-get install -y build-essential libpython<version>
-``` 
-where `<version>` should be `3.6` or `3.7` as appropriate.
+    1. Ensure software required for compilation and Python libraries
+       is installed.
 
-On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-  
-2. Create a conda or virtual environment. See the [setup guide](SETUP.md) for more details.
+       + On Linux this can be supported by adding:
 
-3. Within the created environment, install the package from [PyPI](https://pypi.org):
+         ```bash
+         sudo apt-get install -y build-essential libpython<version>
+         ``` 
 
-```bash
-pip install --upgrade pip
-pip install --upgrade setuptools
-pip install recommenders[examples]
-```
+         where `<version>` should be `3.6` or `3.7` as appropriate.
 
-4. Register your (conda or virtual) environment with Jupyter:
+       + On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
 
-```bash
-python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
-```
+    2. Create a conda or virtual environment.  See the
+       [setup guide](SETUP.md) for more details.
 
-5. Start the Jupyter notebook server
+    3. Within the created environment, install the package from
+       [PyPI](https://pypi.org):
 
-```bash
-jupyter notebook
-```
+       ```bash
+       pip install --upgrade pip
+       pip install --upgrade setuptools
+       pip install recommenders[examples]
+       ```
 
-6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb) notebook under the `00_quick_start` folder. Make sure to change the kernel to "Python (reco)".
+    4. Register your (conda or virtual) environment with Jupyter:
 
-For additional options to install the package (support for GPU, Spark etc.) see [this guide](recommenders/README.md).
+       ```bash
+       python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
+       ```
+
+    5. Start the Jupyter notebook server
+
+       ```bash
+       jupyter notebook
+       ```
+
+    6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb)
+       notebook under the `00_quick_start` folder.  Make sure to
+       change the kernel to "Python (reco)".
+
+* For additional options to install the package (support for GPU,
+  Spark etc.) see [this guide](recommenders/README.md).
 
 **NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
 
@@ -167,7 +166,7 @@ These tests are the nightly builds, which compute the smoke and integration test
 
 ### DSVM Build Status
 
-The following tests run on a Linux DSVM daily. These machines run 24/7.
+The following tests run on a Linux DSVM daily. 
 
 | Build Type | Branch | Status |  | Branch | Status |
 | --- | --- | --- | --- | --- | --- |
