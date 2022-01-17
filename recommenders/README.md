@@ -156,6 +156,8 @@ The models submodule contains implementations of various algorithms that can be 
 * Restricted Boltzmann Machines (RBM)
 * Riemannian Low-rank Matrix Completion (RLRMC)
 * Simple Algorithm for Recommendation (SAR)
+* Self-Attentive Sequential Recommendation (SASRec)
+* Sequential Recommendation Via Personalized Transformer (SSEPT)
 * Surprise
 * Term Frequency - Inverse Document Frequency (TF-IDF)
 * Variational Autoencoders (VAE)
