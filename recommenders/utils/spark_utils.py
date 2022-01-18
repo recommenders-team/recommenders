@@ -9,7 +9,7 @@ try:
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
-MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark:1.0.0-rc3-184-3314e164-SNAPSHOT"
+MMLSPARK_PACKAGE = "com.microsoft.azure:synapseml_2.12:0.9.5"
 MMLSPARK_REPO = "https://mmlspark.azureedge.net/maven"
 # We support Spark v3, but in case you wish to use v2, set
 # MMLSPARK_PACKAGE = "com.microsoft.ml.spark:mmlspark_2.11:0.18.1"
