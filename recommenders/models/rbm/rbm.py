@@ -4,7 +4,6 @@
 import numpy as np
 import tensorflow as tf
 import logging
-from recommenders.evaluation.tf_evaluation import rmse
 
 tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
@@ -437,7 +436,9 @@ class RBM:
         """Initialize metrics"""
 
         if self.with_metrics:  # if true (default) returns evaluation metrics
-            self.rmse = rmse(self.v, self.v_k)
+            self.rmse = tf.sqrt(
+                tf.compat.v1.losses.mean_squared_error(self.v, self.v_k, weights=tf.where(self.v > 0, 1, 0))
+            )
 
     def generate_graph(self):
         """Call the different RBM modules to generate the computational graph"""
