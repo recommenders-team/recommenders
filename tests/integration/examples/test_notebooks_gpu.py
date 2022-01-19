@@ -646,11 +646,3 @@ def test_sasrec_quickstart_integration(
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
-
-
-@pytest.mark.notebooks
-@pytest.mark.gpu
-@pytest.mark.integration
-def test_sasrec_single_node_runs(notebooks, output_notebook, kernel_name):
-    notebook_path = notebooks["sasrec_quickstart"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
