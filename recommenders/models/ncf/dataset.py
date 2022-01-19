@@ -3,14 +3,17 @@ from collections import OrderedDict
 import random
 import numpy as np
 import pandas as pd
-import warnings
 import csv
+import logging
 
 from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_RATING_COL
 )
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class DataFile():
@@ -111,7 +114,7 @@ class DataFile():
     def _init_data(self):
         # Compile lists of unique users and items, assign IDs to users and items,
         # and ensure file is sorted by user (and batch index if test set)
-        print("Indexing {} ...".format(self.filename))
+        logger.info("Indexing {} ...".format(self.filename))
         with self:
             user_items = []
             self.item2id, self.user2id = OrderedDict(), OrderedDict()
@@ -321,7 +324,7 @@ class Dataset(object):
                         "This warning can be turned off by setting print_warnings=False"
                         .format(user, n_samples, population_size, population_size, dataset_name, n_neg_var)
                     )
-                    warnings.warn(
+                    logging.warning(
                          warning_string
                     )
         
@@ -330,7 +333,7 @@ class Dataset(object):
 
     def _create_test_file(self):
 
-        print("Creating full leave-one-out test file {} ...".format(self.test_file_full))
+        logger.info("Creating full leave-one-out test file {} ...".format(self.test_file_full))
 
         # create empty csv
         pd.DataFrame(
