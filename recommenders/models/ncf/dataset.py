@@ -76,7 +76,7 @@ class DataFile():
             if self.row is None:
                 raise Exception("{} is empty.".format(self.filename))
         else:
-            raise StopIteration # end of file
+            raise StopIteration  # end of file
 
         self.next_row = self._extract_row_data(next(self.reader, None))
         self.line_num += 1
@@ -99,7 +99,7 @@ class DataFile():
         test_batch = None
         if self.col_test_batch:
             test_batch = int(row[self.col_test_batch])
-        return {self.col_user:user, self.col_item:item, self.col_rating:rating, self.col_test_batch:test_batch}
+        return {self.col_user: user, self.col_item: item, self.col_rating: rating, self.col_test_batch: test_batch}
 
     def _init_data(self):
         # Compile lists of unique users and items, assign IDs to users and items,
@@ -112,7 +112,7 @@ class DataFile():
             for _ in self:
                 item = self.row[self.col_item]
                 user = self.row[self.col_user]
-                test_batch = self.row[self.col_test_batch]                
+                test_batch = self.row[self.col_test_batch]           
                 if not self.end_of_file:
                     next_user = self.next_row[self.col_user]
                     next_test_batch = self.next_row[self.col_test_batch]
@@ -221,7 +221,7 @@ class Dataset(object):
         self.print_warnings = print_warnings
 
         self.col_test_batch = "test_batch"
-    
+
         # set sampling method to use
         if self.sample_with_replacement:
             self._sample = self._sample_negatives_with_replacement
@@ -309,7 +309,7 @@ class Dataset(object):
                         .format(user, n_samples, population_size, population_size, dataset_name, n_neg_var)
                     )
                     logging.warning(
-                         warning_string
+                        warning_string
                     )
 
         return new_n_samples
@@ -333,9 +333,8 @@ class Dataset(object):
                         user_train_data = train_datafile.load_data(user)
                         # for leave-one-out evaluation, exclude items seen in both training and test sets
                         # when sampling negatives
-                        user_positive_item_pool = set(
-                            user_test_data[self.col_item].unique()).union(user_train_data[self.col_item].unique()
-                        )
+                        user_positive_item_pool = set(user_test_data[self.col_item].unique()) \
+                            .union(user_train_data[self.col_item].unique())
                         user_negative_item_pool = self._get_user_negatives_pool(user_positive_item_pool)
                         n_samples = self.n_neg_test
                         n_samples = self._check_sample_size(user, n_samples, user_negative_item_pool, training=False)
@@ -371,10 +370,10 @@ class Dataset(object):
             batch[self.col_rating].values.tolist()
         ]
 
-    def _release_shuffle_buffer(self, shuffle_buffer, batch_size, yield_id, write_to = None):
+    def _release_shuffle_buffer(self, shuffle_buffer, batch_size, yield_id, write_to=None):
         prepare_batch = self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
         shuffle_buffer_df = pd.concat(shuffle_buffer)
-        shuffle_buffer_df = shuffle_buffer_df.sample(shuffle_buffer_df.shape[0]) # shuffle the buffer
+        shuffle_buffer_df = shuffle_buffer_df.sample(shuffle_buffer_df.shape[0])  # shuffle the buffer
         for batch in self._split_into_batches(shuffle_buffer_df, batch_size):
             if batch.shape[0] == batch_size:
                 if write_to:
