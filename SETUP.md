@@ -6,7 +6,6 @@ This document describes how to setup all the dependencies to run the notebooks i
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
 * Docker container
 
-
 ## Table of Contents
 
   - [Compute environments](#compute-environments)
@@ -397,7 +396,7 @@ You can then open the Jupyter notebook server at http://localhost:8888
 
 The process of making a new release and publishing it to pypi is as follows:
 
-First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [recommenders.py/__init__.py](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
+First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`recommenders.py/__init__.py`](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
@@ -406,4 +405,5 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [re
 generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
+1. Install twine: `pip install twine`
 1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`

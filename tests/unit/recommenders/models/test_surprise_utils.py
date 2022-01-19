@@ -17,7 +17,7 @@ try:
         compute_ranking_predictions,
     )
 except:
-    pass    # skip if experimental not installed
+    pass    # skip if surprise not installed
 
 TOL = 0.001
 
