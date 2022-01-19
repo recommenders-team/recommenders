@@ -146,12 +146,13 @@ class DataFile():
     
     def load_data(self, key, by_user=True):
         """ Load data for a specified user or test batch
-        Args:
-            key (int): user or test batch index
-            by_user (bool): load data by usr if True, else by test batch
 
-        Returns:
-            pandas.DataFrame
+            Args:
+                key (int): user or test batch index
+                by_user (bool): load data by usr if True, else by test batch
+
+            Returns:
+                pandas.DataFrame
         """
         records = []
         key_col = self.col_user if by_user else self.col_test_batch
@@ -196,22 +197,23 @@ class Dataset(object):
         print_warnings=False
     ):
         """Constructor
-        Args:
-            train_file (str): Path to training dataset file.
-            test_file (str): Path to test dataset file for leave-one-out evaluation.
-            test_file_full (str): Path to full test dataset file including negative samples.
-            overwrite_test_file_full (bool): If true, recreate and overwrite test_file_full.
-            n_neg (int): Number of negative samples per positive example for training set.
-            n_neg_test (int): Number of negative samples per positive example for test set.
-            col_user (str): User column name.
-            col_item (str): Item column name.
-            col_rating (str): Rating column name.
-            binary (bool): If true, set rating > 0 to rating = 1.
-            seed (int): Seed.
-            sample_with_replacement (bool): If true, sample negative examples with replacement,
-                otherwise without replacement.
-            print_warnings (bool): If true, prints warnings if sampling without replacement and
-                there are not enough items to sample from to satisfy n_neg or n_neg_test.
+
+            Args:
+                train_file (str): Path to training dataset file.
+                test_file (str): Path to test dataset file for leave-one-out evaluation.
+                test_file_full (str): Path to full test dataset file including negative samples.
+                overwrite_test_file_full (bool): If true, recreate and overwrite test_file_full.
+                n_neg (int): Number of negative samples per positive example for training set.
+                n_neg_test (int): Number of negative samples per positive example for test set.
+                col_user (str): User column name.
+                col_item (str): Item column name.
+                col_rating (str): Rating column name.
+                binary (bool): If true, set rating > 0 to rating = 1.
+                seed (int): Seed.
+                sample_with_replacement (bool): If true, sample negative examples with replacement,
+                    otherwise without replacement.
+                print_warnings (bool): If true, prints warnings if sampling without replacement and
+                    there are not enough items to sample from to satisfy n_neg or n_neg_test.
         """
         self.train_file = train_file
         self.test_file = test_file
@@ -407,11 +409,14 @@ class Dataset(object):
         shuffle buffer up to a maximum of shuffle_size rows, before the data is shuffled and released.
         If out-of-memory errors are encountered, try reducing shuffle_size.
 
-        Args:
-            batch_size (int): Number of examples in each batch.
-            shuffle_size (int): Maximum number of examples in shuffle buffer.
-            yield_id (bool): If true, return assigned user and item IDs, else return original values.
-            write_to (str): Path of file to write full dataset (including negative examples). 
+            Args:
+                batch_size (int): Number of examples in each batch.
+                shuffle_size (int): Maximum number of examples in shuffle buffer.
+                yield_id (bool): If true, return assigned user and item IDs, else return original values.
+                write_to (str): Path of file to write full dataset (including negative examples).
+            
+            Returns:
+                list
         """
 
         # if shuffle_size not supplied, use (estimated) full data size i.e. complete in-memory shuffle
@@ -452,8 +457,11 @@ class Dataset(object):
         """
         Generator for serving batches of test data for leave-one-out evaluation. Data is loaded from test_file_full.
 
-        Args:
-            yield_id (bool): If true, return assigned user and item IDs, else return original values.
+            Args:
+                yield_id (bool): If true, return assigned user and item IDs, else return original values.
+            
+            Returns:
+                list
         """
         prepare_batch = self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
 
