@@ -112,7 +112,7 @@ class DataFile():
             for _ in self:
                 item = self.row[self.col_item]
                 user = self.row[self.col_user]
-                test_batch = self.row[self.col_test_batch]           
+                test_batch = self.row[self.col_test_batch]
                 if not self.end_of_file:
                     next_user = self.next_row[self.col_user]
                     next_test_batch = self.next_row[self.col_test_batch]
