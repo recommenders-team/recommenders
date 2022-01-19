@@ -20,7 +20,7 @@ class DataFile():
     """
     DataFile class for NCF. Iterator to read data from a csv file.
     Data must be sorted by user. Includes utilities for loading user data from
-    to file, formatting it and returning a Pandas dataframe.  
+    to file, formatting it and returning a Pandas dataframe.
     """
 
     def __init__(
@@ -39,25 +39,20 @@ class DataFile():
         self.user2id, self.item2id, self.id2user, self.id2item = None, None, None, None
         self._init_data()
 
-
     @property
     def users(self):
         return self.user2id.keys()
 
-    
     @property
     def items(self):
         return self.item2id.keys()
 
-    
     @property
     def end_of_file(self):
         return (self.line_num > 0) and self.next_row is None
 
-
     def __iter__(self):
         return self
-
 
     def __enter__(self, *args):
         self.file = open(self.filename, 'r', encoding='UTF8')
@@ -67,13 +62,11 @@ class DataFile():
         self.row, self.next_row = None, None
         return self
 
-
     def __exit__(self, *args):
         self.file.close()
         self.reader = None
         self.line_num = 0
         self.row, self.next_row = None, None
-
 
     def __next__(self):
         if self.next_row:
@@ -90,12 +83,10 @@ class DataFile():
 
         return self.row
 
-
     def _check_for_missing_fields(self, fields_to_check):
         missing_fields = set(fields_to_check).difference(set(self.reader.fieldnames))
         if len(missing_fields):
             raise ValueError("Columns {} not in header of file {}".format(missing_fields, self.filename))
-
 
     def _extract_row_data(self, row):
         if row is None:
@@ -109,7 +100,6 @@ class DataFile():
         if self.col_test_batch:
             test_batch = int(row[self.col_test_batch])
         return {self.col_user:user, self.col_item:item, self.col_rating:rating, self.col_test_batch:test_batch}
-    
 
     def _init_data(self):
         # Compile lists of unique users and items, assign IDs to users and items,
@@ -146,7 +136,6 @@ class DataFile():
             self.batch_indices_range = range(0, batch_index)
             self.data_len = self.line_num - 1
 
-    
     def load_data(self, key, by_user=True):
         """ Load data for a specified user or test batch
 
@@ -159,7 +148,7 @@ class DataFile():
         """
         records = []
         key_col = self.col_user if by_user else self.col_test_batch
-        
+
         # fast forward in file to user/test batch
         while (self.line_num == 0) or (self.row[key_col] != key):
             if self.end_of_file:
@@ -232,7 +221,7 @@ class Dataset(object):
         self.print_warnings = print_warnings
 
         self.col_test_batch = "test_batch"
-        
+    
         # set sampling method to use
         if self.sample_with_replacement:
             self._sample = self._sample_negatives_with_replacement
@@ -254,7 +243,7 @@ class Dataset(object):
         self.id2user = {self.user2id[k]: k for k in self.user2id}
         self.id2item = {self.item2id[k]: k for k in self.item2id}
         self.train_len = self.train_datafile.data_len
-            
+
         if self.test_file is not None:
             self.test_datafile = DataFile(
                 filename=self.test_file,
@@ -276,23 +265,19 @@ class Dataset(object):
                 col_test_batch=self.col_test_batch,
                 binary=self.binary
             )
-        
+
         # set random seed
         random.seed(seed)
-
 
     def _sample_negatives_with_replacement(self, user_negative_item_pool, n_samples):
         return random.choices(user_negative_item_pool, k=n_samples)
 
-
     def _sample_negatives_without_replacement(self, user_negative_item_pool, n_samples):
         return random.sample(user_negative_item_pool, k=n_samples)
-
 
     def _get_user_negatives_pool(self, user_positive_item_pool):
         # get list of items user has not interacted with
         return list(set(self.train_datafile.items) - user_positive_item_pool)
-
 
     def _get_negative_examples(self, user, user_negative_item_pool, n_samples):
         # create dataframe containing negative examples for user assigned zero rating
@@ -302,7 +287,6 @@ class Dataset(object):
             self.col_item: user_negative_samples,
             self.col_rating: [0.0] * n_samples
         })
-
 
     def _check_sample_size(self, user, n_samples, user_negative_item_pool, training=True):
         # if sampling without replacement, check sample population is sufficient and reduce
@@ -327,9 +311,8 @@ class Dataset(object):
                     logging.warning(
                          warning_string
                     )
-        
-        return new_n_samples
 
+        return new_n_samples
 
     def _create_test_file(self):
 
@@ -339,7 +322,7 @@ class Dataset(object):
         pd.DataFrame(
             columns=[self.col_user, self.col_item, self.col_rating, self.col_test_batch]
         ).to_csv(self.test_file_full, index=False)
-        
+
         batch_idx = 0
 
         with self.train_datafile as train_datafile:
@@ -365,16 +348,14 @@ class Dataset(object):
                             examples[self.col_test_batch] = batch_idx
                             user_examples_dfs.append(examples)
                             batch_idx += 1
-                        
-                        # append user test data to file 
-                        user_examples = pd.concat(user_examples_dfs)                        
+
+                        # append user test data to file
+                        user_examples = pd.concat(user_examples_dfs)
                         user_examples.to_csv(self.test_file_full, mode='a', index=False, header=False)
 
-
     def _split_into_batches(self, shuffle_buffer, batch_size):
-        for i in range(0, len(shuffle_buffer), batch_size): 
+        for i in range(0, len(shuffle_buffer), batch_size):
             yield shuffle_buffer[i:i + batch_size]
-
 
     def _prepare_batch_with_id(self, batch):
         return [
@@ -382,7 +363,6 @@ class Dataset(object):
             [self.item2id[item] for item in batch[self.col_item].values],
             batch[self.col_rating].values.tolist()
         ]
-    
 
     def _prepare_batch_without_id(self, batch):
         return [
@@ -390,7 +370,6 @@ class Dataset(object):
             batch[self.col_item].values.tolist(),
             batch[self.col_rating].values.tolist()
         ]
-
 
     def _release_shuffle_buffer(self, shuffle_buffer, batch_size, yield_id, write_to = None):
         prepare_batch = self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
@@ -404,7 +383,6 @@ class Dataset(object):
             else:
                 return batch
 
-
     def train_loader(self, batch_size, shuffle_size=None, yield_id=False, write_to=None):
         """
         Generator for serving batches of training data. Positive examples are loaded from the
@@ -417,7 +395,7 @@ class Dataset(object):
                 shuffle_size (int): Maximum number of examples in shuffle buffer.
                 yield_id (bool): If true, return assigned user and item IDs, else return original values.
                 write_to (str): Path of file to write full dataset (including negative examples).
-            
+
             Returns:
                 list
         """
@@ -425,13 +403,13 @@ class Dataset(object):
         # if shuffle_size not supplied, use (estimated) full data size i.e. complete in-memory shuffle
         if shuffle_size is None:
             shuffle_size = (self.train_len * (self.n_neg + 1))
-        
+
         if write_to:
             pd.DataFrame(columns=[self.col_user, self.col_item, self.col_rating]) \
                 .to_csv(write_to, header=True, index=False)
-        
+
         shuffle_buffer = []
-        
+
         with self.train_datafile as train_datafile:
             for user in train_datafile.users:
                 user_positive_examples = train_datafile.load_data(user)
@@ -451,10 +429,9 @@ class Dataset(object):
                         shuffle_buffer, batch_size, yield_id, write_to
                     )
                     shuffle_buffer = [buffer_remainder] if buffer_remainder is not None else []
-            
+
             # yield remaining buffer
             yield from self._release_shuffle_buffer(shuffle_buffer, batch_size, yield_id, write_to)
-
 
     def test_loader(self, yield_id=False):
         """
@@ -462,7 +439,7 @@ class Dataset(object):
 
             Args:
                 yield_id (bool): If true, return assigned user and item IDs, else return original values.
-            
+
             Returns:
                 list
         """
