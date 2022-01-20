@@ -11,6 +11,7 @@ log = logging.getLogger(__name__)
 
 MODEL_CHECKPOINT = 'rbm_model.ckpt'
 
+
 class RBM:
     """Restricted  Boltzmann Machine"""
 
@@ -106,8 +107,8 @@ class RBM:
         np.random.seed(self.seed)
         tf.compat.v1.set_random_seed(self.seed)
 
-        self.n_visible = visible_units # number of items
-        self.n_users = n_users # number of users
+        self.n_visible = visible_units  # number of items
+        self.n_users = n_users  # number of users
 
         tf.compat.v1.reset_default_graph()
 
