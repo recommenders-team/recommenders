@@ -75,7 +75,7 @@ def test_train_param_init(init_rbm, affinity_matrix):
     # initialize the model
     model = RBM(
         n_users=Xtr.shape[0],
-        possible_ratings=np.unique(Xtr),
+        possible_ratings=np.setdiff1d(np.unique(Xtr), np.array([0])),
         visible_units=Xtr.shape[1],
         hidden_units=init_rbm["n_hidden"],
         training_epoch=init_rbm["epochs"],
@@ -102,7 +102,7 @@ def test_sampling_funct(init_rbm, affinity_matrix):
     # initialize the model
     model = RBM(
         n_users=Xtr.shape[0],
-        possible_ratings=np.unique(Xtr),
+        possible_ratings=np.setdiff1d(np.unique(Xtr), np.array([0])),
         visible_units=Xtr.shape[1],
         hidden_units=init_rbm["n_hidden"],
         training_epoch=init_rbm["epochs"],
@@ -160,7 +160,7 @@ def test_save_load(init_rbm, affinity_matrix):
     # initialize the model
     original_model = RBM(
         n_users=Xtr.shape[0],
-        possible_ratings=np.unique(Xtr),
+        possible_ratings=np.setdiff1d(np.unique(Xtr), np.array([0])),
         visible_units=Xtr.shape[1],
         hidden_units=init_rbm["n_hidden"],
         training_epoch=init_rbm["epochs"],
@@ -178,7 +178,7 @@ def test_save_load(init_rbm, affinity_matrix):
     # initialize another model
     saved_model = RBM(
         n_users=Xtr.shape[0],
-        possible_ratings=np.unique(Xtr),
+        possible_ratings=np.setdiff1d(np.unique(Xtr), np.array([0])),
         visible_units=Xtr.shape[1],
         hidden_units=init_rbm["n_hidden"],
         training_epoch=init_rbm["epochs"],
