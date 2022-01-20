@@ -701,7 +701,7 @@ class RBM:
 
     def save(self, file_path='./rbm_model.ckpt'):
         """Save model parameters to `file_path`
-        
+
         This function saves the current tensorflow session to a specified path.
 
         Args:
@@ -734,4 +734,3 @@ class RBM:
         # load pre-trained model
         saver = tf.compat.v1.train.Saver()
         saver.restore(self.sess, os.path.join(dir_name, file_name))
-
