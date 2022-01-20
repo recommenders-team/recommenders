@@ -5,11 +5,10 @@ import numpy as np
 import tensorflow as tf
 import logging
 import os
+from pathlib import Path
 
 tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
-
-MODEL_CHECKPOINT = 'rbm_model.ckpt'
 
 
 class RBM:
@@ -115,7 +114,7 @@ class RBM:
         # ----------------------Initializers-------------------------------------
 
         # create a sorted list of all the unique ratings (of float type)
-        self.possible_ratings = np.sort(np.setdiff1d(possible_ratings, np.array([0])))
+        self.possible_ratings = possible_ratings
 
         # create a lookup table to map integer indices to float ratings
         self.ratings_lookup_table = tf.lookup.StaticHashTable(
@@ -700,26 +699,39 @@ class RBM:
 
         return vp
 
-    def save(self, dir_name):
-        """Save model parameters in `dir_name`
+    def save(self, file_path='./rbm_model.ckpt'):
+        """Save model parameters to `file_path`
+        
+        This function saves the current tensorflow session to a specified path.
+
         Args:
-            dir_name (str): directory name, which should be a folder name instead of file name
+            file_path (str): output file path for the RBM model checkpoint
                 we will create a new directory if not existing.
         """
-        # save trained model
-        if not os.path.exists(dir_name):
-            os.makedirs(dir_name)
-        saver = tf.compat.v1.train.Saver()
-        saver.save(self.sess, os.path.join(dir_name, MODEL_CHECKPOINT))
 
-    def load(self, dir_name):
+        f_path = Path(file_path)
+        dir_name, file_name = f_path.parent, f_path.name
+
+        # create the directory if it does not exist
+        os.makedirs(dir_name, exist_ok=True)
+
+        # save trained model
+        saver = tf.compat.v1.train.Saver()
+        saver.save(self.sess, os.path.join(dir_name, file_name))
+
+    def load(self, file_path='./rbm_model.ckpt'):
         """Load model parameters for further use.
+
+        This function loads a saved tensorflow session.
+
         Args:
-            dir_name (str): Directory name for RBM model.
-        Returns:
-            object: Load parameters in this model.
+            file_path (str): file path for RBM model checkpoint
         """
+
+        f_path = Path(file_path)
+        dir_name, file_name = f_path.parent, f_path.name
 
         # load pre-trained model
         saver = tf.compat.v1.train.Saver()
-        saver.restore(self.sess, os.path.join(dir_name, MODEL_CHECKPOINT))
+        saver.restore(self.sess, os.path.join(dir_name, file_name))
+
