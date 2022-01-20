@@ -59,4 +59,4 @@ def test_mmlspark_lightgbm_criteo_smoke(notebooks, output_notebook, kernel_name)
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
-    assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)
+    assert results["auc"] == pytest.approx(0.645, rel=TOL, abs=ABS_TOL)
