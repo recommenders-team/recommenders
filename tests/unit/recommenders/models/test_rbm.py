@@ -65,13 +65,13 @@ def test_class_init(init_rbm):
 @pytest.mark.gpu
 def test_train_param_init(init_rbm, affinity_matrix):
     # obtain the train/test set matrices
-    Xtr, Xtst = affinity_matrix
+    Xtr, _ = affinity_matrix
 
     # initialize the model
     model = RBM(
-        n_users=init_rbm["n_users"],
-        possible_ratings=init_rbm["possible_ratings"],
-        visible_units=init_rbm["n_visible"],
+        n_users=Xtr.shape[0],
+        possible_ratings=np.unique(Xtr),
+        visible_units=Xtr.shape[1],
         hidden_units=init_rbm["n_hidden"],
         training_epoch=init_rbm["epochs"],
         minibatch_size=init_rbm["minibatch"],
@@ -92,13 +92,13 @@ def test_train_param_init(init_rbm, affinity_matrix):
 @pytest.mark.gpu
 def test_sampling_funct(init_rbm, affinity_matrix):
     # obtain the train/test set matrices
-    Xtr, Xtst = affinity_matrix
+    Xtr, _ = affinity_matrix
 
     # initialize the model
     model = RBM(
-        n_users=init_rbm["n_users"],
-        possible_ratings=init_rbm["possible_ratings"],
-        visible_units=init_rbm["n_visible"],
+        n_users=Xtr.shape[0],
+        possible_ratings=np.unique(Xtr),
+        visible_units=Xtr.shape[1],
         hidden_units=init_rbm["n_hidden"],
         training_epoch=init_rbm["epochs"],
         minibatch_size=init_rbm["minibatch"],
