@@ -46,7 +46,7 @@ def test_class_init(init_rbm):
     # number of users
     assert model.n_users == init_rbm["n_users"]
     # list of unique rating values
-    assert model.possible_ratings == init_rbm["possible_ratings"]
+    assert np.array_equal(model.possible_ratings, init_rbm["possible_ratings"])
     # number of visible units
     assert model.n_visible == init_rbm["n_visible"]
     # number of hidden units
@@ -196,7 +196,7 @@ def test_save_load(init_rbm, affinity_matrix):
     # number of users
     assert saved_model.n_users == original_model.n_users
     # list of unique rating values
-    assert saved_model.possible_ratings == original_model.possible_ratings
+    assert np.array_equal(saved_model.possible_ratings, original_model.possible_ratings)
     # number of visible units
     assert saved_model.n_visible == original_model.n_visible
     # number of hidden units
