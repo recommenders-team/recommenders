@@ -4,6 +4,8 @@
 import numpy as np
 import tensorflow as tf
 import logging
+import os
+from pathlib import Path
 
 tf.compat.v1.disable_eager_execution()
 log = logging.getLogger(__name__)
@@ -14,6 +16,9 @@ class RBM:
 
     def __init__(
         self,
+        n_users,
+        possible_ratings,
+        visible_units,
         hidden_units=500,
         keep_prob=0.7,
         init_stdv=0.1,
@@ -100,6 +105,33 @@ class RBM:
         self.seed = seed
         np.random.seed(self.seed)
         tf.compat.v1.set_random_seed(self.seed)
+
+        self.n_visible = visible_units  # number of items
+        self.n_users = n_users  # number of users
+
+        tf.compat.v1.reset_default_graph()
+
+        # ----------------------Initializers-------------------------------------
+
+        # create a sorted list of all the unique ratings (of float type)
+        self.possible_ratings = possible_ratings
+
+        # create a lookup table to map integer indices to float ratings
+        self.ratings_lookup_table = tf.lookup.StaticHashTable(
+            tf.lookup.KeyValueTensorInitializer(
+                tf.constant(list(range(len(self.possible_ratings))), dtype=tf.int32),
+                tf.constant(list(self.possible_ratings), dtype=tf.float32),
+            ), default_value=0
+        )
+
+        self.generate_graph()
+        self.init_metrics()
+        self.init_gpu()
+        init_graph = tf.compat.v1.global_variables_initializer()
+
+        # Start TF training session on default graph
+        self.sess = tf.compat.v1.Session(config=self.config_gpu)
+        self.sess.run(init_graph)
 
     def binomial_sampling(self, pr):
         """Binomial sampling of hidden units activations using a rejection method.
@@ -482,12 +514,6 @@ class RBM:
             xtr (numpy.ndarray, int32): The user/affinity matrix for the train set.
         """
 
-        init_graph = tf.compat.v1.global_variables_initializer()
-
-        # Start TF training session on default graph
-        self.sess = tf.compat.v1.Session(config=self.config_gpu)
-        self.sess.run(init_graph)
-
         self.sess.run(
             self.iter.initializer,
             feed_dict={self.vu: xtr, self.batch_size: self.minibatch},
@@ -522,7 +548,7 @@ class RBM:
 
         return epoch_tr_err
 
-    def fit(self, xtr, xtst):
+    def fit(self, xtr):
         """Fit method
 
         Training in generative models takes place in two steps:
@@ -545,27 +571,8 @@ class RBM:
         # keep the position of the items in the train set so that they can be optionally exluded from recommendation
         self.seen_mask = np.not_equal(xtr, 0)
 
-        m, self.n_visible = xtr.shape  # m= # users, n_visible= # items
-        num_minibatches = int(m / self.minibatch)  # number of minibatches
+        num_minibatches = int(self.n_users / self.minibatch)  # number of minibatches
 
-        tf.compat.v1.reset_default_graph()
-
-        # ----------------------Initializers-------------------------------------
-
-        # create a sorted list of all the unique ratings (of float type)
-        self.possible_ratings = np.sort(np.setdiff1d(np.unique(xtr), np.array([0])))
-
-        # create a lookup table to map integer indices to float ratings
-        self.ratings_lookup_table = tf.lookup.StaticHashTable(
-            tf.lookup.KeyValueTensorInitializer(
-                tf.constant(list(range(len(self.possible_ratings))), dtype=tf.int32),
-                tf.constant(list(self.possible_ratings), dtype=tf.float32),
-            ), default_value=0
-        )
-
-        self.generate_graph()
-        self.init_metrics()
-        self.init_gpu()
         self.init_training_session(xtr)
 
         rmse_train = []  # List to collect the metrics across epochs
@@ -691,3 +698,39 @@ class RBM:
         vp = self.sess.run(v_, feed_dict={self.vu: x})
 
         return vp
+
+    def save(self, file_path='./rbm_model.ckpt'):
+        """Save model parameters to `file_path`
+
+        This function saves the current tensorflow session to a specified path.
+
+        Args:
+            file_path (str): output file path for the RBM model checkpoint
+                we will create a new directory if not existing.
+        """
+
+        f_path = Path(file_path)
+        dir_name, file_name = f_path.parent, f_path.name
+
+        # create the directory if it does not exist
+        os.makedirs(dir_name, exist_ok=True)
+
+        # save trained model
+        saver = tf.compat.v1.train.Saver()
+        saver.save(self.sess, os.path.join(dir_name, file_name))
+
+    def load(self, file_path='./rbm_model.ckpt'):
+        """Load model parameters for further use.
+
+        This function loads a saved tensorflow session.
+
+        Args:
+            file_path (str): file path for RBM model checkpoint
+        """
+
+        f_path = Path(file_path)
+        dir_name, file_name = f_path.parent, f_path.name
+
+        # load pre-trained model
+        saver = tf.compat.v1.train.Saver()
+        saver.restore(self.sess, os.path.join(dir_name, file_name))
