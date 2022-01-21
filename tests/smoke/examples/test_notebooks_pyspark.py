@@ -53,7 +53,7 @@ def test_mmlspark_lightgbm_criteo_smoke(notebooks, output_notebook, kernel_name)
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=50, EARLY_STOPPING_ROUND=10),
+        parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=50),
     )
 
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
