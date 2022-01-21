@@ -1,6 +1,6 @@
 # What's New
 
-## Update December 17, 2021
+## Update January 13, 2022
 
 We have a new release [Recommenders 1.0.0](https://github.com/microsoft/recommenders/releases/tag/1.0.0)! The codebase has now migrated to TensorFlow versions 2.6 / 2.7 and to Spark version 3. In addition, there are a few changes in the dependencies and extras installed by `pip` (see [this guide](recommenders/README.md#optional-dependencies)). We have also made improvements in the code and the CI / CD pipelines.
 
@@ -15,7 +15,6 @@ The recommenders package now supports three types of environments: [venv](https:
 We have also added new evaluation metrics: _novelty, serendipity, diversity and coverage_ (see the [evalution notebooks](examples/03_evaluate/README.md)).
 
 Code coverage reports are now generated for every PR, using [Codecov](https://about.codecov.io/).
-
 
 ## Update June 21, 2021
 
