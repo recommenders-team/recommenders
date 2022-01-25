@@ -121,7 +121,7 @@ def data_process_with_time(fname, pname, K=10, sep=" ", item_set=None, add_time=
 
 @pytest.mark.gpu
 def test_prepare_data():
-    data_dir = os.path.join("..", "..", "tests", "resources", "deeprec", "sasrec")
+    data_dir = os.path.join("tests", "resources", "deeprec", "sasrec")
     dataset = "reviews_Electronics_5"
     reviews_name = dataset + ".json"
     outfile = os.path.join(data_dir, dataset + ".txt")
@@ -146,7 +146,7 @@ def test_prepare_data():
 def test_sampler():
     batch_size = 8
     maxlen = 50
-    data_dir = os.path.join("..", "..", "tests", "resources", "deeprec", "sasrec")
+    data_dir = os.path.join("tests", "resources", "deeprec", "sasrec")
     dataset = "reviews_Electronics_5"
     reviews_name = dataset + ".json"
     outfile = os.path.join(data_dir, dataset + ".txt")

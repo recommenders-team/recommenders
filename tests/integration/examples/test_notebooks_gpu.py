@@ -607,7 +607,7 @@ def test_cornac_bivae_integration(
     "data_dir, num_epochs, batch_size, expected_values, seed",
     [
         (
-            "/recsys_data/RecSys/SASRec-tf2/data/",
+            os.path.join("tests", "recsys_data", "RecSys", "SASRec-tf2", "data"),
             1,
             128,
             {"ndcg@10": 0.2626, "Hit@10": 0.4244},
