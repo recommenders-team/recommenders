@@ -171,7 +171,7 @@ def test_test_loader(dataset_ncf_files_sorted):
 
     # test number of batches and data size is as expected after loading all test data
     expected_test_batches = leave_one_out_test.shape[0]
-    assert max([x for x in dataset.test_full_datafile.batch_indices_range]) + 1 == expected_test_batches
+    assert max(dataset.test_full_datafile.batch_indices_range) + 1 == expected_test_batches
     batch_records = []
     for batch in dataset.test_loader(yield_id=True):
         assert type(batch[0][0]) == int
