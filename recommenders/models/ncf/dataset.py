@@ -157,7 +157,7 @@ class DataFile:
                                 )
                         batch_index += 1
             self.batch_indices_range = range(0, batch_index)
-            self.data_len = self.line_num - 1
+            self.data_len = self.line_num
 
     def load_data(self, key, by_user=True):
         """Load data for a specified user or test batch

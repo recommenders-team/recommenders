@@ -343,6 +343,8 @@ def notebooks():
 def test_specs_ncf():
     return {
         "number_of_rows": 1000,
+        # "max_user_id": 100,
+        # "max_item_id": 100,
         "user_ids": [1, 2, 3, 4, 5],
         "seed": 123,
         "ratio": 0.6,
@@ -352,7 +354,7 @@ def test_specs_ncf():
 
 
 @pytest.fixture(scope="module")
-def python_dataset_ncf(test_specs_ncf):
+def dataset_ncf(test_specs_ncf):
     """Get Python labels"""
 
     def random_date_generator(start_date, range_in_days):
@@ -390,6 +392,75 @@ def python_dataset_ncf(test_specs_ncf):
     train, test = python_chrono_split(rating, ratio=test_specs_ncf["ratio"])
 
     return train, test
+
+
+@pytest.fixture
+def dataset_ncf_files(dataset_ncf):
+    train, test = dataset_ncf
+    test = test[test["userID"].isin(train["userID"].unique())]
+    test = test[test["itemID"].isin(train["itemID"].unique())]
+    train = train.sort_values(by=DEFAULT_USER_COL)
+    test = test.sort_values(by=DEFAULT_USER_COL)
+    leave_one_out_test = test.groupby("userID").last().reset_index()
+    return train, test, leave_one_out_test
+
+
+@pytest.fixture
+def data_paths(tmp_path):
+    train_path = os.path.join(tmp_path, "train.csv")
+    test_path = os.path.join(tmp_path, "test.csv")
+    leave_one_out_test_path = os.path.join(tmp_path, "leave_one_out_test.csv")
+    return train_path, test_path, leave_one_out_test_path
+
+
+@pytest.fixture
+def dataset_ncf_files_sorted(data_paths, dataset_ncf_files):
+    train_path, test_path, leave_one_out_test_path = data_paths
+    train, test, leave_one_out_test = dataset_ncf_files
+    train.to_csv(train_path, index=False)
+    test.to_csv(test_path, index=False)
+    leave_one_out_test.to_csv(leave_one_out_test_path, index=False)
+    return train_path, test_path, leave_one_out_test_path
+
+
+@pytest.fixture
+def dataset_ncf_files_unsorted(data_paths, dataset_ncf_files):
+    train_path, test_path, leave_one_out_test_path = data_paths
+    train, test, leave_one_out_test = dataset_ncf_files
+    train = train.sort_values(by=DEFAULT_ITEM_COL)
+    test = test.sort_values(by=DEFAULT_ITEM_COL)
+    leave_one_out_test = leave_one_out_test.sort_values(by=DEFAULT_ITEM_COL)
+    train.to_csv(train_path, index=False)
+    test.to_csv(test_path, index=False)
+    leave_one_out_test.to_csv(leave_one_out_test_path, index=False)
+    return train_path, test_path, leave_one_out_test_path
+
+
+@pytest.fixture
+def dataset_ncf_files_empty(data_paths, dataset_ncf_files):
+    train_path, test_path, leave_one_out_test_path = data_paths
+    train, test, leave_one_out_test = dataset_ncf_files
+    train = train[0:0]
+    test = test[0:0]
+    leave_one_out_test = leave_one_out_test[0:0]
+    train.to_csv(train_path, index=False)
+    test.to_csv(test_path, index=False)
+    leave_one_out_test.to_csv(leave_one_out_test_path, index=False)
+    return train_path, test_path, leave_one_out_test_path
+
+
+@pytest.fixture
+def dataset_ncf_files_missing_column(data_paths, dataset_ncf_files):
+    train_path, test_path, leave_one_out_test_path = data_paths
+    train, test, leave_one_out_test = dataset_ncf_files
+    train = train.drop(DEFAULT_USER_COL, axis=1)
+    test = test.drop(DEFAULT_USER_COL, axis=1)
+    leave_one_out_test = leave_one_out_test.drop(DEFAULT_USER_COL, axis=1)
+    train.to_csv(train_path, index=False)
+    test.to_csv(test_path, index=False)
+    leave_one_out_test.to_csv(leave_one_out_test_path, index=False)
+    return train_path, test_path, leave_one_out_test_path
+
 
 
 # RBM Fixtures
