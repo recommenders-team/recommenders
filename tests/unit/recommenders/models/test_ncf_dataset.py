@@ -13,7 +13,11 @@ from recommenders.utils.constants import (
 from recommenders.models.ncf.dataset import (
     DataFile,
     NegativeSampler,
-    Dataset
+    Dataset,
+    EmptyFileException,
+    MissingFieldsException,
+    FileNotSortedException,
+    MissingUserException
 )
 
 
@@ -54,18 +58,18 @@ def test_datafile_init(dataset_ncf_files_sorted):
 
     # test data can be loaded for a valid user and it throws exception for invalid user
     user = train[DEFAULT_USER_COL].iloc[0]
-    missing_user = train[DEFAULT_USER_COL].iloc[0] + 1
+    missing_user = train[DEFAULT_USER_COL].iloc[-1] + 1
     with datafile as f:
         user_data = f.load_data(user)
         assert user_data[DEFAULT_USER_COL].iloc[0] == user
-        with pytest.raises(Exception):
-            user_data = f.load(missing_user)
+        with pytest.raises(MissingUserException):
+            user_data == f.load_data(missing_user)
 
 
 @pytest.mark.gpu
 def test_datafile_init_unsorted(dataset_ncf_files_unsorted):
     train_path, _, _= dataset_ncf_files_unsorted
-    with pytest.raises(Exception):
+    with pytest.raises(FileNotSortedException):
         datafile = DataFile(
             train_path, DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, col_test_batch=None, binary=True
         )
@@ -74,7 +78,7 @@ def test_datafile_init_unsorted(dataset_ncf_files_unsorted):
 @pytest.mark.gpu
 def test_datafile_init_empty(dataset_ncf_files_empty):
     train_path, _, _= dataset_ncf_files_empty
-    with pytest.raises(Exception):
+    with pytest.raises(EmptyFileException):
         datafile = DataFile(
             train_path, DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, col_test_batch=None, binary=True
         )
@@ -83,7 +87,7 @@ def test_datafile_init_empty(dataset_ncf_files_empty):
 @pytest.mark.gpu
 def test_datafile_missing_column(dataset_ncf_files_missing_column):
     train_path, _, _= dataset_ncf_files_missing_column
-    with pytest.raises(Exception):
+    with pytest.raises(MissingFieldsException):
         datafile = DataFile(
             train_path, DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, col_test_batch=None, binary=True
         )
