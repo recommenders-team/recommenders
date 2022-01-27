@@ -9,7 +9,7 @@ Some dependencies require compilation during pip installation. On Linux this can
 ```bash
 sudo apt-get install -y build-essential libpython<version>
 ``` 
-where `<version>` should be `3.6` or `3.7` as appropriate.
+where `<version>` should be the Python version (e.g. `3.6`).
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
@@ -162,6 +162,8 @@ The models submodule contains implementations of various algorithms that can be 
 * Restricted Boltzmann Machines (RBM)
 * Riemannian Low-rank Matrix Completion (RLRMC)
 * Simple Algorithm for Recommendation (SAR)
+* Self-Attentive Sequential Recommendation (SASRec)
+* Sequential Recommendation Via Personalized Transformer (SSEPT)
 * Surprise
 * Term Frequency - Inverse Document Frequency (TF-IDF)
 * Variational Autoencoders (VAE)

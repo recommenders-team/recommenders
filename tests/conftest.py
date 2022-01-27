@@ -263,6 +263,9 @@ def notebooks():
         "geoimc_quickstart": os.path.join(
             folder_notebooks, "00_quick_start", "geoimc_movielens.ipynb"
         ),
+        "sasrec_quickstart": os.path.join(
+            folder_notebooks, "00_quick_start", "sasrec_amazon.ipynb"
+        ),
         "data_split": os.path.join(
             folder_notebooks, "01_prepare_data", "data_split.ipynb"
         ),

@@ -90,6 +90,8 @@ To contributors: please add your name to the list when you submit a patch to the
    * Improving documentation
    * Quick start notebook
    * Operationalization notebook
+* **[Nile Wilson](https://github.com/niwilso)**
+   * Term Frequency - Inverse Document Frequency (TF-IDF) quickstart, utils
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
    * GeoIMC algorithm
