@@ -190,15 +190,15 @@ class NegativeSampler():
         """Constructor
 
             Args:
-                user (str or int): user to be sampled for
-                n_samples (int): number of required samples
-                user_positive_item_pool (set): set of items with which user has previously interacted
-                item_pool (set): set of all items in population
+                user (str or int): User to be sampled for.
+                n_samples (int): Number of required samples.
+                user_positive_item_pool (set): Set of items with which user has previously interacted.
+                item_pool (set): Set of all items in population.
                 sample_with_replacement (bool): If true, sample negative examples with replacement,
                     otherwise without replacement.
                 print_warnings (bool): If true, prints warnings if sampling without replacement and
                     there are not enough items to sample from to satisfy n_neg or n_neg_test.
-                training (bool): set to true if sampling for the training set or false if for the test set
+                training (bool): Set to true if sampling for the training set or false if for the test set.
         """
         self.user = user
         self.n_samples = n_samples
@@ -348,7 +348,7 @@ class Dataset(object):
         # set random seed
         random.seed(seed)
 
-    def _get_negative_examples_df(self, user, user_negative_samples):
+    def _create_negative_examples_df(self, user, user_negative_samples):
         # create dataframe containing negative examples for user assigned zero rating
         n_samples = len(user_negative_samples)
         return pd.DataFrame({
@@ -383,7 +383,7 @@ class Dataset(object):
                         user_examples_dfs = []
                         # sample n_neg_test negatives for each positive example and assign a batch index
                         for positive_example in np.array_split(user_test_data, user_test_data.shape[0]):
-                            negative_examples = self._get_negative_examples_df(user, sampler.sample())
+                            negative_examples = self._create_negative_examples_df(user, sampler.sample())
                             examples = pd.concat([positive_example, negative_examples])
                             examples[self.col_test_batch] = batch_idx
                             user_examples_dfs.append(examples)
@@ -456,7 +456,7 @@ class Dataset(object):
                 user_positive_item_pool = set(user_positive_examples[self.col_item].unique())
                 n_samples = self.n_neg * user_positive_examples.shape[0]
                 sampler = NegativeSampler(user, n_samples, user_positive_item_pool, self.train_datafile.items, self.sample_with_replacement, self.print_warnings)
-                user_negative_examples = self._get_negative_examples_df(user, sampler.sample())
+                user_negative_examples = self._create_negative_examples_df(user, sampler.sample())
                 user_examples = pd.concat([user_positive_examples, user_negative_examples])
                 shuffle_buffer.append(user_examples)
                 shuffle_buffer_len = sum([df.shape[0] for df in shuffle_buffer])
