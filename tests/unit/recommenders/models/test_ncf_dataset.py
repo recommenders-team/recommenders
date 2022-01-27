@@ -9,7 +9,6 @@ from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_RATING_COL,
     DEFAULT_TIMESTAMP_COL,
-    SEED,
 )
 from recommenders.models.ncf.dataset import (
     DataFile,
@@ -46,12 +45,14 @@ def test_datafile_init(dataset_ncf_files_sorted):
     datafile_df = pd.DataFrame.from_records(datafile_records)
     assert datafile_df.shape[0] == train.shape[0]
 
+    # test the data loaded from the file is the same as original data
     datafile_df = datafile_df.sort_values(by=[DEFAULT_USER_COL, DEFAULT_ITEM_COL])
     train = train.sort_values(by=[DEFAULT_USER_COL, DEFAULT_ITEM_COL])
     train[DEFAULT_RATING_COL] = train[DEFAULT_RATING_COL].apply(lambda x: float(x > 0))
     train = train.drop(DEFAULT_TIMESTAMP_COL, axis=1)
     assert train.equals(datafile_df)
 
+    # test data can be loaded for a valid user and it throws exception for invalid user
     user = train[DEFAULT_USER_COL].iloc[0]
     missing_user = train[DEFAULT_USER_COL].iloc[0] + 1
     with datafile as f:
@@ -77,6 +78,8 @@ def test_datafile_init_empty(dataset_ncf_files_empty):
         datafile = DataFile(
             train_path, DEFAULT_USER_COL, DEFAULT_ITEM_COL, DEFAULT_RATING_COL, col_test_batch=None, binary=True
         )
+
+
 @pytest.mark.gpu
 def test_datafile_missing_column(dataset_ncf_files_missing_column):
     train_path, _, _= dataset_ncf_files_missing_column
@@ -98,11 +101,13 @@ def test_negative_sampler(caplog):
     samples = sampler.sample()
     assert set(samples) == item_pool.difference(user_positive_item_pool)
 
+    # test sampler adjusts n_samples down if population is too small and that it raises a warning
     n_samples = 4
     sampler = NegativeSampler(user, n_samples, user_positive_item_pool, item_pool, sample_with_replacement)
     assert sampler.n_samples == 3
     assert "The population of negative items to sample from is too small for user 1" in caplog.text
 
+    # test sampling with replacement returns requested number of samples despite small population
     sampler = NegativeSampler(user, n_samples, user_positive_item_pool, item_pool, sample_with_replacement=True)
     assert sampler.n_samples == 4
     assert len(sampler.sample()) == n_samples
@@ -124,6 +129,7 @@ def test_train_loader(tmp_path, dataset_ncf_files_sorted):
     assert len(set(dataset.user2id.values())) == len(users)
     assert len(set(dataset.item2id.values())) == len(items)
 
+    # test number of batches and data size is as expected after loading all training data
     full_data_len = train.shape[0] * 2
     batch_size = full_data_len // 10
     expected_batches = full_data_len // batch_size
@@ -146,6 +152,7 @@ def test_train_loader(tmp_path, dataset_ncf_files_sorted):
     assert set(train_loader_df[DEFAULT_USER_COL]) == set(users)
     assert set(train_loader_df[DEFAULT_ITEM_COL]) == set(items)
 
+    # test that data is successfully saved
     assert os.path.exists(train_save_path)
     train_file_data = pd.read_csv(train_save_path)
     assert train_file_data.equals(train_loader_df)
@@ -154,7 +161,6 @@ def test_train_loader(tmp_path, dataset_ncf_files_sorted):
 @pytest.mark.gpu
 def test_test_loader(dataset_ncf_files_sorted):
     train_path, _, leave_one_out_test_path = dataset_ncf_files_sorted
-    train = pd.read_csv(train_path)
     leave_one_out_test = pd.read_csv(leave_one_out_test_path)
     test_users = leave_one_out_test[DEFAULT_USER_COL].unique()
 
@@ -163,9 +169,9 @@ def test_test_loader(dataset_ncf_files_sorted):
     dataset = Dataset(train_path, test_file=leave_one_out_test_path, n_neg=n_neg, n_neg_test=n_neg_test)
     assert set(dataset.test_full_datafile.users) == set(test_users)
 
+    # test number of batches and data size is as expected after loading all test data
     expected_test_batches = leave_one_out_test.shape[0]
     assert max([x for x in dataset.test_full_datafile.batch_indices_range]) + 1 == expected_test_batches
-
     batch_records = []
     for batch in dataset.test_loader(yield_id=True):
         assert type(batch[0][0]) == int

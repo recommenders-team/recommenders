@@ -462,7 +462,6 @@ def dataset_ncf_files_missing_column(data_paths, dataset_ncf_files):
     return train_path, test_path, leave_one_out_test_path
 
 
-
 # RBM Fixtures
 
 

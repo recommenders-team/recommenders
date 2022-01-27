@@ -191,9 +191,7 @@ class DataFile:
 
 
 class NegativeSampler:
-    """
-    NegativeSampler class for NCF. Samples a subset of negative items from a given population of items.
-    """
+    """NegativeSampler class for NCF. Samples a subset of negative items from a given population of items."""
 
     def __init__(
         self,
