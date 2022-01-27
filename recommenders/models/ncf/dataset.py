@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import csv
 import logging
+from tqdm import tqdm
 
 from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
@@ -169,6 +170,79 @@ class DataFile():
         return pd.DataFrame.from_records(records)
 
 
+class NegativeSampler():
+    """
+    NegativeSampler class for NCF. Samples a subset of negative items from a given population of items.
+    """
+
+    def __init__(self, user, n_samples, user_positive_item_pool, item_pool, sample_with_replacement, print_warnings=True, training=True):
+        """Constructor
+
+            Args:
+                user (str or int): user to be sampled for
+                n_samples (int): number of required samples
+                user_positive_item_pool (set): set of items with which user has previously interacted
+                item_pool (set): set of all items in population
+                sample_with_replacement (bool): If true, sample negative examples with replacement,
+                    otherwise without replacement.
+                print_warnings (bool): If true, prints warnings if sampling without replacement and
+                    there are not enough items to sample from to satisfy n_neg or n_neg_test.
+                training (bool): set to true if sampling for the training set or false if for the test set
+        """
+        self.user = user
+        self.n_samples = n_samples
+        self.user_positive_item_pool = user_positive_item_pool
+        self.item_pool = item_pool
+        self.sample_with_replacement = sample_with_replacement
+        self.print_warnings = print_warnings
+        self.training = training
+
+        self.user_negative_item_pool = self._get_user_negatives_pool()
+        self.population_size = len(self.user_negative_item_pool)
+        self._sample = self._sample_negatives_with_replacement if self.sample_with_replacement else self._sample_negatives_without_replacement
+        if not self.sample_with_replacement:
+            self._check_sample_size()
+
+    def sample(self):
+        """
+        Method for sampling uniformly from a population of negative items
+
+            returns: list
+        """
+        return self._sample()
+
+    def _get_user_negatives_pool(self):
+        # get list of items user has not interacted with
+        return list(set(self.item_pool) - self.user_positive_item_pool)
+
+    def _sample_negatives_with_replacement(self):
+        return random.choices(self.user_negative_item_pool, k=self.n_samples)
+
+    def _sample_negatives_without_replacement(self):
+        return random.sample(self.user_negative_item_pool, k=self.n_samples)
+
+    def _check_sample_size(self):
+        # if sampling without replacement, check sample population is sufficient and reduce
+        # n_samples if not.
+        n_neg_var = "n_neg" if self.training else "n_neg_test"
+        dataset_name = "training" if self.training else "test"
+
+        k = min(self.n_samples, self.population_size)
+        if k < self.n_samples and self.print_warnings:
+            warning_string = (
+                "The population of negative items to sample from is too small for user {}. "
+                "Samples needed = {}, negative items = {}. "
+                "Reducing samples to {} for this user."
+                "If an equal number of negative samples for each user is required in the {} set, sample with replacement or reduce {}. "
+                "This warning can be turned off by setting print_warnings=False"
+                .format(self.user, self.n_samples, self.population_size, self.population_size, dataset_name, n_neg_var)
+            )
+            logging.warning(
+                warning_string
+            )
+        self.n_samples = k
+
+
 class Dataset(object):
     """Dataset class for NCF"""
 
@@ -222,12 +296,6 @@ class Dataset(object):
 
         self.col_test_batch = "test_batch"
 
-        # set sampling method to use
-        if self.sample_with_replacement:
-            self._sample = self._sample_negatives_with_replacement
-        else:
-            self._sample = self._sample_negatives_without_replacement
-
         self.train_datafile = DataFile(
             filename=self.train_file,
             col_user=self.col_user,
@@ -269,50 +337,14 @@ class Dataset(object):
         # set random seed
         random.seed(seed)
 
-    def _sample_negatives_with_replacement(self, user_negative_item_pool, n_samples):
-        return random.choices(user_negative_item_pool, k=n_samples)
-
-    def _sample_negatives_without_replacement(self, user_negative_item_pool, n_samples):
-        return random.sample(user_negative_item_pool, k=n_samples)
-
-    def _get_user_negatives_pool(self, user_positive_item_pool):
-        # get list of items user has not interacted with
-        return list(set(self.train_datafile.items) - user_positive_item_pool)
-
-    def _get_negative_examples(self, user, user_negative_item_pool, n_samples):
+    def _get_negative_examples_df(self, user, user_negative_samples):
         # create dataframe containing negative examples for user assigned zero rating
-        user_negative_samples = self._sample(user_negative_item_pool, n_samples)
+        n_samples = len(user_negative_samples)
         return pd.DataFrame({
             self.col_user: [user] * n_samples,
             self.col_item: user_negative_samples,
             self.col_rating: [0.0] * n_samples
         })
-
-    def _check_sample_size(self, user, n_samples, user_negative_item_pool, training=True):
-        # if sampling without replacement, check sample population is sufficient and reduce
-        # n_samples if not.
-        n_neg_var = "n_neg" if training else "n_neg_test"
-        dataset_name = "training" if training else "test"
-
-        new_n_samples = n_samples
-        if not self.sample_with_replacement:
-            population_size = len(user_negative_item_pool)
-            if n_samples > population_size:
-                new_n_samples = min(n_samples, population_size)
-                if self.print_warnings:
-                    warning_string = (
-                        "The population of negative items to sample from is too small for user {}. "
-                        "Samples needed = {}, negative items = {}. "
-                        "Reducing samples to {} for this user."
-                        "If an equal number of negative samples for each user is required in the {} set, sample with replacement or reduce {}. "
-                        "This warning can be turned off by setting print_warnings=False"
-                        .format(user, n_samples, population_size, population_size, dataset_name, n_neg_var)
-                    )
-                    logging.warning(
-                        warning_string
-                    )
-
-        return new_n_samples
 
     def _create_test_file(self):
 
@@ -327,7 +359,7 @@ class Dataset(object):
 
         with self.train_datafile as train_datafile:
             with self.test_datafile as test_datafile:
-                for user in test_datafile.users:
+                for user in tqdm(test_datafile.users):
                     if user in train_datafile.users:
                         user_test_data = test_datafile.load_data(user)
                         user_train_data = train_datafile.load_data(user)
@@ -335,14 +367,12 @@ class Dataset(object):
                         # when sampling negatives
                         user_positive_item_pool = set(user_test_data[self.col_item].unique()) \
                             .union(user_train_data[self.col_item].unique())
-                        user_negative_item_pool = self._get_user_negatives_pool(user_positive_item_pool)
-                        n_samples = self.n_neg_test
-                        n_samples = self._check_sample_size(user, n_samples, user_negative_item_pool, training=False)
+                        sampler = NegativeSampler(user, self.n_neg_test, user_positive_item_pool, self.train_datafile.items, self.sample_with_replacement, self.print_warnings, training=False)
 
                         user_examples_dfs = []
                         # sample n_neg_test negatives for each positive example and assign a batch index
                         for positive_example in np.array_split(user_test_data, user_test_data.shape[0]):
-                            negative_examples = self._get_negative_examples(user, user_negative_item_pool, n_samples)
+                            negative_examples = self._get_negative_examples_df(user, sampler.sample())
                             examples = pd.concat([positive_example, negative_examples])
                             examples[self.col_test_batch] = batch_idx
                             user_examples_dfs.append(examples)
@@ -413,13 +443,9 @@ class Dataset(object):
             for user in train_datafile.users:
                 user_positive_examples = train_datafile.load_data(user)
                 user_positive_item_pool = set(user_positive_examples[self.col_item].unique())
-                user_negative_item_pool = self._get_user_negatives_pool(user_positive_item_pool)
                 n_samples = self.n_neg * user_positive_examples.shape[0]
-                n_samples = self._check_sample_size(user, n_samples, user_negative_item_pool, training=False)
-
-                user_negative_examples = self._get_negative_examples(
-                    user, user_negative_item_pool, n_samples
-                )
+                sampler = NegativeSampler(user, n_samples, user_positive_item_pool, self.train_datafile.items, self.sample_with_replacement, self.print_warnings)
+                user_negative_examples = self._get_negative_examples_df(user, sampler.sample())
                 user_examples = pd.concat([user_positive_examples, user_negative_examples])
                 shuffle_buffer.append(user_examples)
                 shuffle_buffer_len = sum([df.shape[0] for df in shuffle_buffer])
