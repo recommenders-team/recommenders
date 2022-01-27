@@ -47,8 +47,9 @@ class DataFile():
         if self.col_test_batch is not None:
             self.expected_fields.append(self.col_test_batch)
         self.binary = binary
-        self.user2id, self.item2id, self.id2user, self.id2item = None, None, None, None
         self._init_data()
+        self.id2user = {self.user2id[k]: k for k in self.user2id}
+        self.id2item = {self.item2id[k]: k for k in self.item2id}
 
     @property
     def users(self):
@@ -318,8 +319,8 @@ class Dataset(object):
         self.n_items = len(self.train_datafile.items)
         self.user2id = self.train_datafile.user2id
         self.item2id = self.train_datafile.item2id
-        self.id2user = {self.user2id[k]: k for k in self.user2id}
-        self.id2item = {self.item2id[k]: k for k in self.item2id}
+        self.id2user = self.train_datafile.id2user
+        self.id2item = self.train_datafile.id2item
         self.train_len = self.train_datafile.data_len
 
         if self.test_file is not None:
