@@ -17,6 +17,22 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+class EmptyFileException(Exception):
+    """Exception raised if file is empty"""
+
+
+class MissingFieldsException(Exception):
+    """Exception raised if file is missing expected fields"""
+
+
+class FileNotSortedException(Exception):
+    """Exception raised if file is not sorted correctly"""
+
+
+class MissingUserException(Exception):
+    """Exception raised if user is not in file"""
+
+
 class DataFile:
     """
     DataFile class for NCF. Iterator to read data from a csv file.
@@ -85,7 +101,7 @@ class DataFile:
         elif self.line_num == 0:
             self.row = self._extract_row_data(next(self.reader, None))
             if self.row is None:
-                raise Exception("{} is empty.".format(self.filename))
+                raise EmptyFileException("{} is empty.".format(self.filename))
         else:
             raise StopIteration  # end of file
         self.next_row = self._extract_row_data(next(self.reader, None))
@@ -96,7 +112,7 @@ class DataFile:
     def _check_for_missing_fields(self, fields_to_check):
         missing_fields = set(fields_to_check).difference(set(self.reader.fieldnames))
         if len(missing_fields):
-            raise ValueError(
+            raise MissingFieldsException(
                 "Columns {} not in header of file {}".format(
                     missing_fields, self.filename
                 )
@@ -142,7 +158,7 @@ class DataFile:
                 if (next_user != user) or self.next_row is None:
                     if not self.end_of_file:
                         if next_user in self.users:
-                            raise ValueError(
+                            raise FileNotSortedException(
                                 "File {} is not sorted by user".format(self.filename)
                             )
                     self.user2id[user] = len(self.user2id)
@@ -150,7 +166,7 @@ class DataFile:
                     if (next_test_batch != test_batch) or self.next_row is None:
                         if not self.end_of_file:
                             if next_test_batch < batch_index:
-                                raise ValueError(
+                                raise FileNotSortedException(
                                     "File {} is not sorted by {}".format(
                                         self.filename, self.col_test_batch
                                     )
@@ -175,7 +191,7 @@ class DataFile:
         # fast forward in file to user/test batch
         while (self.line_num == 0) or (self.row[key_col] != key):
             if self.end_of_file:
-                raise Exception("User {} not in file {}".format(key, self.filename))
+                raise MissingUserException("User {} not in file {}".format(key, self.filename))
             next(self)
         # collect user/test batch data
         while self.row[key_col] == key:
@@ -235,10 +251,9 @@ class NegativeSampler:
             self._check_sample_size()
 
     def sample(self):
-        """
-        Method for sampling uniformly from a population of negative items
+        """Method for sampling uniformly from a population of negative items
 
-            returns: list
+        Returns: list
         """
         return self._sample()
 
@@ -478,14 +493,14 @@ class Dataset(object):
         shuffle buffer up to a maximum of shuffle_size rows, before the data is shuffled and released.
         If out-of-memory errors are encountered, try reducing shuffle_size.
 
-            Args:
-                batch_size (int): Number of examples in each batch.
-                shuffle_size (int): Maximum number of examples in shuffle buffer.
-                yield_id (bool): If true, return assigned user and item IDs, else return original values.
-                write_to (str): Path of file to write full dataset (including negative examples).
+        Args:
+            batch_size (int): Number of examples in each batch.
+            shuffle_size (int): Maximum number of examples in shuffle buffer.
+            yield_id (bool): If true, return assigned user and item IDs, else return original values.
+            write_to (str): Path of file to write full dataset (including negative examples).
 
-            Returns:
-                list
+        Returns:
+            list
         """
 
         # if shuffle_size not supplied, use (estimated) full data size i.e. complete in-memory shuffle
@@ -533,14 +548,13 @@ class Dataset(object):
             )
 
     def test_loader(self, yield_id=False):
-        """
-        Generator for serving batches of test data for leave-one-out evaluation. Data is loaded from test_file_full.
+        """Generator for serving batches of test data for leave-one-out evaluation. Data is loaded from test_file_full.
 
-            Args:
-                yield_id (bool): If true, return assigned user and item IDs, else return original values.
+        Args:
+            yield_id (bool): If true, return assigned user and item IDs, else return original values.
 
-            Returns:
-                list
+        Returns:
+            list
         """
         prepare_batch = (
             self._prepare_batch_with_id if yield_id else self._prepare_batch_without_id
