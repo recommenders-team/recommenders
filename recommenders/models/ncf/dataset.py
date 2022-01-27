@@ -28,6 +28,16 @@ class DataFile():
         self, filename, col_user, col_item, col_rating,
         col_test_batch=None, binary=True
     ):
+        """Constructor
+
+            Args:
+                filename (str): path to file to be processed.
+                col_user (str): User column name.
+                col_item (str): Item column name.
+                col_rating (str): Rating column name.
+                col_test_batch (str): Test batch column name.
+                binary (bool): If true, set rating > 0 to rating = 1.
+        """
         self.filename = filename
         self.col_user = col_user
         self.col_item = col_item
