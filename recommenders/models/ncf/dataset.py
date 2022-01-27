@@ -21,7 +21,7 @@ class DataFile():
     """
     DataFile class for NCF. Iterator to read data from a csv file.
     Data must be sorted by user. Includes utilities for loading user data from
-    to file, formatting it and returning a Pandas dataframe.
+    file, formatting it and returning a Pandas dataframe.
     """
 
     def __init__(
@@ -31,7 +31,7 @@ class DataFile():
         """Constructor
 
             Args:
-                filename (str): path to file to be processed.
+                filename (str): Path to file to be processed.
                 col_user (str): User column name.
                 col_item (str): Item column name.
                 col_rating (str): Rating column name.
