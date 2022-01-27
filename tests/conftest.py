@@ -343,8 +343,6 @@ def notebooks():
 def test_specs_ncf():
     return {
         "number_of_rows": 1000,
-        # "max_user_id": 100,
-        # "max_item_id": 100,
         "user_ids": [1, 2, 3, 4, 5],
         "seed": 123,
         "ratio": 0.6,
@@ -427,9 +425,10 @@ def dataset_ncf_files_sorted(data_paths, dataset_ncf_files):
 def dataset_ncf_files_unsorted(data_paths, dataset_ncf_files):
     train_path, test_path, leave_one_out_test_path = data_paths
     train, test, leave_one_out_test = dataset_ncf_files
-    train = train.sort_values(by=DEFAULT_ITEM_COL)
-    test = test.sort_values(by=DEFAULT_ITEM_COL)
-    leave_one_out_test = leave_one_out_test.sort_values(by=DEFAULT_ITEM_COL)
+    # shift last row to the first
+    train = train.apply(np.roll, shift=1)
+    test = test.apply(np.roll, shift=1)
+    leave_one_out_test = leave_one_out_test.apply(np.roll, shift=1)
     train.to_csv(train_path, index=False)
     test.to_csv(test_path, index=False)
     leave_one_out_test.to_csv(leave_one_out_test_path, index=False)
