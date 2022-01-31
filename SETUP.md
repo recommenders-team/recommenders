@@ -42,7 +42,7 @@ Another alternative is to run all the recommender utilities directly from a loca
 ### Requirements
 
 * A machine running Linux, MacOS or Windows
-* An optional requirement is Anaconda with Python version >= 3.6
+* An optional requirement is Anaconda with Python version >= 3.6, <= 3.9
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
   
   Alternatively a [virtual environment](#using-a-virtual-environment) can be used instead of Anaconda.
