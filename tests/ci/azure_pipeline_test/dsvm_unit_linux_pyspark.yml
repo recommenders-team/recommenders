@@ -59,6 +59,6 @@ extends:
     - unit
     task_name: "Test - Unit Linux Spark"
     conda_env: "unit_linux_spark"
-    conda_opts: "python=3.6"
+    conda_opts: "python=3.7"
     pip_opts: "[spark,dev]"
     pytest_markers: "not notebooks and spark and not gpu"

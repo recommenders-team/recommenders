@@ -42,7 +42,7 @@ Another alternative is to run all the recommender utilities directly from a loca
 ### Requirements
 
 * A machine running Linux, MacOS or Windows
-* An optional requirement is Anaconda with Python version >= 3.6
+* An optional requirement is Anaconda with Python version >= 3.6, <= 3.9
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
   
   Alternatively a [virtual environment](#using-a-virtual-environment) can be used instead of Anaconda.
@@ -235,7 +235,7 @@ sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsof
 ### Requirements
 
 * Databricks Runtime version >= 7, <= 9 (Apache Spark >= 3.0, <= 3.1, Scala 2.12)
-* Python 3.6 - 3.8
+* Python 3.6 - 3.9
 
 Earlier versions of Databricks or Spark may work but this is not guaranteed.
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
