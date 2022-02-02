@@ -40,9 +40,9 @@ steps:
 
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.6'
+    versionSpec: '3.7'
     architecture: 'x64'
-  displayName: 'Use Python 3.6'
+  displayName: 'Use Python 3.7'
 
 - script: | 
    az login --service-principal -u $(ClientID) -p $(ClientSecret) --tenant $(TenantID)
