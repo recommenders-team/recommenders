@@ -138,7 +138,8 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
     return cpu_cluster
 
 
-def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
+# def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
+def create_run_config(cpu_cluster, docker_proc_type, workspace):
     """
     AzureML requires the run environment to be setup prior to submission.
     This configures a docker persistent compute.  Even though
@@ -170,9 +171,17 @@ def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
     # False means the user will provide a conda file for setup
     # True means the user will manually configure the environment
     run_amlcompute.environment.python.user_managed_dependencies = False
-    run_amlcompute.environment.python.conda_dependencies = CondaDependencies(
-        conda_dependencies_file_path=conda_env_file
+    # run_amlcompute.environment.python.conda_dependencies = CondaDependencies(
+    #     conda_dependencies_file_path=conda_env_file
+    # )
+
+    whl_url = run_amlcompute.environment.add_private_pip_wheel(
+        workspace=workspace,
+        file_path="dist/recommenders-1.0.0-py3-none-any.whl"
     )
+    conda_dep = CondaDependencies()
+    conda_dep.add_pip_package(whl_url)
+    run_amlcompute.environment.python.conda_dependencies = conda_dep
     return run_amlcompute
 
 
@@ -402,7 +411,8 @@ if __name__ == "__main__":
     run_config = create_run_config(
         cpu_cluster=cpu_cluster,
         docker_proc_type=docker_proc_type,
-        conda_env_file=args.condafile,
+        # conda_env_file=args.condafile,
+        workspace=workspace,
     )
 
     logger.info("exp: In Azure, look for experiment named {}".format(args.expname))
