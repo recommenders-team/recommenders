@@ -38,7 +38,6 @@ install_requires = [
     "lightgbm>=2.2.1",
     "memory_profiler>=0.54.0,<1",
     "nltk>=3.4,<4",
-    "pydocumentdb>=2.3.3<3",  # TODO: replace with azure-cosmos
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
