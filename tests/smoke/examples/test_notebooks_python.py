@@ -56,7 +56,6 @@ def test_baseline_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.108826, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.experimental
 @pytest.mark.smoke
 def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["surprise_svd_deep_dive"]
