@@ -47,50 +47,6 @@ from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.compute_target import ComputeTargetException
 from azureml.core.workspace import WorkspaceException
 
-EXTRAS = {
-    "examples": [
-        "azure.mgmt.cosmosdb>=0.8.0,<1",
-        "hyperopt>=0.1.2,<1",
-        "ipykernel>=4.6.1,<7",
-        "jupyter>=1,<2",
-        "locust>=1,<2",
-        "papermill>=2.1.2,<3",
-        "scrapbook>=0.5.0,<1.0.0",
-    ],
-    "gpu": [
-        "nvidia-ml-py3>=7.352.0",
-        # TensorFlow compiled with CUDA 11.2, cudnn 8.1
-        "tensorflow~=2.6.1;python_version=='3.6'",
-        "tensorflow~=2.7.0;python_version>='3.7'",
-        "tf-slim>=1.1.0",
-        "torch>=1.8",  # for CUDA 11 support
-        "fastai>=1.0.46,<2",
-    ],
-    "spark": [
-        "databricks_cli>=0.8.6,<1",
-        "pyarrow>=0.12.1,<7.0.0",
-        "pyspark>=2.4.5,<4.0.0",
-    ],
-    "dev": [
-        "black>=18.6b4,<21",
-        "pytest>=3.6.4",
-        "pytest-cov>=2.12.1",
-        "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
-        "pytest-rerunfailures>=10.2",  # to mark flaky tests
-        "scikit-surprise",
-        "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip",
-    ],
-    "experimental": [
-        # xlearn requires cmake to be pre-installed
-        "xlearn==0.40a1",
-        # VW C++ binary needs to be installed manually for some code to work
-        "vowpalwabbit>=8.9.0,<9",
-    ],
-    "nni": [
-        # nni needs to be upgraded
-        "nni==1.5",
-    ]
-}
 
 def setup_workspace(
     workspace_name, subscription_id, resource_group, cli_auth, location
@@ -231,15 +187,13 @@ def create_run_config(cpu_cluster,
     )
     conda_dep = CondaDependencies()
     conda_dep.add_pip_package(whl_url)
+    conda_dep.add_pip_package("recommenders[dev,examples]")
 
-    # TODO: install extra dependencies
-    extra_dependencies = list(EXTRAS['examples']) + list(EXTRAS['dev'])
+    # install extra dependencies
     if add_gpu_dependencies:
-        extra_dependencies.extend(list(EXTRAS['gpu']))
+        conda_dep.add_pip_package("recommenders[gpu]")
     if add_spark_dependencies:
-        extra_dependencies.extend(list(EXTRAS['spark']))
-    for e in extra_dependencies:
-        conda_dep.add_pip_package(e)
+        conda_dep.add_pip_package("recommenders[spark]")
 
     run_amlcompute.environment.python.conda_dependencies = conda_dep
     return run_amlcompute
@@ -431,10 +385,10 @@ def create_arg_parser():
         help="If a pr triggered the test, list it here",
     )
     parser.add_argument(
-        "--add_gpu_dependencies", action="store_false", help="include packages for GPU support"
+        "--add_gpu_dependencies", action="store_true", help="include packages for GPU support"
     )
     parser.add_argument(
-        "--add_spark_dependencies", action="store_false", help="include packages for PySpark support"
+        "--add_spark_dependencies", action="store_true", help="include packages for PySpark support"
     )
 
     args = parser.parse_args()
