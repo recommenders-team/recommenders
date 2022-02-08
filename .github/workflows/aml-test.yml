@@ -10,6 +10,8 @@ name: trigger-aml-tests
 on:
   # pull_request:
   #   branches: [ staging, main ]
+  push:
+    branches: [pradjoshi/aml_tests]
 
   # enable manual trigger
   workflow_dispatch:
@@ -18,12 +20,19 @@ on:
         description: 'Tags to label this manual run (optional)'
         default: 'Anything to describe this manual run'
 
+env:
+  CLUSTER_NAME: "cpu-aml-cluster"
+  EXP_NAME: "cpu_unit_tests"
+  RG: "pradjoshi-aml-rg"
+  WS: "pradjoshi-aml-ws"
+  TEST_MARKERS: '"not notebooks and not spark and not gpu and not experimental"'
+
 jobs:
-  Trigger-tests-on-AML-with-GitHub-Actions:
+  cpu-unit-tests:
     runs-on: ubuntu-latest
     steps:
-      # - name: Check out repository code
-      #   uses: actions/checkout@v2
+      - name: Check out repository code
+        uses: actions/checkout@v2
       - name: Setup python
         uses: actions/setup-python@v2
         with: 
@@ -33,7 +42,17 @@ jobs:
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          creds: ${{secrets.AZ_AE_CREDS}}
-      # - name: Submit a test to AML
-      #   run: python tests/ci/aml_tests_new/submit_azureml_pytest.py
+          creds: ${{secrets.AML_TEST_CREDENTIALS}}
+      - name: Install wheel package
+        run: pip install wheel
+      - name: Create wheel from setup.py
+        run: python setup.py bdist_wheel
+      - name: Submit a test to AML
+        run: >-
+            python tests/ci/aml_tests_new/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
+        id: run_test
+      - name: Output of submit_azureml_pytest
+        run: ${{join(steps.run_test.outputs.*, '\n')}}
       - run: echo "🍏 This job's status is ${{ job.status }}."
