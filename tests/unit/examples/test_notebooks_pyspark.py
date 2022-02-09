@@ -117,7 +117,7 @@ def test_spark_tuning(notebooks, output_notebook, kernel_name):
             NUMBER_CORES="*",
             NUMBER_ITERATIONS=3,
             SUBSET_RATIO=0.5,
-            RANK=[5, 5],
+            RANK=[5, 10],
             REG=[0.1, 0.01],
         ),
     )
@@ -132,5 +132,5 @@ def test_mmlspark_lightgbm_criteo_runs(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=10, EARLY_STOPPING_ROUND=2),
+        parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=10),
     )

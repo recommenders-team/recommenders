@@ -599,3 +599,50 @@ def test_cornac_bivae_integration(
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "data_dir, num_epochs, batch_size, expected_values, seed",
+    [
+        (
+            os.path.join("tests", "recsys_data", "RecSys", "SASRec-tf2", "data"),
+            1,
+            128,
+            {"ndcg@10": 0.2626, "Hit@10": 0.4244},
+            42,
+        )
+    ],
+)
+def test_sasrec_quickstart_integration(
+    notebooks,
+    output_notebook,
+    kernel_name,
+    data_dir,
+    num_epochs,
+    batch_size,
+    expected_values,
+    seed,
+):
+    notebook_path = notebooks["sasrec_quickstart"]
+    params = {
+        "data_dir": data_dir,
+        "num_epochs": num_epochs,
+        "batch_size": batch_size,
+        "seed": seed,
+    }
+
+    print("Executing notebook ... ")
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=params,
+    )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)

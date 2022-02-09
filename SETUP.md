@@ -6,7 +6,6 @@ This document describes how to setup all the dependencies to run the notebooks i
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
 * Docker container
 
-
 ## Table of Contents
 
   - [Compute environments](#compute-environments)
@@ -43,7 +42,7 @@ Another alternative is to run all the recommender utilities directly from a loca
 ### Requirements
 
 * A machine running Linux, MacOS or Windows
-* An optional requirement is Anaconda with Python version >= 3.6
+* An optional requirement is Anaconda with Python version >= 3.6, <= 3.9
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
   
   Alternatively a [virtual environment](#using-a-virtual-environment) can be used instead of Anaconda.
@@ -62,7 +61,7 @@ If using venv or virtualenv, see [these instructions](#using-a-virtual-environme
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
 
-**NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
+**NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.x`, depending on the version of Python.
 
 **NOTE** Spark requires Java version 8 or 11. We support Spark versions 3.0 and 3.1, but versions 2.4+ with Java version 8 may also work. 
 
@@ -236,7 +235,7 @@ sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsof
 ### Requirements
 
 * Databricks Runtime version >= 7, <= 9 (Apache Spark >= 3.0, <= 3.1, Scala 2.12)
-* Python 3.6 or 3.7
+* Python 3.6 - 3.9
 
 Earlier versions of Databricks or Spark may work but this is not guaranteed.
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
@@ -397,7 +396,7 @@ You can then open the Jupyter notebook server at http://localhost:8888
 
 The process of making a new release and publishing it to pypi is as follows:
 
-First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [recommenders.py/__init__.py](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
+First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`recommenders.py/__init__.py`](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
@@ -406,4 +405,5 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [re
 generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
+1. Install twine: `pip install twine`
 1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`

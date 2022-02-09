@@ -5,8 +5,8 @@ To setup the documentation, first you need to install the dependencies of the fu
     conda create -n reco_full -c conda-forge python=3.7 cudatoolkit=11.2 cudnn=8.1
     conda activate reco_full
 
-    pip install numpy cython
-    pip install --no-binary scikit-surprise .[all,experimental]
+    pip install numpy
+    pip install "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"
     pip install sphinx_rtd_theme
 
 

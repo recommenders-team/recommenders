@@ -41,6 +41,9 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
+* **[Abir Chakraborty](https://github.com/aeroabir)**
+   * Self-Attentive Sequential Recommendation (SASRec)
+   * Sequential Recommendation Via Personalized Transformer (SSEPT)
 * **[Alexandros Ioannou](https://github.com/aioannou96)**
    * Standard VAE algorithm 
    * Multinomial VAE algorithm  
@@ -90,6 +93,8 @@ To contributors: please add your name to the list when you submit a patch to the
    * Improving documentation
    * Quick start notebook
    * Operationalization notebook
+* **[Nile Wilson](https://github.com/niwilso)**
+   * Term Frequency - Inverse Document Frequency (TF-IDF) quickstart, utils
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
    * GeoIMC algorithm

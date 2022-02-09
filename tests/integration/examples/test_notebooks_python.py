@@ -91,7 +91,6 @@ def test_baseline_deep_dive_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.experimental
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
@@ -236,6 +235,7 @@ def test_cornac_bpr_integration(
 
 
 @pytest.mark.integration
+@pytest.mark.experimental
 @pytest.mark.parametrize(
     "expected_values",
     [({"rmse": 0.4969, "mae": 0.4761})],

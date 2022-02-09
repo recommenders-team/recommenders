@@ -17,7 +17,7 @@ try:
         compute_ranking_predictions,
     )
 except:
-    pass    # skip if experimental not installed
+    pass    # skip if surprise not installed
 
 TOL = 0.001
 
@@ -52,7 +52,6 @@ def rating_true():
     )
 
 
-@pytest.mark.experimental
 def test_predict(rating_true):
     svd = surprise.SVD()
     train_set = surprise.Dataset.load_from_df(
@@ -87,7 +86,6 @@ def test_predict(rating_true):
     ].values == pytest.approx(svd.predict(user, item).est, rel=TOL)
 
 
-@pytest.mark.experimental
 def test_recommend_k_items(rating_true):
     n_users = len(rating_true["userID"].unique())
     n_items = len(rating_true["itemID"].unique())

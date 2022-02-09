@@ -9,7 +9,7 @@ Some dependencies require compilation during pip installation. On Linux this can
 ```bash
 sudo apt-get install -y build-essential libpython<version>
 ``` 
-where `<version>` should be `3.6` or `3.7` as appropriate.
+where `<version>` should be the Python version (e.g. `3.6`).
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
@@ -35,7 +35,7 @@ By default `recommenders` does not install all dependencies used throughout the 
 - experimental: current experimental dependencies that are being evaluated (e.g. libraries that require advanced build requirements or might conflict with libraries from other options)
 - nni: dependencies for NNI tuning framework.
 
-Note that, currently, xLearn, Surprise and Vowpal Wabbit are in the experimental group.
+Note that, currently, xLearn and Vowpal Wabbit are in the experimental group.
 
 These groups can be installed alone or in combination:
 ```bash
@@ -64,9 +64,14 @@ When installing with GPU support you will need to point to the PyTorch index to 
 
 We are currently evaluating inclusion of the following dependencies:
 
- - scikit-surprise: due to incompatibilities with `numpy <= 1.19`, proper installation of Surprise requires `pip install numpy cython` and `pip install --no-binary scikit-surprise recommenders[experimental]`
  - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the [PyPI package](https://pypi.org/project/vowpalwabbit/) with the scikit-learn interface will facilitate easier integration into python environments
  - xlearn: on some platforms, xLearn requires pre-installation of cmake.
+
+## Other dependencies
+
+Some dependencies are not available via the recommenders PyPI package, but can be installed in the following ways: 
+ - pymanopt: this dependency is required for the RLRMC and GeoIMC algorithms; a version of this code compatible with TensorFlow 2 can be
+ installed with `pip install "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"`. 
 
 ## NNI dependencies
 
@@ -156,6 +161,8 @@ The models submodule contains implementations of various algorithms that can be 
 * Restricted Boltzmann Machines (RBM)
 * Riemannian Low-rank Matrix Completion (RLRMC)
 * Simple Algorithm for Recommendation (SAR)
+* Self-Attentive Sequential Recommendation (SASRec)
+* Sequential Recommendation Via Personalized Transformer (SSEPT)
 * Surprise
 * Term Frequency - Inverse Document Frequency (TF-IDF)
 * Variational Autoencoders (VAE)

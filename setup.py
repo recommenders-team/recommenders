@@ -38,9 +38,6 @@ install_requires = [
     "lightgbm>=2.2.1",
     "memory_profiler>=0.54.0,<1",
     "nltk>=3.4,<4",
-    "pydocumentdb>=2.3.3<3",  # TODO: replace with azure-cosmos
-    # Temporary fix for pymanopt, only this commit works with TF2
-    "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
@@ -51,6 +48,7 @@ install_requires = [
     "cornac>=1.1.2,<2",
     "retrying>=1.3.3",
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
+    "scikit-surprise>=1.0.6"
 ]
 
 # shared dependencies
@@ -76,7 +74,7 @@ extras_require = {
     "spark": [
         "databricks_cli>=0.8.6,<1",
         "pyarrow>=0.12.1,<7.0.0",
-        "pyspark>=2.4.5,<3.2.0",
+        "pyspark>=2.4.5,<4.0.0",
     ],
     "dev": [
         "black>=18.6b4,<21",
@@ -93,9 +91,6 @@ extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
-    # Surprise needs to be built from source because of the numpy <= 1.19 incompatibility
-    # Requires pip to be run with the --no-binary option
-    "scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz",
     # VW C++ binary needs to be installed manually for some code to work
     "vowpalwabbit>=8.9.0,<9",
 ]
@@ -104,6 +99,9 @@ extras_require["nni"] = [
     "nni==1.5",
 ]
 
+# The following dependency can be installed as below, however PyPI does not allow direct URLs.
+# Temporary fix for pymanopt, only this commit works with TF2
+# "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip",
 
 setup(
     name="recommenders",
@@ -128,6 +126,8 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS",
@@ -137,7 +137,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.6, <3.9",     # latest Databricks versions come with Python 3.8 installed
+    python_requires=">=3.6, <3.10",
     packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
     setup_requires=["numpy>=1.15"]
 )
