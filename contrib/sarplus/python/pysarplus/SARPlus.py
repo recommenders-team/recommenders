@@ -293,7 +293,12 @@ class SARPlus:
 
         cache_path_output = cache_path
         if cache_path.startswith("dbfs:"):
+            # Databricks DBFS
             cache_path_input = "/dbfs" + cache_path[5:]
+        elif cache_path.startswith("synfs:"):
+            # Azure Synapse
+            # See https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-file-mount-api
+            cache_path_input = "/synfs" + cache_path[6:]
         else:
             cache_path_input = cache_path
 
