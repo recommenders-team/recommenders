@@ -88,7 +88,7 @@ class SARPlus:
         Arguments:
             df (pySpark.DataFrame): input dataframe which contains the index of users and items.
         """
-        # threshold - items below this number get set to zero in coocurrence counts
+        # threshold - items below this number get set to zero in cooccurrence counts
 
         df.createOrReplaceTempView(self.f("{prefix}df_train_input"))
 
@@ -100,10 +100,10 @@ class SARPlus:
             # when T=np.inf, so user gets a cumulative sum of ratings for a particular item and
             # not the last rating.
             # Time Decay
-            # do a group by on user item pairs and apply the formula for time decay there
-            # Time T parameter is in days and input time is in seconds
+            # does a group by on user item pairs and apply the formula for time decay there
+            # Time T parameter is in days and input time is in seconds,
             # so we do dt/60/(T*24*60)=dt/(T*24*3600)
-            # the folling is the query which we want to run
+            # the following is the query which we want to run
 
             query = self.f(
                 """
@@ -120,7 +120,7 @@ class SARPlus:
             # replace with timedecayed version
             df = self.spark.sql(query)
         else:
-            # since SQL is case insensitive, this check needs to be performed similar
+            # since SQL is case-insensitive, this check needs to be performed similar
             if self.header["col_timestamp"].lower() in [
                 s.name.lower() for s in df.schema
             ]:
@@ -143,7 +143,7 @@ class SARPlus:
 
         df.createOrReplaceTempView(self.f("{prefix}df_train"))
 
-        log.info("sarplus.fit 1/2: compute item cooccurences...")
+        log.info("sarplus.fit 1/2: compute item cooccurrences...")
 
         # compute cooccurrence above minimum threshold
         query = self.f(
@@ -202,7 +202,7 @@ class SARPlus:
 
         # store upper triangular
         log.info(
-            "sarplus.fit 2/2: compute similiarity metric %s..." % self.similarity_type
+            "sarplus.fit 2/2: compute similarity metric %s..." % self.similarity_type
         )
         self.item_similarity.write.mode("overwrite").saveAsTable(
             self.f("{prefix}item_similarity_upper")
@@ -346,7 +346,7 @@ class SARPlus:
             # Magic happening here
             # The cache_path points to file write to by com.microsoft.sarplus
             # This has exactly the memory layout we need and since the file is
-            # memory mapped, the memory consumption only happens ones per worker
+            # memory mapped, the memory consumption only happens once per worker
             # for all python processes
             model = SARModel(cache_path_input)
             preds = model.predict(
