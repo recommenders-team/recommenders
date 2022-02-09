@@ -1,8 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import sysconfig
-
 from pathlib import Path
 from setuptools import setup
 from setuptools.extension import Extension
