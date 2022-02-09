@@ -20,20 +20,20 @@ Features:
 * Scalable PySpark based [implementation](python/pysarplus/SARPlus.py)
 * Fast C++ based [predictions](python/src/pysarplus.cpp)
 * Reduced memory consumption: similarity matrix cached in-memory once
-  per worker, shared accross python executors
+  per worker, shared across python executors
 
 ## Benchmarks
 
-| # Users | # Items | # Ratings | Runtime | Environment | Dataset | 
-|---------|---------|-----------|---------|-------------|---------|
-| 2.5mio  | 35k     | 100mio    | 1.3h    | Databricks, 8 workers, [Azure Standard DS3 v2](https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/) (4 core machines) | |
+| # Users | # Items | # Ratings | Runtime | Environment                                                                                                                                 | Dataset |
+|---------|---------|-----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| 2.5mio  | 35k     | 100mio    | 1.3h    | Databricks, 8 workers, [Azure Standard DS3 v2](https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/) (4 core machines) |         |
 
 ## Top-K Recommendation Optimization
 
 There are a couple of key optimizations:
 
 * map item ids (e.g. strings) to a continuous set of indexes to
-  optmize storage and simplify access
+  optimize storage and simplify access
 * convert similarity matrix to exactly the representation the C++
   component needs, thus enabling simple shared, memory mapping of the
   cache file and avoid parsing. This requires a customer formatter,
