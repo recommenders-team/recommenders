@@ -114,7 +114,7 @@ def test_spark_tuning(notebooks, output_notebook, kernel_name):
         kernel_name=kernel_name,
         parameters=dict(
             MOVIELENS_DATA_SIZE="mock100",
-            NUMBER_CORES="*",
+            NUMBER_CORES="1",
             NUMBER_ITERATIONS=3,
             SUBSET_RATIO=0.5,
             RANK=[5, 10],
