@@ -165,7 +165,7 @@ jobs:
           # set sarplus_version
           echo "sarplus_version=${SARPLUS_VERSION}" >> $GITHUB_ENV
           
-      - name: Upload Scala bundle  as GitHub artifact
+      - name: Upload Scala bundle as GitHub artifact
         uses: actions/upload-artifact@v2
         with:
           name: sarplus-bundle_2.12-${{ env.sarplus_version }}

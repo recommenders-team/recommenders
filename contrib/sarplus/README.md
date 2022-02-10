@@ -56,6 +56,11 @@ There are a couple of key optimizations:
 
 ## Usage
 
+Two packages should be installed:
+* [pysarplus@PyPI](https://pypi.org/project/pysarplus/)
+* [sarplus@MavenCentralRepository](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12) (or [sarplus-spark-3-2-plus@MavenCentralRepository](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12) if run on Spark 3.2+)
+
+
 ### Python
 
 ```python
