@@ -188,6 +188,7 @@ def create_run_config(cpu_cluster,
     conda_dep = CondaDependencies()
     conda_dep.add_pip_package(whl_url)
     conda_dep.add_pip_package("recommenders[dev,examples]")
+    conda_dep.add_pip_package("glob2")
 
     # install extra dependencies
     if add_gpu_dependencies:
@@ -456,4 +457,8 @@ if __name__ == "__main__":
     run.tag("PR", args.pr)
     # download files from AzureML
     run.download_files(prefix="reports", output_paths="./reports")
+
+    # download logs file from AzureML
+    run.download_file(name="test_logs", output_file_path='./test_logs.log')
+
     run.complete()
