@@ -13,7 +13,6 @@ import logging
 import os
 import sys
 from azureml.core import Run
-import glob
 
 
 def create_arg_parser():
@@ -42,6 +41,14 @@ def create_arg_parser():
         action="store",
         default="reports/test-unit.xml",
         help="Test results",
+    )
+    # pytest logs path
+    parser.add_argument(
+        "--testlogs",
+        "-f",
+        action="store",
+        default="user_logs/std_log.txt",
+        help="Path to pytest logs file on AzureML compute",
     )
     args = parser.parse_args()
 
@@ -88,8 +95,5 @@ if __name__ == "__main__":
     run.upload_folder(name_of_upload, path_on_disk)
 
     # upload pytest stdout file
-    std_log_path = glob.glob('**/std_log.txt', recursive=True)
-    if std_log_path:
-        print("FOUND STD_LOG.TXT!!!!!!!!!!!!!!")
-        print(std_log_path)
-        run.upload_file(name='test_logs', path_or_stream=std_log_path[0])
+    if os.path.exists(args.testlogs):
+        run.upload_file(name='test_logs', path_or_stream=args.testlogs)

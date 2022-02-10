@@ -347,7 +347,7 @@ def create_arg_parser():
     parser.add_argument(
         "--subid", action="store", default="123456", help="Azure Subscription ID"
     )
-    # reco wheel is created in the azure devops pipeline.
+    # reco wheel is created in the GitHub action workflow.
     # Not recommended to change this.
     parser.add_argument(
         "--wheelfile",
@@ -385,13 +385,21 @@ def create_arg_parser():
         default="--pr PRTestRun",
         help="If a pr triggered the test, list it here",
     )
+    # flag to indicate whether gpu dependencies should be included in conda env
     parser.add_argument(
         "--add_gpu_dependencies", action="store_true", help="include packages for GPU support"
     )
+    # flag to indicate whether pyspark dependencies should be included in conda env    
     parser.add_argument(
         "--add_spark_dependencies", action="store_true", help="include packages for PySpark support"
     )
-
+    # path where test logs should be downloaded
+    parser.add_argument(
+        "--testlogs",
+        action="store",
+        default="./test_logs.log",
+        help="Test logs will be downloaded to this path",
+    )
     args = parser.parse_args()
 
     return args
@@ -455,10 +463,11 @@ if __name__ == "__main__":
     run.tag("RepoName", args.reponame)
     run.tag("Branch", args.branch)
     run.tag("PR", args.pr)
+    
     # download files from AzureML
     run.download_files(prefix="reports", output_paths="./reports")
 
     # download logs file from AzureML
-    run.download_file(name="test_logs", output_file_path='./test_logs.log')
+    run.download_file(name="test_logs", output_file_path=args.testlogs)
 
     run.complete()

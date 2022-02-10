@@ -26,6 +26,7 @@ env:
   RG: "pradjoshi-aml-rg"
   WS: "pradjoshi-aml-ws"
   TEST_MARKERS: '"not notebooks and not spark and not gpu and not experimental"'
+  TEST_LOGS_PATH: '"test_logs.log"'
 
 jobs:
   cpu-unit-tests:
@@ -52,7 +53,8 @@ jobs:
             python tests/ci/aml_tests_new/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
+            --testlogs ${{env.TEST_LOGS_PATH}}
         id: run_test
       - name: Print test logs
-        run: cat test_logs.log
+        run: cat ${{env.TEST_LOGS_PATH}}
       - run: echo "🍏 This job's status is ${{ job.status }}."
