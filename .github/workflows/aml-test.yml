@@ -54,5 +54,5 @@ jobs:
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
         id: run_test
       - name: Print test logs
-        run: cat tests/ci/aml_tests_new/test_logs.log
+        run: cat test_logs.log
       - run: echo "🍏 This job's status is ${{ job.status }}."
