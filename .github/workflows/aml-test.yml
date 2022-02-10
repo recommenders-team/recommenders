@@ -62,7 +62,8 @@ jobs:
         run: cat ${{env.PYTEST_EXIT_CODE}}
       - name: Success/Fail
         run: |
-          if ${cat ${{env.PYTEST_EXIT_CODE}}} == "0"; then
+          exit_code = $(cat ${{env.PYTEST_EXIT_CODE}});
+          if exit_code == "0"; then
               exit 0
           else
               exit 1
