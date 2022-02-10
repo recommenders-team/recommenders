@@ -55,19 +55,8 @@ jobs:
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
             --testlogs ${{env.TEST_LOGS_PATH}}
-        id: run_test
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
-      - name: Print PyTest exit code
-        run: cat ${{env.PYTEST_EXIT_CODE}}
-      # - name: Success/Fail
-      #   run: |
-      #     exit_code=$(cat ${{env.PYTEST_EXIT_CODE}});
-      #     if exit_code=="0"; then
-      #         exit 0
-      #     else
-      #         exit 1
-      #     fi
       - name: Test Success/Failure
         if: $(cat ${{env.PYTEST_EXIT_CODE}}) != "0"
         uses: actions/github-script@v3
