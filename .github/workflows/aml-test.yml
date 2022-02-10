@@ -60,12 +60,17 @@ jobs:
         run: cat ${{env.TEST_LOGS_PATH}}
       - name: Print PyTest exit code
         run: cat ${{env.PYTEST_EXIT_CODE}}
-      - name: Success/Fail
-        run: |
-          exit_code=$(cat ${{env.PYTEST_EXIT_CODE}});
-          if exit_code=="0"; then
-              exit 0
-          else
-              exit 1
-          fi
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      # - name: Success/Fail
+      #   run: |
+      #     exit_code=$(cat ${{env.PYTEST_EXIT_CODE}});
+      #     if exit_code=="0"; then
+      #         exit 0
+      #     else
+      #         exit 1
+      #     fi
+      - name: Test Success/Failure
+        if: $(cat ${{env.PYTEST_EXIT_CODE}}) != "0"
+        uses: actions/github-script@v3
+        with:
+          script: |
+              core.setFailed('All tests did not pass!')
