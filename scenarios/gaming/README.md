@@ -12,7 +12,7 @@ A common scenario is to recommend games to a user based on their past interactio
 
 ### Personalized item recommendation
 
-
+The addition of micro-transactions inside games have produced a complete shift in the business model of games. Traditionally, most games were based on a one-off purchase, and users got all the content. Nowadays, many games allow players to buy items via micro-transactions. Personalized item recommendations can be used to increase the player engagement, tailor the content to the player's interests, and increase the player's retention. In addition, these recommendation provide benefits for studios, which will increase their conversion rate and revenue. The same set of algorithms used in personalized game recommendation can be used for personalized item recommendation, by just adapting the dataset.
 
 ### Similar items
 
