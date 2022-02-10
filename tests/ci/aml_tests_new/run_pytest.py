@@ -68,15 +68,20 @@ if __name__ == "__main__":
     logger.debug("args.junitxml {}".format(args.xmlname))
     logger.debug("junit= --junitxml={}".format(args.xmlname))
 
+    logger.info("Executing tests now...")
+
+    # execute pytest command
     pytest_exit_code = pytest.main([
         args.testfolder,
         "-m " + args.testmarkers,
         "--junitxml={}".format(args.xmlname),
-        "-v",
-        "--tb=no"
+        "--log-level=DEBUG",
     ])
-    print("PYTEST EXIT CODE..................")
-    print(pytest_exit_code.value)
+    
+    logger.info("Test execution completed!")
+
+    # log pytest exit code as a metric
+    # to be used to indicate success/failure in github workflow
     run.log("pytest_exit_code", pytest_exit_code.value)
 
     #
