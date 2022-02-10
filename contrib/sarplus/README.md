@@ -85,11 +85,13 @@ model.fit(train_df, similarity_type="jaccard")
 
 model.recommend_k_items(test_df, "cache", top_k=3).show()
 
-# For Databricks
+# # For Databricks
 # model.recommend_k_items(test_df, "dbfs:/mnt/sarpluscache/cache", top_k=3).show()
 
-# For Azure Synapse
-# model.recommend_k_items(test_df, "synfs:/mnt/sarpluscache/cache", top_k=3).show()
+# # For Azure Synapse
+# from notebookutils import mssparkutils
+# job_id = mssparkutils.env.getJobId()
+# model.recommend_k_items(test_df, f"synfs:/{job_id}/mnt/sarpluscache/cache", top_k=3).show()
 ```
 
 ### Jupyter Notebook
@@ -177,7 +179,7 @@ similarity matrix, and set default sources to parquet.
 
 #### Prepare local file system for cache
 
-`pysarplus.SARPlus.recommend_k_items()` need a local file system path
+`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
 as its second parameter for storing intermediate files during its
 calculation, so you'll also have to **mount** shared storage.
 
@@ -240,7 +242,7 @@ for details on how to manage libraries in Azue Synapse.
 
 #### Prepare local file system for cache
 
-`pysarplus.SARPlus.recommend_k_items()` need a local file system path
+`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
 as its second parameter for storing intermediate files during its
 calculation, so you'll also have to **mount** shared storage.
 
