@@ -13,6 +13,7 @@ import logging
 import os
 import sys
 from azureml.core import Run
+import pytest
 
 
 def create_arg_parser():
@@ -66,15 +67,15 @@ if __name__ == "__main__":
     """
     logger.debug("args.junitxml {}".format(args.xmlname))
     logger.debug("junit= --junitxml={}".format(args.xmlname))
-    pytest_cmd = [
-        "pytest",
+
+    pytest_exit_code = pytest.main([
         args.testfolder,
-        "-m",
-        args.testmarkers,
+        "-m " + args.testmarkers,
         "--junitxml={}".format(args.xmlname),
-    ]
-    logger.info("pytest run:{}".format(" ".join(pytest_cmd)))
-    subprocess.run(pytest_cmd)
+    ])
+    print("PYTEST EXIT CODE..................")
+    print(pytest_exit_code.value)
+    run.log("pytest_exit_code", pytest_exit_code.value)
 
     #
     # Leveraged code from this  notebook:

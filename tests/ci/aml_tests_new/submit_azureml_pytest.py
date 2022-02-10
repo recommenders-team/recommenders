@@ -46,6 +46,7 @@ from azureml.core.script_run_config import ScriptRunConfig
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.compute_target import ComputeTargetException
 from azureml.core.workspace import WorkspaceException
+from sklearn.feature_selection import f_oneway
 
 
 def setup_workspace(
@@ -469,5 +470,10 @@ if __name__ == "__main__":
 
     # download logs file from AzureML
     run.download_file(name="test_logs", output_file_path=args.testlogs)
+
+    # save pytest exit code
+    metrics = run.get_metrics()
+    with open("pytest_exit_code.log", "w") as f:
+        f.write(metrics.get('pytest_exit_code'))
 
     run.complete()

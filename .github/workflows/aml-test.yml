@@ -27,6 +27,7 @@ env:
   WS: "pradjoshi-aml-ws"
   TEST_MARKERS: '"not notebooks and not spark and not gpu and not experimental"'
   TEST_LOGS_PATH: '"./test_logs.log"'
+  PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
   cpu-unit-tests:
@@ -57,4 +58,6 @@ jobs:
         id: run_test
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
+      - name: Print PyTest exit code
+        run: cat ${{env.PYTEST_EXIT_CODE}}
       - run: echo "🍏 This job's status is ${{ job.status }}."
