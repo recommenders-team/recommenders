@@ -5,8 +5,8 @@ On this section there is listed a number of business scenarios that are common i
 The list of scenarios are:
 
 * [Ads](ads)
-* [Entertainment](entertainment)
 * [Food and restaurants](food_and_restaurants)
+* [Gaming](gaming)
 * [News and document](news)
 * [Retail](retail)
 * [Travel](travel)
