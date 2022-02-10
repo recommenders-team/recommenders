@@ -57,8 +57,11 @@ jobs:
             --testlogs ${{env.TEST_LOGS_PATH}}
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
+      - name: Get exit status
+        id: exit_status
+        run: echo ::set-output name=code::$(cat ${{env.PYTEST_EXIT_CODE}})
       - name: Check Success/Failure
-        if: $(cat ${{env.PYTEST_EXIT_CODE}})!=0
+        if: ${{ steps.exit_status.outputs.code != 0 }}
         uses: actions/github-script@v3
         with:
           script: |
