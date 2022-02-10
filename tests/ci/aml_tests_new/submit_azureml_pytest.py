@@ -46,7 +46,6 @@ from azureml.core.script_run_config import ScriptRunConfig
 from azureml.core.compute import ComputeTarget, AmlCompute
 from azureml.core.compute_target import ComputeTargetException
 from azureml.core.workspace import WorkspaceException
-from sklearn.feature_selection import f_oneway
 
 
 def setup_workspace(
