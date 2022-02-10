@@ -42,14 +42,6 @@ def create_arg_parser():
         default="reports/test-unit.xml",
         help="Test results",
     )
-    # pytest logs path
-    parser.add_argument(
-        "--uploadlogs",
-        "-f",
-        action="store",
-        default="user_logs/std_log.txt",
-        help="Path to pytest logs file on AzureML compute",
-    )
     args = parser.parse_args()
 
     return args
@@ -95,5 +87,4 @@ if __name__ == "__main__":
     run.upload_folder(name_of_upload, path_on_disk)
 
     # upload pytest stdout file
-    if os.path.exists(args.testlogs):
-        run.upload_file(name='test_logs', path_or_stream=args.uploadlogs)
+    run.upload_file(name='test_logs', path_or_stream="user_logs/std_log.txt")
