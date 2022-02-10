@@ -60,4 +60,11 @@ jobs:
         run: cat ${{env.TEST_LOGS_PATH}}
       - name: Print PyTest exit code
         run: cat ${{env.PYTEST_EXIT_CODE}}
+      - name: Success/Fail
+        run: |
+          if cat ${{env.PYTEST_EXIT_CODE}} == "0"; then
+              exit 0
+          else
+              exit 1
+          fi
       - run: echo "🍏 This job's status is ${{ job.status }}."
