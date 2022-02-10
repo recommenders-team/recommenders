@@ -53,7 +53,7 @@ jobs:
             python tests/ci/aml_tests_new/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
-            --testlogs ${{env.TEST_LOGS_PATH}}
+            --downloadlogs ${{env.TEST_LOGS_PATH}}
         id: run_test
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}

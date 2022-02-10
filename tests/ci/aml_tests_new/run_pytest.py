@@ -44,7 +44,7 @@ def create_arg_parser():
     )
     # pytest logs path
     parser.add_argument(
-        "--testlogs",
+        "--uploadlogs",
         "-f",
         action="store",
         default="user_logs/std_log.txt",
@@ -96,4 +96,4 @@ if __name__ == "__main__":
 
     # upload pytest stdout file
     if os.path.exists(args.testlogs):
-        run.upload_file(name='test_logs', path_or_stream=args.testlogs)
+        run.upload_file(name='test_logs', path_or_stream=args.uploadlogs)

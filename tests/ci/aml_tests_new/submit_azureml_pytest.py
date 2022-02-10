@@ -395,7 +395,7 @@ def create_arg_parser():
     )
     # path where test logs should be downloaded
     parser.add_argument(
-        "--testlogs",
+        "--downloadlogs",
         action="store",
         default="./test_logs.log",
         help="Test logs will be downloaded to this path",
@@ -468,6 +468,6 @@ if __name__ == "__main__":
     run.download_files(prefix="reports", output_paths="./reports")
 
     # download logs file from AzureML
-    run.download_file(name="test_logs", output_file_path=args.testlogs)
+    run.download_file(name="test_logs", output_file_path=args.downloadlogs)
 
     run.complete()
