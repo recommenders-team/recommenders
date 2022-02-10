@@ -72,7 +72,7 @@ if __name__ == "__main__":
         args.testfolder,
         "-m " + args.testmarkers,
         "--junitxml={}".format(args.xmlname),
-        "-rA",
+        "-ra",
     ])
     print("PYTEST EXIT CODE..................")
     print(pytest_exit_code.value)
