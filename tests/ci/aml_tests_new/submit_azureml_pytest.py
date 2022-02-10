@@ -473,6 +473,6 @@ if __name__ == "__main__":
     # save pytest exit code
     metrics = run.get_metrics()
     with open("pytest_exit_code.log", "w") as f:
-        f.write(metrics.get('pytest_exit_code'))
+        f.write(str(metrics.get('pytest_exit_code')))
 
     run.complete()
