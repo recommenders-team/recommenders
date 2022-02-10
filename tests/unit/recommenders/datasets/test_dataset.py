@@ -15,6 +15,8 @@ def files_fixtures():
     filepath = "license.txt"
     return file_url, filepath
 
+def test_fail():
+    assert 1 == 0
 
 def test_maybe_download(files_fixtures):
     file_url, filepath = files_fixtures
