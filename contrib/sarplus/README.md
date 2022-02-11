@@ -3,8 +3,10 @@
 Pronounced surplus as it's simply better if not best!
 
 [![sarplus test and package](https://github.com/microsoft/recommenders/actions/workflows/sarplus.yml/badge.svg)](https://github.com/microsoft/recommenders/actions/workflows/sarplus.yml)
-[![PyPI version](https://badge.fury.io/py/pysarplus.svg)](https://badge.fury.io/py/pysarplus)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.microsoft.sarplus/sarplus_2.12/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.microsoft.sarplus/sarplus_2.12)
+[![PyPI version](https://img.shields.io/pypi/v/pysarplus.svg)](https://pypi.org/project/pysarplus/)
+[![Python version](https://img.shields.io/pypi/pyversions/pysarplus)](https://pypi.org/project/pysarplus/)
+[![Maven Central version](https://img.shields.io/maven-central/v/com.microsoft.sarplus/sarplus_2.12)](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12)
+[![Maven Central version (Spark 3.2+)](https://img.shields.io/maven-central/v/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12?label=maven-central%20%28spark%203.2%2B%29)](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12)
 
 
 Simple Algorithm for Recommendation (SAR) is a neighborhood based
