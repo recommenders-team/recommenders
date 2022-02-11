@@ -49,7 +49,7 @@ setup(
     setup_requires=["pytest-runner"],
     install_requires=DEPENDENCIES,
     tests_require=["pytest"],
-    python_requires=">=3.6,<=3.10",
+    python_requires=">=3.6",
     packages=["pysarplus"],
     package_data={"": ["VERSION"]},
     ext_modules=[
