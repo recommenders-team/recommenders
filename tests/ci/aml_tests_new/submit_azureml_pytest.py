@@ -187,14 +187,16 @@ def create_run_config(cpu_cluster,
     )
     conda_dep = CondaDependencies()
     conda_dep.add_pip_package(whl_url)
-    conda_dep.add_pip_package("recommenders[dev,examples]")
-    conda_dep.add_pip_package("glob2")
 
     # install extra dependencies
     if add_gpu_dependencies:
-        conda_dep.add_pip_package("recommenders[gpu]")
+        conda_dep.add_conda_package("cudatoolkit=11.2")
+        conda_dep.add_conda_package("cudnn=8.1")
+        conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
     if add_spark_dependencies:
-        conda_dep.add_pip_package("recommenders[spark]")
+        conda_dep.add_pip_package("recommenders[dev,examples,spark]")
+    if not add_gpu_dependencies and not add_spark_dependencies:
+        conda_dep.add_pip_package("recommenders[dev,examples]")
 
     run_amlcompute.environment.python.conda_dependencies = conda_dep
     return run_amlcompute

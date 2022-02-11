@@ -8,7 +8,6 @@ are set otherwise.
 """
 
 import argparse
-import subprocess
 import logging
 import os
 import sys

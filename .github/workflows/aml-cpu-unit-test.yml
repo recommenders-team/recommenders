@@ -5,7 +5,7 @@
 
 # ToDo: workflow that gets triggered on a PR to main/staging
 # and submits an experiment to run tests on AML cluster
-name: trigger-aml-tests
+name: trigger-aml-cpu-unit-tests
 
 on:
   # pull_request:
