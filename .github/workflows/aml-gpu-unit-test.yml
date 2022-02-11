@@ -25,7 +25,7 @@ env:
   EXP_NAME: "gpu_unit_tests"
   RG: "pradjoshi-aml-rg"
   WS: "pradjoshi-aml-ws"
-  TEST_MARKERS: '"not notebooks and not spark and gpu"'
+  TEST_MARKERS: '"not notebooks and not spark and gpu and not experimental"'
   TEST_LOGS_PATH: '"./test_logs.log"'
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 

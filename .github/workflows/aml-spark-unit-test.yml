@@ -5,7 +5,7 @@
 
 # ToDo: workflow that gets triggered on a PR to main/staging
 # and submits an experiment to run tests on AML cluster
-name: trigger-aml-cpu-unit-tests
+name: trigger-aml-spark-unit-tests
 
 on:
   # pull_request:
@@ -22,15 +22,15 @@ on:
 
 env:
   CLUSTER_NAME: "cpu-aml-cluster"
-  EXP_NAME: "cpu_unit_tests"
+  EXP_NAME: "spark_unit_tests"
   RG: "pradjoshi-aml-rg"
   WS: "pradjoshi-aml-ws"
-  TEST_MARKERS: '"not notebooks and not spark and not gpu and not experimental"'
+  TEST_MARKERS: '"not notebooks and spark and not gpu and not experimental"'
   TEST_LOGS_PATH: '"./test_logs.log"'
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
-  cpu-unit-tests:
+  spark-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
@@ -54,7 +54,7 @@ jobs:
             python tests/ci/aml_tests_new/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
-            --testlogs ${{env.TEST_LOGS_PATH}}
+            --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
       - name: Get exit status
