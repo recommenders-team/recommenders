@@ -108,7 +108,7 @@ Insert this cell prior to the code above.
 ```python
 import os
 
-SARPLUS_MVN_COORDINATE = "com.microsoft.sarplus:sarplus_2.12:0.5.3"
+SARPLUS_MVN_COORDINATE = "com.microsoft.sarplus:sarplus_2.12:0.5.4"
 SUBMIT_ARGS = f"--packages {SARPLUS_MVN_COORDINATE} pyspark-shell"
 os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
@@ -131,7 +131,7 @@ spark = (
 ### PySpark Shell
 
 ```bash
-SARPLUS_MVN_COORDINATE="com.microsoft.sarplus:sarplus_2.12:0.5.3"
+SARPLUS_MVN_COORDINATE="com.microsoft.sarplus:sarplus_2.12:0.5.4"
 
 # Install pysarplus
 pip install pysarplus
@@ -152,14 +152,14 @@ pyspark --packages "${SARPLUS_MVN_COORDINATE}" \
 1. Create Library
 1. Under `Library Source` select `Maven`
 1. Enter into `Coordinates`:
-   * `com.microsoft.sarplus:sarplus_2.12:0.5.3`
-   * or `com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.5.3` (if
+   * `com.microsoft.sarplus:sarplus_2.12:0.5.4`
+   * or `com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.5.4` (if
      you're on Spark 3.2+)
 1. Hit `Create`
 1. Attach to your cluster
 1. Create 2nd library
 1. Under `Library Source` select `PyPI`
-1. Enter `pysarplus==0.5.3`
+1. Enter `pysarplus==0.5.4`
 1. Hit `Create`
 
 This will install C++, Python and Scala code on your cluster.  See
