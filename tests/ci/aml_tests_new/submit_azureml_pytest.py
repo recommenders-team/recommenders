@@ -187,6 +187,7 @@ def create_run_config(cpu_cluster,
     )
     conda_dep = CondaDependencies()
     conda_dep.add_pip_package(whl_url)
+    conda_dep.add_pip_package("cmake")
 
     # install extra dependencies
     if add_gpu_dependencies:
