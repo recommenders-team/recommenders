@@ -18,7 +18,8 @@ The addition of micro-transactions inside games has produced a complete shift in
 
 ### Similar items
 
-A related scenario to personalized item recommendation is similar item recommendations. In this case the recommendations are based on item feature similarity. Some features that can be taken into account are price, item category, item usage, etc. The business usecase for similar items can be increasing the likelihood of buying or avoiding losing a sale by showing an alternative item with a lower price (down-selling). The set of algorithms that can be used in this scenario are those based on content-based filtering, such as [LightGBM](../../examples/00_quick_start/lightgbm_tinycriteo.ipynb), [VW](../../examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) or even [xDeepFM](../../examples/00_quick_start/xdeepfm_criteo.ipynb).
+A related scenario to personalized item recommendation is similar item recommendations. In this case the recommendations are based on item feature similarity. Some features that can be taken into account are price, item category, item usage, etc. The business usecase for similar items can to increase the likelihood of buying or avoiding losing a sale by showing an alternative item with a lower price (down-selling). The set of algorithms that can be used in this scenario are those based on content-based filtering, such as [LightGBM](../../examples/00_quick_start/lightgbm_tinycriteo.ipynb), [VW](../../examples/02_model_content_based_filtering/vowpal_wabbit_deep_dive.ipynb) or even [xDeepFM](../../examples/00_quick_start/xdeepfm_criteo.ipynb).
+
 
 ### Next best action prediction
 
