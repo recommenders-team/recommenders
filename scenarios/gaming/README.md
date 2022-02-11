@@ -8,7 +8,8 @@ In this section we will describe the most common scenarios in recommendation sys
 
 ### Personalized game recommendation
 
-A common scenario is to recommend games to a user based on their past interactions with other games. In this scenario, the user is represented by a user profile, and the game is represented by a game profile.  The user profile contains information about the user's past interactions with the game, and the game profile contains information about the game's popularity and other attributes. This scenario is typically shown on the game store homepage (for example, the store of XBox), or it can be send to a user via a personalized newsletter. A large number of algorithms in this repository such as [SAR](../../examples/00_quick_start/sar_movielens.ipynb), [BPR](../../examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb), and [NCF](../../examples/00_quick_start/ncf_movielens.ipynb) can be used for personalized game recommendation.
+A common scenario is to recommend games to a user based on their past interactions with other games. In this scenario, the user is represented by a user profile, and the game is represented by a game profile.  The user profile contains information about the user's past interactions with the game, and the game profile contains information about the game's popularity and other attributes. This scenario is typically shown on the game store homepage (for example, the store of XBox), or it can be sent to a user via a personalized newsletter. A large number of algorithms in this repository such as [SAR](../../examples/00_quick_start/sar_movielens.ipynb), [BPR](../../examples/02_model_collaborative_filtering/cornac_bpr_deep_dive.ipynb), and [NCF](../../examples/00_quick_start/ncf_movielens.ipynb) can be used for personalized game recommendation.
+
 
 ### Personalized item recommendation
 
