@@ -143,6 +143,9 @@ def create_run_config(cpu_cluster,
                     workspace,
                     add_gpu_dependencies,
                     add_spark_dependencies,
+                    conda_pkg_cudatoolkit,
+                    conda_pkg_cudnn,
+                    conda_pkg_jdk,
                     reco_wheel_path):
     """
     AzureML requires the run environment to be setup prior to submission.
@@ -190,12 +193,12 @@ def create_run_config(cpu_cluster,
 
     # install extra dependencies
     if add_gpu_dependencies:
-        conda_dep.add_conda_package("cudatoolkit=11.2")
-        conda_dep.add_conda_package("cudnn=8.1")
+        conda_dep.add_conda_package(conda_pkg_cudatoolkit)
+        conda_dep.add_conda_package(conda_pkg_cudnn)
         conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
     if add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
-        conda_dep.add_conda_package("openjdk=8")
+        conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark]")
     if not add_gpu_dependencies and not add_spark_dependencies:
         conda_dep.add_pip_package("recommenders[dev,examples]")
@@ -404,6 +407,27 @@ def create_arg_parser():
         default="./test_logs.log",
         help="Test logs will be downloaded to this path",
     )
+    # conda package name for cudatoolkit
+    parser.add_argument(
+        "--conda_pkg_cudatoolkit",
+        action="store",
+        default="cudatoolkit=11.2",
+        help="conda package name for cudatoolkit",
+    )
+    # conda package name for cudnn
+    parser.add_argument(
+        "--conda_pkg_cudnn",
+        action="store",
+        default="cudnn=8.1",
+        help="conda package name for cudnn",
+    )
+    # conda package name for jdk
+    parser.add_argument(
+        "--conda_pkg_jdk",
+        action="store",
+        default="openjdk=8",
+        help="conda package name for jdk",
+    )
     args = parser.parse_args()
 
     return args
@@ -447,6 +471,9 @@ if __name__ == "__main__":
         workspace=workspace,
         add_gpu_dependencies=args.add_gpu_dependencies,
         add_spark_dependencies=args.add_spark_dependencies,
+        conda_pkg_cudatoolkit=args.conda_pkg_cudatoolkit,
+        conda_pkg_cudnn=args.conda_pkg_cudnn,
+        conda_pkg_jdk=args.conda_pkg_jdk,
         reco_wheel_path=args.wheelfile
     )
 
