@@ -80,10 +80,10 @@ test_df = spark.createDataFrame(
 
 model = SARPlus(
     spark,
-	col_user="user_id",
-	col_item="item_id",
-	col_rating="rating",
-	col_timestamp="timestamp"
+    col_user="user_id",
+    col_item="item_id",
+    col_rating="rating",
+    col_timestamp="timestamp"
 )
 model.fit(train_df, similarity_type="jaccard")
 
@@ -118,8 +118,8 @@ spark = (
     .config("memory", "1G")
     .config("spark.sql.shuffle.partitions", "1")
     .config("spark.sql.crossJoin.enabled", True)
-	.config("spark.sql.sources.default", "parquet")
-	.config("spark.sql.legacy.createHiveTableByDefault", True)
+    .config("spark.sql.sources.default", "parquet")
+    .config("spark.sql.legacy.createHiveTableByDefault", True)
     .config("spark.ui.enabled", False)
     .getOrCreate()
 )
@@ -137,8 +137,8 @@ pip install pysarplus
 # Specify sarplus maven coordinate and configure Spark environment
 pyspark --packages "${SARPLUS_MVN_COORDINATE}" \
         --conf spark.sql.crossJoin.enabled=true \
-		--conf spark.sql.sources.default=parquet \
-		--conf spark.sql.legacy.createHiveTableByDefault=true
+        --conf spark.sql.sources.default=parquet \
+        --conf spark.sql.legacy.createHiveTableByDefault=true
 ```
 
 
@@ -200,7 +200,7 @@ dbutils.fs.mount(
   mount_point = "/mnt/<container>",
   extra_configs = {
     "fs.azure.account.key.<storage-account>.blob.core.windows.net":
-	"<access-key>"
+    "<access-key>"
   }
 )
 ```
