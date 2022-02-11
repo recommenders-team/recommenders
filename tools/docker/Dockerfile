@@ -20,7 +20,8 @@ RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "$
 # Install base dependencies and libpython (for cornac)
 RUN apt-get update && \
     apt-get install -y curl build-essential
-RUN apt-get install -y libpython3.7
+RUN apt-get install -y libpython3.7-dev
+RUN apt-get install -y python3-dev  
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -45,14 +46,14 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; 
     python3.7 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; fi
+    pip install --upgrade setuptools wheel; fi
 RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; fi
+    pip install --upgrade setuptools wheel; fi
 
 ###########
 # CPU Stage
@@ -99,7 +100,8 @@ RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "$
 
 RUN apt-get update && \
     apt-get install -y curl build-essential
-RUN apt-get install -y libpython3.7
+RUN apt-get install -y libpython3.7-dev
+RUN apt-get install -y python3-dev
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -122,15 +124,15 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; 
     python3.7 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; \
+    pip install --upgrade setuptools wheel; \
     pip install recommenders[gpu,examples]; fi
 RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; \
+    pip install --upgrade setuptools wheel; \
     pip install recommenders[gpu,examples]; fi
 
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
