@@ -30,7 +30,7 @@ env:
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
-  cpu-unit-tests:
+  gpu-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
