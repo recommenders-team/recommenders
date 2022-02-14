@@ -454,7 +454,7 @@ class SARPlus:
         """
         if not use_cache:
             return self._recommend_k_items_slow(test, top_k, remove_seen)
-        elif self.cache_path is None:
-            raise ValueError("No cache_path specified")
-        else:
+        elif self.cache_path is not None:
             return self._recommend_k_items_fast(test, top_k, remove_seen, n_user_prediction_partitions)
+        else:
+            raise ValueError("No cache_path specified")
