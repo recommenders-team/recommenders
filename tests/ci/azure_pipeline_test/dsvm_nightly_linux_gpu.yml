@@ -29,9 +29,9 @@ extends:
     - smoke
     - integration
     task_name: "Test - Nightly Linux GPU"
-    timeout: 300
+    timeout: 360
     conda_env: "nightly_linux_gpu"
-    conda_opts: "-c conda-forge python=3.6 cudatoolkit=11.2 cudnn=8.1"
+    conda_opts: "-c conda-forge python=3.7 cudatoolkit=11.2 cudnn=8.1"
     pip_opts: "[gpu,examples,dev] -f https://download.pytorch.org/whl/cu111/torch_stable.html"
     pytest_markers: "not spark and gpu"
     pytest_params: "-x"
