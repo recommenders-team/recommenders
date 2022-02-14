@@ -71,8 +71,8 @@ class SARPlus:
         self.similarity_type = similarity_type
         self.timedecay_formula = timedecay_formula
 
-    def f(self, str, **kwargs):
-        return str.format(**self.header, **kwargs)
+    def f(self, string, **kwargs):
+        return string.format(**self.header, **kwargs)
 
     # denominator in time decay. Zero makes time decay irrelevant
     # toggle the computation of time decay group by formula
