@@ -38,6 +38,7 @@ class SARPlus:
         time_now=None,
         timedecay_formula=False,
         threshold=1,
+        cache_path=None,
     ):
 
         """Initialize model parameters
@@ -53,6 +54,8 @@ class SARPlus:
             time_now (int | None): current time for time decay calculation
             timedecay_formula (bool): flag to apply time decay
             threshold (int): item-item co-occurrences below this threshold will be removed
+            cache_path (str): user specified local cache directory for recommend_k_items().  If specified,
+                recommend_k_items() will do C++ based fast predictions.
         """
         assert threshold > 0
 
@@ -70,6 +73,8 @@ class SARPlus:
 
         self.similarity_type = similarity_type
         self.timedecay_formula = timedecay_formula
+        self.item_similarity = None
+        self.cache_path = cache_path
 
     def _format(self, string, **kwargs):
         return string.format(**self.header, **kwargs)
@@ -263,14 +268,15 @@ class SARPlus:
 
         return self.spark.sql(query)
 
-    def recommend_k_items(
+    def _recommend_k_items_fast(
         self,
         test,
-        cache_path,
         top_k=10,
         remove_seen=True,
         n_user_prediction_partitions=200,
     ):
+
+        assert self.cache_path is not None
 
         # create item id to continuous index mapping
         log.info("sarplus.recommend_k_items 1/3: create item index")
@@ -291,16 +297,16 @@ class SARPlus:
             )
         ).write.mode("overwrite").saveAsTable(self._format("{prefix}item_similarity_mapped"))
 
-        cache_path_output = cache_path
-        if cache_path.startswith("dbfs:"):
+        cache_path_output = self.cache_path
+        if self.cache_path.startswith("dbfs:"):
             # Databricks DBFS
-            cache_path_input = "/dbfs" + cache_path[5:]
-        elif cache_path.startswith("synfs:"):
+            cache_path_input = "/dbfs" + self.cache_path[5:]
+        elif self.cache_path.startswith("synfs:"):
             # Azure Synapse
             # See https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-file-mount-api
-            cache_path_input = "/synfs" + cache_path[6:]
+            cache_path_input = "/synfs" + self.cache_path[6:]
         else:
-            cache_path_input = cache_path
+            cache_path_input = self.cache_path
 
         # export similarity matrix for C++ backed UDF
         log.info("sarplus.recommend_k_items 2/3: prepare similarity matrix")
@@ -388,7 +394,7 @@ class SARPlus:
             )
         )
 
-    def recommend_k_items_slow(self, test, top_k=10, remove_seen=True):
+    def _recommend_k_items_slow(self, test, top_k=10, remove_seen=True):
         """Recommend top K items for all users which are in the test set.
 
         Args:
@@ -428,3 +434,27 @@ class SARPlus:
         )
 
         return self.spark.sql(query)
+
+    def recommend_k_items(
+        self,
+        test,
+        top_k=10,
+        remove_seen=True,
+        use_cache=False,
+        n_user_prediction_partitions=200,
+    ):
+        """Recommend top K items for all users which are in the test set.
+
+        Args:
+            test: test Spark dataframe
+            top_k: top n items to return
+            remove_seen: remove items test users have already seen in the past from the recommended set
+            use_cache: use specified local directory stored in self.cache_path as cache for C++ based fast predictions
+            n_user_prediction_partitions: prediction partitions
+        """
+        if not use_cache:
+            return self._recommend_k_items_slow(test, top_k, remove_seen)
+        elif self.cache_path is None:
+            raise ValueError("No cache_path specified")
+        else:
+            return self._recommend_k_items_fast(test, top_k, remove_seen, n_user_prediction_partitions)

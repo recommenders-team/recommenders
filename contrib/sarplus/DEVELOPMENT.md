@@ -20,7 +20,7 @@ Steps to package and publish (also described in
    ```
 
 2. Package the [Scala package](scala/build.sbt), which includes the
-   [Scala formatter](scala/src/main/scala/microsoft/sarplus) and
+   [Scala formatter](scala/src/main/scala/com/microsoft/sarplus) and
    references the pip package.
    
    ```bash
@@ -61,7 +61,7 @@ Steps to package and publish (also described in
 
 3. Upload the zipped Scala package bundle to [Nexus Repository
    Manager](https://oss.sonatype.org/) through a browser (See [publish
-   manul](https://central.sonatype.org/publish/publish-manual/)).
+   manual](https://central.sonatype.org/publish/publish-manual/)).
 
 
 ## Testing
