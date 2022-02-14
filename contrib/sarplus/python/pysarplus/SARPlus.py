@@ -71,7 +71,7 @@ class SARPlus:
         self.similarity_type = similarity_type
         self.timedecay_formula = timedecay_formula
 
-    def f(self, string, **kwargs):
+    def _format(self, string, **kwargs):
         return string.format(**self.header, **kwargs)
 
     # denominator in time decay. Zero makes time decay irrelevant
@@ -90,7 +90,7 @@ class SARPlus:
         """
         # threshold - items below this number get set to zero in cooccurrence counts
 
-        df.createOrReplaceTempView(self.f("{prefix}df_train_input"))
+        df.createOrReplaceTempView(self._format("{prefix}df_train_input"))
 
         if self.timedecay_formula:
             # WARNING: previously we would take the last value in training dataframe and set it
@@ -105,7 +105,7 @@ class SARPlus:
             # so we do dt/60/(T*24*60)=dt/(T*24*3600)
             # the following is the query which we want to run
 
-            query = self.f(
+            query = self._format(
                 """
             SELECT
                  {col_user}, {col_item}, 
@@ -125,7 +125,7 @@ class SARPlus:
                 s.name.lower() for s in df.schema
             ]:
                 # we need to de-duplicate items by using the latest item
-                query = self.f(
+                query = self._format(
                     """
                 SELECT {col_user}, {col_item}, {col_rating}
                 FROM
@@ -141,12 +141,12 @@ class SARPlus:
 
                 df = self.spark.sql(query)
 
-        df.createOrReplaceTempView(self.f("{prefix}df_train"))
+        df.createOrReplaceTempView(self._format("{prefix}df_train"))
 
         log.info("sarplus.fit 1/2: compute item cooccurrences...")
 
         # compute cooccurrence above minimum threshold
-        query = self.f(
+        query = self._format(
             """
         SELECT A.{col_item} i1, B.{col_item} i2, COUNT(*) value
         FROM   {prefix}df_train A INNER JOIN {prefix}df_train B
@@ -159,22 +159,22 @@ class SARPlus:
 
         item_cooccurrence = self.spark.sql(query)
         item_cooccurrence.write.mode("overwrite").saveAsTable(
-            self.f("{prefix}item_cooccurrence")
+            self._format("{prefix}item_cooccurrence")
         )
 
         # compute the diagonal used later for Jaccard and Lift
         if self.similarity_type == SIM_LIFT or self.similarity_type == SIM_JACCARD:
             item_marginal = self.spark.sql(
-                self.f(
+                self._format(
                     "SELECT i1 i, value AS margin FROM {prefix}item_cooccurrence WHERE i1 = i2"
                 )
             )
-            item_marginal.createOrReplaceTempView(self.f("{prefix}item_marginal"))
+            item_marginal.createOrReplaceTempView(self._format("{prefix}item_marginal"))
 
         if self.similarity_type == SIM_COOCCUR:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == SIM_JACCARD:
-            query = self.f(
+            query = self._format(
                 """
             SELECT i1, i2, value / (M1.margin + M2.margin - value) AS value
             FROM {prefix}item_cooccurrence A 
@@ -185,7 +185,7 @@ class SARPlus:
             )
             self.item_similarity = self.spark.sql(query)
         elif self.similarity_type == SIM_LIFT:
-            query = self.f(
+            query = self._format(
                 """
             SELECT i1, i2, value / (M1.margin * M2.margin) AS value
             FROM {prefix}item_cooccurrence A 
@@ -205,12 +205,12 @@ class SARPlus:
             "sarplus.fit 2/2: compute similarity metric %s..." % self.similarity_type
         )
         self.item_similarity.write.mode("overwrite").saveAsTable(
-            self.f("{prefix}item_similarity_upper")
+            self._format("{prefix}item_similarity_upper")
         )
 
         # expand upper triangular to full matrix
 
-        query = self.f(
+        query = self._format(
             """
         SELECT i1, i2, value
         FROM
@@ -225,14 +225,14 @@ class SARPlus:
 
         self.item_similarity = self.spark.sql(query)
         self.item_similarity.write.mode("overwrite").saveAsTable(
-            self.f("{prefix}item_similarity")
+            self._format("{prefix}item_similarity")
         )
 
         # free space
-        self.spark.sql(self.f("DROP TABLE {prefix}item_cooccurrence"))
-        self.spark.sql(self.f("DROP TABLE {prefix}item_similarity_upper"))
+        self.spark.sql(self._format("DROP TABLE {prefix}item_cooccurrence"))
+        self.spark.sql(self._format("DROP TABLE {prefix}item_similarity_upper"))
 
-        self.item_similarity = self.spark.table(self.f("{prefix}item_similarity"))
+        self.item_similarity = self.spark.table(self._format("{prefix}item_similarity"))
 
     def get_user_affinity(self, test):
         """Prepare test set for C++ SAR prediction code.
@@ -241,18 +241,18 @@ class SARPlus:
         Arguments:
             test (pySpark.DataFrame): input dataframe which contains test users.
         """
-        test.createOrReplaceTempView(self.f("{prefix}df_test"))
+        test.createOrReplaceTempView(self._format("{prefix}df_test"))
 
-        query = self.f(
+        query = self._format(
             "SELECT DISTINCT {col_user} FROM {prefix}df_test CLUSTER BY {col_user}"
         )
 
         df_test_users = self.spark.sql(query)
         df_test_users.write.mode("overwrite").saveAsTable(
-            self.f("{prefix}df_test_users")
+            self._format("{prefix}df_test_users")
         )
 
-        query = self.f(
+        query = self._format(
             """
           SELECT a.{col_user}, a.{col_item}, CAST(a.{col_rating} AS double) {col_rating}
           FROM {prefix}df_train a INNER JOIN {prefix}df_test_users b ON a.{col_user} = b.{col_user} 
@@ -275,21 +275,21 @@ class SARPlus:
         # create item id to continuous index mapping
         log.info("sarplus.recommend_k_items 1/3: create item index")
         self.spark.sql(
-            self.f(
+            self._format(
                 "SELECT i1, row_number() OVER(ORDER BY i1)-1 idx FROM (SELECT DISTINCT i1 FROM {prefix}item_similarity) CLUSTER BY i1"
             )
-        ).write.mode("overwrite").saveAsTable(self.f("{prefix}item_mapping"))
+        ).write.mode("overwrite").saveAsTable(self._format("{prefix}item_mapping"))
 
         # map similarity matrix into index space
         self.spark.sql(
-            self.f(
+            self._format(
                 """
             SELECT a.idx i1, b.idx i2, is.value
             FROM {prefix}item_similarity is, {prefix}item_mapping a, {prefix}item_mapping b
             WHERE is.i1 = a.i1 AND i2 = b.i1
         """
             )
-        ).write.mode("overwrite").saveAsTable(self.f("{prefix}item_similarity_mapped"))
+        ).write.mode("overwrite").saveAsTable(self._format("{prefix}item_similarity_mapped"))
 
         cache_path_output = cache_path
         if cache_path.startswith("dbfs:"):
@@ -306,7 +306,7 @@ class SARPlus:
         log.info("sarplus.recommend_k_items 2/3: prepare similarity matrix")
 
         self.spark.sql(
-            self.f(
+            self._format(
                 "SELECT i1, i2, CAST(value AS DOUBLE) value FROM {prefix}item_similarity_mapped ORDER BY i1, i2"
             )
         ).coalesce(1).write.format("com.microsoft.sarplus").mode("overwrite").save(
@@ -314,12 +314,12 @@ class SARPlus:
         )
 
         self.get_user_affinity(test).createOrReplaceTempView(
-            self.f("{prefix}user_affinity")
+            self._format("{prefix}user_affinity")
         )
 
         # map item ids to index space
         pred_input = self.spark.sql(
-            self.f(
+            self._format(
                 """
             SELECT {col_user}, idx, rating
             FROM 
@@ -376,10 +376,10 @@ class SARPlus:
             .apply(sar_predict_udf)
         )
 
-        df_preds.createOrReplaceTempView(self.f("{prefix}predictions"))
+        df_preds.createOrReplaceTempView(self._format("{prefix}predictions"))
 
         return self.spark.sql(
-            self.f(
+            self._format(
                 """
         SELECT userID {col_user}, b.i1 {col_item}, score
         FROM {prefix}predictions p, {prefix}item_mapping b
@@ -402,12 +402,12 @@ class SARPlus:
             raise ValueError("Not implemented")
 
         self.get_user_affinity(test).write.mode("overwrite").saveAsTable(
-            self.f("{prefix}user_affinity")
+            self._format("{prefix}user_affinity")
         )
 
         # user_affinity * item_similarity
         # filter top-k
-        query = self.f(
+        query = self._format(
             """
         SELECT {col_user}, {col_item}, score
         FROM
