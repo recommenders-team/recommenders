@@ -70,7 +70,6 @@ We are currently evaluating inclusion of the following dependencies:
 ## Other dependencies
 
 Some dependencies are not available via the recommenders PyPI package, but can be installed in the following ways: 
- - scikit-surprise: due to incompatibilities with `numpy <= 1.19`, proper installation of Surprise requires `pip install numpy cython` and `pip install --no-binary scikit-surprise "scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz"`
  - pymanopt: this dependency is required for the RLRMC and GeoIMC algorithms; a version of this code compatible with TensorFlow 2 can be
  installed with `pip install "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"`. 
 
