@@ -27,6 +27,6 @@ An interesting scenario is next best action prediction. In this scenario, what i
 
 ## Data and evaluation
 
-Datasets used in gaming recommendations usually include [user information](../../GLOSSARY.md), [item information](../../GLOSSARY.md) and [interaction data](../../GLOSSARY.md), among others. 
+Datasets used in gaming recommendations usually include [user information](../../GLOSSARY.md), [item information](../../GLOSSARY.md), [interaction data](../../GLOSSARY.md), and session-based data, among others. 
 
 For evaluation of the algorithms, it is common to use [ranking metrics](../../GLOSSARY.md). For measuring the business impact, Average Revenue Per Paying User (ARPPU) is one of the main metrics used. Other business metrics are conversion rate, average revenue per user (ARPU), daily active users and monthly active users.
