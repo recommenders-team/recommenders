@@ -65,7 +65,7 @@ There are several build arguments which can change how the image is built. Simil
 
 Build Arg|Description|
 ---------|-----------|
-ENV|Environment to use, options: cpu, psypark, gpu, full (defaults to cpu)|
+ENV|Environment to use, options: cpu, pyspark, gpu, full (defaults to cpu)|
 VIRTUAL_ENV|Virtual environment to use; mandatory argument, must be one of "conda", "venv", "virtualenv"|
 ANACONDA|Anaconda installation script (defaults to miniconda3 4.6.14)|
 
@@ -84,8 +84,9 @@ To run the tests using e.g. the CPU image, do the following:
 ```
 docker run -it recommenders:cpu bash -c 'pip install pytest; \
 pip install pytest-cov; \
+pip install pytest-mock; \
 apt-get install -y git; \
 git clone https://github.com/microsoft/recommenders.git; \
 cd recommenders; \
-pytest tests/unit -m "not spark and not gpu and not notebooks"'
+pytest tests/unit -m "not spark and not gpu and not notebooks and not experimental"'
 ```
