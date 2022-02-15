@@ -76,29 +76,74 @@ train_df = spark.createDataFrame(
 
 # spark dataframe with user/item tuples
 test_df = spark.createDataFrame(
-    [(1, 1, 1), (3, 3, 1)], 
-    ["user_id", "item_id', "rating"]
+    [(1, 1, 1), (3, 3, 1)],
+    ["user_id", "item_id', "rating"],
 )
 
+# To use C++ based fast prediction, a local cache directory needs to be
+# specified.
+# * On local machine, `cache_path` can be any valid directories. For example,
+#
+#   ```python
+#   model = SARPlus(
+#       spark,
+#       col_user="user_id",
+#       col_item="item_id",
+#       col_rating="rating",
+#       col_timestamp="timestamp",
+#       cache_path="cache",
+#   )
+#   ```
+#
+# * On Databricks, `cache_path` needs to be mounted on DBFS.  For example,
+#
+#   ```python
+#   model = SARPlus(
+#       spark,
+#       col_user="user_id",
+#       col_item="item_id",
+#       col_rating="rating",
+#       col_timestamp="timestamp",
+#       cache_path="dbfs:/mnt/sarpluscache/cache",
+#   )
+#   ```
+#
+# * On Azure Synapse, `cache_path` needs to be mounted on Spark pool's driver
+#   node.  For example,
+#
+#   ```python
+#   model = SARPlus(
+#       spark,
+#       col_user="user_id",
+#       col_item="item_id",
+#       col_rating="rating",
+#       col_timestamp="timestamp",
+#       cache_path=f"synfs:/{job_id}/mnt/sarpluscache/cache",
+#   )
+#   ```
+#
+#   where `job_id` can be obtained by
+#
+#   ```python
+#   from notebookutils import mssparkutils
+#   job_id = mssparkutils.env.getJobId()
+#   ```
 model = SARPlus(
     spark,
     col_user="user_id",
     col_item="item_id",
     col_rating="rating",
-    col_timestamp="timestamp"
+    col_timestamp="timestamp",
 )
 model.fit(train_df, similarity_type="jaccard")
 
-
-model.recommend_k_items(test_df, "cache", top_k=3).show()
-
-# # For Databricks
-# model.recommend_k_items(test_df, "dbfs:/mnt/sarpluscache/cache", top_k=3).show()
-
-# # For Azure Synapse
-# from notebookutils import mssparkutils
-# job_id = mssparkutils.env.getJobId()
-# model.recommend_k_items(test_df, f"synfs:/{job_id}/mnt/sarpluscache/cache", top_k=3).show()
+# To use C++ based fast prediction, the `use_cache` parameter of
+# `SARPlus.recommend_k_items()` also needs to be set to `True`.
+#
+# ```
+# model.recommend_k_items(test_df, top_k=3, use_cache=True).show()
+# ```
+model.recommend_k_items(test_df, top_k=3).show()
 ```
 
 ### Jupyter Notebook
@@ -108,7 +153,7 @@ Insert this cell prior to the code above.
 ```python
 import os
 
-SARPLUS_MVN_COORDINATE = "com.microsoft.sarplus:sarplus_2.12:0.5.4"
+SARPLUS_MVN_COORDINATE = "com.microsoft.sarplus:sarplus_2.12:0.6.0"
 SUBMIT_ARGS = f"--packages {SARPLUS_MVN_COORDINATE} pyspark-shell"
 os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
@@ -131,7 +176,7 @@ spark = (
 ### PySpark Shell
 
 ```bash
-SARPLUS_MVN_COORDINATE="com.microsoft.sarplus:sarplus_2.12:0.5.4"
+SARPLUS_MVN_COORDINATE="com.microsoft.sarplus:sarplus_2.12:0.6.0"
 
 # Install pysarplus
 pip install pysarplus
@@ -152,14 +197,14 @@ pyspark --packages "${SARPLUS_MVN_COORDINATE}" \
 1. Create Library
 1. Under `Library Source` select `Maven`
 1. Enter into `Coordinates`:
-   * `com.microsoft.sarplus:sarplus_2.12:0.5.4`
-   * or `com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.5.4` (if
+   * `com.microsoft.sarplus:sarplus_2.12:0.6.0`
+   * or `com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.0` (if
      you're on Spark 3.2+)
 1. Hit `Create`
 1. Attach to your cluster
 1. Create 2nd library
 1. Under `Library Source` select `PyPI`
-1. Enter `pysarplus==0.5.4`
+1. Enter `pysarplus==0.6.0`
 1. Hit `Create`
 
 This will install C++, Python and Scala code on your cluster.  See
@@ -244,7 +289,7 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
 
 See [Manage libraries for Apache Spark in Azure Synapse
 Analytics](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-azure-portal-add-libraries)
-for details on how to manage libraries in Azue Synapse.
+for details on how to manage libraries in Azure Synapse.
 
 
 #### Prepare local file system for cache
@@ -254,7 +299,7 @@ as its second parameter for storing intermediate files during its
 calculation, so you'll also have to **mount** shared storage.
 
 For example, you can run the following code to mount the file system
-(container) of the default/primary stroage account.
+(container) of the default/primary storage account.
 
 ```python
 from notebookutils import mssparkutils
