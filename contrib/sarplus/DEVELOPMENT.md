@@ -20,7 +20,7 @@ Steps to package and publish (also described in
    ```
 
 2. Package the [Scala package](scala/build.sbt), which includes the
-   [Scala formatter](scala/src/main/scala/microsoft/sarplus) and
+   [Scala formatter](scala/src/main/scala/com/microsoft/sarplus) and
    references the pip package.
    
    ```bash
@@ -61,7 +61,7 @@ Steps to package and publish (also described in
 
 3. Upload the zipped Scala package bundle to [Nexus Repository
    Manager](https://oss.sonatype.org/) through a browser (See [publish
-   manul](https://central.sonatype.org/publish/publish-manual/)).
+   manual](https://central.sonatype.org/publish/publish-manual/)).
 
 
 ## Testing
@@ -105,11 +105,11 @@ on **Spark 3.2**, which adds an extra function `path()`, so an
 additional package called [Sarplus Spark 3.2
 Plus](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12)
 (with Maven coordinate such as
-`com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.5.4`) should be
+`com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.0`) should be
 used if running on Spark 3.2 instead of
 [Sarplus](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12)
 (with Maven coordinate like
-`com.microsoft.sarplus:sarplus_2.12:0.5.4`).
+`com.microsoft.sarplus:sarplus_2.12:0.6.0`).
 
 In addition to `spark.sql.crossJoin.enabled true`, extra
 configurations are required when running on Spark 3.x:

@@ -140,7 +140,7 @@ def test_pandas(spark, sample_cache):
 
 @pytest.mark.spark
 def test_e2e(spark, pandas_dummy_dataset, header):
-    sar = SARPlus(spark, **header)
+    sar = SARPlus(spark, **header, cache_path="tests/test_e2e_cache")
 
     df = spark.createDataFrame(pandas_dummy_dataset)
     sar.fit(df)
@@ -150,7 +150,7 @@ def test_e2e(spark, pandas_dummy_dataset, header):
     )
 
     r1 = (
-        sar.recommend_k_items_slow(test_df, top_k=3, remove_seen=False)
+        sar.recommend_k_items(test_df, top_k=3, remove_seen=False)
         .toPandas()
         .sort_values([header["col_user"], header["col_item"]])
         .reset_index(drop=True)
@@ -159,10 +159,10 @@ def test_e2e(spark, pandas_dummy_dataset, header):
     r2 = (
         sar.recommend_k_items(
             test_df,
-            "tests/test_e2e_cache",
             top_k=3,
             n_user_prediction_partitions=2,
             remove_seen=False,
+            use_cache=True,
         )
         .toPandas()
         .sort_values([header["col_user"], header["col_item"]])
@@ -348,6 +348,7 @@ def test_userpred(
         time_now=time_now,
         threshold=threshold,
         similarity_type=similarity_type,
+        cache_path=str(tmp_path.joinpath("test_userpred-" + test_id)),
     )
 
     df = spark.createDataFrame(demo_usage_data)
@@ -369,9 +370,9 @@ def test_userpred(
                 demo_usage_data[header["col_user"]] == sar_settings["TEST_USER_ID"]
             ]
         ),
-        cache_path=str(tmp_path.joinpath("test_userpred-" + test_id)),
         top_k=10,
         n_user_prediction_partitions=1,
+        use_cache=True,
     )
 
     pred = pred.toPandas().sort_values("score", ascending=False).reset_index(drop=True)
