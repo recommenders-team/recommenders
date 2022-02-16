@@ -13,6 +13,7 @@ import os
 import sys
 from azureml.core import Run
 import pytest
+import pyspark
 
 
 def create_arg_parser():
@@ -68,6 +69,10 @@ if __name__ == "__main__":
     logger.debug("junit= --junitxml={}".format(args.xmlname))
 
     logger.info("Executing tests now...")
+
+    # if running spark tests, set spark python path
+    os.environ["PYSPARK_PYTHON"] = sys.executable
+    os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
 
     # execute pytest command
     pytest_exit_code = pytest.main([
