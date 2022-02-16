@@ -48,7 +48,7 @@ pip install recommenders[examples,gpu]
 
 ## GPU Support
 
-You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda enviroment, this can be installed with
+You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda environment, this can be installed with
 ```bash
 conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1
 ```
