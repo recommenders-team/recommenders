@@ -77,7 +77,7 @@ train_df = spark.createDataFrame(
 # spark dataframe with user/item tuples
 test_df = spark.createDataFrame(
     [(1, 1, 1), (3, 3, 1)],
-    ["user_id", "item_id", "rating"],
+    ["user_id", "item_id', "rating"],
 )
 
 # To use C++ based fast prediction, a local cache directory needs to be
@@ -91,7 +91,6 @@ test_df = spark.createDataFrame(
 #       col_item="item_id",
 #       col_rating="rating",
 #       col_timestamp="timestamp",
-#       similarity_type="jaccard",
 #       cache_path="cache",
 #   )
 #   ```
@@ -105,7 +104,6 @@ test_df = spark.createDataFrame(
 #       col_item="item_id",
 #       col_rating="rating",
 #       col_timestamp="timestamp",
-#       similarity_type="jaccard",
 #       cache_path="dbfs:/mnt/sarpluscache/cache",
 #   )
 #   ```
@@ -120,7 +118,6 @@ test_df = spark.createDataFrame(
 #       col_item="item_id",
 #       col_rating="rating",
 #       col_timestamp="timestamp",
-#       similarity_type="jaccard",
 #       cache_path=f"synfs:/{job_id}/mnt/sarpluscache/cache",
 #   )
 #   ```
@@ -137,9 +134,8 @@ model = SARPlus(
     col_item="item_id",
     col_rating="rating",
     col_timestamp="timestamp",
-    similarity_type="jaccard",
 )
-model.fit(train_df)
+model.fit(train_df, similarity_type="jaccard")
 
 # To use C++ based fast prediction, the `use_cache` parameter of
 # `SARPlus.recommend_k_items()` also needs to be set to `True`.
@@ -147,7 +143,7 @@ model.fit(train_df)
 # ```
 # model.recommend_k_items(test_df, top_k=3, use_cache=True).show()
 # ```
-model.recommend_k_items(test_df, top_k=3, remove_seen=False).show()
+model.recommend_k_items(test_df, top_k=3).show()
 ```
 
 ### Jupyter Notebook

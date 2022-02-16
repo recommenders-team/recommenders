@@ -446,15 +446,11 @@ class SARPlus:
         """Recommend top K items for all users which are in the test set.
 
         Args:
-            test (pyspark.sql.DataFrame): test Spark dataframe.
-            top_k (int): top n items to return.
-            remove_seen (bool): remove items test users have already seen in the past from the recommended set.
-            use_cache (bool): use specified local directory stored in `self.cache_path` as cache for C++ based fast
-                predictions.
-            n_user_prediction_partitions (int): prediction partitions.
-
-        Returns:
-            pyspark.sql.DataFrame: Spark dataframe with recommended items
+            test: test Spark dataframe
+            top_k: top n items to return
+            remove_seen: remove items test users have already seen in the past from the recommended set
+            use_cache: use specified local directory stored in self.cache_path as cache for C++ based fast predictions
+            n_user_prediction_partitions: prediction partitions
         """
         if not use_cache:
             return self._recommend_k_items_slow(test, top_k, remove_seen)
