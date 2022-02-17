@@ -32,7 +32,7 @@ extends:
     task_name: "Test - Nightly Linux Spark"
     timeout: 180
     conda_env: "nightly_linux_spark"
-    conda_opts: "python=3.6"
+    conda_opts: "python=3.7"
     pip_opts: "[spark,examples,dev]"
     pytest_markers: "spark and not gpu"
     pytest_params: "-x"

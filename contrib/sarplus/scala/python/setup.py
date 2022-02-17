@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 from distutils.core import setup
-import os
+from pathlib import Path
 
 setup(
     name="pysarplus_dummy",
