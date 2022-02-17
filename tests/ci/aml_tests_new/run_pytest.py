@@ -14,8 +14,6 @@ import sys
 from azureml.core import Run
 import pytest
 
-SPARK_JAR_OLD = "/root/.ivy2/jars/io.netty_netty-tcnative-boringssl-static-2.0.43.Final.jar"
-SPARK_JAR_NEW = "/root/.ivy2/jars/io.netty_netty-tcnative-boringssl-static-2.0.43.Final-.jar"
 
 def create_arg_parser():
     parser = argparse.ArgumentParser(description="Process inputs")
@@ -76,7 +74,6 @@ if __name__ == "__main__":
         os.environ["PYSPARK_PYTHON"] = sys.executable
         os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
         os.environ.pop('SPARK_HOME', None)
-        # os.rename(SPARK_JAR_OLD, SPARK_JAR_NEW)
 
     # execute pytest command
     pytest_exit_code = pytest.main([
