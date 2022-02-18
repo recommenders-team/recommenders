@@ -14,8 +14,13 @@ on:
   #          │ │ │ │ │
   #          │ │ │ │ │
   schedule: 
-    - cron: '0 0 * * *'  # basically running everyday at 12AM
+    - cron: '8 0 * * *'  # basically running everyday at 12AM
     # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
+  
+  push:
+    # because we can't schedule runs for non-main branches,
+    # to ensure we are running the build on the staging branch, we can add push policy for it
+    branches: [staging]
 
   # enable manual trigger
   workflow_dispatch:
@@ -42,8 +47,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-        with:
-          ref: staging
+        # with:
+        #   ref: staging
       - name: Setup python
         uses: actions/setup-python@v2
         with: 
