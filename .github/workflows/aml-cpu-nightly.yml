@@ -67,7 +67,7 @@ jobs:
             python tests/ci/aml_tests_github_actions/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
-            --testlogs ${{env.TEST_LOGS_PATH}} --testfolder "./test/${{matrix.test-kind}}"
+            --testlogs ${{env.TEST_LOGS_PATH}} --testfolder "./tests/${{matrix.test-kind}}"
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
       - name: Get exit status
