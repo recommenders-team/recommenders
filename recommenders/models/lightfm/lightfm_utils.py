@@ -256,8 +256,8 @@ def prepare_all_predictions(
 
     all_predictions["prediction"] = all_predictions.apply(
         lambda x: model.predict(
-            user_ids=x["uid"],
-            item_ids=[x["iid"]],
+            user_ids=np.array([x["uid"]]),
+            item_ids=np.array([x["iid"]]),
             user_features=user_features,
             item_features=item_features,
             num_threads=num_threads,
