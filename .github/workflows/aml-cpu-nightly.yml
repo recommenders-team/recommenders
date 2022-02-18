@@ -14,7 +14,7 @@ on:
   #          │ │ │ │ │
   #          │ │ │ │ │
   schedule: 
-    - cron: '12 0 * * *'  # basically running everyday at 12AM
+    - cron: '18 0 * * *'  # basically running everyday at 12AM
     # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
   
   push:
