@@ -51,7 +51,7 @@ jobs:
         run: python setup.py bdist_wheel
       - name: Submit a test to AML
         run: >-
-            python tests/ci/aml_tests_new/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
+            python tests/ci/aml_tests_github_actions/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies
