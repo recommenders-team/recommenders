@@ -3,13 +3,24 @@
 # Licensed under the MIT License.
 # ---------------------------------------------------------
 
-# ToDo: workflow that gets triggered on a PR to main/staging
-# and submits an experiment to run tests on AML cluster
-name: trigger-aml-notebooks-cpu-unit-tests
+name: aml-gpu-nightly
 
 on:
-  pull_request:
-    branches: [ staging, main ]
+  #          ┌───────────── minute (0 - 59)
+  #          │ ┌───────────── hour (0 - 23)
+  #          │ │ ┌───────────── day of the month (1 - 31)
+  #          │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+  #          │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
+  #          │ │ │ │ │
+  #          │ │ │ │ │
+  schedule: 
+    - cron: '0 0 * * *'  # basically running everyday at 12AM
+    # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
+  
+  push:
+    # because we can't schedule runs for non-main branches,
+    # to ensure we are running the build on the staging branch, we can add push policy for it
+    branches: [pradjoshi/aml_tests]
 
   # enable manual trigger
   workflow_dispatch:
@@ -19,17 +30,20 @@ on:
         default: 'Anything to describe this manual run'
 
 env:
-  CLUSTER_NAME: "cpu-aml-cluster"
-  EXP_NAME: "notebooks_cpu_unit_tests"
+  CLUSTER_NAME: "nightly-cluster"
+  EXP_NAME: "nightly_gpu_tests"
   RG: "pradjoshi-aml-rg"
   WS: "pradjoshi-aml-ws"
-  TEST_MARKERS: '"notebooks and not spark and not gpu and not experimental"'
+  TEST_MARKERS: '"not spark and gpu and not experimental"'
   TEST_LOGS_PATH: '"./test_logs.log"'
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
-  notebooks-cpu-unit-tests:
+  nightly-gpu-tests:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-kind: ["smoke", "integration"]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -52,7 +66,7 @@ jobs:
             python tests/ci/aml_tests_github_actions/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
-            --testlogs ${{env.TEST_LOGS_PATH}}
+            --testlogs ${{env.TEST_LOGS_PATH}} --testfolder "./tests/${{matrix.test-kind}}" --add_gpu_dependencies
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
       - name: Get exit status
