@@ -14,13 +14,13 @@ on:
   #          │ │ │ │ │
   #          │ │ │ │ │
   schedule: 
-    - cron: '18 0 * * *'  # basically running everyday at 12AM
+    - cron: '20 0 * * *'  # basically running everyday at 12AM
     # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
   
   push:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [pradjoshi/aml_tests]
+    branches: [staging]
 
   # enable manual trigger
   workflow_dispatch:
@@ -28,8 +28,6 @@ on:
       tags:
         description: 'Tags to label this manual run (optional)'
         default: 'Anything to describe this manual run'
-
-jobs:
 
 env:
   CLUSTER_NAME: "cpu-aml-cluster"
