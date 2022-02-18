@@ -45,8 +45,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-        # with:
-        #   ref: staging
+        with:
+          ref: pradjoshi/aml_tests
       - name: Setup python
         uses: actions/setup-python@v2
         with: 
