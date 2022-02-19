@@ -175,3 +175,6 @@ examples/07_tutorials/KDD2020-tutorial/data_folder/
 
 tests/**/resources/
 reports/
+
+### pip folders
+pip-wheel*

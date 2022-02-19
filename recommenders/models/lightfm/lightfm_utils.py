@@ -221,7 +221,6 @@ def prepare_all_predictions(
     item_features=None,
 ):
     """Function to prepare all predictions for evaluation.
-
     Args:
         data (pandas df): dataframe of all users, items and ratings as loaded
         uid_map (dict): Keys to map internal user indices to external ids.
@@ -231,7 +230,6 @@ def prepare_all_predictions(
         num_threads (int): number of parallel computation threads
         user_features (np.float32 csr_matrix): User weights over features
         item_features (np.float32 csr_matrix):  Item weights over features
-
     Returns:
         pandas.DataFrame: all predictions
     """
@@ -241,7 +239,6 @@ def prepare_all_predictions(
         user = [user] * len(item)
         users.extend(user)
         items.extend(item)
-
     all_predictions = pd.DataFrame(data={"userID": users, "itemID": items})
     all_predictions["uid"] = all_predictions.userID.map(uid_map)
     all_predictions["iid"] = all_predictions.itemID.map(iid_map)
