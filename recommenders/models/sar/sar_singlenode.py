@@ -90,6 +90,7 @@ class SARSingleNode:
         # set flag to capture unity-rating user-affinity matrix for scaling scores
         self.normalize = normalize
         self.col_unity_rating = "_unity_rating"
+        self.unity_user_affinity = None
 
         # column for mapping user / item ids to internal indices
         self.col_item_id = "_indexed_items"
