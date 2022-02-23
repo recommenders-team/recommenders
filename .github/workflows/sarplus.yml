@@ -19,6 +19,7 @@ on:
       - .github/workflows/sarplus.yml
 
 env:
+  SARPLUS_ROOT: ${{ github.workspace }}/contrib/sarplus
   PYTHON_ROOT: ${{ github.workspace }}/contrib/sarplus/python
   SCALA_ROOT: ${{ github.workspace }}/contrib/sarplus/scala
 
@@ -52,15 +53,20 @@ jobs:
 
       - name: Package and check
         run: |
+          # build
           cd "${PYTHON_ROOT}"
-          cp ../VERSION ./pysarplus/
+          cp "${SARPLUS_ROOT}/VERSION" ./pysarplus/VERSION
           python -m build --sdist
           python -m twine check dist/*
+
+          # set sarplus_version
+          SARPLUS_VERSION=$(cat "${SARPLUS_ROOT}/VERSION")
+          echo "sarplus_version=${SARPLUS_VERSION}" >> $GITHUB_ENV
 
       - name: Test
         run: |
           cd "${PYTHON_ROOT}"
-          python -m pip install dist/*.gz
+          python -m pip install dist/*.tar.gz
 
           cd "${SCALA_ROOT}"
           export SPARK_VERSION=$(python -m pip show pyspark | grep -i version | cut -d ' ' -f 2)
@@ -75,14 +81,13 @@ jobs:
 
           cd "${PYTHON_ROOT}"
           pytest ./tests
-          echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
 
       - name: Upload Python package as GitHub artifact
         if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
         uses: actions/upload-artifact@v2
         with:
           name: pysarplus-${{ env.sarplus_version }}
-          path: ${{ env.PYTHON_ROOT }}/dist/*.gz
+          path: ${{ env.PYTHON_ROOT }}/dist/*.tar.gz
 
   scala-test:
     # Test sarplus with different versions of Databricks runtime, 2 LTSs and 1
@@ -129,6 +134,8 @@ jobs:
         env:
           GPG_KEY: ${{ secrets.SARPLUS_GPG_PRI_KEY_ASC }}
         run: |
+          SARPLUS_VERSION=$(cat "${SARPLUS_ROOT}/VERSION")
+
           # generate artifacts
           cd "${SCALA_ROOT}"
           export SPARK_VERSION="3.1.2"
@@ -142,18 +149,24 @@ jobs:
           export HADOOP_VERSION="3.3.1"
           export SCALA_VERSION="2.12.14"
           sbt ++${SCALA_VERSION}! package
+          sbt ++${SCALA_VERSION}! packageDoc
+          sbt ++${SCALA_VERSION}! packageSrc
+          sbt ++${SCALA_VERSION}! makePom
 
           # sign with GPG
-          cd target/scala-2.12
+          cd "${SCALA_ROOT}/target/scala-2.12"
           gpg --import <(cat <<< "${GPG_KEY}")
           for file in {*.jar,*.pom}; do gpg -ab "${file}"; done
 
           # bundle
-          jar cvf sarplus-bundle_2.12-$(cat ../VERSION).jar *.jar *.pom *.asc
-          echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
+          jar cvf sarplus-bundle_2.12-${SARPLUS_VERSION}.jar sarplus_*.jar sarplus_*.pom sarplus_*.asc
+          jar cvf sarplus-spark-3.2-plus-bundle_2.12-${SARPLUS_VERSION}.jar sarplus-spark*.jar sarplus-spark*.pom sarplus-spark*.asc
+
+          # set sarplus_version
+          echo "sarplus_version=${SARPLUS_VERSION}" >> $GITHUB_ENV
           
-      - name: Upload Scala bundle  as GitHub artifact
+      - name: Upload Scala bundle as GitHub artifact
         uses: actions/upload-artifact@v2
         with:
           name: sarplus-bundle_2.12-${{ env.sarplus_version }}
-          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/sarplus-bundle_2.12-${{ env.sarplus_version }}.jar
+          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/*bundle*.jar

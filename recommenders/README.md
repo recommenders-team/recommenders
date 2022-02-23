@@ -9,7 +9,7 @@ Some dependencies require compilation during pip installation. On Linux this can
 ```bash
 sudo apt-get install -y build-essential libpython<version>
 ``` 
-where `<version>` should be `3.6` or `3.7` as appropriate.
+where `<version>` should be the Python version (e.g. `3.6`).
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
@@ -48,7 +48,7 @@ pip install recommenders[examples,gpu]
 
 ## GPU Support
 
-You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda enviroment, this can be installed with
+You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda environment, this can be installed with
 ```bash
 conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1
 ```
@@ -70,7 +70,6 @@ We are currently evaluating inclusion of the following dependencies:
 ## Other dependencies
 
 Some dependencies are not available via the recommenders PyPI package, but can be installed in the following ways: 
- - scikit-surprise: due to incompatibilities with `numpy <= 1.19`, proper installation of Surprise requires `pip install numpy cython` and `pip install --no-binary scikit-surprise "scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz"`
  - pymanopt: this dependency is required for the RLRMC and GeoIMC algorithms; a version of this code compatible with TensorFlow 2 can be
  installed with `pip install "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"`. 
 

@@ -17,6 +17,19 @@ random.seed(SEED)
 logger = logging.getLogger()
 
 
+def get_review_data(reviews_file):
+    """Downloads amazon review data (only), prepares in the required format
+    and stores in the same location
+
+    Args:
+        reviews_file (str): Filename for downloaded reviews dataset.
+    """
+    reviews_name = reviews_file.split("/")[-1]  # *.json (for url)
+    download_and_extract(reviews_name, reviews_file)
+    reviews_output = _reviews_preprocessing(reviews_file)
+    return reviews_output
+
+
 def data_preprocessing(
     reviews_file,
     meta_file,
