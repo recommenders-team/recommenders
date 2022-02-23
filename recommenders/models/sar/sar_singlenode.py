@@ -156,7 +156,7 @@ class SARSingleNode:
         # group time decayed ratings by user-item and take the sum as the user-item affinity
         return df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
-    def compute_coocurrence_matrix(self, df):
+    def compute_cooccurrence_matrix(self, df):
         """Co-occurrence matrix.
 
         The co-occurrence matrix is defined as :math:`C = U^T * U`
@@ -260,7 +260,7 @@ class SARSingleNode:
 
         # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
-        item_cooccurrence = self.compute_coocurrence_matrix(df=temp_df)
+        item_cooccurrence = self.compute_cooccurrence_matrix(df=temp_df)
 
         # free up some space
         del temp_df
