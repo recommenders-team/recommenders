@@ -293,6 +293,10 @@ class SARSingleNode:
     def score(self, test, remove_seen=False):
         """Score all items for test users.
 
+        .. note::
+
+        Please make sure that `test` has no duplicate users.
+
         Args:
             test (pandas.DataFrame): user to test
             remove_seen (bool): flag to remove items seen in training from recommendation
@@ -305,7 +309,7 @@ class SARSingleNode:
         user_ids = list(
             map(
                 lambda user: self.user2index.get(user, np.NaN),
-                test[self.col_user].unique(),
+                test[self.col_user],
             )
         )
         if any(np.isnan(user_ids)):
@@ -448,6 +452,10 @@ class SARSingleNode:
     def recommend_k_items(self, test, top_k=10, sort_top_k=True, remove_seen=False):
         """Recommend top K items for all users which are in the test set
 
+        .. note::
+
+        Please make sure that `test` has no duplicate users.
+
         Args:
             test (pandas.DataFrame): users to test
             top_k (int): number of top items to recommend
@@ -466,9 +474,7 @@ class SARSingleNode:
 
         df = pd.DataFrame(
             {
-                self.col_user: np.repeat(
-                    test[self.col_user].drop_duplicates().values, top_items.shape[1]
-                ),
+                self.col_user: np.repeat(test[self.col_user].values, top_items.shape[1]),
                 self.col_item: [self.index2item[item] for item in top_items.flatten()],
                 self.col_prediction: top_scores.flatten(),
             }
@@ -479,6 +485,10 @@ class SARSingleNode:
 
     def predict(self, test):
         """Output SAR scores for only the users-items pairs which are in the test set
+
+        .. note::
+
+        Please make sure that `test` has no duplicates.
 
         Args:
             test (pandas.DataFrame): DataFrame that contains users and items to test
