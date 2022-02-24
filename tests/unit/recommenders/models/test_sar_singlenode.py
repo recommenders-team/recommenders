@@ -254,7 +254,7 @@ def test_recommend_k_items(
     test_results = model.recommend_k_items(
         demo_usage_data[
             demo_usage_data[header["col_user"]] == sar_settings["TEST_USER_ID"]
-        ].drop_duplicates(header["col_user"]),
+        ],
         top_k=10,
         sort_top_k=True,
         remove_seen=True,
