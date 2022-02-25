@@ -44,7 +44,7 @@ jobs:
     strategy:
       matrix:
         test-kind: ["smoke", "integration"]
-        python-version: ["python=3.6", "python=3.7"]
+        python-version: ['"python=3.6"', '"python=3.7"']
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
