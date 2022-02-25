@@ -146,6 +146,7 @@ def create_run_config(cpu_cluster,
                     conda_pkg_cudatoolkit,
                     conda_pkg_cudnn,
                     conda_pkg_jdk,
+                    conda_pkg_python,
                     reco_wheel_path):
     """
     AzureML requires the run environment to be setup prior to submission.
@@ -189,6 +190,7 @@ def create_run_config(cpu_cluster,
         exist_ok=True,
     )
     conda_dep = CondaDependencies()
+    conda_dep.add_conda_package(conda_pkg_python)
     conda_dep.add_pip_package(whl_url)
 
     # install extra dependencies
@@ -428,6 +430,13 @@ def create_arg_parser():
         default="openjdk=8",
         help="conda package name for jdk",
     )
+    # conda package name for python
+    parser.add_argument(
+        "--conda_pkg_python",
+        action="store",
+        default="python=3.7",
+        help="conda package name for jdk",
+    )
     args = parser.parse_args()
 
     return args
@@ -474,6 +483,7 @@ if __name__ == "__main__":
         conda_pkg_cudatoolkit=args.conda_pkg_cudatoolkit,
         conda_pkg_cudnn=args.conda_pkg_cudnn,
         conda_pkg_jdk=args.conda_pkg_jdk,
+        conda_pkg_python=args.conda_pkg_python,
         reco_wheel_path=args.wheelfile
     )
 

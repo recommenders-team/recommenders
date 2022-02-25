@@ -44,6 +44,7 @@ jobs:
     strategy:
       matrix:
         test-kind: ["smoke", "integration"]
+        python-version: ["python=3.6", "python=3.7"]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -66,7 +67,7 @@ jobs:
             python tests/ci/aml_tests_github_actions/submit_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --testmarkers ${{env.TEST_MARKERS}} --expname ${{env.EXP_NAME}}
-            --testlogs ${{env.TEST_LOGS_PATH}} --testfolder "./tests/${{matrix.test-kind}}"
+            --testlogs ${{env.TEST_LOGS_PATH}} --testfolder "./tests/${{matrix.test-kind}}" --conda_pkg_python ${{matrix.python-version}}
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
       - name: Get exit status

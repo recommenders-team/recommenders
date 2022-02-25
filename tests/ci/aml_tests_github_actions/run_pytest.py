@@ -67,6 +67,8 @@ if __name__ == "__main__":
     logger.debug("args.junitxml {}".format(args.xmlname))
     logger.debug("junit= --junitxml={}".format(args.xmlname))
 
+    logger.info("Python version ")
+    logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
     # if running spark tests, set spark python path
