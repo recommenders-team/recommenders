@@ -112,7 +112,13 @@ def _do_stratification_spark(
 
     split_by = col_user if filter_by == "user" else col_item
     partition_by = split_by if is_partitioned else []
-    order_by = F.rand(seed=seed) if is_random else F.col(col_timestamp)
+
+    if is_random:
+        col_random = "_random"
+        data = data.withColumn(col_random, F.rand(seed=seed))
+        order_by = F.col(col_random)
+    else:
+        order_by = F.col(col_timestamp)
 
     window_count = Window.partitionBy(partition_by)
     window_spec = Window.partitionBy(partition_by).orderBy(order_by)
@@ -122,6 +128,9 @@ def _do_stratification_spark(
         .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
         .drop("_count")
     )
+
+    if is_random:
+        data = data.drop(col_random)
 
     multi_split, ratio = process_split_ratio(ratio)
     ratio = ratio if multi_split else [ratio, 1 - ratio]
