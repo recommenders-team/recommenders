@@ -158,6 +158,15 @@ def test_sar_item_similarity(
         **header
     )
 
+    # Remove duplicates
+    demo_usage_data = demo_usage_data.sort_values(
+        header["col_timestamp"], ascending=False
+    )
+    demo_usage_data = demo_usage_data.drop_duplicates(
+        [header["col_user"], header["col_item"]],
+        keep="first"
+    )
+
     model.fit(demo_usage_data)
 
     true_item_similarity, row_ids, col_ids = read_matrix(
