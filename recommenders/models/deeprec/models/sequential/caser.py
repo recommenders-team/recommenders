@@ -23,7 +23,7 @@ class CaserModel(SequentialBaseModel):
         """Initialization of variables for caser
 
         Args:
-            hparams (object): A tf.contrib.training.HParams object, hold the entire set of hyperparameters.
+            hparams (HParams): A HParams object, hold the entire set of hyperparameters.
             iterator_creator (object): An iterator to load the data.
         """
         self.hparams = hparams
@@ -42,10 +42,10 @@ class CaserModel(SequentialBaseModel):
         Returns:
             object: The output of caser section.
         """
-        with tf.variable_scope("caser"):
+        with tf.compat.v1.variable_scope("caser"):
             cnn_output = self._caser_cnn()
             model_output = tf.concat([cnn_output, self.target_item_embedding], 1)
-            tf.summary.histogram("model_output", model_output)
+            tf.compat.v1.summary.histogram("model_output", model_output)
             return model_output
 
     def _add_cnn(self, hist_matrix, vertical_dim, scope):
@@ -59,17 +59,17 @@ class CaserModel(SequentialBaseModel):
         Returns:
             object: The output of CNN layers.
         """
-        with tf.variable_scope(scope):
-            with tf.variable_scope("vertical"):
-                embedding_T = tf.transpose(hist_matrix, [0, 2, 1])
+        with tf.compat.v1.variable_scope(scope):
+            with tf.compat.v1.variable_scope("vertical"):
+                embedding_T = tf.transpose(a=hist_matrix, perm=[0, 2, 1])
                 out_v = self._build_cnn(embedding_T, self.n_v, vertical_dim)
-                out_v = tf.layers.flatten(out_v)
-            with tf.variable_scope("horizonal"):
+                out_v = tf.compat.v1.layers.flatten(out_v)
+            with tf.compat.v1.variable_scope("horizonal"):
                 out_hs = []
                 for h in self.lengths:
                     conv_out = self._build_cnn(hist_matrix, self.n_h, h)
                     max_pool_out = tf.reduce_max(
-                        conv_out, reduction_indices=[1], name="max_pool_{0}".format(h)
+                        input_tensor=conv_out, axis=[1], name="max_pool_{0}".format(h)
                     )
                     out_hs.append(max_pool_out)
                 out_h = tf.concat(out_hs, 1)
@@ -84,13 +84,13 @@ class CaserModel(SequentialBaseModel):
         item_out = self._add_cnn(
             self.item_history_embedding, self.item_embedding_dim, "item"
         )
-        tf.summary.histogram("item_out", item_out)
+        tf.compat.v1.summary.histogram("item_out", item_out)
         cate_out = self._add_cnn(
             self.cate_history_embedding, self.cate_embedding_dim, "cate"
         )
-        tf.summary.histogram("cate_out", cate_out)
+        tf.compat.v1.summary.histogram("cate_out", cate_out)
         cnn_output = tf.concat([item_out, cate_out], 1)
-        tf.summary.histogram("cnn_output", cnn_output)
+        tf.compat.v1.summary.histogram("cnn_output", cnn_output)
         return cnn_output
 
     def _build_cnn(self, history_matrix, nums, shape):
@@ -99,7 +99,7 @@ class CaserModel(SequentialBaseModel):
         Returns:
             object: The output of cnn section.
         """
-        return tf.layers.conv1d(
+        return tf.compat.v1.layers.conv1d(
             history_matrix,
             nums,
             shape,

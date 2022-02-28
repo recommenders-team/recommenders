@@ -36,8 +36,8 @@ on:
   workflow_dispatch:
     input:
       tags:
-        description: 'Test scenario tags'
-        default: 'Anything to describe this manual run (optional)'
+        description: 'Tags to label this manual run (optional)'
+        default: 'Anything to describe this manual run'
 
 
 jobs:
@@ -48,21 +48,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - name: Use Python 3.6
+      with:
+        fetch-depth: 2
+
+    - name: Setup Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.6
+        python-version: 3.7
     
     - name: Install dependencies (tox)
       run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential libpython3.6 libpython3.7
         python -m pip install --upgrade pip setuptools wheel
         pip install tox
 
     - name: Run flake8
-      # TODO: re-enable this flake8 block (turned off to get a draft of the pipeline infrastructure)
-      continue-on-error: true
       run: |
        tox -e flake8
+    
+    - name: Detect changes in 'setup.py'
+      id: setup-dot-py-changes
+      uses: tj-actions/changed-files@v10
+      with:
+        files: setup.py
+
+    - name: Raise notice for changes in 'setup.py'
+      # Throws a notice for new release if there are changes in 'setup.py'
+      if: steps.setup-dot-py-changes.outputs.any_changed == 'true'
+      run:
+        echo "::notice file=setup.py,line=1,title=A new release may be needed::Changes detected in 'setup.py'. Please examine if a new release on PyPI is needed."
 
 ###############################################
 ################## CPU-BUILD ##################
@@ -73,11 +88,11 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python: [3.6]
+        python: [3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['not gpu and not spark and not notebooks', 'notebooks and not gpu and not spark']
+        test-marker: ['not gpu and not spark and not notebooks and not experimental', 'notebooks and not gpu and not spark and not experimental']
 
     steps:
     - uses: actions/checkout@v2
@@ -115,11 +130,11 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         java: [8]
-        python: [3.6]
+        python: [3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['notebooks and spark and not gpu', 'spark and not notebooks and not gpu']
+        test-marker: ['notebooks and spark and not gpu and not experimental', 'spark and not notebooks and not gpu and not experimental']
 
     steps:
     - uses: actions/checkout@v2
@@ -157,11 +172,11 @@ jobs:
     needs: static-analysis
     strategy:
       matrix:
-        python: [3.6]
+        python: [3.7]
         # different kinds of tests are located in tests/<unit|integration|smoke> folders
         test-kind: ['unit'] 
         # pytest markers configured in tox.ini. See https://docs.pytest.org/en/6.2.x/example/markers.html
-        test-marker: ['gpu and notebooks and not spark', 'gpu and not notebooks and not spark']
+        test-marker: ['gpu and notebooks and not spark and not experimental', 'gpu and not notebooks and not spark and not experimental']
 
     steps:
     - uses: actions/checkout@v2
@@ -196,7 +211,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.2
         with:
-          python-version: '3.6'
+          python-version: 3.7
 
       - name: Download coverage reports from all previous jobs
         uses: actions/download-artifact@v2
@@ -209,6 +224,7 @@ jobs:
       - name: Upload code coverage report to CodeCov
         uses: codecov/codecov-action@v2.0.2
         with:
+          flags: pr-gate
           fail_ci_if_error: true
           # comes from the last 'Merge coverage reports' step
           files: ./coverage.xml

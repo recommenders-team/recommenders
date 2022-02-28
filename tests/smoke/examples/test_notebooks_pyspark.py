@@ -3,6 +3,7 @@
 
 import sys
 import pytest
+
 try:
     import papermill as pm
     import scrapbook as sb
@@ -14,6 +15,8 @@ TOL = 0.05
 ABS_TOL = 0.05
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.smoke
 @pytest.mark.spark
 def test_als_pyspark_smoke(notebooks, output_notebook, kernel_name):
@@ -39,6 +42,8 @@ def test_als_pyspark_smoke(notebooks, output_notebook, kernel_name):
     assert results["rsquared"] == pytest.approx(0.2611, rel=TOL, abs=ABS_TOL)
 
 
+# This is a flaky test that can fail unexpectedly
+@pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.smoke
 @pytest.mark.spark
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
@@ -48,10 +53,10 @@ def test_mmlspark_lightgbm_criteo_smoke(notebooks, output_notebook, kernel_name)
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=50, EARLY_STOPPING_ROUND=10),
+        parameters=dict(DATA_SIZE="sample", NUM_ITERATIONS=50),
     )
 
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
-    assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)
+    assert results["auc"] == pytest.approx(0.65, rel=TOL, abs=ABS_TOL)

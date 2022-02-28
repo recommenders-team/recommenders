@@ -235,6 +235,7 @@ def test_cornac_bpr_integration(
 
 
 @pytest.mark.integration
+@pytest.mark.experimental
 @pytest.mark.parametrize(
     "expected_values",
     [({"rmse": 0.4969, "mae": 0.4761})],
@@ -251,7 +252,7 @@ def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_va
 
 
 @pytest.mark.integration
-@pytest.mark.skip(reason="xLearn pip package has installation incompatibilities")
+@pytest.mark.experimental
 def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xlearn_fm_deep_dive"]
     pm.execute_notebook(

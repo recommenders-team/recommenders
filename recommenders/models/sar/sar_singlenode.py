@@ -90,6 +90,7 @@ class SARSingleNode:
         # set flag to capture unity-rating user-affinity matrix for scaling scores
         self.normalize = normalize
         self.col_unity_rating = "_unity_rating"
+        self.unity_user_affinity = None
 
         # column for mapping user / item ids to internal indices
         self.col_item_id = "_indexed_items"
@@ -156,7 +157,7 @@ class SARSingleNode:
         # group time decayed ratings by user-item and take the sum as the user-item affinity
         return df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
-    def compute_coocurrence_matrix(self, df):
+    def compute_cooccurrence_matrix(self, df):
         """Co-occurrence matrix.
 
         The co-occurrence matrix is defined as :math:`C = U^T * U`
@@ -205,8 +206,12 @@ class SARSingleNode:
     def fit(self, df):
         """Main fit method for SAR.
 
+        .. note::
+
+        Please make sure that `df` has no duplicates.
+
         Args:
-            df (pandas.DataFrame): User item rating dataframe
+            df (pandas.DataFrame): User item rating dataframe (without duplicates).
         """
 
         # generate continuous indices if this hasn't been done
@@ -226,12 +231,6 @@ class SARSingleNode:
         if self.time_decay_flag:
             logger.info("Calculating time-decayed affinities")
             temp_df = self.compute_time_decay(df=temp_df, decay_column=self.col_rating)
-        else:
-            # without time decay use the latest user-item rating in the dataset as the affinity score
-            logger.info("De-duplicating the user-item counts")
-            temp_df = temp_df.drop_duplicates(
-                [self.col_user, self.col_item], keep="last"
-            )
 
         logger.info("Creating index columns")
         # add mapping of user and item ids to indices
@@ -263,7 +262,7 @@ class SARSingleNode:
 
         # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
-        item_cooccurrence = self.compute_coocurrence_matrix(df=temp_df)
+        item_cooccurrence = self.compute_cooccurrence_matrix(df=temp_df)
 
         # free up some space
         del temp_df

@@ -2,4 +2,8 @@
 # For more details, please see: 
 # https://docs.codecov.com/docs/pull-request-comments#section-behavior
 comment:
-  behavior: new
+  behavior: default
+
+flags:
+  nightly:
+    joined: false

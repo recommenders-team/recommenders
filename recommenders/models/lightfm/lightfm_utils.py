@@ -3,10 +3,8 @@
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
 
-import lightfm
 from lightfm.evaluation import precision_at_k, recall_at_k
 
 
@@ -15,7 +13,7 @@ def model_perf_plots(df):
 
     Args:
         df (pandas.DataFrame): Dataframe in tidy format, with ['epoch','level','value'] columns
-    
+
     Returns:
         object: matplotlib axes
     """
@@ -27,10 +25,10 @@ def compare_metric(df_list, metric="prec", stage="test"):
     """Function to combine and prepare list of dataframes into tidy format.
 
     Args:
-        df_list (list): List of dataframes 
+        df_list (list): List of dataframes
         metrics (str): name of metric to be extracted, optional
         stage (str): name of model fitting stage to be extracted, optional
-    
+
     Returns:
         pandas.DataFrame: Metrics
     """
@@ -66,11 +64,11 @@ def track_model_metrics(
         test_interactions (scipy sparse COO matrix): test interaction set
         k (int): number of recommendations, optional
         no_epochs (int): Number of epochs to run, optional
-        no_threads (int): Number of parallel threads to use, optional 
+        no_threads (int): Number of parallel threads to use, optional
         **kwargs: other keyword arguments to be passed down
-    
+
     Returns:
-        pandas.DataFrame, LightFM model, matplotlib axes: 
+        pandas.DataFrame, LightFM model, matplotlib axes:
         - Performance traces of the fitted model
         - Fitted model
         - Side effect of the method
@@ -122,7 +120,7 @@ def track_model_metrics(
     metric_keys = {"prec": "Precision", "rec": "Recall"}
     fitting_metrics.metric.replace(metric_keys, inplace=True)
     # plots the performance data
-    if show_plot == True:
+    if show_plot:
         model_perf_plots(fitting_metrics)
     return fitting_metrics, model
 
@@ -133,9 +131,9 @@ def similar_users(user_id, user_features, model, N=10):
      Args:
         user_id (int): id of user to be used as reference
         user_features (scipy sparse CSR matrix): user feature matric
-        model (LightFM instance): fitted LightFM model 
+        model (LightFM instance): fitted LightFM model
         N (int): Number of top similar users to return
-    
+
     Returns:
         pandas.DataFrame: top N most similar users with score
     """
@@ -161,9 +159,9 @@ def similar_items(item_id, item_features, model, N=10):
     Args:
         item_id (int): id of item to be used as reference
         item_features (scipy sparse CSR matrix): item feature matric
-        model (LightFM instance): fitted LightFM model 
+        model (LightFM instance): fitted LightFM model
         N (int): Number of top similar items to return
-    
+
     Returns:
         pandas.DataFrame: top N most similar items with score
     """
@@ -223,7 +221,6 @@ def prepare_all_predictions(
     item_features=None,
 ):
     """Function to prepare all predictions for evaluation.
-    
     Args:
         data (pandas df): dataframe of all users, items and ratings as loaded
         uid_map (dict): Keys to map internal user indices to external ids.
@@ -231,19 +228,17 @@ def prepare_all_predictions(
         interactions (np.float32 coo_matrix): user-item interaction
         model (LightFM instance): fitted LightFM model
         num_threads (int): number of parallel computation threads
-        user_features (np.float32 csr_matrix): User weights over features 
+        user_features (np.float32 csr_matrix): User weights over features
         item_features (np.float32 csr_matrix):  Item weights over features
-
     Returns:
         pandas.DataFrame: all predictions
     """
-    users, items, preds = [], [], []
+    users, items, preds = [], [], []  # noqa: F841
     item = list(data.itemID.unique())
     for user in data.userID.unique():
         user = [user] * len(item)
         users.extend(user)
         items.extend(item)
-
     all_predictions = pd.DataFrame(data={"userID": users, "itemID": items})
     all_predictions["uid"] = all_predictions.userID.map(uid_map)
     all_predictions["iid"] = all_predictions.itemID.map(iid_map)
@@ -258,8 +253,8 @@ def prepare_all_predictions(
 
     all_predictions["prediction"] = all_predictions.apply(
         lambda x: model.predict(
-            user_ids=x["uid"],
-            item_ids=[x["iid"]],
+            user_ids=np.array([x["uid"]], dtype=np.int32),
+            item_ids=np.array([x["iid"]], dtype=np.int32),
             user_features=user_features,
             item_features=item_features,
             num_threads=num_threads,

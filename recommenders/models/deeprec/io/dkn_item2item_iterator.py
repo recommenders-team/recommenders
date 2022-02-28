@@ -24,10 +24,10 @@ class DKNItem2itemTextIterator(DKNTextIterator):
         self.batch_size = hparams.batch_size * (self.neg_num + 2)
         self.doc_size = hparams.doc_size
         with self.graph.as_default():
-            self.candidate_news_index_batch = tf.placeholder(
+            self.candidate_news_index_batch = tf.compat.v1.placeholder(
                 tf.int64, [self.batch_size, self.doc_size], name="candidate_news_index"
             )
-            self.candidate_news_entity_index_batch = tf.placeholder(
+            self.candidate_news_entity_index_batch = tf.compat.v1.placeholder(
                 tf.int64,
                 [self.batch_size, self.doc_size],
                 name="candidate_news_entity_index",

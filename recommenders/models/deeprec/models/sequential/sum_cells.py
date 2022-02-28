@@ -3,15 +3,13 @@
 
 import numpy as np
 import tensorflow as tf
+from keras.layers.legacy_rnn.rnn_cell_impl import LayerRNNCell
 from tensorflow.python.eager import context
 from tensorflow.python.keras import activations
 from tensorflow.python.keras import initializers
 from tensorflow.python.keras.utils import tf_utils
 from tensorflow.python.ops import math_ops
-from tensorflow.python.ops import variable_scope as vs
 from tensorflow.python.platform import tf_logging as logging
-from tensorflow.python.util.deprecation import deprecated
-from tensorflow.contrib.rnn import LayerRNNCell
 from tensorflow.python.ops import init_ops
 from tensorflow.python.framework import dtypes
 from tensorflow.python.util import nest
@@ -44,13 +42,13 @@ class SUMCell(LayerRNNCell):
         if context.executing_eagerly() and context.num_gpus() > 0:
             logging.warn(
                 "%s: Note that this cell is not optimized for performance. "
-                "Please use tf.contrib.cudnn_rnn.CudnnGRU for better "
+                "Please use keras.layers.cudnn_recurrent.CuDNNGRU for better "
                 "performance on GPU.",
                 self,
             )
 
         self._input_size = input_size
-        self._slots = slots - 1  ## the last channel is reserved for the highway slot
+        self._slots = slots - 1  # the last channel is reserved for the highway slot
         self._num_units = num_units
         self._real_units = (self._num_units - input_size) // slots
         if activation:
@@ -122,12 +120,16 @@ class SUMCell(LayerRNNCell):
         self._beta = self.add_variable(
             name="_beta_no_reg",
             shape=(),
-            initializer=tf.constant_initializer(np.array([1.02]), dtype=np.float32),
+            initializer=tf.compat.v1.constant_initializer(
+                np.array([1.02]), dtype=np.float32
+            ),
         )
         self._alpha = self.add_variable(
             name="_alpha_no_reg",
             shape=(),
-            initializer=tf.constant_initializer(np.array([0.98]), dtype=np.float32),
+            initializer=tf.compat.v1.constant_initializer(
+                np.array([0.98]), dtype=np.float32
+            ),
         )
 
     @tf_utils.shape_type_conversion
@@ -141,9 +143,9 @@ class SUMCell(LayerRNNCell):
                 % str(inputs_shape)
             )
         _check_supported_dtypes(self.dtype)
-        d = inputs_shape[-1]
-        h = self._real_units
-        s = self._slots
+        d = inputs_shape[-1]  # noqa: F841
+        h = self._real_units  # noqa: F841
+        s = self._slots  # noqa: F841
 
         self._basic_build(inputs_shape)
 
@@ -167,7 +169,7 @@ class SUMCell(LayerRNNCell):
             state:  (a batch of) user states at time T-1
 
         returns:
-            state, state: 
+            state, state:
             - after process the user behavior at time T, returns (a batch of) new user states at time T
             - after process the user behavior at time T, returns (a batch of) new user states at time T
         """
@@ -183,27 +185,29 @@ class SUMCell(LayerRNNCell):
         att_weights = tf.nn.softmax(self._beta * att_logit_mat, axis=-1)
         att_weights = tf.expand_dims(att_weights, 2)
 
-        h_hat = tf.reduce_sum(tf.multiply(state[:, : self._slots, :], att_weights), 1)
+        h_hat = tf.reduce_sum(
+            input_tensor=tf.multiply(state[:, : self._slots, :], att_weights), axis=1
+        )
         h_hat = (h_hat + state[:, self._slots, :]) / 2
 
         n_a, n_b = tf.nn.l2_normalize(last, 1), tf.nn.l2_normalize(inputs, 1)
-        dist = tf.expand_dims(tf.reduce_sum(n_a * n_b, 1), 1)
+        dist = tf.expand_dims(tf.reduce_sum(input_tensor=n_a * n_b, axis=1), 1)
         dist = tf.math.pow(self._alpha, dist)
 
         att_weights = att_weights * tf.expand_dims(dist, 1)
 
         reset = tf.sigmoid(
-            tf.nn.xw_plus_b(
+            tf.compat.v1.nn.xw_plus_b(
                 tf.concat([inputs, h_hat], axis=-1), self._reset_W, self._reset_b
             )
         )
         erase = tf.sigmoid(
-            tf.nn.xw_plus_b(
+            tf.compat.v1.nn.xw_plus_b(
                 tf.concat([inputs, h_hat], axis=-1), self._erase_W, self._erase_b
             )
         )
         add = tf.tanh(
-            tf.nn.xw_plus_b(
+            tf.compat.v1.nn.xw_plus_b(
                 tf.concat([inputs, reset * h_hat], axis=-1), self._add_W, self._add_b
             )
         )
@@ -309,35 +313,39 @@ class SUMV2Cell(SUMCell):
         att_weights = tf.nn.softmax(self._beta * att_logit_mat, axis=-1)
         att_weights = tf.expand_dims(att_weights, 2)
 
-        h_hat = tf.reduce_sum(tf.multiply(state[:, : self._slots, :], att_weights), 1)
+        h_hat = tf.reduce_sum(
+            input_tensor=tf.multiply(state[:, : self._slots, :], att_weights), axis=1
+        )
         h_hat = (h_hat + state[:, self._slots, :]) / 2
 
-        ## get the true writing attentions
+        # get the true writing attentions
         writing_input = tf.concat([inputs, h_hat], axis=1)
-        att_weights = tf.nn.xw_plus_b(writing_input, self._writing_W, self._writing_b)
+        att_weights = tf.compat.v1.nn.xw_plus_b(
+            writing_input, self._writing_W, self._writing_b
+        )
         att_weights = tf.nn.relu(att_weights)
         att_weights = tf.matmul(att_weights, self._writing_W02)
         att_weights = tf.nn.softmax(att_weights, axis=-1)
         att_weights = tf.expand_dims(att_weights, 2)
 
         n_a, n_b = tf.nn.l2_normalize(last, 1), tf.nn.l2_normalize(inputs, 1)
-        dist = tf.expand_dims(tf.reduce_sum(n_a * n_b, 1), 1)
+        dist = tf.expand_dims(tf.reduce_sum(input_tensor=n_a * n_b, axis=1), 1)
         dist = tf.math.pow(self._alpha, dist)
 
         att_weights = att_weights * tf.expand_dims(dist, 1)
 
         reset = tf.sigmoid(
-            tf.nn.xw_plus_b(
+            tf.compat.v1.nn.xw_plus_b(
                 tf.concat([inputs, h_hat], axis=-1), self._reset_W, self._reset_b
             )
         )
         erase = tf.sigmoid(
-            tf.nn.xw_plus_b(
+            tf.compat.v1.nn.xw_plus_b(
                 tf.concat([inputs, h_hat], axis=-1), self._erase_W, self._erase_b
             )
         )
         add = tf.tanh(
-            tf.nn.xw_plus_b(
+            tf.compat.v1.nn.xw_plus_b(
                 tf.concat([inputs, reset * h_hat], axis=-1), self._add_W, self._add_b
             )
         )

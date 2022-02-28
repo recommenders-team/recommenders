@@ -3,20 +3,22 @@
 
 import itertools
 import numpy as np
-import pandas as pd
 import tensorflow as tf
+from tensorflow_estimator.python.estimator.export.export import (
+    build_supervised_input_receiver_fn_from_input_fn,
+)
 
 MODEL_DIR = "model_checkpoints"
 
 
 OPTIMIZERS = dict(
-    adadelta=tf.train.AdadeltaOptimizer,
-    adagrad=tf.train.AdagradOptimizer,
-    adam=tf.train.AdamOptimizer,
-    ftrl=tf.train.FtrlOptimizer,
-    momentum=tf.train.MomentumOptimizer,
-    rmsprop=tf.train.RMSPropOptimizer,
-    sgd=tf.train.GradientDescentOptimizer,
+    adadelta=tf.compat.v1.train.AdadeltaOptimizer,
+    adagrad=tf.compat.v1.train.AdagradOptimizer,
+    adam=tf.compat.v1.train.AdamOptimizer,
+    ftrl=tf.compat.v1.train.FtrlOptimizer,
+    momentum=tf.compat.v1.train.MomentumOptimizer,
+    rmsprop=tf.compat.v1.train.RMSPropOptimizer,
+    sgd=tf.compat.v1.train.GradientDescentOptimizer,
 )
 
 
@@ -86,7 +88,7 @@ def pandas_input_fn(
     for col in X_df.columns:
         values = X_df[col].values
         if isinstance(values[0], (list, np.ndarray)):
-            values = np.array([l for l in values], dtype=np.float32)
+            values = np.array(values.tolist(), dtype=np.float32)
         X[col] = values
 
     return lambda: _dataset(
@@ -165,17 +167,9 @@ def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
     Returns:
         str: Exported model path
     """
-    tf.logging.set_verbosity(tf.logging.ERROR)
-    train_rcvr_fn = (
-        tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
-            train_input_fn
-        )
-    )
-    eval_rcvr_fn = (
-        tf.contrib.estimator.build_supervised_input_receiver_fn_from_input_fn(
-            eval_input_fn
-        )
-    )
+    tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+    train_rcvr_fn = build_supervised_input_receiver_fn_from_input_fn(train_input_fn)
+    eval_rcvr_fn = build_supervised_input_receiver_fn_from_input_fn(eval_input_fn)
     serve_rcvr_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(
         tf.feature_column.make_parse_example_spec(tf_feat_cols)
     )
@@ -184,8 +178,8 @@ def export_model(model, train_input_fn, eval_input_fn, tf_feat_cols, base_dir):
         tf.estimator.ModeKeys.EVAL: eval_rcvr_fn,
         tf.estimator.ModeKeys.PREDICT: serve_rcvr_fn,
     }
-    exported_path = tf.contrib.estimator.export_all_saved_models(
-        model, export_dir_base=base_dir, input_receiver_fn_map=rcvr_fn_map
+    exported_path = model.experimental_export_all_saved_models(
+        export_dir_base=base_dir, input_receiver_fn_map=rcvr_fn_map
     )
 
     return exported_path.decode("utf-8")
@@ -222,7 +216,7 @@ def evaluation_log_hook(
         batch_size (int): Number of samples fed into the model at a time.
             Note, the batch size doesn't affect on evaluation results.
         eval_fns (iterable of functions): List of evaluation functions that have signature of
-            (true_df, prediction_df, \*\*eval_kwargs)->(float). If None, loss is calculated on true_df.
+            (true_df, prediction_df, **eval_kwargs)->(float). If None, loss is calculated on true_df.
         eval_kwargs: Evaluation function's keyword arguments.
             Note, prediction column name should be 'prediction'
 
@@ -244,7 +238,7 @@ def evaluation_log_hook(
     )
 
 
-class _TrainLogHook(tf.train.SessionRunHook):
+class _TrainLogHook(tf.estimator.SessionRunHook):
     def __init__(
         self,
         estimator,
@@ -276,15 +270,17 @@ class _TrainLogHook(tf.train.SessionRunHook):
 
     def begin(self):
         if self.model_dir is not None:
-            self.summary_writer = tf.summary.FileWriterCache.get(self.model_dir)
-            self.global_step_tensor = tf.train.get_or_create_global_step()
+            self.summary_writer = tf.compat.v1.summary.FileWriterCache.get(
+                self.model_dir
+            )
+            self.global_step_tensor = tf.compat.v1.train.get_or_create_global_step()
         else:
             self.step = 0
 
     def before_run(self, run_context):
         if self.global_step_tensor is not None:
             requests = {"global_step": self.global_step_tensor}
-            return tf.train.SessionRunArgs(requests)
+            return tf.estimator.SessionRunArgs(requests)
         else:
             return None
 
@@ -295,8 +291,8 @@ class _TrainLogHook(tf.train.SessionRunHook):
             self.step += 1
 
         if self.step % self.every_n_iter == 0:
-            _prev_log_level = tf.logging.get_verbosity()
-            tf.logging.set_verbosity(tf.logging.ERROR)
+            _prev_log_level = tf.compat.v1.logging.get_verbosity()
+            tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
             if self.eval_fns is None:
                 result = self.model.evaluate(
@@ -322,7 +318,7 @@ class _TrainLogHook(tf.train.SessionRunHook):
                     result = fn(self.true_df, prediction_df, **self.eval_kwargs)
                     self._log(fn.__name__, result)
 
-            tf.logging.set_verbosity(_prev_log_level)
+            tf.compat.v1.logging.set_verbosity(_prev_log_level)
 
     def end(self, session):
         if self.summary_writer is not None:
@@ -331,7 +327,9 @@ class _TrainLogHook(tf.train.SessionRunHook):
     def _log(self, tag, value):
         self.logger.log(tag, value)
         if self.summary_writer is not None:
-            summary = tf.Summary(value=[tf.Summary.Value(tag=tag, simple_value=value)])
+            summary = tf.compat.v1.Summary(
+                value=[tf.compat.v1.Summary.Value(tag=tag, simple_value=value)]
+            )
             self.summary_writer.add_summary(summary, self.step)
 
 

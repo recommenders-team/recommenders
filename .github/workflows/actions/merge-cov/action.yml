@@ -36,7 +36,7 @@ runs:
     run: |
       python -m coverage combine .coverage*
       python -m coverage report
-      python -m coverage xml
+      python -m coverage xml -i
       
   - name: Show merged report
     id: show-final-report

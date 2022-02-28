@@ -20,10 +20,6 @@ They have admin access to the repo and provide support reviewing issues and pull
    * ALS notebook
    * Wide & Deep algorithm
    * Hyperparameter tuning notebooks
-* **[Le Zhang](https://github.com/yueguoguo)**
-   * Reco utils
-   * Continuous integration build / test setup
-   * Quickstart, deep dive, algorithm comparison, notebooks
 * **[Miguel González-Fierro](https://github.com/miguelfierro)**
    * Recommendation algorithms review, development and optimization.
    * Reco utils review, development and optimization.
@@ -45,6 +41,9 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Aaron He](https://github.com/AaronHeee)**
    * Reco utils of NCF
    * Deep dive notebook demonstrating the use of NCF
+* **[Abir Chakraborty](https://github.com/aeroabir)**
+   * Self-Attentive Sequential Recommendation (SASRec)
+   * Sequential Recommendation Via Personalized Transformer (SSEPT)
 * **[Alexandros Ioannou](https://github.com/aioannou96)**
    * Standard VAE algorithm 
    * Multinomial VAE algorithm  
@@ -68,9 +67,16 @@ To contributors: please add your name to the list when you submit a patch to the
    * AzureML documentation and support
 * **[Jeremy Reynolds](https://github.com/jreynolds01)**
    * Reference architecture
+* **[Jianjie Liu](https://github.com/laserprec/)**
+   * GitHub Action Migration
+   * Test Infrastructure Optimization
 * **[Kaisar Mussalim](https://github.com/kmussalim)**
    * Multinomial VAE algorithm
    * Standard VAE algorithm
+* **[Le Zhang](https://github.com/yueguoguo)**
+   * Reco utils
+   * Continuous integration build / test setup
+   * Quickstart, deep dive, algorithm comparison, notebooks
 * **[Markus Cozowicz](https://github.com/eisber)**
    * SAR improvements on Spark
 * **[Max Kaznady](https://github.com/maxkazmsft)**
@@ -87,6 +93,8 @@ To contributors: please add your name to the list when you submit a patch to the
    * Improving documentation
    * Quick start notebook
    * Operationalization notebook
+* **[Nile Wilson](https://github.com/niwilso)**
+   * Term Frequency - Inverse Document Frequency (TF-IDF) quickstart, utils
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
    * GeoIMC algorithm
@@ -100,6 +108,11 @@ To contributors: please add your name to the list when you submit a patch to the
    * Windows test pipelines
 * **[Satyadev Ntv](https://github.com/satyadevntv)**
    * GeoIMC algorithm
+* **[Simon Zhao](https://github.com/simonzhaoms)**
+   * SARplus algorithm upgrade
+* **[Yan Zhang](https://github.com/YanZhangADS)**
+   * Diversity metrics including coverage, novelty, diversity, and serendipity
+   * Diversity metrics evaluation sample notebook
 * **[Yassine Khelifi](https://github.com/datashinobi)**
    * SAR notebook quickstart
 * **[Zhenhui Xu](https://github.com/motefly)**

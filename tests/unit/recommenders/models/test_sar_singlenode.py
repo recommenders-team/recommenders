@@ -81,8 +81,8 @@ def test_init(header):
     assert model.col_prediction == "prediction"
     assert model.similarity_type == "jaccard"
     assert model.time_decay_half_life == 2592000
-    assert model.time_decay_flag == False
-    assert model.time_now == None
+    assert not model.time_decay_flag
+    assert model.time_now is None
     assert model.threshold == 1
 
 
@@ -156,6 +156,15 @@ def test_sar_item_similarity(
         time_decay_coefficient=30,
         threshold=threshold,
         **header
+    )
+
+    # Remove duplicates
+    demo_usage_data = demo_usage_data.sort_values(
+        header["col_timestamp"], ascending=False
+    )
+    demo_usage_data = demo_usage_data.drop_duplicates(
+        [header["col_user"], header["col_item"]],
+        keep="first"
     )
 
     model.fit(demo_usage_data)

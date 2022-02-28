@@ -5,15 +5,12 @@
 Module maintaining the IMC problem.
 """
 
-import os
-import itertools
-from collections import Counter, OrderedDict
 import numpy as np
-from sklearn.cluster import KMeans
-from scipy.sparse import coo_matrix, csr_matrix, isspmatrix_csr
-from numba import njit, jit, prange
+
+from scipy.sparse import csr_matrix
+from numba import njit, prange
 from pymanopt import Problem
-from pymanopt.manifolds import Stiefel, Product, PositiveDefinite, Euclidean
+from pymanopt.manifolds import Stiefel, Product, SymmetricPositiveDefinite
 from pymanopt.solvers import ConjugateGradient
 from pymanopt.solvers.linesearch import LineSearchBackTracking
 
@@ -23,13 +20,8 @@ class IMCProblem(object):
     Implements the IMC problem.
     """
 
-    def __init__(
-            self,
-            dataPtr,
-            lambda1=1e-2,
-            rank=10
-    ):
-        """ Initialize parameters
+    def __init__(self, dataPtr, lambda1=1e-2, rank=10):
+        """Initialize parameters
 
         Args:
             dataPtr (DataPtr): An object of which contains X, Z side features and target matrix Y.
@@ -48,26 +40,19 @@ class IMCProblem(object):
 
         self.W = None
         self.optima_reached = False
-        self.manifold = Product([
-                            Stiefel(
-                                self.X.shape[1],
-                                self.rank
-                            ),
-                            PositiveDefinite(
-                                self.rank
-                            ),
-                            Stiefel(
-                                self.Z.shape[1],
-                                self.rank
-                            )
-        ])
+        self.manifold = Product(
+            [
+                Stiefel(self.X.shape[1], self.rank),
+                SymmetricPositiveDefinite(self.rank),
+                Stiefel(self.Z.shape[1], self.rank),
+            ]
+        )
 
-
-    def _loadTarget(self, ):
-        """Loads target matrix from the dataset pointer.
-        """
+    def _loadTarget(
+        self,
+    ):
+        """Loads target matrix from the dataset pointer."""
         self.Y = self.dataset.get_data()
-
 
     @staticmethod
     @njit(nogil=True, parallel=True)
@@ -83,7 +68,6 @@ class IMCProblem(object):
                 residual_global[j] = num - cd[j]
         return residual_global
 
-
     def _cost(self, params, residual_global):
         """Compute the cost of GeoIMC optimization problem
 
@@ -96,7 +80,7 @@ class IMCProblem(object):
         B = params[1]
         V = params[2]
 
-        regularizer = 0.5 * self.lambda1 * np.sum(B**2)
+        regularizer = 0.5 * self.lambda1 * np.sum(B ** 2)
 
         IMCProblem._computeLoss_csrmatrix(
             self.X.dot(U.dot(B)),
@@ -104,12 +88,11 @@ class IMCProblem(object):
             self.Y.data,
             self.Y.indices,
             self.Y.indptr,
-            residual_global
+            residual_global,
         )
-        cost = 0.5 * np.sum((residual_global)**2)/self.nSamples + regularizer
+        cost = 0.5 * np.sum((residual_global) ** 2) / self.nSamples + regularizer
 
         return cost
-
 
     def _egrad(self, params, residual_global):
         """Computes the euclidean gradient
@@ -128,31 +111,27 @@ class IMCProblem(object):
             shape=self.shape,
         )
 
-        gradU = np.dot(
-            self.X.T,
-            residual_global_csr.dot(self.Z.dot(V.dot(B.T)))
-        )/self.nSamples
+        gradU = (
+            np.dot(self.X.T, residual_global_csr.dot(self.Z.dot(V.dot(B.T))))
+            / self.nSamples
+        )
 
-        gradB = np.dot(
-            (self.X.dot(U)).T,
-            residual_global_csr.dot(self.Z.dot(V))
-        )/self.nSamples + self.lambda1 * B
-        gradB_sym = (gradB + gradB.T)/2
+        gradB = (
+            np.dot((self.X.dot(U)).T, residual_global_csr.dot(self.Z.dot(V)))
+            / self.nSamples
+            + self.lambda1 * B
+        )
+        gradB_sym = (gradB + gradB.T) / 2
 
-        gradV = np.dot(
-            (self.X.dot(U.dot(B))).T,
-            residual_global_csr.dot(self.Z)
-        ).T/self.nSamples
+        gradV = (
+            np.dot((self.X.dot(U.dot(B))).T, residual_global_csr.dot(self.Z)).T
+            / self.nSamples
+        )
 
-        return [
-            gradU,
-            gradB_sym,
-            gradV
-        ]
-
+        return [gradU, gradB_sym, gradV]
 
     def solve(self, *args):
-        """ Main solver of the IMC model
+        """Main solver of the IMC model
 
         Args:
             max_opt_time (uint): Maximum time (in secs) for optimization
@@ -167,7 +146,6 @@ class IMCProblem(object):
         self.optima_reached = True
         return
 
-
     def _optimize(self, max_opt_time, max_opt_iter, verbosity):
         """Optimize the GeoIMC optimization problem
 
@@ -175,28 +153,24 @@ class IMCProblem(object):
         """
         residual_global = np.zeros(self.Y.data.shape)
 
-        solver = ConjugateGradient(maxtime=max_opt_time, maxiter=max_opt_iter, linesearch=LineSearchBackTracking())
+        solver = ConjugateGradient(
+            maxtime=max_opt_time,
+            maxiter=max_opt_iter,
+            linesearch=LineSearchBackTracking(),
+        )
         prb = Problem(
             manifold=self.manifold,
-            cost=lambda x: self._cost(
-                x,
-                residual_global
-            ),
-            egrad=lambda z: self._egrad(
-                z,
-                residual_global
-            ),
-            verbosity=verbosity
+            cost=lambda x: self._cost(x, residual_global),
+            egrad=lambda z: self._egrad(z, residual_global),
+            verbosity=verbosity,
         )
         solution = solver.solve(prb, x=self.W)
         self.W = [solution[0], solution[1], solution[2]]
 
         return self._cost(self.W, residual_global)
 
-
     def reset(self):
-        """Reset the model.
-        """
+        """Reset the model."""
         self.optima_reached = False
         self.W = None
         return

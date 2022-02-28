@@ -17,11 +17,11 @@ WORKDIR ${HOME}
 RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "${VIRTUAL_ENV}" != "virtualenv" ]; then \
     echo 'VIRTUAL_ENV argument should be either "conda", "venv" or "virtualenv"'; exit 1; fi
 
-# Install base dependencies, cmake (for xlearn) and libpython (for cornac)
+# Install base dependencies and libpython (for cornac)
 RUN apt-get update && \
-    apt-get install -y curl build-essential cmake
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.6; fi
+    apt-get install -y curl build-essential
+RUN apt-get install -y libpython3.7-dev
+RUN apt-get install -y python3-dev  
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -38,22 +38,22 @@ SHELL ["/bin/bash", "--login", "-c"]
 
 # Python version supported by recommenders
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    apt-get -y install python3.6-venv; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; \
+    apt-get -y install python3.7-venv; fi
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    python3.6 -m pip install --user virtualenv; fi
+    python3.7 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/${VIRTUAL_ENV}; \
+    pip install --upgrade setuptools wheel; fi
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; fi
+    pip install --upgrade setuptools wheel; fi
 
 ###########
 # CPU Stage
@@ -61,11 +61,8 @@ RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/
 FROM base AS cpu
 
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install recommenders[xlearn,examples]; fi
-# Note that "conda install numpy-base" needs to be called after the pip installation
-# so that numpy works smoothly with other dependencies in python 3.7
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[xlearn,examples]; \
-    conda install -n base numpy-base; fi
+    pip install recommenders[examples]; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[examples]; fi
 
 
 ###############
@@ -83,15 +80,14 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
 
 # Install dependencies in virtual environment
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
-    pip install recommenders[spark,xlearn,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,xlearn,examples]; \
-    conda install -n base numpy-base; fi
+    pip install recommenders[spark,examples]; fi
+RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,examples]; fi
 
 
 ###########
 # GPU Stage
 ###########
-FROM nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04 AS gpu
+FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu18.04 AS gpu
 
 ARG HOME
 ARG VIRTUAL_ENV
@@ -103,9 +99,9 @@ RUN if [ "${VIRTUAL_ENV}" != "conda" ] && [ "${VIRTUAL_ENV}" != "venv" ] && [ "$
     echo 'VIRTUAL_ENV argument should be either "conda", "venv" or "virtualenv"'; exit 1; fi
 
 RUN apt-get update && \
-    apt-get install -y curl build-essential cmake
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then apt-get install -y libpython3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then apt-get install -y libpython3.6; fi
+    apt-get install -y curl build-essential
+RUN apt-get install -y libpython3.7-dev
+RUN apt-get install -y python3-dev
 
 # Install Anaconda
 ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -119,30 +115,28 @@ ENV PATH="${HOME}/${VIRTUAL_ENV}/bin:${PATH}"
 
 SHELL ["/bin/bash", "--login", "-c"]
 
-# Python version supported by recommenders
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda install python=3.7; fi
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.6; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    apt-get -y install python3.6-venv; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.6; \
+    apt-get -y install python3.7-venv; fi
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then apt-get -y install python3.7; \
     apt-get -y install python3-pip; \
-    python3.6 -m pip install --user virtualenv; fi
+    python3.7 -m pip install --user virtualenv; fi
 
 # Activate the virtual environment
-RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.6 -m venv --system-site-packages $HOME/${VIRTUAL_ENV}; \
+RUN if [ "${VIRTUAL_ENV}" = "venv" ] ; then python3.7 -m venv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; \
-    pip install recommenders[gpu,xlearn,examples]; fi
-RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.6 -m virtualenv $HOME/${VIRTUAL_ENV}; \
+    pip install --upgrade setuptools wheel; \
+    pip install recommenders[gpu,examples]; fi
+RUN if [ "${VIRTUAL_ENV}" = "virtualenv" ] ; then python3.7 -m virtualenv $HOME/${VIRTUAL_ENV}; \
     source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools; \
-    pip install recommenders[gpu,xlearn,examples]; fi
+    pip install --upgrade setuptools wheel; \
+    pip install recommenders[gpu,examples]; fi
 
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then \
-    pip install recommenders[gpu,xlearn,examples] -f https://download.pytorch.org/whl/cu100/torch_stable.html && \
-    conda install -n base numpy-base; fi
+    pip install recommenders[gpu,examples] -f https://download.pytorch.org/whl/cu111/torch_stable.html ; fi
 
 
 ############
@@ -167,10 +161,6 @@ ENV JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64" \
 RUN if [ "${VIRTUAL_ENV}" = "venv" ] || [ "${VIRTUAL_ENV}" = "virtualenv" ]; then source $HOME/${VIRTUAL_ENV}/bin/activate; \
     pip install recommenders[all]; fi
 RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[all]; fi
-
-# It is not clear why but force-reinstall is needed at this place, 
-# otherwise numpy-base does not appear in conda list  
-RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then conda update --force-reinstall -y -n base numpy-base; fi
 
 
 #############

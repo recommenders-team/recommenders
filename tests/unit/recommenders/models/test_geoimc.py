@@ -1,24 +1,23 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import itertools
-import collections
-import pytest
-import numpy as np
-import pandas as pd
-from scipy.sparse import csr_matrix
-from pandas.testing import assert_frame_equal
+try:
+    import collections
+    import pytest
+    import numpy as np
+    from scipy.sparse import csr_matrix
 
-from recommenders.utils.python_utils import binarize
-from recommenders.models.geoimc.geoimc_data import DataPtr
-from recommenders.models.geoimc.geoimc_predict import PlainScalarProduct, Inferer
-from recommenders.models.geoimc.geoimc_algorithm import IMCProblem
-from recommenders.models.geoimc.geoimc_utils import (
-    length_normalize,
-    mean_center,
-    reduce_dims,
-)
-from pymanopt.manifolds import Stiefel, PositiveDefinite
+    from recommenders.models.geoimc.geoimc_data import DataPtr
+    from recommenders.models.geoimc.geoimc_predict import Inferer
+    from recommenders.models.geoimc.geoimc_algorithm import IMCProblem
+    from recommenders.models.geoimc.geoimc_utils import (
+        length_normalize,
+        mean_center,
+        reduce_dims,
+    )
+    from pymanopt.manifolds import Stiefel, SymmetricPositiveDefinite
+except:
+    pass    # skip if pymanopt not installed
 
 _IMC_TEST_DATA = [
     (
@@ -37,7 +36,9 @@ _IMC_TEST_DATA = [
     ),
 ]
 
+
 # `geoimc_data` tests
+@pytest.mark.experimental
 @pytest.mark.parametrize("data, entities", _IMC_TEST_DATA)
 def test_dataptr(data, entities):
     ptr = DataPtr(data, entities)
@@ -47,6 +48,7 @@ def test_dataptr(data, entities):
 
 
 # `geoimc_utils` tests
+@pytest.mark.experimental
 @pytest.mark.parametrize(
     "matrix",
     [
@@ -62,6 +64,7 @@ def test_length_normalize(matrix):
     )
 
 
+@pytest.mark.experimental
 @pytest.mark.parametrize(
     "matrix",
     [
@@ -76,12 +79,14 @@ def test_mean_center(matrix):
     )
 
 
+@pytest.mark.experimental
 def test_reduce_dims():
     matrix = np.random.rand(100, 100)
     assert reduce_dims(matrix, 50).shape[1] == 50
 
 
 # `geoimc_algorithm` tests
+@pytest.mark.experimental
 @pytest.mark.parametrize(
     "dataPtr, rank",
     [
@@ -89,6 +94,7 @@ def test_reduce_dims():
         (DataPtr(_IMC_TEST_DATA[1][0], _IMC_TEST_DATA[1][1]), 3),
     ],
 )
+@pytest.mark.experimental
 def test_imcproblem(dataPtr, rank):
 
     # Test init
@@ -99,7 +105,7 @@ def test_imcproblem(dataPtr, rank):
     assert prblm.rank == rank
     assert prblm.lambda1 == 1e-2
     assert prblm.W is None
-    assert prblm.optima_reached == False
+    assert not prblm.optima_reached
 
     # Test solve
     prblm.solve(10, 10, 0)
@@ -109,14 +115,16 @@ def test_imcproblem(dataPtr, rank):
     # Test reset
     prblm.reset()
     assert prblm.W is None
-    assert prblm.optima_reached == False
+    assert not prblm.optima_reached
 
 
 # `geoimc_predict` tests
+@pytest.mark.experimental
 def test_inferer_init():
     assert Inferer(method="dot").method.__name__ == "PlainScalarProduct"
 
 
+@pytest.mark.experimental
 @pytest.mark.parametrize(
     "dataPtr",
     [
@@ -132,7 +140,7 @@ def test_inferer_infer(dataPtr):
     rank = 2
     W = [
         Stiefel(rowFeatureDim, rank).rand(),
-        PositiveDefinite(rank).rand(),
+        SymmetricPositiveDefinite(rank).rand(),
         Stiefel(colFeatureDim, rank).rand(),
     ]
 

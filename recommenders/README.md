@@ -9,7 +9,7 @@ Some dependencies require compilation during pip installation. On Linux this can
 ```bash
 sudo apt-get install -y build-essential libpython<version>
 ``` 
-where `<version>` should be `3.6` or `3.7` as appropriate.
+where `<version>` should be the Python version (e.g. `3.6`).
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
@@ -19,14 +19,9 @@ For more details about the software requirements that must be pre-installed on e
 
 To install core utilities, CPU-based algorithms, and dependencies
 ```bash
-pip install --upgrade pip
+pip install --upgrade pip setuptools
 pip install recommenders
 ```
-In the case of conda, you also need to 
-```bash
-conda install numpy-base
-```
-after the pip installation.
 
 ## Optional Dependencies
 
@@ -35,11 +30,12 @@ By default `recommenders` does not install all dependencies used throughout the 
 - examples: dependencies related to Jupyter needed to run [example notebooks](https://github.com/microsoft/recommenders/tree/main/examples)
 - gpu: dependencies to enable GPU functionality (PyTorch & TensorFlow)
 - spark: dependencies to enable Apache Spark functionality used in dataset, splitting, evaluation and certain algorithms
-- xlearn: xLearn package (on some platforms it requires pre-installation of cmake)
+- dev: dependencies such as `black` and `pytest` required only for development or testing
 - all: all of the above dependencies
 - experimental: current experimental dependencies that are being evaluated (e.g. libraries that require advanced build requirements or might conflict with libraries from other options)
+- nni: dependencies for NNI tuning framework.
 
-Note that, currently, NNI and Vowpal Wabbit are in the experimental group.
+Note that, currently, xLearn and Vowpal Wabbit are in the experimental group.
 
 These groups can be installed alone or in combination:
 ```bash
@@ -52,9 +48,9 @@ pip install recommenders[examples,gpu]
 
 ## GPU Support
 
-You will need CUDA Toolkit v10.0 and CuDNN >= 7.6 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda enviroment, this can be installed with
+You will need CUDA Toolkit v11.2 and CuDNN v8.1 to enable both Tensorflow and PyTorch to use the GPU. For example, if you are using a conda environment, this can be installed with
 ```bash
-conda install cudatoolkit=10.0 "cudnn>=7.6"
+conda install -c conda-forge cudatoolkit=11.2 cudnn=8.1
 ```
 For a virtual environment, you may use a [docker container by Nvidia](../SETUP.md#using-a-virtual-environment). 
 
@@ -62,14 +58,24 @@ For manual installation of the necessary requirements see [TensorFlow](https://w
 
 When installing with GPU support you will need to point to the PyTorch index to ensure you are downloading a version of PyTorch compiled with CUDA support. This can be done using the --find-links or -f option below.
 
-`pip install recommenders[gpu] -f https://download.pytorch.org/whl/cu100/torch_stable.html`
+`pip install recommenders[gpu] -f https://download.pytorch.org/whl/cu111/torch_stable.html`
 
 ## Experimental dependencies
 
 We are currently evaluating inclusion of the following dependencies:
 
  - vowpalwabbit: current examples show how to use vowpal wabbit after it has been installed on the command line; using the [PyPI package](https://pypi.org/project/vowpalwabbit/) with the scikit-learn interface will facilitate easier integration into python environments
- - nni: a more recent version can be installed but is untested (and requires a higher numpy version).
+ - xlearn: on some platforms, xLearn requires pre-installation of cmake.
+
+## Other dependencies
+
+Some dependencies are not available via the recommenders PyPI package, but can be installed in the following ways: 
+ - pymanopt: this dependency is required for the RLRMC and GeoIMC algorithms; a version of this code compatible with TensorFlow 2 can be
+ installed with `pip install "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"`. 
+
+## NNI dependencies
+
+For NNI a more recent version can be installed but is untested.
 
 
 ## Installing the utilities from a local copy
@@ -155,6 +161,8 @@ The models submodule contains implementations of various algorithms that can be 
 * Restricted Boltzmann Machines (RBM)
 * Riemannian Low-rank Matrix Completion (RLRMC)
 * Simple Algorithm for Recommendation (SAR)
+* Self-Attentive Sequential Recommendation (SASRec)
+* Sequential Recommendation Via Personalized Transformer (SSEPT)
 * Surprise
 * Term Frequency - Inverse Document Frequency (TF-IDF)
 * Variational Autoencoders (VAE)

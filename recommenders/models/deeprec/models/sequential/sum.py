@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import tensorflow as tf
-from tensorflow.nn import dynamic_rnn
+from tensorflow.compat.v1.nn import dynamic_rnn
 from recommenders.models.deeprec.models.sequential.sequential_base_model import (
     SequentialBaseModel,
 )
@@ -27,8 +27,8 @@ class SUMModel(SequentialBaseModel):
         Returns:
             object: The output of SUM section, which is a concatenation of user vector and target item vector.
         """
-        hparams = self.hparams
-        with tf.variable_scope("sum"):
+        hparams = self.hparams  # noqa: F841
+        with tf.compat.v1.variable_scope("sum"):
             self.history_embedding = tf.concat(
                 [self.item_history_embedding, self.cate_history_embedding], 2
             )
@@ -38,17 +38,17 @@ class SUMModel(SequentialBaseModel):
             final_state = self._build_sum(cell)
 
             for _p in cell.parameter_set:
-                tf.summary.histogram(_p.name, _p)
+                tf.compat.v1.summary.histogram(_p.name, _p)
             if hasattr(cell, "_alpha") and hasattr(cell._alpha, "name"):
-                tf.summary.histogram(cell._alpha.name, cell._alpha)
+                tf.compat.v1.summary.histogram(cell._alpha.name, cell._alpha)
             if hasattr(cell, "_beta") and hasattr(cell._beta, "name"):
-                tf.summary.histogram(cell._beta.name, cell._beta)
+                tf.compat.v1.summary.histogram(cell._beta.name, cell._beta)
 
             final_state, att_weights = self._attention_query_by_state(
                 final_state, self.target_item_embedding
             )
             model_output = tf.concat([final_state, self.target_item_embedding], 1)
-            tf.summary.histogram("model_output", model_output)
+            tf.compat.v1.summary.histogram("model_output", model_output)
         return model_output
 
     def _attention_query_by_state(self, seq_output, query):
@@ -61,11 +61,11 @@ class SUMModel(SequentialBaseModel):
         Returns:
             tf.Tensor, tf.Tensor: Merged user representation. Attention weights of each memory channel.
         """
-        dim_q = query.shape[-1].value
+        dim_q = query.shape[-1]
         att_weights = tf.constant(1.0, dtype=tf.float32)
-        with tf.variable_scope("query_att"):
+        with tf.compat.v1.variable_scope("query_att"):
             if self.hparams.slots > 1:
-                query_att_W = tf.get_variable(
+                query_att_W = tf.compat.v1.get_variable(
                     name="query_att_W",
                     shape=[self.hidden_size, dim_q],
                     initializer=self.initializer,
@@ -88,7 +88,7 @@ class SUMModel(SequentialBaseModel):
                 )
                 # merge the memory states, the final shape is (BatchSize, HiddenSize)
                 att_res = tf.reduce_sum(
-                    memory_state * tf.expand_dims(att_weights, -1), 1
+                    input_tensor=memory_state * tf.expand_dims(att_weights, -1), axis=1
                 )
 
             else:
@@ -129,9 +129,9 @@ class SUMModel(SequentialBaseModel):
             object: A flatten representation of user memory states, in the shape of (BatchSize, SlotsNum x HiddenSize)
         """
         hparams = self.hparams
-        with tf.variable_scope("sum"):
+        with tf.compat.v1.variable_scope("sum"):
             self.mask = self.iterator.mask
-            self.sequence_length = tf.reduce_sum(self.mask, 1)
+            self.sequence_length = tf.reduce_sum(input_tensor=self.mask, axis=1)
 
             rum_outputs, final_state = dynamic_rnn(
                 cell,
@@ -140,7 +140,7 @@ class SUMModel(SequentialBaseModel):
                 sequence_length=self.sequence_length,
                 scope="sum",
                 initial_state=cell.zero_state(
-                    tf.shape(self.history_embedding)[0], tf.float32
+                    tf.shape(input=self.history_embedding)[0], tf.float32
                 ),
             )
 
@@ -149,6 +149,6 @@ class SUMModel(SequentialBaseModel):
             self.heads = cell.heads
             self.alpha = cell._alpha
             self.beta = cell._beta
-            tf.summary.histogram("SUM_outputs", rum_outputs)
+            tf.compat.v1.summary.histogram("SUM_outputs", rum_outputs)
 
         return final_state

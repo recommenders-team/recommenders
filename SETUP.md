@@ -6,7 +6,6 @@ This document describes how to setup all the dependencies to run the notebooks i
 * [Azure Databricks](https://azure.microsoft.com/en-us/services/databricks/)
 * Docker container
 
-
 ## Table of Contents
 
   - [Compute environments](#compute-environments)
@@ -43,7 +42,7 @@ Another alternative is to run all the recommender utilities directly from a loca
 ### Requirements
 
 * A machine running Linux, MacOS or Windows
-* An optional requirement is Anaconda with Python version >= 3.6
+* An optional requirement is Anaconda with Python version >= 3.6, <= 3.9
   * This is pre-installed on Azure DSVM such that one can run the following steps directly. To setup on your local machine, [Miniconda](https://docs.conda.io/en/latest/miniconda.html) is a quick way to get started.
   
   Alternatively a [virtual environment](#using-a-virtual-environment) can be used instead of Anaconda.
@@ -58,18 +57,18 @@ conda update conda -n root
 conda update anaconda        # use 'conda install anaconda' if the package is not installed
 ```
 
-If using venv, see [these instructions](#using-a-virtual-environment).
+If using venv or virtualenv, see [these instructions](#using-a-virtual-environment).
 
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
 
-**NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.6` or `libpython3.7`, depending on the version of Python.
+**NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.x`, depending on the version of Python.
 
-**NOTE** PySpark v2.4.x requires Java version 8. 
+**NOTE** Spark requires Java version 8 or 11. We support Spark versions 3.0 and 3.1, but versions 2.4+ with Java version 8 may also work. 
 
 <details> 
-<summary><strong><em>Install Java 8 on MacOS</em></strong></summary>
+<summary><strong><em>Install Java on MacOS</em></strong></summary>
   
-To install Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
+To install e.g. Java 8 on MacOS using [asdf](https://github.com/halcyon/asdf-java):
 
     brew install asdf
     asdf plugin add Java
@@ -151,12 +150,13 @@ create the file `%RECO_ENV%\etc\conda\deactivate.d\env_vars.bat` and add:
 
 It is straightforward to install the recommenders package within a [virtual environment](https://docs.python.org/3/library/venv.html). However, setting up CUDA for use with a GPU can be cumbersome. We thus
 recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) and running the virtual environment within a container, as the most convenient way to do this.  
+In the following `3.6` should be replaced with the Python version you are using and `8` should be replaced with the appropriate Java version. 
 
     # Start docker daemon if not running
     sudo dockerd &
     # Pull the image from the Nvidia docker hub (https://hub.docker.com/r/nvidia/cuda) that is suitable for your system
     # E.g. for Ubuntu 18.04 do
-    sudo docker run --gpus all -it --rm nvidia/cuda:10.0-cudnn7-runtime-ubuntu18.04
+    sudo docker run --gpus all -it --rm nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu18.04
 
     # Within the container: 
 
@@ -174,6 +174,7 @@ recommend setting up [Nvidia docker](https://github.com/NVIDIA/nvidia-docker) an
     pip install --upgrade pip
     pip install --upgrade setuptools
 
+    export SPARK_HOME=/venv/lib/python3.6/site-packages/pyspark
     export PYSPARK_DRIVER_PYTHON=/venv/bin/python
     export PYSPARK_PYTHON=/venv/bin/python
 
@@ -222,13 +223,6 @@ SPARK_WORKER_OPTS="-Dspark.worker.cleanup.enabled=true, -Dspark.worker.cleanup.a
 unset SPARK_HOME
 ```
 
-* Java 11 might produce errors when running the notebooks. To change it to Java 8:
-
-```
-sudo apt install openjdk-8-jdk
-export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-```
-
 * We found that there might be conflicts between the current MMLSpark jars available in the DSVM and the ones used by the library. In that case, it is better to remove those jars and rely on loading them from Maven or other repositories made available by MMLSpark team.
 
 ```
@@ -240,9 +234,10 @@ sudo rm -rf Azure_mmlspark-0.12.jar com.microsoft.cntk_cntk-2.4.jar com.microsof
 
 ### Requirements
 
-* Databricks Runtime version >= 4.3 (Apache Spark 2.3.1, Scala 2.11) and <= 5.5 (Apache Spark 2.4.3, Scala 2.11)
-* Python 3
+* Databricks Runtime version >= 7, <= 9 (Apache Spark >= 3.0, <= 3.1, Scala 2.12)
+* Python 3.6 - 3.9
 
+Earlier versions of Databricks or Spark may work but this is not guaranteed.
 An example of how to create an Azure Databricks workspace and an Apache Spark cluster within the workspace can be found from [here](https://docs.microsoft.com/en-us/azure/azure-databricks/quickstart-create-databricks-workspace-portal). To utilize deep learning models and GPUs, you may setup GPU-enabled cluster. For more details about this topic, please see [Azure Databricks deep learning guide](https://docs.azuredatabricks.net/applications/deep-learning/index.html).
 
 ### Installation from PyPI
@@ -367,7 +362,8 @@ You can follow instructions [here](https://docs.azuredatabricks.net/user-guide/l
 
 Additionally, you must install the [spark-cosmosdb connector](https://docs.databricks.com/spark/latest/data-sources/azure/cosmosdb-connector.html) on the cluster. The easiest way to manually do that is to:
 
-1. Download the [appropriate jar](https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.3.0_2.11/1.2.2/azure-cosmosdb-spark_2.3.0_2.11-1.2.2-uber.jar) from MAVEN. **NOTE** This is the appropriate jar for spark versions `2.3.X`, and is the appropriate version for the recommended Azure Databricks run-time detailed above.
+
+1. Download the [appropriate jar](https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar) from MAVEN. **NOTE** This is the appropriate jar for spark versions `3.1.X`, and is the appropriate version for the recommended Azure Databricks run-time detailed above. See the [Databricks installation script](https://github.com/microsoft/recommenders/blob/main/tools/databricks_install.py#L45) for other Databricks runtimes.
 2. Upload and install the jar by:
    1. Log into your `Azure Databricks` workspace
    2. Select the `Clusters` button on the left.
@@ -400,7 +396,7 @@ You can then open the Jupyter notebook server at http://localhost:8888
 
 The process of making a new release and publishing it to pypi is as follows:
 
-First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [recommenders.py/__init__.py](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
+First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`recommenders.py/__init__.py`](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
@@ -409,4 +405,5 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [re
 generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
+1. Install twine: `pip install twine`
 1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`
