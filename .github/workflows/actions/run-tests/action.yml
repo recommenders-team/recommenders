@@ -47,12 +47,6 @@ runs:
       sudo apt-get install -y build-essential libpython3.6 libpython3.7
       pip install tox
   
-  - name: Set PYSPARK environment variables
-    shell: bash
-    run: |
-      export PYSPARK_DRIVER_PYTHON=$(which python)
-      export PYSPARK_PYTHON=$(which python)
-
   - name: Run ${{ inputs.test-kind }} tests ('${{ inputs.test-marker }}')
     shell: bash
     # '-e py' will use the default 'python' executable found in system path
