@@ -394,11 +394,9 @@ def test_get_normalized_scores(header):
 
 def test_match_similarity_type(header):
     # store parameters in json
-    with open('similarity_type_test.json', 'w') as f:
-        json.dump({'similarity_type': 'jaccard'}, f)
+    params_str = json.dumps({'similarity_type': 'jaccard'})
     # load parameters in json
-    with open('similarity_type_test.json') as f:
-        params = json.load(f)
+    params = json.loads(params_str)
 
     params.update(header)
 
