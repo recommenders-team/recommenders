@@ -4,6 +4,7 @@
 import codecs
 import csv
 import itertools
+import json
 import pytest
 import numpy as np
 import pandas as pd
@@ -389,3 +390,27 @@ def test_get_normalized_scores(header):
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray)
     assert np.isclose(expected, np.asarray(actual)).all()
+
+
+def test_match_similarity_type(header):
+    # store parameters in json
+    with open('similarity_type_test.json', 'w') as f:
+        json.dump({'similarity_type': 'jaccard'}, f)
+    # load parameters in json
+    with open('similarity_type_test.json') as f:
+        params = json.load(f)
+
+    params.update(header)
+
+    model = SARSingleNode(**params)
+
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2],
+            header["col_item"]: [1, 2, 3, 4, 1, 5, 6, 7],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0],
+            header["col_timestamp"]: [1, 20, 30, 400, 50, 60, 70, 800],
+        }
+    )
+
+    model.fit(train)
