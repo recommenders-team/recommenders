@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -217,13 +218,17 @@ class SARSingleNode:
 
         .. note::
 
-        Please make sure that `df` has no duplicates.
+        Please make sure that `df` has no duplicate user-item pairs.
 
         Args:
-            df (pandas.DataFrame): User item rating dataframe (without duplicates).
+            df (pandas.DataFrame): User item rating dataframe (without duplicate user-items).
             compute_user_similarity (bool): If true, compute user similarity using the self.similarity_type. Item
             similarity is always calculated. This must be true to use self.get_user_based_topk to get similar users.
         """
+        if sum(df[[self.col_user, self.col_item]].duplicated()) > 0:
+            warnings.warn(
+                'Warning: Please provide a dataframe that has no user-item pairs duplicated to ensure expected behavior'
+            )
 
         # generate continuous indices if this hasn't been done
         if self.index2item is None:
