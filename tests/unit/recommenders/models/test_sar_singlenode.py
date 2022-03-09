@@ -392,9 +392,9 @@ def test_get_normalized_scores(header):
     assert np.isclose(expected, np.asarray(actual)).all()
 
 
-def test_match_similarity_type(header):
+def test_match_similarity_type_from_json_file(header):
     # store parameters in json
-    params_str = json.dumps({'similarity_type': 'jaccard'})
+    params_str = json.dumps({'similarity_type': 'lift'})
     # load parameters in json
     params = json.loads(params_str)
 
@@ -411,4 +411,5 @@ def test_match_similarity_type(header):
         }
     )
 
+    # make sure fit still works when similarity type is loaded from a json file
     model.fit(train)
