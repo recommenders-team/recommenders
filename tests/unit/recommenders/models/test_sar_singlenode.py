@@ -419,7 +419,6 @@ def test_match_similarity_type_from_json_file(header):
     # make sure fit still works when similarity type is loaded from a json file
     model.fit(train)
 
-
 def test_get_user_and_item_based_topk(header):
     model = SARSingleNode(**header)
     train = pd.DataFrame(
