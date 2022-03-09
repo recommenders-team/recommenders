@@ -4,6 +4,7 @@
 import codecs
 import csv
 import itertools
+import json
 import pytest
 import numpy as np
 import pandas as pd
@@ -318,17 +319,22 @@ def test_get_popularity_based_topk(header):
 
     train_df = pd.DataFrame(
         {
-            header["col_user"]: [1, 1, 1, 2, 2, 2, 3, 3, 3],
-            header["col_item"]: [1, 2, 3, 1, 3, 4, 5, 6, 1],
-            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3],
+            header["col_user"]: [1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 2],
+            header["col_item"]: [1, 2, 3, 1, 3, 4, 5, 4, 1, 3, 1, 6],
+            header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3, 3, 3, 1],
         }
     )
 
     sar = SARSingleNode(**header)
-    sar.fit(train_df)
+    sar.fit(train_df, compute_user_similarity=True)
 
-    expected = pd.DataFrame(dict(MovieId=[1, 3, 4], prediction=[3, 2, 1]))
+    expected = pd.DataFrame(dict(MovieId=[1, 3, 4], prediction=[4, 3, 2]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
+    assert_frame_equal(expected, actual)
+
+    # get most popular users
+    expected = pd.DataFrame(dict(UserId=[2, 3, 1], prediction=[6, 5, 1]))
+    actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True, items=False)
     assert_frame_equal(expected, actual)
 
 
@@ -389,3 +395,65 @@ def test_get_normalized_scores(header):
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray)
     assert np.isclose(expected, np.asarray(actual)).all()
+
+
+def test_match_similarity_type_from_json_file(header):
+    # store parameters in json
+    params_str = json.dumps({'similarity_type': 'lift'})
+    # load parameters in json
+    params = json.loads(params_str)
+
+    params.update(header)
+
+    model = SARSingleNode(**params)
+
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2],
+            header["col_item"]: [1, 2, 3, 4, 1, 5, 6, 7],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0],
+            header["col_timestamp"]: [1, 20, 30, 400, 50, 60, 70, 800],
+        }
+    )
+
+    # make sure fit still works when similarity type is loaded from a json file
+    model.fit(train)
+
+
+def test_get_user_and_item_based_topk(header):
+    model = SARSingleNode(**header)
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
+            header["col_item"]: [1, 2, 1, 3, 3, 4, 5, 6, 1, 2],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0, 1.0, 1.0]
+        }
+    )
+    model.fit(train, compute_user_similarity=True)
+
+    similar_users = model.get_user_based_topk(pd.DataFrame({header['col_user']: [1]}))
+    assert similar_users[header['col_user']].iloc[0] == 4
+
+    similar_users = model.get_user_based_topk(pd.DataFrame({header['col_user']: [1, 2]}))
+    assert similar_users[header['col_user']].iloc[0] == 4
+
+    similar_items = model.get_item_based_topk(pd.DataFrame({header['col_item']: [1]}))
+    assert similar_items[header['col_item']].iloc[0] == 2
+
+    similar_items = model.get_item_based_topk(pd.DataFrame({header['col_item']: [1, 2]}))
+    assert similar_items[header['col_item']].iloc[0] == 3
+
+
+def test_user_and_item_frequencies(header):
+    model = SARSingleNode(**header)
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
+            header["col_item"]: [1, 2, 1, 3, 3, 4, 5, 6, 1, 2],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0, 1.0, 1.0]
+        }
+    )
+    model.fit(train, compute_user_similarity=True)
+
+    assert model.user_frequencies[0] == 2
+    assert model.item_frequencies[0] == 3
