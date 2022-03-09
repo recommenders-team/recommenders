@@ -270,15 +270,15 @@ class SARSingleNode:
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
-        if self.similarity_type is COOCCUR:
+        if self.similarity_type == COOCCUR:
             logger.info("Using co-occurrence based similarity")
             self.item_similarity = item_cooccurrence
-        elif self.similarity_type is JACCARD:
+        elif self.similarity_type == JACCARD:
             logger.info("Using jaccard based similarity")
             self.item_similarity = jaccard(item_cooccurrence).astype(
                 df[self.col_rating].dtype
             )
-        elif self.similarity_type is LIFT:
+        elif self.similarity_type == LIFT:
             logger.info("Using lift based similarity")
             self.item_similarity = lift(item_cooccurrence).astype(
                 df[self.col_rating].dtype
