@@ -27,6 +27,11 @@ def exponential_decay(value, max_val, half_life):
 
 def jaccard(cooccurrence):
     """Helper method to calculate the Jaccard similarity of a matrix of co-occurrences.
+    When comparing Jaccard with count co-occurrence and lift similarity, count favours 
+    predictability, meaning that the most popular items will be recommended most of 
+    the time. Lift, by contrast, favours discoverability/serendipity, meaning that an 
+    item that is less popular overall but highly favoured by a small subset of users 
+    is more likely to be recommended. Jaccard is a compromise between the two.
 
     Args:
         cooccurrence (numpy.ndarray): the symmetric matrix of co-occurrences of items.
@@ -46,7 +51,10 @@ def jaccard(cooccurrence):
 
 
 def lift(cooccurrence):
-    """Helper method to calculate the Lift of a matrix of co-occurrences.
+    """Helper method to calculate the Lift of a matrix of co-occurrences. In comparison
+    with basic co-occurrence and Jaccard similarity, lift favours discoverability and 
+    serendipity, as opposed to co-occurrence that favours the most popular items, and
+    Jaccard that is a compromise between the two. 
 
     Args:
         cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
