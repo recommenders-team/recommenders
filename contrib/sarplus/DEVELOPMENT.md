@@ -105,11 +105,11 @@ on **Spark 3.2**, which adds an extra function `path()`, so an
 additional package called [Sarplus Spark 3.2
 Plus](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12)
 (with Maven coordinate such as
-`com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.0`) should be
+`com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.4`) should be
 used if running on Spark 3.2 instead of
 [Sarplus](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12)
 (with Maven coordinate like
-`com.microsoft.sarplus:sarplus_2.12:0.6.0`).
+`com.microsoft.sarplus:sarplus_2.12:0.6.4`).
 
 In addition to `spark.sql.crossJoin.enabled true`, extra
 configurations are required when running on Spark 3.x:
