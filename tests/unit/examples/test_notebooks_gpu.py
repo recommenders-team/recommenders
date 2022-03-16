@@ -26,7 +26,7 @@ def test_fastai(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1),
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="mock100", EPOCHS=1),
     )
 
 
@@ -39,7 +39,7 @@ def test_ncf(notebooks, output_notebook, kernel_name):
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=1024
+            TOP_K=10, MOVIELENS_DATA_SIZE="mock100", EPOCHS=1, BATCH_SIZE=1024
         ),
     )
 
@@ -53,7 +53,7 @@ def test_ncf_deep_dive(notebooks, output_notebook, kernel_name):
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=2048
+            TOP_K=10, MOVIELENS_DATA_SIZE="mock100", EPOCHS=1, BATCH_SIZE=2048
         ),
     )
 
@@ -84,7 +84,7 @@ def test_wide_deep(notebooks, output_notebook, kernel_name, tmp):
     model_dir = os.path.join(tmp, "wide_deep_0")
     os.mkdir(model_dir)
     params = {
-        "MOVIELENS_DATA_SIZE": "100k",
+        "MOVIELENS_DATA_SIZE": "mock100",
         "STEPS": 1,
         "EVALUATE_WHILE_TRAINING": False,
         "MODEL_DIR": model_dir,
@@ -100,7 +100,7 @@ def test_wide_deep(notebooks, output_notebook, kernel_name, tmp):
     model_dir = os.path.join(tmp, "wide_deep_1")
     os.mkdir(model_dir)
     params = {
-        "MOVIELENS_DATA_SIZE": "100k",
+        "MOVIELENS_DATA_SIZE": "mock100",
         "STEPS": 1,
         "ITEM_FEAT_COL": None,
         "EVALUATE_WHILE_TRAINING": True,

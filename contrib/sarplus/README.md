@@ -2,8 +2,12 @@
 
 Pronounced surplus as it's simply better if not best!
 
-[![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/contrib%20sarplus?branchName=master)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=107&branchName=master)
-[![PyPI version](https://badge.fury.io/py/pysarplus.svg)](https://badge.fury.io/py/pysarplus)
+[![sarplus test and package](https://github.com/microsoft/recommenders/actions/workflows/sarplus.yml/badge.svg)](https://github.com/microsoft/recommenders/actions/workflows/sarplus.yml)
+[![PyPI version](https://img.shields.io/pypi/v/pysarplus.svg)](https://pypi.org/project/pysarplus/)
+[![Python version](https://img.shields.io/pypi/pyversions/pysarplus)](https://pypi.org/project/pysarplus/)
+[![Maven Central version](https://img.shields.io/maven-central/v/com.microsoft.sarplus/sarplus_2.12)](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12)
+[![Maven Central version (Spark 3.2+)](https://img.shields.io/maven-central/v/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12?label=maven-central%20%28spark%203.2%2B%29)](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12)
+
 
 Simple Algorithm for Recommendation (SAR) is a neighborhood based
 algorithm for personalized recommendations based on user transaction
@@ -20,20 +24,20 @@ Features:
 * Scalable PySpark based [implementation](python/pysarplus/SARPlus.py)
 * Fast C++ based [predictions](python/src/pysarplus.cpp)
 * Reduced memory consumption: similarity matrix cached in-memory once
-  per worker, shared accross python executors
+  per worker, shared across python executors
 
 ## Benchmarks
 
-| # Users | # Items | # Ratings | Runtime | Environment | Dataset | 
-|---------|---------|-----------|---------|-------------|---------|
-| 2.5mio  | 35k     | 100mio    | 1.3h    | Databricks, 8 workers, [Azure Standard DS3 v2](https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/) (4 core machines) | |
+| # Users | # Items | # Ratings | Runtime | Environment                                                                                                                                 | Dataset |
+|---------|---------|-----------|---------|---------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| 2.5mio  | 35k     | 100mio    | 1.3h    | Databricks, 8 workers, [Azure Standard DS3 v2](https://azure.microsoft.com/en-us/pricing/details/virtual-machines/linux/) (4 core machines) |         |
 
 ## Top-K Recommendation Optimization
 
 There are a couple of key optimizations:
 
 * map item ids (e.g. strings) to a continuous set of indexes to
-  optmize storage and simplify access
+  optimize storage and simplify access
 * convert similarity matrix to exactly the representation the C++
   component needs, thus enabling simple shared, memory mapping of the
   cache file and avoid parsing. This requires a customer formatter,
@@ -54,34 +58,96 @@ There are a couple of key optimizations:
 
 ## Usage
 
+Two packages should be installed:
+* [pysarplus@PyPI](https://pypi.org/project/pysarplus/)
+* [sarplus@MavenCentralRepository](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12) (or [sarplus-spark-3-2-plus@MavenCentralRepository](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12) if run on Spark 3.2+)
+
+
 ### Python
 
 ```python
 from pysarplus import SARPlus
 
 # spark dataframe with user/item/rating/optional timestamp tuples
-train_df = spark.createDataFrame([
-    (1, 1, 1), 
-    (1, 2, 1), 
-    (2, 1, 1), 
-    (3, 1, 1), 
-    (3, 3, 1)], 
-    ['user_id', 'item_id', 'rating'])
+train_df = spark.createDataFrame(
+    [(1, 1, 1), (1, 2, 1), (2, 1, 1), (3, 1, 1), (3, 3, 1)],
+    ["user_id", "item_id", "rating"]
+)
 
 # spark dataframe with user/item tuples
-test_df = spark.createDataFrame([
-    (1, 1, 1), 
-    (3, 3, 1)], 
-    ['user_id', 'item_id', 'rating'])
+test_df = spark.createDataFrame(
+    [(1, 1, 1), (3, 3, 1)],
+    ["user_id", "item_id", "rating"],
+)
 
-model = SARPlus(spark, col_user='user_id', col_item='item_id', col_rating='rating', col_timestamp='timestamp')
-model.fit(train_df, similarity_type='jaccard')
+# To use C++ based fast prediction, a local cache directory needs to be
+# specified.
+# * On local machine, `cache_path` can be any valid directories. For example,
+#
+#   ```python
+#   model = SARPlus(
+#       spark,
+#       col_user="user_id",
+#       col_item="item_id",
+#       col_rating="rating",
+#       col_timestamp="timestamp",
+#       similarity_type="jaccard",
+#       cache_path="cache",
+#   )
+#   ```
+#
+# * On Databricks, `cache_path` needs to be mounted on DBFS.  For example,
+#
+#   ```python
+#   model = SARPlus(
+#       spark,
+#       col_user="user_id",
+#       col_item="item_id",
+#       col_rating="rating",
+#       col_timestamp="timestamp",
+#       similarity_type="jaccard",
+#       cache_path="dbfs:/mnt/sarpluscache/cache",
+#   )
+#   ```
+#
+# * On Azure Synapse, `cache_path` needs to be mounted on Spark pool's driver
+#   node.  For example,
+#
+#   ```python
+#   model = SARPlus(
+#       spark,
+#       col_user="user_id",
+#       col_item="item_id",
+#       col_rating="rating",
+#       col_timestamp="timestamp",
+#       similarity_type="jaccard",
+#       cache_path=f"synfs:/{job_id}/mnt/sarpluscache/cache",
+#   )
+#   ```
+#
+#   where `job_id` can be obtained by
+#
+#   ```python
+#   from notebookutils import mssparkutils
+#   job_id = mssparkutils.env.getJobId()
+#   ```
+model = SARPlus(
+    spark,
+    col_user="user_id",
+    col_item="item_id",
+    col_rating="rating",
+    col_timestamp="timestamp",
+    similarity_type="jaccard",
+)
+model.fit(train_df)
 
-
-model.recommend_k_items(test_df, 'sarplus_cache', top_k=3).show()
-
-# For databricks
-# model.recommend_k_items(test_df, 'dbfs:/mnt/sarpluscache', top_k=3).show()
+# To use C++ based fast prediction, the `use_cache` parameter of
+# `SARPlus.recommend_k_items()` also needs to be set to `True`.
+#
+# ```
+# model.recommend_k_items(test_df, top_k=3, use_cache=True).show()
+# ```
+model.recommend_k_items(test_df, top_k=3, remove_seen=False).show()
 ```
 
 ### Jupyter Notebook
@@ -91,7 +157,8 @@ Insert this cell prior to the code above.
 ```python
 import os
 
-SUBMIT_ARGS = "--packages com.microsoft.sarplus:sarplus:0.5.0 pyspark-shell"
+SARPLUS_MVN_COORDINATE = "com.microsoft.sarplus:sarplus_2.12:0.6.4"
+SUBMIT_ARGS = f"--packages {SARPLUS_MVN_COORDINATE} pyspark-shell"
 os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
 from pyspark.sql import SparkSession
@@ -102,74 +169,159 @@ spark = (
     .config("memory", "1G")
     .config("spark.sql.shuffle.partitions", "1")
     .config("spark.sql.crossJoin.enabled", True)
+    .config("spark.sql.sources.default", "parquet")
+    .config("spark.sql.legacy.createHiveTableByDefault", True)
     .config("spark.ui.enabled", False)
     .getOrCreate()
 )
 ```
 
+
 ### PySpark Shell
 
 ```bash
+SARPLUS_MVN_COORDINATE="com.microsoft.sarplus:sarplus_2.12:0.6.4"
+
+# Install pysarplus
 pip install pysarplus
-pyspark --packages com.microsoft.sarplus:sarplus:0.5.0 --conf spark.sql.crossJoin.enabled=true
+
+# Specify sarplus maven coordinate and configure Spark environment
+pyspark --packages "${SARPLUS_MVN_COORDINATE}" \
+        --conf spark.sql.crossJoin.enabled=true \
+        --conf spark.sql.sources.default=parquet \
+        --conf spark.sql.legacy.createHiveTableByDefault=true
 ```
+
 
 ### Databricks
 
-One must set the crossJoin property to enable calculation of the
-similarity matrix (Clusters / &lt; Cluster &gt; / Configuration /
-Spark Config)
+#### Install libraries
 
-```
-spark.sql.crossJoin.enabled true
-spark.sql.sources.default parquet
-spark.sql.legacy.createHiveTableByDefault true
-```
+1. Navigate to your Databricks Workspace
+1. Create Library
+1. Under `Library Source` select `Maven`
+1. Enter into `Coordinates`:
+   * `com.microsoft.sarplus:sarplus_2.12:0.6.4`
+   * or `com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.4` (if
+     you're on Spark 3.2+)
+1. Hit `Create`
+1. Attach to your cluster
+1. Create 2nd library
+1. Under `Library Source` select `PyPI`
+1. Enter `pysarplus==0.6.4`
+1. Hit `Create`
 
-1. Navigate to your workspace 
-2. Create library
-3. Under 'Source' select 'Maven Coordinate'
-4. Enter com.microsoft:sarplus:0.5.0' or
-   microsoft:sarplus:0.5.0:spark32' if you're on Spark 3.2+
-5. Hit 'Create Library'
-6. Attach to your cluster
-7. Create 2nd library
-8. Under 'Source' select 'Upload Python Egg or PyPI'
-9. Enter 'pysarplus'
-10. Hit 'Create Library'
-
-This will install C++, Python and Scala code on your cluster.
-
-You'll also have to mount shared storage
-
-1. Create [Azure Storage Blob](https://ms.portal.azure.com/#create/Microsoft.StorageAccount-ARM)
-2. Create storage account (e.g. <yourcontainer>)
-3. Create container (e.g. sarpluscache)
-
-1. Navigate to User / User Settings
-2. Generate new token: enter 'sarplus'
-3. Use databricks shell (installation here)
-4. databricks configure --token
-    1. Host: e.g. https://westus.azuredatabricks.net
-5. databricks secrets create-scope --scope all --initial-manage-principal users
-6. databricks secrets put --scope all --key sarpluscache
-    1. enter Azure Storage Blob key of Azure Storage created before
-7. Run mount code
+This will install C++, Python and Scala code on your cluster.  See
+[Libraries](https://docs.microsoft.com/en-us/azure/databricks/libraries/)
+for details on how to install libraries on Azure Databricks.
 
 
-```pyspark
+#### Configurations
+
+1. Navigate to your Databricks Compute
+1. Navigate to your cluster's `Configuration` -> `Advanced options` ->
+   `Spark`
+1. Put the following configurations into `Spark config`
+
+   ```
+   spark.sql.crossJoin.enabled true
+   spark.sql.sources.default parquet
+   spark.sql.legacy.createHiveTableByDefault true
+   ```
+
+These will set the crossJoin property to enable calculation of the
+similarity matrix, and set default sources to parquet.
+
+
+#### Prepare local file system for cache
+
+`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
+as its second parameter for storing intermediate files during its
+calculation, so you'll also have to **mount** shared storage.
+
+For example, you can [create a storage
+account](https://ms.portal.azure.com/#create/Microsoft.StorageAccount)
+(e.g. `sarplusstorage`) and a container (e.g. `sarpluscache`) in the
+storage account, copy the access key of the storage account, and then
+run the following code to mount the storage.
+
+```python
 dbutils.fs.mount(
-  source = "wasbs://sarpluscache@<accountname>.blob.core.windows.net",
-  mount_point = "/mnt/sarpluscache",
-  extra_configs = {"fs.azure.account.key.<accountname>.blob.core.windows.net":dbutils.secrets.get(scope = "all", key = "sarpluscache")})
+  source = "wasbs://<container>@<storage-account>.blob.core.windows.net",
+  mount_point = "/mnt/<container>",
+  extra_configs = {
+    "fs.azure.account.key.<storage-account>.blob.core.windows.net":
+    "<access-key>"
+  }
+)
 ```
 
-Disable annoying logging
+where `<storage-account>`, `<container>` and `<access-key>` should be
+replaced with the actual values, such as `sarplusstorage`,
+`sarpluscache` and the access key of the storage account.  Then pass
+`"dbfs:/mnt/<container>/cache"` to
+`pysarplus.SARPlus.recommend_k_items()` as the value for its 2nd
+parameter.
 
-```pyspark
+
+To disable logging messages:
+
+```python
 import logging
 logging.getLogger("py4j").setLevel(logging.ERROR)
 ```
+
+
+### Azure Synapse
+
+#### Install libraries
+
+1. Download pysarplus TAR file from
+   [pysarplus@PyPI](https://pypi.org/project/pysarplus/)
+1. Download sarplus JAR file from 
+1. Navigate to your Azure Synapse workspace -> `Manage` -> `Workspace
+   packages`
+1. Upload pysarplus TAR file and sarplus JAR file as workspace
+   packages
+1. Navigate to your Azure Synapse workspace -> `Manage` -> `Apache
+   Spark pools`
+1. Find the Spark pool to install the packages -> `...` -> `Packages`
+   -> `Workspace packages` -> `+ Select from workspace packages` and
+   select pysarplus TAR file and sarplus JAR file uploaded in the
+   previous step
+1. Apply
+
+See [Manage libraries for Apache Spark in Azure Synapse
+Analytics](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-azure-portal-add-libraries)
+for details on how to manage libraries in Azure Synapse.
+
+
+#### Prepare local file system for cache
+
+`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
+as its second parameter for storing intermediate files during its
+calculation, so you'll also have to **mount** shared storage.
+
+For example, you can run the following code to mount the file system
+(container) of the default/primary storage account.
+
+```python
+from notebookutils import mssparkutils
+mssparkutils.fs.mount(
+    "abfss://<container>@<storage-account>.dfs.core.windows.net",
+    "/mnt/<container>",
+    { "linkedService": "<storage-linked-service>"}
+)
+job_id = mssparkutils.env.getJobId()
+```
+
+Then pass `f"synfs:/{job_id}/mnt/<container>/cache"` to
+`pysarplus.SARPlus.recommend_k_items()` as the value for its 2nd
+parameter.  **NOTE**: `job_id` should be prepended to the local path.
+
+See [How to use file mount/unmount API in Synapse](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-file-mount-api)
+for more details.
+
 
 ## Development
 

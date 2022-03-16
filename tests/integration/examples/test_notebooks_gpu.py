@@ -308,10 +308,11 @@ def test_slirec_quickstart_integration(
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, MIND_type, expected_values",
+    "epochs, batch_size, seed, MIND_type, expected_values",
     [
         (
-            8,
+            5,
+            64,
             42,
             "demo",
             {
@@ -326,11 +327,11 @@ def test_slirec_quickstart_integration(
     ],
 )
 def test_nrms_quickstart_integration(
-    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, epochs, batch_size, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["nrms_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
+    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -356,10 +357,11 @@ def test_nrms_quickstart_integration(
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, MIND_type, expected_values",
+    "epochs, batch_size, seed, MIND_type, expected_values",
     [
         (
-            6,
+            5,
+            64,
             42,
             "demo",
             {
@@ -374,11 +376,11 @@ def test_nrms_quickstart_integration(
     ],
 )
 def test_naml_quickstart_integration(
-    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, batch_size, epochs, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["naml_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
+    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -404,11 +406,12 @@ def test_naml_quickstart_integration(
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, MIND_type, expected_values",
+    "epochs, batch_size, seed, MIND_type, expected_values",
     [
         (
             5,
-            40,
+            64,
+            42,
             "demo",
             {
                 "res_syn": {
@@ -422,11 +425,11 @@ def test_naml_quickstart_integration(
     ],
 )
 def test_lstur_quickstart_integration(
-    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, epochs, batch_size, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["lstur_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
+    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -452,10 +455,11 @@ def test_lstur_quickstart_integration(
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "epochs, seed, MIND_type, expected_values",
+    "epochs, batch_size, seed, MIND_type, expected_values",
     [
         (
-            6,
+            5,
+            64,
             42,
             "demo",
             {
@@ -470,11 +474,11 @@ def test_lstur_quickstart_integration(
     ],
 )
 def test_npa_quickstart_integration(
-    notebooks, output_notebook, kernel_name, epochs, seed, MIND_type, expected_values
+    notebooks, output_notebook, kernel_name, epochs, batch_size, seed, MIND_type, expected_values
 ):
     notebook_path = notebooks["npa_quickstart"]
 
-    params = {"epochs": epochs, "seed": seed, "MIND_type": MIND_type}
+    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -592,6 +596,53 @@ def test_cornac_bivae_integration(
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size),
+    )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+
+    for key, value in expected_values.items():
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "data_dir, num_epochs, batch_size, expected_values, seed",
+    [
+        (
+            os.path.join("tests", "recsys_data", "RecSys", "SASRec-tf2", "data"),
+            1,
+            128,
+            {"ndcg@10": 0.2626, "Hit@10": 0.4244},
+            42,
+        )
+    ],
+)
+def test_sasrec_quickstart_integration(
+    notebooks,
+    output_notebook,
+    kernel_name,
+    data_dir,
+    num_epochs,
+    batch_size,
+    expected_values,
+    seed,
+):
+    notebook_path = notebooks["sasrec_quickstart"]
+    params = {
+        "data_dir": data_dir,
+        "num_epochs": num_epochs,
+        "batch_size": batch_size,
+        "seed": seed,
+    }
+
+    print("Executing notebook ... ")
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=params,
     )
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"

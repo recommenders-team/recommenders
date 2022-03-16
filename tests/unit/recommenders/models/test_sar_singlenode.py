@@ -4,6 +4,7 @@
 import codecs
 import csv
 import itertools
+import json
 import pytest
 import numpy as np
 import pandas as pd
@@ -156,6 +157,15 @@ def test_sar_item_similarity(
         time_decay_coefficient=30,
         threshold=threshold,
         **header
+    )
+
+    # Remove duplicates
+    demo_usage_data = demo_usage_data.sort_values(
+        header["col_timestamp"], ascending=False
+    )
+    demo_usage_data = demo_usage_data.drop_duplicates(
+        [header["col_user"], header["col_item"]],
+        keep="first"
     )
 
     model.fit(demo_usage_data)
@@ -380,3 +390,26 @@ def test_get_normalized_scores(header):
     assert actual.shape == (2, 7)
     assert isinstance(actual, np.ndarray)
     assert np.isclose(expected, np.asarray(actual)).all()
+
+
+def test_match_similarity_type_from_json_file(header):
+    # store parameters in json
+    params_str = json.dumps({'similarity_type': 'lift'})
+    # load parameters in json
+    params = json.loads(params_str)
+
+    params.update(header)
+
+    model = SARSingleNode(**params)
+
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 1, 1, 2, 2, 2, 2],
+            header["col_item"]: [1, 2, 3, 4, 1, 5, 6, 7],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0],
+            header["col_timestamp"]: [1, 20, 30, 400, 50, 60, 70, 800],
+        }
+    )
+
+    # make sure fit still works when similarity type is loaded from a json file
+    model.fit(train)

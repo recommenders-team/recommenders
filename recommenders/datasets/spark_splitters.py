@@ -12,7 +12,6 @@ from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
-    DEFAULT_RATING_COL,
 )
 from recommenders.datasets.split_utils import (
     process_split_ratio,
@@ -112,7 +111,13 @@ def _do_stratification_spark(
 
     split_by = col_user if filter_by == "user" else col_item
     partition_by = split_by if is_partitioned else []
-    order_by = F.rand(seed=seed) if is_random else F.col(col_timestamp)
+
+    if is_random:
+        col_random = "_random"
+        data = data.withColumn(col_random, F.rand(seed=seed))
+        order_by = F.col(col_random)
+    else:
+        order_by = F.col(col_timestamp)
 
     window_count = Window.partitionBy(partition_by)
     window_spec = Window.partitionBy(partition_by).orderBy(order_by)
@@ -122,6 +127,9 @@ def _do_stratification_spark(
         .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
         .drop("_count")
     )
+
+    if is_random:
+        data = data.drop(col_random)
 
     multi_split, ratio = process_split_ratio(ratio)
     ratio = ratio if multi_split else [ratio, 1 - ratio]
@@ -161,7 +169,6 @@ def spark_chrono_split(
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
-        seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
         filter_by (str): either "user" or "item", depending on which of the two is to filter
             with min_rating.
@@ -193,7 +200,6 @@ def spark_stratified_split(
     filter_by="user",
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
     seed=42,
 ):
     """Spark stratified splitter.
@@ -216,7 +222,6 @@ def spark_stratified_split(
             with min_rating.
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
-        col_rating (str): column name of ratings.
 
     Returns:
         list: Splits of the input data as pyspark.sql.DataFrame.
