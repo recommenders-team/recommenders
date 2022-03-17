@@ -117,6 +117,8 @@ def test_chrono_splitter(spark_dataset):
 
 @pytest.mark.spark
 def test_stratified_splitter(spark_dataset):
+    spark_dataset = spark_dataset.dropDuplicates()
+
     splits = spark_stratified_split(
         spark_dataset, ratio=RATIOS[0], filter_by="user", min_rating=10
     )
