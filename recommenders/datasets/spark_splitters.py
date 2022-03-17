@@ -6,6 +6,7 @@ import numpy as np
 try:
     from pyspark.sql import functions as F, Window
     from pyspark.sql.types import StructType, StructField, LongType
+    from pyspark.storagelevel import StorageLevel
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -110,23 +111,15 @@ def _do_stratification_spark(
             col_item=col_item,
         )
 
-    def _add_index_column(df, index_name):
-        # Add a index column to the data frame
-        return df.rdd.zipWithIndex().map(lambda row: row[0] + (row[1],)).toDF(
-            schema=StructType(df.schema.fields + [StructField(index_name, LongType(), False), ])
-        )
-
-    # Generate random numbers independent of the data
-    col_random = "__random_number"
-    col_index = "__col_index"
-    rand_numbers = spark.range(data.count()).orderBy(F.rand(seed=seed)).withColumnRenamed("id", col_random)
-    rand_numbers = _add_index_column(rand_numbers, col_index)
-    data = _add_index_column(data, col_index)
-    data = data.join(rand_numbers, on=col_index, how="inner").drop(col_index)
-
     split_by = col_user if filter_by == "user" else col_item
     partition_by = split_by if is_partitioned else []
-    order_by = F.col(col_random) if is_random else F.col(col_timestamp)
+
+    col_random = "_random"
+    if is_random:
+        data = data.withColumn(col_random, F.rand(seed=seed))
+        order_by = F.col(col_random)
+    else:
+        order_by = F.col(col_timestamp)
 
     window_count = Window.partitionBy(partition_by)
     window_spec = Window.partitionBy(partition_by).orderBy(order_by)
@@ -134,8 +127,12 @@ def _do_stratification_spark(
     data = (
         data.withColumn("_count", F.count(split_by).over(window_count))
         .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
-        .drop("_count", col_random)
+        .drop("_count")
     )
+    data.persist(StorageLevel.MEMORY_AND_DISK_2).count()
+
+    if is_random:
+        data = data.drop(col_random)
 
     multi_split, ratio = process_split_ratio(ratio)
     ratio = ratio if multi_split else [ratio, 1 - ratio]
