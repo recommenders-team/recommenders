@@ -128,6 +128,7 @@ def _do_stratification_spark(
         .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
         .drop("_count", col_random)
     )
+    # Persist to avoid duplicate rows in splits caused by lazy evaluation
     data.persist(StorageLevel.MEMORY_AND_DISK_2).count()
 
     multi_split, ratio = process_split_ratio(ratio)
