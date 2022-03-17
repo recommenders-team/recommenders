@@ -124,6 +124,13 @@ def test_stratified_splitter(spark_dataset):
     assert splits[0].count() / NUM_ROWS == pytest.approx(RATIOS[0], TOL)
     assert splits[1].count() / NUM_ROWS == pytest.approx(1 - RATIOS[0], TOL)
 
+    # Test if there is intersection
+    assert splits[0].intersect(splits[1]).count() == 0
+    splits = spark_stratified_split(
+        spark_dataset.repartition(4), ratio=RATIOS[0], filter_by="user", min_rating=10
+    )
+    assert splits[0].intersect(splits[1]).count() == 0
+
     # Test if both contains the same user list. This is because stratified split is stratified.
     users_train = (
         splits[0].select(DEFAULT_USER_COL).distinct().rdd.map(lambda r: r[0]).collect()
@@ -139,6 +146,15 @@ def test_stratified_splitter(spark_dataset):
     assert splits[0].count() / NUM_ROWS == pytest.approx(RATIOS[0], TOL)
     assert splits[1].count() / NUM_ROWS == pytest.approx(RATIOS[1], TOL)
     assert splits[2].count() / NUM_ROWS == pytest.approx(RATIOS[2], TOL)
+
+    # Test if there is intersection
+    assert splits[0].intersect(splits[1]).count() == 0
+    assert splits[0].intersect(splits[2]).count() == 0
+    assert splits[1].intersect(splits[2]).count() == 0
+    splits = spark_stratified_split(spark_dataset.repartition(9), ratio=RATIOS)
+    assert splits[0].intersect(splits[1]).count() == 0
+    assert splits[0].intersect(splits[2]).count() == 0
+    assert splits[1].intersect(splits[2]).count() == 0
 
 
 @pytest.mark.spark
