@@ -5,7 +5,6 @@ import numpy as np
 
 try:
     from pyspark.sql import functions as F, Window
-    from pyspark.sql.types import StructType, StructField, LongType
     from pyspark.storagelevel import StorageLevel
 except ImportError:
     pass  # skip this import if we are in pure python environment
@@ -127,12 +126,9 @@ def _do_stratification_spark(
     data = (
         data.withColumn("_count", F.count(split_by).over(window_count))
         .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
-        .drop("_count")
+        .drop("_count", col_random)
     )
     data.persist(StorageLevel.MEMORY_AND_DISK_2).count()
-
-    if is_random:
-        data = data.drop(col_random)
 
     multi_split, ratio = process_split_ratio(ratio)
     ratio = ratio if multi_split else [ratio, 1 - ratio]
