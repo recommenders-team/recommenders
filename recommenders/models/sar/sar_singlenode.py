@@ -157,7 +157,7 @@ class SARSingleNode:
         # group time decayed ratings by user-item and take the sum as the user-item affinity
         return df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
-    def compute_cooccurrence_matrix(self, df, items=True):
+    def compute_cooccurrence_matrix(self, df):
         """Co-occurrence matrix.
 
         The co-occurrence matrix is defined as :math:`C = U^T * U`
@@ -166,32 +166,21 @@ class SARSingleNode:
 
         Args:
             df (pandas.DataFrame): DataFrame of users and items
-            items (bool): if false, return user cooccurence instead
 
         Returns:
             numpy.ndarray: Co-occurrence matrix
         """
-        # remove duplicates from user dataframe before calculating cooccurrence
-        # this ensures that cooccurrence is accurate
-        df = df.copy().drop_duplicates(subset=[self.col_user_id, self.col_item_id])
-        if items:
-            shape = (self.n_users, self.n_items)
-            fields = (df[self.col_user_id], df[self.col_item_id])
-        else:
-            shape = (self.n_items, self.n_users)
-            fields = (df[self.col_item_id], df[self.col_user_id])
-
-        hits = sparse.coo_matrix(
-            (np.repeat(1, df.shape[0]), fields),
-            shape=shape,
+        user_item_hits = sparse.coo_matrix(
+            (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])),
+            shape=(self.n_users, self.n_items),
         ).tocsr()
-        cooccurrence = hits.transpose().dot(hits)
 
-        cooccurrence = cooccurrence.multiply(
-            cooccurrence >= self.threshold
+        item_cooccurrence = user_item_hits.transpose().dot(user_item_hits)
+        item_cooccurrence = item_cooccurrence.multiply(
+            item_cooccurrence >= self.threshold
         )
 
-        return cooccurrence.astype(df[self.col_rating].dtype)
+        return item_cooccurrence.astype(df[self.col_rating].dtype)
 
     def set_index(self, df):
         """Generate continuous indices for users and items to reduce memory usage.
@@ -212,7 +201,7 @@ class SARSingleNode:
         self.n_users = len(self.user2index)
         self.n_items = len(self.index2item)
 
-    def fit(self, df, compute_user_similarity=False):
+    def fit(self, df):
         """Main fit method for SAR.
 
         .. note::
@@ -221,8 +210,6 @@ class SARSingleNode:
 
         Args:
             df (pandas.DataFrame): User item rating dataframe.
-            compute_user_similarity (bool): If true, compute user similarity using the self.similarity_type. Item
-            similarity is always calculated. This must be true to use self.get_user_based_topk to get similar users.
         """
 
         # generate continuous indices if this hasn't been done
