@@ -319,8 +319,8 @@ def test_get_popularity_based_topk(header):
 
     train_df = pd.DataFrame(
         {
-            header["col_user"]: [1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 2],
-            header["col_item"]: [1, 2, 3, 1, 3, 4, 5, 4, 1, 3, 1, 6],
+            header["col_user"]: [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+            header["col_item"]: [1, 4, 2, 1, 5, 4, 1, 4, 6, 3, 2, 4],
             header["col_rating"]: [1, 2, 3, 1, 2, 3, 1, 2, 3, 3, 3, 1],
         }
     )
@@ -328,12 +328,12 @@ def test_get_popularity_based_topk(header):
     sar = SARSingleNode(**header)
     sar.fit(train_df, compute_user_similarity=True)
 
-    expected = pd.DataFrame(dict(MovieId=[1, 3, 4], prediction=[4, 3, 2]))
+    expected = pd.DataFrame(dict(MovieId=[4, 1, 2], prediction=[4, 3, 2]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
     assert_frame_equal(expected, actual)
 
     # get most popular users
-    expected = pd.DataFrame(dict(UserId=[2, 3, 1], prediction=[6, 5, 1]))
+    expected = pd.DataFrame(dict(UserId=[3, 2, 1], prediction=[5, 4, 2]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True, items=False)
     assert_frame_equal(expected, actual)
 
@@ -419,7 +419,8 @@ def test_match_similarity_type_from_json_file(header):
     # make sure fit still works when similarity type is loaded from a json file
     model.fit(train)
 
-def test_get_user_and_item_based_topk(header):
+
+def test_get_user_based_topk(header):
     model = SARSingleNode(**header)
     train = pd.DataFrame(
         {
@@ -435,6 +436,18 @@ def test_get_user_and_item_based_topk(header):
 
     similar_users = model.get_user_based_topk(pd.DataFrame({header['col_user']: [1, 2]}))
     assert similar_users[header['col_user']].iloc[0] == 4
+
+
+def test_get_item_based_topk(header):
+    model = SARSingleNode(**header)
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
+            header["col_item"]: [1, 2, 1, 3, 3, 4, 5, 6, 1, 2],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0, 1.0, 1.0]
+        }
+    )
+    model.fit(train)
 
     similar_items = model.get_item_based_topk(pd.DataFrame({header['col_item']: [1]}))
     assert similar_items[header['col_item']].iloc[0] == 2
