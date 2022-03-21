@@ -1,8 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
-import warnings
-
 import numpy as np
 import pandas as pd
 import logging
@@ -83,7 +80,6 @@ class SARSingleNode:
         self.user_affinity = None
         self.item_similarity = None
         self.item_frequencies = None
-        self.user_similarity = None
         self.user_frequencies = None
 
         # threshold - items below this number get set to zero in co-occurrence counts
@@ -175,6 +171,9 @@ class SARSingleNode:
         Returns:
             numpy.ndarray: Co-occurrence matrix
         """
+        # remove duplicates from user dataframe before calculating cooccurrence
+        # this ensures that cooccurrence is accurate
+        df = df.copy().drop_duplicates(subset=[self.col_user_id, self.col_item_id])
         if items:
             shape = (self.n_users, self.n_items)
             fields = (df[self.col_user_id], df[self.col_item_id])
@@ -221,14 +220,10 @@ class SARSingleNode:
         Please make sure that `df` has no duplicate user-item pairs.
 
         Args:
-            df (pandas.DataFrame): User item rating dataframe (without duplicate user-items).
+            df (pandas.DataFrame): User item rating dataframe.
             compute_user_similarity (bool): If true, compute user similarity using the self.similarity_type. Item
             similarity is always calculated. This must be true to use self.get_user_based_topk to get similar users.
         """
-        if sum(df[[self.col_user, self.col_item]].duplicated()) > 0:
-            warnings.warn(
-                'Warning: Please provide a dataframe that has no user-item pairs duplicated to ensure expected behavior'
-            )
 
         # generate continuous indices if this hasn't been done
         if self.index2item is None:
@@ -279,8 +274,6 @@ class SARSingleNode:
         # calculate item co-occurrence
         logger.info("Calculating item co-occurrence")
         item_cooccurrence = self.compute_cooccurrence_matrix(df=temp_df)
-        if compute_user_similarity:
-            user_cooccurrence = self.compute_cooccurrence_matrix(df=temp_df, items=False)
 
         # free up some space
         del temp_df
@@ -308,21 +301,6 @@ class SARSingleNode:
 
         # free up some space
         del item_cooccurrence
-
-        if compute_user_similarity:
-            if self.similarity_type == COOCCUR:
-                logger.info("Using co-occurrence based similarity")
-                self.user_similarity = user_cooccurrence
-            elif self.similarity_type == JACCARD:
-                logger.info("Using jaccard based similarity")
-                self.user_similarity = jaccard(user_cooccurrence).astype(
-                    df[self.col_rating].dtype
-                )
-            elif self.similarity_type == LIFT:
-                logger.info("Using lift based similarity")
-                self.user_similarity = lift(user_cooccurrence).astype(
-                    df[self.col_rating].dtype
-                )
 
         logger.info("Done training")
 
@@ -490,73 +468,28 @@ class SARSingleNode:
         # drop invalid items
         return df.replace(-np.inf, np.nan).dropna()
 
-    def get_user_based_topk(self, users, top_k=10, sort_top_k=True):
-        """Get top K similar users to provided seed users based on similarity metric defined.
-        This method will take a set of users and use them to recommend the most similar users to that set
-        based on the similarity matrix fit during training.
+    def get_topk_most_similar_users(self, user, top_k, sort_top_k=True):
+        """Based on user affinity towards items, calculate the most similar users to the given user.
 
         Args:
-            users (pandas.DataFrame): DataFrame with user, item (optional), and rating (optional) columns
-            top_k (int): number of top users to recommend
+            user (int): user to retrieve most similar users for
+            top_k (int): number of top items to recommend
             sort_top_k (bool): flag to sort top k results
 
         Returns:
-            pandas.DataFrame: similar users to the users provided in users
+            pandas.DataFrame: top k most similar users and their scores
         """
+        user_idx = self.user2index[user]
+        similarities = self.user_affinity[user_idx].dot(self.user_affinity.T).toarray()
+        similarities[0, user_idx] = -np.inf
 
-        if self.user_similarity is None:
-            raise ValueError(
-                "fit() must be called with compute_user_similarity=True before using this method"
-            )
-
-        # convert item ids to indices
-        user_ids = np.asarray(
-            list(
-                map(
-                    lambda user: self.user2index.get(user, np.NaN),
-                    users[self.col_user].values,
-                )
-            )
-        )
-
-        # if no ratings were provided assume they are all 1
-        if self.col_rating in users.columns:
-            ratings = users[self.col_rating]
-        else:
-            ratings = pd.Series(np.ones_like(user_ids))
-
-        # create local map of item ids
-        if self.col_item in users.columns:
-            test_items = users[self.col_item]
-            item2index = {x[1]: x[0] for x in enumerate(users[self.col_item].unique())}
-            item_ids = test_items.map(item2index)
-        else:
-            # if no item column exists assume all entries are for a single item
-            test_items = pd.Series(np.zeros_like(user_ids))
-            item_ids = test_items
-        n_items = item_ids.drop_duplicates().shape[0]
-
-        # generate pseudo user affinity using seed items
-        pseudo_affinity = sparse.coo_matrix(
-            (ratings, (item_ids, user_ids)), shape=(n_items, self.n_users)
-        ).tocsr()
-
-        # calculate raw scores with a matrix multiplication
-        test_scores = pseudo_affinity.dot(self.user_similarity)
-
-        # remove items in the seed set so recommended items are novel
-        test_scores[item_ids, user_ids] = -np.inf
-
-        top_users, top_scores = get_top_k_scored_items(
-            scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
+        top_items, top_scores = get_top_k_scored_items(
+            scores=similarities, top_k=top_k, sort_top_k=sort_top_k
         )
 
         df = pd.DataFrame(
             {
-                self.col_user: [self.index2user[user] for user in top_users.flatten()],
-                self.col_item: np.repeat(
-                    test_items.drop_duplicates().values, top_users.shape[1]
-                ),
+                self.col_user: [self.index2user[user] for user in top_items.flatten()],
                 self.col_prediction: top_scores.flatten(),
             }
         )

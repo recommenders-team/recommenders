@@ -326,7 +326,7 @@ def test_get_popularity_based_topk(header):
     )
 
     sar = SARSingleNode(**header)
-    sar.fit(train_df, compute_user_similarity=True)
+    sar.fit(train_df)
 
     expected = pd.DataFrame(dict(MovieId=[4, 1, 2], prediction=[4, 3, 2]))
     actual = sar.get_popularity_based_topk(top_k=3, sort_top_k=True)
@@ -420,40 +420,23 @@ def test_match_similarity_type_from_json_file(header):
     model.fit(train)
 
 
-def test_get_user_based_topk(header):
+def test_get_topk_most_similar_users(header):
     model = SARSingleNode(**header)
+    # 1, 2, and 4 used the same items, but 1 and 2 have the same ratings also
     train = pd.DataFrame(
         {
             header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
-            header["col_item"]: [1, 2, 1, 3, 3, 4, 5, 6, 1, 2],
-            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0, 1.0, 1.0]
-        }
-    )
-    model.fit(train, compute_user_similarity=True)
-
-    similar_users = model.get_user_based_topk(pd.DataFrame({header['col_user']: [1]}))
-    assert similar_users[header['col_user']].iloc[0] == 4
-
-    similar_users = model.get_user_based_topk(pd.DataFrame({header['col_user']: [1, 2]}))
-    assert similar_users[header['col_user']].iloc[0] == 4
-
-
-def test_get_item_based_topk(header):
-    model = SARSingleNode(**header)
-    train = pd.DataFrame(
-        {
-            header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
-            header["col_item"]: [1, 2, 1, 3, 3, 4, 5, 6, 1, 2],
-            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0, 1.0, 1.0]
+            header["col_item"]: [1, 2, 1, 2, 3, 4, 5, 6, 1, 2],
+            header["col_rating"]: [3.0, 4.0, 3.0, 4.0, 3.0, 2.0, 1.0, 5.0, 5.0, 1.0]
         }
     )
     model.fit(train)
 
-    similar_items = model.get_item_based_topk(pd.DataFrame({header['col_item']: [1]}))
-    assert similar_items[header['col_item']].iloc[0] == 2
+    similar_users = model.get_topk_most_similar_users(1, 1)
+    assert similar_users[header['col_user']].iloc[0] == 2
 
-    similar_items = model.get_item_based_topk(pd.DataFrame({header['col_item']: [1, 2]}))
-    assert similar_items[header['col_item']].iloc[0] == 3
+    similar_users = model.get_topk_most_similar_users(2, 1)
+    assert similar_users[header['col_user']].iloc[0] == 1
 
 
 def test_user_and_item_frequencies(header):
@@ -465,7 +448,7 @@ def test_user_and_item_frequencies(header):
             header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0, 1.0, 1.0]
         }
     )
-    model.fit(train, compute_user_similarity=True)
+    model.fit(train)
 
     assert model.user_frequencies[0] == 2
     assert model.item_frequencies[0] == 3
