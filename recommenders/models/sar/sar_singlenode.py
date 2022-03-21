@@ -161,7 +161,7 @@ class SARSingleNode:
         # group time decayed ratings by user-item and take the sum as the user-item affinity
         return df.groupby([self.col_user, self.col_item]).sum().reset_index()
 
-    def compute_cooccurrence_matrix(self, df, reverse=False):
+    def compute_cooccurrence_matrix(self, df, items=True):
         """Co-occurrence matrix.
 
         The co-occurrence matrix is defined as :math:`C = U^T * U`
@@ -170,12 +170,12 @@ class SARSingleNode:
 
         Args:
             df (pandas.DataFrame): DataFrame of users and items
-            reverse (bool): if true, return user cooccurence instead
+            items (bool): if false, return user cooccurence instead
 
         Returns:
             numpy.ndarray: Co-occurrence matrix
         """
-        if not reverse:
+        if items:
             shape = (self.n_users, self.n_items)
             fields = (df[self.col_user_id], df[self.col_item_id])
         else:
@@ -280,7 +280,7 @@ class SARSingleNode:
         logger.info("Calculating item co-occurrence")
         item_cooccurrence = self.compute_cooccurrence_matrix(df=temp_df)
         if compute_user_similarity:
-            user_cooccurrence = self.compute_cooccurrence_matrix(df=temp_df, reverse=True)
+            user_cooccurrence = self.compute_cooccurrence_matrix(df=temp_df, items=False)
 
         # free up some space
         del temp_df
@@ -403,13 +403,13 @@ class SARSingleNode:
         test_scores = np.array([frequencies])
 
         logger.info("Getting top K")
-        top_things, top_scores = get_top_k_scored_items(
+        top_components, top_scores = get_top_k_scored_items(
             scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
         )
 
         return pd.DataFrame(
             {
-                col: [idx[item] for item in top_things.flatten()],
+                col: [idx[item] for item in top_components.flatten()],
                 self.col_prediction: top_scores.flatten(),
             }
         )
