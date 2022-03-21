@@ -206,8 +206,6 @@ class SARSingleNode:
 
         .. note::
 
-        Please make sure that `df` has no duplicate user-item pairs.
-
         Args:
             df (pandas.DataFrame): User item rating dataframe.
         """
