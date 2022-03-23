@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install -U build pip twine
+          python -m pip install -U build cibuildwheel pip twine
           python -m pip install -U flake8 pytest pytest-cov scikit-learn
 
       - name: Lint with flake8
@@ -58,7 +58,9 @@ jobs:
           cd "${PYTHON_ROOT}"
           cp "${SARPLUS_ROOT}/VERSION" ./pysarplus/VERSION
           python -m build --sdist
-          python -m build --wheel
+          PYTHON_VER='${{ matrix.python-version }}'
+          MINOR_VER="${PYTHON_VER#*.}"
+          CIBW_BUILD="cp3${MINOR_VER}-manylinux_x86_64" python -m cibuildwheel --platform linux --output-dir dist
           python -m twine check dist/*
 
           # set sarplus_version for the artifact upload step
@@ -68,7 +70,7 @@ jobs:
       - name: Test
         run: |
           cd "${PYTHON_ROOT}"
-          python -m pip install dist/*.tar.gz
+          python -m pip install dist/*.whl
 
           cd "${SCALA_ROOT}"
           export SPARK_VERSION=$(python -m pip show pyspark | grep -i version | cut -d ' ' -f 2)
