@@ -16,6 +16,7 @@ Steps to package and publish (also described in
    cd python
    cp ../VERSION ./pysarplus/  # copy version file
    python -m build --sdist
+   python -m build --wheel
    python -m twine upload dist/*
    ```
 
@@ -38,7 +39,7 @@ Steps to package and publish (also described in
    sbt ++${SCALA_VERSION}! makePom
 
    # generate the artifact (sarplus-*-spark32.jar) for Spark 3.2+
-   export SPARK_VERSION="3.2.0"
+   export SPARK_VERSION="3.2.1"
    export HADOOP_VERSION="3.3.1"
    export SCALA_VERSION="2.12.14"
    sbt ++${SCALA_VERSION}! package
@@ -85,7 +86,7 @@ pytest ./tests
 To test the Scala formatter
 
 ```bash
-export SPARK_VERSION=3.2.0
+export SPARK_VERSION=3.2.1
 export HADOOP_VERSION=3.3.1
 export SCALA_VERSION=2.12.14
 
@@ -97,9 +98,10 @@ sbt ++${SCALA_VERSION}! test
 ## Notes for Spark 3.x  ##
 
 The code now has been modified to support Spark 3.x, and has been
-tested under different versions of Databricks Runtime (including 6.4
-Extended Support, 7.3 LTS, 9.1 LTS, 10.0 and 10.1) on Azure Databricks
-Service.  However, there is a breaking change of
+tested under Azure Synapse Apache Spark 3.1 runtime and different
+versions of Databricks Runtime (including 6.4 Extended Support, 7.3
+LTS, 9.1 LTS and 10.4 LTS) on Azure Databricks Service.  However,
+there is a breaking change of
 [org/apache.spark.sql.execution.datasources.OutputWriter](https://github.com/apache/spark/blob/dc0fa1eef74238d745dabfdc86705b59d95b07e1/sql/core/src/main/scala/org/apache/spark/sql/execution/datasources/OutputWriter.scala#L74)
 on **Spark 3.2**, which adds an extra function `path()`, so an
 additional package called [Sarplus Spark 3.2
