@@ -276,7 +276,7 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
 
 #### Install libraries
 
-1. Download pysarplus TAR file from
+1. Download pysarplus WHL file from
    [pysarplus@PyPI](https://pypi.org/project/pysarplus/)
 1. Download sarplus JAR file
    from[sarplus@MavenCentralRepository](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12)
@@ -285,7 +285,7 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
    if run on Spark 3.2+)
 1. Navigate to your Azure Synapse workspace -> `Manage` -> `Workspace
    packages`
-1. Upload pysarplus TAR file and sarplus JAR file as workspace
+1. Upload pysarplus WHL file and sarplus JAR file as workspace
    packages
 1. Navigate to your Azure Synapse workspace -> `Manage` -> `Apache
    Spark pools`
@@ -295,7 +295,8 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
    previous step
 1. Apply
 
-See [Manage libraries for Apache Spark in Azure Synapse
+pysarplus can also be installed via `requirements.txt`.  See [Manage
+libraries for Apache Spark in Azure Synapse
 Analytics](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-azure-portal-add-libraries)
 for details on how to manage libraries in Azure Synapse.
 
