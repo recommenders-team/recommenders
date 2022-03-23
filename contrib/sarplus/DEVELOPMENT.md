@@ -11,12 +11,13 @@ Steps to package and publish (also described in
 
    ```bash
    # build dependencies
-   python -m pip install -U build pip twine
+   python -m pip install -U build cibuildwheel pip twine
 
    cd python
    cp ../VERSION ./pysarplus/  # copy version file
    python -m build --sdist
-   python -m build --wheel
+   MINOR_VERSION=$(python --version | cut -d '.' -f 2)
+   CIBW_BUILD="cp3${MINOR_VERSION}-manylinux_x86_64" python -m cibuildwheel --platform linux --output-dir dist
    python -m twine upload dist/*
    ```
 
@@ -26,31 +27,26 @@ Steps to package and publish (also described in
    
    ```bash
    export SARPLUS_VERSION=$(cat VERSION)
+   GPG_KEY="<gpg-private-key>"
+   GPG_KEY_ID="<gpg-key-id>"
+   cd scala
+
+   # generate artifacts
    export SPARK_VERSION="3.1.2"
    export HADOOP_VERSION="2.7.4"
    export SCALA_VERSION="2.12.10"
-   GPG_KEY="<gpg-private-key>"
+   sbt ++${SCALA_VERSION}! package packageDoc packageSrc makePom
 
-   # generate artifacts
-   cd scala
-   sbt ++${SCALA_VERSION}! package
-   sbt ++${SCALA_VERSION}! packageDoc
-   sbt ++${SCALA_VERSION}! packageSrc
-   sbt ++${SCALA_VERSION}! makePom
-
-   # generate the artifact (sarplus-*-spark32.jar) for Spark 3.2+
+   # generate the artifact (sarplus-spark-3-2-plus*.jar) for Spark 3.2+
    export SPARK_VERSION="3.2.1"
    export HADOOP_VERSION="3.3.1"
    export SCALA_VERSION="2.12.14"
-   sbt ++${SCALA_VERSION}! package
-   sbt ++${SCALA_VERSION}! packageDoc
-   sbt ++${SCALA_VERSION}! packageSrc
-   sbt ++${SCALA_VERSION}! makePom
+   sbt ++${SCALA_VERSION}! package packageDoc packageSrc makePom
 
    # sign with GPG
    cd target/scala-${SCALA_VERSION%.*}
    gpg --import <(cat <<< "${GPG_KEY}")
-   for file in {*.jar,*.pom}; do gpg -ab "${file}"; done
+   for file in {*.jar,*.pom}; do gpg -ab -u "${GPG_KEY_ID}" "${file}"; done
 
    # bundle
    jar cvf sarplus-bundle_2.12-${SARPLUS_VERSION}.jar sarplus_*.jar sarplus_*.pom sarplus_*.asc
