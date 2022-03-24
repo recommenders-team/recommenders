@@ -3,8 +3,11 @@
 
 import numpy as np
 import math
+import logging
 
 from recommenders.utils.constants import DEFAULT_ITEM_COL, DEFAULT_USER_COL
+
+logger = logging.getLogger(__name__)
 
 try:
     from pyspark.sql import functions as F, Window
@@ -171,7 +174,7 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
 
     """
     num_users, num_items = len(data[col_user].unique()), len(data[col_item].unique())
-    print(f"Original: {num_users} users and {num_items} items")
+    logger.info("Original: %d users and %d items", num_users, num_items)
     df_inp = data.copy()
 
     if core_num > 0:
@@ -190,8 +193,8 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
             ):
                 break
     df_inp = df_inp.sort_values(by=[col_user])
-    print(
-        f"Final: {len(df_inp[col_user].unique())} users and {len(df_inp[col_item].unique())} items"
-    )
+    num_users = len(df_inp[col_user].unique())
+    num_items = len(df_inp[col_item].unique())
+    logger.info("Final: %d users and %d items", num_users, num_items)
 
     return df_inp
