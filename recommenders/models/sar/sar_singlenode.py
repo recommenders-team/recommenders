@@ -206,8 +206,10 @@ class SARSingleNode:
 
         .. note::
 
+        Please make sure that `df` has no duplicates.
+
         Args:
-            df (pandas.DataFrame): User item rating dataframe.
+            df (pandas.DataFrame): User item rating dataframe (without duplicates).
         """
 
         # generate continuous indices if this hasn't been done
@@ -263,9 +265,9 @@ class SARSingleNode:
         # free up some space
         del temp_df
 
-        # creates an array with the most frequency of every unique user/item
-        self.user_frequencies = df[self.col_user].value_counts(sort=False).to_numpy()
-        self.item_frequencies = df[self.col_item].value_counts(sort=False).to_numpy()
+        # creates an array with the frequency of every unique user/item
+        self.user_frequencies = np.count_nonzero(self.user_affinity.toarray(), axis=1)
+        self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
         if self.similarity_type == COOCCUR:
