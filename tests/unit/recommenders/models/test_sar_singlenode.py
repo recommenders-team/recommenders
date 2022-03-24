@@ -432,11 +432,17 @@ def test_get_topk_most_similar_users(header):
     )
     model.fit(train)
 
-    similar_users = model.get_topk_most_similar_users(1, 1)
-    assert similar_users[header['col_user']].iloc[0] == 2
+    similar_users = model.get_topk_most_similar_users(user=1, top_k=1)
+    expected = pd.DataFrame(dict(UserId=[2], prediction=[25.0]))
+    assert_frame_equal(expected, similar_users)
 
-    similar_users = model.get_topk_most_similar_users(2, 1)
-    assert similar_users[header['col_user']].iloc[0] == 1
+    similar_users = model.get_topk_most_similar_users(user=2, top_k=1)
+    expected = pd.DataFrame(dict(UserId=[1], prediction=[25.0]))
+    assert_frame_equal(expected, similar_users)
+
+    similar_users = model.get_topk_most_similar_users(user=1, top_k=2)
+    expected = pd.DataFrame(dict(UserId=[2, 4], prediction=[25.0, 19.0]))
+    assert_frame_equal(expected, similar_users)
 
 
 def test_user_and_item_frequencies(header):
