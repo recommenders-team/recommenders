@@ -232,12 +232,23 @@ for details on how to install libraries on Azure Databricks.
 These will set the crossJoin property to enable calculation of the
 similarity matrix, and set default sources to parquet.
 
+It can also be configured by putting the following Python code in a
+notebook cell:
+
+```python
+spark.conf.set("spark.sql.crossJoin.enabled", "true")
+spark.conf.set("spark.sql.sources.default", "parquet")
+spark.conf.set("spark.sql.legacy.createHiveTableByDefault", "true")
+```
+
 
 #### Prepare local file system for cache
 
-`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
-as its second parameter for storing intermediate files during its
-calculation, so you'll also have to **mount** shared storage.
+To use C++ based fast prediction in
+`pysarplus.SARPlus.recommend_k_items()`, a local cache directory needs
+to be specified as the `cache_path` parameter of `pysarplus.SARPlus()`
+to store intermediate files during its calculation, so you'll also
+have to **mount** shared storage.
 
 For example, you can [create a storage
 account](https://ms.portal.azure.com/#create/Microsoft.StorageAccount)
@@ -259,9 +270,8 @@ dbutils.fs.mount(
 where `<storage-account>`, `<container>` and `<access-key>` should be
 replaced with the actual values, such as `sarplusstorage`,
 `sarpluscache` and the access key of the storage account.  Then pass
-`"dbfs:/mnt/<container>/cache"` to
-`pysarplus.SARPlus.recommend_k_items()` as the value for its 2nd
-parameter.
+`cache_path="dbfs:/mnt/<container>/cache"` to `pysarplus.SARPlus()`,
+where `cache` is the cache's name.
 
 
 To disable logging messages:
@@ -304,9 +314,11 @@ for details on how to manage libraries in Azure Synapse.
 
 #### Prepare local file system for cache
 
-`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
-as its second parameter for storing intermediate files during its
-calculation, so you'll also have to **mount** shared storage.
+To use C++ based fast prediction in
+`pysarplus.SARPlus.recommend_k_items()`, a local cache directory needs
+to be specified as the `cache_path` parameter of `pysarplus.SARPlus()`
+to store intermediate files during its calculation, so you'll also
+have to **mount** shared storage.
 
 For example, you can run the following code to mount the file system
 (container) of the default/primary storage account.
@@ -321,9 +333,9 @@ mssparkutils.fs.mount(
 job_id = mssparkutils.env.getJobId()
 ```
 
-Then pass `f"synfs:/{job_id}/mnt/<container>/cache"` to
-`pysarplus.SARPlus.recommend_k_items()` as the value for its 2nd
-parameter.  **NOTE**: `job_id` should be prepended to the local path.
+Then pass `cache_path=f"synfs:/{job_id}/mnt/<container>/cache"` to
+`pysarplus.SARPlus()`, where `cache` is the cache's name.  **NOTE**:
+`job_id` should be prepended to the local path.
 
 See [How to use file mount/unmount API in Synapse](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-file-mount-api)
 for more details.
