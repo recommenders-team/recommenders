@@ -184,7 +184,7 @@ jobs:
   build-gpu:
     runs-on: [self-hosted, Linux, gpu, nightly] # this is a union of labels to select specific self-hosted machine
     needs: static-analysis
-    timeout-minutes: 420
+    timeout-minutes: 480
     strategy:
       matrix:
         python: [3.7]
