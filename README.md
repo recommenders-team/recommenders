@@ -2,9 +2,14 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (January 13, 2022)
+## What's New (March 31, 2022)
 
-We have a new release [Recommenders 1.0.0](https://github.com/microsoft/recommenders/releases/tag/1.0.0)! The codebase has now migrated to TensorFlow versions 2.6 / 2.7 and to Spark version 3. In addition, there are a few changes in the dependencies and extras installed by `pip` (see [this guide](recommenders/README.md#optional-dependencies)). We have also made improvements in the code and the CI / CD pipelines.
+We have a new release [Recommenders 1.1.0](https://github.com/microsoft/recommenders/releases/tag/1.1.0)! 
+We have introduced the SASRec and SSEPT algorithms that are based on transformers. 
+In addition, we now have enabled Python 3.8 and 3.9.
+We have also made improvements on the SARPlus algorithm, including support for Azure Synapse and Spark 3.2.
+There are also bug fixes and improvements on NCF, RBM, LightGBM, LightFM, Scikit-Surprise, the stratified splitter, dockerfile 
+and upgrade to Scikit-Learn 1.0.2.
 
 Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
 
