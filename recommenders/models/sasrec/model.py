@@ -16,13 +16,12 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     """
 
     def __init__(self, attention_dim, num_heads, dropout_rate):
-        """Initialize model parameters.
+        """Initialize parameters.
 
         Args:
             attention_dim (int): Dimension of the attention embeddings.
             num_heads (int): Number of heads in the multi-head self-attention module.
             dropout_rate (float): Dropout probability.
-        
         """
         super(MultiHeadAttention, self).__init__()
         self.num_heads = num_heads
@@ -125,6 +124,12 @@ class PointWiseFeedForward(tf.keras.layers.Layer):
     """
 
     def __init__(self, conv_dims, dropout_rate):
+        """Initialize parameters.
+
+        Args:
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout probability.
+        """
         super(PointWiseFeedForward, self).__init__()
         self.conv_dims = conv_dims
         self.dropout_rate = dropout_rate
@@ -173,6 +178,16 @@ class EncoderLayer(tf.keras.layers.Layer):
         conv_dims,
         dropout_rate,
     ):
+        """Initialize parameters.
+
+        Args:
+            seq_max_len (int): Maximum sequence length.
+            embedding_dim (int): Embedding dimension.
+            attention_dim (int): Dimension of the attention embeddings.
+            num_heads (int): Number of heads in the multi-head self-attention module.
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout probability.
+        """
         super(EncoderLayer, self).__init__()
 
         self.seq_max_len = seq_max_len
@@ -255,6 +270,17 @@ class Encoder(tf.keras.layers.Layer):
         conv_dims,
         dropout_rate,
     ):
+        """Initialize parameters.
+
+        Args:
+            num_layers (int): Number of layers.
+            seq_max_len (int): Maximum sequence length.
+            embedding_dim (int): Embedding dimension.
+            attention_dim (int): Dimension of the attention embeddings.
+            num_heads (int): Number of heads in the multi-head self-attention module.
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout probability.
+        """
         super(Encoder, self).__init__()
 
         self.num_layers = num_layers
@@ -299,6 +325,13 @@ class LayerNormalization(tf.keras.layers.Layer):
     """
 
     def __init__(self, seq_max_len, embedding_dim, epsilon):
+        """Initialize parameters.
+
+        Args:
+            seq_max_len (int): Maximum sequence length.
+            embedding_dim (int): Embedding dimension.
+            epsilon (float): Epsilon value.
+        """
         super(LayerNormalization, self).__init__()
         self.seq_max_len = seq_max_len
         self.embedding_dim = embedding_dim
@@ -344,15 +377,15 @@ class SASREC(tf.keras.Model):
         https://github.com/nnkkmto/SASRec-tf2
 
     Args:
-        item_num: number of items in the dataset
-        seq_max_len: maximum number of items in user history
-        num_blocks: number of Transformer blocks to be used
-        embedding_dim: item embedding dimension
-        attention_dim: Transformer attention dimension
-        conv_dims: list of the dimensions of the Feedforward layer
-        dropout_rate: dropout rate
-        l2_reg: coefficient of the L2 regularization
-        num_neg_test: number of negative examples used in testing
+        item_num (int): Number of items in the dataset.
+        seq_max_len (int): Maximum number of items in user history.
+        num_blocks (int): Number of Transformer blocks to be used.
+        embedding_dim (int): Item embedding dimension.
+        attention_dim (int): Transformer attention dimension.
+        conv_dims (list): List of the dimensions of the Feedforward layer.
+        dropout_rate (float): Dropout rate.
+        l2_reg (float): Coefficient of the L2 regularization.
+        num_neg_test (int): Number of negative examples used in testing.
     """
 
     def __init__(self, **kwargs):
@@ -409,7 +442,6 @@ class SASREC(tf.keras.Model):
             tf.Tensor, tf.Tensor:
             - Sequence embeddings.
             - Positional embeddings.
-        
         """
 
         seq_embeddings = self.item_embedding_layer(input_seq)
