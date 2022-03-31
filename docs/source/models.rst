@@ -225,6 +225,14 @@ SASRec
 .. automodule:: recommenders.models.sasrec.util
     :members:
 
+
+SSE-PT 
+******************************
+
+.. automodule:: recommenders.models.sasrec.ssept
+    :members:
+
+
 Surprise
 ******************************
 
