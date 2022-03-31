@@ -1,6 +1,6 @@
 # What's New
 
-## Update March 31, 2022
+## Update April 1, 2022
 
 We have a new release [Recommenders 1.1.0](https://github.com/microsoft/recommenders/releases/tag/1.1.0)! 
 We have introduced the SASRec and SSEPT algorithms that are based on transformers. 
