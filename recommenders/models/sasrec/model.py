@@ -299,7 +299,7 @@ class Encoder(tf.keras.layers.Layer):
 
         self.dropout = tf.keras.layers.Dropout(dropout_rate)
 
-    def call(self, x, training, mask):        
+    def call(self, x, training, mask):
         """Model forward pass.
 
         Args:
@@ -310,7 +310,6 @@ class Encoder(tf.keras.layers.Layer):
         Returns:
             tf.Tensor: Output tensor.
         """
-        
 
         for i in range(self.num_layers):
             x = self.enc_layers[i](x, training, mask)
@@ -380,7 +379,7 @@ class SASREC(tf.keras.Model):
 
     def __init__(self, **kwargs):
         """Model initialization.
-        
+
         Args:
             item_num (int): Number of items in the dataset.
             seq_max_len (int): Maximum number of items in user history.
@@ -440,7 +439,7 @@ class SASREC(tf.keras.Model):
 
         Args:
             input_seq (tf.Tensor): Input sequence
-        
+
         Returns:
             tf.Tensor, tf.Tensor:
             - Sequence embeddings.
@@ -465,7 +464,7 @@ class SASREC(tf.keras.Model):
             training (tf.Tensor): Training tensor.
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor: 
+            tf.Tensor, tf.Tensor, tf.Tensor:
             - Logits of the positive examples.
             - Logits of the negative examples.
             - Mask for nonzero targets
@@ -526,8 +525,13 @@ class SASREC(tf.keras.Model):
         return pos_logits, neg_logits, istarget
 
     def predict(self, inputs):
-        """
-        Returns the logits for the test items
+        """Returns the logits for the test items.
+
+        Args:
+            inputs (tf.Tensor): Input tensor.
+
+        Returns:
+             tf.Tensor: Output tensor.
         """
         training = False
         input_seq = inputs["input_seq"]
@@ -559,10 +563,10 @@ class SASREC(tf.keras.Model):
         return test_logits
 
     def loss_function(self, pos_logits, neg_logits, istarget):
-        """
-        Losses are calculated separately for the positive and negative
+        """Losses are calculated separately for the positive and negative
         items based on the corresponding logits. A mask is included to
         take care of the zero items (added for padding).
+
         """
 
         pos_logits = pos_logits[:, 0]
