@@ -400,6 +400,17 @@ class SASREC(tf.keras.Model):
         )
 
     def embedding(self, input_seq):
+        """Compute the sequence and positional embeddings.
+
+        Args:
+            input_seq (tf.Tensor): Input sequence
+        
+        Returns:
+            tf.Tensor, tf.Tensor:
+            - Sequence embeddings.
+            - Positional embeddings.
+        
+        """
 
         seq_embeddings = self.item_embedding_layer(input_seq)
         seq_embeddings = seq_embeddings * (self.embedding_dim ** 0.5)
