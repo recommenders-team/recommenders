@@ -6,6 +6,7 @@ build:
     - cmake
 
 # Explicitly set the version of Python and its requirements
+# The flat extra_requirements all is equivalent to: pip install .[all]
 python:
   version: "3.7"
   install:
