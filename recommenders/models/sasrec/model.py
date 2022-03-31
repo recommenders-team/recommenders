@@ -567,6 +567,13 @@ class SASREC(tf.keras.Model):
         items based on the corresponding logits. A mask is included to
         take care of the zero items (added for padding).
 
+        Args:
+            pos_logits (tf.Tensor): Logits of the positive examples.
+            neg_logits (tf.Tensor): Logits of the negative examples.
+            istarget (tf.Tensor): Mask for nonzero targets.
+
+        Returns:
+            float: Loss.
         """
 
         pos_logits = pos_logits[:, 0]

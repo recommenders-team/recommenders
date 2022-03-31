@@ -220,10 +220,17 @@ class SSEPT(SASREC):
         return test_logits
 
     def loss_function(self, pos_logits, neg_logits, istarget):
-        """
-        Losses are calculated separately for the positive and negative
+        """Losses are calculated separately for the positive and negative
         items based on the corresponding logits. A mask is included to
         take care of the zero items (added for padding).
+
+        Args:
+            pos_logits (tf.Tensor): Logits of the positive examples.
+            neg_logits (tf.Tensor): Logits of the negative examples.
+            istarget (tf.Tensor): Mask for nonzero targets.
+
+        Returns:
+            float: Loss.
         """
 
         pos_logits = pos_logits[:, 0]
