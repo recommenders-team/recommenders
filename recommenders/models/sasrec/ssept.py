@@ -77,6 +77,18 @@ class SSEPT(SASREC):
         )
 
     def call(self, x, training):
+        """Model forward pass.
+
+        Args:
+            x (tf.Tensor): Input tensor.
+            training (tf.Tensor): Training tensor.
+
+        Returns:
+            tf.Tensor, tf.Tensor, tf.Tensor: 
+            - Logits of the positive examples.
+            - Logits of the negative examples.
+            - Mask for nonzero targets        
+        """
 
         users = x["users"]
         input_seq = x["input_seq"]

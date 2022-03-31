@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 import random
-import tensorflow as tf
 import numpy as np
 from tqdm import tqdm
+import tensorflow as tf
 
 from recommenders.utils.timer import Timer
 
@@ -16,6 +16,14 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     """
 
     def __init__(self, attention_dim, num_heads, dropout_rate):
+        """Initialize model parameters.
+
+        Args:
+            attention_dim (int): Dimension of the attention embeddings.
+            num_heads (int): Number of heads in the multi-head self-attention module.
+            dropout_rate (float): Dropout probability.
+        
+        """
         super(MultiHeadAttention, self).__init__()
         self.num_heads = num_heads
         self.attention_dim = attention_dim
@@ -30,6 +38,15 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         self.dropout = tf.keras.layers.Dropout(self.dropout_rate)
 
     def call(self, queries, keys):
+        """Model forward pass.
+
+        Args:
+            queries (tf.Tensor): Tensor of queries.
+            keys (tf.Tensor): Tensor of keys
+
+        Returns:
+            tf.Tensor: Output tensor.
+        """
 
         # Linear projections
         Q = self.Q(queries)  # (N, T_q, C)
@@ -120,6 +137,14 @@ class PointWiseFeedForward(tf.keras.layers.Layer):
         self.dropout_layer = tf.keras.layers.Dropout(self.dropout_rate)
 
     def call(self, x):
+        """Model forward pass.
+
+        Args:
+            x (tf.Tensor): Input tensor.
+
+        Returns:
+            tf.Tensor: Output tensor.
+        """
 
         output = self.conv_layer1(x)
         output = self.dropout_layer(output)
@@ -167,6 +192,16 @@ class EncoderLayer(tf.keras.layers.Layer):
         )
 
     def call_(self, x, training, mask):
+        """Model forward pass.
+
+        Args:
+            x (tf.Tensor): Input tensor.
+            training (tf.Tensor): Training tensor.
+            mask (tf.Tensor): Mask tensor.
+
+        Returns:
+            tf.Tensor: Output tensor.
+        """
 
         attn_output = self.mha(queries=self.layer_normalization(x), keys=x)
         attn_output = self.dropout1(attn_output, training=training)
@@ -185,6 +220,16 @@ class EncoderLayer(tf.keras.layers.Layer):
         return out2
 
     def call(self, x, training, mask):
+        """Model forward pass.
+
+        Args:
+            x (tf.Tensor): Input tensor.
+            training (tf.Tensor): Training tensor.
+            mask (tf.Tensor): Mask tensor.
+
+        Returns:
+            tf.Tensor: Output tensor.
+        """
 
         x_norm = self.layer_normalization(x)
         attn_output = self.mha(queries=x_norm, keys=x)
@@ -228,7 +273,18 @@ class Encoder(tf.keras.layers.Layer):
 
         self.dropout = tf.keras.layers.Dropout(dropout_rate)
 
-    def call(self, x, training, mask):
+    def call(self, x, training, mask):        
+        """Model forward pass.
+
+        Args:
+            x (tf.Tensor): Input tensor.
+            training (tf.Tensor): Training tensor.
+            mask (tf.Tensor): Mask tensor.
+
+        Returns:
+            tf.Tensor: Output tensor.
+        """
+        
 
         for i in range(self.num_layers):
             x = self.enc_layers[i](x, training, mask)
@@ -260,6 +316,14 @@ class LayerNormalization(tf.keras.layers.Layer):
         )
 
     def call(self, x):
+        """Model forward pass.
+
+        Args:
+            x (tf.Tensor): Input tensor.
+
+        Returns:
+            tf.Tensor: Output tensor.
+        """
         mean, variance = tf.nn.moments(x, [-1], keepdims=True)
         normalized = (x - mean) / ((variance + self.epsilon) ** 0.5)
         output = self.gamma * normalized + self.beta
@@ -348,10 +412,17 @@ class SASREC(tf.keras.Model):
         return seq_embeddings, positional_embeddings
 
     def call(self, x, training):
-        """
-        Returns the logits of the positive examples,
-                    logits of the negative examples,
-                    mask for nonzero targets
+        """Model forward pass.
+
+        Args:
+            x (tf.Tensor): Input tensor.
+            training (tf.Tensor): Training tensor.
+
+        Returns:
+            tf.Tensor, tf.Tensor, tf.Tensor: 
+            - Logits of the positive examples.
+            - Logits of the negative examples.
+            - Mask for nonzero targets
         """
 
         input_seq = x["input_seq"]
