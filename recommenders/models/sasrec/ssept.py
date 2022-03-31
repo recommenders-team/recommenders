@@ -14,27 +14,25 @@ class SSEPT(SASREC):
     Via Personalized Transformer, RecSys, 2020.
     TF 1.x codebase: https://github.com/SSE-PT/SSE-PT
     TF 2.x codebase (SASREc): https://github.com/nnkkmto/SASRec-tf2
-
-    Args:
-        basic arguments -
-        item_num: number of items in the dataset
-        seq_max_len: maximum number of items in user history
-        num_blocks: number of Transformer blocks to be used
-        embedding_dim: item embedding dimension
-        attention_dim: Transformer attention dimension
-        conv_dims: list of the dimensions of the Feedforward layer
-        dropout_rate: dropout rate
-        l2_reg: coefficient of the L2 regularization
-        num_neg_test: number of negative examples used in testing
-
-        additional arguments -
-        user_num: number of users in the dataset
-        user_embedding_dim: user embedding dimension
-        item_embedding_dim: item embedding dimension
-
     """
 
     def __init__(self, **kwargs):
+        """Model initialization.
+
+        Args:
+            item_num (int): Number of items in the dataset.
+            seq_max_len (int): Maximum number of items in user history.
+            num_blocks (int): Number of Transformer blocks to be used.
+            embedding_dim (int): Item embedding dimension.
+            attention_dim (int): Transformer attention dimension.
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout rate.
+            l2_reg (float): Coefficient of the L2 regularization.
+            num_neg_test (int): Number of negative examples used in testing.
+            user_num (int): Number of users in the dataset.
+            user_embedding_dim (int): User embedding dimension.
+            item_embedding_dim (int): Item embedding dimension.
+        """
         super().__init__(**kwargs)
 
         self.user_num = kwargs.get("user_num", None)  # New

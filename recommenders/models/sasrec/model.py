@@ -376,19 +376,22 @@ class SASREC(tf.keras.Model):
         Original source code from nnkkmto/SASRec-tf2,
         https://github.com/nnkkmto/SASRec-tf2
 
-    Args:
-        item_num (int): Number of items in the dataset.
-        seq_max_len (int): Maximum number of items in user history.
-        num_blocks (int): Number of Transformer blocks to be used.
-        embedding_dim (int): Item embedding dimension.
-        attention_dim (int): Transformer attention dimension.
-        conv_dims (list): List of the dimensions of the Feedforward layer.
-        dropout_rate (float): Dropout rate.
-        l2_reg (float): Coefficient of the L2 regularization.
-        num_neg_test (int): Number of negative examples used in testing.
     """
 
     def __init__(self, **kwargs):
+        """Model initialization.
+        
+        Args:
+            item_num (int): Number of items in the dataset.
+            seq_max_len (int): Maximum number of items in user history.
+            num_blocks (int): Number of Transformer blocks to be used.
+            embedding_dim (int): Item embedding dimension.
+            attention_dim (int): Transformer attention dimension.
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout rate.
+            l2_reg (float): Coefficient of the L2 regularization.
+            num_neg_test (int): Number of negative examples used in testing.
+        """
         super(SASREC, self).__init__()
 
         self.item_num = kwargs.get("item_num", None)
