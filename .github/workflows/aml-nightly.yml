@@ -65,7 +65,7 @@ jobs:
         run: >-
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
-            --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}
+            --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Print test logs
