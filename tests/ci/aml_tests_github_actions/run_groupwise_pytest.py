@@ -65,10 +65,10 @@ if __name__ == "__main__":
     # https://msdata.visualstudio.com/Vienna/_search?action=contents&text=upload_folder&type=code&lp=code-Project&filters=ProjectFilters%7BVienna%7DRepositoryFilters%7BAzureMlCli%7D&pageSize=25&sortOptions=%5B%7B%22field%22%3A%22relevance%22%2C%22sortOrder%22%3A%22desc%22%7D%5D&result=DefaultCollection%2FVienna%2FAzureMlCli%2FGBmaster%2F%2Fsrc%2Fazureml-core%2Fazureml%2Fcore%2Frun.py
     logger.debug("os.listdir files {}".format(os.listdir(".")))
 
-    #  files for AzureML
-    name_of_upload = "reports"
-    path_on_disk = "./reports"
-    run.upload_folder(name_of_upload, path_on_disk)
+    # #  files for AzureML
+    # name_of_upload = "reports"
+    # path_on_disk = "./reports"
+    # run.upload_folder(name_of_upload, path_on_disk)
 
     # upload pytest stdout file
     # azureml_stdout_path = "user_logs/std_log.txt"
