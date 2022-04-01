@@ -1,0 +1,81 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+name: aml-spark-nightly
+
+on:
+  #          ┌───────────── minute (0 - 59)
+  #          │ ┌───────────── hour (0 - 23)
+  #          │ │ ┌───────────── day of the month (1 - 31)
+  #          │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+  #          │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
+  #          │ │ │ │ │
+  #          │ │ │ │ │
+  schedule: 
+    - cron: '0 0 * * *'  # basically running everyday at 12AM
+    # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
+  
+  push:
+    # because we can't schedule runs for non-main branches,
+    # to ensure we are running the build on the staging branch, we can add push policy for it
+    branches: [pradjoshi/aml_tests]
+
+  # enable manual trigger
+  workflow_dispatch:
+    input:
+      tags:
+        description: 'Tags to label this manual run (optional)'
+        default: 'Anything to describe this manual run'
+
+env:
+  CLUSTER_NAME: "nightly-cluster"
+  EXP_NAME: "nightly_tests"
+  RG: "pradjoshi-aml-rg"
+  WS: "pradjoshi-aml-ws"
+  TEST_LOGS_PATH: '"tests/ci/aml_tests_github_actions/test_logs.log"'
+  PYTEST_EXIT_CODE: "tests/ci/aml_tests_github_actions/pytest_exit_code.log"
+
+jobs:
+  nightly-spark-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['"python=3.6"', '"python=3.7"']
+        test-group: ['"group_criteo"', '"group_mind"', '"group_movielens"']
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with: 
+          python-version: "3.8"
+      - name: Install azureml-core and azure-cli on a GitHub hosted server
+        run: pip install azureml-core azure-cli
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AML_TEST_CREDENTIALS}}
+      - name: Install wheel package
+        run: pip install wheel
+      - name: Create wheel from setup.py
+        run: python setup.py bdist_wheel
+      - name: Submit a test to AML
+        run: >-
+            python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}
+            --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies
+            --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
+      - name: Print test logs
+        run: cat ${{env.TEST_LOGS_PATH}}
+      - name: Get exit status
+        id: exit_status
+        run: echo ::set-output name=code::$(cat ${{env.PYTEST_EXIT_CODE}})
+      - name: Check Success/Failure
+        if: ${{ steps.exit_status.outputs.code != 0 }}
+        uses: actions/github-script@v3
+        with:
+          script: |
+              core.setFailed('All tests did not pass!')

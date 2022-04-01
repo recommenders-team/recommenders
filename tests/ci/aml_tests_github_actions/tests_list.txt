@@ -1,0 +1,611 @@
+tests/integration/examples/test_notebooks_gpu.py::test_gpu_vm
+tests/integration/examples/test_notebooks_gpu.py::test_ncf_integration[1m-10-expected_values0-42]
+tests/integration/examples/test_notebooks_gpu.py::test_ncf_deep_dive_integration[100k-10-512-expected_values0-42]
+tests/integration/examples/test_notebooks_gpu.py::test_fastai_integration[1m-10-expected_values0]
+tests/integration/examples/test_notebooks_gpu.py::test_xdeepfm_integration[15-10-expected_values0-42]
+tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration[1m-50000-expected_values0-42]
+tests/integration/examples/test_notebooks_gpu.py::test_slirec_quickstart_integration[recommenders/models/deeprec/config/sli_rec.yaml-tests/resources/deeprec/slirec-10-400-expected_values0-42]
+tests/integration/examples/test_notebooks_gpu.py::test_nrms_quickstart_integration[8-42-demo-expected_values0]
+tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration[6-42-demo-expected_values0]
+tests/integration/examples/test_notebooks_gpu.py::test_lstur_quickstart_integration[5-40-demo-expected_values0]
+tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration[6-42-demo-expected_values0]
+tests/integration/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_integration[recommenders/models/deeprec/config/lightgcn.yaml-tests/resources/deeprec/lightgcn-100k-5-1024-expected_values0-42]
+tests/integration/examples/test_notebooks_gpu.py::test_dkn_quickstart_integration
+tests/integration/examples/test_notebooks_gpu.py::test_cornac_bivae_integration[1m-expected_values0]
+tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration[tests/recsys_data/RecSys/SASRec-tf2/data-1-128-expected_values0-42]
+tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration
+tests/integration/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_integration
+tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration[1m-expected_values0]
+tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration[10m-expected_values1]
+tests/integration/examples/test_notebooks_python.py::test_baseline_deep_dive_integration[1m-expected_values0]
+tests/integration/examples/test_notebooks_python.py::test_surprise_svd_integration[1m-expected_values0]
+tests/integration/examples/test_notebooks_python.py::test_vw_deep_dive_integration[1m-expected_values0]
+tests/integration/examples/test_notebooks_python.py::test_nni_tuning_svd
+tests/integration/examples/test_notebooks_python.py::test_wikidata_integration
+tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration[1m-expected_values0]
+tests/integration/examples/test_notebooks_python.py::test_geoimc_integration[expected_values0]
+tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration
+tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_pandas_df
+tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_spark_df
+tests/integration/recommenders/datasets/test_mind.py::test_download_mind
+tests/integration/recommenders/datasets/test_mind.py::test_extract_mind
+tests/integration/recommenders/datasets/test_mind.py::test_mind_utils_integration
+tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df[1m-1000209-3883-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df[10m-10000054-10681-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df[20m-20000263-27278-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df[1m-3883-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df[10m-10681-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df[20m-27278-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df[1m-1000209-3883-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df[10m-10000054-10681-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df[20m-20000263-27278-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens[1m]
+tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens[10m]
+tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens[20m]
+tests/smoke/examples/test_notebooks_gpu.py::test_gpu_vm
+tests/smoke/examples/test_notebooks_gpu.py::test_ncf_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_ncf_deep_dive_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_fastai_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_xdeepfm_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_nrms_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_lstur_smoke
+tests/smoke/examples/test_notebooks_gpu.py::test_cornac_bivae_smoke
+tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke
+tests/smoke/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_smoke
+tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke
+tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke
+tests/smoke/examples/test_notebooks_python.py::test_surprise_svd_smoke
+tests/smoke/examples/test_notebooks_python.py::test_vw_deep_dive_smoke
+tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke
+tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke
+tests/smoke/examples/test_notebooks_python.py::test_mind_utils
+tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_pandas_df
+tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_spark_df
+tests/smoke/recommenders/dataset/test_criteo.py::test_download_criteo
+tests/smoke/recommenders/dataset/test_criteo.py::test_extract_criteo
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_train.zip-17372879-"0x8D8B8AD5B233930"]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_dev.zip-10080022-"0x8D8B8AD5B188839"]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://recodatasets.z20.web.core.windows.net/newsrec/MINDdemo_utils.zip-97292694-"0x8D8B8AD5B126C3B"]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://mind201910small.blob.core.windows.net/release/MINDsmall_train.zip-52952752-0x8D834F2EB31BDEC]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://mind201910small.blob.core.windows.net/release/MINDsmall_dev.zip-30945572-0x8D834F2EBA8D865]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://mind201910small.blob.core.windows.net/release/MINDsmall_utils.zip-155178106-0x8D87F67F4AEB960]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://mind201910small.blob.core.windows.net/release/MINDlarge_train.zip-530196631-0x8D8244E90C15C07]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://mind201910small.blob.core.windows.net/release/MINDlarge_dev.zip-103456245-0x8D8244E92005849]
+tests/smoke/recommenders/dataset/test_mind.py::test_mind_url[https://mind201910small.blob.core.windows.net/release/MINDlarge_utils.zip-150359301-0x8D87F67E6CA4364]
+tests/smoke/recommenders/dataset/test_mind.py::test_extract_mind[demo]
+tests/smoke/recommenders/dataset/test_mind.py::test_extract_mind[small]
+tests/smoke/recommenders/dataset/test_movielens.py::test_load_pandas_df[100k-100000-1682-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
+tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df[100k-1682-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
+tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df[100k-100000-1682-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
+tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens[100k]
+tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator
+tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_xdeepfm
+tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn
+tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec
+tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_sum
+tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_lightgcn
+tests/smoke/recommenders/recommender/test_deeprec_utils.py::test_DKN_iterator
+tests/smoke/recommenders/recommender/test_deeprec_utils.py::test_Sequential_Iterator
+tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_nrms
+tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_naml
+tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur
+tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_npa
+tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_news_iterator
+tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_naml_iterator
+tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm
+tests/unit/examples/test_notebooks_gpu.py::test_fastai
+tests/unit/examples/test_notebooks_gpu.py::test_ncf
+tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive
+tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm
+tests/unit/examples/test_notebooks_gpu.py::test_wide_deep
+tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart
+tests/unit/examples/test_notebooks_pyspark.py::test_als_pyspark_runs
+tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs
+tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs
+tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs
+tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_diversity_runs
+tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning
+tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs
+tests/unit/examples/test_notebooks_python.py::test_template_runs
+tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs
+tests/unit/examples/test_notebooks_python.py::test_sar_deep_dive_runs
+tests/unit/examples/test_notebooks_python.py::test_baseline_deep_dive_runs
+tests/unit/examples/test_notebooks_python.py::test_surprise_deep_dive_runs
+tests/unit/examples/test_notebooks_python.py::test_vw_deep_dive_runs
+tests/unit/examples/test_notebooks_python.py::test_lightgbm
+tests/unit/examples/test_notebooks_python.py::test_wikidata_runs
+tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs
+tests/unit/examples/test_notebooks_python.py::test_cornac_deep_dive_runs
+tests/unit/recommenders/datasets/test_covid_utils.py::test_remove_duplicates
+tests/unit/recommenders/datasets/test_covid_utils.py::test_remove_nan
+tests/unit/recommenders/datasets/test_covid_utils.py::test_clean_dataframe
+tests/unit/recommenders/datasets/test_covid_utils.py::test_retrieve_text
+tests/unit/recommenders/datasets/test_covid_utils.py::test_get_public_domain_text
+tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download
+tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_wrong_bytes
+tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_maybe
+tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_retry
+tests/unit/recommenders/datasets/test_dataset.py::test_download_path
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names[10]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names[100]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success[2]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success[3]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success[4]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_invalid_param__return_failure[-1]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_invalid_param__return_failure[0]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_invalid_param__return_failure[100]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-None-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-None-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-None-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-None-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-2-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-2-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-2-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[0--1-2-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-None-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-None-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-None-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-None-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-2-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-2-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-2-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[3--1-2-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-None-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-None-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-None-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-None-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-2-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-2-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-2-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success[10--1-2-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[0-101-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[0-101-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[0-101-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[0-101-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[3-101-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[3-101-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[3-101-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[3-101-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[10-101-True-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[10-101-True-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[10-101-False-True]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success[10-101-False-False]
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__data_serialization_default_param
+tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_data__no_name_collision
+tests/unit/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_default_param__succeed
+tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed
+tests/unit/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_custom_param__succeed
+tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed
+tests/unit/recommenders/datasets/test_pandas_df_utils.py::test_negative_feedback_sampler
+tests/unit/recommenders/datasets/test_pandas_df_utils.py::test_filter_by
+tests/unit/recommenders/datasets/test_pandas_df_utils.py::test_csv_to_libffm
+tests/unit/recommenders/datasets/test_pandas_df_utils.py::test_has_columns
+tests/unit/recommenders/datasets/test_pandas_df_utils.py::test_has_same_base_dtype
+tests/unit/recommenders/datasets/test_pandas_df_utils.py::test_lru_cache_df
+tests/unit/recommenders/datasets/test_python_splitter.py::test_split_pandas_data
+tests/unit/recommenders/datasets/test_python_splitter.py::test_min_rating_filter
+tests/unit/recommenders/datasets/test_python_splitter.py::test_random_splitter
+tests/unit/recommenders/datasets/test_python_splitter.py::test_chrono_splitter
+tests/unit/recommenders/datasets/test_python_splitter.py::test_stratified_splitter
+tests/unit/recommenders/datasets/test_python_splitter.py::test_int_numpy_stratified_splitter
+tests/unit/recommenders/datasets/test_python_splitter.py::test_float_numpy_stratified_splitter
+tests/unit/recommenders/datasets/test_spark_splitter.py::test_min_rating_filter
+tests/unit/recommenders/datasets/test_spark_splitter.py::test_random_splitter
+tests/unit/recommenders/datasets/test_spark_splitter.py::test_chrono_splitter
+tests/unit/recommenders/datasets/test_spark_splitter.py::test_stratified_splitter
+tests/unit/recommenders/datasets/test_spark_splitter.py::test_timestamp_splitter
+tests/unit/recommenders/datasets/test_sparse.py::test_df_to_sparse
+tests/unit/recommenders/datasets/test_sparse.py::test_sparse_to_df
+tests/unit/recommenders/datasets/test_wikidata.py::test_find_wikidata_id
+tests/unit/recommenders/datasets/test_wikidata.py::test_query_entity_links
+tests/unit/recommenders/datasets/test_wikidata.py::test_read_linked_entities
+tests/unit/recommenders/datasets/test_wikidata.py::test_query_entity_description
+tests/unit/recommenders/datasets/test_wikidata.py::test_search_wikidata
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_column_dtypes_match
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_merge_rating
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_merge_ranking
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_rmse
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_mae
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_rsquared
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_exp_var
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_ndcg_at_k
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_map_at_k
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_precision
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_recall
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_auc
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_logloss
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_python_errors
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_catalog_coverage
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_distributional_coverage
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_item_novelty
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_novelty
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_diversity
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_diversity
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_item_serendipity
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_serendipity
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_serendipity
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_diversity_item_feature_vector
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_diversity_item_feature_vector
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_item_serendipity_item_feature_vector
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_serendipity_item_feature_vector
+tests/unit/recommenders/evaluation/test_python_evaluation.py::test_serendipity_item_feature_vector
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_init_spark
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_init_spark_rating_eval
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_rmse
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_mae
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_rsquared
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_exp_var
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_recall
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_precision
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_ndcg
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_map
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_python_match
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_catalog_coverage
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_item_novelty
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_novelty
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_diversity
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_diversity
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_item_serendipity
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_serendipity
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_serendipity
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_diversity_item_feature_vector
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_diversity_item_feature_vector
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_item_serendipity_item_feature_vector
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_serendipity_item_feature_vector
+tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_serendipity_item_feature_vector
+tests/unit/recommenders/models/test_cornac_utils.py::test_predict
+tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items
+tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition
+tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition
+tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition
+tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition
+tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition
+tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition
+tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition
+tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams[FEATURE_COUNT]
+tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams[data_format]
+tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams[dim]
+tests/unit/recommenders/models/test_deeprec_utils.py::test_load_yaml_file
+tests/unit/recommenders/models/test_geoimc.py::test_dataptr[data0-entities0]
+tests/unit/recommenders/models/test_geoimc.py::test_dataptr[data1-entities1]
+tests/unit/recommenders/models/test_geoimc.py::test_length_normalize[matrix0]
+tests/unit/recommenders/models/test_geoimc.py::test_length_normalize[matrix1]
+tests/unit/recommenders/models/test_geoimc.py::test_mean_center[matrix0]
+tests/unit/recommenders/models/test_geoimc.py::test_mean_center[matrix1]
+tests/unit/recommenders/models/test_geoimc.py::test_reduce_dims
+tests/unit/recommenders/models/test_geoimc.py::test_imcproblem[dataPtr0-3]
+tests/unit/recommenders/models/test_geoimc.py::test_imcproblem[dataPtr1-3]
+tests/unit/recommenders/models/test_geoimc.py::test_inferer_init
+tests/unit/recommenders/models/test_geoimc.py::test_inferer_infer[dataPtr0]
+tests/unit/recommenders/models/test_geoimc.py::test_inferer_infer[dataPtr1]
+tests/unit/recommenders/models/test_lightfm_utils.py::test_interactions
+tests/unit/recommenders/models/test_lightfm_utils.py::test_fitting
+tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_users
+tests/unit/recommenders/models/test_lightfm_utils.py::test_sim_items
+tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init
+tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_unsorted
+tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_empty
+tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_missing_column
+tests/unit/recommenders/models/test_ncf_dataset.py::test_negative_sampler
+tests/unit/recommenders/models/test_ncf_dataset.py::test_train_loader
+tests/unit/recommenders/models/test_ncf_dataset.py::test_test_loader
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_init[NeuMF-1-1]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_init[GMF-10-10]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_init[MLP-4-8]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load[NeuMF-5-5]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load[GMF-5-5]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load[MLP-5-5]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load[5-5]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load[4-8]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_fit[NeuMF]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_fit[GMF]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_fit[MLP]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict[NeuMF]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict[GMF]
+tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict[MLP]
+tests/unit/recommenders/models/test_newsrec_model.py::test_nrms_component_definition
+tests/unit/recommenders/models/test_newsrec_model.py::test_naml_component_definition
+tests/unit/recommenders/models/test_newsrec_model.py::test_npa_component_definition
+tests/unit/recommenders/models/test_newsrec_model.py::test_lstur_component_definition
+tests/unit/recommenders/models/test_newsrec_utils.py::test_prepare_hparams[wordEmb_file]
+tests/unit/recommenders/models/test_newsrec_utils.py::test_prepare_hparams[wordDict_file]
+tests/unit/recommenders/models/test_newsrec_utils.py::test_prepare_hparams[userDict_file]
+tests/unit/recommenders/models/test_newsrec_utils.py::test_load_yaml_file
+tests/unit/recommenders/models/test_rbm.py::test_class_init
+tests/unit/recommenders/models/test_rbm.py::test_train_param_init
+tests/unit/recommenders/models/test_rbm.py::test_sampling_funct
+tests/unit/recommenders/models/test_rbm.py::test_save_load
+tests/unit/recommenders/models/test_sar_singlenode.py::test_init
+tests/unit/recommenders/models/test_sar_singlenode.py::test_fit[jaccard-False]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_fit[lift-True]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_predict[jaccard-False]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_predict[lift-True]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_predict_all_items
+tests/unit/recommenders/models/test_sar_singlenode.py::test_sar_item_similarity[1-cooccurrence-count]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_sar_item_similarity[1-jaccard-jac]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_sar_item_similarity[1-lift-lift]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_sar_item_similarity[3-cooccurrence-count]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_sar_item_similarity[3-jaccard-jac]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_sar_item_similarity[3-lift-lift]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_user_affinity
+tests/unit/recommenders/models/test_sar_singlenode.py::test_recommend_k_items[3-cooccurrence-count]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_recommend_k_items[3-jaccard-jac]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_recommend_k_items[3-lift-lift]
+tests/unit/recommenders/models/test_sar_singlenode.py::test_get_item_based_topk
+tests/unit/recommenders/models/test_sar_singlenode.py::test_get_popularity_based_topk
+tests/unit/recommenders/models/test_sar_singlenode.py::test_get_normalized_scores
+tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data
+tests/unit/recommenders/models/test_sasrec_model.py::test_sampler
+tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec
+tests/unit/recommenders/models/test_sasrec_model.py::test_ssept
+tests/unit/recommenders/models/test_surprise_utils.py::test_predict
+tests/unit/recommenders/models/test_surprise_utils.py::test_recommend_k_items
+tests/unit/recommenders/models/test_tfidf_utils.py::test_init
+tests/unit/recommenders/models/test_tfidf_utils.py::test_clean_dataframe
+tests/unit/recommenders/models/test_tfidf_utils.py::test_tokenize_text
+tests/unit/recommenders/models/test_tfidf_utils.py::test_fit
+tests/unit/recommenders/models/test_tfidf_utils.py::test_get_tokens
+tests/unit/recommenders/models/test_tfidf_utils.py::test_get_stop_words
+tests/unit/recommenders/models/test_tfidf_utils.py::test_recommend_top_k_items
+tests/unit/recommenders/models/test_tfidf_utils.py::test_get_top_k_recommendations
+tests/unit/recommenders/models/test_vowpal_wabbit.py::test_vw_init_del
+tests/unit/recommenders/models/test_vowpal_wabbit.py::test_to_vw_cmd
+tests/unit/recommenders/models/test_vowpal_wabbit.py::test_parse_train_cmd
+tests/unit/recommenders/models/test_vowpal_wabbit.py::test_parse_test_cmd
+tests/unit/recommenders/models/test_vowpal_wabbit.py::test_to_vw_file
+tests/unit/recommenders/models/test_vowpal_wabbit.py::test_fit_and_predict
+tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model
+tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model
+tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model
+tests/unit/recommenders/tuning/test_ncf_utils.py::test_compute_test_results__return_success
+tests/unit/recommenders/tuning/test_nni_utils.py::test_get_experiment_status
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_experiment_status_done
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_experiment_status_tuner_no_more_trial
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_experiment_status_running
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_experiment_status_no_more_trial
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_experiment_status_failed
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_stopped_timeout
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_stopped
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_metrics_written
+tests/unit/recommenders/tuning/test_nni_utils.py::test_check_metrics_written_timeout
+tests/unit/recommenders/tuning/test_nni_utils.py::test_get_trials
+tests/unit/recommenders/tuning/test_sweep.py::test_param_sweep
+tests/unit/recommenders/utils/test_general_utils.py::test_invert_dictionary
+tests/unit/recommenders/utils/test_general_utils.py::test_get_number_processors
+tests/unit/recommenders/utils/test_gpu_utils.py::test_get_gpu_info
+tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus
+tests/unit/recommenders/utils/test_gpu_utils.py::test_clear_memory_all_gpus
+tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cuda_version
+tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cudnn_version
+tests/unit/recommenders/utils/test_gpu_utils.py::test_tensorflow_gpu
+tests/unit/recommenders/utils/test_gpu_utils.py::test_pytorch_gpu
+tests/unit/recommenders/utils/test_k8s_utils.py::test_qps_to_replicas
+tests/unit/recommenders/utils/test_k8s_utils.py::test_replicas_to_qps
+tests/unit/recommenders/utils/test_k8s_utils.py::test_nodes_to_replicas
+tests/unit/recommenders/utils/test_notebook_utils.py::test_is_jupyter
+tests/unit/recommenders/utils/test_plot.py::test_line_graph
+tests/unit/recommenders/utils/test_python_utils.py::test_python_jaccard
+tests/unit/recommenders/utils/test_python_utils.py::test_python_lift
+tests/unit/recommenders/utils/test_python_utils.py::test_exponential_decay
+tests/unit/recommenders/utils/test_python_utils.py::test_get_top_k_scored_items
+tests/unit/recommenders/utils/test_python_utils.py::test_binarize
+tests/unit/recommenders/utils/test_python_utils.py::test_rescale
+tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn
+tests/unit/recommenders/utils/test_tf_utils.py::test_build_optimizer
+tests/unit/recommenders/utils/test_tf_utils.py::test_evaluation_log_hook
+tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn_for_saved_model
+tests/unit/recommenders/utils/test_timer.py::test_no_time
+tests/unit/recommenders/utils/test_timer.py::test_stop_before_start
+tests/unit/recommenders/utils/test_timer.py::test_interval_before_stop
+tests/unit/recommenders/utils/test_timer.py::test_timer
+tests/unit/recommenders/utils/test_timer.py::test_timer_format
+
+=============================== warnings summary ===============================
+../anaconda3/envs/reco-env/lib/python3.7/site-packages/ansiwrap/core.py:6
+  /home/pradjoshi/anaconda3/envs/reco-env/lib/python3.7/site-packages/ansiwrap/core.py:6: DeprecationWarning: the imp module is deprecated in favour of importlib; see the module's documentation for alternative uses
+    import imp
+
+../anaconda3/envs/reco-env/lib/python3.7/site-packages/papermill/iorw.py:50
+  /home/pradjoshi/anaconda3/envs/reco-env/lib/python3.7/site-packages/papermill/iorw.py:50: FutureWarning: pyarrow.HadoopFileSystem is deprecated as of 2.0.0, please use pyarrow.fs.HadoopFileSystem instead.
+    from pyarrow import HadoopFileSystem
+
+tests/integration/examples/test_notebooks_pyspark.py:19
+  /home/pradjoshi/recommenders/tests/integration/examples/test_notebooks_pyspark.py:19: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=2)
+
+tests/integration/examples/test_notebooks_pyspark.py:45
+  /home/pradjoshi/recommenders/tests/integration/examples/test_notebooks_pyspark.py:45: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=2)
+
+tests/integration/examples/test_notebooks_python.py:94
+  /home/pradjoshi/recommenders/tests/integration/examples/test_notebooks_python.py:94: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/integration/examples/test_notebooks_python.py:239
+  /home/pradjoshi/recommenders/tests/integration/examples/test_notebooks_python.py:239: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/integration/examples/test_notebooks_python.py:256
+  /home/pradjoshi/recommenders/tests/integration/examples/test_notebooks_python.py:256: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/smoke/examples/test_notebooks_pyspark.py:19
+  /home/pradjoshi/recommenders/tests/smoke/examples/test_notebooks_pyspark.py:19: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=2)
+
+tests/smoke/examples/test_notebooks_pyspark.py:46
+  /home/pradjoshi/recommenders/tests/smoke/examples/test_notebooks_pyspark.py:46: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=2)
+
+tests/smoke/examples/test_notebooks_python.py:59
+  /home/pradjoshi/recommenders/tests/smoke/examples/test_notebooks_python.py:59: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/examples/test_notebooks_pyspark.py:20
+  /home/pradjoshi/recommenders/tests/unit/examples/test_notebooks_pyspark.py:20: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=2)
+
+tests/unit/examples/test_notebooks_pyspark.py:49
+  /home/pradjoshi/recommenders/tests/unit/examples/test_notebooks_pyspark.py:49: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=3)
+
+tests/unit/examples/test_notebooks_pyspark.py:71
+  /home/pradjoshi/recommenders/tests/unit/examples/test_notebooks_pyspark.py:71: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=3)
+
+tests/unit/examples/test_notebooks_pyspark.py:83
+  /home/pradjoshi/recommenders/tests/unit/examples/test_notebooks_pyspark.py:83: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=2)
+
+tests/unit/examples/test_notebooks_pyspark.py:103
+  /home/pradjoshi/recommenders/tests/unit/examples/test_notebooks_pyspark.py:103: PytestUnknownMarkWarning: Unknown pytest.mark.flaky - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.flaky(reruns=5, reruns_delay=2)
+
+tests/unit/examples/test_notebooks_python.py:52
+  /home/pradjoshi/recommenders/tests/unit/examples/test_notebooks_python.py:52: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/examples/test_notebooks_python.py:106
+  /home/pradjoshi/recommenders/tests/unit/examples/test_notebooks_python.py:106: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/evaluation/test_python_evaluation.py:9
+  /home/pradjoshi/recommenders/tests/unit/recommenders/evaluation/test_python_evaluation.py:9: FutureWarning: pandas.util.testing is deprecated. Use the functions in the public API at pandas.testing instead.
+    from pandas.util.testing import assert_frame_equal
+
+tests/unit/recommenders/models/test_geoimc.py:41
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:41: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_geoimc.py:51
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:51: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_geoimc.py:67
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:67: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_geoimc.py:82
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:82: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_geoimc.py:89
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:89: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_geoimc.py:97
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:97: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_geoimc.py:122
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:122: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_geoimc.py:127
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_geoimc.py:127: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_surprise_utils.py:55
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_surprise_utils.py:55: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+tests/unit/recommenders/models/test_surprise_utils.py:90
+  /home/pradjoshi/recommenders/tests/unit/recommenders/models/test_surprise_utils.py:90: PytestUnknownMarkWarning: Unknown pytest.mark.experimental - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/mark.html
+    @pytest.mark.experimental
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+--- generated xml file: /home/pradjoshi/recommenders/junit/test-results.xml ----
+
+---------- coverage: platform linux, python 3.7.12-final-0 -----------
+Name                                                                     Stmts   Miss  Cover
+--------------------------------------------------------------------------------------------
+recommenders/datasets/amazon_reviews.py                                    354    329     7%
+recommenders/datasets/cosmos_cli.py                                         31     31     0%
+recommenders/datasets/covid_utils.py                                        40      4    90%
+recommenders/datasets/criteo.py                                             53     23    57%
+recommenders/datasets/download_utils.py                                     50      5    90%
+recommenders/datasets/mind.py                                              214    183    14%
+recommenders/datasets/movielens.py                                         226     93    59%
+recommenders/datasets/pandas_df_utils.py                                   137     18    87%
+recommenders/datasets/python_splitters.py                                   57      5    91%
+recommenders/datasets/spark_splitters.py                                    49     49     0%
+recommenders/datasets/sparse.py                                             63      6    90%
+recommenders/datasets/split_utils.py                                        49     12    76%
+recommenders/datasets/wikidata.py                                           75     40    47%
+recommenders/evaluation/python_evaluation.py                               269     17    94%
+recommenders/evaluation/spark_evaluation.py                                224    224     0%
+recommenders/models/deeprec/DataModel/ImplicitCF.py                         88     75    15%
+recommenders/models/deeprec/deeprec_utils.py                               180     97    46%
+recommenders/models/deeprec/io/dkn_item2item_iterator.py                    57     51    11%
+recommenders/models/deeprec/io/dkn_iterator.py                             153    140     8%
+recommenders/models/deeprec/io/iterator.py                                 105     91    13%
+recommenders/models/deeprec/io/nextitnet_iterator.py                       119    110     8%
+recommenders/models/deeprec/io/sequential_iterator.py                      223    210     6%
+recommenders/models/deeprec/models/base_model.py                           312    276    12%
+recommenders/models/deeprec/models/dkn.py                                  175    160     9%
+recommenders/models/deeprec/models/dkn_item2item.py                         48     37    23%
+recommenders/models/deeprec/models/graphrec/lightgcn.py                    170    148    13%
+recommenders/models/deeprec/models/sequential/asvd.py                       16     16     0%
+recommenders/models/deeprec/models/sequential/caser.py                      42     42     0%
+recommenders/models/deeprec/models/sequential/gru4rec.py                    28     28     0%
+recommenders/models/deeprec/models/sequential/nextitnet.py                  61     51    16%
+recommenders/models/deeprec/models/sequential/rnn_cell_implement.py        282    254    10%
+recommenders/models/deeprec/models/sequential/sequential_base_model.py     149    132    11%
+recommenders/models/deeprec/models/sequential/sli_rec.py                    49     41    16%
+recommenders/models/deeprec/models/sequential/sum.py                        57     48    16%
+recommenders/models/deeprec/models/sequential/sum_cells.py                 143    116    19%
+recommenders/models/deeprec/models/xDeepFM.py                              208    196     6%
+recommenders/models/fastai/fastai_utils.py                                  31     31     0%
+recommenders/models/geoimc/geoimc_algorithm.py                              69     51    26%
+recommenders/models/geoimc/geoimc_data.py                                   92     56    39%
+recommenders/models/geoimc/geoimc_predict.py                                40     24    40%
+recommenders/models/geoimc/geoimc_utils.py                                  13      8    38%
+recommenders/models/lightfm/lightfm_utils.py                                72     27    62%
+recommenders/models/ncf/dataset.py                                         249    141    43%
+recommenders/models/ncf/ncf_singlenode.py                                  131    127     3%
+recommenders/models/newsrec/io/mind_all_iterator.py                        262     23    91%
+recommenders/models/newsrec/io/mind_iterator.py                            185     15    92%
+recommenders/models/newsrec/models/base_model.py                           166     44    73%
+recommenders/models/newsrec/models/layers.py                               118     64    46%
+recommenders/models/newsrec/models/lstur.py                                 70      4    94%
+recommenders/models/newsrec/models/npa.py                                   68     56    18%
+recommenders/models/newsrec/newsrec_utils.py                                73     15    79%
+recommenders/models/rbm/rbm.py                                             183     94    49%
+recommenders/models/rlrmc/RLRMCalgorithm.py                                127    124     2%
+recommenders/models/rlrmc/RLRMCdataset.py                                   57     49    14%
+recommenders/models/rlrmc/conjugate_gradient_ms.py                         118    118     0%
+recommenders/models/sar/sar_singlenode.py                                  160      5    97%
+recommenders/models/sasrec/model.py                                        331    300     9%
+recommenders/models/sasrec/sampler.py                                       48     40    17%
+recommenders/models/sasrec/ssept.py                                         85     78     8%
+recommenders/models/sasrec/util.py                                          71     65     8%
+recommenders/models/surprise/surprise_utils.py                              29     22    24%
+recommenders/models/tfidf/tfidf_utils.py                                   145     34    77%
+recommenders/models/vae/multinomial_vae.py                                 179    179     0%
+recommenders/models/vae/standard_vae.py                                    175    175     0%
+recommenders/models/vowpal_wabbit/vw.py                                     67      3    96%
+recommenders/models/wide_deep/wide_deep_utils.py                            31     24    23%
+recommenders/tuning/nni/ncf_training.py                                     95     95     0%
+recommenders/tuning/nni/ncf_utils.py                                        27      4    85%
+recommenders/tuning/nni/nni_utils.py                                        71     11    85%
+recommenders/tuning/nni/svd_training.py                                    101    101     0%
+recommenders/utils/general_utils.py                                         13      4    69%
+recommenders/utils/gpu_utils.py                                             69     56    19%
+recommenders/utils/notebook_memory_management.py                            50     50     0%
+recommenders/utils/notebook_utils.py                                        16      4    75%
+recommenders/utils/plot.py                                                  34      1    97%
+recommenders/utils/python_utils.py                                          40      2    95%
+recommenders/utils/spark_utils.py                                           26     18    31%
+recommenders/utils/tf_utils.py                                             128    105    18%
+--------------------------------------------------------------------------------------------
+TOTAL                                                                     9091   5805    36%
+
+39 files skipped due to complete coverage.
+Coverage XML written to file coverage.xml
+
+406 tests collected in 9.21s

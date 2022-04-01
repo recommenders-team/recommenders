@@ -1,0 +1,38 @@
+{
+    "group_criteo": [
+        "tests/smoke/recommenders/dataset/test_criteo.py",
+        "tests/integration/recommenders/datasets/test_criteo.py"
+    ],
+    "group_mind": [
+        "tests/smoke/recommenders/dataset/test_mind.py",
+        "tests/integration/recommenders/datasets/test_mind.py"
+    ],
+    "group_movielens": [
+        "tests/smoke/recommenders/dataset/test_movielens.py",
+        "tests/integration/recommenders/datasets/test_movielens.py"
+    ],
+    "group_notebooks_gpu": [
+        "tests/smoke/examples/test_notebooks_gpu.py",
+        "tests/integration/examples/test_notebooks_gpu.py"
+    ],
+    "group_notebooks_pyspark": [
+        "tests/smoke/examples/test_notebooks_pyspark.py",
+        "tests/integration/examples/test_notebooks_pyspark.py"
+    ],
+    "group_notebooks_python": [
+        "tests/smoke/examples/test_notebooks_python.py",
+        "tests/integration/examples/test_notebooks_python.py"
+    ],
+    "group_deeprec_model": [
+        "tests/integration/recommenders/recommender/test_deeprec_model.py"
+    ],
+    "group_deeprec_utils": [
+        "tests/integration/recommenders/recommender/test_deeprec_utils.py"
+    ],
+    "group_newsrec_model": [
+        "tests/integration/recommenders/recommender/test_newsrec_model.py"
+    ],
+    "group_newsrec_utils": [
+        "tests/integration/recommenders/recommender/test_newsrec_utils.py"
+    ]
+}

@@ -12,17 +12,30 @@ import os
 import sys
 from azureml.core import Run
 import pytest
+import json
+import argparse
 
 
 if __name__ == "__main__":
+
     logger = logging.getLogger("submit_azureml_pytest.py")
-
-    test_group = [
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_pandas_df",
-        "tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_pandas_df",
-    ]
-
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+
+    parser = argparse.ArgumentParser(description="Process inputs")
+    parser.add_argument(
+        "--testgroup",
+        "-g",
+        action="store",
+        default="group1",
+        help="Group name for the tests",
+    )
+    args = parser.parse_args()
+
+    with open("tests/ci/aml_tests_github_actions/test_module_groups.json") as f:
+        test_group = json.load(f)[args.testgroup]
+    
+    logger.info("Tests to be executed")
+    logger.info(str(test_group))
 
     # Run.get_context() is needed to save context as pytest causes corruption
     # of env vars
@@ -58,4 +71,6 @@ if __name__ == "__main__":
     run.upload_folder(name_of_upload, path_on_disk)
 
     # upload pytest stdout file
-    run.upload_file(name='test_logs', path_or_stream="user_logs/std_log.txt")
+    # azureml_stdout_path = "user_logs/std_log.txt"
+    azureml_stdout_path = "azureml-logs/70_driver_log.txt"
+    run.upload_file(name='test_logs', path_or_stream=azureml_stdout_path)

@@ -228,7 +228,7 @@ def create_experiment(workspace, experiment_name):
 
 
 def submit_experiment_to_azureml(
-    test, run_config, experiment
+    test, run_config, experiment, test_group
 ):
 
     """
@@ -254,6 +254,10 @@ def submit_experiment_to_azureml(
         source_directory=project_folder,
         script=test,
         run_config=run_config,
+        arguments=[
+            "--testgroup",
+            test_group
+        ],
     )
     run = experiment.submit(script_run_config)
     # waits only for configuration to complete
@@ -287,6 +291,10 @@ def create_arg_parser():
         action="store",
         default=4,
         help="specify the maximum number of nodes for the run",
+    )
+    # Test group
+    parser.add_argument(
+        "--testgroup", action="store", default="group1", help="Test Group"
     )
     # Azure resource group
     parser.add_argument(
@@ -460,6 +468,7 @@ if __name__ == "__main__":
         test=args.test,
         run_config=run_config,
         experiment=experiment,
+        test_group=args.testgroup,
     )
 
     # add helpful information to experiment on Azure
