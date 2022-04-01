@@ -19,7 +19,8 @@ import argparse
 if __name__ == "__main__":
 
     logger = logging.getLogger("submit_azureml_pytest.py")
-    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    logging.basicConfig(filename="std_log.txt", level=logging.INFO)
 
     parser = argparse.ArgumentParser(description="Process inputs")
     parser.add_argument(
@@ -72,5 +73,6 @@ if __name__ == "__main__":
 
     # upload pytest stdout file
     # azureml_stdout_path = "user_logs/std_log.txt"
-    azureml_stdout_path = "azureml-logs/70_driver_log.txt"
+    # azureml_stdout_path = "azureml-logs/70_driver_log.txt"
+    azureml_stdout_path = "std_log.txt"
     run.upload_file(name='test_logs', path_or_stream=azureml_stdout_path)
