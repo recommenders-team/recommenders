@@ -19,15 +19,20 @@ import argparse
 if __name__ == "__main__":
 
     logger = logging.getLogger("submit_azureml_pytest.py")
-    # logging.basicConfig(stream=sys.stdout, level=logging.INFO)
-    logging.basicConfig(filename="std_log.txt", level=logging.INFO)
+
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    # logs_path = "user_logs/std_log.txt"
+    # logs_path = "azureml-logs/70_driver_log.txt"
+
+    logs_path = "pytest_logs.txt"
+    # logging.basicConfig(filename=logs_path, level=logging.INFO)
 
     parser = argparse.ArgumentParser(description="Process inputs")
     parser.add_argument(
         "--testgroup",
         "-g",
         action="store",
-        default="group1",
+        default="group_criteo",
         help="Group name for the tests",
     )
     args = parser.parse_args()
@@ -53,7 +58,7 @@ if __name__ == "__main__":
     logger.info("Executing tests now...")
 
     # execute pytest command
-    pytest_exit_code = pytest.main(test_group)
+    pytest_exit_code = pytest.main(test_group + ["--log-file", logs_path])
     
     logger.info("Test execution completed!")
 
@@ -72,7 +77,4 @@ if __name__ == "__main__":
     # run.upload_folder(name_of_upload, path_on_disk)
 
     # upload pytest stdout file
-    # azureml_stdout_path = "user_logs/std_log.txt"
-    # azureml_stdout_path = "azureml-logs/70_driver_log.txt"
-    azureml_stdout_path = "std_log.txt"
-    run.upload_file(name='test_logs', path_or_stream=azureml_stdout_path)
+    run.upload_file(name='test_logs', path_or_stream=logs_path)
