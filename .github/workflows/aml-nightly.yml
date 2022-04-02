@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.6"', '"python=3.7"']
-        test-group: ['"group_criteo"']
+        test-group: ['"group_criteo"', '"group_mind"', '"group_movielens"', '"group_notebooks_gpu"', '"group_notebooks_pyspark"', '"group_notebooks_python"', '"group_deeprec_model"', '"group_deeprec_utils"', '"group_newsrec_model"', '"group_newsrec_utils"']
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -66,7 +66,7 @@ jobs:
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
-            --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies
+            --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --add_gpu_dependencies
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}

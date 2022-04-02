@@ -294,7 +294,7 @@ def create_arg_parser():
     )
     # Test group
     parser.add_argument(
-        "--testgroup", action="store", default="group1", help="Test Group"
+        "--testgroup", action="store", default="group_criteo", help="Test Group"
     )
     # Azure resource group
     parser.add_argument(
@@ -379,7 +379,7 @@ def create_arg_parser():
     parser.add_argument(
         "--testlogs",
         action="store",
-        default="./test_logs.log",
+        default="test_logs.log",
         help="Test logs will be downloaded to this path",
     )
     # conda package name for cudatoolkit
@@ -416,7 +416,7 @@ def create_arg_parser():
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger("submit_azureml_pytest.py")
+    logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
     # logger.setLevel(logging.DEBUG)
     # logging.basicConfig(level=logging.DEBUG)
     args = create_arg_parser()
@@ -480,7 +480,7 @@ if __name__ == "__main__":
     # run.download_files(prefix="reports", output_paths="./reports")
 
     # download logs file from AzureML
-    run.download_file(name="test_logs.log", output_file_path=args.testlogs)
+    run.download_file(name="test_logs", output_file_path=args.testlogs)
 
     # save pytest exit code
     metrics = run.get_metrics()
