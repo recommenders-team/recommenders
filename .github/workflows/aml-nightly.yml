@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ---------------------------------------------------------
 
-name: aml-spark-nightly
+name: aml-nightly
 
 on:
   #          ┌───────────── minute (0 - 59)
@@ -38,7 +38,7 @@ env:
   PYTEST_EXIT_CODE: "tests/ci/aml_tests_github_actions/pytest_exit_code.log"
 
 jobs:
-  nightly-spark-tests:
+  nightly-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
