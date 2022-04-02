@@ -34,8 +34,8 @@ env:
   EXP_NAME: "nightly_tests"
   RG: "pradjoshi-aml-rg"
   WS: "pradjoshi-aml-ws"
-  TEST_LOGS_PATH: '"tests/ci/aml_tests_github_actions/test_logs.log"'
-  PYTEST_EXIT_CODE: "tests/ci/aml_tests_github_actions/pytest_exit_code.log"
+  TEST_LOGS_PATH: '"test_logs.log"'
+  PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
   nightly-tests:

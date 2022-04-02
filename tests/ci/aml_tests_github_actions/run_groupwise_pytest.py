@@ -53,8 +53,7 @@ if __name__ == "__main__":
 
     # log pytest exit code as a metric
     # to be used to indicate success/failure in github workflow
-    # run.log("pytest_exit_code", pytest_exit_code.value)
-    run.log("pytest_exit_code", 0)
+    run.log("pytest_exit_code", pytest_exit_code.value)
 
     # #
     # # Leveraged code from this  notebook:
