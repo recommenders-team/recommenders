@@ -18,13 +18,13 @@ import argparse
 
 if __name__ == "__main__":
 
-    logger = logging.getLogger("submit_azureml_pytest.py")
+    logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
 
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     # logs_path = "user_logs/std_log.txt"
-    # logs_path = "azureml-logs/70_driver_log.txt"
+    logs_path = "azureml-logs/70_driver_log.txt"
 
-    logs_path = "pytest_logs.log"
+    # logs_path = '"tests/ci/aml_tests_github_actions/pytest_logs.log"'
     # logging.basicConfig(filename=logs_path, level=logging.INFO)
 
     parser = argparse.ArgumentParser(description="Process inputs")
@@ -46,19 +46,14 @@ if __name__ == "__main__":
     # Run.get_context() is needed to save context as pytest causes corruption
     # of env vars
     run = Run.get_context()
-    """
-    This is an example of a working subprocess.run for a unit test run:
-    subprocess.run(["pytest", "tests/unit",
-                    "-m", "not notebooks and not spark and not gpu",
-                    "--junitxml=reports/test-unit.xml"])
-    """
 
     logger.info("Python version ")
     logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
     # execute pytest command
-    pytest_exit_code = pytest.main(["-o log_cli=true log_file=" + logs_path + " log_file_level=INFO"] + test_group)
+    # pytest_exit_code = pytest.main(["-o log_cli=true log_file=" + logs_path + " log_file_level=INFO"] + test_group)
+    pytest_exit_code = pytest.main([test_group])
     
     logger.info("Test execution completed!")
 
@@ -69,7 +64,7 @@ if __name__ == "__main__":
     #
     # Leveraged code from this  notebook:
     # https://msdata.visualstudio.com/Vienna/_search?action=contents&text=upload_folder&type=code&lp=code-Project&filters=ProjectFilters%7BVienna%7DRepositoryFilters%7BAzureMlCli%7D&pageSize=25&sortOptions=%5B%7B%22field%22%3A%22relevance%22%2C%22sortOrder%22%3A%22desc%22%7D%5D&result=DefaultCollection%2FVienna%2FAzureMlCli%2FGBmaster%2F%2Fsrc%2Fazureml-core%2Fazureml%2Fcore%2Frun.py
-    logger.debug("os.listdir files {}".format(os.listdir(".")))
+    logger.info("os.listdir files {}".format(os.listdir(".")))
 
     # #  files for AzureML
     # name_of_upload = "reports"
@@ -77,4 +72,4 @@ if __name__ == "__main__":
     # run.upload_folder(name_of_upload, path_on_disk)
 
     # upload pytest stdout file
-    run.upload_file(name='test_logs', path_or_stream=logs_path)
+    run.upload_file(name='test_logs.log', path_or_stream=logs_path)

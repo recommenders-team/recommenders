@@ -477,10 +477,10 @@ if __name__ == "__main__":
     run.tag("PR", args.pr)
     
     # download files from AzureML
-    run.download_files(prefix="reports", output_paths="./reports")
+    # run.download_files(prefix="reports", output_paths="./reports")
 
     # download logs file from AzureML
-    run.download_file(name="test_logs", output_file_path=args.testlogs)
+    run.download_file(name="test_logs.log", output_file_path=args.testlogs)
 
     # save pytest exit code
     metrics = run.get_metrics()
