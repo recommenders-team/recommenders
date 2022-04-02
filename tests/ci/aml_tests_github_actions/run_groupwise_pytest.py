@@ -24,7 +24,7 @@ if __name__ == "__main__":
     # logs_path = "user_logs/std_log.txt"
     # logs_path = "azureml-logs/70_driver_log.txt"
 
-    logs_path = "pytest_logs.txt"
+    logs_path = "pytest_logs.log"
     # logging.basicConfig(filename=logs_path, level=logging.INFO)
 
     parser = argparse.ArgumentParser(description="Process inputs")
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     logger.info("Executing tests now...")
 
     # execute pytest command
-    pytest_exit_code = pytest.main(test_group + ["-o log_cli=true", "--log-file", logs_path, "--log-file-level", "DEBUG"])
+    pytest_exit_code = pytest.main(["-o log_cli=true log_file=" + logs_path + " log_file_level=INFO"] + test_group)
     
     logger.info("Test execution completed!")
 

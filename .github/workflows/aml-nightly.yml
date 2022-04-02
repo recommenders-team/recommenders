@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.6"', '"python=3.7"']
-        test-group: ['"group_criteo"', '"group_mind"', '"group_movielens"']
+        test-group: ['"group_criteo"']
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
