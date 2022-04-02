@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     # execute pytest command
     # pytest_exit_code = pytest.main(["-o log_cli=true log_file=" + logs_path + " log_file_level=INFO"] + test_group)
-    pytest_exit_code = pytest.main([test_group])
+    pytest_exit_code = pytest.main(test_group)
     
     logger.info("Test execution completed!")
 
