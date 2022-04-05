@@ -211,6 +211,12 @@ class SARSingleNode:
         Args:
             df (pandas.DataFrame): User item rating dataframe (without duplicates).
         """
+        select_columns = [self.col_user, self.col_item, self.col_rating]
+        if self.time_decay_flag:
+            select_columns += [self.col_timestamp]
+
+        if df[select_columns].duplicated().any():
+            raise ValueError("There should not be duplicates in the dataframe")
 
         # generate continuous indices if this hasn't been done
         if self.index2item is None:
@@ -221,9 +227,6 @@ class SARSingleNode:
             raise TypeError("Rating column data type must be numeric")
 
         # copy the DataFrame to avoid modification of the input
-        select_columns = [self.col_user, self.col_item, self.col_rating]
-        if self.time_decay_flag:
-            select_columns += [self.col_timestamp]
         temp_df = df[select_columns].copy()
 
         if self.time_decay_flag:
