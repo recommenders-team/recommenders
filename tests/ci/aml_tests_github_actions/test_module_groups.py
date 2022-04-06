@@ -31,6 +31,26 @@ groups = {
         "tests/integration/recommenders/datasets/test_mind.py::test_extract_mind", # 56.30s
         "tests/integration/recommenders/datasets/test_mind.py::test_mind_utils_integration", # 219.26s
     ],
+    "group_cpu_002": [ # Total group time: 1444,31s
+        "tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke", # 46.42s
+
+        "tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke", # 15.98s
+        "tests/integration/examples/test_notebooks_python.py::test_baseline_deep_dive_integration", # 170.73s
+
+        "tests/smoke/examples/test_notebooks_python.py::test_surprise_svd_smoke", # 45.88s
+        "tests/integration/examples/test_notebooks_python.py::test_surprise_svd_integration", # 503.54s
+
+        "tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke", # 12.58s
+        "tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration", # 49.89s + 599.29s
+    ],
+    "group_cpu_003": [ # Total group time: 1444.26
+        "tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke", # 16.62s
+        "tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration", # 165.72s
+
+        "tests/integration/examples/test_notebooks_python.py::test_geoimc_integration", # 1006.19s
+
+        "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration", # 255.73s
+    ],
     "group_gpu_001":[
 
     ],
@@ -50,30 +70,7 @@ groups = {
     ],
 }
 #CPU
-      
-46.42s      tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke
-45.88s      tests/smoke/examples/test_notebooks_python.py::test_surprise_svd_smoke
-16.62s      tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke
-15.98s      tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke
-12.58s      tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke
-      
-      
 
-      
-      
-1006.19s      tests/integration/examples/test_notebooks_python.py::test_geoimc_integration[expected_values0]
-599.29s      tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration[10m-expected_values1]
-503.54s      tests/integration/examples/test_notebooks_python.py::test_surprise_svd_integration[1m-expected_values0]
-      
-255.73s      tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration
-      
-170.73s      tests/integration/examples/test_notebooks_python.py::test_baseline_deep_dive_integration[1m-expected_values0]
-165.72s      tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration[1m-expected_values0]
-      
-      
-49.89s      tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration[1m-expected_values0]
-      
-      
 
 #GPU
 620.13s      tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke
