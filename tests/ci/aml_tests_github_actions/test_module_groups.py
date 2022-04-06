@@ -4,10 +4,10 @@
 # NOTE: All the times are being calculated on an Azure STANDARD_NC6S_V2
 # with 6 vcpus, 112 GiB memory, 1 NVIDIA Tesla P100 GPU.
 
-# IMPORTANT NOTE: NO GROUP SHOULD SURPASS 30MIN!!!
+# IMPORTANT NOTE: NO GROUP SHOULD SURPASS 30MIN = 1800s !!!
 
 groups = {
-    "group_cpu_001": [ # Total group time: 
+    "group_cpu_001": [ # Total group time: 1020.68s
         # Movielens dataset
         "tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens", # 0.45s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df", # 0.47s
