@@ -43,6 +43,10 @@ groups = {
         "tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_spark_df", # 6.83s
         "tests/smoke/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_smoke", # 32.45s
         "tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_spark_df", # 374.64s
+
+        # ALS
+        "tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke", # 49.53s
+        "tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration", # 110.58s
     ],
 }
 #CPU
@@ -99,6 +103,6 @@ groups = {
 0.28s      tests/smoke/recommenders/recommender/test_deeprec_utils.py::test_Sequential_Iterator
 
 #spark
-49.53s      tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke
+      
             
-110.58s      tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration
+      
