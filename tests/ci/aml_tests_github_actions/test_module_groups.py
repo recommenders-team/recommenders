@@ -34,7 +34,7 @@ groups = {
     "group_gpu_001":[
 
     ],
-    "group_spark_001":[ # Total group time: 
+    "group_spark_001":[ # Total group time: 845.16s
         # Movielens dataset
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df", # 4.33s
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df", # 25.58s + 101.99s + 139.23s
@@ -101,6 +101,23 @@ groups = {
 0.76s      tests/smoke/examples/test_notebooks_gpu.py::test_gpu_vm
 0.74s      tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator
 0.28s      tests/smoke/recommenders/recommender/test_deeprec_utils.py::test_Sequential_Iterator
+
+2033.85s      tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration[5-64-42-demo-expected_values0]
+1843.29s      tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration[1m-50000-expected_values0-42]
+1167.93s      tests/integration/examples/test_notebooks_gpu.py::test_dkn_quickstart_integration
+1046.97s      tests/integration/examples/test_notebooks_gpu.py::test_ncf_integration[1m-10-expected_values0-42]
+857.05s      tests/integration/examples/test_notebooks_gpu.py::test_nrms_quickstart_integration[5-64-42-demo-expected_values0]
+810.92s      tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration[5-64-42-demo-expected_values0]
+766.52s      tests/integration/examples/test_notebooks_gpu.py::test_lstur_quickstart_integration[5-64-42-demo-expected_values0]
+667.88s      tests/integration/examples/test_notebooks_gpu.py::test_fastai_integration[1m-10-expected_values0]
+614.69s      tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration[tests/recsys_data/RecSys/SASRec-tf2/data-1-128-sasrec-expected_values0-42]
+470.11s      tests/integration/examples/test_notebooks_gpu.py::test_xdeepfm_integration[15-10-expected_values0-42]
+453.21s      tests/integration/examples/test_notebooks_gpu.py::test_cornac_bivae_integration[1m-expected_values0]
+448.06s      tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration[tests/recsys_data/RecSys/SASRec-tf2/data-1-128-ssept-expected_values1-42]
+351.17s      tests/integration/examples/test_notebooks_gpu.py::test_ncf_deep_dive_integration[100k-10-512-expected_values0-42]
+175.00s      tests/integration/examples/test_notebooks_gpu.py::test_slirec_quickstart_integration[recommenders/models/deeprec/config/sli_rec.yaml-tests/resources/deeprec/slirec-10-400-expected_values0-42]
+19.45s      tests/integration/examples/test_notebooks_gpu.py::test_lightgcn_deep_dive_integration[recommenders/models/deeprec/config/lightgcn.yaml-tests/resources/deeprec/lightgcn-100k-5-1024-expected_values0-42]
+0.82s      tests/integration/examples/test_notebooks_gpu.py::test_gpu_vm
 
 #spark
       
