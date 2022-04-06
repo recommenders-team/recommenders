@@ -4,8 +4,19 @@
 # NOTE: All the times are being calculated on an Azure STANDARD_NC6S_V2
 # with 6 vcpus, 112 GiB memory, 1 NVIDIA Tesla P100 GPU.
 
+# IMPORTANT NOTE: NO GROUP SHOULD SURPASS 30MIN!!!
+
 groups = {
     "group_cpu_001": [ # Total group time: 
+        # Movielens dataset
+        "tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens", # 0.45s
+        "tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df", # 0.47s
+        "tests/smoke/recommenders/dataset/test_movielens.py::test_load_pandas_df", # 2.45s
+        "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df", # 16.87s
+        "tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens", # 0.61s + 3.47s + 8.28s
+        "tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df", # 0.59s + 3.59s + 8.44s
+        "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df", # 155.18s + 302.65s
+
         # Criteo dataset
         "tests/smoke/recommenders/dataset/test_criteo.py::test_download_criteo", # 1.05s
         "tests/smoke/recommenders/dataset/test_criteo.py::test_extract_criteo", # 1.22s
@@ -18,12 +29,16 @@ groups = {
         "tests/smoke/examples/test_notebooks_python.py::test_mind_utils", # 219.77s
         "tests/integration/recommenders/datasets/test_mind.py::test_download_mind", # 37.63s
         "tests/integration/recommenders/datasets/test_mind.py::test_extract_mind", # 56.30s
-
+        "tests/integration/recommenders/datasets/test_mind.py::test_mind_utils_integration", # 219.26s
     ],
     "group_gpu_001":[
 
     ],
-    "group_spark_001":[
+    "group_spark_001":[ # Total group time: 
+        # Movielens dataset
+        "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df", # 4.33s
+        "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df", # 25.58s + 101.99s + 139.23s
+
         # Criteo dataset
         "tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_spark_df", # 6.83s
         "tests/smoke/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_smoke", # 32.45s
@@ -38,32 +53,23 @@ groups = {
 15.98s      tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke
 12.58s      tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke
       
-2.45s      tests/smoke/recommenders/dataset/test_movielens.py::test_load_pandas_df[100k-100000-1682-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
+      
 
       
-0.47s      tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df[100k-1682-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
-0.45s      tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens[100k]
       
 1006.19s      tests/integration/examples/test_notebooks_python.py::test_geoimc_integration[expected_values0]
 599.29s      tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration[10m-expected_values1]
 503.54s      tests/integration/examples/test_notebooks_python.py::test_surprise_svd_integration[1m-expected_values0]
       
-302.65s      tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df[20m-20000263-27278-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
 255.73s      tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration
-219.26s      tests/integration/recommenders/datasets/test_mind.py::test_mind_utils_integration
+      
 170.73s      tests/integration/examples/test_notebooks_python.py::test_baseline_deep_dive_integration[1m-expected_values0]
 165.72s      tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration[1m-expected_values0]
-155.18s      tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df[10m-10000054-10681-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+      
       
 49.89s      tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration[1m-expected_values0]
       
-16.87s      tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df[1m-1000209-3883-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
-8.44s      tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df[20m-27278-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
-8.28s      tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens[20m]
-3.59s      tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df[10m-10681-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
-3.47s      tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens[10m]
-0.61s      tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens[1m]
-0.59s      tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df
+      
 
 #GPU
 620.13s      tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke
@@ -94,11 +100,5 @@ groups = {
 
 #spark
 49.53s      tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke
-      
-      
-4.33s      tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df[100k-100000-1682-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
-      
-139.23s      tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df[10m-10000054-10681-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
+            
 110.58s      tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration
-101.99s      tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df[20m-20000263-27278-1-Toy Story (1995)-Adventure|Animation|Children|Comedy|Fantasy-1995]
-25.58s      tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df[1m-1000209-3883-1-Toy Story (1995)-Animation|Children's|Comedy-1995]
