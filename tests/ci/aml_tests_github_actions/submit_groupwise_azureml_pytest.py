@@ -199,17 +199,17 @@ def create_run_config(cpu_cluster,
         conda_dep.add_conda_package(conda_pkg_cudnn)
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]")
+        conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu,experimental]")
     elif add_gpu_dependencies:
         conda_dep.add_conda_package(conda_pkg_cudatoolkit)
         conda_dep.add_conda_package(conda_pkg_cudnn)
-        conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
+        conda_dep.add_pip_package("recommenders[dev,examples,gpu,experimental]")
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark]")
+        conda_dep.add_pip_package("recommenders[dev,examples,spark,experimental]")
     else:
-        conda_dep.add_pip_package("recommenders[dev,examples]")
+        conda_dep.add_pip_package("recommenders[dev,examples,experimental]")
 
     run_amlcompute.environment.python.conda_dependencies = conda_dep
     return run_amlcompute
