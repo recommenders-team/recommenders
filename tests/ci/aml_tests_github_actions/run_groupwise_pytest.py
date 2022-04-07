@@ -15,6 +15,7 @@ import pytest
 import json
 import argparse
 import glob
+from test_groups import groups
 
 
 if __name__ == "__main__":
@@ -27,14 +28,12 @@ if __name__ == "__main__":
         "--testgroup",
         "-g",
         action="store",
-        default="group_criteo",
+        default="group_cpu_001",
         help="Group name for the tests",
     )
     args = parser.parse_args()
 
-    with open("tests/ci/aml_tests_github_actions/test_module_groups.json") as f:
-        test_group = json.load(f)[args.testgroup]
-    
+    test_group = groups[args.testgroup]
     logger.info("Tests to be executed")
     logger.info(str(test_group))
 

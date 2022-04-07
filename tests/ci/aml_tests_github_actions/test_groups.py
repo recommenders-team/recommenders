@@ -6,6 +6,8 @@
 
 # IMPORTANT NOTE: NO GROUP SHOULD SURPASS 30MIN = 1800s !!!
 
+global groups
+
 groups = {
     "group_cpu_001": [  # Total group time: 1020.68s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens",  # 0.45s
