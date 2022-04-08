@@ -1,6 +1,10 @@
 Contributors to Recommenders 
 ============================
-Recommenders is developed and maintained by a community of people interested in exploring recommendation algorithms and how best to deploy them in industry settings. The goal is to accelerate the workflow of any individual or organization working on recommender systems. Everyone is encouraged to contribute at any level to add and improve the implemented algorithms, notebooks and utilities. 
+Recommenders is developed and maintained by a community of people interested in exploring recommendation algorithms and how best to deploy them in industry settings. The goal is to accelerate the workflow of any individual or organization working on recommender systems. Everyone is encouraged to contribute at any level to add and improve the implemented algorithms, notebooks and utilities.
+
+<p align="center">
+  <img src="https://contributors-img.web.app/image?repo=microsoft/recommenders" width = 500/>
+</p>
 
 Maintainers (sorted alphabetically)
 ---------------------------------------

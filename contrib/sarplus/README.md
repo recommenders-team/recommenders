@@ -157,7 +157,7 @@ Insert this cell prior to the code above.
 ```python
 import os
 
-SARPLUS_MVN_COORDINATE = "com.microsoft.sarplus:sarplus_2.12:0.6.0"
+SARPLUS_MVN_COORDINATE = "com.microsoft.sarplus:sarplus_2.12:0.6.5"
 SUBMIT_ARGS = f"--packages {SARPLUS_MVN_COORDINATE} pyspark-shell"
 os.environ["PYSPARK_SUBMIT_ARGS"] = SUBMIT_ARGS
 
@@ -180,7 +180,7 @@ spark = (
 ### PySpark Shell
 
 ```bash
-SARPLUS_MVN_COORDINATE="com.microsoft.sarplus:sarplus_2.12:0.6.0"
+SARPLUS_MVN_COORDINATE="com.microsoft.sarplus:sarplus_2.12:0.6.5"
 
 # Install pysarplus
 pip install pysarplus
@@ -201,14 +201,14 @@ pyspark --packages "${SARPLUS_MVN_COORDINATE}" \
 1. Create Library
 1. Under `Library Source` select `Maven`
 1. Enter into `Coordinates`:
-   * `com.microsoft.sarplus:sarplus_2.12:0.6.0`
-   * or `com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.0` (if
+   * `com.microsoft.sarplus:sarplus_2.12:0.6.5`
+   * or `com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.5` (if
      you're on Spark 3.2+)
 1. Hit `Create`
 1. Attach to your cluster
 1. Create 2nd library
 1. Under `Library Source` select `PyPI`
-1. Enter `pysarplus==0.6.0`
+1. Enter `pysarplus==0.6.5`
 1. Hit `Create`
 
 This will install C++, Python and Scala code on your cluster.  See
@@ -232,12 +232,23 @@ for details on how to install libraries on Azure Databricks.
 These will set the crossJoin property to enable calculation of the
 similarity matrix, and set default sources to parquet.
 
+It can also be configured by putting the following Python code in a
+notebook cell:
+
+```python
+spark.conf.set("spark.sql.crossJoin.enabled", "true")
+spark.conf.set("spark.sql.sources.default", "parquet")
+spark.conf.set("spark.sql.legacy.createHiveTableByDefault", "true")
+```
+
 
 #### Prepare local file system for cache
 
-`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
-as its second parameter for storing intermediate files during its
-calculation, so you'll also have to **mount** shared storage.
+To use C++ based fast prediction in
+`pysarplus.SARPlus.recommend_k_items()`, a local cache directory needs
+to be specified as the `cache_path` parameter of `pysarplus.SARPlus()`
+to store intermediate files during its calculation, so you'll also
+have to **mount** shared storage.
 
 For example, you can [create a storage
 account](https://ms.portal.azure.com/#create/Microsoft.StorageAccount)
@@ -259,9 +270,8 @@ dbutils.fs.mount(
 where `<storage-account>`, `<container>` and `<access-key>` should be
 replaced with the actual values, such as `sarplusstorage`,
 `sarpluscache` and the access key of the storage account.  Then pass
-`"dbfs:/mnt/<container>/cache"` to
-`pysarplus.SARPlus.recommend_k_items()` as the value for its 2nd
-parameter.
+`cache_path="dbfs:/mnt/<container>/cache"` to `pysarplus.SARPlus()`,
+where `cache` is the cache's name.
 
 
 To disable logging messages:
@@ -276,12 +286,17 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
 
 #### Install libraries
 
-1. Download pysarplus TAR file from
+1. Download pysarplus WHL file from
    [pysarplus@PyPI](https://pypi.org/project/pysarplus/)
-1. Download sarplus JAR file from 
+1. Download sarplus JAR file
+   from [sarplus@MavenCentralRepository](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12)
+
+   (or
+   [sarplus-spark-3-2-plus@MavenCentralRepository](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12)
+   if run on Spark 3.2+)
 1. Navigate to your Azure Synapse workspace -> `Manage` -> `Workspace
    packages`
-1. Upload pysarplus TAR file and sarplus JAR file as workspace
+1. Upload pysarplus WHL file and sarplus JAR file as workspace
    packages
 1. Navigate to your Azure Synapse workspace -> `Manage` -> `Apache
    Spark pools`
@@ -291,16 +306,19 @@ logging.getLogger("py4j").setLevel(logging.ERROR)
    previous step
 1. Apply
 
-See [Manage libraries for Apache Spark in Azure Synapse
+pysarplus can also be installed via `requirements.txt`.  See [Manage
+libraries for Apache Spark in Azure Synapse
 Analytics](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-azure-portal-add-libraries)
 for details on how to manage libraries in Azure Synapse.
 
 
 #### Prepare local file system for cache
 
-`pysarplus.SARPlus.recommend_k_items()` needs a local file system path
-as its second parameter for storing intermediate files during its
-calculation, so you'll also have to **mount** shared storage.
+To use C++ based fast prediction in
+`pysarplus.SARPlus.recommend_k_items()`, a local cache directory needs
+to be specified as the `cache_path` parameter of `pysarplus.SARPlus()`
+to store intermediate files during its calculation, so you'll also
+have to **mount** shared storage.
 
 For example, you can run the following code to mount the file system
 (container) of the default/primary storage account.
@@ -315,9 +333,9 @@ mssparkutils.fs.mount(
 job_id = mssparkutils.env.getJobId()
 ```
 
-Then pass `f"synfs:/{job_id}/mnt/<container>/cache"` to
-`pysarplus.SARPlus.recommend_k_items()` as the value for its 2nd
-parameter.  **NOTE**: `job_id` should be prepended to the local path.
+Then pass `cache_path=f"synfs:/{job_id}/mnt/<container>/cache"` to
+`pysarplus.SARPlus()`, where `cache` is the cache's name.  **NOTE**:
+`job_id` should be prepended to the local path.
 
 See [How to use file mount/unmount API in Synapse](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/synapse-file-mount-api)
 for more details.

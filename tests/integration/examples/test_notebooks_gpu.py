@@ -327,11 +327,23 @@ def test_slirec_quickstart_integration(
     ],
 )
 def test_nrms_quickstart_integration(
-    notebooks, output_notebook, kernel_name, epochs, batch_size, seed, MIND_type, expected_values
+    notebooks,
+    output_notebook,
+    kernel_name,
+    epochs,
+    batch_size,
+    seed,
+    MIND_type,
+    expected_values,
 ):
     notebook_path = notebooks["nrms_quickstart"]
 
-    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
+    params = {
+        "epochs": epochs,
+        "batch_size": batch_size,
+        "seed": seed,
+        "MIND_type": MIND_type,
+    }
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -376,11 +388,23 @@ def test_nrms_quickstart_integration(
     ],
 )
 def test_naml_quickstart_integration(
-    notebooks, output_notebook, kernel_name, batch_size, epochs, seed, MIND_type, expected_values
+    notebooks,
+    output_notebook,
+    kernel_name,
+    batch_size,
+    epochs,
+    seed,
+    MIND_type,
+    expected_values,
 ):
     notebook_path = notebooks["naml_quickstart"]
 
-    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
+    params = {
+        "epochs": epochs,
+        "batch_size": batch_size,
+        "seed": seed,
+        "MIND_type": MIND_type,
+    }
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -425,11 +449,23 @@ def test_naml_quickstart_integration(
     ],
 )
 def test_lstur_quickstart_integration(
-    notebooks, output_notebook, kernel_name, epochs, batch_size, seed, MIND_type, expected_values
+    notebooks,
+    output_notebook,
+    kernel_name,
+    epochs,
+    batch_size,
+    seed,
+    MIND_type,
+    expected_values,
 ):
     notebook_path = notebooks["lstur_quickstart"]
 
-    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
+    params = {
+        "epochs": epochs,
+        "batch_size": batch_size,
+        "seed": seed,
+        "MIND_type": MIND_type,
+    }
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -474,11 +510,23 @@ def test_lstur_quickstart_integration(
     ],
 )
 def test_npa_quickstart_integration(
-    notebooks, output_notebook, kernel_name, epochs, batch_size, seed, MIND_type, expected_values
+    notebooks,
+    output_notebook,
+    kernel_name,
+    epochs,
+    batch_size,
+    seed,
+    MIND_type,
+    expected_values,
 ):
     notebook_path = notebooks["npa_quickstart"]
 
-    params = {"epochs": epochs, "batch_size": batch_size, "seed": seed, "MIND_type": MIND_type}
+    params = {
+        "epochs": epochs,
+        "batch_size": batch_size,
+        "seed": seed,
+        "MIND_type": MIND_type,
+    }
     pm.execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
@@ -608,15 +656,24 @@ def test_cornac_bivae_integration(
 @pytest.mark.gpu
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "data_dir, num_epochs, batch_size, expected_values, seed",
+    "data_dir, num_epochs, batch_size, model_name, expected_values, seed",
     [
         (
             os.path.join("tests", "recsys_data", "RecSys", "SASRec-tf2", "data"),
             1,
             128,
+            "sasrec",
             {"ndcg@10": 0.2626, "Hit@10": 0.4244},
             42,
-        )
+        ),
+        (
+            os.path.join("tests", "recsys_data", "RecSys", "SASRec-tf2", "data"),
+            1,
+            128,
+            "ssept",
+            {"ndcg@10": 0.2626, "Hit@10": 0.4244},
+            42,
+        ),
     ],
 )
 def test_sasrec_quickstart_integration(
@@ -626,6 +683,7 @@ def test_sasrec_quickstart_integration(
     data_dir,
     num_epochs,
     batch_size,
+    model_name,
     expected_values,
     seed,
 ):
@@ -634,6 +692,7 @@ def test_sasrec_quickstart_integration(
         "data_dir": data_dir,
         "num_epochs": num_epochs,
         "batch_size": batch_size,
+        "model_name": model_name,
         "seed": seed,
     }
 
