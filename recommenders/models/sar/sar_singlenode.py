@@ -268,8 +268,7 @@ class SARSingleNode:
         # free up some space
         del temp_df
 
-        # creates an array with the frequency of every unique user/item
-        self.user_frequencies = np.count_nonzero(self.user_affinity.toarray(), axis=1)
+        # creates an array with the frequency of every unique item
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
@@ -364,6 +363,8 @@ class SARSingleNode:
             col = self.col_item
             idx = self.index2item
         else:
+            if self.user_frequencies is None:
+                self.user_frequencies = self.user_affinity.getnnz(axis=1).astype("int64")
             frequencies = self.user_frequencies
             col = self.col_user
             idx = self.index2user
@@ -565,3 +566,17 @@ class SARSingleNode:
             }
         )
         return df
+
+
+if __name__ == '__main__':
+    header = {'col_user': 'UserId', 'col_item': 'MovieId', 'col_rating': 'Rating', 'col_timestamp': 'Timestamp'}
+    model = SARSingleNode(**header)
+    df = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 2, 2, 2],
+            header["col_item"]: [1, 2, 1, 2, 3],
+            header["col_rating"]: [3.0, 4.0, 3.0, 4.0, 4.0]
+        }
+    )
+    model.fit(df)
+    print(model.get_popularity_based_topk(items=False))

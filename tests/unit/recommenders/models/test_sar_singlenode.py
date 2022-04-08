@@ -458,7 +458,7 @@ def test_get_topk_most_similar_users(header):
     assert_frame_equal(expected, similar_users)
 
 
-def test_user_and_item_frequencies(header):
+def test_item_frequencies(header):
     model = SARSingleNode(**header)
     train = pd.DataFrame(
         {
@@ -468,6 +468,19 @@ def test_user_and_item_frequencies(header):
         }
     )
     model.fit(train)
-
-    assert model.user_frequencies[0] == 2
     assert model.item_frequencies[0] == 3
+
+
+def test_user_frequencies(header):
+    model = SARSingleNode(**header)
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
+            header["col_item"]: [1, 2, 1, 3, 3, 4, 5, 6, 1, 2],
+            header["col_rating"]: [3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0, 5.0, 1.0, 1.0]
+        }
+    )
+    model.fit(train)
+    # run this method once so that user frequencies are calculated
+    model.get_popularity_based_topk(items=False)
+    assert model.user_frequencies[0] == 2
