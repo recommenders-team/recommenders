@@ -420,6 +420,19 @@ def test_match_similarity_type_from_json_file(header):
     model.fit(train)
 
 
+def test_dataset_with_duplicates(header):
+    model = SARSingleNode(**header)
+    train = pd.DataFrame(
+        {
+            header["col_user"]: [1, 1, 2, 2, 2],
+            header["col_item"]: [1, 2, 1, 2, 2],
+            header["col_rating"]: [3.0, 4.0, 3.0, 4.0, 4.0]
+        }
+    )
+    with pytest.raises(ValueError):
+        model.fit(train)
+
+
 def test_get_topk_most_similar_users(header):
     model = SARSingleNode(**header)
     # 1, 2, and 4 used the same items, but 1 and 2 have the same ratings also
