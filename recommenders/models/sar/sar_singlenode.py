@@ -566,17 +566,3 @@ class SARSingleNode:
             }
         )
         return df
-
-
-if __name__ == '__main__':
-    header = {'col_user': 'UserId', 'col_item': 'MovieId', 'col_rating': 'Rating', 'col_timestamp': 'Timestamp'}
-    model = SARSingleNode(**header)
-    df = pd.DataFrame(
-        {
-            header["col_user"]: [1, 1, 2, 2, 2],
-            header["col_item"]: [1, 2, 1, 2, 3],
-            header["col_rating"]: [3.0, 4.0, 3.0, 4.0, 4.0]
-        }
-    )
-    model.fit(df)
-    print(model.get_popularity_based_topk(items=False))
