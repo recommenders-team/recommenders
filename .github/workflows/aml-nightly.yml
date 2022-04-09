@@ -42,9 +42,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['"python=3.6"', '"python=3.7"']
-        # test-group: ['"group_cpu_001"', '"group_cpu_002"', '"group_cpu_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_gpu_004"', '"group_gpu_005"', '"group_gpu_006"', '"group_gpu_007"', '"group_gpu_008"', '"group_gpu_009"', '"group_gpu_010"', '"group_spark_001"']
-        test-group: ['"group_gpu_001"']
+        python-version: ['"python=3.6"']
+        test-group: ['"group_cpu_001"', '"group_cpu_002"', '"group_cpu_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_gpu_004"', '"group_gpu_005"', '"group_gpu_006"', '"group_gpu_007"', '"group_gpu_008"', '"group_gpu_009"', '"group_gpu_010"', '"group_spark_001"']
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
