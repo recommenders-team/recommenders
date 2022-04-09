@@ -177,6 +177,10 @@ def create_run_config(cpu_cluster,
     run_amlcompute.environment.docker.enabled = True
     run_amlcompute.environment.docker.base_image = docker_proc_type
 
+    # # https://github.com/Azure/MachineLearningNotebooks/issues/1483#issuecomment-846433075
+    # run_amlcompute.environment.docker.base_dockerfile = "tools/Docker/Dockerfile"
+    # dc = DockerConfiguration(use_docker=True, arguments=['-e', 'MY_NAME="foobarrr"'])
+
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
     # False means the user will provide a conda file for setup
@@ -192,6 +196,11 @@ def create_run_config(cpu_cluster,
     conda_dep = CondaDependencies()
     conda_dep.add_conda_package(conda_pkg_python)
     conda_dep.add_pip_package(whl_url)
+    
+    conda_dep.add_pip_package("cmake")
+    conda_dep.add_pip_package("vowpalwabbit")
+    conda_dep.add_pip_package("pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip")
+    # conda_dep.add_pip_package("scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz")
 
     # install extra dependencies
     if add_gpu_dependencies and add_spark_dependencies:
@@ -264,6 +273,7 @@ def submit_experiment_to_azureml(
             "--testgroup",
             test_group
         ],
+        # docker_runtime_config=dc
     )
     run = experiment.submit(script_run_config)
     # waits only for configuration to complete

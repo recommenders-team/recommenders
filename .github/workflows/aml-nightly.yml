@@ -43,7 +43,8 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.6"', '"python=3.7"']
-        test-group: ['"group_cpu_001"', '"group_cpu_002"', '"group_cpu_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_gpu_004"', '"group_gpu_005"', '"group_gpu_006"', '"group_gpu_007"', '"group_gpu_008"', '"group_gpu_009"', '"group_gpu_010"', '"group_spark_001"']
+        # test-group: ['"group_cpu_001"', '"group_cpu_002"', '"group_cpu_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_gpu_004"', '"group_gpu_005"', '"group_gpu_006"', '"group_gpu_007"', '"group_gpu_008"', '"group_gpu_009"', '"group_gpu_010"', '"group_spark_001"']
+        test-group: ['"group_gpu_001"']
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
@@ -62,7 +63,7 @@ jobs:
       - name: Create wheel from setup.py
         run: python setup.py bdist_wheel
       - name: Submit CPU tests to AML
-        if: contains(${{matrix.test-group}}, 'cpu')
+        if: contains(matrix.test-group, 'cpu')
         run: >-
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
@@ -70,7 +71,7 @@ jobs:
             --testlogs ${{env.TEST_LOGS_PATH}}
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Submit GPU tests to AML
-        if: contains(${{matrix.test-group}}, 'gpu')
+        if: contains(matrix.test-group, 'gpu')
         run: >-
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
@@ -78,7 +79,7 @@ jobs:
             --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Submit PySpark tests to AML
-        if: contains(${{matrix.test-group}}, 'spark')
+        if: contains(matrix.test-group, 'spark')
         run: >-
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
