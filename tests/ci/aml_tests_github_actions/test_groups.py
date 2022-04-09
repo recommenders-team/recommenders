@@ -73,7 +73,7 @@ groups = {
         "tests/integration/examples/test_notebooks_gpu.py::test_xdeepfm_integration",  # 470.11s
         #
         "tests/integration/examples/test_notebooks_gpu.py::test_slirec_quickstart_integration",  # 175.00s
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec"  # 346.72s
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_cornac_bivae_smoke",  # 67.84s
         "tests/integration/examples/test_notebooks_gpu.py::test_cornac_bivae_integration",  # 453.21s
