@@ -197,7 +197,7 @@ unit_test_groups = {
     ],
     "group_gpu_001": [
         "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
-
+    ],
     "group_gpu_002": [
         "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
         "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
@@ -232,7 +232,6 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_unsorted",
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
         "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_missing_column",
-    ],
     ],
     "group_gpu_003": [
         "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data",
