@@ -491,9 +491,6 @@ if __name__ == "__main__":
     run.tag("RepoName", args.reponame)
     run.tag("Branch", args.branch)
     run.tag("PR", args.pr)
-    
-    # download files from AzureML
-    # run.download_files(prefix="reports", output_paths="./reports")
 
     # download logs file from AzureML
     run.download_file(name="test_logs", output_file_path=args.testlogs)

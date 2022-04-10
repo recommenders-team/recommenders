@@ -15,7 +15,7 @@ import pytest
 import json
 import argparse
 import glob
-from test_groups import groups
+from test_groups import nightly_test_groups, unit_test_groups
 
 
 if __name__ == "__main__":
