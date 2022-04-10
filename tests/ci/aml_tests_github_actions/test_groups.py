@@ -49,7 +49,7 @@ nightly_test_groups = {
         #
         "tests/integration/examples/test_notebooks_python.py::test_geoimc_integration",  # 1006.19s
         #
-        # "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration",  # 255.73s
+        "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration",  # 255.73s
     ],
     "group_gpu_001": [  # Total group time: 1415.29s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
