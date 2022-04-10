@@ -38,7 +38,7 @@ env:
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
-  nightly-tests:
+  unit-tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
