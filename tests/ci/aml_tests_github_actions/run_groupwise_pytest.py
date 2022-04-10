@@ -25,6 +25,13 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Process inputs")
     parser.add_argument(
+        "--testkind",
+        "-k",
+        action="store",
+        default="unit",
+        help="Test kind - nightly or unit",
+    )
+    parser.add_argument(
         "--testgroup",
         "-g",
         action="store",
@@ -33,7 +40,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    test_group = groups[args.testgroup]
+    if args.testkind == "nightly":
+        test_group = nightly_test_groups[args.testgroup]
+    else:
+        test_group = unit_test_groups[args.testgroup]
     logger.info("Tests to be executed")
     logger.info(str(test_group))
 

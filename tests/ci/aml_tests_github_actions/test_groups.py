@@ -237,7 +237,7 @@ unit_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive",
         "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
-    ]
+    ],
     "group_cpu": [
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed",
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed",

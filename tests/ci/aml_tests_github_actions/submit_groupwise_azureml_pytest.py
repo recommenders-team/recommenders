@@ -243,7 +243,7 @@ def create_experiment(workspace, experiment_name):
 
 
 def submit_experiment_to_azureml(
-    test, run_config, experiment, test_group
+    test, run_config, experiment, test_group, test_kind
 ):
 
     """
@@ -271,7 +271,9 @@ def submit_experiment_to_azureml(
         run_config=run_config,
         arguments=[
             "--testgroup",
-            test_group
+            test_group,
+            "--testkind",
+            test_kind,
         ],
         # docker_runtime_config=dc
     )
@@ -426,6 +428,12 @@ def create_arg_parser():
         default="python=3.7",
         help="conda package name for jdk",
     )
+    parser.add_argument(
+        "--testkind",
+        action="store",
+        default="unit",
+        help="Test kind - nightly or unit",
+    )
     args = parser.parse_args()
 
     return args
@@ -485,6 +493,7 @@ if __name__ == "__main__":
         run_config=run_config,
         experiment=experiment,
         test_group=args.testgroup,
+        test_kind=args.testkind,
     )
 
     # add helpful information to experiment on Azure

@@ -67,7 +67,7 @@ jobs:
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
-            --testlogs ${{env.TEST_LOGS_PATH}}
+            --testlogs ${{env.TEST_LOGS_PATH}} --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Submit GPU tests to AML
         if: contains(matrix.test-group, 'gpu')
@@ -75,7 +75,7 @@ jobs:
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
-            --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies
+            --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Submit PySpark tests to AML
         if: contains(matrix.test-group, 'spark')
@@ -83,7 +83,7 @@ jobs:
             python tests/ci/aml_tests_github_actions/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
-            --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies
+            --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Print test logs
         run: cat ${{env.TEST_LOGS_PATH}}
