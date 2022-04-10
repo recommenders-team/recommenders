@@ -197,8 +197,18 @@ unit_test_groups = {
     ],
     "group_gpu_001": [
         "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
+
+    "group_gpu_002": [
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
+        "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
+        "tests/unit/recommenders/models/test_rbm.py::test_train_param_init",
+        "tests/unit/recommenders/models/test_rbm.py::test_save_load",
+        "tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec",
+        "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler",
+        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model",
+        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load",
+        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data",
         "tests/unit/recommenders/utils/test_tf_utils.py::test_evaluation_log_hook",
         "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn_for_saved_model",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
@@ -223,16 +233,9 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
         "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_missing_column",
     ],
-    "group_gpu_002": [
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
-        "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
-        "tests/unit/recommenders/models/test_rbm.py::test_train_param_init",
-        "tests/unit/recommenders/models/test_rbm.py::test_save_load",
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec",
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler",
-        "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model",
-        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load",
-        "tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load",
+    ],
+    "group_gpu_003": [
+        "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data",
     ],
     "group_notebooks_gpu_001": [
         "tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart",  
@@ -251,8 +254,6 @@ unit_test_groups = {
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed",
         "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_wrong_bytes",
         "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names",
-    ],
-    "group_cpu_002": [
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed",
         "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_retry",
         "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success",
