@@ -199,13 +199,12 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",,
+        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
     ],
     "group_gpu_002": [
-        
         "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
         "tests/unit/recommenders/models/test_rbm.py::test_train_param_init",
         "tests/unit/recommenders/models/test_rbm.py::test_save_load",
