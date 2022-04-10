@@ -43,7 +43,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.6"']
-        test-group: ['"group_cpu_001"', '"group_cpu_002"' '"group_notebooks_cpu_001"', '"group_notebooks_cpu_002"', '"group_pyspark_001"', '"group_pyspark_002"', '"group_notebooks_pyspark_001"', '"group_notebooks_pyspark_002"', '"group_notebooks_pyspark_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_notebooks_gpu_001"', '"group_notebooks_gpu_002"', '"group_notebooks_gpu_003"']
+        test-group: ['"group_cpu_001"', '"group_cpu_002"', '"group_notebooks_cpu_001"', '"group_notebooks_cpu_002"', '"group_pyspark_001"', '"group_pyspark_002"', '"group_notebooks_pyspark_001"', '"group_notebooks_pyspark_002"', '"group_notebooks_pyspark_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_notebooks_gpu_001"', '"group_notebooks_gpu_002"', '"group_notebooks_gpu_003"']
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
