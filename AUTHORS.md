@@ -57,6 +57,8 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Beth Zeranski](https://github.com/bethz)**
    * DevOps Pipelines used as a control plane to run existing Pytests on AzureML
    * Automation scripts to configure AzureML environment for pipeline use 
+* **[Dan Bianchini](https://github.com/danb27)**
+   * SAR Single Node algorithm improvements
 * **[Dan Ciborowski](https://github.com/dciborow)**
    * ALS operationalization notebook
    * SAR PySpark improvement

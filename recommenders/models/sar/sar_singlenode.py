@@ -1,7 +1,5 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
-
 import numpy as np
 import pandas as pd
 import logging
@@ -82,6 +80,7 @@ class SARSingleNode:
         self.user_affinity = None
         self.item_similarity = None
         self.item_frequencies = None
+        self.user_frequencies = None
 
         # threshold - items below this number get set to zero in co-occurrence counts
         if self.threshold <= 0:
@@ -108,8 +107,9 @@ class SARSingleNode:
         self.user2index = None
         self.item2index = None
 
-        # the opposite of the above map - map array index to actual string ID
+        # the opposite of the above maps - map array index to actual string ID
         self.index2item = None
+        self.index2user = None
 
     def compute_affinity_matrix(self, df, rating_col):
         """Affinity matrix.
@@ -170,7 +170,6 @@ class SARSingleNode:
         Returns:
             numpy.ndarray: Co-occurrence matrix
         """
-
         user_item_hits = sparse.coo_matrix(
             (np.repeat(1, df.shape[0]), (df[self.col_user_id], df[self.col_item_id])),
             shape=(self.n_users, self.n_items),
@@ -192,12 +191,11 @@ class SARSingleNode:
 
         # generate a map of continuous index values to items
         self.index2item = dict(enumerate(df[self.col_item].unique()))
+        self.index2user = dict(enumerate(df[self.col_user].unique()))
 
-        # invert the mapping from above
+        # invert the mappings from above
         self.item2index = {v: k for k, v in self.index2item.items()}
-
-        # create mapping of users to continuous indices
-        self.user2index = {x[1]: x[0] for x in enumerate(df[self.col_user].unique())}
+        self.user2index = {v: k for k, v in self.index2user.items()}
 
         # set values for the total count of users and items
         self.n_users = len(self.user2index)
@@ -213,6 +211,12 @@ class SARSingleNode:
         Args:
             df (pandas.DataFrame): User item rating dataframe (without duplicates).
         """
+        select_columns = [self.col_user, self.col_item, self.col_rating]
+        if self.time_decay_flag:
+            select_columns += [self.col_timestamp]
+
+        if df[select_columns].duplicated().any():
+            raise ValueError("There should not be duplicates in the dataframe")
 
         # generate continuous indices if this hasn't been done
         if self.index2item is None:
@@ -223,9 +227,6 @@ class SARSingleNode:
             raise TypeError("Rating column data type must be numeric")
 
         # copy the DataFrame to avoid modification of the input
-        select_columns = [self.col_user, self.col_item, self.col_rating]
-        if self.time_decay_flag:
-            select_columns += [self.col_timestamp]
         temp_df = df[select_columns].copy()
 
         if self.time_decay_flag:
@@ -267,6 +268,7 @@ class SARSingleNode:
         # free up some space
         del temp_df
 
+        # creates an array with the frequency of every unique item
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
@@ -345,27 +347,38 @@ class SARSingleNode:
 
         return test_scores
 
-    def get_popularity_based_topk(self, top_k=10, sort_top_k=True):
+    def get_popularity_based_topk(self, top_k=10, sort_top_k=True, items=True):
         """Get top K most frequently occurring items across all users.
 
         Args:
             top_k (int): number of top items to recommend.
             sort_top_k (bool): flag to sort top k results.
+            items (bool): if false, return most frequent users instead
 
         Returns:
             pandas.DataFrame: top k most popular items.
         """
+        if items:
+            frequencies = self.item_frequencies
+            col = self.col_item
+            idx = self.index2item
+        else:
+            if self.user_frequencies is None:
+                self.user_frequencies = self.user_affinity.getnnz(axis=1).astype("int64")
+            frequencies = self.user_frequencies
+            col = self.col_user
+            idx = self.index2user
 
-        test_scores = np.array([self.item_frequencies])
+        test_scores = np.array([frequencies])
 
         logger.info("Getting top K")
-        top_items, top_scores = get_top_k_scored_items(
+        top_components, top_scores = get_top_k_scored_items(
             scores=test_scores, top_k=top_k, sort_top_k=sort_top_k
         )
 
         return pd.DataFrame(
             {
-                self.col_item: [self.index2item[item] for item in top_items.flatten()],
+                col: [idx[item] for item in top_components.flatten()],
                 self.col_prediction: top_scores.flatten(),
             }
         )
@@ -439,6 +452,35 @@ class SARSingleNode:
                     test_users.drop_duplicates().values, top_items.shape[1]
                 ),
                 self.col_item: [self.index2item[item] for item in top_items.flatten()],
+                self.col_prediction: top_scores.flatten(),
+            }
+        )
+
+        # drop invalid items
+        return df.replace(-np.inf, np.nan).dropna()
+
+    def get_topk_most_similar_users(self, user, top_k, sort_top_k=True):
+        """Based on user affinity towards items, calculate the most similar users to the given user.
+
+        Args:
+            user (int): user to retrieve most similar users for
+            top_k (int): number of top items to recommend
+            sort_top_k (bool): flag to sort top k results
+
+        Returns:
+            pandas.DataFrame: top k most similar users and their scores
+        """
+        user_idx = self.user2index[user]
+        similarities = self.user_affinity[user_idx].dot(self.user_affinity.T).toarray()
+        similarities[0, user_idx] = -np.inf
+
+        top_items, top_scores = get_top_k_scored_items(
+            scores=similarities, top_k=top_k, sort_top_k=sort_top_k
+        )
+
+        df = pd.DataFrame(
+            {
+                self.col_user: [self.index2user[user] for user in top_items.flatten()],
                 self.col_prediction: top_scores.flatten(),
             }
         )

@@ -138,7 +138,7 @@ def train_test_dummy_timestamp(pandas_dummy_timestamp):
 @pytest.fixture(scope="module")
 def demo_usage_data(header, sar_settings):
     # load the data
-    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv")
+    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsageNoDups.csv")
     data["rating"] = pd.Series([1.0] * data.shape[0])
     data = data.rename(
         columns={
