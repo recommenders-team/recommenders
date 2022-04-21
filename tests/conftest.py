@@ -322,9 +322,6 @@ def notebooks():
         "xlearn_fm_deep_dive": os.path.join(
             folder_notebooks, "02_model_hybrid", "fm_deep_dive.ipynb"
         ),
-        "lightfm_deep_dive": os.path.join(
-            folder_notebooks, "02_model_hybrid", "lightfm_deep_dive.ipynb"
-        ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "evaluation_diversity": os.path.join(
             folder_notebooks, "03_evaluate", "als_movielens_diversity_metrics.ipynb"
