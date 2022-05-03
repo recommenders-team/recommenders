@@ -294,7 +294,7 @@ def notebooks():
             "lightgcn_deep_dive.ipynb",
         ),
         "ncf_deep_dive": os.path.join(
-            folder_notebooks, "02_model_hybrid", "ncf_deep_dive.ipynb"
+            folder_notebooks, "02_model_collaborative_filtering", "ncf_deep_dive.ipynb"
         ),
         "sar_deep_dive": os.path.join(
             folder_notebooks, "02_model_collaborative_filtering", "sar_deep_dive.ipynb"
