@@ -196,11 +196,7 @@ def create_run_config(cpu_cluster,
     conda_dep = CondaDependencies()
     conda_dep.add_conda_package(conda_pkg_python)
     conda_dep.add_pip_package(whl_url)
-    
-    conda_dep.add_pip_package("cmake")
-    conda_dep.add_pip_package("vowpalwabbit")
     conda_dep.add_pip_package("pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip")
-    # conda_dep.add_pip_package("scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz")
 
     # install extra dependencies
     if add_gpu_dependencies and add_spark_dependencies:
@@ -208,17 +204,17 @@ def create_run_config(cpu_cluster,
         conda_dep.add_conda_package(conda_pkg_cudnn)
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu,experimental]")
+        conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]")
     elif add_gpu_dependencies:
         conda_dep.add_conda_package(conda_pkg_cudatoolkit)
         conda_dep.add_conda_package(conda_pkg_cudnn)
-        conda_dep.add_pip_package("recommenders[dev,examples,gpu,experimental]")
+        conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark,experimental]")
+        conda_dep.add_pip_package("recommenders[dev,examples,spark]")
     else:
-        conda_dep.add_pip_package("recommenders[dev,examples,experimental]")
+        conda_dep.add_pip_package("recommenders[dev,examples]")
 
     run_amlcompute.environment.python.conda_dependencies = conda_dep
     return run_amlcompute
@@ -440,9 +436,8 @@ def create_arg_parser():
 
 
 if __name__ == "__main__":
+
     logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
-    # logger.setLevel(logging.DEBUG)
-    # logging.basicConfig(level=logging.DEBUG)
     args = create_arg_parser()
 
     if args.dockerproc == "cpu":
@@ -508,5 +503,7 @@ if __name__ == "__main__":
     metrics = run.get_metrics()
     with open("pytest_exit_code.log", "w") as f:
         f.write(str(metrics.get('pytest_exit_code')))
+
+    run.download_file(name="output.ipynb", output_file_path="output.ipynb")
 
     run.complete()
