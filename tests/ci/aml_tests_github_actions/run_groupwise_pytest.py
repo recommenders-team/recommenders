@@ -16,7 +16,6 @@ import json
 import argparse
 import glob
 from test_groups import nightly_test_groups, unit_test_groups
-from time import time
 
 if __name__ == "__main__":
 
@@ -40,11 +39,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    # if args.testkind == "nightly":
-    #     test_group = nightly_test_groups[args.testgroup]
-    # else:
-    #     test_group = unit_test_groups[args.testgroup]
-    test_group = ["tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration"]
+    if args.testkind == "nightly":
+        test_group = nightly_test_groups[args.testgroup]
+    else:
+        test_group = unit_test_groups[args.testgroup]
 
     logger.info("Tests to be executed")
     logger.info(str(test_group))
@@ -57,10 +55,8 @@ if __name__ == "__main__":
     logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
-    start_time = time()
     # execute pytest command
     pytest_exit_code = pytest.main(test_group)
-    print("time taken for execute pytest command ", time()-start_time)
     
     logger.info("Test execution completed!")
 

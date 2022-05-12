@@ -504,6 +504,4 @@ if __name__ == "__main__":
     with open("pytest_exit_code.log", "w") as f:
         f.write(str(metrics.get('pytest_exit_code')))
 
-    run.download_file(name="output.ipynb", output_file_path="output.ipynb")
-
     run.complete()

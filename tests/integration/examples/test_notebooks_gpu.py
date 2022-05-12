@@ -622,6 +622,7 @@ def test_sasrec_quickstart_integration(
     data_dir,
     num_epochs,
     batch_size,
+    model_name,
     expected_values,
     seed,
 ):
@@ -630,24 +631,20 @@ def test_sasrec_quickstart_integration(
         "data_dir": data_dir,
         "num_epochs": num_epochs,
         "batch_size": batch_size,
+        "model_name": model_name,
         "seed": seed,
     }
 
     print("Executing notebook ... ")
-    from time import time
-    start_time = time()
     pm.execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=params,
     )
-    print("Notebook execution completed in ", str(time() - start_time))
-    start_time = time()
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
     ]
-    print("sb.read_notebook execution completed in ", str(time() - start_time))
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)

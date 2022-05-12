@@ -48,7 +48,8 @@ nightly_test_groups = {
         "tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration",  # 165.72s
         #
         "tests/integration/examples/test_notebooks_python.py::test_geoimc_integration",  # 1006.19s
-        #
+        
+        #FIXME: Add experimental tests in a later iteration
         # "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration",  # 255.73s
     ],
     "group_gpu_001": [  # Total group time: 1415.29s
@@ -120,7 +121,9 @@ nightly_test_groups = {
     ],
     "group_gpu_009": [  # Total group time: 1063.51s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
-        "tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration",  # 448.06s + 614.69s
+
+        #FIXME: https://github.com/microsoft/recommenders/issues/1716
+        # "tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration",  # 448.06s + 614.69s
     ],
     "group_gpu_010": [  # Total group time: 2034.61s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s

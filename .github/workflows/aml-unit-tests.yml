@@ -6,21 +6,8 @@
 name: aml-unit-tests
 
 on:
-  #          ┌───────────── minute (0 - 59)
-  #          │ ┌───────────── hour (0 - 23)
-  #          │ │ ┌───────────── day of the month (1 - 31)
-  #          │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
-  #          │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
-  #          │ │ │ │ │
-  #          │ │ │ │ │
-  schedule: 
-    - cron: '0 0 * * *'  # basically running everyday at 12AM
-    # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
-  
-  push:
-    # because we can't schedule runs for non-main branches,
-    # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [pradjoshi/aml_tests]
+  pull_request:
+    branches: [ staging, main ]
 
   # enable manual trigger
   workflow_dispatch:
