@@ -33,9 +33,18 @@ runs:
   # different parallelized runs
   - name: Merge coverage reports
     shell: bash
+    # NOTE: Merging code reports generated from self-hosted (aml) runners can be problematic
+    #       as reports may reference the source code at an unresolvable absolute path.
+    #       For example, you may encounter errors like:
+    #            "CoverageWarning: Couldn't parse 
+    #            '/home/azureuser/runner/work/recommenders/recommenders/recommenders/evaluation/__init__.py':
+    #            No source for code"
+    # Work-around: Creating a symlink at the root that points to the default local runner folder: '/home/runner/work/recommenders'
     run: |
+      sudo mkdir -p /home/azureuser
+      sudo ln -s /home/runner /home/azureuser/runner
       python -m coverage combine .coverage*
-      python -m coverage report
+      python -m coverage report -i
       python -m coverage xml -i
       
   - name: Show merged report

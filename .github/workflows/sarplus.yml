@@ -6,6 +6,7 @@
 #       + [scala](https://github.com/actions/starter-workflows/blob/main/ci/scala.yml)
 #   * [GitHub hosted runner - Ubuntu 20.04 LTS](https://github.com/actions/virtual-environments/blob/main/images/linux/Ubuntu2004-README.md)
 #   * [Azure Databricks runtime releases](https://docs.microsoft.com/en-us/azure/databricks/release-notes/runtime/releases)
+#   * [Azure Synapse Analytics runtimes](https://docs.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-version-support)
 
 
 name: sarplus test and package
@@ -19,6 +20,7 @@ on:
       - .github/workflows/sarplus.yml
 
 env:
+  SARPLUS_ROOT: ${{ github.workspace }}/contrib/sarplus
   PYTHON_ROOT: ${{ github.workspace }}/contrib/sarplus/python
   SCALA_ROOT: ${{ github.workspace }}/contrib/sarplus/scala
 
@@ -41,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          python -m pip install -U build pip twine
+          python -m pip install -U build cibuildwheel pip twine
           python -m pip install -U flake8 pytest pytest-cov scikit-learn
 
       - name: Lint with flake8
@@ -52,15 +54,23 @@ jobs:
 
       - name: Package and check
         run: |
+          # build
           cd "${PYTHON_ROOT}"
-          cp ../VERSION ./pysarplus/
+          cp "${SARPLUS_ROOT}/VERSION" ./pysarplus/VERSION
           python -m build --sdist
+          PYTHON_VER='${{ matrix.python-version }}'
+          MINOR_VER="${PYTHON_VER#*.}"
+          CIBW_BUILD="cp3${MINOR_VER}-manylinux_x86_64" python -m cibuildwheel --platform linux --output-dir dist
           python -m twine check dist/*
+
+          # set sarplus_version for the artifact upload step
+          SARPLUS_VERSION=$(cat "${SARPLUS_ROOT}/VERSION")
+          echo "sarplus_version=${SARPLUS_VERSION}" >> $GITHUB_ENV
 
       - name: Test
         run: |
           cd "${PYTHON_ROOT}"
-          python -m pip install dist/*.gz
+          python -m pip install dist/*.whl
 
           cd "${SCALA_ROOT}"
           export SPARK_VERSION=$(python -m pip show pyspark | grep -i version | cut -d ' ' -f 2)
@@ -75,36 +85,43 @@ jobs:
 
           cd "${PYTHON_ROOT}"
           pytest ./tests
-          echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
 
-      - name: Upload Python package as GitHub artifact
+      - name: Upload Python wheel as GitHub artifact when merged into main
+        # Upload the whl file of the specific python version
+        if: github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v2
+        with:
+          name: pysarplus-${{ env.sarplus_version }}-cp${{ matrix.python-version }}-wheel
+          path: ${{ env.PYTHON_ROOT }}/dist/*.whl
+
+      - name: Upload Python source as GitHub artifact when merged into main
+        # Only one pysarplus source tar file is needed
         if: github.ref == 'refs/heads/main' && matrix.python-version == '3.10'
         uses: actions/upload-artifact@v2
         with:
-          name: pysarplus-${{ env.sarplus_version }}
-          path: ${{ env.PYTHON_ROOT }}/dist/*.gz
+          name: pysarplus-${{ env.sarplus_version }}-source
+          path: ${{ env.PYTHON_ROOT }}/dist/*.tar.gz
 
-  scala-test:
-    # Test sarplus with different versions of Databricks runtime, 2 LTSs and 1
-    # latest.
+  scala:
+    # Test sarplus with different versions of Databricks and Synapse runtime
     runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
+          # For Azure Databricks 7.3 LTS
           - scala-version: "2.12.10"
             spark-version: "3.0.1"
             hadoop-version: "2.7.4"
-            databricks-runtime: "ADB 7.3 LTS"
 
+          # For Azure Databricks 9.1 LTS and Azure Synapse Apache Spark 3.1 runtime
           - scala-version: "2.12.10"
             spark-version: "3.1.2"
             hadoop-version: "2.7.4"
-            databricks-runtime: "ADB 9.1 LTS"
 
+          # For Azure Databricks 10.4 LTS
           - scala-version: "2.12.14"
-            spark-version: "3.2.0"
+            spark-version: "3.2.1"
             hadoop-version: "3.3.1"
-            databricks-runtime: "ADB 10.0"
 
     steps:
       - uses: actions/checkout@v2
@@ -116,44 +133,38 @@ jobs:
           export HADOOP_VERSION="${{ matrix.hadoop-version }}"
           sbt ++${{ matrix.scala-version }}! test
 
-  scala-package:
-    # Package sarplus and upload as GitHub workflow artifact when merged into
-    # the main branch.
-    needs: scala-test
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
       - name: Package
+        # Generate jar files for Spark below 3.2 and above 3.2
+        if: github.ref == 'refs/heads/main' && matrix.spark-version != '3.0.1'
         env:
           GPG_KEY: ${{ secrets.SARPLUS_GPG_PRI_KEY_ASC }}
         run: |
+          SARPLUS_VERSION=$(cat "${SARPLUS_ROOT}/VERSION")
+
           # generate artifacts
           cd "${SCALA_ROOT}"
-          export SPARK_VERSION="3.1.2"
-          export HADOOP_VERSION="2.7.4"
-          export SCALA_VERSION="2.12.10"
+          export SPARK_VERSION='${{ matrix.spark-version }}'
+          export HADOOP_VERSION='${{ matrix.hadoop-version }}'
+          export SCALA_VERSION='${{ matrix.scala-version }}'
           sbt ++${SCALA_VERSION}! package
           sbt ++${SCALA_VERSION}! packageDoc
           sbt ++${SCALA_VERSION}! packageSrc
           sbt ++${SCALA_VERSION}! makePom
-          export SPARK_VERSION="3.2.0"
-          export HADOOP_VERSION="3.3.1"
-          export SCALA_VERSION="2.12.14"
-          sbt ++${SCALA_VERSION}! package
 
           # sign with GPG
-          cd target/scala-2.12
+          cd "${SCALA_ROOT}/target/scala-2.12"
           gpg --import <(cat <<< "${GPG_KEY}")
           for file in {*.jar,*.pom}; do gpg -ab "${file}"; done
 
           # bundle
-          jar cvf sarplus-bundle_2.12-$(cat ../VERSION).jar *.jar *.pom *.asc
-          echo "sarplus_version=$(cat ../VERSION)" >> $GITHUB_ENV
-          
-      - name: Upload Scala bundle  as GitHub artifact
+          jar cvf sarplus-${SARPLUS_VERSION}-bundle_2.12-spark-${SPARK_VERSION}.jar sarplus_*.jar sarplus_*.pom sarplus_*.asc
+
+          # set sarplus_version for the artifact upload step
+          echo "sarplus_version=${SARPLUS_VERSION}" >> $GITHUB_ENV
+
+      - name: Upload Scala bundle as GitHub artifact when merged into main
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v2
         with:
-          name: sarplus-bundle_2.12-${{ env.sarplus_version }}
-          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/sarplus-bundle_2.12-${{ env.sarplus_version }}.jar
+          name: sarplus-${{ env.sarplus_version }}-bundle_2.12-spark-${{ matrix.spark-version }}-jar
+          path: ${{ env.SCALA_ROOT }}/target/scala-2.12/*bundle*.jar

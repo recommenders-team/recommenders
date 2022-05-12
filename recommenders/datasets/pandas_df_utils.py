@@ -109,8 +109,8 @@ class LibffmConverter:
         The above data will be converted to the libffm format by following the convention as explained in
         `this paper <https://www.csie.ntu.edu.tw/~r01922136/slides/ffm.pdf>`_.
 
-        i.e. `<field_index>:<field_feature_index>:1` or `<field_index>:<field_index>:<field_feature_value>`, depending on
-        the data type of the features in the original dataframe.
+        i.e. `<field_index>:<field_feature_index>:1` or `<field_index>:<field_feature_index>:<field_feature_value>`,
+        depending on the data type of the features in the original dataframe.
 
     Args:
         filepath (str): path to save the converted data.

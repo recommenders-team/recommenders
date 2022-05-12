@@ -32,23 +32,23 @@ install_requires = [
     "scipy>=1.0.0,<2",
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<4",
-    "scikit-learn>=0.22.1,<1",
+    "scikit-learn>=0.22.1,<1.0.3",
     "numba>=0.38.1,<1",
     "lightfm>=1.15,<2",
     "lightgbm>=2.2.1",
     "memory_profiler>=0.54.0,<1",
     "nltk>=3.4,<4",
-    "pydocumentdb>=2.3.3<3",  # TODO: replace with azure-cosmos
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
-    "jinja2>=2,<4",
+    "jinja2>=2,<3.1",
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<2",
     "retrying>=1.3.3",
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
+    "scikit-surprise>=1.0.6"
 ]
 
 # shared dependencies
@@ -99,10 +99,7 @@ extras_require["nni"] = [
     "nni==1.5",
 ]
 
-# The following dependencies can be installed as below, however PyPI does not allow direct URLs.
-# Surprise needs to be built from source because of the numpy <= 1.19 incompatibility
-# Requires pip to be run with the --no-binary option
-# "scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz",
+# The following dependency can be installed as below, however PyPI does not allow direct URLs.
 # Temporary fix for pymanopt, only this commit works with TF2
 # "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip",
 

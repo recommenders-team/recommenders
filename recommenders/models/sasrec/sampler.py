@@ -18,6 +18,7 @@ def sample_function(
 ):
     """Batch sampler that creates a sequence of negative items based on the
     original sequence of items (positive) that the user has interacted with.
+
     Args:
         user_train (dict): dictionary of training exampled for each user
         usernum (int): number of users

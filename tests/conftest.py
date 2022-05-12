@@ -138,7 +138,7 @@ def train_test_dummy_timestamp(pandas_dummy_timestamp):
 @pytest.fixture(scope="module")
 def demo_usage_data(header, sar_settings):
     # load the data
-    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsage.csv")
+    data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsageNoDups.csv")
     data["rating"] = pd.Series([1.0] * data.shape[0])
     data = data.rename(
         columns={
@@ -294,7 +294,7 @@ def notebooks():
             "lightgcn_deep_dive.ipynb",
         ),
         "ncf_deep_dive": os.path.join(
-            folder_notebooks, "02_model_hybrid", "ncf_deep_dive.ipynb"
+            folder_notebooks, "02_model_collaborative_filtering", "ncf_deep_dive.ipynb"
         ),
         "sar_deep_dive": os.path.join(
             folder_notebooks, "02_model_collaborative_filtering", "sar_deep_dive.ipynb"
@@ -321,6 +321,9 @@ def notebooks():
         ),
         "xlearn_fm_deep_dive": os.path.join(
             folder_notebooks, "02_model_hybrid", "fm_deep_dive.ipynb"
+        ),
+        "lightfm_deep_dive": os.path.join(
+            folder_notebooks, "02_model_hybrid", "lightfm_deep_dive.ipynb"
         ),
         "evaluation": os.path.join(folder_notebooks, "03_evaluate", "evaluation.ipynb"),
         "evaluation_diversity": os.path.join(

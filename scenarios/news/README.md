@@ -2,7 +2,7 @@
 
 While online news services have become a major source of information for millions of people, the massive amount of continuously generated content brings heavy information overload to users. Personalized news recommendation, which predicts which news articles a user is likely to read, can help reduce information overload and improve user experience. 
 
-There are several aspects to consider when developing news recommendation systems.  Especially:
+There are several aspects to consider when developing news recommendation systems. Especially:
 
 1. Cold-start is a major challenge for news recommendation. New articles are continuously emerging, and existing news articles will expire quickly. Effective representation and recommendation of new articles is essential to good performance in news recommendation.  
 

@@ -60,5 +60,5 @@ extends:
     task_name: "Test - Unit Notebook Linux CPU"
     conda_env: "unit_notebook_linux_cpu"
     conda_opts: "python=3.7"
-    pip_opts: "[examples,dev,experimental] 'scikit-surprise@https://github.com/NicolasHug/Surprise/archive/refs/tags/v1.1.1.tar.gz' 'pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip' --no-cache --no-binary scikit-surprise"
+    pip_opts: "[examples,dev,experimental] 'pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip' --no-cache"
     pytest_markers: "notebooks and not spark and not gpu"

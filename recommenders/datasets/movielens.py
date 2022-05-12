@@ -159,7 +159,7 @@ def load_pandas_df(
 ):
     """Loads the MovieLens dataset as pd.DataFrame.
 
-    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load.
+    Download the dataset from https://files.grouplens.org/datasets/movielens, unzip, and load.
     To load movie information only, you can use load_item_df function.
 
     Args:
@@ -304,7 +304,7 @@ def _load_item_df(size, item_datapath, movie_col, title_col, genres_col, year_co
     genres_header_100k = None
     if genres_col is not None:
         # 100k data's movie genres are encoded as a binary array (the last 19 fields)
-        # For details, see http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
+        # For details, see https://files.grouplens.org/datasets/movielens/ml-100k-README.txt
         if size == "100k":
             genres_header_100k = [*(str(i) for i in range(19))]
             item_header.extend(genres_header_100k)
@@ -366,7 +366,7 @@ def load_spark_df(
 ):
     """Loads the MovieLens dataset as `pyspark.sql.DataFrame`.
 
-    Download the dataset from http://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.sql.DataFrame`.
+    Download the dataset from https://files.grouplens.org/datasets/movielens, unzip, and load as `pyspark.sql.DataFrame`.
 
     To load movie information only, you can use `load_item_df` function.
 
@@ -552,7 +552,7 @@ def download_movielens(size, dest_path):
     if size not in DATA_FORMAT:
         raise ValueError(ERROR_MOVIE_LENS_SIZE)
 
-    url = "http://files.grouplens.org/datasets/movielens/ml-" + size + ".zip"
+    url = "https://files.grouplens.org/datasets/movielens/ml-" + size + ".zip"
     dirs, file = os.path.split(dest_path)
     maybe_download(url, file, work_directory=dirs)
 
@@ -587,7 +587,7 @@ class MockMovielensSchema(pa.SchemaModel):
     Mock dataset schema to generate fake data for testing purpose.
     This schema is configured to mimic the Movielens dataset
 
-    http://files.grouplens.org/datasets/movielens/ml-100k/
+    https://files.grouplens.org/datasets/movielens/ml-100k/
 
     Dataset schema and generation is configured using pandera.
     Please see https://pandera.readthedocs.io/en/latest/schema_models.html

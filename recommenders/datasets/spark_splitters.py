@@ -5,6 +5,7 @@ import numpy as np
 
 try:
     from pyspark.sql import functions as F, Window
+    from pyspark.storagelevel import StorageLevel
 except ImportError:
     pass  # skip this import if we are in pure python environment
 
@@ -12,7 +13,6 @@ from recommenders.utils.constants import (
     DEFAULT_ITEM_COL,
     DEFAULT_USER_COL,
     DEFAULT_TIMESTAMP_COL,
-    DEFAULT_RATING_COL,
 )
 from recommenders.datasets.split_utils import (
     process_split_ratio,
@@ -112,7 +112,13 @@ def _do_stratification_spark(
 
     split_by = col_user if filter_by == "user" else col_item
     partition_by = split_by if is_partitioned else []
-    order_by = F.rand(seed=seed) if is_random else F.col(col_timestamp)
+
+    col_random = "_random"
+    if is_random:
+        data = data.withColumn(col_random, F.rand(seed=seed))
+        order_by = F.col(col_random)
+    else:
+        order_by = F.col(col_timestamp)
 
     window_count = Window.partitionBy(partition_by)
     window_spec = Window.partitionBy(partition_by).orderBy(order_by)
@@ -120,8 +126,10 @@ def _do_stratification_spark(
     data = (
         data.withColumn("_count", F.count(split_by).over(window_count))
         .withColumn("_rank", F.row_number().over(window_spec) / F.col("_count"))
-        .drop("_count")
+        .drop("_count", col_random)
     )
+    # Persist to avoid duplicate rows in splits caused by lazy evaluation
+    data.persist(StorageLevel.MEMORY_AND_DISK_2).count()
 
     multi_split, ratio = process_split_ratio(ratio)
     ratio = ratio if multi_split else [ratio, 1 - ratio]
@@ -161,7 +169,6 @@ def spark_chrono_split(
             training data set; if it is a list of float numbers, the splitter splits
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
-        seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
         filter_by (str): either "user" or "item", depending on which of the two is to filter
             with min_rating.
@@ -193,7 +200,6 @@ def spark_stratified_split(
     filter_by="user",
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
-    col_rating=DEFAULT_RATING_COL,
     seed=42,
 ):
     """Spark stratified splitter.
@@ -209,14 +215,13 @@ def spark_stratified_split(
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
             Earlier indexed splits will have earlier times
-            (e.g the latest time per user or item in split[0] <= the earliest time per user or item in split[1])
+            (e.g. the latest time per user or item in split[0] <= the earliest time per user or item in split[1])
         seed (int): Seed.
         min_rating (int): minimum number of ratings for user or item.
         filter_by (str): either "user" or "item", depending on which of the two is to filter
             with min_rating.
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
-        col_rating (str): column name of ratings.
 
     Returns:
         list: Splits of the input data as pyspark.sql.DataFrame.
@@ -252,7 +257,7 @@ def spark_timestamp_split(
             data into several portions corresponding to the split ratios. If a list is
             provided and the ratios are not summed to 1, they will be normalized.
             Earlier indexed splits will have earlier times
-            (e.g the latest time in split[0] <= the earliest time in split[1])
+            (e.g. the latest time in split[0] <= the earliest time in split[1])
         col_user (str): column name of user IDs.
         col_item (str): column name of item IDs.
         col_timestamp (str): column name of timestamps. Float number represented in
