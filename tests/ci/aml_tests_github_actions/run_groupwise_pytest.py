@@ -39,10 +39,11 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    if args.testkind == "nightly":
-        test_group = nightly_test_groups[args.testgroup]
-    else:
-        test_group = unit_test_groups[args.testgroup]
+    # if args.testkind == "nightly":
+    #     test_group = nightly_test_groups[args.testgroup]
+    # else:
+    #     test_group = unit_test_groups[args.testgroup]
+    test_group = ["tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration"]
 
     logger.info("Tests to be executed")
     logger.info(str(test_group))
