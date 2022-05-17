@@ -30,7 +30,7 @@ lazy val commonSettings = Seq(
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
     "com.google.guava" % "guava" % "31.1-jre",
     "org.scalamock" %% "scalamock" % "5.2.0" % "test",
-    "org.scalatest" %% "scalatest" % "3.2.12" % "test",
+    "org.scalatest" %% "scalatest" % "3.0.8" % "test",
     "xerces" % "xercesImpl" % "2.12.2",
   ),
   name := {
