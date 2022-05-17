@@ -20,7 +20,7 @@ lazy val commonSettings = Seq(
   sparkVer := sys.env.getOrElse("SPARK_VERSION", "3.2.1"),
   hadoopVer := sys.env.getOrElse("HADOOP_VERSION", "3.3.1"),
   libraryDependencies ++= Seq(
-    "com.fasterxml.jackson.core" % "jackson-databind" % "2.13.2.2",
+    "com.fasterxml.jackson.core" % "jackson-databind" % "2.12.3",
     "commons-io" % "commons-io" % "2.11.0",
     "org.apache.hadoop" % "hadoop-common" % hadoopVer.value,
     "org.apache.hadoop" % "hadoop-hdfs" % hadoopVer.value,
@@ -28,7 +28,7 @@ lazy val commonSettings = Seq(
     "org.apache.spark" %% "spark-mllib" % sparkVer.value,
     "org.apache.spark" %% "spark-sql" % sparkVer.value,
     "org.scala-lang" % "scala-reflect" % scalaVersion.value,
-    "com.google.guava" % "guava" % "31.1-jre",
+    "com.google.guava" % "guava" % "28.0-jre",
     "org.scalamock" %% "scalamock" % "5.2.0" % "test",
     "org.scalatest" %% "scalatest" % "3.0.8" % "test",
     "xerces" % "xercesImpl" % "2.12.2",
