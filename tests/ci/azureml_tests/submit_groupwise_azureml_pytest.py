@@ -297,7 +297,7 @@ def create_arg_parser():
     parser.add_argument(
         "--test",
         action="store",
-        default="./tests/ci/aml_tests_github_actions/run_groupwise_pytest.py",
+        default="./tests/ci/azureml_tests/run_groupwise_pytest.py",
         help="location of script to run pytest",
     )
     # max num nodes in Azure cluster
