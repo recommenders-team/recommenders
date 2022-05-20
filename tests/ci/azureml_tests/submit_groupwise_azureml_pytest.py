@@ -36,6 +36,7 @@ Example:
 """
 import argparse
 import logging
+import glob
 
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
@@ -466,6 +467,11 @@ if __name__ == "__main__":
         max_nodes=args.maxnodes,
     )
 
+    wheel_list = glob.glob('./dist/*.whl')
+    if not wheel_list:
+        logger.error("Wheel not found!")
+    logger.info("Found wheel at " + wheel_list[0])
+
     run_config = create_run_config(
         cpu_cluster=cpu_cluster,
         docker_proc_type=docker_proc_type,
@@ -476,7 +482,7 @@ if __name__ == "__main__":
         conda_pkg_cudnn=args.conda_pkg_cudnn,
         conda_pkg_jdk=args.conda_pkg_jdk,
         conda_pkg_python=args.conda_pkg_python,
-        reco_wheel_path=args.wheelfile
+        reco_wheel_path=wheel_list[0],
     )
 
     logger.info("exp: In Azure, look for experiment named {}".format(args.expname))

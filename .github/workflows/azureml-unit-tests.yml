@@ -9,8 +9,8 @@ on:
   pull_request:
     branches: [ staging, main ]
 
-  # push:
-  #   branches: [pradjoshi/aml_tests]
+  push:
+    branches: [pradjoshi/aml_tests]
 
   # enable manual trigger
   workflow_dispatch:
