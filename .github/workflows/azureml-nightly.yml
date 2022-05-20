@@ -20,6 +20,7 @@ on:
   push:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
+    # branches: [staging, pradjoshi/aml_tests]
     branches: [staging]
 
   # enable manual trigger
@@ -64,7 +65,7 @@ jobs:
       - name: Submit CPU tests to AzureML
         if: contains(matrix.test-group, 'cpu')
         run: >-
-            python tests/ci/azureml_tests_github_pipeline/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --testkind "nightly"
@@ -72,7 +73,7 @@ jobs:
       - name: Submit GPU tests to AML
         if: contains(matrix.test-group, 'gpu')
         run: >-
-            python tests/ci/azureml_tests_github_pipeline/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind "nightly"
@@ -80,7 +81,7 @@ jobs:
       - name: Submit PySpark tests to AML
         if: contains(matrix.test-group, 'spark')
         run: >-
-            python tests/ci/azureml_tests_github_pipeline/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
             --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind "nightly"
