@@ -62,11 +62,15 @@ jobs:
         run: pip install wheel
       - name: Create wheel from setup.py
         run: python setup.py bdist_wheel
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
       - name: Submit CPU tests to AzureML
         if: contains(matrix.test-group, 'cpu')
         run: >-
             python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
@@ -74,7 +78,7 @@ jobs:
         if: contains(matrix.test-group, 'gpu')
         run: >-
             python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
@@ -82,7 +86,7 @@ jobs:
         if: contains(matrix.test-group, 'spark')
         run: >-
             python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}

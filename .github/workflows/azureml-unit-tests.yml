@@ -59,7 +59,7 @@ jobs:
         if: contains(matrix.test-group, 'cpu')
         run: >-
             python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --testkind "unit"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
@@ -67,7 +67,7 @@ jobs:
         if: contains(matrix.test-group, 'gpu')
         run: >-
             python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind "unit"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
@@ -75,7 +75,7 @@ jobs:
         if: contains(matrix.test-group, 'spark')
         run: >-
             python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch "pradjoshi/aml_tests"
+            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind "unit"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
