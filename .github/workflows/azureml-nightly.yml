@@ -20,8 +20,8 @@ on:
   push:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
-    # branches: [staging, pradjoshi/aml_tests]
-    branches: [staging]
+    branches: [staging, pradjoshi/aml_tests]
+    # branches: [staging]
 
   # enable manual trigger
   workflow_dispatch:

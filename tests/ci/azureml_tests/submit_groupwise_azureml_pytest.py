@@ -168,28 +168,22 @@ def create_run_config(cpu_cluster,
             add_spark_dependencies (bool)   : True if PySpark packages should be
                                         added to the conda environment, else False
     Return:
-          run_amlcompute : AzureML run config
+          run_azuremlcompute : AzureML run config
     """
 
-    # runconfig with max_run_duration_seconds did not work, check why:
-    # run_amlcompute = RunConfiguration(max_run_duration_seconds=60*30)
-    run_amlcompute = RunConfiguration()
-    run_amlcompute.target = cpu_cluster
-    run_amlcompute.environment.docker.enabled = True
-    run_amlcompute.environment.docker.base_image = docker_proc_type
-
-    # # https://github.com/Azure/MachineLearningNotebooks/issues/1483#issuecomment-846433075
-    # run_amlcompute.environment.docker.base_dockerfile = "tools/Docker/Dockerfile"
-    # dc = DockerConfiguration(use_docker=True, arguments=['-e', 'MY_NAME="foobarrr"'])
+    run_azuremlcompute = RunConfiguration()
+    run_azuremlcompute.target = cpu_cluster
+    run_azuremlcompute.environment.docker.enabled = True
+    run_azuremlcompute.environment.docker.base_image = docker_proc_type
 
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
     # False means the user will provide a conda file for setup
     # True means the user will manually configure the environment
-    run_amlcompute.environment.python.user_managed_dependencies = False
+    run_azuremlcompute.environment.python.user_managed_dependencies = False
 
-    # install local version of recommenders on AML compute using .whl file
-    whl_url = run_amlcompute.environment.add_private_pip_wheel(
+    # install local version of recommenders on AzureML compute using .whl file
+    whl_url = run_azuremlcompute.environment.add_private_pip_wheel(
         workspace=workspace,
         file_path=reco_wheel_path,
         exist_ok=True,
@@ -217,8 +211,8 @@ def create_run_config(cpu_cluster,
     else:
         conda_dep.add_pip_package("recommenders[dev,examples]")
 
-    run_amlcompute.environment.python.conda_dependencies = conda_dep
-    return run_amlcompute
+    run_azuremlcompute.environment.python.conda_dependencies = conda_dep
+    return run_azuremlcompute
 
 
 def create_experiment(workspace, experiment_name):
@@ -323,7 +317,7 @@ def create_arg_parser():
     parser.add_argument(
         "--clustername",
         action="store",
-        default="amlcompute",
+        default="azuremlcompute",
         help="Set name of Azure cluster",
     )
     # Azure VM size
@@ -356,7 +350,7 @@ def create_arg_parser():
     parser.add_argument(
         "--expname",
         action="store",
-        default="persistentAML",
+        default="persistentAzureML",
         help="experiment name on Azure",
     )
     # Azure datacenter location
