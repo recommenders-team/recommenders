@@ -236,17 +236,13 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         **header
     )
     model.fit(demo_usage_data)
-    true_user_affinity = pd.read_csv(
-        sar_settings["FILE_DIR"] + "user_aff_2_months_later.csv"
-    ).iloc[:, 1:]
+    true_user_affinity_url = sar_settings["FILE_DIR"] + "user_aff_2_months_later.csv"
+    true_user_affinity = pd.read_csv(true_user_affinity_url).iloc[:, 1:]
     user_index = model.user2index[sar_settings["TEST_USER_ID"]]
     item_indexes = pd.Series(model.item2index)[true_user_affinity.columns]
     sar_user_affinity = model.user_affinity[user_index].toarray().flatten()[item_indexes]
-    assert np.allclose(
-        true_user_affinity.astype(sar_user_affinity.dtype),
-        sar_user_affinity,
-        atol=sar_settings["ATOL"],
-    )
+    true_user_affinity = true_user_affinity.astype(sar_user_affinity.dtype)
+    assert np.allclose(true_user_affinity, sar_user_affinity, atol=sar_settings["ATOL"])
 
 
 @pytest.mark.parametrize(
