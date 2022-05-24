@@ -5,7 +5,7 @@
 
 import Utils._
 
-// Denpendency configuration
+// Dependency configuration
 
 lazy val sparkVer = settingKey[String]("spark version")
 lazy val hadoopVer = settingKey[String]("hadoop version")

@@ -319,6 +319,30 @@ def test_user_affinity(spark, demo_usage_data, sar_settings, header):
         atol=sar_settings["ATOL"],
     )
 
+    # Set time_now to 60 days later
+    user_affinity_ref = pd.read_csv(
+        sar_settings["FILE_DIR"] + "user_aff_2_months_later.csv"
+    ).iloc[:, 1:].squeeze()
+    user_affinity_ref = user_affinity_ref[user_affinity_ref > 0]
+
+    two_months = 2 * 30 * (24 * 60 * 60)
+    model = SARPlus(
+        spark,
+        **header,
+        timedecay_formula=True,
+        time_decay_coefficient=30,
+        time_now=demo_usage_data[header["col_timestamp"]].max() + two_months,
+        similarity_type="cooccurrence",
+    )
+    model.fit(spark.createDataFrame(demo_usage_data))
+    df_test = pd.DataFrame({header["col_user"]: [sar_settings["TEST_USER_ID"]]})
+    df_test = spark.createDataFrame(df_test)
+    user_affinity = model.get_user_affinity(df_test).toPandas()
+    user_affinity = user_affinity.set_index(header["col_item"])[header["col_rating"]]
+    user_affinity = user_affinity[user_affinity_ref.index]
+
+    assert np.allclose(user_affinity_ref, user_affinity, atol=sar_settings["ATOL"])
+
 
 # Tests 8-10
 @pytest.mark.parametrize(

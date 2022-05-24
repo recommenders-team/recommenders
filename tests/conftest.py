@@ -5,7 +5,7 @@
 # https://docs.pytest.org/en/latest/fixture.html:
 # "If during implementing your tests you realize that you want to use a fixture function from multiple test files
 # you can move it to a conftest.py file. You don't need to import the module you defined your fixtures to use in a test,
-# it automatically gets discovered by pytest and thus you can simply receive fixture objects by naming them as
+# it automatically gets discovered by pytest, and thus you can simply receive fixture objects by naming them as
 # an input argument in the test."
 
 import calendar
@@ -481,14 +481,14 @@ def test_specs():
 
 @pytest.fixture(scope="module")
 def affinity_matrix(test_specs):
-    """Generate a random user/item affinity matrix. By increasing the likehood of 0 elements we simulate
+    """Generate a random user/item affinity matrix. By increasing the likelihood of 0 elements we simulate
     a typical recommending situation where the input matrix is highly sparse.
 
     Args:
-        users (int): number of users (rows).
-        items (int): number of items (columns).
-        ratings (int): rating scale, e.g. 5 meaning rates are from 1 to 5.
-        spars: probability of obtaining zero. This roughly corresponds to the sparseness.
+        test_specs["users"] (int): number of users (rows).
+        test_specs["items"] (int): number of items (columns).
+        test_specs["ratings"] (int): rating scale, e.g. 5 meaning rates are from 1 to 5.
+        test_specs["spars"]: probability of obtaining zero. This roughly corresponds to the sparseness.
                of the generated matrix. If spars = 0 then the affinity matrix is dense.
 
     Returns:
@@ -512,7 +512,7 @@ def affinity_matrix(test_specs):
         X, ratio=test_specs["ratio"], seed=test_specs["seed"]
     )
 
-    return (Xtr, Xtst)
+    return Xtr, Xtst
 
 
 # DeepRec Fixtures
