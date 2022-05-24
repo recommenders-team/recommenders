@@ -17,7 +17,9 @@ Steps to package and publish (also described in
    cp ../VERSION ./pysarplus/  # copy version file
    python -m build --sdist
    MINOR_VERSION=$(python --version | cut -d '.' -f 2)
-   CIBW_BUILD="cp3${MINOR_VERSION}-manylinux_x86_64" python -m cibuildwheel --platform linux --output-dir dist
+   for MINOR_VERSION in {6..10}; do
+     CIBW_BUILD="cp3${MINOR_VERSION}-manylinux_x86_64" python -m cibuildwheel --platform linux --output-dir dist
+   done
    python -m twine upload dist/*
    ```
 
