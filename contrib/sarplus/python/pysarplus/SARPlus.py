@@ -49,13 +49,20 @@ class SARPlus:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             table_prefix (str): name prefix of the generated tables
-            similarity_type (str): ['cooccurrence', 'jaccard', 'lift'] option for computing item-item similarity
-            time_decay_coefficient (float): number of days till ratings are decayed by 1/2
-            time_now (int | None): current time for time decay calculation
+            similarity_type (str): ['cooccurrence', 'jaccard', 'lift']
+                option for computing item-item similarity
+            time_decay_coefficient (float): number of days till
+                ratings are decayed by 1/2.  denominator in time
+                decay.  Zero makes time decay irrelevant
+            time_now (int | None): current time for time decay
+                calculation
             timedecay_formula (bool): flag to apply time decay
-            threshold (int): item-item co-occurrences below this threshold will be removed
-            cache_path (str): user specified local cache directory for recommend_k_items().  If specified,
-                recommend_k_items() will do C++ based fast predictions.
+            threshold (int): item-item co-occurrences below this
+                threshold will be removed
+            cache_path (str): user specified local cache directory for
+                recommend_k_items().  If specified,
+                recommend_k_items() will do C++ based fast
+                predictions.
         """
         assert threshold > 0
 
@@ -67,7 +74,7 @@ class SARPlus:
             "col_timestamp": col_timestamp,
             "prefix": table_prefix,
             "time_now": time_now,
-            "time_decay_coefficient": time_decay_coefficient,
+            "time_decay_half_life": time_decay_coefficient * 24 * 60 * 60,
             "threshold": threshold,
         }
 
@@ -79,50 +86,52 @@ class SARPlus:
     def _format(self, string, **kwargs):
         return string.format(**self.header, **kwargs)
 
-    # denominator in time decay. Zero makes time decay irrelevant
-    # toggle the computation of time decay group by formula
-    # current time for time decay calculation
-    # cooccurrence matrix threshold
     def fit(self, df):
         """Main fit method for SAR.
 
-        Expects the dataframes to have row_id, col_id columns which are indexes,
-        i.e. contain the sequential integer index of the original alphanumeric user and item IDs.
-        Dataframe also contains rating and timestamp as floats; timestamp is in seconds since Epoch by default.
+        Expects the dataframes to have row_id, col_id columns which
+        are indexes, i.e. contain the sequential integer index of the
+        original alphanumeric user and item IDs.  Dataframe also
+        contains rating and timestamp as floats; timestamp is in
+        seconds since Epoch by default.
 
         Arguments:
-            df (pySpark.DataFrame): input dataframe which contains the index of users and items.
+            df (pySpark.DataFrame): input dataframe which contains the
+                index of users and items.
         """
-        # threshold - items below this number get set to zero in cooccurrence counts
 
         df.createOrReplaceTempView(self._format("{prefix}df_train_input"))
 
         if self.timedecay_formula:
-            # WARNING: previously we would take the last value in training dataframe and set it
-            # as a matrix U element
-            # for each user-item pair. Now with time decay, we compute a sum over ratings given
-            # by a user in the case
-            # when T=np.inf, so user gets a cumulative sum of ratings for a particular item and
-            # not the last rating.
-            # Time Decay
-            # does a group by on user item pairs and apply the formula for time decay there
-            # Time T parameter is in days and input time is in seconds,
-            # so we do dt/60/(T*24*60)=dt/(T*24*3600)
-            # the following is the query which we want to run
+            # With time decay, we compute a sum over ratings given by
+            # a user in the case when T=np.inf, so user gets a
+            # cumulative sum of ratings for a particular item and not
+            # the last rating.  Time Decay does a group by on user
+            # item pairs and apply the formula for time decay there
+            # Time T parameter is in days and input time is in
+            # seconds, so we do dt/60/(T*24*60)=dt/(T*24*3600) the
+            # following is the query which we want to run
 
-            query = self._format(
-                """
-            SELECT
-                 {col_user}, {col_item}, 
-                 SUM({col_rating} * EXP(-log(2) * (latest_timestamp - CAST({col_timestamp} AS long)) / ({time_decay_coefficient} * 3600 * 24))) as {col_rating}
-            FROM {prefix}df_train_input,
-                 (SELECT CAST(MAX({col_timestamp}) AS long) latest_timestamp FROM {prefix}df_train_input)
-            GROUP BY {col_user}, {col_item} 
-            CLUSTER BY {col_user} 
-            """
-            )
+            if self.header["time_now"] is None:
+                query = self._format("""
+                    SELECT CAST(MAX({col_timestamp}) AS long)
+                    FROM {prefix}df_train_input
+                """)
+                self.header["time_now"] = self.spark.sql(query).first()[0]
 
-            # replace with timedecayed version
+            query = self._format("""
+                SELECT {col_user},
+                       {col_item},
+                       SUM(
+                           {col_rating} *
+                           POW(2, (CAST({col_timestamp} AS LONG) - {time_now}) / {time_decay_half_life})
+                          ) AS {col_rating}
+                FROM {prefix}df_train_input
+                GROUP BY {col_user}, {col_item}
+                CLUSTER BY {col_user}
+            """)
+
+            # replace with time-decayed version
             df = self.spark.sql(query)
         else:
             # since SQL is case-insensitive, this check needs to be performed similar
@@ -262,7 +271,7 @@ class SARPlus:
           SELECT a.{col_user}, a.{col_item}, CAST(a.{col_rating} AS double) {col_rating}
           FROM {prefix}df_train a INNER JOIN {prefix}df_test_users b ON a.{col_user} = b.{col_user} 
           DISTRIBUTE BY {col_user}
-          SORT BY {col_user}, {col_item}          
+          SORT BY {col_user}, {col_item}
         """
         )
 
