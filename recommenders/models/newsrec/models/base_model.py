@@ -416,7 +416,7 @@ class BaseModel:
         ) in tqdm(self.test_iterator.load_impression_from_file(behaviors_file)):
             pred = np.dot(
                 np.stack([news_vecs[i] for i in news_index], axis=0),
-                user_vecs[impr_index],
+                user_vecs[user_index],
             )
             group_impr_indexes.append(impr_index)
             group_labels.append(label)
