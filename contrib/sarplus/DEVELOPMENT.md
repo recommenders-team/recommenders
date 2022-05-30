@@ -17,7 +17,9 @@ Steps to package and publish (also described in
    cp ../VERSION ./pysarplus/  # copy version file
    python -m build --sdist
    MINOR_VERSION=$(python --version | cut -d '.' -f 2)
-   CIBW_BUILD="cp3${MINOR_VERSION}-manylinux_x86_64" python -m cibuildwheel --platform linux --output-dir dist
+   for MINOR_VERSION in {6..10}; do
+     CIBW_BUILD="cp3${MINOR_VERSION}-manylinux_x86_64" python -m cibuildwheel --platform linux --output-dir dist
+   done
    python -m twine upload dist/*
    ```
 
@@ -103,11 +105,11 @@ on **Spark 3.2**, which adds an extra function `path()`, so an
 additional package called [Sarplus Spark 3.2
 Plus](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus-spark-3-2-plus_2.12)
 (with Maven coordinate such as
-`com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.5`) should be
+`com.microsoft.sarplus:sarplus-spark-3-2-plus_2.12:0.6.6`) should be
 used if running on Spark 3.2 instead of
 [Sarplus](https://search.maven.org/artifact/com.microsoft.sarplus/sarplus_2.12)
 (with Maven coordinate like
-`com.microsoft.sarplus:sarplus_2.12:0.6.5`).
+`com.microsoft.sarplus:sarplus_2.12:0.6.6`).
 
 In addition to `spark.sql.crossJoin.enabled true`, extra
 configurations are required when running on Spark 3.x:
