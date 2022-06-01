@@ -4,7 +4,7 @@
 ARG ENV="cpu"
 ARG HOME="/root"
 
-FROM ubuntu:18.04 AS base
+FROM mcr.microsoft.com/mirror/docker/library/ubuntu:18.04 AS base
 
 LABEL maintainer="Microsoft Recommender Project <RecoDevTeam@service.microsoft.com>"
 
@@ -87,7 +87,7 @@ RUN if [ "${VIRTUAL_ENV}" = "conda" ] ; then pip install recommenders[spark,exam
 ###########
 # GPU Stage
 ###########
-FROM nvidia/cuda:11.2.2-cudnn8-runtime-ubuntu18.04 AS gpu
+FROM mcr.microsoft.com/mirror/nvcr/nvidia/cuda:11.4.2-cudnn8-runtime-ubuntu18.04 AS gpu
 
 ARG HOME
 ARG VIRTUAL_ENV
