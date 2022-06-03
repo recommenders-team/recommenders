@@ -16,3 +16,5 @@ To build the documentation as HTML:
     make html
 
 To contribute to this repository, please follow our [coding guidelines](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines). See also the [reStructuredText documentation](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) for the syntax of docstrings.
+
+# Sample Pull Request text
