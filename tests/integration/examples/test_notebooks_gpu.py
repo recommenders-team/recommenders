@@ -213,7 +213,7 @@ def test_xdeepfm_integration(
     [
         (
             "1m",
-            50000,
+            10000,
             {
                 "rmse": 0.924958,
                 "mae": 0.741425,

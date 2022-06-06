@@ -36,6 +36,7 @@ Example:
 """
 import argparse
 import logging
+import glob
 
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
@@ -138,7 +139,16 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
     return cpu_cluster
 
 
-def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
+def create_run_config(cpu_cluster,
+                    docker_proc_type,
+                    workspace,
+                    add_gpu_dependencies,
+                    add_spark_dependencies,
+                    conda_pkg_cudatoolkit,
+                    conda_pkg_cudnn,
+                    conda_pkg_jdk,
+                    conda_pkg_python,
+                    reco_wheel_path):
     """
     AzureML requires the run environment to be setup prior to submission.
     This configures a docker persistent compute.  Even though
@@ -146,34 +156,63 @@ def create_run_config(cpu_cluster, docker_proc_type, conda_env_file):
     of the compute environment.
 
     Args:
-        cpu_cluster      (str) : Names the cluster for the test
-                                 In the case of unit tests, any of
-                                 the following:
-                                 - Reco_cpu_test
-                                 - Reco_gpu_test
-        docker_proc_type (str) : processor type, cpu or gpu
-        conda_env_file   (str) : filename which contains info to
-                                 set up conda env
+            cpu_cluster      (str)          : Names the cluster for the test
+                                                In the case of unit tests, any of
+                                                the following:
+                                                - Reco_cpu_test
+                                                - Reco_gpu_test
+            docker_proc_type (str)          : processor type, cpu or gpu
+            workspace                       : workspace reference
+            add_gpu_dependencies (bool)     : True if gpu packages should be
+                                        added to the conda environment, else False
+            add_spark_dependencies (bool)   : True if PySpark packages should be
+                                        added to the conda environment, else False
     Return:
-          run_amlcompute : AzureML run config
+          run_azuremlcompute : AzureML run config
     """
 
-    # runconfig with max_run_duration_seconds did not work, check why:
-    # run_amlcompute = RunConfiguration(max_run_duration_seconds=60*30)
-    run_amlcompute = RunConfiguration()
-    run_amlcompute.target = cpu_cluster
-    run_amlcompute.environment.docker.enabled = True
-    run_amlcompute.environment.docker.base_image = docker_proc_type
+    run_azuremlcompute = RunConfiguration()
+    run_azuremlcompute.target = cpu_cluster
+    run_azuremlcompute.environment.docker.enabled = True
+    run_azuremlcompute.environment.docker.base_image = docker_proc_type
 
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
     # False means the user will provide a conda file for setup
     # True means the user will manually configure the environment
-    run_amlcompute.environment.python.user_managed_dependencies = False
-    run_amlcompute.environment.python.conda_dependencies = CondaDependencies(
-        conda_dependencies_file_path=conda_env_file
+    run_azuremlcompute.environment.python.user_managed_dependencies = False
+
+    # install local version of recommenders on AzureML compute using .whl file
+    whl_url = run_azuremlcompute.environment.add_private_pip_wheel(
+        workspace=workspace,
+        file_path=reco_wheel_path,
+        exist_ok=True,
     )
-    return run_amlcompute
+    conda_dep = CondaDependencies()
+    conda_dep.add_conda_package(conda_pkg_python)
+    conda_dep.add_pip_package(whl_url)
+    conda_dep.add_pip_package("pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip")
+
+    # install extra dependencies
+    if add_gpu_dependencies and add_spark_dependencies:
+        conda_dep.add_conda_package(conda_pkg_cudatoolkit)
+        conda_dep.add_conda_package(conda_pkg_cudnn)
+        conda_dep.add_channel("conda-forge")
+        conda_dep.add_conda_package(conda_pkg_jdk)
+        conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]")
+    elif add_gpu_dependencies:
+        conda_dep.add_conda_package(conda_pkg_cudatoolkit)
+        conda_dep.add_conda_package(conda_pkg_cudnn)
+        conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
+    elif add_spark_dependencies:
+        conda_dep.add_channel("conda-forge")
+        conda_dep.add_conda_package(conda_pkg_jdk)
+        conda_dep.add_pip_package("recommenders[dev,examples,spark]")
+    else:
+        conda_dep.add_pip_package("recommenders[dev,examples]")
+
+    run_azuremlcompute.environment.python.conda_dependencies = conda_dep
+    return run_azuremlcompute
 
 
 def create_experiment(workspace, experiment_name):
@@ -195,7 +234,7 @@ def create_experiment(workspace, experiment_name):
 
 
 def submit_experiment_to_azureml(
-    test, test_folder, test_markers, junitxml, run_config, experiment
+    test, run_config, experiment, test_group, test_kind
 ):
 
     """
@@ -208,10 +247,6 @@ def submit_experiment_to_azureml(
                              like ./tests/unit
         test_markers (str) - test markers used by pytest
                              "not notebooks and not spark and not gpu"
-        junitxml     (str) - file of output summary of tests run
-                             note "--junitxml" is required as part
-                             of the string
-                             Example: "--junitxml reports/test-unit.xml"
         run_config - environment configuration
         experiment - instance of an Experiment, a collection of
                      trials where each trial is a run.
@@ -219,8 +254,6 @@ def submit_experiment_to_azureml(
           run : AzureML run or trial
     """
 
-    logger.debug("submit: testfolder {}".format(test_folder))
-    logger.debug("junitxml: {}".format(junitxml))
     project_folder = "."
 
     script_run_config = ScriptRunConfig(
@@ -228,13 +261,12 @@ def submit_experiment_to_azureml(
         script=test,
         run_config=run_config,
         arguments=[
-            "--testfolder",
-            test_folder,
-            "--testmarkers",
-            test_markers,
-            "--xmlname",
-            junitxml,
+            "--testgroup",
+            test_group,
+            "--testkind",
+            test_kind,
         ],
+        # docker_runtime_config=dc
     )
     run = experiment.submit(script_run_config)
     # waits only for configuration to complete
@@ -259,29 +291,8 @@ def create_arg_parser():
     parser.add_argument(
         "--test",
         action="store",
-        default="./tests/ci/run_pytest.py",
+        default="./tests/ci/azureml_tests/run_groupwise_pytest.py",
         help="location of script to run pytest",
-    )
-    # test folder
-    parser.add_argument(
-        "--testfolder",
-        action="store",
-        default="./tests/unit",
-        help="folder where tests are stored",
-    )
-    # pytest test markers
-    parser.add_argument(
-        "--testmarkers",
-        action="store",
-        default="not notebooks and not spark and not gpu",
-        help="pytest markers indicate tests to run",
-    )
-    # test summary file
-    parser.add_argument(
-        "--junitxml",
-        action="store",
-        default="reports/test-unit.xml",
-        help="file for returned test results",
     )
     # max num nodes in Azure cluster
     parser.add_argument(
@@ -289,6 +300,10 @@ def create_arg_parser():
         action="store",
         default=4,
         help="specify the maximum number of nodes for the run",
+    )
+    # Test group
+    parser.add_argument(
+        "--testgroup", action="store", default="group_criteo", help="Test Group"
     )
     # Azure resource group
     parser.add_argument(
@@ -302,7 +317,7 @@ def create_arg_parser():
     parser.add_argument(
         "--clustername",
         action="store",
-        default="amlcompute",
+        default="azuremlcompute",
         help="Set name of Azure cluster",
     )
     # Azure VM size
@@ -323,19 +338,19 @@ def create_arg_parser():
     parser.add_argument(
         "--subid", action="store", default="123456", help="Azure Subscription ID"
     )
-    # ./reco.yaml is created in the azure devops pipeline.
+    # reco wheel is created in the GitHub action workflow.
     # Not recommended to change this.
     parser.add_argument(
-        "--condafile",
+        "--wheelfile",
         action="store",
-        default="./reco.yaml",
-        help="file with environment variables",
+        default="./dist/recommenders-1.0.0-py3-none-any.whl",
+        help="recommenders whl file path",
     )
     # AzureML experiment name
     parser.add_argument(
         "--expname",
         action="store",
-        default="persistentAML",
+        default="persistentAzureML",
         help="experiment name on Azure",
     )
     # Azure datacenter location
@@ -361,16 +376,63 @@ def create_arg_parser():
         default="--pr PRTestRun",
         help="If a pr triggered the test, list it here",
     )
-
+    # flag to indicate whether gpu dependencies should be included in conda env
+    parser.add_argument(
+        "--add_gpu_dependencies", action="store_true", help="include packages for GPU support"
+    )
+    # flag to indicate whether pyspark dependencies should be included in conda env    
+    parser.add_argument(
+        "--add_spark_dependencies", action="store_true", help="include packages for PySpark support"
+    )
+    # path where test logs should be downloaded
+    parser.add_argument(
+        "--testlogs",
+        action="store",
+        default="test_logs.log",
+        help="Test logs will be downloaded to this path",
+    )
+    # conda package name for cudatoolkit
+    parser.add_argument(
+        "--conda_pkg_cudatoolkit",
+        action="store",
+        default="cudatoolkit=11.2",
+        help="conda package name for cudatoolkit",
+    )
+    # conda package name for cudnn
+    parser.add_argument(
+        "--conda_pkg_cudnn",
+        action="store",
+        default="cudnn=8.1",
+        help="conda package name for cudnn",
+    )
+    # conda package name for jdk
+    parser.add_argument(
+        "--conda_pkg_jdk",
+        action="store",
+        default="openjdk=8",
+        help="conda package name for jdk",
+    )
+    # conda package name for python
+    parser.add_argument(
+        "--conda_pkg_python",
+        action="store",
+        default="python=3.7",
+        help="conda package name for jdk",
+    )
+    parser.add_argument(
+        "--testkind",
+        action="store",
+        default="unit",
+        help="Test kind - nightly or unit",
+    )
     args = parser.parse_args()
 
     return args
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger("submit_azureml_pytest.py")
-    # logger.setLevel(logging.DEBUG)
-    # logging.basicConfig(level=logging.DEBUG)
+
+    logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
     args = create_arg_parser()
 
     if args.dockerproc == "cpu":
@@ -399,10 +461,22 @@ if __name__ == "__main__":
         max_nodes=args.maxnodes,
     )
 
+    wheel_list = glob.glob('./dist/*.whl')
+    if not wheel_list:
+        logger.error("Wheel not found!")
+    logger.info("Found wheel at " + wheel_list[0])
+
     run_config = create_run_config(
         cpu_cluster=cpu_cluster,
         docker_proc_type=docker_proc_type,
-        conda_env_file=args.condafile,
+        workspace=workspace,
+        add_gpu_dependencies=args.add_gpu_dependencies,
+        add_spark_dependencies=args.add_spark_dependencies,
+        conda_pkg_cudatoolkit=args.conda_pkg_cudatoolkit,
+        conda_pkg_cudnn=args.conda_pkg_cudnn,
+        conda_pkg_jdk=args.conda_pkg_jdk,
+        conda_pkg_python=args.conda_pkg_python,
+        reco_wheel_path=wheel_list[0],
     )
 
     logger.info("exp: In Azure, look for experiment named {}".format(args.expname))
@@ -411,17 +485,23 @@ if __name__ == "__main__":
     experiment = Experiment(workspace=workspace, name=args.expname)
     run = submit_experiment_to_azureml(
         test=args.test,
-        test_folder=args.testfolder,
-        test_markers=args.testmarkers,
-        junitxml=args.junitxml,
         run_config=run_config,
         experiment=experiment,
+        test_group=args.testgroup,
+        test_kind=args.testkind,
     )
 
     # add helpful information to experiment on Azure
     run.tag("RepoName", args.reponame)
     run.tag("Branch", args.branch)
     run.tag("PR", args.pr)
-    # download files from AzureML
-    run.download_files(prefix="reports", output_paths="./reports")
+
+    # download logs file from AzureML
+    run.download_file(name="test_logs", output_file_path=args.testlogs)
+
+    # save pytest exit code
+    metrics = run.get_metrics()
+    with open("pytest_exit_code.log", "w") as f:
+        f.write(str(metrics.get('pytest_exit_code')))
+
     run.complete()

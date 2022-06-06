@@ -10,12 +10,12 @@ This project uses unit, smoke and integration tests with Python files and notebo
 
 For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
 
-AzureML is also used to run the existing unit, smoke and integration tests as-is. AzureML benefits include managing the compute environment by automatically turning it on/off, scaling, automatic logging of artifacts from test runs and more. Azure DevOps is used as a control plane to provide information to scripts to configure and run the tests as-is on AzureML.  A separate set of pipelines was created to run the tests on AzureML and parameters to configure AzureML are defined in the pipeline yml files. There are two scripts used with each pipeline:
 
-* submit_azureml_pytest.py - this script uses parameters in the pipeline yml to set up the AzureML environment for testing using the AzureML SDK .
-* run_pytest.py - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above. The same tests and testmarkers are used as described below.
+AzureML is also used to run the existing unit, smoke and integration tests as-is. AzureML benefits include managing the compute environment by automatically turning it on/off, scaling, automatic logging of artifacts from test runs and more. GitHub is used as a control plane to provide information to scripts to configure and run the tests as-is on AzureML.  GitHub workflows `recommenders/.github/workflows/azureml-unit-tests.yml` and `recommenders/.github/workflows/azureml-nightly.yml` are used to run the tests on AzureML and parameters to configure AzureML are defined in the workflow yml files. Tests are divided into groups and each workflow triggers execution of these test groups in parallel, which significantly reduces end-to-end execution time. There are three scripts used with each workflow:
 
-Note: Spark tests are not currently run on AzureML and may be set up in the future.
+* `ci/azureml_tests/submit_groupwise_azureml_pytest.py` - this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK .
+* `ci/azureml_tests/run_groupwise_pytest.py` - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above.
+* `ci/azureml_tests/test_groups.py` - this script defines groups of tests.
 
 ## Test execution
 
