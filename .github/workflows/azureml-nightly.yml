@@ -30,10 +30,11 @@ on:
         default: 'Anything to describe this manual run'
 
 env:
-  CLUSTER_NAME: "nightly-cluster"
+  CPU_CLUSTER_NAME: "cpu-cluster"
+  GPU_CLUSTER_NAME: "gpu-cluster"
   EXP_NAME: "nightly_tests"
-  RG: "pradjoshi-aml-rg"
-  WS: "pradjoshi-aml-ws"
+  RG: "recommenders_project_resources"
+  WS: "azureml-test-workspace"
   TEST_LOGS_PATH: '"test_logs.log"'
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
@@ -56,7 +57,7 @@ jobs:
       - name: Log in to Azure
         uses: azure/login@v1
         with:
-          creds: ${{secrets.AML_TEST_CREDENTIALS}}
+          creds: ${{secrets.AZUREML_TEST_CREDENTIALS}}
       - name: Install wheel package
         run: pip install wheel
       - name: Create wheel from setup.py
@@ -68,24 +69,24 @@ jobs:
       - name: Submit CPU tests to AzureML
         if: contains(matrix.test-group, 'cpu')
         run: >-
-            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
+            --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Submit GPU tests to AzureML
         if: contains(matrix.test-group, 'gpu')
         run: >-
-            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.GPU_CLUSTER_NAME}}
+            --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
       - name: Submit PySpark tests to AzureML
         if: contains(matrix.test-group, 'spark')
         run: >-
-            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CLUSTER_NAME}}
-            --subid ${{secrets.AML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
+            --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
             --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
             --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind "nightly"
             --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
