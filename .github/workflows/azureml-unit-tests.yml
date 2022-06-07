@@ -9,10 +9,10 @@ on:
   pull_request:
     branches: [ staging, main ]
 
-  push:
-    # because we can't schedule runs for non-main branches,
-    # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [pradjoshi/update_azureml_cluster]
+  # push:
+  #   # because we can't schedule runs for non-main branches,
+  #   # to ensure we are running the build on the staging branch, we can add push policy for it
+  #   branches: [pradjoshi/update_azureml_cluster]
 
   # enable manual trigger
   workflow_dispatch:
