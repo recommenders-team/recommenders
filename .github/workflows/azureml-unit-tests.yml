@@ -32,6 +32,7 @@ env:
 
 jobs:
   unit-tests:
+    name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
