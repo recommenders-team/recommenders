@@ -338,14 +338,6 @@ def create_arg_parser():
     parser.add_argument(
         "--subid", action="store", default="123456", help="Azure Subscription ID"
     )
-    # reco wheel is created in the GitHub action workflow.
-    # Not recommended to change this.
-    parser.add_argument(
-        "--wheelfile",
-        action="store",
-        default="./dist/recommenders-1.0.0-py3-none-any.whl",
-        help="recommenders whl file path",
-    )
     # AzureML experiment name
     parser.add_argument(
         "--expname",
