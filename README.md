@@ -184,6 +184,12 @@ The following tests run on a Linux DSVM daily.
 | **Windows Spark** | main | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/windows-tests/dsvm_nightly_win_pyspark?branchName=main)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=103&branchName=main) | | staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/windows-tests/dsvm_nightly_win_pyspark?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=103&branchName=staging) |
 -->
 
+### AzureML Nightly Build Status
+
+Smoke and integration tests are run daily on AzureML.
+
+[![YourActionName AzureML Nightly Build Status(https://github.com/microsoft/recommenders/workflows/azureml-nightly/badge.svg)](https://github.com/microsoft/recommenders/actions)
+
 ## Related projects
 
 - [Microsoft AI Github](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository.
