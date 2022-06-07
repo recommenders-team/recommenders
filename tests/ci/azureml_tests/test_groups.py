@@ -8,13 +8,13 @@
 # Standard_DC8s_v3 with 8 vCPUs and 64 GiB memory.
 
 # IMPORTANT NOTE:
-# FOR INTEGRATION, NO GROUP SHOULD SURPASS 30MIN = 1800s !!!
+# FOR INTEGRATION, NO GROUP SHOULD SURPASS 35MIN = 2100s !!!
 # FOR UNIT, NO GROUP SHOULD SURPASS 15MIN = 900s !!!
 
 global nightly_test_groups, unit_test_groups
 
 nightly_test_groups = {
-    "group_cpu_001": [  # Total group time: 1682.44s
+    "group_cpu_001": [  # Total group time: 1911.2s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens",  # 0.45s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df",  # 0.47s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_pandas_df",  # 2.45s
@@ -38,8 +38,13 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke",  # 12.58s
         "tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration",  # 49.89s + 599.29s
+        #
+        "tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke",  # 46.42s
+        #
+        "tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke",  # 16.62s
+        "tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration",  # 165.72s
     ],
-    "group_cpu_002": [  # Total group time: 1742.32s
+    "group_cpu_002": [  # Total group time: 1742.32s (didn't add xlearn)
         #
         "tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke",  # 15.98s
         "tests/integration/examples/test_notebooks_python.py::test_baseline_deep_dive_integration",  # 170.73s
@@ -48,17 +53,11 @@ nightly_test_groups = {
         "tests/integration/examples/test_notebooks_python.py::test_surprise_svd_integration",  # 503.54s
         #
         "tests/integration/examples/test_notebooks_python.py::test_geoimc_integration",  # 1006.19s
-    ],
-    "group_cpu_003": [  # Total group time: 228.76s (didn't add xlearn)
-        "tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke",  # 46.42s
-        #
-        "tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke",  # 16.62s
-        "tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration",  # 165.72s
         #
         # FIXME: Add experimental tests in a later iteration
         # "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration",  # 255.73s
     ],
-    "group_gpu_001": [  # Total group time: 1415.29s
+    "group_gpu_001": [  # Total group time: 1937.01s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
         "tests/smoke/recommenders/recommender/test_deeprec_utils.py",  # 2.91
         "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator",  # 0.74s
@@ -71,68 +70,62 @@ nightly_test_groups = {
         #
         "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_dkn",  # 187.20s
         "tests/integration/examples/test_notebooks_gpu.py::test_dkn_quickstart_integration",  # 1167.93s
-    ],
-    "group_gpu_002": [  # Total group time: 1594.67s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
-        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_xdeepfm",  # 3.10s
-        "tests/smoke/examples/test_notebooks_gpu.py::test_xdeepfm_smoke",  # 77.93s
-        #
-        "tests/integration/examples/test_notebooks_gpu.py::test_xdeepfm_integration",  # 470.11s
         #
         "tests/integration/examples/test_notebooks_gpu.py::test_slirec_quickstart_integration",  # 175.00s
         "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s
+    ],
+    "group_gpu_002": [  # Total group time: 1896.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_xdeepfm",  # 3.10s
+        "tests/smoke/examples/test_notebooks_gpu.py::test_xdeepfm_smoke",  # 77.93s
+        "tests/integration/examples/test_notebooks_gpu.py::test_xdeepfm_integration",  # 470.11s
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_cornac_bivae_smoke",  # 67.84s
         "tests/integration/examples/test_notebooks_gpu.py::test_cornac_bivae_integration",  # 453.21s
-    ],
-    "group_gpu_003": [  # Total group time: 1616s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
-        "tests/smoke/examples/test_notebooks_gpu.py::test_ncf_deep_dive_smoke",  # 102.71s
-        "tests/smoke/examples/test_notebooks_gpu.py::test_ncf_smoke",  # 114.39s
-        "tests/integration/examples/test_notebooks_gpu.py::test_ncf_deep_dive_integration",  # 351.17s
-        "tests/integration/examples/test_notebooks_gpu.py::test_ncf_integration",  # 1046.97s
-    ],
-    "group_gpu_004": [  # Total group time: 1778.14s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
-        "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_naml_iterator",  # 5.50s
-        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_naml",  # 450.65s
-        "tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke",  # 620.13s
+        #
+        "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_fastai_smoke",  # 33.22s
         "tests/integration/examples/test_notebooks_gpu.py::test_fastai_integration",  # 667.88s
     ],
-    "group_gpu_005": [  # Total group time: 1503.22s
+    "group_gpu_003": [  # Total group time: 2072.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
-        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_npa",  # 202.61s
-        "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
-        "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
+        "tests/smoke/examples/test_notebooks_gpu.py::test_ncf_smoke",  # 114.39s
+        "tests/integration/examples/test_notebooks_gpu.py::test_ncf_integration",  # 1046.97s
+        "tests/smoke/examples/test_notebooks_gpu.py::test_ncf_deep_dive_smoke",  # 102.71s
+        "tests/integration/examples/test_notebooks_gpu.py::test_ncf_deep_dive_integration",  # 351.17s
         #
-        "tests/smoke/examples/test_notebooks_gpu.py::test_wide_deep_smoke",  # 122.71s
+        "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_naml_iterator",  # 5.50s
+        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_naml",  # 450.65s
     ],
-    "group_gpu_006": [  # Total group time: 1844.05s
+    "group_gpu_004": [  # Total group time: 2103.34s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/smoke/examples/test_notebooks_gpu.py::test_nrms_smoke",  # 232.55s
+        "tests/integration/examples/test_notebooks_gpu.py::test_nrms_quickstart_integration",  # 857.05s
+        #
+        "tests/smoke/examples/test_notebooks_gpu.py::test_lstur_smoke",  # 246.46s
+        "tests/integration/examples/test_notebooks_gpu.py::test_lstur_quickstart_integration",  # 766.52s
+    ],
+    "group_gpu_005": [  # Total group time: 1844.05s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
         "tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration",  # 1843.29s
     ],
-    "group_gpu_007": [  # Total group time: 1278.96s
+    "group_gpu_006": [  # Total group time: 1763.99s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_npa",  # 202.61s
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_nrms",  # 188.60s
-        "tests/smoke/examples/test_notebooks_gpu.py::test_nrms_smoke",  # 232.55s
-        "tests/integration/examples/test_notebooks_gpu.py::test_nrms_quickstart_integration",  # 857.05s
-    ],
-    "group_gpu_008": [  # Total group time: 1208.62s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
-        "tests/smoke/examples/test_notebooks_gpu.py::test_lstur_smoke",  # 246.46s
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur",  # 194.88s
-        "tests/integration/examples/test_notebooks_gpu.py::test_lstur_quickstart_integration",  # 766.52s
+        #
+        "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
+        "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
     ],
-    "group_gpu_009": [  # Total group time: 1063.51s
+    "group_gpu_007": [  # Total group time:
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke",  # 620.13s
+        # FIXME: Reduce test time https://github.com/microsoft/recommenders/issues/1731
+        # "tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration",  # 2033.85s
         # FIXME: https://github.com/microsoft/recommenders/issues/1716
         # "tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration",  # 448.06s + 614.69s
-    ],
-    "group_gpu_010": [  # Total group time: 2034.61s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
-        "tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration",  # 2033.85s
     ],
     "group_spark_001": [  # Total group time: 845.16s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
