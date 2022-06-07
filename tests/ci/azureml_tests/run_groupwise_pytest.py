@@ -70,5 +70,5 @@ if __name__ == "__main__":
     # logger.info("os.listdir files {}".format(os.listdir(".")))
 
     # upload pytest stdout file
-    logs_path = glob.glob('**/70_driver_log.txt', recursive=True)[0]
+    logs_path = (glob.glob('**/(70_driver_log.txt', recursive=True) + glob.glob('**/(70_driver_log.txt', recursive=True))[0]
     run.upload_file(name='test_logs', path_or_stream=logs_path)
