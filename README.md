@@ -188,7 +188,7 @@ The following tests run on a Linux DSVM daily.
 
 Smoke and integration tests are run daily on AzureML.
 
-[![YourActionName AzureML Nightly Build Status(https://github.com/microsoft/recommenders/workflows/azureml-nightly/badge.svg)](https://github.com/microsoft/recommenders/actions)
+| **Nightly** | main | [![azureml-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-nightly.yml) | | staging | [![azureml-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-nightly.yml) |
 
 ## Related projects
 
