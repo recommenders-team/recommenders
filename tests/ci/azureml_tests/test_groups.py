@@ -58,7 +58,7 @@ nightly_test_groups = {
         # "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration",  # 255.73s
     ],
     "group_gpu_001": [  # Total group time: 1937.01s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/recommenders/recommender/test_deeprec_utils.py",  # 2.91
         "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_FFM_iterator",  # 0.74s
         "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_news_iterator",  # 3.04s
@@ -75,7 +75,7 @@ nightly_test_groups = {
         "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_slirec",  # 346.72s
     ],
     "group_gpu_002": [  # Total group time: 1896.76s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/recommenders/recommender/test_deeprec_model.py::test_model_xdeepfm",  # 3.10s
         "tests/smoke/examples/test_notebooks_gpu.py::test_xdeepfm_smoke",  # 77.93s
         "tests/integration/examples/test_notebooks_gpu.py::test_xdeepfm_integration",  # 470.11s
@@ -89,7 +89,7 @@ nightly_test_groups = {
         "tests/integration/examples/test_notebooks_gpu.py::test_fastai_integration",  # 667.88s
     ],
     "group_gpu_003": [  # Total group time: 2072.15s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/examples/test_notebooks_gpu.py::test_ncf_smoke",  # 114.39s
         "tests/integration/examples/test_notebooks_gpu.py::test_ncf_integration",  # 1046.97s
         "tests/smoke/examples/test_notebooks_gpu.py::test_ncf_deep_dive_smoke",  # 102.71s
@@ -99,7 +99,7 @@ nightly_test_groups = {
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_naml",  # 450.65s
     ],
     "group_gpu_004": [  # Total group time: 2103.34s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/examples/test_notebooks_gpu.py::test_nrms_smoke",  # 232.55s
         "tests/integration/examples/test_notebooks_gpu.py::test_nrms_quickstart_integration",  # 857.05s
         #
@@ -107,11 +107,11 @@ nightly_test_groups = {
         "tests/integration/examples/test_notebooks_gpu.py::test_lstur_quickstart_integration",  # 766.52s
     ],
     "group_gpu_005": [  # Total group time: 1844.05s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration",  # 1843.29s
     ],
     "group_gpu_006": [  # Total group time: 1763.99s
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_npa",  # 202.61s
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_nrms",  # 188.60s
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur",  # 194.88s
@@ -120,7 +120,7 @@ nightly_test_groups = {
         "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
     ],
     "group_gpu_007": [  # Total group time:
-        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke",  # 620.13s
         # FIXME: Reduce test time https://github.com/microsoft/recommenders/issues/1731
         # "tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration",  # 2033.85s
@@ -141,7 +141,7 @@ nightly_test_groups = {
 }
 
 unit_test_groups = {
-    "group_pyspark_001": [  # Total group time: 152.66s
+    "group_pyspark_001": [  # Total group time: 270.41s
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_custom_param__succeed",
         "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_stratified_splitter",
@@ -159,8 +159,6 @@ unit_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_serendipity",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_diversity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_diversity",
-    ],
-    "group_pyspark_002": [  # Total group time: 117.75s
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_default_param__succeed",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_serendipity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_serendipity_item_feature_vector",
@@ -180,20 +178,19 @@ unit_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_min_rating_filter",
     ],
-    "group_notebooks_pyspark_001": [  # Total group time: 1125.20s
-        "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",
-        "tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs",
+    "group_notebooks_pyspark_001": [  # Total group time: 746.53s
+        "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it has to rerun several times)
     ],
-    "group_notebooks_pyspark_002": [  # Total group time: 180.05s
+    "group_notebooks_pyspark_002": [  # Total group time: 728.43s
         "tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs",
-    ],
-    "group_notebooks_pyspark_003": [  # Total group time: 491.83s
         "tests/unit/examples/test_notebooks_pyspark.py::test_als_pyspark_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_diversity_runs",
+        "tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs",  # 56.55s
     ],
-    "group_gpu_001": [  # Total group time: 178.68s
+    "group_gpu_001": [  # Total group time: 492.62s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",
@@ -201,8 +198,6 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
-    ],
-    "group_gpu_002": [  # Total group time: 72.01s
         "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
         "tests/unit/recommenders/models/test_rbm.py::test_train_param_init",
         "tests/unit/recommenders/models/test_rbm.py::test_save_load",
@@ -227,22 +222,20 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_unsorted",
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
         "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_missing_column",
-    ],
-    "group_gpu_003": [  # Total group time: 241.17s
         "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data",
         "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler",
         "tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec",
         "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept",
     ],
-    "group_notebooks_gpu_001": [  # Total group time: 324.44s
+    "group_notebooks_gpu_001": [  # Total group time: 563.35s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/unit/examples/test_notebooks_gpu.py::test_dkn_quickstart",
-    ],
-    "group_notebooks_gpu_002": [  # Total group time: 238.15s
         "tests/unit/examples/test_notebooks_gpu.py::test_ncf",
         "tests/unit/examples/test_notebooks_gpu.py::test_ncf_deep_dive",
         "tests/unit/examples/test_notebooks_gpu.py::test_fastai",
     ],
-    "group_notebooks_gpu_003": [  # Total group time: 241.15s
+    "group_notebooks_gpu_002": [  # Total group time: 241.15s
+        "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/unit/examples/test_notebooks_gpu.py::test_wide_deep",
         "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
@@ -264,14 +257,12 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_get_tokens",
         "tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items",
     ],
-    "group_notebooks_cpu_001": [  # Total group time: 104.19s
+    "group_notebooks_cpu_001": [  # Total group time: 226.42s
         "tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs",
         "tests/unit/examples/test_notebooks_python.py::test_sar_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_baseline_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_template_runs",
         "tests/unit/recommenders/utils/test_notebook_utils.py::test_is_jupyter",
-    ],
-    "group_notebooks_cpu_002": [  # Total group time: 122.23s
         "tests/unit/examples/test_notebooks_python.py::test_surprise_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_lightgbm",
         "tests/unit/examples/test_notebooks_python.py::test_cornac_deep_dive_runs",
