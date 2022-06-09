@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ---------------------------------------------------------
 
-name: azureml-nightly
+name: azureml-gpu-nightly
 
 on:
   #          ┌───────────── minute (0 - 59)
@@ -20,7 +20,7 @@ on:
   push:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [staging]
+    branches: [staging, pradjoshi/divide_tests]
 
   # enable manual trigger
   workflow_dispatch:
@@ -32,7 +32,7 @@ on:
 env:
   CPU_CLUSTER_NAME: "cpu-cluster"
   GPU_CLUSTER_NAME: "gpu-cluster"
-  EXP_NAME: "nightly_tests"
+  EXP_NAME: "nightly_gpu_tests"
   RG: "recommenders_project_resources"
   WS: "azureml-test-workspace"
   TEST_LOGS_PATH: '"test_logs.log"'
