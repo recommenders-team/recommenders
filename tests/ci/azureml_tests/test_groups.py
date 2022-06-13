@@ -179,7 +179,7 @@ unit_test_groups = {
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_min_rating_filter",
     ],
     "group_notebooks_pyspark_001": [  # Total group time: 746.53s
-        "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it has to rerun several times)
+        "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it rerun several times)
     ],
     "group_notebooks_pyspark_002": [  # Total group time: 728.43s
         "tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs",
