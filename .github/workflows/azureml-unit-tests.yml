@@ -49,6 +49,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Get test group names
         run: echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
+        echo test_groups
       # - name: Setup python
       #   uses: actions/setup-python@v2
       #   with: 
