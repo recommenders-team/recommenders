@@ -7,12 +7,12 @@ name: azureml-unit-tests
 
 on:
   pull_request:
-    branches: [ staging, main, azureml_groups_opt ]
+    branches: [ staging, main ]
 
-  # push:
-  #   # because we can't schedule runs for non-main branches,
-  #   # to ensure we are running the build on the staging branch, we can add push policy for it
-  #   branches: [pradjoshi/update_azureml_cluster]
+  push:
+    # because we can't schedule runs for non-main branches,
+    # to ensure we are running the build on the staging branch, we can add push policy for it
+    branches: [azureml_groups_opt]
 
   # enable manual trigger
   workflow_dispatch:
