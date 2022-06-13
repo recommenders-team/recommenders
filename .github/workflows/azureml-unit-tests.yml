@@ -7,7 +7,7 @@ name: azureml-unit-tests
 
 on:
   pull_request:
-    branches: [ staging, main ]
+    branches: [ staging, main, azureml_groups_opt ]
 
   # push:
   #   # because we can't schedule runs for non-main branches,
@@ -37,7 +37,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.7"']
-        test-group: ['"group_cpu_001"', '"group_notebooks_cpu_001"', '"group_notebooks_cpu_002"', '"group_pyspark_001"', '"group_pyspark_002"', '"group_notebooks_pyspark_001"', '"group_notebooks_pyspark_002"', '"group_notebooks_pyspark_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_notebooks_gpu_001"', '"group_notebooks_gpu_002"', '"group_notebooks_gpu_003"']
+        test-group: $${{ python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))' }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
