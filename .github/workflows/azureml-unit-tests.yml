@@ -37,7 +37,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.7"']
-        test-group: []
+        test-group: ['"group_cpu_001"', '"group_notebooks_cpu_001"', '"group_notebooks_cpu_002"', '"group_pyspark_001"', '"group_pyspark_002"', '"group_notebooks_pyspark_001"', '"group_notebooks_pyspark_002"', '"group_notebooks_pyspark_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_notebooks_gpu_001"', '"group_notebooks_gpu_002"', '"group_notebooks_gpu_003"']
     steps:
       - name: Get test group names
         run: echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
