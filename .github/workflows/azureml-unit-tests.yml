@@ -6,14 +6,12 @@
 name: azureml-unit-tests
 
 on:
-  pull_request:
-    branches: [ staging, main ]
-
   pull_request_target:
     types:
       - opened
-    branches:    
-      - 'pradjoshi/pr_fork'
+    branches:
+      - 'staging'
+      - 'main'
 
   # enable manual trigger
   workflow_dispatch:
