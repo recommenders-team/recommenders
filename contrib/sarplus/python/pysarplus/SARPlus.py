@@ -77,7 +77,7 @@ class SARPlus:
             "time_decay_half_life": time_decay_coefficient * 24 * 60 * 60,
             "threshold": threshold,
         }
-        if similarity_type not in [COOCCUR, JACCARD, LIFT]:
+        if similarity_type not in [SIM_COOCCUR, SIM_JACCARD, SIM_LIFT]:
             raise ValueError(
                 'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]'
             )
@@ -116,13 +116,16 @@ class SARPlus:
             # following is the query which we want to run
 
             if self.header["time_now"] is None:
-                query = self._format("""
+                query = self._format(
+                    """
                     SELECT CAST(MAX({col_timestamp}) AS long)
                     FROM {prefix}df_train_input
-                """)
+                """
+                )
                 self.header["time_now"] = self.spark.sql(query).first()[0]
 
-            query = self._format("""
+            query = self._format(
+                """
                 SELECT {col_user},
                        {col_item},
                        SUM(
@@ -132,7 +135,8 @@ class SARPlus:
                 FROM {prefix}df_train_input
                 GROUP BY {col_user}, {col_item}
                 CLUSTER BY {col_user}
-            """)
+            """
+            )
 
             # replace with time-decayed version
             df = self.spark.sql(query)
@@ -307,7 +311,9 @@ class SARPlus:
             WHERE is.i1 = a.i1 AND i2 = b.i1
         """
             )
-        ).write.mode("overwrite").saveAsTable(self._format("{prefix}item_similarity_mapped"))
+        ).write.mode("overwrite").saveAsTable(
+            self._format("{prefix}item_similarity_mapped")
+        )
 
         cache_path_output = self.cache_path
         if self.cache_path.startswith("dbfs:"):
@@ -471,6 +477,8 @@ class SARPlus:
         if not use_cache:
             return self._recommend_k_items_slow(test, top_k, remove_seen)
         elif self.cache_path is not None:
-            return self._recommend_k_items_fast(test, top_k, remove_seen, n_user_prediction_partitions)
+            return self._recommend_k_items_fast(
+                test, top_k, remove_seen, n_user_prediction_partitions
+            )
         else:
             raise ValueError("No cache_path specified")
