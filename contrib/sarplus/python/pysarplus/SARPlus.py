@@ -77,7 +77,10 @@ class SARPlus:
             "time_decay_half_life": time_decay_coefficient * 24 * 60 * 60,
             "threshold": threshold,
         }
-
+        if similarity_type not in [COOCCUR, JACCARD, LIFT]:
+            raise ValueError(
+                'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]'
+            )
         self.similarity_type = similarity_type
         self.timedecay_formula = timedecay_formula
         self.item_similarity = None
