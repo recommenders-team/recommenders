@@ -11,7 +11,7 @@ on:
     types:
       - opened
     branches:    
-      - ['staging', 'main', 'pradjoshi/pr_fork']
+      - ['staging', 'main']
 
   # enable manual trigger
   workflow_dispatch:
