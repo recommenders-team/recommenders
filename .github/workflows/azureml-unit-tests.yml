@@ -39,13 +39,10 @@ jobs:
         uses: actions/checkout@v2
       - name: Get test group names
         id: get_test_groups
-        run: echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
-      - name: Print test groups
-        run: echo $test_groups
-      - name: Remove first and last characters
-        run: test_groups::${test_groups:1:${#test_groups}-2}
-      - name: Print test groups
-        run: echo $test_groups
+        run: |
+        test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
+        test_groups_str=${test_groups_str:1:${#test_groups_str}-2}
+        echo ::set-output name=test_groups::test_groups_str
     outputs:
       test_groups: ${{steps.get_test_groups.outputs.test_groups}}
 
