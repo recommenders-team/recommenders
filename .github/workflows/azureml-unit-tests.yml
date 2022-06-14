@@ -43,7 +43,9 @@ jobs:
         uses: actions/checkout@v2
       - name: Get test group names
         id: get_test_groups
-        run: echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
+        run: |
+        echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
+        test_groups=${test_groups:1:${#test_groups}-2}
     outputs:
       test_groups: ${{steps.get_test_groups.outputs.test_groups}}
 
@@ -55,7 +57,8 @@ jobs:
       matrix:
         python-version: ['"python=3.7"']
         # test-group: ['"group_cpu_001"', '"group_notebooks_cpu_001"', '"group_notebooks_cpu_002"', '"group_pyspark_001"', '"group_pyspark_002"', '"group_notebooks_pyspark_001"', '"group_notebooks_pyspark_002"', '"group_notebooks_pyspark_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_notebooks_gpu_001"', '"group_notebooks_gpu_002"', '"group_notebooks_gpu_003"']
-        test-group:  $(eval `${{ needs.get-test-groups.outputs.test_groups }}`)
+        test-group:  ${{ needs.get-test-groups.outputs.test_groups }}
+
     steps:
       - name: Print matrix
         run: echo ${{ matrix.test-group }}
