@@ -43,7 +43,7 @@ jobs:
       - name: Print test groups
         run: echo $test_groups
       - name: Remove first and last characters
-        run: test_groups=${test_groups:1:${#test_groups}-2}
+        run: test_groups::${test_groups:1:${#test_groups}-2}
       - name: Print test groups
         run: echo $test_groups
     outputs:
