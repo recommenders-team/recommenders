@@ -20,7 +20,7 @@ on:
   push:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [staging]
+    branches: [staging, azureml_groups_opt]
 
   # enable manual trigger
   workflow_dispatch:
@@ -39,13 +39,28 @@ env:
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
+  
+  get-test-groups:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Get test group names
+        id: get_test_groups
+        run: |
+          test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print([t for t in unit_test_groups.keys() if "cpu" in t])')
+          echo ::set-output name=test_groups::$test_groups_str
+    outputs:
+      test_groups: ${{steps.get_test_groups.outputs.test_groups}}
+  
   nightly-tests:
+    needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ['"python=3.7"']
-        test-group: ['"group_cpu_001"', '"group_cpu_002"', '"group_cpu_003"']
+        test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
