@@ -43,7 +43,7 @@ jobs:
           test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
           # test_groups_str=${test_groups_str:1:${#test_groups_str}-2}
           # test_groups_str=(${test_groups_str//, / })
-          echo '::set-output name=test_groups::$test_groups_str'
+          echo ::set-output name=test_groups::$test_groups_str
     outputs:
       test_groups: ${{steps.get_test_groups.outputs.test_groups}}
 
