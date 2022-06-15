@@ -20,7 +20,7 @@ on:
   push:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [staging, azureml_groups_opt]
+    branches: [staging]
 
   # enable manual trigger
   workflow_dispatch:
@@ -53,7 +53,7 @@ jobs:
     outputs:
       test_groups: ${{steps.get_test_groups.outputs.test_groups}}
   
-  nightly-tests:
+  nightly-cpu-tests:
     needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-latest
