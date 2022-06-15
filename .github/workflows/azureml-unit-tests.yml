@@ -57,11 +57,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
-      - name: Get test group names
-        id: get_test_groups
-        run: echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
-      - name: Print test groups
-        run: echo ${{ steps.get_test_groups.outputs.test_groups }}
       - name: Setup python
         uses: actions/setup-python@v2
         with: 
