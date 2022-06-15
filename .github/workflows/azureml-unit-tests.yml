@@ -41,8 +41,6 @@ jobs:
         id: get_test_groups
         run: |
           test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
-          # test_groups_str=${test_groups_str:1:${#test_groups_str}-2}
-          # test_groups_str=(${test_groups_str//, / })
           echo ::set-output name=test_groups::$test_groups_str
     outputs:
       test_groups: ${{steps.get_test_groups.outputs.test_groups}}
@@ -54,69 +52,66 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.7"']
-        # test-group: ['"group_cpu_001"', '"group_notebooks_cpu_001"', '"group_notebooks_cpu_002"', '"group_pyspark_001"', '"group_pyspark_002"', '"group_notebooks_pyspark_001"', '"group_notebooks_pyspark_002"', '"group_notebooks_pyspark_003"', '"group_gpu_001"', '"group_gpu_002"', '"group_gpu_003"', '"group_notebooks_gpu_001"', '"group_notebooks_gpu_002"', '"group_notebooks_gpu_003"']
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
 
     steps:
-      - name: Print matrix
-        run: echo ${{ matrix.test-group }}
-      # - name: Check out repository code
-      #   uses: actions/checkout@v2
-      # - name: Get test group names
-      #   id: get_test_groups
-      #   run: echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
-      # - name: Print test groups
-      #   run: echo ${{ steps.get_test_groups.outputs.test_groups }}
-      # - name: Setup python
-      #   uses: actions/setup-python@v2
-      #   with: 
-      #     python-version: "3.8"
-      # - name: Install azureml-core and azure-cli on a GitHub hosted server
-      #   run: pip install azureml-core azure-cli
-      # - name: Log in to Azure
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: ${{secrets.AZUREML_TEST_CREDENTIALS}}
-      # - name: Install wheel package
-      #   run: pip install wheel
-      # - name: Create wheel from setup.py
-      #   run: python setup.py bdist_wheel
-      # - name: Extract branch name
-      #   shell: bash
-      #   run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-      #   id: extract_branch
-      # - name: Submit CPU tests to AzureML
-      #   if: contains(matrix.test-group, 'cpu')
-      #   run: >-
-      #       python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
-      #       --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
-      #       --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
-      #       --testlogs ${{env.TEST_LOGS_PATH}} --testkind "unit"
-      #       --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
-      # - name: Submit GPU tests to AzureML
-      #   if: contains(matrix.test-group, 'gpu')
-      #   run: >-
-      #       python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.GPU_CLUSTER_NAME}}
-      #       --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
-      #       --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
-      #       --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind "unit"
-      #       --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
-      # - name: Submit PySpark tests to AzureML
-      #   if: contains(matrix.test-group, 'spark')
-      #   run: >-
-      #       python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
-      #       --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
-      #       --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
-      #       --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind "unit"
-      #       --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
-      # - name: Print test logs
-      #   run: cat ${{env.TEST_LOGS_PATH}}
-      # - name: Get exit status
-      #   id: exit_status
-      #   run: echo ::set-output name=code::$(cat ${{env.PYTEST_EXIT_CODE}})
-      # - name: Check Success/Failure
-      #   if: ${{ steps.exit_status.outputs.code != 0 }}
-      #   uses: actions/github-script@v3
-      #   with:
-      #     script: |
-      #         core.setFailed('All tests did not pass!')
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Get test group names
+        id: get_test_groups
+        run: echo ::set-output name=test_groups::$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
+      - name: Print test groups
+        run: echo ${{ steps.get_test_groups.outputs.test_groups }}
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with: 
+          python-version: "3.8"
+      - name: Install azureml-core and azure-cli on a GitHub hosted server
+        run: pip install azureml-core azure-cli
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZUREML_TEST_CREDENTIALS}}
+      - name: Install wheel package
+        run: pip install wheel
+      - name: Create wheel from setup.py
+        run: python setup.py bdist_wheel
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+      - name: Submit CPU tests to AzureML
+        if: contains(matrix.test-group, 'cpu')
+        run: >-
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
+            --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+            --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
+            --testlogs ${{env.TEST_LOGS_PATH}} --testkind "unit"
+            --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
+      - name: Submit GPU tests to AzureML
+        if: contains(matrix.test-group, 'gpu')
+        run: >-
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.GPU_CLUSTER_NAME}}
+            --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+            --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
+            --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind "unit"
+            --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
+      - name: Submit PySpark tests to AzureML
+        if: contains(matrix.test-group, 'spark')
+        run: >-
+            python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
+            --subid ${{secrets.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+            --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{env.EXP_NAME}}_${{matrix.test-group}}
+            --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind "unit"
+            --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
+      - name: Print test logs
+        run: cat ${{env.TEST_LOGS_PATH}}
+      - name: Get exit status
+        id: exit_status
+        run: echo ::set-output name=code::$(cat ${{env.PYTEST_EXIT_CODE}})
+      - name: Check Success/Failure
+        if: ${{ steps.exit_status.outputs.code != 0 }}
+        uses: actions/github-script@v3
+        with:
+          script: |
+              core.setFailed('All tests did not pass!')
