@@ -6,13 +6,17 @@
 name: azureml-unit-tests
 
 on:
-  pull_request:
-    branches: [ staging, main ]
-
-  # push:
-  #   # because we can't schedule runs for non-main branches,
-  #   # to ensure we are running the build on the staging branch, we can add push policy for it
-  #   branches: [pradjoshi/update_azureml_cluster]
+  # pull_request_target allows execution of workflows in the context
+  # of a base repository. When a PR is raised from a forked repo, it
+  # gives the workflow access to AZUREML_TEST_CREDENTIALS, stored as
+  # a repo level secret, which is needed to trigger execution of unit
+  # tests on AzureML compute.
+  pull_request_target:
+    types:
+      - opened
+    branches:
+      - 'staging'
+      - 'main'
 
   # enable manual trigger
   workflow_dispatch:
