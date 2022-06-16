@@ -6,11 +6,6 @@
 name: azureml-unit-tests
 
 on:
-  push:
-    # because we can't schedule runs for non-main branches,
-    # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [azureml_groups_opt]
-
   # pull_request_target allows execution of workflows in the context
   # of a base repository. When a PR is raised from a forked repo, it
   # gives the workflow access to AZUREML_TEST_CREDENTIALS, stored as
