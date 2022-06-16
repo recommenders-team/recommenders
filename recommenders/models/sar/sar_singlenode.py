@@ -15,9 +15,9 @@ from recommenders.utils.python_utils import (
 from recommenders.utils import constants
 
 
-COOCCUR = "cooccurrence"
-JACCARD = "jaccard"
-LIFT = "lift"
+SIM_COOCCUR = "cooccurrence"
+SIM_JACCARD = "jaccard"
+SIM_LIFT = "lift"
 
 logger = logging.getLogger()
 
@@ -38,7 +38,7 @@ class SARSingleNode:
         col_rating=constants.DEFAULT_RATING_COL,
         col_timestamp=constants.DEFAULT_TIMESTAMP_COL,
         col_prediction=constants.DEFAULT_PREDICTION_COL,
-        similarity_type=JACCARD,
+        similarity_type=SIM_JACCARD,
         time_decay_coefficient=30,
         time_now=None,
         timedecay_formula=False,
@@ -66,7 +66,7 @@ class SARSingleNode:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
 
-        if similarity_type not in [COOCCUR, JACCARD, LIFT]:
+        if similarity_type not in [SIM_COOCCUR, SIM_JACCARD, SIM_LIFT]:
             raise ValueError(
                 'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]'
             )
@@ -272,15 +272,15 @@ class SARSingleNode:
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
-        if self.similarity_type == COOCCUR:
+        if self.similarity_type == SIM_COOCCUR:
             logger.info("Using co-occurrence based similarity")
             self.item_similarity = item_cooccurrence
-        elif self.similarity_type == JACCARD:
+        elif self.similarity_type == SIM_JACCARD:
             logger.info("Using jaccard based similarity")
             self.item_similarity = jaccard(item_cooccurrence).astype(
                 df[self.col_rating].dtype
             )
-        elif self.similarity_type == LIFT:
+        elif self.similarity_type == SIM_LIFT:
             logger.info("Using lift based similarity")
             self.item_similarity = lift(item_cooccurrence).astype(
                 df[self.col_rating].dtype
@@ -364,7 +364,9 @@ class SARSingleNode:
             idx = self.index2item
         else:
             if self.user_frequencies is None:
-                self.user_frequencies = self.user_affinity.getnnz(axis=1).astype("int64")
+                self.user_frequencies = self.user_affinity.getnnz(axis=1).astype(
+                    "int64"
+                )
             frequencies = self.user_frequencies
             col = self.col_user
             idx = self.index2user
