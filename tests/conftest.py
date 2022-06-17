@@ -139,7 +139,7 @@ def train_test_dummy_timestamp(pandas_dummy_timestamp):
 def demo_usage_data(header, sar_settings):
     # load the data
     data = pd.read_csv(sar_settings["FILE_DIR"] + "demoUsageNoDups.csv")
-    data["rating"] = pd.Series([1.0] * data.shape[0])
+    data["rating"] = pd.Series([1] * data.shape[0])
     data = data.rename(
         columns={
             "userId": header["col_user"],
