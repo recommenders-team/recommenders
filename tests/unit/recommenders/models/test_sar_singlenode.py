@@ -21,14 +21,6 @@ def _csv_reader_url(url, delimiter=",", encoding="utf-8"):
     return csvfile
 
 
-def load_affinity(file):
-    """Loads user affinities from test dataset"""
-    reader = _csv_reader_url(file)
-    items = next(reader)[1:]
-    affinities = np.array(next(reader)[1:])
-    return affinities, items
-
-
 def load_userpred(file, k=10):
     """Loads test predicted items and their SAR scores"""
     reader = _csv_reader_url(file)
@@ -37,39 +29,6 @@ def load_userpred(file, k=10):
     items = values[1 : (k + 1)]
     scores = np.array([float(x) for x in values[(k + 1) :]])
     return items, scores
-
-
-def read_matrix(file, row_map=None, col_map=None):
-    """read in test matrix and hash it"""
-    reader = _csv_reader_url(file)
-
-    # skip the header
-    col_ids = next(reader)[1:]
-    row_ids = []
-    rows = []
-    for row in reader:
-        rows += [row[1:]]
-        row_ids += [row[0]]
-    array = np.array(rows)
-
-    # now map the rows and columns to the right values
-    if row_map is not None and col_map is not None:
-        row_index = [row_map[x] for x in row_ids]
-        col_index = [col_map[x] for x in col_ids]
-        array = array[row_index, :]
-        array = array[:, col_index]
-    return array, row_ids, col_ids
-
-
-def _rearrange_to_test(array, row_ids, col_ids, row_map, col_map):
-    """Rearranges SAR array into test array order"""
-    if row_ids is not None:
-        row_index = [row_map[x] for x in row_ids]
-        array = array[row_index, :]
-    if col_ids is not None:
-        col_index = [col_map[x] for x in col_ids]
-        array = array[:, col_index]
-    return array
 
 
 def test_init(header):
@@ -170,29 +129,31 @@ def test_sar_item_similarity(
 
     model.fit(demo_usage_data)
 
-    true_item_similarity, row_ids, col_ids = read_matrix(
-        sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv"
+    true_item_similarity = pd.read_csv(
+        sar_settings["FILE_DIR"] + "sim_" + file + str(threshold) + ".csv",
+        index_col=0
     )
+    item2index = pd.Series(model.item2index)
+    index = item2index[true_item_similarity.index]
+    columns = item2index[true_item_similarity.columns]
 
     if similarity_type == "cooccurrence":
-        test_item_similarity = _rearrange_to_test(
-            model.item_similarity.todense(),
-            row_ids,
-            col_ids,
-            model.item2index,
-            model.item2index,
+        test_item_similarity = pd.DataFrame(model.item_similarity.todense())
+        test_item_similarity = test_item_similarity.reindex(
+            index=index, columns=columns
         )
         assert np.array_equal(
-            true_item_similarity.astype(test_item_similarity.dtype),
-            test_item_similarity,
+            true_item_similarity.astype("int64"),
+            test_item_similarity.astype("int64"),
         )
     else:
-        test_item_similarity = _rearrange_to_test(
-            model.item_similarity, row_ids, col_ids, model.item2index, model.item2index
+        test_item_similarity = pd.DataFrame(model.item_similarity)
+        test_item_similarity = test_item_similarity.reindex(
+            index=index, columns=columns
         )
         assert np.allclose(
-            true_item_similarity.astype(test_item_similarity.dtype),
-            test_item_similarity,
+            true_item_similarity.astype("float64"),
+            test_item_similarity.astype("float64"),
             atol=sar_settings["ATOL"],
         )
 
@@ -208,21 +169,17 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
     )
     model.fit(demo_usage_data)
 
-    true_user_affinity, items = load_affinity(sar_settings["FILE_DIR"] + "user_aff.csv")
-    user_index = model.user2index[sar_settings["TEST_USER_ID"]]
-    sar_user_affinity = np.reshape(
-        np.array(
-            _rearrange_to_test(
-                model.user_affinity, None, items, None, model.item2index
-            )[
-                user_index,
-            ].todense()
-        ),
-        -1,
+    true_user_affinity = pd.read_csv(
+        sar_settings["FILE_DIR"] + "user_aff.csv",
+        index_col=0
     )
+    sar_user_affinity = model.user_affinity[
+        model.user2index[sar_settings["TEST_USER_ID"]],
+        pd.Series(model.item2index)[true_user_affinity.columns]
+    ].toarray().flatten()
     assert np.allclose(
-        true_user_affinity.astype(sar_user_affinity.dtype),
-        sar_user_affinity,
+        true_user_affinity.astype("float64"),
+        sar_user_affinity.astype("float64"),
         atol=sar_settings["ATOL"],
     )
 
@@ -236,13 +193,20 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
         **header
     )
     model.fit(demo_usage_data)
-    true_user_affinity_url = sar_settings["FILE_DIR"] + "user_aff_2_months_later.csv"
-    true_user_affinity = pd.read_csv(true_user_affinity_url).iloc[:, 1:]
-    user_index = model.user2index[sar_settings["TEST_USER_ID"]]
-    item_indexes = pd.Series(model.item2index)[true_user_affinity.columns]
-    sar_user_affinity = model.user_affinity[user_index].toarray().flatten()[item_indexes]
-    true_user_affinity = true_user_affinity.astype(sar_user_affinity.dtype)
-    assert np.allclose(true_user_affinity, sar_user_affinity, atol=sar_settings["ATOL"])
+
+    true_user_affinity = pd.read_csv(
+        sar_settings["FILE_DIR"] + "user_aff_2_months_later.csv",
+        index_col=0
+    )
+    sar_user_affinity = model.user_affinity[
+        model.user2index[sar_settings["TEST_USER_ID"]],
+        pd.Series(model.item2index)[true_user_affinity.columns]
+    ].toarray().flatten()
+    assert np.allclose(
+        true_user_affinity.astype("float64"),
+        sar_user_affinity.astype("float64"),
+        atol=sar_settings["ATOL"]
+    )
 
 
 @pytest.mark.parametrize(
