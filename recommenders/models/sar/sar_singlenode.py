@@ -277,14 +277,10 @@ class SARSingleNode:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == SIM_JACCARD:
             logger.info("Using jaccard based similarity")
-            self.item_similarity = jaccard(item_cooccurrence).astype(
-                df[self.col_rating].dtype
-            )
+            self.item_similarity = jaccard(item_cooccurrence)
         elif self.similarity_type == SIM_LIFT:
             logger.info("Using lift based similarity")
-            self.item_similarity = lift(item_cooccurrence).astype(
-                df[self.col_rating].dtype
-            )
+            self.item_similarity = lift(item_cooccurrence)
         else:
             raise ValueError("Unknown similarity type: {}".format(self.similarity_type))
 

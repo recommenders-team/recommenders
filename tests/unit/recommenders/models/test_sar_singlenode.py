@@ -183,16 +183,16 @@ def test_sar_item_similarity(
             model.item2index,
         )
         assert np.array_equal(
-            true_item_similarity.astype(test_item_similarity.dtype),
-            test_item_similarity,
+            true_item_similarity.astype("float64"),
+            test_item_similarity.astype("float64"),
         )
     else:
         test_item_similarity = _rearrange_to_test(
             model.item_similarity, row_ids, col_ids, model.item2index, model.item2index
         )
         assert np.allclose(
-            true_item_similarity.astype(test_item_similarity.dtype),
-            test_item_similarity,
+            true_item_similarity.astype("float64"),
+            test_item_similarity.astype("float64"),
             atol=sar_settings["ATOL"],
         )
 
