@@ -143,8 +143,8 @@ def test_sar_item_similarity(
             index=index, columns=columns
         )
         assert np.array_equal(
-            true_item_similarity.astype("int64"),
-            test_item_similarity.astype("int64"),
+            true_item_similarity.astype("float64"),
+            test_item_similarity.astype("float64"),
         )
     else:
         test_item_similarity = pd.DataFrame(model.item_similarity)
