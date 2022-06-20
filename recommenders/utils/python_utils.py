@@ -133,6 +133,24 @@ def cosine_similarity(cooccurrence):
     return result
 
 
+def inclusion_index(cooccurrence):
+    """Helper method to calculate the Inclusion Index of a matrix of co-occurrences.
+
+    Args:
+        cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
+
+    Returns:
+        numpy.ndarray: The matrix of inclusion index between any two items.
+    """
+
+    diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        result = cooccurrence / np.minimum(diag_rows, diag_cols)
+
+    return result
+
+
 def get_top_k_scored_items(scores, top_k, sort_top_k=False):
     """Extract top K items from a matrix of scores for each user-item pair, optionally sort results per user.
 
