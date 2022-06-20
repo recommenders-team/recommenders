@@ -59,7 +59,7 @@ def jaccard(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / (diag_rows + diag_cols - cooccurrence)
 
-    return result
+    return np.array(result)
 
 
 def lift(cooccurrence):
@@ -80,7 +80,7 @@ def lift(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / (diag_rows * diag_cols)
 
-    return result
+    return np.array(result)
 
 
 def mutual_information(cooccurrence):
@@ -96,7 +96,7 @@ def mutual_information(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = np.log2(cooccurrence.shape[0] * lift(cooccurrence))
 
-    return result
+    return np.array(result)
 
 
 def lexicographers_mutual_information(cooccurrence):
@@ -112,7 +112,7 @@ def lexicographers_mutual_information(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence * mutual_information(cooccurrence)
 
-    return result
+    return np.array(result)
 
 
 def cosine_similarity(cooccurrence):
@@ -130,7 +130,7 @@ def cosine_similarity(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / np.sqrt(diag_rows * diag_cols)
 
-    return result
+    return np.array(result)
 
 
 def inclusion_index(cooccurrence):
@@ -148,7 +148,7 @@ def inclusion_index(cooccurrence):
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / np.minimum(diag_rows, diag_cols)
 
-    return result
+    return np.array(result)
 
 
 def get_top_k_scored_items(scores, top_k, sort_top_k=False):
