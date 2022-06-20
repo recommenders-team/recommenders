@@ -7,6 +7,7 @@ from scipy import sparse
 
 from recommenders.utils.python_utils import (
     jaccard,
+    lexicographers_mutual_information,
     lift,
     mutual_information,
     exponential_decay,
@@ -20,6 +21,7 @@ SIM_COOCCUR = "cooccurrence"
 SIM_JACCARD = "jaccard"
 SIM_LIFT = "lift"
 SIM_MUTUAL_INFORMATION = "mutual information"
+SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION = "lexicographers mutual information"
 
 logger = logging.getLogger()
 
@@ -55,8 +57,8 @@ class SARSingleNode:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             col_prediction (str): prediction column name
-            similarity_type (str): ['cooccurrence', 'jaccard', 'lift', 'mutual information'] option for computing
-              item-item similarity
+            similarity_type (str): ['cooccurrence', 'jaccard', 'lift', 'mutual information',
+              'lexicographers mutual information'] option for computing item-item similarity
             time_decay_coefficient (float): number of days till ratings are decayed by 1/2
             time_now (int | None): current time for time decay calculation
             timedecay_formula (bool): flag to apply time decay
@@ -69,9 +71,16 @@ class SARSingleNode:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
 
-        if similarity_type not in [SIM_COOCCUR, SIM_JACCARD, SIM_LIFT, SIM_MUTUAL_INFORMATION]:
+        available_similarity_types = [
+            SIM_COOCCUR,
+            SIM_JACCARD,
+            SIM_LIFT,
+            SIM_MUTUAL_INFORMATION,
+            SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION,
+        ]
+        if similarity_type not in available_similarity_types:
             raise ValueError(
-                'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift" | "mutual information"]'
+                'Similarity type must be one of ["' + '" | "'.join(available_similarity_types) + '"]'
             )
         self.similarity_type = similarity_type
         self.time_decay_half_life = (
@@ -287,6 +296,9 @@ class SARSingleNode:
         elif self.similarity_type == SIM_MUTUAL_INFORMATION:
             logger.info("Using mutual information similarity")
             self.item_similarity = mutual_information(item_cooccurrence)
+        elif self.similarity_type == SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION:
+            logger.info("Using lexicographers mutual information similarity")
+            self.item_similarity = lexicographers_mutual_information(item_cooccurrence)
         else:
             raise ValueError("Unknown similarity type: {}".format(self.similarity_type))
 

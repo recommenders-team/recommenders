@@ -93,9 +93,24 @@ def mutual_information(cooccurrence):
         numpy.ndarray: The matrix of mutual information between any two items.
     """
 
-    diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
     with np.errstate(invalid="ignore", divide="ignore"):
-        result = np.log2(cooccurrence.shape[0] * cooccurrence / (diag_rows * diag_cols))
+        result = np.log2(cooccurrence.shape[0] * lift(cooccurrence))
+
+    return result
+
+
+def lexicographers_mutual_information(cooccurrence):
+    """Helper method to calculate the Lexicographers Mutual Information of a matrix of co-occurrences.
+
+    Args:
+        cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
+
+    Returns:
+        numpy.ndarray: The matrix of lexicographers mutual information between any two items.
+    """
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        result = cooccurrence * mutual_information(cooccurrence)
 
     return result
 
