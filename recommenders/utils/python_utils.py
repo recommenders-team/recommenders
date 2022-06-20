@@ -161,7 +161,7 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
 
     Returns:
         numpy.ndarray, numpy.ndarray:
-        - Indices into score matrix for each users top items.
+        - Indices into score matrix for each user's top items.
         - Scores corresponding to top items.
 
     """
