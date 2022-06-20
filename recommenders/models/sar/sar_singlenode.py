@@ -8,6 +8,7 @@ from scipy import sparse
 from recommenders.utils.python_utils import (
     jaccard,
     lift,
+    mutual_information,
     exponential_decay,
     get_top_k_scored_items,
     rescale,
@@ -18,6 +19,7 @@ from recommenders.utils import constants
 SIM_COOCCUR = "cooccurrence"
 SIM_JACCARD = "jaccard"
 SIM_LIFT = "lift"
+SIM_MUTUAL_INFORMATION = "mutual information"
 
 logger = logging.getLogger()
 
@@ -53,7 +55,8 @@ class SARSingleNode:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             col_prediction (str): prediction column name
-            similarity_type (str): ['cooccurrence', 'jaccard', 'lift'] option for computing item-item similarity
+            similarity_type (str): ['cooccurrence', 'jaccard', 'lift', 'mutual information'] option for computing
+              item-item similarity
             time_decay_coefficient (float): number of days till ratings are decayed by 1/2
             time_now (int | None): current time for time decay calculation
             timedecay_formula (bool): flag to apply time decay
@@ -66,9 +69,9 @@ class SARSingleNode:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
 
-        if similarity_type not in [SIM_COOCCUR, SIM_JACCARD, SIM_LIFT]:
+        if similarity_type not in [SIM_COOCCUR, SIM_JACCARD, SIM_LIFT, SIM_MUTUAL_INFORMATION]:
             raise ValueError(
-                'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]'
+                'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift" | "mutual information"]'
             )
         self.similarity_type = similarity_type
         self.time_decay_half_life = (
@@ -281,6 +284,9 @@ class SARSingleNode:
         elif self.similarity_type == SIM_LIFT:
             logger.info("Using lift based similarity")
             self.item_similarity = lift(item_cooccurrence)
+        elif self.similarity_type == SIM_MUTUAL_INFORMATION:
+            logger.info("Using mutual information similarity")
+            self.item_similarity = mutual_information(item_cooccurrence)
         else:
             raise ValueError("Unknown similarity type: {}".format(self.similarity_type))
 
