@@ -17,6 +17,9 @@ on:
     branches:
       - 'staging'
       - 'main'
+  
+  push:
+    branches: [pradjoshi/test_py3839]
 
   # enable manual trigger
   workflow_dispatch:
@@ -55,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['"python=3.7"']
+        python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
 
     steps:
