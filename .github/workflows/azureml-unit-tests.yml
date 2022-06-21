@@ -17,9 +17,6 @@ on:
     branches:
       - 'staging'
       - 'main'
-  
-  push:
-    branches: [pradjoshi/test_py3839]
 
   # enable manual trigger
   workflow_dispatch:
