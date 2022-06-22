@@ -10,6 +10,7 @@ from recommenders.datasets.movielens import (
     download_movielens,
     extract_movielens,
 )
+import gc
 
 try:
     from pyspark.sql.types import (
@@ -107,6 +108,8 @@ def test_load_pandas_df(
     assert len(df) == num_samples
     # user, item, rating and timestamp
     assert len(df.columns) == 4
+    del df
+    gc.collect()
 
 
 @pytest.mark.integration
@@ -163,6 +166,8 @@ def test_load_item_df(
     assert df["item"][0] == movie_example
     assert df["genres"][0] == genres_example
     assert df["year"][0] == year_example
+    del df
+    gc.collect()
 
 
 @pytest.mark.integration
@@ -264,6 +269,8 @@ def test_load_spark_df(
     assert df.count() == num_samples
     # user, item, rating and timestamp
     assert len(df.columns) == 4
+    del df
+    gc.collect()
 
 
 @pytest.mark.integration

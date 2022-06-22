@@ -12,6 +12,8 @@ def test_criteo_load_pandas_df(criteo_first_row):
     assert df.shape[0] == 45840617
     assert df.shape[1] == 40
     assert df.loc[0].equals(pd.Series(criteo_first_row))
+    del df
+    gc.collect()
 
 
 @pytest.mark.spark
@@ -22,3 +24,5 @@ def test_criteo_load_spark_df(spark, criteo_first_row):
     assert len(df.columns) == 40
     first_row = df.limit(1).collect()[0].asDict()
     assert first_row == criteo_first_row
+    del df
+    gc.collect()
