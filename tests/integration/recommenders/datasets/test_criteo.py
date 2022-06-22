@@ -4,6 +4,7 @@
 import pytest
 import pandas as pd
 from recommenders.datasets import criteo
+import gc
 
 
 @pytest.mark.integration
