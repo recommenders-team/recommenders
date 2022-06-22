@@ -22,6 +22,7 @@ from recommenders.evaluation.python_evaluation import (
     mae,
     rsquared,
     exp_var,
+    get_top_k_items,
     precision_at_k,
     recall_at_k,
     ndcg_at_k,
@@ -75,6 +76,29 @@ def rating_nohit():
             DEFAULT_PREDICTION_COL: [12, 14, 13, 12, 11, 10, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 14, 13],
         }
     )
+
+
+@pytest.fixture
+def top_3_items_true():
+    # Both are correct top 3 items of rating_true
+    return [
+        pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 3, 3, 3],
+                DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 5, 2, 5, 6],
+                DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 5, 5, 5],
+                "rank": [1, 2, 3, 1, 2, 3, 1, 2, 3],
+            }
+        ),
+        pd.DataFrame(
+            {
+                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 3, 3, 3],
+                DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 6, 2, 5, 6],
+                DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 5, 5, 5],
+                "rank": [1, 2, 3, 1, 2, 3, 1, 2, 3],
+            }
+        ),
+    ]
 # fmt: on
 
 
@@ -198,6 +222,18 @@ def test_python_exp_var(rating_true, rating_pred):
         == pytest.approx(1.0, TOL)
     )
     assert exp_var(rating_true, rating_pred) == pytest.approx(-6.4466, TOL)
+
+
+def test_get_top_k_items(rating_true, top_3_items_true):
+    top_3_items_df = get_top_k_items(
+        dataframe=rating_true,
+        col_user=DEFAULT_USER_COL,
+        col_rating=DEFAULT_RATING_COL,
+        k=3,
+    )
+    assert (top_3_items_df.equals(top_3_items_true[0])) or (
+        top_3_items_df.equals(top_3_items_true[1])
+    )
 
 
 def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
