@@ -20,7 +20,7 @@ on:
   push:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
-    branches: [staging, pradjoshi/mem_err]
+    branches: [staging, pradjoshi/mem_error]
 
   # enable manual trigger
   workflow_dispatch:
