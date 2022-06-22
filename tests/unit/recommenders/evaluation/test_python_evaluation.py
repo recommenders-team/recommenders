@@ -76,29 +76,6 @@ def rating_nohit():
             DEFAULT_PREDICTION_COL: [12, 14, 13, 12, 11, 10, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 14, 13],
         }
     )
-
-
-@pytest.fixture
-def top_3_items_true():
-    # Both are correct top 3 items of rating_true
-    return [
-        pd.DataFrame(
-            {
-                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 3, 3, 3],
-                DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 5, 2, 5, 6],
-                DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 5, 5, 5],
-                "rank": [1, 2, 3, 1, 2, 3, 1, 2, 3],
-            }
-        ),
-        pd.DataFrame(
-            {
-                DEFAULT_USER_COL: [1, 1, 1, 2, 2, 2, 3, 3, 3],
-                DEFAULT_ITEM_COL: [1, 2, 3, 1, 4, 6, 2, 5, 6],
-                DEFAULT_RATING_COL: [5, 4, 3, 5, 5, 3, 5, 5, 5],
-                "rank": [1, 2, 3, 1, 2, 3, 1, 2, 3],
-            }
-        ),
-    ]
 # fmt: on
 
 
@@ -224,16 +201,43 @@ def test_python_exp_var(rating_true, rating_pred):
     assert exp_var(rating_true, rating_pred) == pytest.approx(-6.4466, TOL)
 
 
-def test_get_top_k_items(rating_true, top_3_items_true):
+def test_get_top_k_items(rating_true):
     top_3_items_df = get_top_k_items(
         dataframe=rating_true,
         col_user=DEFAULT_USER_COL,
         col_rating=DEFAULT_RATING_COL,
         k=3,
     )
-    assert (top_3_items_df.equals(top_3_items_true[0])) or (
-        top_3_items_df.equals(top_3_items_true[1])
+    top_3_user_true = pd.Series([1, 1, 1, 2, 2, 2, 3, 3, 3])
+    top_3_rating_true = pd.Series([5, 4, 3, 5, 5, 3, 5, 5, 5])
+    top_3_rank_true = pd.Series([1, 2, 3, 1, 2, 3, 1, 2, 3])
+    assert(top_3_items_df[DEFAULT_USER_COL].equals(top_3_user_true))
+    assert(top_3_items_df[DEFAULT_RATING_COL].equals(top_3_rating_true))
+    assert(top_3_items_df['rank'].equals(top_3_rank_true))
+    assert(top_3_items_df[DEFAULT_ITEM_COL][:3].equals(pd.Series([1, 2, 3])))
+    assert(set(top_3_items_df[DEFAULT_ITEM_COL][3:5]) == set([1, 4]))
+    assert(top_3_items_df[DEFAULT_ITEM_COL][5] in [5, 6])
+    assert(set(top_3_items_df[DEFAULT_ITEM_COL][6:]) == set([2, 5, 6]))
+
+    top_6_items_df = get_top_k_items(
+        dataframe=rating_true,
+        col_user=DEFAULT_USER_COL,
+        col_rating=DEFAULT_RATING_COL,
+        k=6,
     )
+    top_6_user_true = pd.Series([1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3])
+    top_6_rating_true = pd.Series([5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3])
+    top_6_rank_true = pd.Series([1, 2, 3, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6])
+    assert(top_6_items_df[DEFAULT_USER_COL].equals(top_6_user_true))
+    assert(top_6_items_df[DEFAULT_RATING_COL].equals(top_6_rating_true))
+    assert(top_6_items_df['rank'].equals(top_6_rank_true))
+    assert(top_6_items_df[DEFAULT_ITEM_COL][:3].equals(pd.Series([1, 2, 3])))
+    assert(set(top_6_items_df[DEFAULT_ITEM_COL][3:5]) == set([1, 4]))
+    assert(set(top_6_items_df[DEFAULT_ITEM_COL][5:7]) == set([5, 6]))
+    assert(top_6_items_df[DEFAULT_ITEM_COL][7] == 7)
+    assert(set(top_6_items_df[DEFAULT_ITEM_COL][8:11]) == set([2, 5, 6]))
+    assert(set(top_6_items_df[DEFAULT_ITEM_COL][11:13]) == set([8, 9]))
+    assert(top_6_items_df[DEFAULT_ITEM_COL][13] in [10, 11, 12])
 
 
 def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
