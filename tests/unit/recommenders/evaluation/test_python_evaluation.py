@@ -219,6 +219,7 @@ def test_get_top_k_items(rating_true):
     assert(top_3_items_df[DEFAULT_ITEM_COL][5] in [5, 6])
     assert(set(top_3_items_df[DEFAULT_ITEM_COL][6:]) == set([2, 5, 6]))
 
+    # Tests when k is larger than the number of available items
     top_6_items_df = get_top_k_items(
         dataframe=rating_true,
         col_user=DEFAULT_USER_COL,
