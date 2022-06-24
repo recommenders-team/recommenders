@@ -215,12 +215,12 @@ def test_get_top_k_items(rating_true):
     assert(top_3_items_df[DEFAULT_RATING_COL].equals(top_3_rating_true))
     assert(top_3_items_df['rank'].equals(top_3_rank_true))
     assert(top_3_items_df[DEFAULT_ITEM_COL][:3].equals(pd.Series([1, 2, 3])))
-    assert(set(top_3_items_df[DEFAULT_ITEM_COL][3:5]) == set([1, 4]))
     # First two itemIDs of user 2. The scores are both 5, so any order is OK.
-    assert(top_3_items_df[DEFAULT_ITEM_COL][5] in [5, 6])
+    assert(set(top_3_items_df[DEFAULT_ITEM_COL][3:5]) == set([1, 4]))
     # Third itemID of user 2. Both item 5 and 6 have a score of 3, so either one is OK.
-    assert(set(top_3_items_df[DEFAULT_ITEM_COL][6:]) == set([2, 5, 6]))
+    assert(top_3_items_df[DEFAULT_ITEM_COL][5] in [5, 6])
     # All itemIDs of user 3. All three items have a score of 5, so any order is OK.
+    assert(set(top_3_items_df[DEFAULT_ITEM_COL][6:]) == set([2, 5, 6]))
 
     # Tests when k is larger than the number of available items
     top_6_items_df = get_top_k_items(
