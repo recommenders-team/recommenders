@@ -228,8 +228,9 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
 def prepare_training_ncf(df_train, df_test):
     df_train.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
     df_test.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
-    train = "./df_train.csv"
-    test = "./df_test.csv"
+    tmp_dir = TemporaryDirectory()
+    train = os.path.join(tmp_dir.name, "df_train.csv")
+    test = os.path.join(tmp_dir.name, "df_test.csv")
     df_train.to_csv(train, index=False)
     df_test.to_csv(test, index=False)
     return NCFDataset(
