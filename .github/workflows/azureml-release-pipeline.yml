@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 on:
-  push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-      - '0.*' # Push events to matching 0.*, 1.*
-      - '1.*'
+  # push:
+  #   # Sequence of patterns matched against refs/tags
+  #   tags:
+  #     - '0.*' # Push events to matching 0.*, 1.*
+  #     - '1.*'
 
   push:
     branches: [pradjoshi/release_pipeline]
