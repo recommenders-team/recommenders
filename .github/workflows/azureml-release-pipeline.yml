@@ -2,38 +2,35 @@
 # Licensed under the MIT License.
 
 on:
-  # push:
-  #   # Sequence of patterns matched against refs/tags
-  #   tags:
-  #     - '0.*' # Push events to matching 0.*, 1.*
-  #     - '1.*'
-
   push:
-    branches: [pradjoshi/release_pipeline]
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '0.*' # Push events to matching 0.*, 1.*
+      - '1.*'
 
 name: Create GitHub Draft Release
 
 jobs:
   
-  # unit-test-workflow:
-  #   uses: ./.github/workflows/azureml-unit-tests.yml
-  #   secrets: inherit
+  unit-test-workflow:
+    uses: ./.github/workflows/azureml-unit-tests.yml
+    secrets: inherit
 
-  # cpu-nightly-workflow:
-  #   uses: ./.github/workflows/azureml-cpu-nightly.yml
-  #   secrets: inherit
+  cpu-nightly-workflow:
+    uses: ./.github/workflows/azureml-cpu-nightly.yml
+    secrets: inherit
 
-  # gpu-nightly-workflow:
-  #   uses: ./.github/workflows/azureml-gpu-nightly.yml
-  #   secrets: inherit
+  gpu-nightly-workflow:
+    uses: ./.github/workflows/azureml-gpu-nightly.yml
+    secrets: inherit
 
-  # spark-nightly-workflow:
-  #   uses: ./.github/workflows/azureml-spark-nightly.yml
-  #   secrets: inherit
+  spark-nightly-workflow:
+    uses: ./.github/workflows/azureml-spark-nightly.yml
+    secrets: inherit
 
   create-release:
     runs-on: ubuntu-latest
-    # needs: [unit-test-workflow, cpu-nightly-workflow, gpu-nightly-workflow, spark-nightly-workflow]
+    needs: [unit-test-workflow, cpu-nightly-workflow, gpu-nightly-workflow, spark-nightly-workflow]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
