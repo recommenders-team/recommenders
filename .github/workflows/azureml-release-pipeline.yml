@@ -1,0 +1,70 @@
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - '0.*' # Push events to matching 0.*, 1.*
+      - '1.*'
+
+  # enable manual trigger
+  workflow_dispatch:
+    input:
+      tags:
+        description: 'Tags to label this manual run (optional)'
+        default: 'Anything to describe this manual run'
+
+name: Create GitHub Draft Release
+
+jobs:
+  
+  unit-test-workflow:
+    uses: ./.github/workflows/azureml-unit-tests.yml
+
+  # cpu-nightly-workflow:
+  #   uses: ./.github/workflows/azureml-cpu-nightly.yml
+
+  # gpu-nightly-workflow:
+  #   uses: ./.github/workflows/azureml-gpu-nightly.yml
+
+  # spark-nightly-workflow:
+  #   uses: ./.github/workflows/azureml-spark-nightly.yml
+
+  create-release:
+    runs-on: ubuntu-latest
+    # needs: [unit-test-workflow, cpu-nightly-workflow, gpu-nightly-workflow, spark-nightly-workflow]
+    needs: [unit-test-workflow]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with: 
+          python-version: "3.8"
+      - name: Install wheel package
+        run: pip install wheel
+      - name: Create wheel from setup.py
+        run: python setup.py bdist_wheel
+      - name: Create GitHub Draft Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Recommenders ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: true
+          prerelease: false
+      - name: Upload .whl and .tar.gz files as Release Assets
+        id: upload-release-assets
+        uses: dwenegar/upload-release-assets@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          release_id: ${{ steps.create_release.outputs.id }}
+          assets_path: dist
