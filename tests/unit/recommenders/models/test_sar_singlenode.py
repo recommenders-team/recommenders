@@ -99,11 +99,19 @@ def test_predict_all_items(train_test_dummy_timestamp, header):
     "threshold,similarity_type,file",
     [
         (1, "cooccurrence", "count"),
+        (1, "cosine", "cos"),
+        (1, "inclusion index", "incl"),
         (1, "jaccard", "jac"),
+        (1, "lexicographers mutual information", "lex"),
         (1, "lift", "lift"),
+        (1, "mutual information", "mi"),
         (3, "cooccurrence", "count"),
+        (3, "cosine", "cos"),
+        (3, "inclusion index", "incl"),
         (3, "jaccard", "jac"),
+        (3, "lexicographers mutual information", "lex"),
         (3, "lift", "lift"),
+        (3, "mutual information", "mi"),
     ],
 )
 def test_sar_item_similarity(
