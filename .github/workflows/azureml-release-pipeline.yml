@@ -26,6 +26,7 @@ jobs:
   
   unit-test-workflow:
     uses: ./.github/workflows/azureml-unit-tests.yml
+    secrets: inherit
 
   # cpu-nightly-workflow:
   #   uses: ./.github/workflows/azureml-cpu-nightly.yml
