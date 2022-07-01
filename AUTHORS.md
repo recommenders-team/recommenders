@@ -101,6 +101,9 @@ To contributors: please add your name to the list when you submit a patch to the
    * Operationalization notebook
 * **[Nile Wilson](https://github.com/niwilso)**
    * Term Frequency - Inverse Document Frequency (TF-IDF) quickstart, utils
+* **[Pradnyesh Vineet Joshi](https://github.com/pradnyeshjoshi)**
+   * GitHub workflows to trigger unit, smoke and integration tests in parallel on AzureML
+   * Scripts to configure AzureML environment
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
    * GeoIMC algorithm

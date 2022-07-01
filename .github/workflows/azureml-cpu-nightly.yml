@@ -29,6 +29,9 @@ on:
         description: 'Tags to label this manual run (optional)'
         default: 'Anything to describe this manual run'
 
+  # make this workflow reusable
+  workflow_call:
+
 env:
   CPU_CLUSTER_NAME: "cpu-cluster"
   GPU_CLUSTER_NAME: "gpu-cluster"
@@ -39,13 +42,28 @@ env:
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
 
 jobs:
-  nightly-tests:
+  
+  get-test-groups:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Get test group names
+        id: get_test_groups
+        run: |
+          test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import nightly_test_groups; print([t for t in nightly_test_groups.keys() if "cpu" in t])')
+          echo ::set-output name=test_groups::$test_groups_str
+    outputs:
+      test_groups: ${{steps.get_test_groups.outputs.test_groups}}
+  
+  nightly-cpu-tests:
+    needs: get-test-groups
     name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['"python=3.7"']
-        test-group: ['"group_cpu_001"', '"group_cpu_002"', '"group_cpu_003"']
+        python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
+        test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v2
