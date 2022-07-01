@@ -19,7 +19,7 @@ from recommenders.utils.constants import (
 )
 from recommenders.utils.timer import Timer
 from recommenders.utils.spark_utils import start_or_get_spark
-from recommenders.models.sar.sar_singlenode import SARSingleNode
+from recommenders.models.sar import SAR
 from recommenders.models.ncf.ncf_singlenode import NCF
 from recommenders.models.ncf.dataset import Dataset as NCFDataset
 from recommenders.models.surprise.surprise_utils import (
@@ -304,7 +304,7 @@ def prepare_training_sar(train, test):
 
 
 def train_sar(params, data):
-    model = SARSingleNode(**params)
+    model = SAR(**params)
     model.set_index(data)
     with Timer() as t:
         model.fit(data)
