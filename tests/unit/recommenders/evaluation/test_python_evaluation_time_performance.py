@@ -1,10 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import numpy as np
 import pandas as pd
 import pytest
-from unittest.mock import Mock
 from sklearn.preprocessing import minmax_scale
 
 from recommenders.utils.constants import (
