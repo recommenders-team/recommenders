@@ -1,15 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import codecs
-import csv
 import itertools
 import json
 import pytest
 import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
-import urllib
 
 from recommenders.utils.constants import DEFAULT_PREDICTION_COL
 from recommenders.models.sar import SAR
