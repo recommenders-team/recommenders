@@ -29,6 +29,9 @@ on:
         description: 'Tags to label this manual run (optional)'
         default: 'Anything to describe this manual run'
 
+  # make this workflow reusable
+  workflow_call:
+
 env:
   CPU_CLUSTER_NAME: "cpu-cluster"
   GPU_CLUSTER_NAME: "gpu-cluster"

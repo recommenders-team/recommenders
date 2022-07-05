@@ -12,7 +12,7 @@ from pandas.testing import assert_frame_equal
 import urllib
 
 from recommenders.utils.constants import DEFAULT_PREDICTION_COL
-from recommenders.models.sar.sar_singlenode import SARSingleNode
+from recommenders.models.sar import SAR
 
 
 def _csv_reader_url(url, delimiter=",", encoding="utf-8"):
@@ -32,7 +32,7 @@ def load_userpred(file, k=10):
 
 
 def test_init(header):
-    model = SARSingleNode(similarity_type="jaccard", **header)
+    model = SAR(similarity_type="jaccard", **header)
 
     assert model.col_user == "UserId"
     assert model.col_item == "MovieId"
@@ -50,7 +50,7 @@ def test_init(header):
     "similarity_type, timedecay_formula", [("jaccard", False), ("lift", True)]
 )
 def test_fit(similarity_type, timedecay_formula, train_test_dummy_timestamp, header):
-    model = SARSingleNode(
+    model = SAR(
         similarity_type=similarity_type, timedecay_formula=timedecay_formula, **header
     )
     trainset, testset = train_test_dummy_timestamp
@@ -63,7 +63,7 @@ def test_fit(similarity_type, timedecay_formula, train_test_dummy_timestamp, hea
 def test_predict(
     similarity_type, timedecay_formula, train_test_dummy_timestamp, header
 ):
-    model = SARSingleNode(
+    model = SAR(
         similarity_type=similarity_type, timedecay_formula=timedecay_formula, **header
     )
     trainset, testset = train_test_dummy_timestamp
@@ -78,7 +78,7 @@ def test_predict(
 
 
 def test_predict_all_items(train_test_dummy_timestamp, header):
-    model = SARSingleNode(**header)
+    model = SAR(**header)
     trainset, _ = train_test_dummy_timestamp
     model.fit(trainset)
 
@@ -110,7 +110,7 @@ def test_sar_item_similarity(
     threshold, similarity_type, file, demo_usage_data, sar_settings, header
 ):
 
-    model = SARSingleNode(
+    model = SAR(
         similarity_type=similarity_type,
         timedecay_formula=False,
         time_decay_coefficient=30,
@@ -160,7 +160,7 @@ def test_sar_item_similarity(
 
 def test_user_affinity(demo_usage_data, sar_settings, header):
     time_now = demo_usage_data[header["col_timestamp"]].max()
-    model = SARSingleNode(
+    model = SAR(
         similarity_type="cooccurrence",
         timedecay_formula=True,
         time_decay_coefficient=30,
@@ -185,7 +185,7 @@ def test_user_affinity(demo_usage_data, sar_settings, header):
 
     # Set time_now to 60 days later
     two_months = 2 * 30 * (24 * 60 * 60)
-    model = SARSingleNode(
+    model = SAR(
         similarity_type="cooccurrence",
         timedecay_formula=True,
         time_decay_coefficient=30,
@@ -217,7 +217,7 @@ def test_recommend_k_items(
     threshold, similarity_type, file, header, sar_settings, demo_usage_data
 ):
     time_now = demo_usage_data[header["col_timestamp"]].max()
-    model = SARSingleNode(
+    model = SAR(
         similarity_type=similarity_type,
         timedecay_formula=True,
         time_decay_coefficient=30,
@@ -250,7 +250,7 @@ def test_recommend_k_items(
 
 def test_get_item_based_topk(header, pandas_dummy):
 
-    sar = SARSingleNode(**header)
+    sar = SAR(**header)
     sar.fit(pandas_dummy)
 
     # test with just items provided
@@ -307,7 +307,7 @@ def test_get_popularity_based_topk(header):
         }
     )
 
-    sar = SARSingleNode(**header)
+    sar = SAR(**header)
     sar.fit(train_df)
 
     expected = pd.DataFrame(dict(MovieId=[4, 1, 2], prediction=[4, 3, 2]))
@@ -337,7 +337,7 @@ def test_get_normalized_scores(header):
         }
     )
 
-    model = SARSingleNode(**header, timedecay_formula=True, normalize=True)
+    model = SAR(**header, timedecay_formula=True, normalize=True)
     model.fit(train)
     actual = model.score(test, remove_seen=True)
     expected = np.array(
@@ -387,7 +387,7 @@ def test_match_similarity_type_from_json_file(header):
 
     params.update(header)
 
-    model = SARSingleNode(**params)
+    model = SAR(**params)
 
     train = pd.DataFrame(
         {
@@ -403,7 +403,7 @@ def test_match_similarity_type_from_json_file(header):
 
 
 def test_dataset_with_duplicates(header):
-    model = SARSingleNode(**header)
+    model = SAR(**header)
     train = pd.DataFrame(
         {
             header["col_user"]: [1, 1, 2, 2, 2],
@@ -416,7 +416,7 @@ def test_dataset_with_duplicates(header):
 
 
 def test_get_topk_most_similar_users(header):
-    model = SARSingleNode(**header)
+    model = SAR(**header)
     # 1, 2, and 4 used the same items, but 1 and 2 have the same ratings also
     train = pd.DataFrame(
         {
@@ -441,7 +441,7 @@ def test_get_topk_most_similar_users(header):
 
 
 def test_item_frequencies(header):
-    model = SARSingleNode(**header)
+    model = SAR(**header)
     train = pd.DataFrame(
         {
             header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
@@ -454,7 +454,7 @@ def test_item_frequencies(header):
 
 
 def test_user_frequencies(header):
-    model = SARSingleNode(**header)
+    model = SAR(**header)
     train = pd.DataFrame(
         {
             header["col_user"]: [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
