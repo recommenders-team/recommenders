@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import numpy as np
 import pandas as pd
 import pytest
 from sklearn.preprocessing import minmax_scale
@@ -37,47 +38,26 @@ DATA_SAMPLE_NUM = DATA_USER_NUM * 1000
 DATA_RATING_MAX = 5
 
 # fmt: off
-DF_RATING_TRUE = pd.DataFrame(
-    {
-        DEFAULT_USER_COL: random.choices(range(0, DATA_USER_NUM), k=DATA_SAMPLE_NUM),
-        DEFAULT_ITEM_COL: random.choices(range(0, DATA_ITEM_NUM), k=DATA_SAMPLE_NUM),
-        DEFAULT_RATING_COL: random.choices(range(1, DATA_RATING_MAX+1), k=DATA_SAMPLE_NUM),
-    }
-)
-
-
-DF_RATING_PRED = pd.DataFrame(
-    {
-        DEFAULT_USER_COL: random.choices(range(0, DATA_USER_NUM), k=DATA_SAMPLE_NUM),
-        DEFAULT_ITEM_COL: random.choices(range(0, DATA_ITEM_NUM), k=DATA_SAMPLE_NUM),
-        DEFAULT_PREDICTION_COL: random.choices(range(1, DATA_RATING_MAX+1), k=DATA_SAMPLE_NUM),
-        # DEFAULT_RATING_COL: random.choices(range(1, RATING_MAX+1), k=SAMPLE_NUM),
-    }
-)
-
-
-DF_RATING_NOHIT = pd.DataFrame(
-    {
-        DEFAULT_USER_COL: random.choices(range(0, DATA_USER_NUM), k=DATA_SAMPLE_NUM),
-        DEFAULT_ITEM_COL: [DATA_ITEM_NUM] * DATA_SAMPLE_NUM,
-        DEFAULT_PREDICTION_COL: random.choices(range(1, DATA_RATING_MAX+1), k=DATA_SAMPLE_NUM),
-    }
-)
-
-
 @pytest.fixture
 def rating_true():
-    return DF_RATING_TRUE.copy()
+    return pd.DataFrame(
+    {
+        DEFAULT_USER_COL: np.random.choice(range(0, DATA_USER_NUM), DATA_SAMPLE_NUM),
+        DEFAULT_ITEM_COL: np.random.choice(range(0, DATA_ITEM_NUM), DATA_SAMPLE_NUM),
+        DEFAULT_RATING_COL: np.random.choice(range(1, DATA_RATING_MAX+1), DATA_SAMPLE_NUM)
+    }
+)
 
 
 @pytest.fixture
 def rating_pred():
-    return DF_RATING_PRED.copy()
-
-
-@pytest.fixture
-def rating_nohit():
-    return DF_RATING_NOHIT.copy()
+    return pd.DataFrame(
+    {
+        DEFAULT_USER_COL: np.random.choice(range(0, DATA_USER_NUM), DATA_SAMPLE_NUM),
+        DEFAULT_ITEM_COL: np.random.choice(range(0, DATA_ITEM_NUM), DATA_SAMPLE_NUM),
+        DEFAULT_PREDICTION_COL: np.random.choice(range(1, DATA_RATING_MAX+1), DATA_SAMPLE_NUM)
+    }
+)
 # fmt: on
 
 
@@ -115,7 +95,7 @@ def test_merge_rating(rating_true, rating_pred):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 20.05368049
+    assert t.interval < 19.58985256
 
 
 def test_merge_ranking(rating_true, rating_pred):
@@ -129,47 +109,47 @@ def test_merge_ranking(rating_true, rating_pred):
             col_prediction=DEFAULT_PREDICTION_COL,
             relevancy_method="top_k",
         )
-    assert t.interval < 23.27795289
+    assert t.interval < 21.52722161
 
 
 def test_python_rmse(rating_true, rating_pred):
     with Timer() as t:
         rmse(
             rating_true=rating_true,
-            rating_pred=rating_true,
-            col_prediction=DEFAULT_RATING_COL,
+            rating_pred=rating_pred,
+            col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 18.24295197
+    assert t.interval < 29.95031411
 
 
 def test_python_mae(rating_true, rating_pred):
     with Timer() as t:
         mae(
             rating_true=rating_true,
-            rating_pred=rating_true,
-            col_prediction=DEFAULT_RATING_COL,
+            rating_pred=rating_pred,
+            col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 30.3051553
+    assert t.interval < 30.45756622
 
 
 def test_python_rsquared(rating_true, rating_pred):
     with Timer() as t:
         rsquared(
             rating_true=rating_true,
-            rating_pred=rating_true,
-            col_prediction=DEFAULT_RATING_COL,
+            rating_pred=rating_pred,
+            col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 30.17068654
+    assert t.interval < 30.60572284
 
 
 def test_python_exp_var(rating_true, rating_pred):
     with Timer() as t:
         exp_var(
             rating_true=rating_true,
-            rating_pred=rating_true,
-            col_prediction=DEFAULT_RATING_COL,
+            rating_pred=rating_pred,
+            col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 30.1946217
+    assert t.interval < 31.01451915
 
 
 def test_get_top_k_items(rating_true):
@@ -180,7 +160,7 @@ def test_get_top_k_items(rating_true):
             col_rating=DEFAULT_RATING_COL,
             k=10,
         )
-    assert t.interval < 4.66904118
+    assert t.interval < 2.94850964
 
 
 def test_get_top_k_items_largek(rating_true):
@@ -191,46 +171,46 @@ def test_get_top_k_items_largek(rating_true):
             col_rating=DEFAULT_RATING_COL,
             k=1000,
         )
-    assert t.interval < 5.48082756
+    assert t.interval < 4.04160459
 
 
-def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
+def test_python_ndcg_at_k(rating_true, rating_pred):
     with Timer() as t:
         ndcg_at_k(
             rating_true=rating_true,
-            rating_pred=rating_true,
-            col_prediction=DEFAULT_RATING_COL,
+            rating_pred=rating_pred,
+            col_prediction=DEFAULT_PREDICTION_COL,
             k=10,
         )
-    assert t.interval < 23.51412245
+    assert t.interval < 21.55627936
 
 
-def test_python_map_at_k(rating_true, rating_pred, rating_nohit):
+def test_python_map_at_k(rating_true, rating_pred):
     with Timer() as t:
         map_at_k(
             rating_true=rating_true,
-            rating_pred=rating_true,
-            col_prediction=DEFAULT_RATING_COL,
+            rating_pred=rating_pred,
+            col_prediction=DEFAULT_PREDICTION_COL,
             k=10,
         )
-    assert t.interval < 29.93251199
+    assert t.interval < 29.90376154
 
 
-def test_python_precision(rating_true, rating_pred, rating_nohit):
+def test_python_precision(rating_true, rating_pred):
     with Timer() as t:
         precision_at_k(rating_true, rating_pred, k=10)
-    assert t.interval < 22.68150388
+    assert t.interval < 29.95129834
 
 
-def test_python_recall(rating_true, rating_pred, rating_nohit):
+def test_python_recall(rating_true, rating_pred):
     with Timer() as t:
         recall_at_k(
             rating_true=rating_true,
-            rating_pred=rating_true,
-            col_prediction=DEFAULT_RATING_COL,
+            rating_pred=rating_pred,
+            col_prediction=DEFAULT_PREDICTION_COL,
             k=10,
         )
-    assert t.interval < 23.07672842
+    assert t.interval < 30.29558967
 
 
 def test_python_auc(rating_true_binary, rating_pred_binary):
@@ -241,7 +221,7 @@ def test_python_auc(rating_true_binary, rating_pred_binary):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 22.70992261
+    assert t.interval < 21.53587225
 
 
 def test_python_logloss(rating_true_binary, rating_pred_binary):
@@ -252,4 +232,4 @@ def test_python_logloss(rating_true_binary, rating_pred_binary):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 32.11197616
+    assert t.interval < 32.91629787
