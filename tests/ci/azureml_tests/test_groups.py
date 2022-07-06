@@ -256,6 +256,7 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_tokenize_text",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_get_tokens",
         "tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items",
+        "tests/unit/recommenders/evaluation/test_python_evaluation_time_performance.py",  # FIXME: new time performance tests, time not tested yet
     ],
     "group_notebooks_cpu_001": [  # Total group time: 226.42s
         "tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs",
