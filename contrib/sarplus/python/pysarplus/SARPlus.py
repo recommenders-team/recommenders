@@ -447,10 +447,10 @@ class SARPlus:
                   FROM `{prefix}user_affinity` AS df,
                        `{prefix}item_similarity` AS s
                   WHERE df.`{col_item}` = s.i1
+                  GROUP BY df.`{col_user}`, s.i2
                   WINDOW w AS (
                       PARTITION BY `{col_user}`
                       ORDER BY SUM(df.`{col_rating}` * s.value) DESC)
-                  GROUP BY df.`{col_user}`, s.i2
                  )
             WHERE rank <= {top_k}
         """, top_k=top_k)
