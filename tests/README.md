@@ -1,5 +1,7 @@
 # Tests
 
+## Types of tests
+
 This project uses unit, smoke and integration tests with Python files and notebooks:
 
 * In the unit tests we just make sure the utilities and notebooks run.
@@ -10,14 +12,15 @@ This project uses unit, smoke and integration tests with Python files and notebo
 
 For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
 
+## Test infrastructure using AzureML
 
-AzureML is also used to run the existing unit, smoke and integration tests as-is. AzureML benefits include managing the compute environment by automatically turning it on/off, scaling, automatic logging of artifacts from test runs and more. GitHub is used as a control plane to provide information to scripts to configure and run the tests as-is on AzureML.  GitHub workflows `recommenders/.github/workflows/azureml-unit-tests.yml` and `recommenders/.github/workflows/azureml-nightly.yml` are used to run the tests on AzureML and parameters to configure AzureML are defined in the workflow yml files. Tests are divided into groups and each workflow triggers execution of these test groups in parallel, which significantly reduces end-to-end execution time. There are three scripts used with each workflow:
+AzureML is used to run the existing unit, smoke and integration tests as-is. AzureML benefits include managing the compute environment by automatically turning it on/off, scaling, automatic logging of artifacts from test runs and more. GitHub is used as a control plane to provide information to scripts to configure and run the tests as-is on AzureML.  GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-gpu-nightly.yml` and `azureml-spark-nightly` located in `recommenders/.github/workflows/` are used to run the tests on AzureML and parameters to configure AzureML are defined in the workflow yml files. Tests are divided into groups and each workflow triggers execution of these test groups in parallel, which significantly reduces end-to-end execution time. There are three scripts used with each workflow:
 
 * `ci/azureml_tests/submit_groupwise_azureml_pytest.py` - this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK .
 * `ci/azureml_tests/run_groupwise_pytest.py` - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above.
 * `ci/azureml_tests/test_groups.py` - this script defines groups of tests.
 
-## Test execution
+## How to execute tests
 
 **Click on the following menus** to see more details on how to execute the unit, smoke and integration tests:
 
@@ -173,11 +176,13 @@ Example:
     5. `tox -e py -- tests/unit` (runs the unit tests under the default python interpreter with `recommenders[all]`)
     6. `tox -e py37 -- tests/unit` (runs the unit tests under Python3.7 with `recommenders[all]` )
 
-## How to create tests on notebooks with Papermill
+## How to create tests
+
+### How to create tests on notebooks with Papermill
 
 In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) in unit, smoke and integration tests. Papermill is a tool that enables you to parameterize notebooks, execute and collect metrics across the notebooks, and summarize collections of notebooks.
 
-### Developing unit tests with Papermill
+#### Developing unit tests with Papermill
 
 Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/test_notebooks_python.py](unit/test_notebooks_python.py).
 
@@ -201,7 +206,7 @@ For executing this test, first make sure you are in the correct environment as d
 pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
 ```
 
-### Developing smoke and integration tests with Papermill
+#### Developing smoke and integration tests with Papermill
 
 A more advanced option is used in the smoke and integration tests, where we not only execute the notebook, but inject parameters and recover the computed metrics.
 
@@ -244,3 +249,8 @@ pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
 ```
 
 More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill).
+
+
+### How to add tests to the AzureML pipeline
+
+To add a new test to the AzureML pipeline, add the test path to an appropriate test group listed in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py). Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. Another thing to keep in mind while adding a new test is that the runtime of the test group should not exceed the specified threshold in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py).
