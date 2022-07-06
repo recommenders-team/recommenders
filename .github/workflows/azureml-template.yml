@@ -18,7 +18,6 @@ on:
       TEST_KIND:
         required: true
         type: string
-    secrets: inherit
 
 env:
   CPU_CLUSTER_NAME: "cpu-cluster"

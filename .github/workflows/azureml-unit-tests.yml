@@ -39,3 +39,4 @@ jobs:
     with:
       EXP_NAME: 'azureml_unit_tests'
       TEST_KIND: 'unit'
+    secrets: inherit
