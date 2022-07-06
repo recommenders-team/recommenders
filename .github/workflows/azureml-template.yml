@@ -18,6 +18,10 @@ on:
       TEST_KIND:
         required: true
         type: string
+      # test environment - cpu, gpu or spark
+      TEST_ENV:
+        required: true
+        type: string
 
 env:
   CPU_CLUSTER_NAME: "cpu-cluster"
@@ -37,7 +41,11 @@ jobs:
       - name: Get test group names
         id: get_test_groups
         run: |
-          test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import ${{inputs.TEST_KIND}}_test_groups; print(list(${{inputs.TEST_KIND}}_test_groups.keys()))')
+          if [[ ${{ inputs.TEST_KIND }} == "nightly" ]]; then
+            test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import nightly_test_groups; print([t for t in nightly_test_groups.keys() if ${{inputs.TEST_ENV}} in t])')
+          else
+            test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import ${{inputs.TEST_KIND}}_test_groups; print(list(${{inputs.TEST_KIND}}_test_groups.keys()))')
+          fi
           echo ::set-output name=test_groups::$test_groups_str
     outputs:
       test_groups: ${{steps.get_test_groups.outputs.test_groups}}
