@@ -35,6 +35,7 @@ on:
 jobs:
 
   azureml-test-template:
+    name: ''
     uses: ./.github/workflows/azureml-template.yml
     with:
       EXP_NAME: 'azureml_unit_tests'
