@@ -28,10 +28,6 @@ on:
   # make this workflow reusable
   workflow_call:
 
-  push:
-    branches:
-      - 'pradjoshi/simplify_tests'
-
 jobs:
 
   unit-tests:

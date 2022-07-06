@@ -178,7 +178,7 @@ unit_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_min_rating_filter",
     ],
-    # TODO: This is a flaky test, skip for now, to be fixed in future iterations.
+    # FIXME: This is a flaky test, skip for now, to be fixed in future iterations.
     # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
     # "group_notebooks_pyspark_001": [  # Total group time: 746.53s
     #     "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it rerun several times)
