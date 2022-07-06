@@ -137,23 +137,24 @@ class SARPlus:
             # replace with time-decayed version
             df = self.spark.sql(query)
         else:
-            # we need to de-duplicate items by using the latest item
-            query = self._format("""
-                SELECT `{col_user}`, `{col_item}`, `{col_rating}`
-                FROM (
-                      SELECT `{col_user}`,
-                             `{col_item}`,
-                             `{col_rating}`,
-                             ROW_NUMBER() OVER user_item_win AS latest
-                      FROM `{prefix}df_train_input`
-                     ) AS reverse_chrono_table
-                WHERE reverse_chrono_table.latest = 1
-                WINDOW user_item_win AS (
-                    PARTITION BY `{col_user}`,`{col_item}`
-                    ORDER BY `{col_timestamp}` DESC)
-            """)
+            if self.header["col_timestamp"] in df.columns:
+                # we need to de-duplicate items by using the latest item
+                query = self._format("""
+                    SELECT `{col_user}`, `{col_item}`, `{col_rating}`
+                    FROM (
+                          SELECT `{col_user}`,
+                                 `{col_item}`,
+                                 `{col_rating}`,
+                                 ROW_NUMBER() OVER user_item_win AS latest
+                          FROM `{prefix}df_train_input`
+                         ) AS reverse_chrono_table
+                    WHERE reverse_chrono_table.latest = 1
+                    WINDOW user_item_win AS (
+                        PARTITION BY `{col_user}`,`{col_item}`
+                        ORDER BY `{col_timestamp}` DESC)
+                """)
 
-            df = self.spark.sql(query)
+                df = self.spark.sql(query)
 
         df.createOrReplaceTempView(self._format("{prefix}df_train"))
 
