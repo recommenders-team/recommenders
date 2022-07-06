@@ -18,10 +18,6 @@ on:
       - 'staging'
       - 'main'
 
-  push:
-    branches:
-      - 'pradjoshi/simplify_tests'
-
   # enable manual trigger
   workflow_dispatch:
     input:
