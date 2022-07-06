@@ -34,8 +34,9 @@ on:
 
 jobs:
 
+  unit-tests:
     uses: ./.github/workflows/azureml-template.yml
     with:
-      EXP_NAME: 'azureml_unit_tests'
+      EXP_NAME: 'unit_tests'
       TEST_KIND: 'unit'
     secrets: inherit
