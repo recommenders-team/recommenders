@@ -116,67 +116,61 @@ class SARPlus:
             # following is the query which we want to run
 
             if self.header["time_now"] is None:
-                query = self._format(
-                    """
-                    SELECT CAST(MAX({col_timestamp}) AS long)
-                    FROM {prefix}df_train_input
-                """
-                )
+                query = self._format("""
+                    SELECT CAST(MAX(`{col_timestamp}`) AS long)
+                    FROM `{prefix}df_train_input`
+                """)
                 self.header["time_now"] = self.spark.sql(query).first()[0]
 
-            query = self._format(
-                """
-                SELECT {col_user},
-                       {col_item},
+            query = self._format("""
+                SELECT `{col_user}`,
+                       `{col_item}`,
                        SUM(
-                           {col_rating} *
-                           POW(2, (CAST({col_timestamp} AS LONG) - {time_now}) / {time_decay_half_life})
-                          ) AS {col_rating}
-                FROM {prefix}df_train_input
-                GROUP BY {col_user}, {col_item}
-                CLUSTER BY {col_user}
-            """
-            )
+                           `{col_rating}` *
+                           POW(2, (CAST(`{col_timestamp}` AS LONG) - {time_now}) / {time_decay_half_life})
+                          ) AS `{col_rating}`
+                FROM `{prefix}df_train_input`
+                GROUP BY `{col_user}`, `{col_item}`
+                CLUSTER BY `{col_user}`
+            """)
 
             # replace with time-decayed version
             df = self.spark.sql(query)
         else:
-            # since SQL is case-insensitive, this check needs to be performed similar
-            if self.header["col_timestamp"].lower() in [
-                s.name.lower() for s in df.schema
-            ]:
-                # we need to de-duplicate items by using the latest item
-                query = self._format(
-                    """
-                SELECT {col_user}, {col_item}, {col_rating}
-                FROM
-                (
-                SELECT
-                    {col_user}, {col_item}, {col_rating}, 
-                    ROW_NUMBER() OVER (PARTITION BY {col_user}, {col_item} ORDER BY {col_timestamp} DESC) latest
-                FROM {prefix}df_train_input
-                )
-                WHERE latest = 1
-                """
-                )
+            # we need to de-duplicate items by using the latest item
+            query = self._format("""
+                SELECT `{col_user}`, `{col_item}`, `{col_rating}`
+                FROM (
+                      SELECT `{col_user}`,
+                             `{col_item}`,
+                             `{col_rating}`,
+                             ROW_NUMBER() OVER user_item_win AS latest
+                      FROM `{prefix}df_train_input`
+                     ) AS reverse_chrono_table
+                WHERE reverse_chrono_table.latest = 1
+                WINDOW user_item_win AS (
+                    PARTITION BY `{col_user}`,`{col_item}`
+                    ORDER BY `{col_timestamp}` DESC)
+            """)
 
-                df = self.spark.sql(query)
+            df = self.spark.sql(query)
 
         df.createOrReplaceTempView(self._format("{prefix}df_train"))
 
         log.info("sarplus.fit 1/2: compute item cooccurrences...")
 
         # compute cooccurrence above minimum threshold
-        query = self._format(
-            """
-        SELECT A.{col_item} i1, B.{col_item} i2, COUNT(*) value
-        FROM   {prefix}df_train A INNER JOIN {prefix}df_train B
-               ON A.{col_user} = B.{col_user} AND A.{col_item} <= b.{col_item}  
-        GROUP  BY A.{col_item}, B.{col_item}
-        HAVING COUNT(*) >= {threshold}
-        CLUSTER BY i1, i2
-        """
-        )
+        query = self._format("""
+            SELECT a.`{col_item}` AS i1,
+                   b.`{col_item}` AS i2,
+                   COUNT(*) AS value
+            FROM `{prefix}df_train` AS a
+            INNER JOIN `{prefix}df_train` AS b
+            ON a.`{col_user}` = b.`{col_user}` AND a.`{col_item}` <= b.`{col_item}`
+            GROUP BY i1, i2
+            HAVING value >= {threshold}
+            CLUSTER BY i1, i2
+        """)
 
         item_cooccurrence = self.spark.sql(query)
         item_cooccurrence.write.mode("overwrite").saveAsTable(
@@ -185,36 +179,33 @@ class SARPlus:
 
         # compute the diagonal used later for Jaccard and Lift
         if self.similarity_type == SIM_LIFT or self.similarity_type == SIM_JACCARD:
-            item_marginal = self.spark.sql(
-                self._format(
-                    "SELECT i1 i, value AS margin FROM {prefix}item_cooccurrence WHERE i1 = i2"
-                )
-            )
+            query = self._format("""
+                SELECT i1 AS i, value AS margin
+                FROM `{prefix}item_cooccurrence`
+                WHERE i1 = i2
+            """)
+            item_marginal = self.spark.sql(query)
             item_marginal.createOrReplaceTempView(self._format("{prefix}item_marginal"))
 
         if self.similarity_type == SIM_COOCCUR:
             self.item_similarity = item_cooccurrence
         elif self.similarity_type == SIM_JACCARD:
-            query = self._format(
-                """
-            SELECT i1, i2, value / (M1.margin + M2.margin - value) AS value
-            FROM {prefix}item_cooccurrence A 
-                INNER JOIN {prefix}item_marginal M1 ON A.i1 = M1.i 
-                INNER JOIN {prefix}item_marginal M2 ON A.i2 = M2.i
-            CLUSTER BY i1, i2
-            """
-            )
+            query = self._format("""
+                SELECT i1, i2, value / (m1.margin + m2.margin - value) AS value
+                FROM `{prefix}item_cooccurrence` AS a
+                INNER JOIN `{prefix}item_marginal` AS m1 ON a.i1 = m1.i
+                INNER JOIN `{prefix}item_marginal` AS m2 ON a.i2 = m2.i
+                CLUSTER BY i1, i2
+            """)
             self.item_similarity = self.spark.sql(query)
         elif self.similarity_type == SIM_LIFT:
-            query = self._format(
-                """
-            SELECT i1, i2, value / (M1.margin * M2.margin) AS value
-            FROM {prefix}item_cooccurrence A 
-                INNER JOIN {prefix}item_marginal M1 ON A.i1 = M1.i 
-                INNER JOIN {prefix}item_marginal M2 ON A.i2 = M2.i
-            CLUSTER BY i1, i2
-            """
-            )
+            query = self._format("""
+                SELECT i1, i2, value / (m1.margin * m2.margin) AS value
+                FROM `{prefix}item_cooccurrence` AS a
+                INNER JOIN `{prefix}item_marginal` AS m1 ON a.i1 = m1.i
+                INNER JOIN `{prefix}item_marginal` AS m2 ON a.i2 = m2.i
+                CLUSTER BY i1, i2
+            """)
             self.item_similarity = self.spark.sql(query)
         else:
             raise ValueError(
@@ -231,18 +222,22 @@ class SARPlus:
 
         # expand upper triangular to full matrix
 
-        query = self._format(
-            """
-        SELECT i1, i2, value
-        FROM
-        (
-          (SELECT i1, i2, value FROM {prefix}item_similarity_upper)
-          UNION ALL
-          (SELECT i2 i1, i1 i2, value FROM {prefix}item_similarity_upper WHERE i1 <> i2)
-        )
-        CLUSTER BY i1
-        """
-        )
+        query = self._format("""
+            SELECT i1, i2, value
+            FROM (
+                  (
+                   SELECT i1, i2, value
+                   FROM `{prefix}item_similarity_upper`
+                  )
+                  UNION ALL
+                  (
+                   SELECT i2 AS i1, i1 AS i2, value
+                   FROM `{prefix}item_similarity_upper`
+                   WHERE i1 <> i2
+                  )
+                 )
+            CLUSTER BY i1
+        """)
 
         self.item_similarity = self.spark.sql(query)
         self.item_similarity.write.mode("overwrite").saveAsTable(
@@ -250,10 +245,12 @@ class SARPlus:
         )
 
         # free space
-        self.spark.sql(self._format("DROP TABLE {prefix}item_cooccurrence"))
-        self.spark.sql(self._format("DROP TABLE {prefix}item_similarity_upper"))
+        self.spark.sql(self._format("DROP TABLE `{prefix}item_cooccurrence`"))
+        self.spark.sql(self._format("DROP TABLE `{prefix}item_similarity_upper`"))
 
-        self.item_similarity = self.spark.table(self._format("{prefix}item_similarity"))
+        self.item_similarity = self.spark.table(
+            self._format("{prefix}item_similarity")
+        )
 
     def get_user_affinity(self, test):
         """Prepare test set for C++ SAR prediction code.
@@ -264,23 +261,27 @@ class SARPlus:
         """
         test.createOrReplaceTempView(self._format("{prefix}df_test"))
 
-        query = self._format(
-            "SELECT DISTINCT {col_user} FROM {prefix}df_test CLUSTER BY {col_user}"
-        )
+        query = self._format("""
+            SELECT DISTINCT `{col_user}`
+            FROM `{prefix}df_test`
+            CLUSTER BY `{col_user}`
+        """)
 
         df_test_users = self.spark.sql(query)
         df_test_users.write.mode("overwrite").saveAsTable(
             self._format("{prefix}df_test_users")
         )
 
-        query = self._format(
-            """
-          SELECT a.{col_user}, a.{col_item}, CAST(a.{col_rating} AS double) {col_rating}
-          FROM {prefix}df_train a INNER JOIN {prefix}df_test_users b ON a.{col_user} = b.{col_user} 
-          DISTRIBUTE BY {col_user}
-          SORT BY {col_user}, {col_item}
-        """
-        )
+        query = self._format("""
+            SELECT a.`{col_user}`,
+                   a.`{col_item}`,
+                   CAST(a.`{col_rating}` AS double) AS `{col_rating}`
+            FROM `{prefix}df_train` AS a
+            INNER JOIN `{prefix}df_test_users` AS b
+            ON a.`{col_user}` = b.`{col_user}`
+            DISTRIBUTE BY `{col_user}`
+            SORT BY `{col_user}`, `{col_item}`
+        """)
 
         return self.spark.sql(query)
 
@@ -296,22 +297,27 @@ class SARPlus:
 
         # create item id to continuous index mapping
         log.info("sarplus.recommend_k_items 1/3: create item index")
-        self.spark.sql(
-            self._format(
-                "SELECT i1, row_number() OVER(ORDER BY i1)-1 idx FROM (SELECT DISTINCT i1 FROM {prefix}item_similarity) CLUSTER BY i1"
-            )
-        ).write.mode("overwrite").saveAsTable(self._format("{prefix}item_mapping"))
+        query = self._format("""
+            SELECT i1, ROW_NUMBER() OVER(ORDER BY i1)-1 AS idx
+            FROM (
+                  SELECT DISTINCT i1
+                  FROM `{prefix}item_similarity`
+                 )
+            CLUSTER BY i1
+        """)
+        self.spark.sql(query).write.mode("overwrite").saveAsTable(
+            self._format("{prefix}item_mapping")
+        )
 
         # map similarity matrix into index space
-        self.spark.sql(
-            self._format(
-                """
-            SELECT a.idx i1, b.idx i2, is.value
-            FROM {prefix}item_similarity is, {prefix}item_mapping a, {prefix}item_mapping b
+        query = self._format("""
+            SELECT a.idx AS i1, b.idx AS i2, is.value
+            FROM `{prefix}item_similarity` AS is,
+                 `{prefix}item_mapping` AS a,
+                 `{prefix}item_mapping` AS b
             WHERE is.i1 = a.i1 AND i2 = b.i1
-        """
-            )
-        ).write.mode("overwrite").saveAsTable(
+        """)
+        self.spark.sql(query).write.mode("overwrite").saveAsTable(
             self._format("{prefix}item_similarity_mapped")
         )
 
@@ -329,37 +335,38 @@ class SARPlus:
         # export similarity matrix for C++ backed UDF
         log.info("sarplus.recommend_k_items 2/3: prepare similarity matrix")
 
-        self.spark.sql(
-            self._format(
-                "SELECT i1, i2, CAST(value AS DOUBLE) value FROM {prefix}item_similarity_mapped ORDER BY i1, i2"
-            )
-        ).coalesce(1).write.format("com.microsoft.sarplus").mode("overwrite").save(
-            cache_path_output
-        )
+        query = self._format("""
+            SELECT i1, i2, CAST(value AS DOUBLE) AS value
+            FROM `{prefix}item_similarity_mapped`
+            ORDER BY i1, i2
+        """)
+        self.spark.sql(query).coalesce(1).write.format(
+            "com.microsoft.sarplus"
+        ).mode("overwrite").save(cache_path_output)
 
         self.get_user_affinity(test).createOrReplaceTempView(
             self._format("{prefix}user_affinity")
         )
 
         # map item ids to index space
-        pred_input = self.spark.sql(
-            self._format(
-                """
-            SELECT {col_user}, idx, rating
-            FROM 
-            (
-                SELECT {col_user}, b.idx, {col_rating} rating
-                FROM {prefix}user_affinity JOIN {prefix}item_mapping b ON {col_item} = b.i1 
-            )
-            CLUSTER BY {col_user}
-        """
-            )
-        )
+        query = self._format("""
+            SELECT `{col_user}`, idx, rating
+            FROM (
+                  SELECT `{col_user}`, b.idx, `{col_rating}` AS rating
+                  FROM `{prefix}user_affinity`
+                  JOIN `{prefix}item_mapping` AS b
+                  ON `{col_item}` = b.i1 
+                 )
+            CLUSTER BY `{col_user}`
+        """)
+        pred_input = self.spark.sql(query)
 
         schema = StructType(
             [
                 StructField(
-                    "userID", pred_input.schema[self.header["col_user"]].dataType, True
+                    "userID",
+                    pred_input.schema[self.header["col_user"]].dataType,
+                    True
                 ),
                 StructField("itemID", IntegerType(), True),
                 StructField("score", FloatType(), True),
@@ -372,11 +379,11 @@ class SARPlus:
         # bridge to python/C++
         @pandas_udf(schema, PandasUDFType.GROUPED_MAP)
         def sar_predict_udf(df):
-            # Magic happening here
-            # The cache_path points to file write to by com.microsoft.sarplus
-            # This has exactly the memory layout we need and since the file is
-            # memory mapped, the memory consumption only happens once per worker
-            # for all python processes
+            # Magic happening here.  The cache_path points to file write
+            # to by com.microsoft.sarplus This has exactly the memory
+            # layout we need and since the file is memory mapped, the
+            # memory consumption only happens once per worker for all
+            # python processes
             model = SARModel(cache_path_input)
             preds = model.predict(
                 df["idx"].values, df["rating"].values, top_k, remove_seen
@@ -402,15 +409,12 @@ class SARPlus:
 
         df_preds.createOrReplaceTempView(self._format("{prefix}predictions"))
 
-        return self.spark.sql(
-            self._format(
-                """
-        SELECT userID {col_user}, b.i1 {col_item}, score
-        FROM {prefix}predictions p, {prefix}item_mapping b
-        WHERE p.itemID = b.idx
-        """
-            )
-        )
+        query = self._format("""
+            SELECT userID AS `{col_user}`, b.i1 AS `{col_item}`, score
+            FROM `{prefix}predictions` AS p, `{prefix}item_mapping` AS b
+            WHERE p.itemID = b.idx
+        """)
+        return self.spark.sql(query)
 
     def _recommend_k_items_slow(self, test, top_k=10, remove_seen=True):
         """Recommend top K items for all users which are in the test set.
@@ -418,7 +422,8 @@ class SARPlus:
         Args:
             test: test Spark dataframe
             top_k: top n items to return
-            remove_seen: remove items test users have already seen in the past from the recommended set.
+            remove_seen: remove items test users have already seen in
+                the past from the recommended set.
         """
 
         # TODO: remove seen
@@ -431,25 +436,23 @@ class SARPlus:
 
         # user_affinity * item_similarity
         # filter top-k
-        query = self._format(
-            """
-        SELECT {col_user}, {col_item}, score
-        FROM
-        (
-          SELECT df.{col_user},
-                 S.i2 {col_item},
-                 SUM(df.{col_rating} * S.value) AS score,
-                 row_number() OVER(PARTITION BY {col_user} ORDER BY SUM(df.{col_rating} * S.value) DESC) rank
-          FROM   
-            {prefix}user_affinity df, 
-            {prefix}item_similarity S
-          WHERE df.{col_item} = S.i1
-          GROUP BY df.{col_user}, S.i2
-        )
-        WHERE rank <= {top_k} 
-        """,
-            top_k=top_k,
-        )
+        query = self._format("""
+            SELECT `{col_user}`, `{col_item}`, score
+            FROM (
+                  SELECT df.`{col_user}`,
+                         s.i2 AS `{col_item}`,
+                         SUM(df.`{col_rating}` * s.value) AS score,
+                         ROW_NUMBER() OVER w AS rank
+                  FROM `{prefix}user_affinity` AS df,
+                       `{prefix}item_similarity` AS s
+                  WHERE df.`{col_item}` = s.i1
+                  WINDOW w AS (
+                      PARTITION BY `{col_user}`
+                      ORDER BY SUM(df.`{col_rating}` * s.value) DESC)
+                  GROUP BY df.`{col_user}`, s.i2
+                 )
+            WHERE rank <= {top_k}
+        """, top_k=top_k)
 
         return self.spark.sql(query)
 
@@ -466,8 +469,10 @@ class SARPlus:
         Args:
             test (pyspark.sql.DataFrame): test Spark dataframe.
             top_k (int): top n items to return.
-            remove_seen (bool): remove items test users have already seen in the past from the recommended set.
-            use_cache (bool): use specified local directory stored in `self.cache_path` as cache for C++ based fast
+            remove_seen (bool): remove items test users have already
+                seen in the past from the recommended set.
+            use_cache (bool): use specified local directory stored in
+                `self.cache_path` as cache for C++ based fast
                 predictions.
             n_user_prediction_partitions (int): prediction partitions.
 
