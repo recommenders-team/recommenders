@@ -42,7 +42,7 @@ jobs:
         id: get_test_groups
         run: |
           if [[ ${{ inputs.TEST_KIND }} == "nightly" ]]; then
-            test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import nightly_test_groups; print([t for t in nightly_test_groups.keys() if ${{inputs.TEST_ENV}} in t])')
+            test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import nightly_test_groups; print([t for t in nightly_test_groups.keys() if "${{inputs.TEST_ENV}}" in t])')
           else
             test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
           fi
