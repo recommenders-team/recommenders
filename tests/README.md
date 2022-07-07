@@ -95,7 +95,7 @@ As it can be seen in the code, we are injecting the dataset size and the top k a
 
 For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
 
-**Note that the next instructions execute the tests from the root folder.**
+*Note that the next instructions execute the tests from the root folder.*
 
 ```
 pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
@@ -105,14 +105,14 @@ More details on how to integrate Papermill with notebooks can be found in their 
 
 ## How to execute tests
 
-**Click on the following menus** to see more details on how to execute the unit, smoke and integration tests:
+*Click on the following menus* to see more details on how to execute the unit, smoke and integration tests:
 
 <details>
 <summary><strong><em>Unit tests</em></strong></summary>
 
 Unit tests ensure that each class or function behaves as it should. Every time a developer makes a pull request to staging or main branch, a battery of unit tests is executed.
 
-**Note that the next instructions execute the tests from the root folder.**
+*Note that the next instructions execute the tests from the root folder.*
 
 For executing the Python unit tests for the utilities:
 
@@ -145,7 +145,7 @@ For executing the PySpark unit tests for the notebooks:
 
 Smoke tests make sure that the system works and are executed just before the integration tests every night.
 
-**Note that the next instructions execute the tests from the root folder.**
+*Note that the next instructions execute the tests from the root folder.*
 
 For executing the Python smoke tests:
 
@@ -170,7 +170,7 @@ For executing the PySpark smoke tests:
 
 Integration tests make sure that the program results are acceptable.
 
-**Note that the next instructions execute the tests from the root folder.**
+*Note that the next instructions execute the tests from the root folder.*
 
 For executing the Python integration tests:
 
