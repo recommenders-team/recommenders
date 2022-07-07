@@ -40,18 +40,21 @@ def _get_row_and_column_matrix(array):
 
 
 def jaccard(cooccurrence):
-    """Helper method to calculate the Jaccard similarity of a matrix of co-occurrences.
-    When comparing Jaccard with count co-occurrence and lift similarity, count favours
-    predictability, meaning that the most popular items will be recommended most of
-    the time. Lift, by contrast, favours discoverability/serendipity, meaning that an
-    item that is less popular overall but highly favoured by a small subset of users
-    is more likely to be recommended. Jaccard is a compromise between the two.
+    """Helper method to calculate the Jaccard similarity of a matrix of
+    co-occurrences.  When comparing Jaccard with count co-occurrence
+    and lift similarity, count favours predictability, meaning that
+    the most popular items will be recommended most of the time. Lift,
+    by contrast, favours discoverability/serendipity, meaning that an
+    item that is less popular overall but highly favoured by a small
+    subset of users is more likely to be recommended. Jaccard is a
+    compromise between the two.
 
     Args:
         cooccurrence (numpy.ndarray): the symmetric matrix of co-occurrences of items.
 
     Returns:
         numpy.ndarray: The matrix of Jaccard similarities between any two items.
+
     """
 
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
@@ -63,9 +66,10 @@ def jaccard(cooccurrence):
 
 
 def lift(cooccurrence):
-    """Helper method to calculate the Lift of a matrix of co-occurrences. In comparison
-    with basic co-occurrence and Jaccard similarity, lift favours discoverability and
-    serendipity, as opposed to co-occurrence that favours the most popular items, and
+    """Helper method to calculate the Lift of a matrix of
+    co-occurrences. In comparison with basic co-occurrence and Jaccard
+    similarity, lift favours discoverability and serendipity, as
+    opposed to co-occurrence that favours the most popular items, and
     Jaccard that is a compromise between the two.
 
     Args:
@@ -73,6 +77,7 @@ def lift(cooccurrence):
 
     Returns:
         numpy.ndarray: The matrix of Lifts between any two items.
+
     """
 
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
@@ -84,13 +89,18 @@ def lift(cooccurrence):
 
 
 def mutual_information(cooccurrence):
-    """Helper method to calculate the Mutual Information of a matrix of co-occurrences.
+    """Helper method to calculate the Mutual Information of a matrix of
+    co-occurrences.
+
+    Mutual information is a measurement of the amount of information
+    explained by the i-th j-th item column vector.
 
     Args:
         cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
 
     Returns:
         numpy.ndarray: The matrix of mutual information between any two items.
+
     """
 
     with np.errstate(invalid="ignore", divide="ignore"):
@@ -100,13 +110,19 @@ def mutual_information(cooccurrence):
 
 
 def lexicographers_mutual_information(cooccurrence):
-    """Helper method to calculate the Lexicographers Mutual Information of a matrix of co-occurrences.
+    """Helper method to calculate the Lexicographers Mutual Information of
+    a matrix of co-occurrences.
+
+    Due to the bias of mutual information for low frequency items,
+    lexicographers mutual information corrects the formula by
+    multiplying it by the co-occurrence frequency.
 
     Args:
         cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
 
     Returns:
         numpy.ndarray: The matrix of lexicographers mutual information between any two items.
+
     """
 
     with np.errstate(invalid="ignore", divide="ignore"):
@@ -116,13 +132,18 @@ def lexicographers_mutual_information(cooccurrence):
 
 
 def cosine_similarity(cooccurrence):
-    """Helper method to calculate the Cosine similarity of a matrix of co-occurrences.
+    """Helper method to calculate the Cosine similarity of a matrix of
+    co-occurrences.
+
+    Cosine similarity can be interpreted as the angle between the i-th
+    and j-th item.
 
     Args:
         cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
 
     Returns:
         numpy.ndarray: The matrix of cosine similarity between any two items.
+
     """
 
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
@@ -134,13 +155,17 @@ def cosine_similarity(cooccurrence):
 
 
 def inclusion_index(cooccurrence):
-    """Helper method to calculate the Inclusion Index of a matrix of co-occurrences.
+    """Helper method to calculate the Inclusion Index of a matrix of
+    co-occurrences.
+
+    Inclusion index measures the overlap between items.
 
     Args:
         cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
 
     Returns:
         numpy.ndarray: The matrix of inclusion index between any two items.
+
     """
 
     diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
