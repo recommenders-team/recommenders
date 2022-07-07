@@ -20,6 +20,89 @@ AzureML is used to run the existing unit, smoke and integration tests as-is. Azu
 * `ci/azureml_tests/run_groupwise_pytest.py` - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above.
 * `ci/azureml_tests/test_groups.py` - this script defines groups of tests.
 
+
+## How to create tests
+
+### How to add tests to the AzureML pipeline
+
+To add a new test to the AzureML pipeline, add the test path to an appropriate test group listed in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py). Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. Another thing to keep in mind while adding a new test is that the runtime of the test group should not exceed the specified threshold in [test_groups.py](tests/ci/azureml_tests/test_groups.py).
+
+### How to create tests on notebooks with Papermill and scrapbook
+
+In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) and [scrapbook](https://nteract-scrapbook.readthedocs.io/en/latest/) in unit, smoke and integration tests. Papermill is a tool that enables you to parameterize and execute notebooks. `scrapbook` is a library for recording a notebook’s data values and generated visual content as “scraps”. These recorded scraps can be read at a future time. We use `scrapbook` to collect the metrics in the notebooks.
+
+#### Developing unit tests with Papermill and scrapbook
+
+Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/examples/test_notebooks_python.py](tests/unit/examples/test_notebooks_python.py).
+
+```python
+import pytest
+import papermill as pm
+
+@pytest.mark.notebooks
+def test_sar_single_node_runs(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["sar_single_node"]
+    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+```
+
+Notice that the input of the function is a fixture defined in [conftest.py](conftest.py). For more information, please see the [definition of fixtures in PyTest](https://docs.pytest.org/en/latest/fixture.html).
+
+For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
+
+*Note that the next instruction executes the tests from the root folder.*
+
+```bash
+pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
+```
+
+#### Developing smoke and integration tests with Papermill and scrapbook
+
+A more advanced option is used in the smoke and integration tests, where we not only execute the notebook, but inject parameters and recover the computed metrics.
+
+The first step is to tag the parameters that we are going to inject. For it we need to modify the notebook. We will add a tag with the name `parameters`. To add a tag, go the the notebook menu, View, Cell Toolbar and Tags. A tag field will appear on every cell. The variables in the cell tagged with `parameters` can be injected. The typical variables that we inject are `MOVIELENS_DATA_SIZE`, `EPOCHS` and other configuration variables for our algorithms.
+
+The way papermill works to inject parameters is very simple, it generates a copy of the notebook (in our code we call it `OUTPUT_NOTEBOOK`), and creates a new cell with the injected variables.
+
+The second modification that we need to do to the notebook is to record the metrics we want to test using `sb.glue("output_variable", python_variable_name)`. We normally use the last cell of the notebook to record all the metrics. These are the metrics that we are going to control to in the smoke and integration tests.
+
+This is an example on how we do a smoke test. The complete code can be found in [tests/smoke/examples/test_notebooks_python.py](tests/smoke/examples/test_notebooks_python.py):
+
+```python
+import pytest
+import papermill as pm
+import scrapbook as sb
+
+TOL = 0.05
+ABS_TOL = 0.05
+
+@pytest.mark.smoke
+def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
+    notebook_path = notebooks["sar_single_node"]
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
+    )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+    assert results["precision"] == pytest.approx(0.330753, rel=TOL, abs=ABS_TOL)
+    assert results["recall"] == pytest.approx(0.176385, rel=TOL, abs=ABS_TOL)
+```
+
+As it can be seen in the code, we are injecting the dataset size and the top k and we are recovering the precision and recall at k. 
+
+For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
+
+**Note that the next instructions execute the tests from the root folder.**
+
+```
+pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
+```
+
+More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill).
+
 ## How to execute tests
 
 **Click on the following menus** to see more details on how to execute the unit, smoke and integration tests:
@@ -153,104 +236,3 @@ Example:
         assert False
 
 </details>
-
-### Test execution with tox
-
-[Tox](https://tox.readthedocs.io/en/latest/) is a great tool for both virtual environment management and test execution. Tox acts like a front-end for our CI workflows. Our existing [CI pipelines](https://github.com/microsoft/recommenders/actions) in GitHub is leveraging it to orchestrate the build. This way we can provide a **parity** in both local and remote execution environments if both run tox. Run tox and no more **"tests run fine in my dev box but fail in the remote build"**! 
-
-1. If you haven't, `pip install tox`
-2. To run static analysis: `tox -e flake8`
-3. To run any of our test suites:
-    `tox -e {TOX_ENV} -- {PYTEST_PARAM}`
-
-    where 
-    - `TOX_ENV` can be `cpu|gpu|spark|all`, each env maps to the "extra" dependency, for example recommenders[gpu], and recommenders[spark]. It can also be any of the [default envs](https://tox.readthedocs.io/en/latest/config.html#tox-environments): `py|pyNM`
-    - `PYTEST_PARAM` are any standard parameters to supply to `pytest` cli.
-
-    For example:
-    
-    1. `tox -e cpu -- tests/unit -m "not notebook and not spark and not gpu` (runs the unit tests with `recommenders[dev,example]` dependencies)
-    2. `tox -e gpu -- tests/unit -m "gpu and notebook"` (runs the gpu notebook tests with `recommenders[dev,example,gpu]` dependencies)
-    3. `tox -e spark -- tests/unit -m "spark and notebook"` (runs the spark notebook tests with `recommenders[dev,example,spark]` dependencies)
-    4. `tox -e all -- tests/unit` (to run all of the unit tests with `recommenders[all]` dependencies)
-    5. `tox -e py -- tests/unit` (runs the unit tests under the default python interpreter with `recommenders[all]`)
-    6. `tox -e py37 -- tests/unit` (runs the unit tests under Python3.7 with `recommenders[all]` )
-
-## How to create tests
-
-### How to create tests on notebooks with Papermill
-
-In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) in unit, smoke and integration tests. Papermill is a tool that enables you to parameterize notebooks, execute and collect metrics across the notebooks, and summarize collections of notebooks.
-
-#### Developing unit tests with Papermill
-
-Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/test_notebooks_python.py](unit/test_notebooks_python.py).
-
-```python
-import pytest
-import papermill as pm
-
-@pytest.mark.notebooks
-def test_sar_single_node_runs(notebooks, output_notebook, kernel_name):
-    notebook_path = notebooks["sar_single_node"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
-```
-
-Notice that the input of the function is a fixture defined in [conftest.py](conftest.py). For more information, please see the [definition of fixtures in PyTest](https://docs.pytest.org/en/latest/fixture.html).
-
-For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
-
-**Note that the next instruction executes the tests from the root folder.**
-
-```bash
-pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
-```
-
-#### Developing smoke and integration tests with Papermill
-
-A more advanced option is used in the smoke and integration tests, where we not only execute the notebook, but inject parameters and recover the computed metrics.
-
-The first step is to tag the parameters that we are going to inject. For it we need to modify the notebook. We will add a tag with the name `parameters`. To add a tag, go the the notebook menu, View, Cell Toolbar and Tags. A tag field will appear on every cell. The variables in the cell tagged with `parameters` can be injected. The typical variables that we inject are `MOVIELENS_DATA_SIZE`, `EPOCHS` and other configuration variables for our algorithms.
-
-The way papermill works to inject parameters is very simple, it generates a copy of the notebook (in our code we call it `OUTPUT_NOTEBOOK`), and creates a new cell with the injected variables.
-
-The second modification that we need to do to the notebook is to record the metrics we want to test using `sb.glue("output_variable", python_variable_name)`. We normally use the last cell of the notebook to record all the metrics. These are the metrics that we are going to control to in the smoke and integration tests.
-
-This is an example on how we do a smoke test. The complete code can be found in [tests/smoke/test_notebooks_python.py](smoke/test_notebooks_python.py):
-
-```python
-import pytest
-import papermill as pm
-
-TOL = 0.05
-
-@pytest.mark.smoke
-def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
-    notebook_path = notebooks["sar_single_node"]
-    pm.execute_notebook(
-        notebook_path,
-        output_notebook,
-        kernel_name=kernel_name,
-        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
-    )
-    results = pm.read_notebook(output_notebook).dataframe.set_index("name")["value"]
-    assert results["precision"] == pytest.approx(0.326617179, TOL)
-    assert results["recall"] == pytest.approx(0.175956743, TOL)
-```
-
-As it can be seen in the code, we are injecting the dataset size and the top k and we are recovering the precision and recall at k. 
-
-For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
-
-**Note that the next instructions execute the tests from the root folder.**
-
-```
-pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
-```
-
-More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill).
-
-
-### How to add tests to the AzureML pipeline
-
-To add a new test to the AzureML pipeline, add the test path to an appropriate test group listed in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py). Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. Another thing to keep in mind while adding a new test is that the runtime of the test group should not exceed the specified threshold in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py).
