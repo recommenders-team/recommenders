@@ -17,11 +17,6 @@ on:
     branches:
       - 'staging'
       - 'main'
-  
-  # FIXME: temporary - manually run time performance tests in group_cpu_001
-  push:
-    branches:
-      - 'chuyang/time_test'
 
   # enable manual trigger
   workflow_dispatch:
