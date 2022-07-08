@@ -1,16 +1,24 @@
 # Tests
 
+In this document we show our test infrastructure and how to contribute test to the repository.
+
 ## Types of tests
 
 This project uses unit, smoke and integration tests with Python files and notebooks:
 
 * In the unit tests we just make sure the utilities and notebooks run.
 
-* In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics.
+* In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable machine learning metrics. These can be run sequentially with integration tests to detect quickly simple errors, and should be fast.
 
-* In the integration tests we use a bigger dataset for more epochs and we test that the metrics are what we expect.
+* In the integration tests we use a bigger dataset for more epochs and we test that the machine learning metrics are what we expect.
 
-For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
+These types of tests are integrated in the repo in two ways, via the PR gate, and the nightly builds. 
+
+The PR gate are the set of tests executed after doing a pull request and they should be quick. Here we include unit test that just check that the code doesn't have any errors.
+
+The nightly builds tests are executed asynchronously and can take longer. Here we include the smoke and integration tests, and their objective is to not only make sure that there are not errors, but also to make sure that the machine learning solutions are doing what we expect.
+
+For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
 ## Test infrastructure using AzureML
 
@@ -20,11 +28,13 @@ In the following figure we show a workflow on how the tests are executed via Azu
 
 <img src="https://recodatasets.z20.web.core.windows.net/images/AzureML_tests.svg?sanitize=true">
 
-GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-gpu-nightly.yml` and `azureml-spark-nightly` located in `recommenders/.github/workflows/` are used to run the tests on AzureML and parameters to configure AzureML are defined in the workflow yml files. Tests are divided into groups and each workflow triggers execution of these test groups in parallel, which significantly reduces end-to-end execution time. There are three scripts used with each workflow:
+GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-gpu-nightly.yml` and `azureml-spark-nightly` located in [.github/workflows/](../.github/workflows/) are used to run the tests on AzureML. The parameters to configure AzureML are defined in the workflow yml files. Tests are divided into groups and each workflow triggers execution of these test groups in parallel, which significantly reduces end-to-end execution time. 
 
-* `ci/azureml_tests/submit_groupwise_azureml_pytest.py` - this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK .
-* `ci/azureml_tests/run_groupwise_pytest.py` - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above.
-* `ci/azureml_tests/test_groups.py` - this script defines groups of tests.
+There are three scripts used with each workflow, all of them are located in [test/ci/azureml_tests/](./ci/azureml_tests/):
+
+* `submit_groupwise_azureml_pytest.py`: this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK.
+* `run_groupwise_pytest.py`: this script uses pytest to run the tests of the libraries and notebooks. This script runs in an AzureML workspace with the environment created by the script above.
+* `test_groups.py`: this script defines groups of tests. If the tests are part of the unit tests, the total compute time of each group should be less than 15min. If the tests are part of the nightly builds, the total time of each group should be less than 35min.
 
 
 ## How to create tests
@@ -110,6 +120,8 @@ pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
 More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill).
 
 ## How to execute tests
+
+To manually execute the tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
 
 *Click on the following menus* to see more details on how to execute the unit, smoke and integration tests:
 
