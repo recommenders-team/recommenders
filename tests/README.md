@@ -143,7 +143,31 @@ More details on how to integrate Papermill with notebooks can be found in their 
 
 ### How to add tests to the AzureML pipeline
 
-To add a new test to the AzureML pipeline, add the test path to an appropriate test group listed in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py). Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. Another thing to keep in mind while adding a new test is that the runtime of the test group should not exceed the specified threshold in [test_groups.py](tests/ci/azureml_tests/test_groups.py).
+To add a new test to the AzureML pipeline, add the test path to an appropriate test group listed in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py). 
+
+Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. 
+
+It's important to keep in mind while adding a new test that the runtime of the test group should not exceed the specified threshold in [test_groups.py](tests/ci/azureml_tests/test_groups.py).
+
+Example of adding a new test:
+
+1. In the environment that you are running your code, first see if there is a group whose total runtime is less than the threshold
+```python
+"group_spark_001": [  # Total group time: 271.13s
+    "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
+    "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 25.58s + 101.99s + 139.23s
+],
+```
+2. Add the test to the group, add the time it takes to compute, and update the total group time.
+```python
+"group_spark_001": [  # Total group time: 571.13s
+    "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
+    "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 25.58s + 101.99s + 139.23s
+    #
+    "tests/path/to/test_new.py::test_new_function", # 300s
+],
+```
+3. If all the groups of your environment are above the threshold, add a new group.
 
 ## How to execute tests in your local environment
 
