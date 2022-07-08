@@ -43,25 +43,26 @@ In this section we show how to create tests and add them to the test pipeline. T
 1. Create your code in the library and/or notebooks.
 1. Design the unit tests for the code.
 1. If you have written a notebook, design the notebook tests and check that the metrics that it returns is what you expect.
-1. Add the tests to the AzureML pipeline in the corresponding [test group](./ci/azureml_tests/test_groups.py).
+1. Add the tests to the AzureML pipeline in the corresponding [test group](./ci/azureml_tests/test_groups.py). **Please note that if you don't add your tests to the pipeline, they will not be executed.**
 
 ### How to create tests for the library code
 
-You want to test that all your code works before you submit it to the repository. Next, some guidelines for creating the unit tests:
+You want to make sure that all your code works before you submit it to the repository. Here are guidelines for creating the unit tests:
 
 * It is better to create multiple small tests than one large test that checks all the code.
 * Use `@pytest.fixture` to create data in your tests.
 * Use the mark `@pytest.mark.gpu` if you want the test to be executed in a GPU environment. Use `@pytest.mark.spark` if you want the test to be executed in a Spark environment.
 * Use `@pytest.mark.smoke` and `@pytest.mark.integration` to mark the tests as smoke tests and integration tests.
+* Use `@pytest.mark.notebooks` if you are testing a notebook.
 * Avoid using `is` in the asserts, instead use the operator `==`.
 * Follow the pattern `assert computation == value`, for example:
 ```python
-assert results["precision"] == pytest.approx(0.330753, rel=TOL, abs=ABS_TOL)
+assert results["precision"] == pytest.approx(0.330753)
 ```
 * Check always the limits of your computations, for example, you want to check that the RMSE between two equal vectors is 0:
 ```python
 assert rmse(rating_true, rating_true) == 0
-assert rmse(rating_true, rating_pred) == pytest.approx(7.254309, TOL)
+assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
 ```
 
 ### How to create tests on notebooks with Papermill and Scrapbook
