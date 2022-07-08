@@ -25,24 +25,39 @@ def exponential_decay(value, max_val, half_life):
     return np.minimum(1.0, np.power(0.5, (max_val - value) / half_life))
 
 
+def _get_row_and_column_matrix(array):
+    """Helper method to get the row and column matrix from an array.
+
+    Args:
+        array (numpy.ndarray): the array from which to get the row and column matrix.
+
+    Returns:
+        (numpy.ndarray, numpy.ndarray): (row matrix, column matrix)
+    """
+    row_matrix = np.expand_dims(array, axis=0)
+    column_matrix = np.expand_dims(array, axis=1)
+    return row_matrix, column_matrix
+
+
 def jaccard(cooccurrence):
-    """Helper method to calculate the Jaccard similarity of a matrix of co-occurrences.
-    When comparing Jaccard with count co-occurrence and lift similarity, count favours
-    predictability, meaning that the most popular items will be recommended most of
-    the time. Lift, by contrast, favours discoverability/serendipity, meaning that an
-    item that is less popular overall but highly favoured by a small subset of users
-    is more likely to be recommended. Jaccard is a compromise between the two.
+    """Helper method to calculate the Jaccard similarity of a matrix of
+    co-occurrences.  When comparing Jaccard with count co-occurrence
+    and lift similarity, count favours predictability, meaning that
+    the most popular items will be recommended most of the time. Lift,
+    by contrast, favours discoverability/serendipity, meaning that an
+    item that is less popular overall but highly favoured by a small
+    subset of users is more likely to be recommended. Jaccard is a
+    compromise between the two.
 
     Args:
         cooccurrence (numpy.ndarray): the symmetric matrix of co-occurrences of items.
 
     Returns:
         numpy.ndarray: The matrix of Jaccard similarities between any two items.
+
     """
 
-    diag = cooccurrence.diagonal()
-    diag_rows = np.expand_dims(diag, axis=0)
-    diag_cols = np.expand_dims(diag, axis=1)
+    diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
 
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / (diag_rows + diag_cols - cooccurrence)
@@ -51,9 +66,10 @@ def jaccard(cooccurrence):
 
 
 def lift(cooccurrence):
-    """Helper method to calculate the Lift of a matrix of co-occurrences. In comparison
-    with basic co-occurrence and Jaccard similarity, lift favours discoverability and
-    serendipity, as opposed to co-occurrence that favours the most popular items, and
+    """Helper method to calculate the Lift of a matrix of
+    co-occurrences. In comparison with basic co-occurrence and Jaccard
+    similarity, lift favours discoverability and serendipity, as
+    opposed to co-occurrence that favours the most popular items, and
     Jaccard that is a compromise between the two.
 
     Args:
@@ -61,14 +77,101 @@ def lift(cooccurrence):
 
     Returns:
         numpy.ndarray: The matrix of Lifts between any two items.
+
     """
 
-    diag = cooccurrence.diagonal()
-    diag_rows = np.expand_dims(diag, axis=0)
-    diag_cols = np.expand_dims(diag, axis=1)
+    diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
 
     with np.errstate(invalid="ignore", divide="ignore"):
         result = cooccurrence / (diag_rows * diag_cols)
+
+    return np.array(result)
+
+
+def mutual_information(cooccurrence):
+    """Helper method to calculate the Mutual Information of a matrix of
+    co-occurrences.
+
+    Mutual information is a measurement of the amount of information
+    explained by the i-th j-th item column vector.
+
+    Args:
+        cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
+
+    Returns:
+        numpy.ndarray: The matrix of mutual information between any two items.
+
+    """
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        result = np.log2(cooccurrence.shape[0] * lift(cooccurrence))
+
+    return np.array(result)
+
+
+def lexicographers_mutual_information(cooccurrence):
+    """Helper method to calculate the Lexicographers Mutual Information of
+    a matrix of co-occurrences.
+
+    Due to the bias of mutual information for low frequency items,
+    lexicographers mutual information corrects the formula by
+    multiplying it by the co-occurrence frequency.
+
+    Args:
+        cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
+
+    Returns:
+        numpy.ndarray: The matrix of lexicographers mutual information between any two items.
+
+    """
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        result = cooccurrence * mutual_information(cooccurrence)
+
+    return np.array(result)
+
+
+def cosine_similarity(cooccurrence):
+    """Helper method to calculate the Cosine similarity of a matrix of
+    co-occurrences.
+
+    Cosine similarity can be interpreted as the angle between the i-th
+    and j-th item.
+
+    Args:
+        cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
+
+    Returns:
+        numpy.ndarray: The matrix of cosine similarity between any two items.
+
+    """
+
+    diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        result = cooccurrence / np.sqrt(diag_rows * diag_cols)
+
+    return np.array(result)
+
+
+def inclusion_index(cooccurrence):
+    """Helper method to calculate the Inclusion Index of a matrix of
+    co-occurrences.
+
+    Inclusion index measures the overlap between items.
+
+    Args:
+        cooccurrence (numpy.ndarray): The symmetric matrix of co-occurrences of items.
+
+    Returns:
+        numpy.ndarray: The matrix of inclusion index between any two items.
+
+    """
+
+    diag_rows, diag_cols = _get_row_and_column_matrix(cooccurrence.diagonal())
+
+    with np.errstate(invalid="ignore", divide="ignore"):
+        result = cooccurrence / np.minimum(diag_rows, diag_cols)
 
     return np.array(result)
 
@@ -83,7 +186,7 @@ def get_top_k_scored_items(scores, top_k, sort_top_k=False):
 
     Returns:
         numpy.ndarray, numpy.ndarray:
-        - Indices into score matrix for each users top items.
+        - Indices into score matrix for each user's top items.
         - Scores corresponding to top items.
 
     """
