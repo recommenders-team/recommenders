@@ -141,7 +141,7 @@ nightly_test_groups = {
 }
 
 unit_test_groups = {
-    "group_pyspark_001": [  # Total group time: 270.41s
+    "group_spark_001": [  # Total group time: 270.41s
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_custom_param__succeed",
         "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_stratified_splitter",
@@ -178,7 +178,7 @@ unit_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_min_rating_filter",
     ],
-    "group_notebooks_pyspark_001": [  # Total group time: 728.43s
+    "group_notebooks_spark_001": [  # Total group time: 728.43s
         "tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs",
@@ -188,7 +188,7 @@ unit_test_groups = {
     ],
     # TODO: This is a flaky test, skip for now, to be fixed in future iterations.
     # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
-    # "group_notebooks_pyspark_002": [  # Total group time: 746.53s
+    # "group_notebooks_spark_002": [  # Total group time: 746.53s
     #     "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it rerun several times)
     # ],
     "group_gpu_001": [  # Total group time: 492.62s
