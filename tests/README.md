@@ -1,16 +1,24 @@
 # Tests
 
+In this document we show our test infrastructure and how to contribute test to the repository.
+
 ## Types of tests
 
 This project uses unit, smoke and integration tests with Python files and notebooks:
 
 * In the unit tests we just make sure the utilities and notebooks run.
 
-* In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable metrics.
+* In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable machine learning metrics. These can be run sequentially with integration tests to detect quickly simple errors, and should be fast.
 
-* In the integration tests we use a bigger dataset for more epochs and we test that the metrics are what we expect.
+* In the integration tests we use a bigger dataset for more epochs and we test that the machine learning metrics are what we expect.
 
-For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/). To manually execute the unit tests in the different environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
+These types of tests are integrated in the repo in two ways, via the PR gate, and the nightly builds. 
+
+The PR gate are the set of tests executed after doing a pull request and they should be quick. Here we include unit test that just check that the code doesn't have any errors.
+
+The nightly builds tests are executed asynchronously and can take longer. Here we include the smoke and integration tests, and their objective is to not only make sure that there are not errors, but also to make sure that the machine learning solutions are doing what we expect.
+
+For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
 ## Test infrastructure using AzureML
 
@@ -20,24 +28,48 @@ In the following figure we show a workflow on how the tests are executed via Azu
 
 <img src="https://recodatasets.z20.web.core.windows.net/images/AzureML_tests.svg?sanitize=true">
 
-GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-gpu-nightly.yml` and `azureml-spark-nightly` located in `recommenders/.github/workflows/` are used to run the tests on AzureML and parameters to configure AzureML are defined in the workflow yml files. Tests are divided into groups and each workflow triggers execution of these test groups in parallel, which significantly reduces end-to-end execution time. There are three scripts used with each workflow:
+GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-gpu-nightly.yml` and `azureml-spark-nightly` located in [.github/workflows/](../.github/workflows/) are used to run the tests on AzureML. The parameters to configure AzureML are defined in the workflow yml files. Tests are divided into groups and each workflow triggers execution of these test groups in parallel, which significantly reduces end-to-end execution time. 
 
-* `ci/azureml_tests/submit_groupwise_azureml_pytest.py` - this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK .
-* `ci/azureml_tests/run_groupwise_pytest.py` - this script uses pytest to run tests on utilities or runs papermill to execute tests on notebooks. This script runs in an AzureML workspace with the environment created by the script above.
-* `ci/azureml_tests/test_groups.py` - this script defines groups of tests.
+There are three scripts used with each workflow, all of them are located in [test/ci/azureml_tests/](./ci/azureml_tests/):
 
+* `submit_groupwise_azureml_pytest.py`: this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK.
+* `run_groupwise_pytest.py`: this script uses pytest to run the tests of the libraries and notebooks. This script runs in an AzureML workspace with the environment created by the script above.
+* `test_groups.py`: this script defines groups of tests. If the tests are part of the unit tests, the total compute time of each group should be less than 15min. If the tests are part of the nightly builds, the total time of each group should be less than 35min.
 
 ## How to create tests
 
-### How to add tests to the AzureML pipeline
+In this section we show how to create tests and add them to the test pipeline. The steps you need to follow are:
 
-To add a new test to the AzureML pipeline, add the test path to an appropriate test group listed in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py). Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. Another thing to keep in mind while adding a new test is that the runtime of the test group should not exceed the specified threshold in [test_groups.py](tests/ci/azureml_tests/test_groups.py).
+1. Create your code in the library and/or notebooks.
+1. Design the unit tests for the code.
+1. If you have written a notebook, design the notebook tests and check that the metrics that it returns is what you expect.
+1. Add the tests to the AzureML pipeline in the corresponding [test group](./ci/azureml_tests/test_groups.py). **Please note that if you don't add your tests to the pipeline, they will not be executed.**
 
-### How to create tests on notebooks with Papermill and scrapbook
+### How to create tests for the library code
+
+You want to make sure that all your code works before you submit it to the repository. Here are guidelines for creating the unit tests:
+
+* It is better to create multiple small tests than one large test that checks all the code.
+* Use `@pytest.fixture` to create data in your tests.
+* Use the mark `@pytest.mark.gpu` if you want the test to be executed in a GPU environment. Use `@pytest.mark.spark` if you want the test to be executed in a Spark environment.
+* Use `@pytest.mark.smoke` and `@pytest.mark.integration` to mark the tests as smoke tests and integration tests.
+* Use `@pytest.mark.notebooks` if you are testing a notebook.
+* Avoid using `is` in the asserts, instead use the operator `==`.
+* Follow the pattern `assert computation == value`, for example:
+```python
+assert results["precision"] == pytest.approx(0.330753)
+```
+* Check always the limits of your computations, for example, you want to check that the RMSE between two equal vectors is 0:
+```python
+assert rmse(rating_true, rating_true) == 0
+assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
+```
+
+### How to create tests on notebooks with Papermill and Scrapbook
 
 In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) and [scrapbook](https://nteract-scrapbook.readthedocs.io/en/latest/) in unit, smoke and integration tests. Papermill is a tool that enables you to parameterize and execute notebooks. `scrapbook` is a library for recording a notebook’s data values and generated visual content as “scraps”. These recorded scraps can be read at a future time. We use `scrapbook` to collect the metrics in the notebooks.
 
-#### Developing unit tests with Papermill and scrapbook
+#### Developing unit tests with Papermill and Scrapbook
 
 Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/examples/test_notebooks_python.py](tests/unit/examples/test_notebooks_python.py).
 
@@ -107,9 +139,39 @@ For executing this test, first make sure you are in the correct environment as d
 pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
 ```
 
-More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill).
+More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill). Also, you can check the [Scrapbook repo](https://github.com/nteract/scrapbook).
 
-## How to execute tests
+### How to add tests to the AzureML pipeline
+
+To add a new test to the AzureML pipeline, add the test path to an appropriate test group listed in [test_groups.py](https://github.com/microsoft/recommenders/blob/main/tests/ci/azureml_tests/test_groups.py). 
+
+Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. 
+
+It's important to keep in mind while adding a new test that the runtime of the test group should not exceed the specified threshold in [test_groups.py](tests/ci/azureml_tests/test_groups.py).
+
+Example of adding a new test:
+
+1. In the environment that you are running your code, first see if there is a group whose total runtime is less than the threshold
+```python
+"group_spark_001": [  # Total group time: 271.13s
+    "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
+    "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 25.58s + 101.99s + 139.23s
+],
+```
+2. Add the test to the group, add the time it takes to compute, and update the total group time.
+```python
+"group_spark_001": [  # Total group time: 571.13s
+    "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
+    "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 25.58s + 101.99s + 139.23s
+    #
+    "tests/path/to/test_new.py::test_new_function", # 300s
+],
+```
+3. If all the groups of your environment are above the threshold, add a new group.
+
+## How to execute tests in your local environment
+
+To manually execute the tests in the CPU, GPU or Spark environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
 
 *Click on the following menus* to see more details on how to execute the unit, smoke and integration tests:
 

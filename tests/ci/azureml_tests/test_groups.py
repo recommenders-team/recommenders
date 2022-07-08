@@ -119,7 +119,7 @@ nightly_test_groups = {
         "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
         "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
     ],
-    "group_gpu_007": [  # Total group time:
+    "group_gpu_007": [  # Total group time: 620.89s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke",  # 620.13s
         # FIXME: Reduce test time https://github.com/microsoft/recommenders/issues/1731
@@ -178,12 +178,7 @@ unit_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_min_rating_filter",
     ],
-    # TODO: This is a flaky test, skip for now, to be fixed in future iterations.
-    # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
-    # "group_notebooks_pyspark_001": [  # Total group time: 746.53s
-    #     "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it rerun several times)
-    # ],
-    "group_notebooks_pyspark_002": [  # Total group time: 728.43s
+    "group_notebooks_pyspark_001": [  # Total group time: 728.43s
         "tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs",
@@ -191,6 +186,11 @@ unit_test_groups = {
         "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_diversity_runs",
         "tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs",  # 56.55s
     ],
+    # TODO: This is a flaky test, skip for now, to be fixed in future iterations.
+    # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
+    # "group_notebooks_pyspark_002": [  # Total group time: 746.53s
+    #     "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it rerun several times)
+    # ],
     "group_gpu_001": [  # Total group time: 492.62s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",
