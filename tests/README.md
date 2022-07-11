@@ -133,7 +133,7 @@ As it can be seen in the code, we are injecting the dataset size and the top k a
 
 For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
 
-*Note that the next instructions execute the tests from the root folder.*
+*Notice that the next instructions execute the tests from the root folder.*
 
 ```
 pytest tests/smoke/test_notebooks_python.py::test_sar_single_node_smoke
