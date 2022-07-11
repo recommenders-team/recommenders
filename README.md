@@ -2,14 +2,13 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (April 1, 2022)
+## What's New (July 11, 2022)
 
-We have a new release [Recommenders 1.1.0](https://github.com/microsoft/recommenders/releases/tag/1.1.0)! 
-We have introduced the SASRec and SSEPT algorithms that are based on transformers. 
-In addition, we now have enabled Python 3.8 and 3.9.
-We have also made improvements on the SARPlus algorithm, including support for Azure Synapse and Spark 3.2.
-There are also bug fixes and improvements on NCF, RBM, LightGBM, LightFM, Scikit-Surprise, the stratified splitter, dockerfile 
-and upgrade to Scikit-Learn 1.0.2.
+We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
+
+We have introduced a new way of testing our repository using [AzureML](https://azure.microsoft.com/en-us/services/machine-learning/). With AzureML we are able to distribute our tests to different machines and run them in parallel. This allows us to test our repository on a wider range of machines and provides us with a much faster test cycle. Our total computation time went from around 9h to 35min, and we were able to reduce the costs by half. See more details [here](test/README.md).
+
+We also made other improvements like faster evaluation metrics and improving SAR algorithm. 
 
 Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
 
@@ -27,13 +26,13 @@ This repository contains examples and best practices for building recommendation
 - [Model Select and Optimize](examples/04_model_select_and_optimize): Tuning and optimizing hyperparameters for recommender models
 - [Operationalize](examples/05_operationalize): Operationalizing models in a production environment on Azure
 
-Several utilities are provided in [recommenders](recommenders) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications. See the [recommenders documentation](https://readthedocs.org/projects/microsoft-recommenders/).
+Several utilities are provided in [recommenders](recommenders) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications. See the [Recommenders documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
 For a more detailed overview of the repository, please see the documents on the [wiki page](https://github.com/microsoft/recommenders/wiki/Documents-and-Presentations).
 
 ## Getting Started
 
-Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [data science virtual machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
+Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [Data Science Virtual Machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
 
 The installation of the recommenders package has been tested with 
 - Python versions 3.6 - 3.9 and [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) or [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment)
@@ -183,6 +182,16 @@ The following tests run on a Linux DSVM daily.
 | **Windows GPU** | main | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/windows-tests/dsvm_nightly_win_gpu?branchName=main)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=102&branchName=main) | | staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/windows-tests/dsvm_nightly_win_gpu?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=102&branchName=staging) |
 | **Windows Spark** | main | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/windows-tests/dsvm_nightly_win_pyspark?branchName=main)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=103&branchName=main) | | staging | [![Build Status](https://dev.azure.com/best-practices/recommenders/_apis/build/status/windows-tests/dsvm_nightly_win_pyspark?branchName=staging)](https://dev.azure.com/best-practices/recommenders/_build/latest?definitionId=103&branchName=staging) |
 -->
+
+### AzureML Nightly Build Status
+
+Smoke and integration tests are run daily on AzureML.
+
+| Build Type | Branch | Status |  | Branch | Status |
+| --- | --- | --- | --- | --- | --- |
+| **Linux CPU** | main | [![azureml-cpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml?query=branch%3Amain) | | staging | [![azureml-cpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml?query=branch%3Astaging) |
+| **Linux GPU** | main | [![azureml-gpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml?query=branch%3Amain) | | staging | [![azureml-gpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml?query=branch%3Astaging) |
+| **Linux Spark** | main | [![azureml-spark-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml?query=branch%3Amain) | | staging | [![azureml-spark-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml?query=branch%3Astaging) |
 
 ## Related projects
 

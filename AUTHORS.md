@@ -57,6 +57,9 @@ To contributors: please add your name to the list when you submit a patch to the
 * **[Beth Zeranski](https://github.com/bethz)**
    * DevOps Pipelines used as a control plane to run existing Pytests on AzureML
    * Automation scripts to configure AzureML environment for pipeline use 
+* **[Chuyang Ke](https://github.com/ChuyangKe)**
+   * Reco utils optimization
+   * Performance tests
 * **[Dan Bianchini](https://github.com/danb27)**
    * SAR Single Node algorithm improvements
 * **[Dan Ciborowski](https://github.com/dciborow)**
@@ -101,6 +104,9 @@ To contributors: please add your name to the list when you submit a patch to the
    * Operationalization notebook
 * **[Nile Wilson](https://github.com/niwilso)**
    * Term Frequency - Inverse Document Frequency (TF-IDF) quickstart, utils
+* **[Pradnyesh Vineet Joshi](https://github.com/pradnyeshjoshi)**
+   * GitHub workflows to trigger unit, smoke and integration tests in parallel on AzureML
+   * Scripts to configure AzureML environment
 * **[Pratik Jawanpuria](https://github.com/pratikjawanpuria)**
    * RLRMC algorithm
    * GeoIMC algorithm

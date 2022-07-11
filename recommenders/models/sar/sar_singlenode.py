@@ -6,8 +6,12 @@ import logging
 from scipy import sparse
 
 from recommenders.utils.python_utils import (
+    cosine_similarity,
+    inclusion_index,
     jaccard,
+    lexicographers_mutual_information,
     lift,
+    mutual_information,
     exponential_decay,
     get_top_k_scored_items,
     rescale,
@@ -15,9 +19,13 @@ from recommenders.utils.python_utils import (
 from recommenders.utils import constants
 
 
-COOCCUR = "cooccurrence"
-JACCARD = "jaccard"
-LIFT = "lift"
+SIM_COOCCUR = "cooccurrence"
+SIM_COSINE = "cosine"
+SIM_INCLUSION_INDEX = "inclusion index"
+SIM_JACCARD = "jaccard"
+SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION = "lexicographers mutual information"
+SIM_LIFT = "lift"
+SIM_MUTUAL_INFORMATION = "mutual information"
 
 logger = logging.getLogger()
 
@@ -38,7 +46,7 @@ class SARSingleNode:
         col_rating=constants.DEFAULT_RATING_COL,
         col_timestamp=constants.DEFAULT_TIMESTAMP_COL,
         col_prediction=constants.DEFAULT_PREDICTION_COL,
-        similarity_type=JACCARD,
+        similarity_type=SIM_JACCARD,
         time_decay_coefficient=30,
         time_now=None,
         timedecay_formula=False,
@@ -53,7 +61,9 @@ class SARSingleNode:
             col_rating (str): rating column name
             col_timestamp (str): timestamp column name
             col_prediction (str): prediction column name
-            similarity_type (str): ['cooccurrence', 'jaccard', 'lift'] option for computing item-item similarity
+            similarity_type (str): ['cooccurrence', 'cosine', 'inclusion index', 'jaccard',
+              'lexicographers mutual information', 'lift', 'mutual information'] option for
+              computing item-item similarity
             time_decay_coefficient (float): number of days till ratings are decayed by 1/2
             time_now (int | None): current time for time decay calculation
             timedecay_formula (bool): flag to apply time decay
@@ -66,9 +76,18 @@ class SARSingleNode:
         self.col_timestamp = col_timestamp
         self.col_prediction = col_prediction
 
-        if similarity_type not in [COOCCUR, JACCARD, LIFT]:
+        available_similarity_types = [
+            SIM_COOCCUR,
+            SIM_COSINE,
+            SIM_INCLUSION_INDEX,
+            SIM_JACCARD,
+            SIM_LIFT,
+            SIM_MUTUAL_INFORMATION,
+            SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION,
+        ]
+        if similarity_type not in available_similarity_types:
             raise ValueError(
-                'Similarity type must be one of ["cooccurrence" | "jaccard" | "lift"]'
+                'Similarity type must be one of ["' + '" | "'.join(available_similarity_types) + '"]'
             )
         self.similarity_type = similarity_type
         self.time_decay_half_life = (
@@ -272,19 +291,27 @@ class SARSingleNode:
         self.item_frequencies = item_cooccurrence.diagonal()
 
         logger.info("Calculating item similarity")
-        if self.similarity_type == COOCCUR:
+        if self.similarity_type == SIM_COOCCUR:
             logger.info("Using co-occurrence based similarity")
             self.item_similarity = item_cooccurrence
-        elif self.similarity_type == JACCARD:
+        elif self.similarity_type == SIM_COSINE:
+            logger.info("Using cosine similarity")
+            self.item_similarity = cosine_similarity(item_cooccurrence)
+        elif self.similarity_type == SIM_INCLUSION_INDEX:
+            logger.info("Using inclusion index")
+            self.item_similarity = inclusion_index(item_cooccurrence)
+        elif self.similarity_type == SIM_JACCARD:
             logger.info("Using jaccard based similarity")
-            self.item_similarity = jaccard(item_cooccurrence).astype(
-                df[self.col_rating].dtype
-            )
-        elif self.similarity_type == LIFT:
+            self.item_similarity = jaccard(item_cooccurrence)
+        elif self.similarity_type == SIM_LEXICOGRAPHERS_MUTUAL_INFORMATION:
+            logger.info("Using lexicographers mutual information similarity")
+            self.item_similarity = lexicographers_mutual_information(item_cooccurrence)
+        elif self.similarity_type == SIM_LIFT:
             logger.info("Using lift based similarity")
-            self.item_similarity = lift(item_cooccurrence).astype(
-                df[self.col_rating].dtype
-            )
+            self.item_similarity = lift(item_cooccurrence)
+        elif self.similarity_type == SIM_MUTUAL_INFORMATION:
+            logger.info("Using mutual information similarity")
+            self.item_similarity = mutual_information(item_cooccurrence)
         else:
             raise ValueError("Unknown similarity type: {}".format(self.similarity_type))
 
@@ -364,7 +391,9 @@ class SARSingleNode:
             idx = self.index2item
         else:
             if self.user_frequencies is None:
-                self.user_frequencies = self.user_affinity.getnnz(axis=1).astype("int64")
+                self.user_frequencies = self.user_affinity.getnnz(axis=1).astype(
+                    "int64"
+                )
             frequencies = self.user_frequencies
             col = self.col_user
             idx = self.index2user

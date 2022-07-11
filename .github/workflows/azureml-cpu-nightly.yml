@@ -1,0 +1,43 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+# ---------------------------------------------------------
+
+name: azureml-cpu-nightly
+
+on:
+  #          ┌───────────── minute (0 - 59)
+  #          │ ┌───────────── hour (0 - 23)
+  #          │ │ ┌───────────── day of the month (1 - 31)
+  #          │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+  #          │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)                                  
+  #          │ │ │ │ │
+  #          │ │ │ │ │
+  schedule: 
+    - cron: '0 0 * * *'  # basically running everyday at 12AM
+    # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
+  
+  push:
+    # because we can't schedule runs for non-main branches,
+    # to ensure we are running the build on the staging branch, we can add push policy for it
+    branches: [staging]
+
+  # enable manual trigger
+  workflow_dispatch:
+    input:
+      tags:
+        description: 'Tags to label this manual run (optional)'
+        default: 'Anything to describe this manual run'
+
+  # make this workflow reusable
+  workflow_call:
+
+jobs:
+
+  cpu-nightly-tests:
+    uses: ./.github/workflows/azureml-template.yml
+    with:
+      EXP_NAME: 'nightly_tests'
+      TEST_KIND: 'nightly'
+      TEST_ENV: 'cpu'
+    secrets: inherit

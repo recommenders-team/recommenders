@@ -15,6 +15,7 @@ TOL = 0.05
 ABS_TOL = 0.05
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
@@ -57,6 +58,7 @@ def test_sar_single_node_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
@@ -91,6 +93,7 @@ def test_baseline_deep_dive_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
@@ -129,6 +132,7 @@ def test_surprise_svd_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
@@ -167,7 +171,7 @@ def test_vw_deep_dive_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
-# @pytest.mark.skipif(sys.platform == "win32", reason="nni not installable on windows")
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.skip(reason="NNI pip package has installation incompatibilities")
 def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
@@ -188,6 +192,7 @@ def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
     )
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.skip(reason="Wikidata API is unstable")
 def test_wikidata_integration(notebooks, output_notebook, kernel_name, tmp):
@@ -208,6 +213,7 @@ def test_wikidata_integration(notebooks, output_notebook, kernel_name, tmp):
     assert results["length_result"] >= 1
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
@@ -234,6 +240,7 @@ def test_cornac_bpr_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
     "size, epochs, expected_values",
@@ -268,6 +275,7 @@ def test_lightfm_integration(
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.experimental
 @pytest.mark.parametrize(
@@ -285,6 +293,7 @@ def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_va
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.experimental
 def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
