@@ -22,7 +22,7 @@ For more information, see a [quick introduction to unit, smoke and integration t
 
 ## Test infrastructure using AzureML
 
-AzureML is used to run the existing unit, smoke and integration tests. AzureML benefits include being able to run the tests in parallel, managing the compute environment by automatically turning it on/off, scaling, automatic logging of artifacts from test runs and more. GitHub is used as a control plane to configure and run the tests on AzureML.  
+AzureML is used to run the existing unit, smoke and integration tests. AzureML benefits include being able to run the tests in parallel, managing the compute environment by automatically turning it on/off, automatic logging of artifacts from test runs and more. GitHub is used as a control plane to configure and run the tests on AzureML.  
 
 In the following figure we show a workflow on how the tests are executed via AzureML:
 
