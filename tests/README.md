@@ -10,7 +10,7 @@ This project uses unit, smoke and integration tests with Python files and notebo
 
 * In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable machine learning metrics. These can be run sequentially with integration tests to detect quickly simple errors, and should be fast.
 
-* In the integration tests we use a bigger dataset for more epochs and we test that the machine learning metrics are what we expect.
+* In the integration tests we use a bigger dataset with more epochs, and we test that the machine learning metrics are what we expect. These tests can take longer.
 
 These types of tests are integrated in the repo in two ways, via the PR gate, and the nightly builds. 
 
