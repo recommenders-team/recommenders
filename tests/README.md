@@ -71,7 +71,7 @@ In the notebooks of this repo, we use [Papermill](https://github.com/nteract/pap
 
 #### Developing unit tests with Papermill and Scrapbook
 
-Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next we show just one of the tests that we have in [tests/unit/examples/test_notebooks_python.py](tests/unit/examples/test_notebooks_python.py).
+Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next, we show just one of the tests that we have in [tests/unit/examples/test_notebooks_python.py](unit/examples/test_notebooks_python.py).
 
 ```python
 import pytest
