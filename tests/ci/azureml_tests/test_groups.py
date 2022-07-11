@@ -242,7 +242,7 @@ unit_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_xdeepfm",
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
     ],
-    "group_cpu_001": [  # Total group time: 228.05s
+    "group_cpu_001": [  # Total group time: 525.96s
         "tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed",
         "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_wrong_bytes",
         "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names",
@@ -258,6 +258,7 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_tokenize_text",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_get_tokens",
         "tests/unit/recommenders/models/test_cornac_utils.py::test_recommend_k_items",
+        "tests/unit/recommenders/evaluation/test_python_evaluation_time_performance.py",  # 297.91s
     ],
     "group_notebooks_cpu_001": [  # Total group time: 226.42s
         "tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs",
