@@ -87,7 +87,7 @@ Notice that the input of the function is a fixture defined in [conftest.py](conf
 
 For executing this test, first make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md): 
 
-*Note that the next instruction executes the tests from the root folder.*
+*Notice that the next instruction executes the tests from the root folder.*
 
 ```bash
 pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
