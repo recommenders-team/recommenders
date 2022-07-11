@@ -47,7 +47,7 @@ In this section we show how to create tests and add them to the test pipeline. T
 
 ### How to create tests for the library code
 
-You want to make sure that all your code works before you submit it to the repository. Here are guidelines for creating the unit tests:
+You want to make sure that all your code works before you submit it to the repository. Here are some guidelines for creating the unit tests:
 
 * It is better to create multiple small tests than one large test that checks all the code.
 * Use `@pytest.fixture` to create data in your tests.
