@@ -14,7 +14,7 @@ This project uses unit, smoke and integration tests with Python files and notebo
 
 These types of tests are integrated in the repo in two ways, via the PR gate, and the nightly builds. 
 
-The PR gate are the set of tests executed after doing a pull request and they should be quick. Here we include unit test that just check that the code doesn't have any errors.
+The PR gate are the set of tests executed after doing a pull request and they should be quick. Here we include the unit tests, that just check that the code doesn't have any errors.
 
 The nightly builds tests are executed asynchronously and can take longer. Here we include the smoke and integration tests, and their objective is to not only make sure that there are not errors, but also to make sure that the machine learning solutions are doing what we expect.
 
