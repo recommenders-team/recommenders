@@ -151,7 +151,7 @@ It's important to keep in mind while adding a new test that the runtime of the t
 
 Example of adding a new test:
 
-1. In the environment that you are running your code, first see if there is a group whose total runtime is less than the threshold
+1. In the environment that you are running your code, first see if there is a group whose total runtime is less than the threshold.
 ```python
 "group_spark_001": [  # Total group time: 271.13s
     "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
