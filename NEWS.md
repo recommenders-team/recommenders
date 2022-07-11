@@ -1,5 +1,13 @@
 # What's New
 
+## Update July 11, 2022
+
+We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
+
+We have introduced a new way of testing our repository using AzureML. With AzureML we are able to distribute our tests to different machines and run them in parallel. This allows us to test our repository on a wider range of machines and provides us with a much faster test cycle. Our total computation time went from around 9h to 35min, and the were able to reduce the costs by half. See more details [here](test/README.md).
+
+We also made other improvements like faster evaluation metrics and improving SAR algorithm. 
+
 ## Update April 1, 2022
 
 We have a new release [Recommenders 1.1.0](https://github.com/microsoft/recommenders/releases/tag/1.1.0)! 
