@@ -42,7 +42,7 @@ In this section we show how to create tests and add them to the test pipeline. T
 
 1. Create your code in the library and/or notebooks.
 1. Design the unit tests for the code.
-1. If you have written a notebook, design the notebook tests and check that the metrics that it returns is what you expect.
+1. If you have written a notebook, design the notebook tests and check that the metrics they return is what you expect.
 1. Add the tests to the AzureML pipeline in the corresponding [test group](./ci/azureml_tests/test_groups.py). **Please note that if you don't add your tests to the pipeline, they will not be executed.**
 
 ### How to create tests for the library code
