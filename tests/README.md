@@ -67,7 +67,7 @@ assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
 
 ### How to create tests on notebooks with Papermill and Scrapbook
 
-In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) and [scrapbook](https://nteract-scrapbook.readthedocs.io/en/latest/) in unit, smoke and integration tests. Papermill is a tool that enables you to parameterize and execute notebooks. `scrapbook` is a library for recording a notebook’s data values and generated visual content as “scraps”. These recorded scraps can be read at a future time. We use `scrapbook` to collect the metrics in the notebooks.
+In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) and [Scrapbook](https://nteract-scrapbook.readthedocs.io/en/latest/) in unit, smoke and integration tests. Papermill is a tool that enables you to parametrize and execute notebooks. Scrapbook is a library for recording a notebook’s data values and generate visual content as “scraps”. These recorded scraps can be read at a future time. We use Scrapbook to collect the metrics in the notebooks.
 
 #### Developing unit tests with Papermill and Scrapbook
 
