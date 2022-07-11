@@ -30,7 +30,7 @@ In the following figure we show a workflow on how the tests are executed via Azu
 
 GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-gpu-nightly.yml` and `azureml-spark-nightly` located in [.github/workflows/](../.github/workflows/) are used to run the tests on AzureML. The parameters to configure AzureML are defined in the workflow yml files. The tests are divided into groups and each workflow triggers these test groups in parallel, which significantly reduces end-to-end execution time. 
 
-There are three scripts used with each workflow, all of them are located in [test/ci/azureml_tests/](./ci/azureml_tests/):
+There are three scripts used with each workflow, all of them are located in [test/ci/azureml_tests](./ci/azureml_tests/):
 
 * `submit_groupwise_azureml_pytest.py`: this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK.
 * `run_groupwise_pytest.py`: this script uses pytest to run the tests of the libraries and notebooks. This script runs in an AzureML workspace with the environment created by the script above.
