@@ -96,7 +96,7 @@ def test_merge_rating(rating_true, rating_pred):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 19.58985256
+    assert t.interval < 19.81252386
 
 
 def test_merge_ranking(rating_true, rating_pred):
@@ -110,7 +110,7 @@ def test_merge_ranking(rating_true, rating_pred):
             col_prediction=DEFAULT_PREDICTION_COL,
             relevancy_method="top_k",
         )
-    assert t.interval < 21.52722161
+    assert t.interval < 22.01327171
 
 
 def test_python_rmse(rating_true, rating_pred):
@@ -161,7 +161,7 @@ def test_get_top_k_items(rating_true):
             col_rating=DEFAULT_RATING_COL,
             k=10,
         )
-    assert t.interval < 2.94850964
+    assert t.interval < 3.90527593
 
 
 def test_get_top_k_items_largek(rating_true):
@@ -172,7 +172,7 @@ def test_get_top_k_items_largek(rating_true):
             col_rating=DEFAULT_RATING_COL,
             k=1000,
         )
-    assert t.interval < 4.04160459
+    assert t.interval < 4.83998316
 
 
 def test_python_ndcg_at_k(rating_true, rating_pred):
@@ -222,7 +222,7 @@ def test_python_auc(rating_true_binary, rating_pred_binary):
             col_rating=DEFAULT_RATING_COL,
             col_prediction=DEFAULT_PREDICTION_COL,
         )
-    assert t.interval < 21.53587225
+    assert t.interval < 22.18870257
 
 
 def test_python_logloss(rating_true_binary, rating_pred_binary):
