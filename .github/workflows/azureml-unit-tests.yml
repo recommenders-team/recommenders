@@ -11,6 +11,9 @@ on:
   # gives the workflow access to AZUREML_TEST_CREDENTIALS, stored as
   # a repo level secret, which is needed to trigger execution of unit
   # tests on AzureML compute.
+  push:
+    branches:
+      - 'chuyang/debug_time_performance_test'
   pull_request_target:
     types:
       - opened
