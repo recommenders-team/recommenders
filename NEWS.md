@@ -1,6 +1,6 @@
 # What's New
 
-## Update July 12, 2022
+## Update July 13, 2022
 
 We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
 
