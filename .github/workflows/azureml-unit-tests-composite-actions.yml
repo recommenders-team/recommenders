@@ -35,7 +35,7 @@ on:
       - 'pradjoshi/composite_actions'
 
 jobs:
-
+  runs-on: ubuntu-latest
   get-test-groups:
     outputs:
       test_groups: ${{ steps.get-test-groups.output.test_groups }}
