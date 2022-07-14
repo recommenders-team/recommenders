@@ -11,6 +11,7 @@ runs:
   steps:
     - name: Get test group names
       id: get_test_groups
+      shell: bash
       run: |
         if [[ ${{ inputs.TEST_KIND }} == "nightly" ]]; then
           test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import nightly_test_groups; print([t for t in nightly_test_groups.keys() if "${{inputs.TEST_ENV}}" in t])')
