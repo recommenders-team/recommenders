@@ -48,6 +48,8 @@ jobs:
       - name: Print test group names
         run: echo ${{ steps.get-test-groups.outputs.test_groups }}
         shell: bash
+    outputs:
+      test_groups: ${{ steps.get_test_groups.outputs.test_groups }}
 
   execute-tests:
     needs: get-test-groups
@@ -56,7 +58,7 @@ jobs:
     strategy:
       matrix:
         python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
-        test-group:  ${{ needs.get-test-groups.outputs.test_groups }}
+        test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
       - name: Execute tests
         uses: ./.github/actions/azureml-test
