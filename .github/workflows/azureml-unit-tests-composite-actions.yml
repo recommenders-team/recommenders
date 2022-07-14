@@ -40,8 +40,8 @@ jobs:
     outputs:
       test_groups: ${{ steps.get-test-groups.output.test_groups }}
     steps:
-    - name: Check out repository code
-      uses: actions/checkout@v2
-    - name: Get test group names
-      id: deploy
-      uses: ./.github/actions/get-test-groups
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Get test group names
+        id: get-test-groups
+        uses: ./.github/actions/get-test-groups
