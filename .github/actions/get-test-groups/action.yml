@@ -6,7 +6,8 @@ inputs:
     required: true
     type: string
 outputs:
-  test_groups: ${{steps.get_test_groups.outputs.test_groups}}
+  test_groups:
+    value: ${{steps.get_test_groups.outputs.test_groups}}
 
 runs:
   using: "composite"
