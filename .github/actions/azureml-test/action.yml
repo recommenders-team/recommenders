@@ -101,4 +101,9 @@ runs:
       shell: bash
       id: exit_status
       run: echo ::set-output name=code::$(cat ${{env.PYTEST_EXIT_CODE}})
-
+    - name: Check Success/Failure
+      if: ${{ steps.execute_tests.outputs.code != 0 }}
+      uses: actions/github-script@v3
+      with:
+        script: |
+            core.setFailed('All tests did not pass!')

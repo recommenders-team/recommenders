@@ -72,10 +72,3 @@ jobs:
           AZUREML_TEST_SUBID: ${{ secrets.AZUREML_TEST_SUBID }}
           PYTHON_VERSION: ${{ matrix.python-version }}
           TEST_GROUP: ${{ matrix.test-group }}
-      - name: Check Success/Failure
-        shell: bash
-        if: ${{ steps.execute_tests.outputs.code != 0 }}
-        uses: actions/github-script@v3
-        with:
-          script: |
-              core.setFailed('All tests did not pass!')
