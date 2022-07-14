@@ -5,6 +5,11 @@ inputs:
   TEST_KIND:
     required: true
     type: string
+  # test environment - cpu, gpu or spark
+  TEST_ENV:
+    required: false
+    type: string
+    default: 'cpu'
 outputs:
   test_groups:
     value: ${{steps.get_test_groups.outputs.test_groups}}
