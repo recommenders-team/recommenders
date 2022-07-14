@@ -34,14 +34,36 @@ inputs:
   TEST_GROUP:
     required: true
     type: string
-
-env:
-  CPU_CLUSTER_NAME: "cpu-cluster"
-  GPU_CLUSTER_NAME: "gpu-cluster"
-  RG: "recommenders_project_resources"
-  WS: "azureml-test-workspace"
-  TEST_LOGS_PATH: '"test_logs.log"'
-  PYTEST_EXIT_CODE: "pytest_exit_code.log"
+  # cpu cluster name
+  CPU_CLUSTER_NAME:
+    required: false
+    type: string
+    default: "cpu-cluster"
+  # gpu cluster name
+  GPU_CLUSTER_NAME:
+    required: false
+    type: string
+    default: "gpu-cluster"
+  # AzureML resource group name
+  RG:
+    required: false
+    type: string
+    default: "recommenders_project_resources"  
+  # AzureML workspace name
+  WS:
+    required: false
+    type: string
+    default: "azureml-test-workspace"  
+  # test logs path
+  TEST_LOGS_PATH:
+    required: false
+    type: string
+    default: '"test_logs.log"'
+  # pytest exit code
+  PYTEST_EXIT_CODE:
+    required: false
+    type: string
+    default: "pytest_exit_code.log"
 
 runs:
   using: "composite"
