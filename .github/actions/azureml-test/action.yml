@@ -115,7 +115,7 @@ runs:
           --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
     - name: Print test logs
       shell: bash
       run: cat ${{inputs.TEST_LOGS_PATH}}
