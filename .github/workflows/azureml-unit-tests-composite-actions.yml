@@ -45,3 +45,5 @@ jobs:
       - name: Get test group names
         id: get-test-groups
         uses: ./.github/actions/get-test-groups
+        with:
+          TEST_KIND: "unit"
