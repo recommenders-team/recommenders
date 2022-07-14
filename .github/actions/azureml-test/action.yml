@@ -26,6 +26,14 @@ inputs:
   AZUREML_TEST_SUBID:
     required: true
     type: string
+  # python version
+  PYTHON_VERSION:
+    required: true
+    type: string
+  # test group name
+  TEST_GROUP:
+    required: true
+    type: string
 
 env:
   CPU_CLUSTER_NAME: "cpu-cluster"
@@ -34,15 +42,6 @@ env:
   WS: "azureml-test-workspace"
   TEST_LOGS_PATH: '"test_logs.log"'
   PYTEST_EXIT_CODE: "pytest_exit_code.log"
-
-# execute-tests:
-#   needs: get-test-groups
-#   name: ${{ join(matrix.*, ', ') }}
-#   runs-on: ubuntu-latest
-#   strategy:
-#     matrix:
-#       python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
-#       test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
 
 runs:
   using: "composite"
@@ -68,29 +67,29 @@ runs:
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: extract_branch
     - name: Submit CPU tests to AzureML
-      if: contains(matrix.test-group, 'cpu')
+      if: contains(inputs.TEST_GROUP, 'cpu')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
           --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
-          --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{inputs.EXP_NAME}}_${{matrix.test-group}}
+          --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{env.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
     - name: Submit GPU tests to AzureML
-      if: contains(matrix.test-group, 'gpu')
+      if: contains(inputs.TEST_GROUP, 'gpu')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.GPU_CLUSTER_NAME}}
           --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
-          --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{inputs.EXP_NAME}}_${{matrix.test-group}}
+          --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
     - name: Submit PySpark tests to AzureML
-      if: contains(matrix.test-group, 'spark')
+      if: contains(inputs.TEST_GROUP, 'spark')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
           --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
-          --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{inputs.EXP_NAME}}_${{matrix.test-group}}
+          --rg ${{env.RG}} --wsname ${{env.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{matrix.python-version}} --testgroup ${{matrix.test-group}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}}
     - name: Print test logs
       run: cat ${{env.TEST_LOGS_PATH}}
     - name: Get exit status

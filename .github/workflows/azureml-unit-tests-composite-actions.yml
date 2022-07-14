@@ -45,5 +45,25 @@ jobs:
         uses: ./.github/actions/get-test-groups
         with:
           TEST_KIND: "unit"
-      - run: echo ${{ steps.get-test-groups.outputs.test_groups }}
+      - name: Print test group names
+        run: echo ${{ steps.get-test-groups.outputs.test_groups }}
         shell: bash
+
+  execute-tests:
+    needs: get-test-groups
+    name: ${{ join(matrix.*, ', ') }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
+        test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
+    steps:
+      - name: Execute tests
+        uses: ./.github/actions/azureml-test
+        with:
+          EXP_NAME: 'unit_tests'
+          TEST_KIND: 'unit'
+          AZUREML_TEST_CREDENTIALS: ${{ secrets.AZUREML_TEST_CREDENTIALS }}
+          AZUREML_TEST_SUBID: ${{ secrets.AZUREML_TEST_SUBID }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          TEST_GROUP: ${{ matrix.test-group }}
