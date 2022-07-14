@@ -20,4 +20,4 @@ runs:
         fi
         echo ::set-output name=test_groups::$test_groups_str
   outputs:
-    test_groups: ${{steps.get_test_groups.outputs.test_groups}}
+    test_groups: ${{steps.get_test_groups.outputs.test_groups.value}}
