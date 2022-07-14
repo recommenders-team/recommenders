@@ -41,12 +41,12 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v2
       - name: Get test group names
-        id: get-test-groups
+        id: get_test_groups
         uses: ./.github/actions/get-test-groups
         with:
           TEST_KIND: "unit"
       - name: Print test group names
-        run: echo ${{ steps.get-test-groups.outputs.test_groups }}
+        run: echo ${{ steps.get_test_groups.outputs.test_groups }}
         shell: bash
     outputs:
       test_groups: ${{ steps.get_test_groups.outputs.test_groups }}
