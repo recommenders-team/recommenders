@@ -51,20 +51,24 @@ runs:
       with: 
         python-version: "3.8"
     - name: Install azureml-core and azure-cli on a GitHub hosted server
+      shell: bash
       run: pip install azureml-core azure-cli
     - name: Log in to Azure
       uses: azure/login@v1
       with:
         creds: ${{inputs.AZUREML_TEST_CREDENTIALS}}
     - name: Install wheel package
+      shell: bash
       run: pip install wheel
     - name: Create wheel from setup.py
+      shell: bash
       run: python setup.py bdist_wheel
     - name: Extract branch name
       shell: bash
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: extract_branch
     - name: Submit CPU tests to AzureML
+      shell: bash
       if: contains(inputs.TEST_GROUP, 'cpu')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
@@ -73,6 +77,7 @@ runs:
           --testlogs ${{env.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
     - name: Submit GPU tests to AzureML
+      shell: bash
       if: contains(inputs.TEST_GROUP, 'gpu')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.GPU_CLUSTER_NAME}}
@@ -81,6 +86,7 @@ runs:
           --testlogs ${{env.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
     - name: Submit PySpark tests to AzureML
+      shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{env.CPU_CLUSTER_NAME}}
@@ -89,11 +95,14 @@ runs:
           --testlogs ${{env.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}}
     - name: Print test logs
+      shell: bash
       run: cat ${{env.TEST_LOGS_PATH}}
     - name: Get exit status
+      shell: bash
       id: exit_status
       run: echo ::set-output name=code::$(cat ${{env.PYTEST_EXIT_CODE}})
     - name: Check Success/Failure
+      shell: bash
       if: ${{ steps.exit_status.outputs.code != 0 }}
       uses: actions/github-script@v3
       with:
