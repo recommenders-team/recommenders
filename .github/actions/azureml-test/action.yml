@@ -46,8 +46,6 @@ env:
 runs:
   using: "composite"
   steps:
-    - name: Check out repository code
-      uses: actions/checkout@v2
     - name: Setup python
       uses: actions/setup-python@v2
       with: 

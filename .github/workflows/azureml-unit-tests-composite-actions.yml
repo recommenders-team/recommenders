@@ -60,6 +60,8 @@ jobs:
         python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
       - name: Execute tests
         uses: ./.github/actions/azureml-test
         with:
