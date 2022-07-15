@@ -224,12 +224,12 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
 
 
 def prepare_training_ncf(train, test):
+    ## Sample Commit
     return NCFDataset(
         train=train,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_timestamp=DEFAULT_TIMESTAMP_COL,
         seed=SEED,
     )
 
