@@ -93,6 +93,8 @@ def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         items = train.select(DEFAULT_ITEM_COL).distinct()
         user_item = users.crossJoin(items)
         dfs_pred = model.transform(user_item)
+        spark = start_or_get_spark("ALS PySpark", memory="16g")
+        spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
 
         # Remove seen items
         dfs_pred_exclude_train = dfs_pred.alias("pred").join(
@@ -223,13 +225,18 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
     return topk_scores, t
 
 
-def prepare_training_ncf(train, test):
+def prepare_training_ncf(df_train, df_test):
+    df_train.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
+    df_test.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
+    train = "./df_train.csv"
+    test = "./df_test.csv"
+    df_train.to_csv(train, index=False)
+    df_test.to_csv(test, index=False)
     return NCFDataset(
-        train=train,
+        train_file=train,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
-        col_timestamp=DEFAULT_TIMESTAMP_COL,
         seed=SEED,
     )
 
