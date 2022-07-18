@@ -19,6 +19,13 @@ on:
     branches:
       - 'staging'
       - 'main'
+    paths:
+      # Unit tests will be run only when there are changes in the
+      # unit tests related code including:
+      - examples/**
+      - recommenders/**
+      - tests/**
+      - setup.py
 
   # enable manual trigger
   workflow_dispatch:
@@ -31,33 +38,7 @@ on:
   workflow_call:
 
 jobs:
-  check-changes:
-    # Check if there are changes in the unit tests related code which
-    # includes:
-    #   * examples/
-    #   * recommenders/
-    #   * tests/
-    #   * setup.py
-    runs-on: ubuntu-latest
-    outputs:
-      code: ${{ steps.filter.outputs.code }}
-    steps:
-      - uses: actions/checkout@v3
-
-      - uses: dorny/paths-filter@v2
-        id: filter
-        with:
-          filters: |
-            code:
-              - examples/**
-              - recommenders/**
-              - tests/**
-              - setup.py
-
   get-test-groups:
-    needs: check-changes
-    # Unit tests will be run only when related code changes
-    if: needs.check-changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
