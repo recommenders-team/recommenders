@@ -22,6 +22,26 @@ on:
     # to ensure we are running the build on the staging branch, we can add push policy for it
     branches: [staging]
 
+  # pull_request_target allows execution of workflows in the context
+  # of a base repository. When a PR is raised from a forked repo, it
+  # gives the workflow access to AZUREML_TEST_CREDENTIALS, stored as
+  # a repo level secret, which is needed to trigger execution of unit
+  # tests on AzureML compute.
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    branches:
+      - 'main'
+    paths:
+      # Unit tests will be run only when there are changes in the
+      # unit tests related code including:
+      - examples/**
+      - recommenders/**
+      - tests/**
+      - setup.py
+
   # enable manual trigger
   workflow_dispatch:
     input:
