@@ -19,6 +19,13 @@ on:
     branches:
       - 'staging'
       - 'main'
+    paths:
+      # Unit tests will be run only when there are changes in the
+      # unit tests related code including:
+      - examples/**
+      - recommenders/**
+      - tests/**
+      - setup.py
 
   # enable manual trigger
   workflow_dispatch:
