@@ -22,6 +22,26 @@ on:
     # to ensure we are running the build on the staging branch, we can add push policy for it
     branches: [staging]
 
+  # pull_request_target allows execution of workflows in the context
+  # of a base repository. When a PR is raised from a forked repo, it
+  # gives the workflow access to AZUREML_TEST_CREDENTIALS, stored as
+  # a repo level secret, which is needed to trigger execution of unit
+  # tests on AzureML compute.
+  pull_request_target:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    branches:
+      - 'main'
+    paths:
+      # Unit tests will be run only when there are changes in the
+      # unit tests related code including:
+      - examples/**
+      - recommenders/**
+      - tests/**
+      - setup.py
+
   # enable manual trigger
   workflow_dispatch:
     input:
@@ -33,11 +53,42 @@ on:
   workflow_call:
 
 jobs:
+  get-test-groups:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Get test group names
+        id: get_test_groups
+        uses: ./.github/actions/get-test-groups
+        with:
+          TEST_KIND: "nightly"
+          TEST_ENV: "spark"
+      - name: Print test group names
+        run: echo ${{ steps.get_test_groups.outputs.test_groups }}
+        shell: bash
+    outputs:
+      test_groups: ${{ steps.get_test_groups.outputs.test_groups }}
 
-  spark-nightly-tests:
-    uses: ./.github/workflows/azureml-template.yml
-    with:
-      EXP_NAME: 'nightly_tests'
-      TEST_KIND: 'nightly'
-      TEST_ENV: 'spark'
-    secrets: inherit
+  execute-tests:
+    needs: get-test-groups
+    name: ${{ join(matrix.*, ', ') }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
+        test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+      - name: Execute tests
+        uses: ./.github/actions/azureml-test
+        id: execute_tests
+        with:
+          EXP_NAME: 'nightly_tests'
+          TEST_KIND: 'nightly'
+          TEST_ENV: 'spark'
+          AZUREML_TEST_CREDENTIALS: ${{ secrets.AZUREML_TEST_CREDENTIALS }}
+          AZUREML_TEST_SUBID: ${{ secrets.AZUREML_TEST_SUBID }}
+          PYTHON_VERSION: ${{ matrix.python-version }}
+          TEST_GROUP: ${{ matrix.test-group }}
