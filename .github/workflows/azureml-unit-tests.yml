@@ -23,8 +23,11 @@ on:
       # Unit tests will be run only when there are changes in the
       # unit tests related code including:
       - examples/**
+      - '!examples/**/*.md'
       - recommenders/**
+      - '!recommenders/**/*.md'
       - tests/**
+      - '!tests/**/*.md'
       - setup.py
 
   # enable manual trigger
