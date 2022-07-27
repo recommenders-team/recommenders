@@ -88,6 +88,7 @@ def _do_stratification(
         )
 
     if is_random:
+        np.random.seed(seed)
         data["random"] = np.random.rand(data.shape[0])
         order_by = "random"
     else:
