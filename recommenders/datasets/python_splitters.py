@@ -110,7 +110,7 @@ def _do_stratification(
         condition = data["rank"] <= round(threshold * data["count"])
         if prev_threshold is not None:
             condition &= data["rank"] > round(prev_threshold * data["count"])
-        splits.append(data[condition].drop("rank", axis=1).drop("count", axis=1))
+        splits.append(data[condition].drop(["rank", "count"], axis=1))
         prev_threshold = threshold
 
     return splits
