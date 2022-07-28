@@ -98,22 +98,37 @@ def _do_stratification(
 
     groups = data.groupby(split_by_column)
 
+    # data["count"] = groups[split_by_column].transform("count")
+    # data["rank"] = groups.cumcount() + 1
+
+    # data["rank"] = data["rank"] / data["count"]
+
+    # data = data.drop("count", axis=1)
+    # if is_random:
+    #     data = data.drop("random", axis=1)
+
+    # splits = []
+    # prev_threshold = None
+    # for threshold in np.cumsum(ratio):
+    #     condition = data["rank"] <= threshold
+    #     if prev_threshold is not None:
+    #         condition &= data["rank"] > prev_threshold
+    #     splits.append(data[condition].drop("rank", axis=1))
+    #     prev_threshold = threshold
+
     data["count"] = groups[split_by_column].transform("count")
     data["rank"] = groups.cumcount() + 1
 
-    data["rank"] = data["rank"] / data["count"]
-
-    data = data.drop("count", axis=1)
     if is_random:
         data = data.drop("random", axis=1)
 
     splits = []
     prev_threshold = None
     for threshold in np.cumsum(ratio):
-        condition = data["rank"] <= threshold
+        condition = data["rank"] <= round(threshold * data["count"])
         if prev_threshold is not None:
-            condition &= data["rank"] > prev_threshold
-        splits.append(data[condition].drop("rank", axis=1))
+            condition &= data["rank"] > round(prev_threshold * data["count"])
+        splits.append(data[condition].drop("rank", axis=1).drop("count", axis=1))
         prev_threshold = threshold
 
     return splits
