@@ -87,36 +87,33 @@ def _do_stratification(
             col_item=col_item,
         )
 
-    # Split by each group and aggregate splits together.
+    if is_random:
+        np.random.seed(seed)
+        data["random"] = np.random.rand(data.shape[0])
+        order_by = "random"
+    else:
+        order_by = col_timestamp
+
+    data = data.sort_values([split_by_column, order_by])
+
+    groups = data.groupby(split_by_column)
+
+    data["count"] = groups[split_by_column].transform("count")
+    data["rank"] = groups.cumcount() + 1
+
+    if is_random:
+        data = data.drop("random", axis=1)
+
     splits = []
+    prev_threshold = None
+    for threshold in np.cumsum(ratio):
+        condition = data["rank"] <= round(threshold * data["count"])
+        if prev_threshold is not None:
+            condition &= data["rank"] > round(prev_threshold * data["count"])
+        splits.append(data[condition].drop(["rank", "count"], axis=1))
+        prev_threshold = threshold
 
-    # If it is for chronological splitting, the split will be performed in a random way.
-    df_grouped = (
-        data.sort_values(col_timestamp).groupby(split_by_column)
-        if is_random is False
-        else data.groupby(split_by_column)
-    )
-
-    for _, group in df_grouped:
-        group_splits = split_pandas_data_with_ratios(
-            group, ratio, shuffle=is_random, seed=seed
-        )
-
-        # Concatenate the list of split dataframes.
-        concat_group_splits = pd.concat(group_splits)
-
-        splits.append(concat_group_splits)
-
-    # Concatenate splits for all the groups together.
-    splits_all = pd.concat(splits)
-
-    # Take split by split_index
-    splits_list = [
-        splits_all[splits_all["split_index"] == x].drop("split_index", axis=1)
-        for x in range(len(ratio))
-    ]
-
-    return splits_list
+    return splits
 
 
 def python_chrono_split(
