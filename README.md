@@ -200,8 +200,9 @@ Smoke and integration tests are run daily on AzureML.
 - [Computer vision best practices](https://github.com/microsoft/computervision-recipes): Best practices and examples on computer vision.
 - [Forecasting best practices](https://github.com/microsoft/forecasting): Best practices and examples on time series forecasting.
 
-## Reference papers
+## References
 
+- D. Li, J. Lian, L. Zhang, K. Ren, D. Lu, T. Wu, X. Xie, "Recommender Systems: Frontiers and Practices" (in Chinese), Publishing House of Electronics Industry, Beijing 2022.
 - A. Argyriou, M. González-Fierro, and L. Zhang, "Microsoft Recommenders: Best Practices for Production-Ready Recommendation Systems", *WWW 2020: International World Wide Web Conference Taipei*, 2020. Available online: https://dl.acm.org/doi/abs/10.1145/3366424.3382692
 - L. Zhang, T. Wu, X. Xie, A. Argyriou, M. González-Fierro and J. Lian, "Building Production-Ready Recommendation System at Scale", *ACM SIGKDD Conference on Knowledge Discovery and Data Mining 2019 (KDD 2019)*, 2019.
 - S. Graham,  J.K. Min, T. Wu, "Microsoft recommenders: tools to accelerate developing recommender systems", *RecSys '19: Proceedings of the 13th ACM Conference on Recommender Systems*, 2019. Available online: https://dl.acm.org/doi/10.1145/3298689.3346967
