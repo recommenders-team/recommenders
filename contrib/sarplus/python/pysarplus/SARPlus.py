@@ -85,6 +85,7 @@ class SARPlus:
         self.similarity_type = similarity_type
         self.timedecay_formula = timedecay_formula
         self.item_similarity = None
+        self.item_frequencies = None
         self.cache_path = cache_path
 
     def _format(self, string, **kwargs):
@@ -186,6 +187,11 @@ class SARPlus:
         item_cooccurrence.write.mode("overwrite").saveAsTable(
             self._format("{prefix}item_cooccurrence")
         )
+
+        # compute item frequencies
+        self.item_frequencies = item_cooccurrence.filter(
+            F.col("i1") == F.col("i2")
+        ).select(F.col("i1").alias("item_id"), F.col("value").alias("frequency"))
 
         # compute the diagonal used later for Jaccard and Lift
         if self.similarity_type == SIM_LIFT or self.similarity_type == SIM_JACCARD:
@@ -569,3 +575,21 @@ class SARPlus:
         )
 
         return df_similar_users
+
+    def get_popularity_based_topk(self, top_k=10, items=True):
+        """Get top K most frequently occurring items across all users.
+
+        Args:
+            top_k (int): number of top items to recommend.
+            items (bool): if false, return most frequent users instead.
+
+        Returns:
+            pyspark.sql.DataFrame: Spark dataframe with top k most popular items
+            and their frequencies in descending order.
+        """
+
+        # TODO: get most frequent users
+        if not items:
+            raise ValueError("Not implemented")
+
+        return self.item_frequencies.orderBy("frequency", ascending=False).limit(top_k)
