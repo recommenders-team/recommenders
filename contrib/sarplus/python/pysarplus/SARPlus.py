@@ -518,3 +518,54 @@ class SARPlus:
             )
         else:
             raise ValueError("No cache_path specified")
+
+    def get_topk_most_similar_users(self, test, user, top_k=10):
+        """Based on user affinity towards items, calculate the most similar
+            users to the given user.
+
+        Args:
+            test (pyspark.sql.DataFrame): test Spark dataframe.
+            user (int): user to retrieve most similar users for.
+            top_k (int): number of top items to recommend.
+
+        Returns:
+            pyspark.sql.DataFrame: Spark dataframe with top k most similar users
+            from test and their similarity scores in descending order.
+        """
+
+        if len(test.filter(test["user_id"].contains(user)).collect()) == 0:
+            raise ValueError("Target user must exist in the input dataframe")
+
+        test_affinity = self.get_user_affinity(test).alias("matrix")
+        num_test_users = test_affinity.select("user_id").distinct().count() - 1
+
+        if num_test_users < top_k:
+            log.warning(
+                "Number of users is less than top_k, limiting top_k to number of users"
+            )
+        k = min(top_k, num_test_users)
+
+        user_affinity = test_affinity.where(F.col("user_id") == user).alias("user")
+
+        df_similar_users = (
+            test_affinity.join(
+                user_affinity,
+                test_affinity["item_id"] == user_affinity["item_id"],
+                "outer",
+            )
+            .withColumn(
+                "prod",
+                F.when(F.col("matrix.user_id") == user, -float("inf"))
+                .when(
+                    F.col("user.rating").isNotNull(),
+                    F.col("matrix.rating") * F.col("user.rating"),
+                )
+                .otherwise(0.0),
+            )
+            .groupBy("matrix.user_id")
+            .agg(F.sum("prod").alias("similarity"))
+            .orderBy("similarity", ascending=False)
+            .limit(k)
+        )
+
+        return df_similar_users
