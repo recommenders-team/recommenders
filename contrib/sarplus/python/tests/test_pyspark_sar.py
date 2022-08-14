@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 from pyspark.sql import SparkSession
 import pytest
+from pandas.testing import assert_frame_equal
 
 from pysarplus import SARPlus, SARModel
 
@@ -320,9 +321,11 @@ def test_user_affinity(spark, demo_usage_data, sar_settings, header):
     )
 
     # Set time_now to 60 days later
-    user_affinity_ref = pd.read_csv(
-        sar_settings["FILE_DIR"] + "user_aff_2_months_later.csv"
-    ).iloc[:, 1:].squeeze()
+    user_affinity_ref = (
+        pd.read_csv(sar_settings["FILE_DIR"] + "user_aff_2_months_later.csv")
+        .iloc[:, 1:]
+        .squeeze()
+    )
     user_affinity_ref = user_affinity_ref[user_affinity_ref > 0]
 
     two_months = 2 * 30 * (24 * 60 * 60)
@@ -378,7 +381,13 @@ def test_userpred(
     df = spark.createDataFrame(demo_usage_data)
     model.fit(df)
 
-    url = sar_settings["FILE_DIR"] + "userpred_" + file + str(threshold) + "_userid_only.csv"
+    url = (
+        sar_settings["FILE_DIR"]
+        + "userpred_"
+        + file
+        + str(threshold)
+        + "_userid_only.csv"
+    )
 
     pred_ref = pd.read_csv(url)
     pred_ref = (
@@ -405,3 +414,35 @@ def test_userpred(
     assert np.allclose(
         pred.score.values, pred_ref.score.values, atol=sar_settings["ATOL"]
     )
+
+
+@pytest.mark.spark
+def test_get_popularity_based_topk(spark):
+    # same df as in tests/unit/recommenders/models/test_sar_singlenode.py
+    train_pd = pd.DataFrame(
+        {
+            "user_id": [1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 4],
+            "item_id": [1, 4, 2, 1, 5, 4, 1, 4, 6, 3, 2, 4],
+            "rating": [1, 2, 3, 1, 2, 3, 1, 2, 3, 3, 3, 1],
+        }
+    )
+    train_df = spark.createDataFrame(train_pd)
+
+    model = SARPlus(
+        spark,
+        col_user="user_id",
+        col_item="item_id",
+        col_rating="rating",
+        col_timestamp="timestamp",
+        similarity_type="jaccard",
+    )
+    model.fit(train_df)
+
+    actual = model.get_popularity_based_topk(top_k=3).toPandas()
+    expected = pd.DataFrame(
+        {
+            "item_id": [4, 1, 2],
+            "frequency": [4, 3, 2],
+        }
+    )
+    assert_frame_equal(expected, actual, check_dtype=False)
