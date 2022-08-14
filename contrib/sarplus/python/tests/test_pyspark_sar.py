@@ -446,3 +446,59 @@ def test_get_popularity_based_topk(spark):
         }
     )
     assert_frame_equal(expected, actual, check_dtype=False)
+
+
+@pytest.mark.spark
+def test_get_topk_most_similar_users(spark):
+    # same df as in tests/unit/recommenders/models/test_sar_singlenode.py
+    train_pd = pd.DataFrame(
+        {
+            "user_id": [1, 1, 2, 2, 3, 3, 3, 3, 4, 4],
+            "item_id": [1, 2, 1, 2, 3, 4, 5, 6, 1, 2],
+            "rating": [3.0, 4.0, 3.0, 4.0, 3.0, 2.0, 1.0, 5.0, 5.0, 1.0],
+        }
+    )
+    train_df = spark.createDataFrame(train_pd)
+
+    model = SARPlus(
+        spark,
+        col_user="user_id",
+        col_item="item_id",
+        col_rating="rating",
+        col_timestamp="timestamp",
+        similarity_type="jaccard",
+    )
+    model.fit(train_df)
+
+    actual = model.get_topk_most_similar_users(
+        test=train_df, user=1, top_k=1
+    ).toPandas()
+    expected = pd.DataFrame(
+        {
+            "user_id": [2],
+            "similarity": [25.0],
+        }
+    )
+    assert_frame_equal(expected, actual, check_dtype=False)
+
+    actual = model.get_topk_most_similar_users(
+        test=train_df, user=2, top_k=1
+    ).toPandas()
+    expected = pd.DataFrame(
+        {
+            "user_id": [1],
+            "similarity": [25.0],
+        }
+    )
+    assert_frame_equal(expected, actual, check_dtype=False)
+
+    actual = model.get_topk_most_similar_users(
+        test=train_df, user=1, top_k=2
+    ).toPandas()
+    expected = pd.DataFrame(
+        {
+            "user_id": [2, 4],
+            "similarity": [25.0, 19.0],
+        }
+    )
+    assert_frame_equal(expected, actual, check_dtype=False)
