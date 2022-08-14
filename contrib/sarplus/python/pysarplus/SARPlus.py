@@ -526,8 +526,8 @@ class SARPlus:
             raise ValueError("No cache_path specified")
 
     def get_topk_most_similar_users(self, test, user, top_k=10):
-        """Based on user affinity towards items, calculate the most similar
-            users to the given user.
+        """Based on user affinity towards items, calculate the top k most
+            similar users from test dataframe to the given user.
 
         Args:
             test (pyspark.sql.DataFrame): test Spark dataframe.
