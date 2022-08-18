@@ -569,16 +569,16 @@ def ndcg_at_k(
     if df_hit.shape[0] == 0:
         return 0.0
 
-    df_dcg = df_hit.merge(rating_pred, on=["user_id", "item_id"]).merge(
-        rating_true, on=["user_id", "item_id"], how="outer"
+    df_dcg = df_hit.merge(rating_pred, on=[col_user, col_item]).merge(
+        rating_true, on=[col_user, col_item], how="outer"
     )
 
     if score_type == "binary":
         df_dcg["rel"] = 1
     elif score_type == "raw":
-        df_dcg["rel"] = df_dcg["rating"]
+        df_dcg["rel"] = df_dcg[col_rating]
     elif score_type == "exp":
-        df_dcg["rel"] = 2 ** df_dcg["rating"] - 1
+        df_dcg["rel"] = 2 ** df_dcg[col_rating] - 1
     else:
         raise ValueError("score_type must be one of 'binary', 'raw', 'exp'")
 
@@ -593,22 +593,22 @@ def ndcg_at_k(
     df_dcg["dcg"] = df_dcg["rel"] / discfun(1 + df_dcg["rank"])
 
     # calculate ideal discounted gain for each record
-    df_idcg = df_dcg.sort_values(["user_id", "rating"], ascending=False)
-    df_idcg["irank"] = df_idcg.groupby("user_id", as_index=False, sort=False)[
-        "rating"
+    df_idcg = df_dcg.sort_values([col_user, col_rating], ascending=False)
+    df_idcg["irank"] = df_idcg.groupby(col_user, as_index=False, sort=False)[
+        col_rating
     ].rank("first", ascending=False)
     df_idcg["idcg"] = df_idcg["rel"] / discfun(1 + df_idcg["irank"])
 
     # calculate actual DCG for each user
-    df_user = df_dcg.groupby("user_id", as_index=False, sort=False).agg({"dcg": "sum"})
+    df_user = df_dcg.groupby(col_user, as_index=False, sort=False).agg({"dcg": "sum"})
 
     # calculate ideal DCG for each user
     df_user = df_user.merge(
-        df_idcg.groupby("user_id", as_index=False, sort=False)
+        df_idcg.groupby(col_user, as_index=False, sort=False)
         .head(k)
-        .groupby("user_id", as_index=False, sort=False)
+        .groupby(col_user, as_index=False, sort=False)
         .agg({"idcg": "sum"}),
-        on="user_id",
+        on=col_user,
     )
 
     # DCG over IDCG is the normalized DCG
