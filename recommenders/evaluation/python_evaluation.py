@@ -570,7 +570,7 @@ def ndcg_at_k(
         return 0.0
 
     df_dcg = df_hit.merge(rating_pred, on=[col_user, col_item]).merge(
-        rating_true, on=[col_user, col_item], how="outer"
+        rating_true, on=[col_user, col_item], how="outer", suffixes=("_left", None)
     )
 
     if score_type == "binary":
