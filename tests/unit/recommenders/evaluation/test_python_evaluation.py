@@ -264,6 +264,24 @@ def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
     assert ndcg_at_k(rating_true, rating_nohit, k=10) == 0.0
     assert ndcg_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.38172, TOL)
 
+    # Test raw relevance score and log2 discounting factor using wiki example
+    # See https://en.wikipedia.org/wiki/Discounted_cumulative_gain
+    df_true = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: np.full(8, 0, dtype=int),
+            DEFAULT_ITEM_COL: np.arange(8),
+            DEFAULT_RATING_COL: np.asarray([3, 2, 3, 0, 1, 2, 3, 2]),
+        }
+    )
+    df_pred = pd.DataFrame(
+        {
+            DEFAULT_USER_COL: np.full(6, 0, dtype=int),
+            DEFAULT_ITEM_COL: np.arange(6),
+            DEFAULT_PREDICTION_COL: np.asarray([6, 5, 4, 3, 2, 1]),
+        }
+    )
+    assert ndcg_at_k(df_true, df_pred, k=6, score_type="raw", discfun_type="log2") == pytest.approx(0.785, TOL)
+
 
 def test_python_map_at_k(rating_true, rating_pred, rating_nohit):
     assert (
