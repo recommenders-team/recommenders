@@ -1,25 +1,15 @@
 # Testing strategy
 
-## Naming convention of ADO pipeline yaml files
-
-We use underscore connected strings in a pipeline yaml file name to indicate the environment, branch, framework, etc. of a testing pipeline. The naming convention follows the pattern as below
-
-```
-<compute>_<test>_<os>_<environment>.yml
-```
-
-For example, if a unit test for Spark utility functions is run on an Linux Azure Data Science Virtual Machine, it will be named as:
-
-```
-dsvm_unit_linux_pyspark.yml
-```
+Here we describe the testing strategy for the Recommenders repository.
 
 ## Testing pipelines
 
-* Azure Data Science Virtual Machine testing pipelines
+### Azure Machine Learning service testing pipeline
 
-Testing pipelines that run on either a Linux or Windows DSVM agent machine.
+The Python files to enable the AzureML tests are located in [azureml_tests](azureml_tests).
 
-* Azure Machine Learning service testing pipeline
+The GitHub workflows for testing pipelines that run within an Azure Machine Learning service workspace are located in [recommenders/.github/workflows/](../../.github/workflows/).
 
-GitHub workflows for testing pipelines that run within an Azure Machine Learning service workspace are located in `recommenders/.github/workflows/`.
+### Azure Data Science Virtual Machine testing pipelines (deprecated)
+
+These are the testing pipelines that run on either a Linux or Windows DSVM agent machine. The yaml files can be found in [azure_pipeline_tests](azure_pipeline_test).

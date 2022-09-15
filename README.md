@@ -166,7 +166,9 @@ This project welcomes contributions and suggestions. Before contributing, please
 
 ## Build Status
 
-These tests are the nightly builds, which compute the smoke and integration tests. `main` is our principal branch and `staging` is our development branch. We use `pytest` for testing python utilities in [recommenders](recommenders) and `papermill` for the [notebooks](examples). For more information about the testing pipelines, please see the [test documentation](tests/README.md).
+These tests are the nightly builds, which compute the smoke and integration tests. `main` is our principal branch and `staging` is our development branch. We use [pytest](https://docs.pytest.org/) for testing python utilities in [recommenders](recommenders) and [Papermill](https://github.com/nteract/papermill) and [Scrapbook](https://nteract-scrapbook.readthedocs.io/en/latest/) for the [notebooks](examples). 
+
+For more information about the testing pipelines, please see the [test documentation](tests/README.md).
 
 ### AzureML Nightly Build Status
 
