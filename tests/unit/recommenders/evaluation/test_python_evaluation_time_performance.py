@@ -185,7 +185,7 @@ def test_python_ndcg_at_k(rating_true, rating_pred):
             col_prediction=DEFAULT_PREDICTION_COL,
             k=10,
         )
-    assert t.interval < 21.55627936 * (1 + TOL)
+    assert t.interval < 39.03877957 * (1 + TOL)
 
 
 def test_python_map_at_k(rating_true, rating_pred):
