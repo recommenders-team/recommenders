@@ -1,24 +1,31 @@
 # Tests
 
-In this document we show our test infrastructure and how to contribute test to the repository.
+In this document we show our test infrastructure and how to contribute tests to the repository.
 
-## Types of tests
+## Type of test workflows
 
-This project uses unit, smoke and integration tests with Python files and notebooks:
+All the tests in this repository are part of the following two workflows: the PR gate and the nightly builds.
 
-* In the unit tests we just make sure the utilities and notebooks run.
+The PR gate are the set of tests executed after doing a pull request and they should be quick. The objective is to validate that the code is not breaking anything before merging it.
 
-* In the smoke tests, we run them with a small dataset or a small number of epochs to make sure that, apart from running, they provide reasonable machine learning metrics. These can be run sequentially with integration tests to detect quickly simple errors, and should be fast.
+The nightly builds tests are executed asynchronously and can take longer. Some tests take so long that they cannot be executed in a PR gate, therefore they are executed asynchronously in the nightly builds. 
 
-* In the integration tests we use a bigger dataset with more epochs, and we test that the machine learning metrics are what we expect. These tests can take longer.
+Notice that the errors in the nightly builds are detected after the code has been merged. This is the reason why, with nightly builds, it is interesting to have a two-level branching strategy. In the standard one-level branching strategy, all pull requests go to the main branch. If a nightly build fails, then the main branch has broken code. In the two-level branching strategy, a pre-production or staging branch is where developers send pull requests to. The main branch is only updated from the staging branch after the nightly builds are successful. This way, the main branch always has working code.
 
-These types of tests are integrated in the repo in two ways, via the PR gate, and the nightly builds. 
+## Categories of tests
 
-The PR gate are the set of tests executed after doing a pull request and they should be quick. Here we include the unit tests, that just check that the code doesn't have any errors.
+The tests in this repository are divided into the following categories:
 
-The nightly builds tests are executed asynchronously and can take longer. Here we include the smoke and integration tests, and their objective is to not only make sure that there are not errors, but also to make sure that the machine learning solutions are doing what we expect.
+* Data validation tests: In the data validation tests, we ensure that the schema for input and output data for each function in the pipeline matches the desired prespecified schema. They should be fast and can be added to the PR gate.
+* Unit tests: In the unit tests we just make sure the python utilities and notebooks run correctly. Unit tests are fast, ideally less than 5min and are run in every pull request. They belong to the PR gate. For this type of tests, synthetic data can be used.
+* Functional tests: These tests make sure that the components of the project not just run but their function is correct. For example, we want to test that an ML model evaluation of RMSE gives a positive number. These tests can be run asynchronously in the nightly builds and can take hours. In these tests, we want to use real data.
+* Integration tests: We want to make sure that the interaction between different components is correct. For example, the interaction between data ingestion pipelines and the compute where the model is trained, or between the compute and a database. These tests can be of variable length, if they are fast, we could add them to the PR gate, otherwise, we will add them to the nightly builds. For this type of tests, synthetic and real data can be used.
+* Smoke tests: The smoke tests are gates to the slow tests in the nightly builds to detect quick errors. If we are running a test with a large dataset that takes 4h, we want to create a faster version of the large test (maybe with a small percentage of the dataset or with 1 epoch) to ensure that it runs end-to-end without obvious failures. Smoke tests can run sequentially with functional or integration tests in the nightly builds, and should be fast, ideally less than 20min. They use the same type of data as their longer counterparts.
+* Performance test: The performance tests are tests that measure the computation time or memory footprint of a piece of code and make sure that this is bounded between some limits.  For this type of tests, synthetic data can be used.
+* Responsible AI tests: Responsible AI tests are test that enforce fairness, transparency, explainability, human-centeredness, privacy and security.
+* Regression tests: In some situations, we are migrating from a deprecated version to a new version of the code, or maybe we are maintaining two versions of the same library (i.e. Tensorflow v1 and v2). Regression tests make sure that the code works in both versions of the code. These types of tests sometimes are done locally, before upgrading to the new version, or they can be included in the tests pipelines if we want to execute them recurrently.
 
-For more information, see a [quick introduction to unit, smoke and integration tests](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
+For more information, see a [quick introduction testing](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
 ## Test infrastructure using AzureML
 
