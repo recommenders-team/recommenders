@@ -6,9 +6,9 @@ In this document we show our test infrastructure and how to contribute tests to 
 
 All the tests in this repository are part of the following two workflows: the PR gate and the nightly builds.
 
-The PR gate are the set of tests executed after doing a pull request and they should be quick. The objective is to validate that the code is not breaking anything before merging it.
+PR gates are the set of tests executed after doing a pull request and they should be quick. The objective is to validate that the code is not breaking anything before merging it. The PR gate should not surpass 20-30 minutes.
 
-The nightly builds tests are executed asynchronously and can take longer. Some tests take so long that they cannot be executed in a PR gate, therefore they are executed asynchronously in the nightly builds. 
+The nightly builds are tests executed asynchronously and can take hours. Some tests take so long that they cannot be executed in a PR gate, therefore they are executed asynchronously in the nightly builds. 
 
 Notice that the errors in the nightly builds are detected after the code has been merged. This is the reason why, with nightly builds, it is interesting to have a two-level branching strategy. In the standard one-level branching strategy, all pull requests go to the main branch. If a nightly build fails, then the main branch has broken code. In the two-level branching strategy, a pre-production or staging branch is where developers send pull requests to. The main branch is only updated from the staging branch after the nightly builds are successful. This way, the main branch always has working code.
 
