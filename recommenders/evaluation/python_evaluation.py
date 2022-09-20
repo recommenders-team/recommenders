@@ -554,7 +554,7 @@ def ndcg_at_k(
         float: nDCG at k (min=0, max=1).
     """
 
-    df_hit, df_hit_count, n_users = merge_ranking_true_pred(
+    df_hit, _, _ = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
         col_user=col_user,
@@ -589,20 +589,20 @@ def ndcg_at_k(
     else:
         raise ValueError("discfun_type must be one of 'loge', 'log2'")
 
-    # calculate actual discounted gain for each record
+    # Calculate the actual discounted gain for each record
     df_dcg["dcg"] = df_dcg["rel"] / discfun(1 + df_dcg["rank"])
 
-    # calculate ideal discounted gain for each record
+    # Calculate the ideal discounted gain for each record
     df_idcg = df_dcg.sort_values([col_user, col_rating], ascending=False)
     df_idcg["irank"] = df_idcg.groupby(col_user, as_index=False, sort=False)[
         col_rating
     ].rank("first", ascending=False)
     df_idcg["idcg"] = df_idcg["rel"] / discfun(1 + df_idcg["irank"])
 
-    # calculate actual DCG for each user
+    # Calculate the actual DCG for each user
     df_user = df_dcg.groupby(col_user, as_index=False, sort=False).agg({"dcg": "sum"})
 
-    # calculate ideal DCG for each user
+    # Calculate the ideal DCG for each user
     df_user = df_user.merge(
         df_idcg.groupby(col_user, as_index=False, sort=False)
         .head(k)
