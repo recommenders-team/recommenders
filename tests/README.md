@@ -2,7 +2,7 @@
 
 In this document we show our test infrastructure and how to contribute tests to the repository.
 
-## Type of test workflows
+## Test workflows
 
 All the tests in this repository are part of the following two workflows: the PR gate and the nightly builds.
 
