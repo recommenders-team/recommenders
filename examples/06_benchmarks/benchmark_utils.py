@@ -94,7 +94,7 @@ def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         user_item = users.crossJoin(items)
         dfs_pred = model.transform(user_item)
         spark = start_or_get_spark("ALS PySpark", memory="16g")
-        spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
+        # spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
 
         # Remove seen items
         dfs_pred_exclude_train = dfs_pred.alias("pred").join(
