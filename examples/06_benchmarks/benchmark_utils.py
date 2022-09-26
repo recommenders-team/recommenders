@@ -5,7 +5,7 @@ from pyspark.sql.types import StructType, StructField
 from pyspark.sql.types import FloatType, IntegerType, LongType
 from fastai.collab import collab_learner, CollabDataBunch
 import surprise
-import cornac
+#import cornac
 
 from recommenders.utils.constants import (
     COL_DICT,
