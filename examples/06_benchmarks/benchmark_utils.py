@@ -1,5 +1,10 @@
-import pandas as pd
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+
+import os
 import numpy as np
+import pandas as pd
+from tempfile import TemporaryDirectory
 from pyspark.ml.recommendation import ALS
 from pyspark.sql.types import StructType, StructField
 from pyspark.sql.types import FloatType, IntegerType, LongType
@@ -47,6 +52,11 @@ from recommenders.evaluation.python_evaluation import (
 from recommenders.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
 
 
+# Helpers
+TRAIN_FILE = "df_train.csv"
+TEST_FILE = "df_test.csv"
+
+
 def prepare_training_als(train, test):
     schema = StructType(
         (
@@ -57,7 +67,7 @@ def prepare_training_als(train, test):
         )
     )
     spark = start_or_get_spark()
-    return spark.createDataFrame(train, schema)
+    return spark.createDataFrame(train, schema).cache()
 
 
 def train_als(params, data):
@@ -77,7 +87,7 @@ def prepare_metrics_als(train, test):
         )
     )
     spark = start_or_get_spark()
-    return spark.createDataFrame(train, schema), spark.createDataFrame(test, schema)
+    return spark.createDataFrame(train, schema).cache(), spark.createDataFrame(test, schema).cache()
 
 
 def predict_als(model, test):
@@ -93,8 +103,6 @@ def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         items = train.select(DEFAULT_ITEM_COL).distinct()
         user_item = users.crossJoin(items)
         dfs_pred = model.transform(user_item)
-        spark = start_or_get_spark("ALS PySpark", memory="16g")
-        spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
 
         # Remove seen items
         dfs_pred_exclude_train = dfs_pred.alias("pred").join(
@@ -228,10 +236,11 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
 def prepare_training_ncf(df_train, df_test):
     df_train.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
     df_test.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
-    train = "df_train.csv"
-    test = "df_test.csv"
-    df_train.to_csv(train, index=False)
-    df_test.to_csv(test, index=False)
+    tmp_dir = TemporaryDirectory()
+    train_file = os.path.join(tmp_dir.name, TRAIN_FILE)
+    test_file = os.path.join(tmp_dir.name, TEST_FILE)
+    df_train.to_csv(train_file, index=False)
+    df_test.to_csv(test_file, index=False)
     return NCFDataset(
         train_file=train,
         col_user=DEFAULT_USER_COL,
@@ -270,6 +279,7 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         topk_scores = merged[merged[DEFAULT_RATING_COL].isnull()].drop(
             DEFAULT_RATING_COL, axis=1
         )
+    # Remove temp files
     return topk_scores, t
 
 
