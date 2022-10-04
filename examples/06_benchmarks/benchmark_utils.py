@@ -10,7 +10,7 @@ from pyspark.sql.types import StructType, StructField
 from pyspark.sql.types import FloatType, IntegerType, LongType
 from fastai.collab import collab_learner, CollabDataBunch
 import surprise
-#import cornac
+import cornac
 
 from recommenders.utils.constants import (
     COL_DICT,
@@ -53,8 +53,9 @@ from recommenders.evaluation.python_evaluation import rmse, mae, rsquared, exp_v
 
 
 # Helpers
-TRAIN_FILE = "df_train.csv"
-TEST_FILE = "df_test.csv"
+tmp_dir = TemporaryDirectory()
+TRAIN_FILE = os.path.join(tmp_dir.name, "df_train.csv")
+TEST_FILE = os.path.join(tmp_dir.name, "df_test.csv")
 
 
 def prepare_training_als(train, test):
@@ -234,15 +235,16 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
 
 
 def prepare_training_ncf(df_train, df_test):
-    df_train.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
-    df_test.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
-    tmp_dir = TemporaryDirectory()
-    train_file = os.path.join(tmp_dir.name, TRAIN_FILE)
-    test_file = os.path.join(tmp_dir.name, TEST_FILE)
-    df_train.to_csv(train_file, index=False)
-    df_test.to_csv(test_file, index=False)
+    #df_train.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
+    #df_test.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
+    train = df_train.sort_values(["userID"], axis=0, ascending=[True])
+    test = df_test.sort_values(["userID"], axis=0, ascending=[True])
+    test = test[df_test["userID"].isin(train["userID"].unique())]
+    test = test[test["itemID"].isin(train["itemID"].unique())]
+    train.to_csv(TRAIN_FILE, index=False)
+    test.to_csv(TEST_FILE, index=False)
     return NCFDataset(
-        train_file=train,
+        train_file=TRAIN_FILE,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
         col_rating=DEFAULT_RATING_COL,
