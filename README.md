@@ -89,7 +89,7 @@ To set up on your local machine:
 
 **NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
 
-**NOTE for DSVM Users** - Please follow the steps in the [Dependencies setup - Set PySpark environment variables on Linux or MacOS](SETUP.md#dependencies-setup) and [Troubleshooting for the DSVM](SETUP.md#troubleshooting-for-the-dsvm) sections if you encounter any issue.
+**NOTE for DSVM Users** - Please follow the steps in the [Dependencies setup - Set PySpark environment variables on Linux or macOS](SETUP.md#dependencies-setup) and [Troubleshooting for the DSVM](SETUP.md#troubleshooting-for-the-dsvm) sections if you encounter any issue.
 
 **DOCKER** - Another easy way to try the recommenders repository and get started quickly is to build [docker images](tools/docker/README.md) suitable for different environments. 
 
@@ -182,7 +182,7 @@ Smoke and integration tests are run daily on AzureML.
 
 ## Related projects
 
-- [Microsoft AI Github](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository.
+- [Microsoft AI GitHub](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository.
 - [NLP best practices](https://github.com/microsoft/nlp-recipes): Best practices and examples on NLP.
 - [Computer vision best practices](https://github.com/microsoft/computervision-recipes): Best practices and examples on computer vision.
 - [Forecasting best practices](https://github.com/microsoft/forecasting): Best practices and examples on time series forecasting.
