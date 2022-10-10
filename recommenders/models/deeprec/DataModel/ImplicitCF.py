@@ -70,7 +70,7 @@ class ImplicitCF(object):
             list: train and test pandas.DataFrame Dataset, which have been reindexed and filtered.
 
         """
-        df = train if test is None else train.append(test)
+        df = train if test is None else pd.concat([train, test],axis=0,ignore_index=True)
 
         if self.user_idx is None:
             user_idx = df[[self.col_user]].drop_duplicates().reindex()
