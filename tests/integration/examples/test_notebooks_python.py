@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import sys
 import pytest
 
 try:
@@ -309,3 +308,30 @@ def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
     ]
 
     assert results["auc_score"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.notebooks
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, algos, expected_values",
+    [
+        (
+            ["100k"],
+            ["svd", "sar", "bpr"],
+            dict(
+                eval_precision=0.131601,
+                eval_recall=0.038056,
+                eval_precision2=0.145599,
+                eval_recall2=0.051338,
+            ),
+        ),
+    ],
+)
+def test_benchmark_movielens_cpu(notebooks, output_notebook, kernel_name, size, algos, expected_values):
+    notebook_path = notebooks["benchmark_movielens"]
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(data_sizes=size, algorithms=algos),
+    )
