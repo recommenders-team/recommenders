@@ -17,7 +17,6 @@ DEFAULT_CUDA_PATH_LINUX = "/usr/local/cuda/version.txt"
 
 def get_number_gpus():
     """Get the number of GPUs in the system.
-    
     Returns:
         int: Number of GPUs.
     """
