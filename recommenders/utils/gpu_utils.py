@@ -17,13 +17,18 @@ DEFAULT_CUDA_PATH_LINUX = "/usr/local/cuda/version.txt"
 
 def get_number_gpus():
     """Get the number of GPUs in the system.
-
     Returns:
         int: Number of GPUs.
     """
     try:
-        return len(cuda.gpus)
-    except CudaSupportError:
+        import torch
+        return torch.cuda.device_count()
+    except (ImportError, ModuleNotFoundError):
+        pass
+    try:
+        import numba
+        return len(numba.cuda.gpus)
+    except Exception: # numba.cuda.cudadrv.error.CudaSupportError:
         return 0
 
 
@@ -61,37 +66,45 @@ def clear_memory_all_gpus():
         logger.info("No CUDA available")
 
 
-def get_cuda_version(unix_path=DEFAULT_CUDA_PATH_LINUX):
-    """Get CUDA version.
-
-    Args:
-        unix_path (str): Path to CUDA version file in Linux/Mac.
-
+def get_cuda_version():
+    """Get CUDA version
+    
     Returns:
         str: Version of the library.
     """
-    if sys.platform == "win32":
-        raise NotImplementedError("Implement this!")
-    elif sys.platform in ["linux", "darwin"]:
-        if os.path.isfile(unix_path):
-            with open(unix_path, "r") as f:
+    try:
+        import torch
+        return torch.version.cuda
+    except (ImportError, ModuleNotFoundError):
+        path = ""
+        if sys.platform == "win32":
+            candidate = (
+                "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v*\\version.txt"
+            )
+            path_list = glob.glob(candidate)
+            if path_list:
+                path = path_list[0]
+        elif sys.platform == "linux" or sys.platform == "darwin":
+            path = "/usr/local/cuda/version.txt"
+        else:
+            raise ValueError("Not in Windows, Linux or Mac")
+
+        if os.path.isfile(path):
+            with open(path, "r") as f:
                 data = f.read().replace("\n", "")
             return data
         else:
-            return "No CUDA in this machine"
-    else:
-        raise ValueError("Not in Windows, Linux or Mac")
+            return "Cannot find CUDA in this machine"
 
 
 def get_cudnn_version():
-    """Get the CuDNN version.
-
+    """Get the CuDNN version
+    
     Returns:
         str: Version of the library.
-
     """
 
-    def find_cudnn_in_headers(candidates):
+    def find_cudnn_in_headers(candiates):
         for c in candidates:
             file = glob.glob(c)
             if file:
@@ -111,21 +124,23 @@ def get_cudnn_version():
             else:
                 return "Cannot find CUDNN version"
         else:
-            return "No CUDNN in this machine"
-
-    if sys.platform == "win32":
-        candidates = [
-            "C:\\NVIDIA\\cuda\\include\\cudnn.h",
-            "C:\\Program Files\\NVIDIA GPU Computing Toolkit\\CUDA\\v*\\include\\cudnn.h",
-        ]
-    elif sys.platform == "linux":
-        candidates = [
-            "/usr/include/x86_64-linux-gnu/cudnn_v*.h",
-            "/usr/local/cuda/include/cudnn.h",
-            "/usr/include/cudnn.h",
-        ]
-    elif sys.platform == "darwin":
-        candidates = ["/usr/local/cuda/include/cudnn.h", "/usr/include/cudnn.h"]
-    else:
-        raise ValueError("Not in Windows, Linux or Mac")
-    return find_cudnn_in_headers(candidates)
+            return "Cannot find CUDNN version"
+            
+    try:
+        import torch
+        return torch.backends.cudnn.version()
+    except (ImportError, ModuleNotFoundError):
+        if sys.platform == "win32":
+            candidates = [r"C:\NVIDIA\cuda\include\cudnn.h"]
+        elif sys.platform == "linux":
+            candidates = [
+                "/usr/include/cudnn_version.h",
+                "/usr/include/x86_64-linux-gnu/cudnn_v[0-99].h",
+                "/usr/local/cuda/include/cudnn.h",
+                "/usr/include/cudnn.h",
+            ]
+        elif sys.platform == "darwin":
+            candidates = ["/usr/local/cuda/include/cudnn.h", "/usr/include/cudnn.h"]
+        else:
+            raise ValueError("Not in Windows, Linux or Mac")
+        return find_cudnn_in_headers(candidates)
