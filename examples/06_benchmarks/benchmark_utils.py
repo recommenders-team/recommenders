@@ -49,7 +49,7 @@ try:
         SparkRatingEvaluation,
         SparkRankingEvaluation,
     )
-except Exception:
+except (ImportError,NameError):
     pass  # skip this import if we are not in a Spark environment
 try:
     from recommenders.models.deeprec.deeprec_utils import prepare_hparams
