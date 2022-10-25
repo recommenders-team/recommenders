@@ -5,13 +5,20 @@ import os
 import numpy as np
 import pandas as pd
 from tempfile import TemporaryDirectory
-from pyspark.ml.recommendation import ALS
-from pyspark.sql.types import StructType, StructField
-from pyspark.sql.types import FloatType, IntegerType, LongType
-from fastai.collab import collab_learner, CollabDataBunch
 import surprise
 import cornac
+try:
+    from pyspark.ml.recommendation import ALS
+    from pyspark.sql.types import StructType, StructField
+    from pyspark.sql.types import FloatType, IntegerType, LongType
+except ImportError:
+    pass  # skip this import if we are not in a Spark environment
+try:
+    from fastai.collab import collab_learner, CollabDataBunch
+except ImportError:
+    pass  # skip this import if we are not in a GPU environment
 
+from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
     COL_DICT,
     DEFAULT_K,
@@ -22,27 +29,12 @@ from recommenders.utils.constants import (
     DEFAULT_TIMESTAMP_COL,
     SEED,
 )
-from recommenders.utils.timer import Timer
-from recommenders.utils.spark_utils import start_or_get_spark
 from recommenders.models.sar import SAR
-from recommenders.models.ncf.ncf_singlenode import NCF
-from recommenders.models.ncf.dataset import Dataset as NCFDataset
 from recommenders.models.surprise.surprise_utils import (
     predict,
     compute_ranking_predictions,
 )
-from recommenders.models.fastai.fastai_utils import (
-    cartesian_product,
-    score,
-)
 from recommenders.models.cornac.cornac_utils import predict_ranking
-from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
-from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-from recommenders.models.deeprec.deeprec_utils import prepare_hparams
-from recommenders.evaluation.spark_evaluation import (
-    SparkRatingEvaluation,
-    SparkRankingEvaluation,
-)
 from recommenders.evaluation.python_evaluation import (
     map_at_k,
     ndcg_at_k,
@@ -51,6 +43,26 @@ from recommenders.evaluation.python_evaluation import (
 )
 from recommenders.evaluation.python_evaluation import rmse, mae, rsquared, exp_var
 
+try:
+    from recommenders.utils.spark_utils import start_or_get_spark
+    from recommenders.evaluation.spark_evaluation import (
+        SparkRatingEvaluation,
+        SparkRankingEvaluation,
+    )
+except Exception:
+    pass  # skip this import if we are not in a Spark environment
+try:
+    from recommenders.models.deeprec.deeprec_utils import prepare_hparams
+    from recommenders.models.fastai.fastai_utils import (
+        cartesian_product,
+        score,
+    )
+    from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
+    from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+    from recommenders.models.ncf.ncf_singlenode import NCF
+    from recommenders.models.ncf.dataset import Dataset as NCFDataset
+except ImportError:
+    pass  # skip this import if we are not in a GPU environment
 
 # Helpers
 tmp_dir = TemporaryDirectory()
