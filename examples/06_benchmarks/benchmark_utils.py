@@ -247,8 +247,6 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
 
 
 def prepare_training_ncf(df_train, df_test):
-    #df_train.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
-    #df_test.sort_values(["userID"], axis=0, ascending=[True], inplace=True)
     train = df_train.sort_values(["userID"], axis=0, ascending=[True])
     test = df_test.sort_values(["userID"], axis=0, ascending=[True])
     test = test[df_test["userID"].isin(train["userID"].unique())]
