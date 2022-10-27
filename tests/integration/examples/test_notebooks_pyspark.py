@@ -64,6 +64,7 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel
     assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)
 
 
+@pytest.mark.spark
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
@@ -81,7 +82,7 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel
         ),
     ],
 )
-def test_benchmark_movielens_spark(notebooks, output_notebook, kernel_name, size, algos, expected_values):
+def test_benchmark_movielens_pyspark(notebooks, output_notebook, kernel_name, size, algos, expected_values):
     notebook_path = notebooks["benchmark_movielens"]
     pm.execute_notebook(
         notebook_path,
