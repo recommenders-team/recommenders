@@ -723,3 +723,31 @@ def test_sasrec_quickstart_integration(
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.notebooks
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, algos, expected_values",
+    [
+        (
+            ["100k"],
+            ["ncf", "fastai", "bivae", "lightgcn"],
+            dict(
+                eval_precision=0.131601,
+                eval_recall=0.038056,
+                eval_precision2=0.145599,
+                eval_recall2=0.051338,
+            ),
+        ),
+    ],
+)
+def test_benchmark_movielens_gpu(notebooks, output_notebook, kernel_name, size, algos, expected_values):
+    notebook_path = notebooks["benchmark_movielens"]
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(data_sizes=size, algorithms=algos),
+    )
