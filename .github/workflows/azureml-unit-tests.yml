@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get test group names
         id: get_test_groups
         uses: ./.github/actions/get-test-groups
@@ -58,7 +58,7 @@ jobs:
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Execute tests
         uses: ./.github/actions/azureml-test
         id: execute_tests
