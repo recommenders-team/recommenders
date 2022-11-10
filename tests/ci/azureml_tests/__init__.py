@@ -1,1 +1,1 @@
-# Creating a package to execute the AzureML tests
+# Neded to execute the AzureML tests
