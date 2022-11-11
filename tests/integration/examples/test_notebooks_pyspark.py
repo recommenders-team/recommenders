@@ -68,21 +68,16 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "size, algos, expected_values",
+    "size, algos, expected_values_ndcg",
     [
         (
             ["100k"],
             ["als"],
-            dict(
-                eval_precision=0.131601,
-                eval_recall=0.038056,
-                eval_precision2=0.145599,
-                eval_recall2=0.051338,
-            ),
+            [0]
         ),
     ],
 )
-def test_benchmark_movielens_pyspark(notebooks, output_notebook, kernel_name, size, algos, expected_values):
+def test_benchmark_movielens_pyspark(notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg):
     notebook_path = notebooks["benchmark_movielens"]
     pm.execute_notebook(
         notebook_path,
@@ -90,3 +85,9 @@ def test_benchmark_movielens_pyspark(notebooks, output_notebook, kernel_name, si
         kernel_name=kernel_name,
         parameters=dict(data_sizes=size, algorithms=algos),
     )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+    assert len(results["results"]) == 1
+    for i, value in enumerate(results["results"]):
+        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
