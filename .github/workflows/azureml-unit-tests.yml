@@ -6,16 +6,7 @@
 name: azureml-unit-tests
 
 on:
-  # pull_request_target allows execution of workflows in the context
-  # of a base repository. When a PR is raised from a forked repo, it
-  # gives the workflow access to AZUREML_TEST_CREDENTIALS, stored as
-  # a repo level secret, which is needed to trigger execution of unit
-  # tests on AzureML compute.
-  pull_request_target:
-    types:
-      - opened
-      - reopened
-      - synchronize
+  pull_request:
     branches:
       - 'staging'
       - 'main'
