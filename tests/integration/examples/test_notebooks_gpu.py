@@ -709,8 +709,6 @@ def test_sasrec_quickstart_integration(
         "model_name": model_name,
         "seed": seed,
     }
-
-    print("Executing notebook ... ")
     pm.execute_notebook(
         notebook_path,
         output_notebook,
