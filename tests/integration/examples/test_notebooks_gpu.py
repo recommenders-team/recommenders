@@ -14,7 +14,7 @@ except ImportError:
 from recommenders.utils.gpu_utils import get_number_gpus
 
 
-TOL = 0.5
+TOL = 0.1
 ABS_TOL = 0.05
 
 
@@ -727,21 +727,16 @@ def test_sasrec_quickstart_integration(
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "size, algos, expected_values",
+    "size, algos, expected_values_ndcg",
     [
         (
             ["100k"],
             ["ncf", "fastai", "bivae", "lightgcn"],
-            dict(
-                eval_precision=0.131601,
-                eval_recall=0.038056,
-                eval_precision2=0.145599,
-                eval_recall2=0.051338,
-            ),
+            [0.382793, 0.147583, 0.471722, 0.412664]
         ),
     ],
 )
-def test_benchmark_movielens_gpu(notebooks, output_notebook, kernel_name, size, algos, expected_values):
+def test_benchmark_movielens_gpu(notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg):
     notebook_path = notebooks["benchmark_movielens"]
     pm.execute_notebook(
         notebook_path,
@@ -749,3 +744,9 @@ def test_benchmark_movielens_gpu(notebooks, output_notebook, kernel_name, size, 
         kernel_name=kernel_name,
         parameters=dict(data_sizes=size, algorithms=algos),
     )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+    assert len(results["results"]) == 4
+    for i, value in enumerate(results["results"]):
+        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
