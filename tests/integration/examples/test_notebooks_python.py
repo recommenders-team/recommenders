@@ -313,21 +313,16 @@ def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "size, algos, expected_values",
+    "size, algos, expected_values_ndcg",
     [
         (
             ["100k"],
             ["svd", "sar", "bpr"],
-            dict(
-                eval_precision=0.131601,
-                eval_recall=0.038056,
-                eval_precision2=0.145599,
-                eval_recall2=0.051338,
-            ),
+            [0.094444, 0.393818, 0.444990]
         ),
     ],
 )
-def test_benchmark_movielens_cpu(notebooks, output_notebook, kernel_name, size, algos, expected_values):
+def test_benchmark_movielens_cpu(notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg):
     notebook_path = notebooks["benchmark_movielens"]
     pm.execute_notebook(
         notebook_path,
@@ -335,3 +330,9 @@ def test_benchmark_movielens_cpu(notebooks, output_notebook, kernel_name, size, 
         kernel_name=kernel_name,
         parameters=dict(data_sizes=size, algorithms=algos),
     )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+    assert len(results["results"]) == 3
+    for i, value in enumerate(results["results"]):
+        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
