@@ -733,7 +733,7 @@ def test_sasrec_quickstart_integration(
     [
         (
             ["100k"],
-            ["lightgcn"], #["ncf", "fastai", "bivae", "lightgcn"],
+            ["ncf", "fastai", "bivae", "lightgcn"],
             dict(
                 eval_precision=0.131601,
                 eval_recall=0.038056,
