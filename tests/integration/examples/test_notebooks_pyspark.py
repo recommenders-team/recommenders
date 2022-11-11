@@ -73,7 +73,7 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel
         (
             ["100k"],
             ["als"],
-            [0]
+            [0.035812]
         ),
     ],
 )
