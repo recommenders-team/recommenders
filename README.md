@@ -2,15 +2,13 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (July, 2022)
+## What's New (November, 2022)
 
-We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
+We became the top rated machine learning repository of Microsoft!
 
-We have introduced a new way of testing our repository using [AzureML](https://azure.microsoft.com/en-us/services/machine-learning/). With AzureML we are able to distribute our tests to different machines and run them in parallel. This allows us to test our repository on a wider range of machines and provides us with a much faster test cycle. Our total computation time went from around 9h to 35min, and we were able to reduce the costs by half. See more details [here](tests/README.md).
+In [this page](https://github.com/orgs/microsoft/repositories?q=&type=all&language=&sort=stargazers) we can see the top rated repositories of Microsoft. On November 10th, Recommenders had 14403 stars, surpassing for the first time LightGBM, which had 14390 stars. CNTK, also related to machine learning but not supported anymore, had over 17,000 stars. Globally, the most popular repository of Microsoft is VSCode with over 130,000 stars.
 
-We also made other improvements like faster evaluation metrics and improving SAR algorithm. 
-
-Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
+Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip: `pip install recommenders`.
 
 Here you can find the PyPi page: https://pypi.org/project/recommenders/
 

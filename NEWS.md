@@ -1,5 +1,11 @@
 # What's New
 
+# Update November, 2022
+
+We became the top rated machine learning repository of Microsoft!
+
+In [this page](https://github.com/orgs/microsoft/repositories?q=&type=all&language=&sort=stargazers) we can see the top rated repositories of Microsoft. On November 10th, Recommenders had 14403 stars, surpassing for the first time LightGBM, which had 14390 stars. CNTK, also related to machine learning but not supported anymore, had over 17,000 stars. Globally, the most popular repository of Microsoft is VSCode with over 130,000 stars.
+
 ## Update July, 2022
 
 We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
