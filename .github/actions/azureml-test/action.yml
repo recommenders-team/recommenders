@@ -69,7 +69,7 @@ runs:
   using: "composite"
   steps:
     - name: Setup python
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with: 
         python-version: "3.8"
     - name: Install azureml-core and azure-cli on a GitHub hosted server
