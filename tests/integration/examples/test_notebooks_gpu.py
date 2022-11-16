@@ -197,11 +197,7 @@ def test_xdeepfm_integration(
     ]
 
     for key, value in expected_values.items():
-        assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
-        assert results[key]["logloss"] == pytest.approx(
-            value["logloss"], rel=TOL, abs=ABS_TOL
-        )
-
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
