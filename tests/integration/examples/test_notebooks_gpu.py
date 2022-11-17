@@ -213,7 +213,7 @@ def test_xdeepfm_integration(
                 "rmse": 0.924958,
                 "mae": 0.741425,
                 "rsquared": 0.262963,
-                "exp_var": 0.322202,
+                "exp_var": 0.268413,
                 "ndcg_at_k": 0.118114,
                 "map_at_k": 0.0139213,
                 "precision_at_k": 0.107087,
