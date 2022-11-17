@@ -164,15 +164,11 @@ def test_fastai_integration(
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "syn_epochs, criteo_epochs, expected_values, seed",
+    "epochs, expected_values, seed",
     [
         (
-            15,
-            10,
-            {
-                "res_syn": {"auc": 0.9716, "logloss": 0.699},
-                "res_real": {"auc": 0.749, "logloss": 0.4926},
-            },
+            5,
+            {"auc": 0.742, "logloss": 0.4964},
             42,
         )
     ],
@@ -181,8 +177,7 @@ def test_xdeepfm_integration(
     notebooks,
     output_notebook,
     kernel_name,
-    syn_epochs,
-    criteo_epochs,
+    epochs,
     expected_values,
     seed,
 ):
@@ -192,10 +187,8 @@ def test_xdeepfm_integration(
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
-            EPOCHS_FOR_SYNTHETIC_RUN=syn_epochs,
-            EPOCHS_FOR_CRITEO_RUN=criteo_epochs,
-            BATCH_SIZE_SYNTHETIC=1024,
-            BATCH_SIZE_CRITEO=1024,
+            EPOCHS=epochs,
+            BATCH_SIZE=1024,
             RANDOM_SEED=seed,
         ),
     )
@@ -204,11 +197,7 @@ def test_xdeepfm_integration(
     ]
 
     for key, value in expected_values.items():
-        assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
-        assert results[key]["logloss"] == pytest.approx(
-            value["logloss"], rel=TOL, abs=ABS_TOL
-        )
-
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
