@@ -203,15 +203,16 @@ def test_xdeepfm_integration(
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "size, steps, expected_values, seed",
+    "size, steps, batch_size, expected_values, seed",
     [
         (
-            "1m",
+            "100k",
             10000,
+            32,
             {
                 "rmse": 0.924958,
                 "mae": 0.741425,
-                "rsquared": 0.316534,
+                "rsquared": 0.262963,
                 "exp_var": 0.322202,
                 "ndcg_at_k": 0.118114,
                 "map_at_k": 0.0139213,
@@ -223,13 +224,14 @@ def test_xdeepfm_integration(
     ],
 )
 def test_wide_deep_integration(
-    notebooks, output_notebook, kernel_name, size, steps, expected_values, seed, tmp
+    notebooks, output_notebook, kernel_name, size, steps, batch_size, expected_values, seed, tmp
 ):
     notebook_path = notebooks["wide_deep"]
 
     params = {
         "MOVIELENS_DATA_SIZE": size,
         "STEPS": steps,
+        "BATCH_SIZE": batch_size,
         "EVALUATE_WHILE_TRAINING": False,
         "MODEL_DIR": tmp,
         "EXPORT_DIR_BASE": tmp,
