@@ -13,14 +13,11 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 markers = [
-    "deeprec: tests for deeprec model",
-    "experimental",
+    "experimental: tests that will not be executed and may need extra dependencies",
     "flaky: flaky tests that can fail unexpectedly",
     "gpu: tests running on GPU",
     "integration: integration tests",
     "notebooks: tests for notebooks",
-    "sequential",
     "smoke: smoke tests",
     "spark: tests that requires Spark",
-    "vw: tests for vowpal wabbit",
 ]
