@@ -20,7 +20,7 @@ markers = [
     "integration: integration tests",
     "notebooks: tests for notebooks",
     "sequential",
-    "smoke: smoke tests"
+    "smoke: smoke tests",
     "spark: tests that requires Spark",
     "vw: tests for vowpal wabbit",
 ]

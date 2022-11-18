@@ -59,9 +59,14 @@ You want to make sure that all your code works before you submit it to the repos
 
 * It is better to create multiple small tests than one large test that checks all the code.
 * Use `@pytest.fixture` to create data in your tests.
-* Use the mark `@pytest.mark.gpu` if you want the test to be executed in a GPU environment. Use `@pytest.mark.spark` if you want the test to be executed in a Spark environment.
-* Use `@pytest.mark.smoke` and `@pytest.mark.integration` to mark the tests as smoke tests and integration tests.
+* Use the mark `@pytest.mark.gpu` if you want the test to be executed
+  in a GPU environment. Use `@pytest.mark.spark` if you want the test
+  to be executed in a Spark environment.
+* Use `@pytest.mark.smoke` and `@pytest.mark.integration` to mark the
+  tests as smoke tests and integration tests.
 * Use `@pytest.mark.notebooks` if you are testing a notebook.
+* Use `@pytest.mark.deeprec` to mark the tests for deeprec model.
+* Use `@pytest.mark.vw` to mark the tests for vowpal wabbit.
 * Avoid using `is` in the asserts, instead use the operator `==`.
 * Follow the pattern `assert computation == value`, for example:
 ```python
