@@ -65,8 +65,6 @@ You want to make sure that all your code works before you submit it to the repos
 * Use `@pytest.mark.smoke` and `@pytest.mark.integration` to mark the
   tests as smoke tests and integration tests.
 * Use `@pytest.mark.notebooks` if you are testing a notebook.
-* Use `@pytest.mark.deeprec` to mark the tests for deeprec model.
-* Use `@pytest.mark.vw` to mark the tests for vowpal wabbit.
 * Avoid using `is` in the asserts, instead use the operator `==`.
 * Follow the pattern `assert computation == value`, for example:
 ```python
