@@ -38,7 +38,7 @@ In the following figure we show a workflow on how the tests are executed via Azu
 
 GitHub workflows `azureml-unit-tests.yml`, `azureml-cpu-nightly.yml`, `azureml-gpu-nightly.yml` and `azureml-spark-nightly` located in [.github/workflows/](../.github/workflows/) are used to run the tests on AzureML. The parameters to configure AzureML are defined in the workflow yml files. The tests are divided into groups and each workflow triggers these test groups in parallel, which significantly reduces end-to-end execution time. 
 
-There are three scripts used with each workflow, all of them are located in [test/ci/azureml_tests](./ci/azureml_tests/):
+There are three scripts used with each workflow, all of them are located in [ci/azureml_tests](./ci/azureml_tests/):
 
 * `submit_groupwise_azureml_pytest.py`: this script uses parameters in the workflow yml to set up the AzureML environment for testing using the AzureML SDK.
 * `run_groupwise_pytest.py`: this script uses pytest to run the tests of the libraries and notebooks. This script runs in an AzureML workspace with the environment created by the script above.
@@ -59,8 +59,11 @@ You want to make sure that all your code works before you submit it to the repos
 
 * It is better to create multiple small tests than one large test that checks all the code.
 * Use `@pytest.fixture` to create data in your tests.
-* Use the mark `@pytest.mark.gpu` if you want the test to be executed in a GPU environment. Use `@pytest.mark.spark` if you want the test to be executed in a Spark environment.
-* Use `@pytest.mark.smoke` and `@pytest.mark.integration` to mark the tests as smoke tests and integration tests.
+* Use the mark `@pytest.mark.gpu` if you want the test to be executed
+  in a GPU environment. Use `@pytest.mark.spark` if you want the test
+  to be executed in a Spark environment.
+* Use `@pytest.mark.smoke` and `@pytest.mark.integration` to mark the
+  tests as smoke tests and integration tests.
 * Use `@pytest.mark.notebooks` if you are testing a notebook.
 * Avoid using `is` in the asserts, instead use the operator `==`.
 * Follow the pattern `assert computation == value`, for example:
@@ -111,7 +114,7 @@ The way papermill works to inject parameters is very simple, it generates a copy
 
 The second modification that we need to do to the notebook is to record the metrics we want to test using `sb.glue("output_variable", python_variable_name)`. We normally use the last cell of the notebook to record all the metrics. These are the metrics that we are going to control in the smoke and integration tests.
 
-This is an example on how we do a smoke test. The complete code can be found in [tests/smoke/examples/test_notebooks_python.py](tests/smoke/examples/test_notebooks_python.py):
+This is an example on how we do a smoke test. The complete code can be found in [smoke/examples/test_notebooks_python.py](./smoke/examples/test_notebooks_python.py):
 
 ```python
 import pytest
@@ -155,7 +158,7 @@ To add a new test to the AzureML pipeline, add the test path to an appropriate t
 
 Tests in `group_cpu_xxx` groups are executed on a CPU-only AzureML compute cluster node. Tests in `group_gpu_xxx` groups are executed on a GPU-enabled AzureML compute cluster node with GPU related dependencies added to the AzureML run environment. Tests in `group_pyspark_xxx` groups are executed on a CPU-only AzureML compute cluster node, with the PySpark related dependencies added to the AzureML run environment. 
 
-It's important to keep in mind while adding a new test that the runtime of the test group should not exceed the specified threshold in [test_groups.py](tests/ci/azureml_tests/test_groups.py).
+It's important to keep in mind while adding a new test that the runtime of the test group should not exceed the specified threshold in [test_groups.py](./ci/azureml_tests/test_groups.py).
 
 Example of adding a new test:
 

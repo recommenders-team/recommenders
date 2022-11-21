@@ -44,7 +44,7 @@ nightly_test_groups = {
         "tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke",  # 16.62s
         "tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration",  # 165.72s
     ],
-    "group_cpu_002": [  # Total group time: 1742.32s (didn't add xlearn)
+    "group_cpu_002": [  # Total group time: 1800.32s (didn't add xlearn)
         #
         "tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke",  # 15.98s
         "tests/integration/examples/test_notebooks_python.py::test_baseline_deep_dive_integration",  # 170.73s
@@ -54,6 +54,7 @@ nightly_test_groups = {
         #
         "tests/integration/examples/test_notebooks_python.py::test_geoimc_integration",  # 1006.19s
         #
+        "tests/integration/examples/test_notebooks_python.py::test_benchmark_movielens_cpu", #58s
         # FIXME: Add experimental tests in a later iteration
         # "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration",  # 255.73s
     ],
@@ -119,15 +120,17 @@ nightly_test_groups = {
         "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
         "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
     ],
-    "group_gpu_007": [  # Total group time: 620.89s
+    "group_gpu_007": [  # Total group time: 846.89s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke",  # 620.13s
+        #
+        "tests/integration/examples/test_notebooks_gpu.py::test_benchmark_movielens_gpu", # 226s
         # FIXME: Reduce test time https://github.com/microsoft/recommenders/issues/1731
         # "tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration",  # 2033.85s
         # FIXME: https://github.com/microsoft/recommenders/issues/1716
         # "tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration",  # 448.06s + 614.69s
     ],
-    "group_spark_001": [  # Total group time: 845.16s
+    "group_spark_001": [  # Total group time: 987.16s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 25.58s + 101.99s + 139.23s
         #
@@ -137,6 +140,7 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke",  # 49.53s
         "tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration",  # 110.58s
+        "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark", #142
     ],
 }
 

@@ -301,25 +301,25 @@ class LightGCN(object):
             if metric == "map":
                 ret.append(
                     map_at_k(
-                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                        self.data.test, topk_scores, k=self.top_k
                     )
                 )
             elif metric == "ndcg":
                 ret.append(
                     ndcg_at_k(
-                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                        self.data.test, topk_scores, k=self.top_k
                     )
                 )
             elif metric == "precision":
                 ret.append(
                     precision_at_k(
-                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                        self.data.test, topk_scores, k=self.top_k
                     )
                 )
             elif metric == "recall":
                 ret.append(
                     recall_at_k(
-                        self.data.test, topk_scores, relevancy_method=None, k=self.top_k
+                        self.data.test, topk_scores, k=self.top_k
                     )
                 )
         return ret

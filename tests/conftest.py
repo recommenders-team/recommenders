@@ -335,6 +335,9 @@ def notebooks():
         "nni_tuning_svd": os.path.join(
             folder_notebooks, "04_model_select_and_optimize", "nni_surprise_svd.ipynb"
         ),
+        "benchmark_movielens": os.path.join(
+            folder_notebooks, "06_benchmarks", "movielens.ipynb"
+        ),
     }
     return paths
 

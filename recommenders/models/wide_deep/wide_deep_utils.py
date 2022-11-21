@@ -161,11 +161,15 @@ def build_model(
     Returns:
         tf.estimator.Estimator: Model
     """
-    # TensorFlow training log frequency setup
+    gpu_config = tf.compat.v1.ConfigProto()
+    gpu_config.gpu_options.allow_growth = True # dynamic memory allocation
+
+    # TensorFlow training setup
     config = tf.estimator.RunConfig(
         tf_random_seed=seed,
         log_step_count_steps=log_every_n_iter,
         save_checkpoints_steps=save_checkpoints_steps,
+        session_config=gpu_config,
     )
 
     if len(wide_columns) > 0 and len(deep_columns) == 0:

@@ -14,7 +14,7 @@ except ImportError:
 from recommenders.utils.gpu_utils import get_number_gpus
 
 
-TOL = 0.5
+TOL = 0.1
 ABS_TOL = 0.05
 
 
@@ -164,15 +164,11 @@ def test_fastai_integration(
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "syn_epochs, criteo_epochs, expected_values, seed",
+    "epochs, expected_values, seed",
     [
         (
-            15,
-            10,
-            {
-                "res_syn": {"auc": 0.9716, "logloss": 0.699},
-                "res_real": {"auc": 0.749, "logloss": 0.4926},
-            },
+            5,
+            {"auc": 0.742, "logloss": 0.4964},
             42,
         )
     ],
@@ -181,8 +177,7 @@ def test_xdeepfm_integration(
     notebooks,
     output_notebook,
     kernel_name,
-    syn_epochs,
-    criteo_epochs,
+    epochs,
     expected_values,
     seed,
 ):
@@ -192,10 +187,8 @@ def test_xdeepfm_integration(
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
-            EPOCHS_FOR_SYNTHETIC_RUN=syn_epochs,
-            EPOCHS_FOR_CRITEO_RUN=criteo_epochs,
-            BATCH_SIZE_SYNTHETIC=1024,
-            BATCH_SIZE_CRITEO=1024,
+            EPOCHS=epochs,
+            BATCH_SIZE=1024,
             RANDOM_SEED=seed,
         ),
     )
@@ -204,26 +197,23 @@ def test_xdeepfm_integration(
     ]
 
     for key, value in expected_values.items():
-        assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
-        assert results[key]["logloss"] == pytest.approx(
-            value["logloss"], rel=TOL, abs=ABS_TOL
-        )
-
+        assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
 @pytest.mark.integration
 @pytest.mark.parametrize(
-    "size, steps, expected_values, seed",
+    "size, steps, batch_size, expected_values, seed",
     [
         (
-            "1m",
+            "100k",
             10000,
+            32,
             {
                 "rmse": 0.924958,
                 "mae": 0.741425,
-                "rsquared": 0.316534,
-                "exp_var": 0.322202,
+                "rsquared": 0.262963,
+                "exp_var": 0.268413,
                 "ndcg_at_k": 0.118114,
                 "map_at_k": 0.0139213,
                 "precision_at_k": 0.107087,
@@ -234,13 +224,14 @@ def test_xdeepfm_integration(
     ],
 )
 def test_wide_deep_integration(
-    notebooks, output_notebook, kernel_name, size, steps, expected_values, seed, tmp
+    notebooks, output_notebook, kernel_name, size, steps, batch_size, expected_values, seed, tmp
 ):
     notebook_path = notebooks["wide_deep"]
 
     params = {
         "MOVIELENS_DATA_SIZE": size,
         "STEPS": steps,
+        "BATCH_SIZE": batch_size,
         "EVALUATE_WHILE_TRAINING": False,
         "MODEL_DIR": tmp,
         "EXPORT_DIR_BASE": tmp,
@@ -709,8 +700,6 @@ def test_sasrec_quickstart_integration(
         "model_name": model_name,
         "seed": seed,
     }
-
-    print("Executing notebook ... ")
     pm.execute_notebook(
         notebook_path,
         output_notebook,
@@ -723,3 +712,32 @@ def test_sasrec_quickstart_integration(
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+
+
+@pytest.mark.gpu
+@pytest.mark.notebooks
+@pytest.mark.integration
+@pytest.mark.parametrize(
+    "size, algos, expected_values_ndcg",
+    [
+        (
+            ["100k"],
+            ["ncf", "fastai", "bivae", "lightgcn"],
+            [0.382793, 0.147583, 0.471722, 0.412664]
+        ),
+    ],
+)
+def test_benchmark_movielens_gpu(notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg):
+    notebook_path = notebooks["benchmark_movielens"]
+    pm.execute_notebook(
+        notebook_path,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(data_sizes=size, algorithms=algos),
+    )
+    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
+        "data"
+    ]
+    assert len(results["results"]) == 4
+    for i, value in enumerate(results["results"]):
+        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
