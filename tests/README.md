@@ -39,7 +39,7 @@ The tests in this repository are divided into the following categories:
 
 For more information, see a [quick introduction testing](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
-## Scalable test infrastructure using AzureML
+## Scalable test infrastructure with AzureML
 
 AzureML is used to run the existing unit, smoke and integration tests. AzureML benefits include being able to run the tests in parallel, managing the compute environment by automatically turning it on/off, automatic logging of artifacts from test runs and more. GitHub is used as a control plane to configure and run the tests on AzureML.  
 
