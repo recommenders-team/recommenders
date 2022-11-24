@@ -11,6 +11,7 @@ In this document we show our test infrastructure and how to contribute tests to 
     - [How to create tests for the Recommenders library](#how-to-create-tests-for-the-recommenders-library)
     - [How to create tests for the notebooks](#how-to-create-tests-for-the-notebooks)
     - [How to add tests to the AzureML pipeline](#how-to-add-tests-to-the-azureml-pipeline)
+    - [Setup GitHub Actions with AzureML compute clusters](#setup-github-actions-with-azureml-compute-clusters)
 - [How to execute tests in your local environment](#how-to-execute-tests-in-your-local-environment)
 
 ## Test workflows
@@ -190,6 +191,21 @@ Example of adding a new test:
 ],
 ```
 3. If all the groups of your environment are above the threshold, add a new group.
+
+### Setup GitHub Actions with AzureML compute clusters
+
+In this section we explain how to create the AzureML infrastructure to run the tests in GitHub Actions.
+
+In order to execute the tests in Recommenders, we need two types of virtual machines: ones without GPU, to execute the CPU and Spark tests, and ones with GPU, to execute the GPU tests. Therefore, the first step is to request enough quota for your subscription.
+
+Then, follow the steps below to create the AzureML infrastructure:
+
+1. Create a new AzureML workspace.
+    - Name: azureml-test-workspace
+    - Resource group: recommenders_project_resources
+    - Location: *Make sure you have enough quota in the location you choose*
+
+
 
 ## How to execute tests in your local environment
 
