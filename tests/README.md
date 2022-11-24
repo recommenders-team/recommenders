@@ -204,7 +204,9 @@ Then, follow the steps below to create the AzureML infrastructure:
     - Name: azureml-test-workspace
     - Resource group: recommenders_project_resources
     - Location: *Make sure you have enough quota in the location you choose*
-
+2. Create two new clusters: `reco-cpu-cluster` and `reco-gpu-cluster`. Go to compute, then new.
+    - Select the VM. Anything above 64GB of RAM, and 16 cores should be fine.
+    - In advanced settings, enable idle shutdown after 30 minutes.
 
 
 ## How to execute tests in your local environment
