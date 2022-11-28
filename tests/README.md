@@ -201,8 +201,8 @@ In order to execute the tests in Recommenders, we need two types of virtual mach
 Then, follow the steps below to create the AzureML infrastructure:
 
 1. Create a new AzureML workspace.
-    - Name: azureml-test-workspace
-    - Resource group: recommenders_project_resources
+    - Name: `azureml-test-workspace`
+    - Resource group: `recommenders_project_resources`
     - Location: *Make sure you have enough quota in the location you choose*
 2. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
     - Select the CPU VM base. Anything above 32GB of RAM, and 8 cores should be fine.
