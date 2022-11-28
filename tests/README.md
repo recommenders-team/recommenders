@@ -209,7 +209,7 @@ Then, follow the steps below to create the AzureML infrastructure:
     - Select the GPU VM base. Anything above 56GB of RAM, and 6 cores, and an NVIDIA K80 should be fine.
 3. Add the subscription ID to GitHub action secrets [here](https://github.com/microsoft/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
 4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
-5. Create a Service Principal: `az ad sp create-for-rbac --name "CICD" --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --sdk-auth`. Make sure you have installed the [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli) and you are logged in.
+5. Create a Service Principal: `az ad sp create-for-rbac --name "CICD" --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --sdk-auth`.
 
 ## How to execute tests in your local environment
 
