@@ -157,7 +157,16 @@ jobs:
           for file in {*.jar,*.pom}; do gpg -ab "${file}"; done
 
           # bundle
-          jar cvf sarplus-${SARPLUS_VERSION}-bundle_2.12-spark-${SPARK_VERSION}.jar sarplus_*.jar sarplus_*.pom sarplus_*.asc
+          [ '${{ matrix.spark-version }}' == '3.1.2' ] \
+            && jar cvf sarplus-${SARPLUS_VERSION}-bundle_2.12-spark-${SPARK_VERSION}.jar \
+                       sarplus_*.jar \
+                       sarplus_*.pom \
+                       sarplus_*.asc
+          [ '${{ matrix.spark-version }}' == '3.2.1' ] \
+            && jar cvf sarplus-spark-3.2-plus-bundle_2.12-${SARPLUS_VERSION}.jar \
+                       sarplus-spark*.jar \
+                       sarplus-spark*.pom \
+                       sarplus-spark*.asc
 
           # set sarplus_version for the artifact upload step
           echo "sarplus_version=${SARPLUS_VERSION}" >> $GITHUB_ENV
