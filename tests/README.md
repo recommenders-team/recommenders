@@ -210,6 +210,7 @@ Then, follow the steps below to create the AzureML infrastructure:
 3. Add the subscription ID to GitHub action secrets [here](https://github.com/microsoft/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
 4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
 5. Create a Service Principal: `az ad sp create-for-rbac --name "CICD" --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --sdk-auth`.
+6. Add the output from the Service Principal (should be a JSON blob) as an action secret `AZUREML_TEST_CREDENTIALS`.
 
 ## How to execute tests in your local environment
 
