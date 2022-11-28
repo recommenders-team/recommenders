@@ -2,6 +2,18 @@
 
 In this document we show our test infrastructure and how to contribute tests to the repository.
 
+## Table of Contents
+
+- [Test workflows](#test-workflows)
+- [Categories of tests](#categories-of-tests)
+- [Scalable test infrastructure with AzureML](#scalable-test-infrastructure-with-azureml)
+- [How to contribute tests to the repository](#how-to-contribute-tests-to-the-repository)
+    - [How to create tests for the Recommenders library](#how-to-create-tests-for-the-recommenders-library)
+    - [How to create tests for the notebooks](#how-to-create-tests-for-the-notebooks)
+    - [How to add tests to the AzureML pipeline](#how-to-add-tests-to-the-azureml-pipeline)
+    - [Setup GitHub Actions with AzureML compute clusters](#setup-github-actions-with-azureml-compute-clusters)
+- [How to execute tests in your local environment](#how-to-execute-tests-in-your-local-environment)
+
 ## Test workflows
 
 All the tests in this repository are part of the following two workflows: the PR gate and the nightly builds.
@@ -28,7 +40,7 @@ The tests in this repository are divided into the following categories:
 
 For more information, see a [quick introduction testing](https://miguelgfierro.com/blog/2018/a-beginners-guide-to-python-testing/).
 
-## Test infrastructure using AzureML
+## Scalable test infrastructure with AzureML
 
 AzureML is used to run the existing unit, smoke and integration tests. AzureML benefits include being able to run the tests in parallel, managing the compute environment by automatically turning it on/off, automatic logging of artifacts from test runs and more. GitHub is used as a control plane to configure and run the tests on AzureML.  
 
@@ -44,7 +56,7 @@ There are three scripts used with each workflow, all of them are located in [ci/
 * `run_groupwise_pytest.py`: this script uses pytest to run the tests of the libraries and notebooks. This script runs in an AzureML workspace with the environment created by the script above.
 * `test_groups.py`: this script defines the groups of tests. If the tests are part of the unit tests, the total compute time of each group should be less than 15min. If the tests are part of the nightly builds, the total time of each group should be less than 35min.
 
-## How to create tests
+## How to contribute tests to the repository
 
 In this section we show how to create tests and add them to the test pipeline. The steps you need to follow are:
 
@@ -53,7 +65,7 @@ In this section we show how to create tests and add them to the test pipeline. T
 1. If you have written a notebook, design the notebook tests and check that the metrics they return is what you expect.
 1. Add the tests to the AzureML pipeline in the corresponding [test group](./ci/azureml_tests/test_groups.py). **Please note that if you don't add your tests to the pipeline, they will not be executed.**
 
-### How to create tests for the library code
+### How to create tests for the Recommenders library
 
 You want to make sure that all your code works before you submit it to the repository. Here are some guidelines for creating the unit tests:
 
@@ -76,11 +88,11 @@ assert rmse(rating_true, rating_true) == 0
 assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
 ```
 
-### How to create tests on notebooks with Papermill and Scrapbook
+### How to create tests for the notebooks
 
 In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) and [Scrapbook](https://nteract-scrapbook.readthedocs.io/en/latest/) in unit, smoke and integration tests. Papermill is a tool that enables you to parametrize and execute notebooks. Scrapbook is a library for recording a notebook’s data values and generate visual content as “scraps”. These recorded scraps can be read at a future time. We use Scrapbook to collect the metrics in the notebooks.
 
-#### Developing unit tests with Papermill and Scrapbook
+#### Developing PR gate tests with Papermill and Scrapbook
 
 Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next, we show just one of the tests that we have in [tests/unit/examples/test_notebooks_python.py](unit/examples/test_notebooks_python.py).
 
@@ -104,9 +116,9 @@ For executing this test, first make sure you are in the correct environment as d
 pytest tests/unit/test_notebooks_python.py::test_sar_single_node_runs
 ```
 
-#### Developing smoke and integration tests with Papermill and scrapbook
+#### Developing nightly tests with Papermill and Scrapbook
 
-A more advanced option is used in the smoke and integration tests, where we not only execute the notebook, but inject parameters and recover the computed metrics.
+A more advanced option is used in the nightly tests, where we not only execute the notebook, but inject parameters and recover the computed metrics.
 
 The first step is to tag the parameters that we are going to inject. For it we need to modify the notebook. We will add a tag with the name `parameters`. To add a tag, go the notebook menu, View, Cell Toolbar and Tags. A tag field will appear on every cell. The variables in the cell tagged with `parameters` can be injected. The typical variables that we inject are `MOVIELENS_DATA_SIZE`, `EPOCHS` and other configuration variables for our algorithms.
 
@@ -180,6 +192,27 @@ Example of adding a new test:
 ```
 3. If all the groups of your environment are above the threshold, add a new group.
 
+### Setup GitHub Actions with AzureML compute clusters
+
+In this section we explain how to create the AzureML infrastructure to run the tests in GitHub Actions.
+
+In order to execute the tests in Recommenders, we need two types of virtual machines: ones without GPU, to execute the CPU and Spark tests, and ones with GPU, to execute the GPU tests. Therefore, the first step is to request enough quota for your subscription.
+
+Then, follow the steps below to create the AzureML infrastructure:
+
+1. Create a new AzureML workspace.
+    - Name: `azureml-test-workspace`
+    - Resource group: `recommenders_project_resources`
+    - Location: *Make sure you have enough quota in the location you choose*
+2. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
+    - Select the CPU VM base. Anything above 32GB of RAM, and 8 cores should be fine.
+    - Select the GPU VM base. Anything above 56GB of RAM, and 6 cores, and an NVIDIA K80 should be fine.
+3. Add the subscription ID to GitHub action secrets [here](https://github.com/microsoft/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
+4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
+5. Select your subscription: `az account set -s $AZURE_SUBSCRIPTION_ID`.
+5. Create a Service Principal: `az ad sp create-for-rbac --name "recommenders-cicd" --role contributor --scopes /subscriptions/$AZURE_SUBSCRIPTION_ID --sdk-auth`.
+6. Add the output from the Service Principal (should be a JSON blob) as an action secret `AZUREML_TEST_CREDENTIALS`.
+
 ## How to execute tests in your local environment
 
 To manually execute the tests in the CPU, GPU or Spark environments, first **make sure you are in the correct environment as described in the [SETUP.md](../SETUP.md)**.
@@ -216,6 +249,10 @@ For executing the PySpark unit tests for the utilities:
 For executing the PySpark unit tests for the notebooks:
 
     pytest tests/unit -m "notebooks and spark and not gpu" --durations 0
+
+*NOTE: Adding `--durations 0` shows the computation time of all tests.*
+
+*NOTE: Adding `--disable-warnings` will disable the warning messages.*
 
 </details>
 
@@ -264,6 +301,8 @@ For executing the PySpark integration tests:
     pytest tests/integration -m "integration and spark and not gpu" --durations 0
 
 *NOTE: Adding `--durations 0` shows the computation time of all tests.*
+
+*NOTE: Adding `--disable-warnings` will disable the warning messages.*
 
 </details>
 
