@@ -496,7 +496,7 @@ if __name__ == "__main__":
         experiment=experiment,
         test_group=args.testgroup,
         test_kind=args.testkind,
-        pytest_args=args.pytestargs,
+        pytestargs=args.pytestargs,
     )
 
     # add helpful information to experiment on Azure
