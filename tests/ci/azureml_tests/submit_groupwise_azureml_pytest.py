@@ -137,7 +137,7 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
             vm_size=vm_size, max_nodes=max_nodes
         )
         cpu_cluster = ComputeTarget.create(workspace, cluster_name, compute_config)
-    cpu_cluster.wait_for_completion(show_output=True)
+    cpu_cluster.wait_for_completion(show_output=False)
     return cpu_cluster
 
 
@@ -240,23 +240,24 @@ def create_experiment(workspace, experiment_name):
     return exp
 
 
-def submit_experiment_to_azureml(test, run_config, experiment, test_group, test_kind):
+def submit_experiment_to_azureml(
+    test, run_config, experiment, test_group, test_kind, pytestargs
+):
 
     """
     Submitting the experiment to AzureML actually runs the script.
 
     Args:
-        test         (str) - pytest script, folder/test
-                             such as ./tests/ci/run_pytest.py
-        test_folder  (str) - folder where tests to run are stored,
-                             like ./tests/unit
-        test_markers (str) - test markers used by pytest
-                             "not notebooks and not spark and not gpu"
-        run_config - environment configuration
-        experiment - instance of an Experiment, a collection of
+        test (str): Pytest script, folder/test such as ./tests/ci/run_pytest.py
+        run_config (obj): Environment configuration
+        experiment (obj): Instance of an Experiment, a collection of
                      trials where each trial is a run.
+        test_group (str): Name of the test group.
+        test_kind (str): Name of the test kind, such as nightly or unit.
+        pytestargs (str): Pytest arguments.
+
     Return:
-          run : AzureML run or trial
+          obj: AzureML run or trial
     """
 
     project_folder = "."
@@ -270,6 +271,8 @@ def submit_experiment_to_azureml(test, run_config, experiment, test_group, test_
             test_group,
             "--testkind",
             test_kind,
+            "--pytestargs",
+            pytestargs,
         ],
         # docker_runtime_config=dc
     )
