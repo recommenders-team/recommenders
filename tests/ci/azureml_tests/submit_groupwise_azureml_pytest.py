@@ -25,6 +25,7 @@ Args:
     --reponame    (str): the Github repository name
     --branch      (str): the branch being run
                     It is also possible to put any text string in these.
+
 Example:
     Usually, this script is run by a DevOps pipeline. It can also be
     run from cmd line.
@@ -96,6 +97,7 @@ def setup_workspace(
             # create_resource_group=True,
             location=location,
             auth=cli_auth,
+            show_output=False,
         )
     return ws
 
@@ -139,16 +141,18 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
     return cpu_cluster
 
 
-def create_run_config(cpu_cluster,
-                    docker_proc_type,
-                    workspace,
-                    add_gpu_dependencies,
-                    add_spark_dependencies,
-                    conda_pkg_cudatoolkit,
-                    conda_pkg_cudnn,
-                    conda_pkg_jdk,
-                    conda_pkg_python,
-                    reco_wheel_path):
+def create_run_config(
+    cpu_cluster,
+    docker_proc_type,
+    workspace,
+    add_gpu_dependencies,
+    add_spark_dependencies,
+    conda_pkg_cudatoolkit,
+    conda_pkg_cudnn,
+    conda_pkg_jdk,
+    conda_pkg_python,
+    reco_wheel_path,
+):
     """
     AzureML requires the run environment to be setup prior to submission.
     This configures a docker persistent compute.  Even though
@@ -167,6 +171,7 @@ def create_run_config(cpu_cluster,
                                         added to the conda environment, else False
             add_spark_dependencies (bool)   : True if PySpark packages should be
                                         added to the conda environment, else False
+
     Return:
           run_azuremlcompute : AzureML run config
     """
@@ -191,7 +196,9 @@ def create_run_config(cpu_cluster,
     conda_dep = CondaDependencies()
     conda_dep.add_conda_package(conda_pkg_python)
     conda_dep.add_pip_package(whl_url)
-    conda_dep.add_pip_package("pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip")
+    conda_dep.add_pip_package(
+        "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"
+    )
 
     # install extra dependencies
     if add_gpu_dependencies and add_spark_dependencies:
@@ -233,9 +240,7 @@ def create_experiment(workspace, experiment_name):
     return exp
 
 
-def submit_experiment_to_azureml(
-    test, run_config, experiment, test_group, test_kind
-):
+def submit_experiment_to_azureml(test, run_config, experiment, test_group, test_kind):
 
     """
     Submitting the experiment to AzureML actually runs the script.
@@ -370,11 +375,15 @@ def create_arg_parser():
     )
     # flag to indicate whether gpu dependencies should be included in conda env
     parser.add_argument(
-        "--add_gpu_dependencies", action="store_true", help="include packages for GPU support"
+        "--add_gpu_dependencies",
+        action="store_true",
+        help="include packages for GPU support",
     )
-    # flag to indicate whether pyspark dependencies should be included in conda env    
+    # flag to indicate whether pyspark dependencies should be included in conda env
     parser.add_argument(
-        "--add_spark_dependencies", action="store_true", help="include packages for PySpark support"
+        "--add_spark_dependencies",
+        action="store_true",
+        help="include packages for PySpark support",
     )
     # path where test logs should be downloaded
     parser.add_argument(
@@ -417,6 +426,12 @@ def create_arg_parser():
         default="unit",
         help="Test kind - nightly or unit",
     )
+    parser.add_argument(
+        "--pytestargs",
+        nargs="+",
+        default="",
+        help="Additional arguments to pass to pytest as a string. Multiple arguments should be separated by space.",
+    )
     args = parser.parse_args()
 
     return args
@@ -453,7 +468,7 @@ if __name__ == "__main__":
         max_nodes=args.maxnodes,
     )
 
-    wheel_list = glob.glob('./dist/*.whl')
+    wheel_list = glob.glob("./dist/*.whl")
     if not wheel_list:
         logger.error("Wheel not found!")
     logger.info("Found wheel at " + wheel_list[0])
@@ -481,6 +496,7 @@ if __name__ == "__main__":
         experiment=experiment,
         test_group=args.testgroup,
         test_kind=args.testkind,
+        pytest_args=args.pytestargs,
     )
 
     # add helpful information to experiment on Azure
@@ -494,6 +510,6 @@ if __name__ == "__main__":
     # save pytest exit code
     metrics = run.get_metrics()
     with open("pytest_exit_code.log", "w") as f:
-        f.write(str(metrics.get('pytest_exit_code')))
+        f.write(str(metrics.get("pytest_exit_code")))
 
     run.complete()
