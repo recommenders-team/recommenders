@@ -74,17 +74,17 @@ runs:
         python-version: "3.8"
     - name: Install azureml-core and azure-cli on a GitHub hosted server
       shell: bash
-      run: pip install azureml-core azure-cli
+      run: pip install --quiet azureml-core azure-cli
     - name: Log in to Azure
       uses: azure/login@v1
       with:
         creds: ${{inputs.AZUREML_TEST_CREDENTIALS}}
     - name: Install wheel package
       shell: bash
-      run: pip install wheel
+      run: pip install --quiet wheel
     - name: Create wheel from setup.py
       shell: bash
-      run: python setup.py bdist_wheel
+      run: python setup.py --quiet bdist_wheel
     - name: Extract branch name
       shell: bash
       run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
