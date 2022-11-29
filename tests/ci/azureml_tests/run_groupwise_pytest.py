@@ -38,7 +38,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pytestargs",
         "-a",
-        nargs="+",
+        action="store",
         default="",
         help="Additional arguments to pass to pytest as a string. Multiple arguments should be separated by space.",
     )

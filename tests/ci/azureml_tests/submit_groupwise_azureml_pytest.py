@@ -431,7 +431,7 @@ def create_arg_parser():
     )
     parser.add_argument(
         "--pytestargs",
-        nargs="+",
+        action="store",
         default="",
         help="Additional arguments to pass to pytest as a string. Multiple arguments should be separated by space.",
     )
