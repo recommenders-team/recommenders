@@ -48,7 +48,8 @@ install_requires = [
     "cornac>=1.1.2,<2",
     "retrying>=1.3.3",
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
-    "scikit-surprise>=1.0.6"
+    "scikit-surprise>=1.0.6",
+    "scrapbook>=0.5.0,<1.0.0",
 ]
 
 # shared dependencies
@@ -60,7 +61,6 @@ extras_require = {
         "jupyter>=1,<2",
         "locust>=1,<2",
         "papermill>=2.1.2,<3",
-        "scrapbook>=0.5.0,<1.0.0",
     ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
