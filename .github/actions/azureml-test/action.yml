@@ -94,7 +94,7 @@ runs:
       if: contains(inputs.TEST_GROUP, 'cpu')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.base_ref }}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref_name }}
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{inputs.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}} 
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
@@ -104,7 +104,7 @@ runs:
       if: contains(inputs.TEST_GROUP, 'gpu')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.base_ref }}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref_name }}
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
@@ -114,7 +114,7 @@ runs:
       if: contains(inputs.TEST_GROUP, 'spark')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.base_ref }}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref_name }}
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
