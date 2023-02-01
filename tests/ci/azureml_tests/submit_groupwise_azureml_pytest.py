@@ -240,9 +240,7 @@ def create_experiment(workspace, experiment_name):
     return exp
 
 
-def submit_experiment_to_azureml(
-    test, run_config, experiment, test_group, test_kind, pytestargs
-):
+def submit_experiment_to_azureml(test, run_config, experiment, test_group, test_kind):
 
     """
     Submitting the experiment to AzureML actually runs the script.
@@ -271,8 +269,6 @@ def submit_experiment_to_azureml(
             test_group,
             "--testkind",
             test_kind,
-            "--pytestargs",
-            pytestargs,
         ],
         # docker_runtime_config=dc
     )
@@ -505,7 +501,6 @@ if __name__ == "__main__":
         experiment=experiment,
         test_group=args.testgroup,
         test_kind=args.testkind,
-        pytestargs=args.pytestargs,
     )
 
     # add helpful information to experiment on Azure
