@@ -31,4 +31,4 @@ runs:
         else
           test_groups_str=$(python -c 'from tests.ci.azureml_tests.test_groups import unit_test_groups; print(list(unit_test_groups.keys()))')
         fi
-        echo "{test_groups}={$test_groups_str}" >> $GITHUB_OUTPUT
+        echo ::set-output name=test_groups::$test_groups_str
