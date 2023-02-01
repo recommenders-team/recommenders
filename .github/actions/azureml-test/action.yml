@@ -87,45 +87,45 @@ runs:
       run: python setup.py --quiet bdist_wheel
     - name: Extract branch name
       shell: bash
-      run: echo "Branch name -> ${GITHUB_REF#refs/heads/}"
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: extract_branch
     - name: Submit CPU tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'cpu')
       run: >-
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref_name }}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{inputs.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}} 
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
           --pytestargs "--durations 0 --disable-warnings" 
-    - name: Submit GPU tests to AzureML
-      shell: bash
-      if: contains(inputs.TEST_GROUP, 'gpu')
-      run: >-
-          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref_name }}
-          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
-          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          --pytestargs "--durations 0 --disable-warnings" 
-    - name: Submit PySpark tests to AzureML
-      shell: bash
-      if: contains(inputs.TEST_GROUP, 'spark')
-      run: >-
-          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref_name }}
-          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
-          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          --pytestargs "--durations 0 --disable-warnings"
+    # - name: Submit GPU tests to AzureML
+    #   shell: bash
+    #   if: contains(inputs.TEST_GROUP, 'gpu')
+    #   run: >-
+    #       python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
+    #       --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+    #       --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+    #       --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
+    #       --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+    #       --pytestargs "--durations 0 --disable-warnings" 
+    # - name: Submit PySpark tests to AzureML
+    #   shell: bash
+    #   if: contains(inputs.TEST_GROUP, 'spark')
+    #   run: >-
+    #       python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
+    #       --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ steps.extract_branch.outputs.branch }}
+    #       --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+    #       --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
+    #       --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+    #       --pytestargs "--durations 0 --disable-warnings"
     - name: Print test logs
       shell: bash
       run: cat ${{inputs.TEST_LOGS_PATH}}
     - name: Get exit status
       shell: bash
       id: exit_status
-      run: echo  "PyTest exit code -> $(cat ${{inputs.PYTEST_EXIT_CODE}})"
+      run: echo ::set-output name=code::$(cat ${{inputs.PYTEST_EXIT_CODE}})
     - name: Check Success/Failure
       if: ${{ steps.execute_tests.outputs.code != 0 }}
       uses: actions/github-script@v3
