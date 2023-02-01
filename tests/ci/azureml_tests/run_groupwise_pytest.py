@@ -35,13 +35,6 @@ if __name__ == "__main__":
         default="group_cpu_001",
         help="Group name for the tests",
     )
-    parser.add_argument(
-        "--pytestargs",
-        "-a",
-        action="store",
-        default="",
-        help="Additional arguments to pass to pytest as a string. Multiple arguments should be separated by space.",
-    )
     args = parser.parse_args()
 
     if args.testkind == "nightly":
@@ -61,7 +54,7 @@ if __name__ == "__main__":
     logger.info("Executing tests now...")
 
     # execute pytest command
-    pytest_exit_code = pytest.main(args=[test_group, args.pytestargs])
+    pytest_exit_code = pytest.main(args=test_group)
 
     logger.info("Test execution completed!")
 

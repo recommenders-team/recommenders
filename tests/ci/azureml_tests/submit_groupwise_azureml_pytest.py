@@ -429,11 +429,17 @@ def create_arg_parser():
         default="unit",
         help="Test kind - nightly or unit",
     )
+    # Flag to indicate whether to turn off the warnings
     parser.add_argument(
-        "--pytestargs",
+        "--disable-warnings",
+        action="store_true",
+        help="Turn off warnings",
+    )
+    parser.add_argument(
+        "--durations",
         action="store",
-        default="",
-        help="Additional arguments to pass to pytest as a string. Multiple arguments should be separated by space.",
+        default=0,
+        help="Add the duration of the test to the output",
     )
     args = parser.parse_args()
 
