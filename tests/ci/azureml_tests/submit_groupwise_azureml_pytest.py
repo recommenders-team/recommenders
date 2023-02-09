@@ -431,12 +431,6 @@ def create_arg_parser():
         action="store_true",
         help="Turn off warnings",
     )
-    parser.add_argument(
-        "--durations",
-        action="store",
-        default=0,
-        help="Add the duration of the test to the output",
-    )
     args = parser.parse_args()
 
     return args

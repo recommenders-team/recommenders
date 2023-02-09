@@ -53,8 +53,9 @@ if __name__ == "__main__":
     logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
-    # execute pytest command
-    pytest_exit_code = pytest.main(args=test_group)
+    # Execute pytest command
+    pytest_string = test_group + ["--durations"] + ["0"]
+    pytest_exit_code = pytest.main(pytest_string)
 
     logger.info("Test execution completed!")
 

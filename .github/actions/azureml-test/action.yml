@@ -94,7 +94,7 @@ runs:
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
           --testlogs ${{inputs.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}} 
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          --durations 0 --disable-warnings 
+          --disable-warnings 
     - name: Submit GPU tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'gpu')
