@@ -35,6 +35,12 @@ if __name__ == "__main__":
         default="group_cpu_001",
         help="Group name for the tests",
     )
+    # Flag to indicate whether to turn off the warnings
+    parser.add_argument(
+        "--disable-warnings",
+        action="store_true",
+        help="Turn off warnings",
+    )
     args = parser.parse_args()
 
     if args.testkind == "nightly":
@@ -53,8 +59,12 @@ if __name__ == "__main__":
     logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
-    # Execute pytest command
+    # Add options to pytest command (Duration and disable warnings)
     pytest_string = test_group + ["--durations"] + ["0"]
+    if args.disable_warnings is True:
+        pytest_string += ["--disable-warnings"]
+
+    # Execute pytest command
     pytest_exit_code = pytest.main(pytest_string)
 
     logger.info("Test execution completed!")

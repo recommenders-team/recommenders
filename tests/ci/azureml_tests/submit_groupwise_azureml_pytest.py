@@ -240,7 +240,9 @@ def create_experiment(workspace, experiment_name):
     return exp
 
 
-def submit_experiment_to_azureml(test, run_config, experiment, test_group, test_kind):
+def submit_experiment_to_azureml(
+    test, run_config, experiment, test_group, test_kind, warnings
+):
 
     """
     Submitting the experiment to AzureML actually runs the script.
@@ -258,18 +260,15 @@ def submit_experiment_to_azureml(test, run_config, experiment, test_group, test_
           obj: AzureML run or trial
     """
 
-    project_folder = "."
+    arguments = ["--testgroup", test_group, "--testkind", test_kind]
+    if warnings is True:
+        arguments.append("--disable-warnings")
 
     script_run_config = ScriptRunConfig(
-        source_directory=project_folder,
+        source_directory=".",
         script=test,
         run_config=run_config,
-        arguments=[
-            "--testgroup",
-            test_group,
-            "--testkind",
-            test_kind,
-        ],
+        arguments=arguments,
         # docker_runtime_config=dc
     )
     run = experiment.submit(script_run_config)
@@ -495,6 +494,7 @@ if __name__ == "__main__":
         experiment=experiment,
         test_group=args.testgroup,
         test_kind=args.testkind,
+        warnings=args.disable_warnings,
     )
 
     # add helpful information to experiment on Azure
