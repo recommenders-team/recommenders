@@ -7,14 +7,12 @@ pytest runs all tests in the specified test folder unless parameters
 are set otherwise.
 """
 
-import logging
-import os
 import sys
-from azureml.core import Run
+import logging
 import pytest
-import json
 import argparse
 import glob
+from azureml.core import Run
 from test_groups import nightly_test_groups, unit_test_groups
 
 if __name__ == "__main__":
@@ -37,6 +35,12 @@ if __name__ == "__main__":
         default="group_cpu_001",
         help="Group name for the tests",
     )
+    # Flag to indicate whether to turn off the warnings
+    parser.add_argument(
+        "--disable-warnings",
+        action="store_true",
+        help="Turn off warnings",
+    )
     args = parser.parse_args()
 
     if args.testkind == "nightly":
@@ -55,9 +59,14 @@ if __name__ == "__main__":
     logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
-    # execute pytest command
-    pytest_exit_code = pytest.main(test_group)
-    
+    # Add options to pytest command (Duration and disable warnings)
+    pytest_string = test_group + ["--durations"] + ["0"]
+    if args.disable_warnings is True:
+        pytest_string += ["--disable-warnings"]
+
+    # Execute pytest command
+    pytest_exit_code = pytest.main(pytest_string)
+
     logger.info("Test execution completed!")
 
     # log pytest exit code as a metric
@@ -70,5 +79,8 @@ if __name__ == "__main__":
     # logger.info("os.listdir files {}".format(os.listdir(".")))
 
     # upload pytest stdout file
-    logs_path = (glob.glob('**/70_driver_log.txt', recursive=True) + glob.glob('**/std_log.txt', recursive=True))[0]
-    run.upload_file(name='test_logs', path_or_stream=logs_path)
+    logs_path = (
+        glob.glob("**/70_driver_log.txt", recursive=True)
+        + glob.glob("**/std_log.txt", recursive=True)
+    )[0]
+    run.upload_file(name="test_logs", path_or_stream=logs_path)
