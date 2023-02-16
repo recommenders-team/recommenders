@@ -74,7 +74,7 @@ runs:
         python-version: "3.8"
     - name: Install azureml-core and azure-cli on a GitHub hosted server
       shell: bash
-      run: pip install --quiet azureml-core azure-cli
+      run: pip install --quiet "azureml-core>1,<2" "azure-cli>2,<3"
     - name: Log in to Azure
       uses: azure/login@v1
       with:
