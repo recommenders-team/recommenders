@@ -21,14 +21,14 @@ on:
       - '!tests/**/*.md'
       - setup.py
 
-  # enable manual trigger
+  # Enable manual trigger
   workflow_dispatch:
     input:
       tags:
         description: 'Tags to label this manual run (optional)'
         default: 'Manual trigger'
 
-  # make this workflow reusable
+  # Make this workflow reusable
   workflow_call:
 
 jobs:

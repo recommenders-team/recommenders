@@ -18,6 +18,9 @@ on:
       - contrib/sarplus/scala/**
       - contrib/sarplus/VERSION
       - .github/workflows/sarplus.yml
+  
+  # Enable manual trigger
+  workflow_dispatch:
 
 env:
   SARPLUS_ROOT: ${{ github.workspace }}/contrib/sarplus
