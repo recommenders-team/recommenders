@@ -66,6 +66,7 @@ jobs:
     name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 50 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
       matrix:
         python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
