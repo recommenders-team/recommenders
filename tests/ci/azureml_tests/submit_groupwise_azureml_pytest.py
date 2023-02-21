@@ -209,8 +209,8 @@ def create_run_config(
         conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]")
     elif add_gpu_dependencies:
-        conda_dep.add_conda_package(conda_pkg_cudatoolkit)
-        conda_dep.add_conda_package(conda_pkg_cudnn)
+        # conda_dep.add_conda_package(conda_pkg_cudatoolkit)
+        # conda_dep.add_conda_package(conda_pkg_cudnn)
         conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
@@ -395,8 +395,7 @@ def create_arg_parser():
     parser.add_argument(
         "--conda_pkg_cudatoolkit",
         action="store",
-        # default="cudatoolkit=11.2",
-        default="cudatoolkit=11.1",
+        default="cudatoolkit=11.2",
         help="conda package name for cudatoolkit",
     )
     # conda package name for cudnn
@@ -404,7 +403,6 @@ def create_arg_parser():
         "--conda_pkg_cudnn",
         action="store",
         default="cudnn=8.1",
-        # default="cudnn=8.2.1",
         help="conda package name for cudnn",
     )
     # conda package name for jdk

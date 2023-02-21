@@ -51,7 +51,12 @@ if __name__ == "__main__":
         ld_library_path = str(get_python_lib()) + "/nvidia/cublas/lib/"
         logger.info("ld_library_path")
         logger.info(ld_library_path)
-        os.environ["LD_LIBRARY_PATH"] += os.pathsep + ld_library_path
+        # os.environ["LD_LIBRARY_PATH"] += os.pathsep + ld_library_path
+        os.environ["LD_LIBRARY_PATH"] += ld_library_path
+        logger.info("os.environ[\"LD_LIBRARY_PATH\"]")
+        logger.info(os.environ["LD_LIBRARY_PATH"])
+        import torch
+        logger.info(torch.__version__)
 
     if args.testkind == "nightly":
         test_group = nightly_test_groups[args.testgroup]
