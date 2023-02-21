@@ -147,8 +147,6 @@ def create_run_config(
     workspace,
     add_gpu_dependencies,
     add_spark_dependencies,
-    conda_pkg_cudatoolkit,
-    conda_pkg_cudnn,
     conda_pkg_jdk,
     conda_pkg_python,
     reco_wheel_path,
@@ -202,14 +200,10 @@ def create_run_config(
 
     # install extra dependencies
     if add_gpu_dependencies and add_spark_dependencies:
-        conda_dep.add_conda_package(conda_pkg_cudatoolkit)
-        conda_dep.add_conda_package(conda_pkg_cudnn)
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]")
     elif add_gpu_dependencies:
-        conda_dep.add_conda_package(conda_pkg_cudatoolkit)
-        conda_dep.add_conda_package(conda_pkg_cudnn)
         conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
@@ -390,20 +384,6 @@ def create_arg_parser():
         default="test_logs.log",
         help="Test logs will be downloaded to this path",
     )
-    # conda package name for cudatoolkit
-    parser.add_argument(
-        "--conda_pkg_cudatoolkit",
-        action="store",
-        default="cudatoolkit=11.2",
-        help="conda package name for cudatoolkit",
-    )
-    # conda package name for cudnn
-    parser.add_argument(
-        "--conda_pkg_cudnn",
-        action="store",
-        default="cudnn=8.1",
-        help="conda package name for cudnn",
-    )
     # conda package name for jdk
     parser.add_argument(
         "--conda_pkg_jdk",
@@ -477,8 +457,6 @@ if __name__ == "__main__":
         workspace=workspace,
         add_gpu_dependencies=args.add_gpu_dependencies,
         add_spark_dependencies=args.add_spark_dependencies,
-        conda_pkg_cudatoolkit=args.conda_pkg_cudatoolkit,
-        conda_pkg_cudnn=args.conda_pkg_cudnn,
         conda_pkg_jdk=args.conda_pkg_jdk,
         conda_pkg_python=args.conda_pkg_python,
         reco_wheel_path=wheel_list[0],
