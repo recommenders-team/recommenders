@@ -178,7 +178,6 @@ def create_run_config(
     run_azuremlcompute.target = cpu_cluster
     run_azuremlcompute.environment.docker.enabled = True
     run_azuremlcompute.environment.docker.base_image = docker_proc_type
-    # run_azuremlcompute.environment.environment_variables['EXAMPLE_ENV_VAR'] = 'EXAMPLE_VALUE'
 
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
