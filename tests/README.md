@@ -205,7 +205,7 @@ Then, follow the steps below to create the AzureML infrastructure:
     - Resource group: `recommenders_project_resources`
     - Location: *Make sure you have enough quota in the location you choose*
 2. Create two new clusters: `cpu-cluster` and `gpu-cluster`. Go to compute, then compute cluster, then new.
-    - Select the CPU VM base. Anything above 32GB of RAM, and 8 cores should be fine.
+    - Select the CPU VM base. Anything above 64GB of RAM, and 8 cores should be fine.
     - Select the GPU VM base. Anything above 56GB of RAM, and 6 cores, and an NVIDIA K80 should be fine.
 3. Add the subscription ID to GitHub action secrets [here](https://github.com/microsoft/recommenders/settings/secrets/actions). Create a new repository secret called `AZUREML_TEST_SUBID` and add the subscription ID as the value.
 4. Make sure you have installed [Azure CLI](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli), and that you are logged in: `az login`.
