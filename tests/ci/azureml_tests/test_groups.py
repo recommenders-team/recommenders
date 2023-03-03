@@ -5,16 +5,16 @@
 # The times on GPU environment have been calculated on an Azure STANDARD_NC6S_V2
 # with 6 vCPUs, 112 GB memory, 1 NVIDIA Tesla P100 GPU.
 # The times on CPU and Spark environments have been calculated on an Azure
-# Standard_DC8s_v3 with 8 vCPUs and 64 GiB memory.
+# Standard_A8m_v2 with 8 vCPUs and 64 GiB memory.
 
 # IMPORTANT NOTE:
-# FOR INTEGRATION, NO GROUP SHOULD SURPASS 35MIN = 2100s !!!
+# FOR INTEGRATION, NO GROUP SHOULD SURPASS 45MIN = 2700s !!!
 # FOR UNIT, NO GROUP SHOULD SURPASS 15MIN = 900s !!!
 
 global nightly_test_groups, unit_test_groups
 
 nightly_test_groups = {
-    "group_cpu_001": [  # Total group time: 1911.2s
+    "group_cpu_001": [  # Total group time: 1883s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens",  # 0.45s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df",  # 0.47s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_pandas_df",  # 2.45s
@@ -22,12 +22,7 @@ nightly_test_groups = {
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 16.87s
         "tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens",  # 0.61s + 3.47s + 8.28s
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df",  # 0.59s + 3.59s + 8.44s
-        "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 155.18s + 302.65s
-        #
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_download_criteo",  # 1.05s
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_extract_criteo",  # 1.22s
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_pandas_df",  # 1.73s
-        "tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_pandas_df",  # 427.89s
+        "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 37.33s + 352.99s + 673.61s
         #
         "tests/smoke/recommenders/dataset/test_mind.py::test_mind_url",  # 0.38s
         "tests/smoke/recommenders/dataset/test_mind.py::test_extract_mind",  # 10.23s
@@ -36,16 +31,12 @@ nightly_test_groups = {
         "tests/integration/recommenders/datasets/test_mind.py::test_extract_mind",  # 56.30s
         "tests/integration/recommenders/datasets/test_mind.py::test_mind_utils_integration",  # 219.26s
         #
-        "tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke",  # 12.58s
-        "tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration",  # 49.89s + 599.29s
-        #
         "tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke",  # 46.42s
         #
         "tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke",  # 16.62s
         "tests/integration/examples/test_notebooks_python.py::test_cornac_bpr_integration",  # 165.72s
     ],
-    "group_cpu_002": [  # Total group time: 1800.32s (didn't add xlearn)
-        #
+    "group_cpu_002": [  # Total group time: 1801s
         "tests/smoke/examples/test_notebooks_python.py::test_baseline_deep_dive_smoke",  # 15.98s
         "tests/integration/examples/test_notebooks_python.py::test_baseline_deep_dive_integration",  # 170.73s
         #
@@ -54,7 +45,16 @@ nightly_test_groups = {
         #
         "tests/integration/examples/test_notebooks_python.py::test_geoimc_integration",  # 1006.19s
         #
-        "tests/integration/examples/test_notebooks_python.py::test_benchmark_movielens_cpu", #58s
+        "tests/integration/examples/test_notebooks_python.py::test_benchmark_movielens_cpu",  # 58s
+    ],
+    "group_cpu_003": [  # Total group time: 2253s
+        "tests/smoke/recommenders/dataset/test_criteo.py::test_download_criteo",  # 1.05s
+        "tests/smoke/recommenders/dataset/test_criteo.py::test_extract_criteo",  # 1.22s
+        "tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_pandas_df",  # 1.73s
+        "tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_pandas_df",  # 1368.63s
+        #
+        "tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke",  # 12.58s
+        "tests/integration/examples/test_notebooks_python.py::test_sar_single_node_integration",  # 57.67s + 808.83s
         # FIXME: Add experimental tests in a later iteration
         # "tests/integration/examples/test_notebooks_python.py::test_xlearn_fm_integration",  # 255.73s
     ],
@@ -124,7 +124,7 @@ nightly_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/examples/test_notebooks_gpu.py::test_naml_smoke",  # 620.13s
         #
-        "tests/integration/examples/test_notebooks_gpu.py::test_benchmark_movielens_gpu", # 226s
+        "tests/integration/examples/test_notebooks_gpu.py::test_benchmark_movielens_gpu",  # 226s
         # FIXME: Reduce test time https://github.com/microsoft/recommenders/issues/1731
         # "tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration",  # 2033.85s
         # FIXME: https://github.com/microsoft/recommenders/issues/1716
@@ -140,7 +140,7 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke",  # 49.53s
         "tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration",  # 110.58s
-        "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark", #142
+        "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark",  # 142
     ],
 }
 
@@ -182,19 +182,19 @@ unit_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_min_rating_filter",
     ],
-    "group_notebooks_spark_001": [  # Total group time: 728.43s
-        "tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs",
-        "tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs",
-        "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs",
-        "tests/unit/examples/test_notebooks_pyspark.py::test_als_pyspark_runs",
-        "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_diversity_runs",
-        "tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs",  # 56.55s
+    "group_notebooks_spark_001": [  # Total group time: 794s
+        "tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs",  # 287.70s
+        "tests/unit/examples/test_notebooks_pyspark.py::test_als_pyspark_runs",  # 374.15s
+        "tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs",  # 132.09s
     ],
-    # TODO: This is a flaky test, skip for now, to be fixed in future iterations.
-    # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
-    # "group_notebooks_spark_002": [  # Total group time: 746.53s
-    #     "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s (flaky test, it rerun several times)
-    # ],
+    "group_notebooks_spark_002": [  # Total group time: 466s
+        "tests/unit/examples/test_notebooks_pyspark.py::test_data_split_runs",  # 43.66s
+        "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_runs",  # 45.24s
+        "tests/unit/examples/test_notebooks_pyspark.py::test_evaluation_diversity_runs",  # 376.61s
+        # TODO: This is a flaky test, skip for now, to be fixed in future iterations.
+        # Refer to the issue: https://github.com/microsoft/recommenders/issues/1770
+        # "tests/unit/examples/test_notebooks_pyspark.py::test_spark_tuning",  # 212.29s+190.02s+180.13s+164.09s=746.53s (flaky test, it rerun several times)
+    ],
     "group_gpu_001": [  # Total group time: 492.62s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",
