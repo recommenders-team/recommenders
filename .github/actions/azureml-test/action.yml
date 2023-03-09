@@ -116,8 +116,8 @@ runs:
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
           --disable-warnings
       env:
-        PYSPARK_PYTHON: "python3"
-        PYSPARK_DRIVER_PYTHON: "python3"
+        PYSPARK_PYTHON: "python"
+        PYSPARK_DRIVER_PYTHON: "python"
     - name: Print test logs
       shell: bash
       run: cat ${{inputs.TEST_LOGS_PATH}}
