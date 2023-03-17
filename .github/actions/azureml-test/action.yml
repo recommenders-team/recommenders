@@ -105,11 +105,22 @@ runs:
           --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
           --disable-warnings
+    - name: Install Spark dependencies
+      if: contains(inputs.TEST_GROUP, 'spark')
+      uses: actions/setup-java@v2.1.0
+      with:
+        java-version: 11
+        distribution: 'adopt'
     - name: Submit PySpark tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
       run: >-
-          echo $Python_ROOT_DIR/bin/python
+          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          --disable-warnings
       env:
         PYSPARK_PYTHON: "$Python_ROOT_DIR/bin/python"
         PYSPARK_DRIVER_PYTHON: "$Python_ROOT_DIR/bin/python"
