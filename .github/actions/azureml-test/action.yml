@@ -114,7 +114,7 @@ runs:
     - name: Submit PySpark tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
-      run: run: |
+      run: |
           export PYSPARK_PYTHON=`which python`
           export PYSPARK_DRIVER_PYTHON=`which python`
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}} \
