@@ -209,6 +209,10 @@ def create_run_config(
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark]")
+        run_azuremlcompute.environment.environment_variables = {
+            "PYSPARK_PYTHON": "python3",
+            "PYSPARK_DRIVER_PYTHON": "python3",
+        }
     else:
         conda_dep.add_pip_package("recommenders[dev,examples]")
 
