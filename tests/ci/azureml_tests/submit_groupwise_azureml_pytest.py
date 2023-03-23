@@ -206,14 +206,13 @@ def create_run_config(
     elif add_gpu_dependencies:
         conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
     elif add_spark_dependencies:
-        run_azuremlcompute.environment.spark.enabled = True
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark]")
-        # run_azuremlcompute.environment.environment_variables = {
-        #     "PYSPARK_PYTHON": "python3",
-        #     "PYSPARK_DRIVER_PYTHON": "python3",
-        # }
+        run_azuremlcompute.environment.environment_variables = {
+            "PYSPARK_PYTHON": "python",
+            "PYSPARK_DRIVER_PYTHON": "python",
+        }
     else:
         conda_dep.add_pip_package("recommenders[dev,examples]")
 
