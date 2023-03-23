@@ -109,6 +109,9 @@ runs:
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
       run: |
+          echo $PYSPARK_PYTHON
+          echo $PYSPARK_DRIVER_PYTHON
+          env
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}} \
           --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }} \
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}} \
