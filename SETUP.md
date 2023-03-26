@@ -7,7 +7,7 @@ This document describes how to setup all the dependencies to run the notebooks i
 * Docker container
 
 ## Table of Contents
-
+  - [Extras](#extras)
   - [Compute environments](#compute-environments)
   - [Setup guide for Local or DSVM](#setup-guide-for-local-or-dsvm)
     - [Requirements](#requirements)
@@ -25,13 +25,27 @@ This document describes how to setup all the dependencies to run the notebooks i
   - [Setup guide for Docker](#setup-guide-for-docker)
   - [Setup guide for making a release](#setup-guide-for-making-a-release)
 
+
+## Extras
+In addition to the core package installable as `pip install, several extras are provided, including:
++ `[examples]`: Needed for running examples.
++ `[gpu]`: Needed for running GPU models.  
++ `[spark]`: Needed for running Spark models.
++ `[dev]`: Needed for development.
++ `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
++ `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation).
++ `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
+
 ## Compute environments
 
+The repo is tested on Linux.   Where applicable, we document differences in [Windows](Setup_Windows.md) and [MacOS](Setup_MacOS.md) although such documentation may not always up to date.
+
 Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements.
-Currently, this repository supports **Python CPU**, **Python GPU** and **PySpark**.
+
+Currently, tests are done on **Python CPU** (the base environment), **Python GPU** (corresponding to `[gpu]` extra above) and **PySpark** (corresponding to `[spark]` extra above).
 
 
-## Setup guide for Local or DSVM
+<!--## Setup guide for Local or DSVM
 
 There are different ways one may use the recommenders utilities. The most convenient one is probably by installing the `recommenders` package from [PyPI](https://pypi.org).
 
@@ -58,7 +72,10 @@ conda update anaconda        # use 'conda install anaconda' if the package is no
 ```
 
 If using venv or virtualenv, see [these instructions](#using-a-virtual-environment).
+-->
 
+
+<!-- FIXME FIXME 23/03/26 -->
 **NOTE** the `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related notebooks or scripts, make sure `cmake` is installed in the system. The easiest way to install on Linux is with apt-get: `sudo apt-get install -y build-essential cmake`. Detailed instructions for installing `cmake` from source can be found [here](https://cmake.org/install/).
 
 **NOTE** the models from Cornac require installation of `libpython` i.e. using `sudo apt-get install -y libpython3.x`, depending on the version of Python.
@@ -180,6 +197,7 @@ In the following `3.6` should be replaced with the Python version you are using 
 
     pip install recommenders[all]
 
+<!--
 If you prefer to use [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) instead of venv, you may follow the above steps, except you will need to replace the line
 
 `apt-get -y install python3.6-venv` 
@@ -195,7 +213,7 @@ and the line
 with
 
 `python3.6 -m virtualenv /venv`
-
+-->
 
 ### Register the environment as a kernel in Jupyter
 
