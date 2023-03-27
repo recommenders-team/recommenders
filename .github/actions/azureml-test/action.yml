@@ -116,7 +116,7 @@ runs:
           export PYSPARK_DRIVER_PYTHON=$Python_ROOT_DIR/bin/python
           echo $PYSPARK_PYTHON
           echo $PYSPARK_DRIVER_PYTHON
-          apt install openjdk-17-jre
+          sudo apt install openjdk-17-jre
           echo $JAVA_HOME
           env
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}} \
