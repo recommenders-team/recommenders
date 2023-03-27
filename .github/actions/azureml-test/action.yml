@@ -109,12 +109,15 @@ runs:
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
       run: |
+          echo $JAVA_HOME
           echo $PYSPARK_PYTHON
           echo $PYSPARK_DRIVER_PYTHON
           export PYSPARK_PYTHON=$Python_ROOT_DIR/bin/python
           export PYSPARK_DRIVER_PYTHON=$Python_ROOT_DIR/bin/python
           echo $PYSPARK_PYTHON
           echo $PYSPARK_DRIVER_PYTHON
+          apt install openjdk-17-jre
+          echo $JAVA_HOME
           env
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}} \
           --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }} \
