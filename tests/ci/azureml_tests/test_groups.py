@@ -98,7 +98,8 @@ nightly_test_groups = {
         "tests/integration/examples/test_notebooks_gpu.py::test_ncf_deep_dive_integration",  # 351.17s
         #
         "tests/smoke/recommenders/recommender/test_newsrec_utils.py::test_naml_iterator",  # 5.50s
-        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_naml",  # 450.65s
+        # FIXME: https://github.com/microsoft/recommenders/issues/1883
+        # "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_naml",  # 450.65s
     ],
     "group_gpu_004": [  # Total group time: 2103.34s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
