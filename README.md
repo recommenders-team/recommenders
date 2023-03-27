@@ -2,7 +2,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (February, 2023)
+## What's New (April, 2023)
 
 We reached 15,000 stars!!
 
@@ -37,20 +37,21 @@ For a more detailed overview of the repository, please see the documents on the 
 We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [vscode](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook:
 
 ```bash
-# clone the repo
-git clone https://github.com/microsoft/recommenders.git
-
-# create and activate a new conda environment
+# Create and activate a new conda environment
 conda create -n <environment_name> python=3.9
 conda activate <environment_name>
 
-# install the recommenders package with examples
+# Install the recommenders package with examples
 pip install recommenders[examples]
 
 # create a Jupyter kernel
 python -m ipykernel install --user --name <environment_name> --display-name <kernel_name>
 
-# Start vscode, open recommenders/examples/00_quick_start/sar_movielens.ipynb and use the created kernel to run the notebook.
+# Clone this repo within vscode or using command:
+git clone https://github.com/microsoft/recommenders.git
+
+
+# Within vscode, open examples/00_quick_start/sar_movielens.ipynb and use the created kernel to run the notebook.
 ```
 
 For more information about setup including extras, as well as configurations for GPU, Spark and Docker container, see the [setup guide](SETUP.md).
