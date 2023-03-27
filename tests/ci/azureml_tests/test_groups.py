@@ -140,7 +140,8 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke",  # 49.53s
         "tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration",  # 110.58s
-        "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark",  # 142
+        # FIXME: https://github.com/microsoft/recommenders/issues/1898
+        # "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark",  # 142s
     ],
 }
 
