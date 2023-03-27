@@ -134,7 +134,10 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
     except ComputeTargetException:
         logger.debug("setup: create cluster")
         compute_config = AmlCompute.provisioning_configuration(
-            vm_size=vm_size, max_nodes=max_nodes
+            vm_size=vm_size,
+            max_nodes=max_nodes,
+            ssh_public_access_enabled=True,
+            idle_time_before_scale_down=3600,  # 1 hour
         )
         cpu_cluster = ComputeTarget.create(workspace, cluster_name, compute_config)
     cpu_cluster.wait_for_completion(show_output=False)
