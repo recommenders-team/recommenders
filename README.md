@@ -57,7 +57,7 @@ git clone https://github.com/microsoft/recommenders.git
 ```
 
 For more information about setup including extras, as well as configurations for GPU, Spark and Docker container, see the [setup guide](SETUP.md).
-<!--
+
 In addition to the core package, several extras are provided, including:
 + `[examples]`: Needed for running examples.
 + `[gpu]`: Needed for running GPU models.
@@ -66,24 +66,8 @@ In addition to the core package, several extras are provided, including:
 + `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
 + `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation).
 + `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
--->
-<!--
-Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [Data Science Virtual Machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
-
-The installation of the recommenders package has been tested with 
-- Python versions 3.7 - 3.9 and [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) or [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment)
-
-and currently does not support version 3.10 and above. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment), [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)).
--->
 
 
-<!--
-**NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
-
-**NOTE for DSVM Users** - Please follow the steps in the [Dependencies setup - Set PySpark environment variables on Linux or macOS](SETUP.md#dependencies-setup) and [Troubleshooting for the DSVM](SETUP.md#troubleshooting-for-the-dsvm) sections if you encounter any issue.
-
-**DOCKER** - Another easy way to try the recommenders repository and get started quickly is to build [docker images](tools/docker/README.md) suitable for different environments. 
--->
 ## Algorithms
 
 The table below lists the recommender algorithms currently available in the repository. Notebooks are linked under the Example column as Quick start, showcasing an easy to run example of the algorithm, or as Deep dive, explaining in detail the math and implementation of the algorithm.
@@ -171,14 +155,6 @@ Smoke and integration tests are run daily on AzureML.
 | **Linux GPU** | main | [![azureml-gpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml?query=branch%3Amain) | | staging | [![azureml-gpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml?query=branch%3Astaging) |
 | **Linux Spark** | main | [![azureml-spark-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml?query=branch%3Amain) | | staging | [![azureml-spark-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml?query=branch%3Astaging) |
 
-<!--
-## Related projects
-
-- [Microsoft AI GitHub](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository.
-- [NLP best practices](https://github.com/microsoft/nlp-recipes): Best practices and examples on NLP.
-- [Computer vision best practices](https://github.com/microsoft/computervision-recipes): Best practices and examples on computer vision.
-- [Forecasting best practices](https://github.com/microsoft/forecasting): Best practices and examples on time series forecasting.
--->
 ## References
 
 - D. Li, J. Lian, L. Zhang, K. Ren, D. Lu, T. Wu, X. Xie, "Recommender Systems: Frontiers and Practices" (in Chinese), Publishing House of Electronics Industry, Beijing 2022.
