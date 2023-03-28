@@ -114,16 +114,15 @@ nightly_test_groups = {
     "group_gpu_005": [  # Total group time: 1844.05s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration",  # 1843.29s
+        #
+        "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
+        # FIXME: https://github.com/microsoft/recommenders/issues/1883
+        # "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
     ],
     "group_gpu_006": [  # Total group time: 1763.99s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_npa",  # 202.61s
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_nrms",  # 188.60s
-        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur",  # 194.88s
-        #
-        "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
-        # FIXME: https://github.com/microsoft/recommenders/issues/1883
-        # "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
     ],
     "group_gpu_007": [  # Total group time: 846.89s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
@@ -135,6 +134,7 @@ nightly_test_groups = {
         # "tests/integration/examples/test_notebooks_gpu.py::test_naml_quickstart_integration",  # 2033.85s
         # FIXME: https://github.com/microsoft/recommenders/issues/1716
         # "tests/integration/examples/test_notebooks_gpu.py::test_sasrec_quickstart_integration",  # 448.06s + 614.69s
+        "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur",  # 194.88s
     ],
     "group_spark_001": [  # Total group time: 987.16s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
