@@ -209,10 +209,11 @@ def create_run_config(
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark]")
-        # run_azuremlcompute.environment_variables = {
-        #     "PYSPARK_PYTHON": "$Python_ROOT_DIR/bin/python",
-        #     "PYSPARK_DRIVER_PYTHON": "$Python_ROOT_DIR/bin/python",
-        # }
+        run_azuremlcompute.environment_variables = {
+            "PYSPARK_PYTHON": "$Python_ROOT_DIR/bin/python",
+            "PYSPARK_DRIVER_PYTHON": "$Python_ROOT_DIR/bin/python",
+            "SPARK_HOME": "",
+        }
     else:
         conda_dep.add_pip_package("recommenders[dev,examples]")
 
