@@ -58,13 +58,13 @@ git clone https://github.com/microsoft/recommenders.git
 
 For more information about setup including extras, as well as configurations for GPU, Spark and Docker container, see the [setup guide](SETUP.md).
 
-In addition to the core package, several extras are provided, including:
+In addition to the core package, several extras are also provided, including:
 + `[examples]`: Needed for running examples.
 + `[gpu]`: Needed for running GPU models.
 + `[spark]`: Needed for running Spark models.
 + `[dev]`: Needed for development for the repo.
 + `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
-+ `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation).
++ `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation.
 + `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
 
 
