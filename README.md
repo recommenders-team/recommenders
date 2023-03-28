@@ -50,7 +50,7 @@ python -m ipykernel install --user --name <environment_name> --display-name <ker
 # Clone this repo within vscode or using command:
 git clone https://github.com/microsoft/recommenders.git
 
-# Within vscode, open examples/00_quick_start/sar_movielens.ipynb and use the created kernel to run the notebook.
+# Open examples/00_quick_start/sar_movielens.ipynb within vscode and use the created kernel to run the notebook.
 ```
 
 For more information about setup including extras, as well as configurations for GPU, Spark and Docker container, see the [setup guide](SETUP.md).
