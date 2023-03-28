@@ -122,7 +122,8 @@ nightly_test_groups = {
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur",  # 194.88s
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
-        "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
+        # FIXME: https://github.com/microsoft/recommenders/issues/1883
+        # "tests/integration/examples/test_notebooks_gpu.py::test_npa_quickstart_integration",  # 810.92s
     ],
     "group_gpu_007": [  # Total group time: 846.89s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
