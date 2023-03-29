@@ -273,7 +273,7 @@ def submit_experiment_to_azureml(
         run_config=run_config,
         arguments=arguments,
         # FIXME
-        command='export PYSPARK_PYTHON=$(which python) && export PYSPARK_DRIVER_PYTHON=$(which python) && unset SPARK_HOME && python {test}'.split(),
+        command=f'export PYSPARK_PYTHON=$(which python) && export PYSPARK_DRIVER_PYTHON=$(which python) && unset SPARK_HOME && python {test}'.split(),
         # docker_runtime_config=dc
     )
     run = experiment.submit(script_run_config)
