@@ -209,11 +209,11 @@ def create_run_config(
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark]")
-        run_azuremlcompute.environment_variables = {
-            "PYSPARK_PYTHON": "python",
-            "PYSPARK_DRIVER_PYTHON": "python",
-            "SPARK_HOME": "",
-        }
+        # run_azuremlcompute.environment_variables = {
+        #     "PYSPARK_PYTHON": "python",
+        #     "PYSPARK_DRIVER_PYTHON": "python",
+        #     "SPARK_HOME": "",
+        # }
         # env = run_azuremlcompute.environment
         # env.environment_variables["PYSPARK_PYTHON"] = env.python.interpreter_path
         # env.environment_variables["PYSPARK_DRIVER_PYTHON"] = env.python.interpreter_path
@@ -269,9 +269,11 @@ def submit_experiment_to_azureml(
 
     script_run_config = ScriptRunConfig(
         source_directory=".",
-        script=test,
+        # script=test,
         run_config=run_config,
         arguments=arguments,
+        # FIXME
+        command='export PYSPARK_PYTHON=$(which python) && export PYSPARK_DRIVER_PYTHON=$(which python) && unset SPARK_HOME && python {test}'.split(),
         # docker_runtime_config=dc
     )
     run = experiment.submit(script_run_config)
