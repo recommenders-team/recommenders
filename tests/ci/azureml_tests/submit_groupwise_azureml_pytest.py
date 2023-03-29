@@ -269,11 +269,9 @@ def submit_experiment_to_azureml(
 
     script_run_config = ScriptRunConfig(
         source_directory=".",
-        # script=test,
+        script=test,
         run_config=run_config,
-        # arguments=arguments,
-        # FIXME
-        command=f'export PYSPARK_PYTHON=$(which python) && export PYSPARK_DRIVER_PYTHON=$(which python) && unset SPARK_HOME && python {test}'.split() + arguments,
+        arguments=arguments,
         # docker_runtime_config=dc
     )
     run = experiment.submit(script_run_config)
@@ -487,9 +485,13 @@ if __name__ == "__main__":
     )
 
     # add helpful information to experiment on Azure
+    run.tag("Python", args.conda_pkg_python)
     run.tag("RepoName", args.reponame)
     run.tag("Branch", args.branch)
     run.tag("PR", args.pr)
+    run.tag("script", args.test)
+    run.tag("testgroup", args.testgroup)
+    run.tag("testkind", args.testkind)
 
     # download logs file from AzureML
     run.download_file(name="test_logs", output_file_path=args.testlogs)
