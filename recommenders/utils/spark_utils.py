@@ -65,7 +65,7 @@ def start_or_get_spark(
     if config is None or "spark.driver.memory" not in config:
         spark_opts.append('config("spark.driver.memory", "{}")'.format(memory))
 
-    # Set extra memory
+    # Set larger stack size
     spark_opts.append('config("spark.executor.extraJavaOptions", "-Xss4m")')
     spark_opts.append('config("spark.driver.extraJavaOptions", "-Xss4m")')
 
