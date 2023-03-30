@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+import os
 import sys
 import pytest
 
@@ -79,6 +80,11 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel
 )
 def test_benchmark_movielens_pyspark(notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg):
     notebook_path = notebooks["benchmark_movielens"]
+
+    os.environ["PYSPARK_PYTHON"] = sys.executable
+    os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
+    os.environ.pop("SPARK_HOME", None)
+
     pm.execute_notebook(
         notebook_path,
         output_notebook,

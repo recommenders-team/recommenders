@@ -48,12 +48,12 @@ inputs:
   RG:
     required: false
     type: string
-    default: "recommenders_project_resources"  
+    default: "recommenders_project_resources"
   # AzureML workspace name
   WS:
     required: false
     type: string
-    default: "azureml-test-workspace"  
+    default: "azureml-test-workspace"
   # test logs path
   TEST_LOGS_PATH:
     required: false
@@ -70,7 +70,7 @@ runs:
   steps:
     - name: Setup python
       uses: actions/setup-python@v4
-      with: 
+      with:
         python-version: "3.8"
     - name: Install azureml-core and azure-cli on a GitHub hosted server
       shell: bash
@@ -92,9 +92,9 @@ runs:
           python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
           --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
           --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
-          --testlogs ${{inputs.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}} 
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          --disable-warnings 
+          --disable-warnings
     - name: Submit GPU tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'gpu')
@@ -108,24 +108,12 @@ runs:
     - name: Submit PySpark tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
-      run: |
-          echo $JAVA_HOME
-          echo $PYSPARK_PYTHON
-          echo $PYSPARK_DRIVER_PYTHON
-          export PYSPARK_PYTHON=$Python_ROOT_DIR/bin/python
-          export PYSPARK_DRIVER_PYTHON=$Python_ROOT_DIR/bin/python
-          echo $PYSPARK_PYTHON
-          echo $PYSPARK_DRIVER_PYTHON
-          sudo apt install openjdk-17-jre -q
-          JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-          echo $JAVA_HOME
-          unset SPARK_HOME
-          env
-          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}} \
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }} \
-          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}} \
-          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}} \
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}} \
+      run: >-
+          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
           --disable-warnings
     - name: Print test logs
       shell: bash

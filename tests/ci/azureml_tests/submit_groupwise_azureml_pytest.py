@@ -212,10 +212,6 @@ def create_run_config(
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         conda_dep.add_pip_package("recommenders[dev,examples,spark]")
-        # run_azuremlcompute.environment_variables = {
-        #     "PYSPARK_PYTHON": "$Python_ROOT_DIR/bin/python",
-        #     "PYSPARK_DRIVER_PYTHON": "$Python_ROOT_DIR/bin/python",
-        # }
     else:
         conda_dep.add_pip_package("recommenders[dev,examples]")
 
@@ -270,7 +266,6 @@ def submit_experiment_to_azureml(
         script=test,
         run_config=run_config,
         arguments=arguments,
-        # docker_runtime_config=dc
     )
     run = experiment.submit(script_run_config)
     # waits only for configuration to complete
@@ -483,9 +478,13 @@ if __name__ == "__main__":
     )
 
     # add helpful information to experiment on Azure
+    run.tag("Python", args.conda_pkg_python)
     run.tag("RepoName", args.reponame)
     run.tag("Branch", args.branch)
     run.tag("PR", args.pr)
+    run.tag("script", args.test)
+    run.tag("testgroup", args.testgroup)
+    run.tag("testkind", args.testkind)
 
     # download logs file from AzureML
     run.download_file(name="test_logs", output_file_path=args.testlogs)

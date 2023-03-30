@@ -30,7 +30,7 @@ def start_or_get_spark(
     Args:
         app_name (str): set name of the application
         url (str): URL for spark master
-        memory (str): size of memory for spark driver
+        memory (str): size of memory for spark driver. This will be ignored if spark.driver.memory is set in config.
         config (dict): dictionary of configuration options
         packages (list): list of packages to install
         jars (list): list of jar files to add
@@ -64,6 +64,10 @@ def start_or_get_spark(
 
     if config is None or "spark.driver.memory" not in config:
         spark_opts.append('config("spark.driver.memory", "{}")'.format(memory))
+
+    # Set larger stack size
+    spark_opts.append('config("spark.executor.extraJavaOptions", "-Xss4m")')
+    spark_opts.append('config("spark.driver.extraJavaOptions", "-Xss4m")')
 
     spark_opts.append("getOrCreate()")
     return eval(".".join(spark_opts))
