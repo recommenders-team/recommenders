@@ -21,10 +21,6 @@ on:
     # because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
     branches: [staging]
-
-  pull_request:
-    branches:
-      - 'main'
     paths:
       # Unit tests will be run only when there are changes in the
       # unit tests related code including:
