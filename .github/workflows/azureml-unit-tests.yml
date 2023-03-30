@@ -11,7 +11,7 @@ on:
       - 'staging'
       - 'main'
     paths:
-      # Unit tests will be run only when there are changes in the
+      # Tests will be run only when there are changes in the
       # unit tests related code including:
       - examples/**
       - '!examples/**/*.md'
