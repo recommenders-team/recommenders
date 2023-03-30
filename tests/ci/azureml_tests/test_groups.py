@@ -113,7 +113,8 @@ nightly_test_groups = {
     ],
     "group_gpu_005": [  # Total group time: 1844.05s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration",  # 1843.29s
+        # FIXME: https://github.com/microsoft/recommenders/issues/1883
+        # "tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration",  # 1843.29s
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
         # FIXME: https://github.com/microsoft/recommenders/issues/1883
