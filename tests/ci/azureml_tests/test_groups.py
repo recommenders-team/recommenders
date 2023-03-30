@@ -113,7 +113,8 @@ nightly_test_groups = {
     ],
     "group_gpu_005": [  # Total group time: 1844.05s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration",  # 1843.29s
+        # FIXME: https://github.com/microsoft/recommenders/issues/1883
+        # "tests/integration/examples/test_notebooks_gpu.py::test_wide_deep_integration",  # 1843.29s
         #
         "tests/smoke/examples/test_notebooks_gpu.py::test_npa_smoke",  # 366.22s
         # FIXME: https://github.com/microsoft/recommenders/issues/1883
@@ -146,8 +147,7 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke",  # 49.53s
         "tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration",  # 110.58s
-        # FIXME: https://github.com/microsoft/recommenders/issues/1898
-        # "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark",  # 142s
+        "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark",  # 142s
     ],
 }
 
