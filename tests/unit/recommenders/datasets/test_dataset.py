@@ -23,7 +23,7 @@ def test_maybe_download(files_fixtures):
 
     downloaded_filepath = maybe_download(file_url, "license.txt", expected_bytes=1162)
     assert os.path.exists(downloaded_filepath)
-    assert downloaded_filepath.split("/")[-1] == "license.txt"
+    assert os.path.basename(downloaded_filepath) == "license.txt"
 
 
 def test_maybe_download_wrong_bytes(caplog, files_fixtures):
@@ -50,7 +50,8 @@ def test_maybe_download_maybe(caplog, files_fixtures):
     downloaded_filepath = maybe_download(file_url, "license.txt")
     assert os.path.exists(downloaded_filepath)
     maybe_download(file_url, "license.txt")
-    assert "File ./license.txt already downloaded" in caplog.text
+    assert "File ." + os.path.sep + "license.txt already downloaded" in caplog.text
+
 
 
 def test_maybe_download_retry(caplog):

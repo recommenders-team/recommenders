@@ -2,9 +2,11 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (July, 2022)
+## What's New (April, 2023)
 
-We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
+We reached 15,000 stars!!
+
+Our latest release is [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
 
 We have introduced a new way of testing our repository using [AzureML](https://azure.microsoft.com/en-us/services/machine-learning/). With AzureML we are able to distribute our tests to different machines and run them in parallel. This allows us to test our repository on a wider range of machines and provides us with a much faster test cycle. Our total computation time went from around 9h to 35min, and we were able to reduce the costs by half. See more details [here](tests/README.md).
 
@@ -32,66 +34,39 @@ For a more detailed overview of the repository, please see the documents on the 
 
 ## Getting Started
 
-Please see the [setup guide](SETUP.md) for more details on setting up your machine locally, on a [Data Science Virtual Machine (DSVM)](https://azure.microsoft.com/en-gb/services/virtual-machines/data-science-virtual-machines/) or on [Azure Databricks](SETUP.md#setup-guide-for-azure-databricks).
+We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [vscode](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook:
 
-The installation of the recommenders package has been tested with 
-- Python versions 3.6 - 3.9 and [venv](https://docs.python.org/3/library/venv.html), [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#) or [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment)
+```bash
+# Create and activate a new conda environment
+conda create -n <environment_name> python=3.9
+conda activate <environment_name>
 
-and currently does not support version 3.10 and above. It is recommended to install the package and its dependencies inside a clean environment (such as [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment), [venv](https://docs.python.org/3/library/venv.html) or [virtualenv](https://virtualenv.pypa.io/en/latest/index.html#)).
+# Install the recommenders package with examples
+pip install recommenders[examples]
 
-To set up on your local machine:
+# create a Jupyter kernel
+python -m ipykernel install --user --name <environment_name> --display-name <kernel_name>
 
-* To install core utilities, CPU-based algorithms, and dependencies:
+# Clone this repo within vscode or using command:
+git clone https://github.com/microsoft/recommenders.git
 
-    1. Ensure software required for compilation and Python libraries
-       is installed.
+# Within vscode:
+#   1. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
+#   2. Select Jupyter kernel <kernel_name>;
+#   3. Run the notebook.
+```
 
-       + On Linux this can be supported by adding:
+For more information about setup including extras, as well as configurations for GPU, Spark and Docker container, see the [setup guide](SETUP.md).
 
-         ```bash
-         sudo apt-get install -y build-essential libpython<version>
-         ``` 
+In addition to the core package, several extras are also provided, including:
++ `[examples]`: Needed for running examples.
++ `[gpu]`: Needed for running GPU models.
++ `[spark]`: Needed for running Spark models.
++ `[dev]`: Needed for development for the repo.
++ `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
++ `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation.
++ `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
 
-         where `<version>` should be the Python version (e.g. `3.6`).
-
-       + On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/).
-
-    2. Create a conda or virtual environment.  See the
-       [setup guide](SETUP.md) for more details.
-
-    3. Within the created environment, install the package from
-       [PyPI](https://pypi.org):
-
-       ```bash
-       pip install --upgrade pip
-       pip install --upgrade setuptools
-       pip install recommenders[examples]
-       ```
-
-    4. Register your (conda or virtual) environment with Jupyter:
-
-       ```bash
-       python -m ipykernel install --user --name my_environment_name --display-name "Python (reco)"
-       ```
-
-    5. Start the Jupyter notebook server
-
-       ```bash
-       jupyter notebook
-       ```
-
-    6. Run the [SAR Python CPU MovieLens](examples/00_quick_start/sar_movielens.ipynb)
-       notebook under the `00_quick_start` folder.  Make sure to
-       change the kernel to "Python (reco)".
-
-* For additional options to install the package (support for GPU,
-  Spark etc.) see [this guide](recommenders/README.md).
-
-**NOTE** - The [Alternating Least Squares (ALS)](examples/00_quick_start/als_movielens.ipynb) notebooks require a PySpark environment to run. Please follow the steps in the [setup guide](SETUP.md#dependencies-setup) to run these notebooks in a PySpark environment. For the deep learning algorithms, it is recommended to use a GPU machine and to follow the steps in the [setup guide](SETUP.md#dependencies-setup) to set up Nvidia libraries.
-
-**NOTE for DSVM Users** - Please follow the steps in the [Dependencies setup - Set PySpark environment variables on Linux or macOS](SETUP.md#dependencies-setup) and [Troubleshooting for the DSVM](SETUP.md#troubleshooting-for-the-dsvm) sections if you encounter any issue.
-
-**DOCKER** - Another easy way to try the recommenders repository and get started quickly is to build [docker images](tools/docker/README.md) suitable for different environments. 
 
 ## Algorithms
 
@@ -179,13 +154,6 @@ Smoke and integration tests are run daily on AzureML.
 | **Linux CPU** | main | [![azureml-cpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml?query=branch%3Amain) | | staging | [![azureml-cpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-cpu-nightly.yml?query=branch%3Astaging) |
 | **Linux GPU** | main | [![azureml-gpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml?query=branch%3Amain) | | staging | [![azureml-gpu-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-gpu-nightly.yml?query=branch%3Astaging) |
 | **Linux Spark** | main | [![azureml-spark-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml/badge.svg?branch=main)](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml?query=branch%3Amain) | | staging | [![azureml-spark-nightly](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml/badge.svg?branch=staging)](https://github.com/microsoft/recommenders/actions/workflows/azureml-spark-nightly.yml?query=branch%3Astaging) |
-
-## Related projects
-
-- [Microsoft AI GitHub](https://github.com/microsoft/ai): Find other Best Practice projects, and Azure AI design patterns in our central repository.
-- [NLP best practices](https://github.com/microsoft/nlp-recipes): Best practices and examples on NLP.
-- [Computer vision best practices](https://github.com/microsoft/computervision-recipes): Best practices and examples on computer vision.
-- [Forecasting best practices](https://github.com/microsoft/forecasting): Best practices and examples on time series forecasting.
 
 ## References
 

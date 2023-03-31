@@ -21,14 +21,14 @@ on:
       - '!tests/**/*.md'
       - setup.py
 
-  # enable manual trigger
+  # Enable manual trigger
   workflow_dispatch:
     input:
       tags:
         description: 'Tags to label this manual run (optional)'
-        default: 'Anything to describe this manual run'
+        default: 'Manual trigger'
 
-  # make this workflow reusable
+  # Make this workflow reusable
   workflow_call:
 
 jobs:
@@ -53,6 +53,7 @@ jobs:
     name: ${{ join(matrix.*, ', ') }}
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 50 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
       matrix:
         python-version: ['"python=3.7"', '"python=3.8"', '"python=3.9"']
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}

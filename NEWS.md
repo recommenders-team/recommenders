@@ -1,5 +1,9 @@
 # What's New
 
+## Update February 7, 2023 
+
+We reached 15,000 stars!!
+
 ## Update July, 2022
 
 We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
