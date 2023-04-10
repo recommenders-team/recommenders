@@ -34,9 +34,12 @@ For a more detailed overview of the repository, please see the documents on the 
 
 ## Getting Started
 
-We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [vscode](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook:
+We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [VS Code](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook on Linux/WSL:
 
 ```bash
+# Install gcc if it is not installed already. On Ubuntu, this could done by using the command
+# sudo apt install gcc
+
 # Create and activate a new conda environment
 conda create -n <environment_name> python=3.9
 conda activate <environment_name>
@@ -50,13 +53,13 @@ python -m ipykernel install --user --name <environment_name> --display-name <ker
 # Clone this repo within vscode or using command:
 git clone https://github.com/microsoft/recommenders.git
 
-# Within vscode:
+# Within VS Code:
 #   1. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
 #   2. Select Jupyter kernel <kernel_name>;
 #   3. Run the notebook.
 ```
 
-For more information about setup including extras, as well as configurations for GPU, Spark and Docker container, see the [setup guide](SETUP.md).
+For more information about setup on different platforms (e.g., Windows and macOS) and configurations (GPU, Spark and Docker container), see the [setup guide](SETUP.md).
 
 In addition to the core package, several extras are also provided, including:
 + `[examples]`: Needed for running examples.
@@ -64,7 +67,7 @@ In addition to the core package, several extras are also provided, including:
 + `[spark]`: Needed for running Spark models.
 + `[dev]`: Needed for development for the repo.
 + `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
-+ `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation.
++ `[experimental]`: Models that are not thoroughly tested and/or may require additional steps in installation.
 + `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
 
 
