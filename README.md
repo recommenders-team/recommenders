@@ -37,26 +37,26 @@ For a more detailed overview of the repository, please see the documents on the 
 We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [VS Code](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook on Linux/WSL:
 
 ```bash
-# Install gcc if it is not installed already. On Ubuntu, this could done by using the command
+# 1. Install gcc if it is not installed already. On Ubuntu, this could done by using the command
 # sudo apt install gcc
 
-# Create and activate a new conda environment
+# 2. Create and activate a new conda environment
 conda create -n <environment_name> python=3.9
 conda activate <environment_name>
 
-# Install the recommenders package with examples
+# 3. Install the recommenders package with examples
 pip install recommenders[examples]
 
-# create a Jupyter kernel
+# 4. create a Jupyter kernel
 python -m ipykernel install --user --name <environment_name> --display-name <kernel_name>
 
-# Clone this repo within vscode or using command:
+# 5. Clone this repo within vscode or using command:
 git clone https://github.com/microsoft/recommenders.git
 
-# Within VS Code:
-#   1. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
-#   2. Select Jupyter kernel <kernel_name>;
-#   3. Run the notebook.
+# 6. Within VS Code:
+#   a. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
+#   b. Select Jupyter kernel <kernel_name>;
+#   c. Run the notebook.
 ```
 
 For more information about setup on different platforms (e.g., Windows and macOS) and configurations (GPU, Spark and Docker container), see the [setup guide](SETUP.md).

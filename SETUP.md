@@ -59,18 +59,21 @@ Follow the [Getting Started](./README.md#Getting-Started) section in the [README
 
 ## Setup for Spark 
 
-Make sure you have installed JDK (we tested on Java 8 and 11). FIXME - instrcutions are on 11. 
-You can install OpenJDK 11 using the command `[sudo apt-get install openjdk-11-jdk]`.
-Then,
 ```bash
-# Within vscode:
-#   1. Open a notebook with a Spark model, e.g., examples/00_quick_start/als_movielens.ipynb;  
-#   2. Select Jupyter kernel <kernel_name>;
-#   3. Run the notebook.
+# 1. Make sure JDK is installed.  For example, OpenJDK 11 can be installed using the command
+# sudo apt-get install openjdk-11-jdk
+
+# 2. Follow Steps 1-5 in [Getting Started](./README.md#Getting-Started) section in [README](./README.md) to install the package and Jupyter kernel, adding the spark extra to the pip install command:
+pip install recommenders[examples,spark]
+
+# 3. Within VS Code:
+#   a. Open a notebook with a Spark model, e.g., examples/00_quick_start/als_movielens.ipynb;  
+#   b. Select Jupyter kernel <kernel_name>;
+#   c. Run the notebook.
 ```
 
 
-TODO 0401 - Databricks
+TODO 0410 - Databricks
 ## Setup guide for Azure Databricks
 
 ### Requirements
