@@ -121,7 +121,7 @@ runs:
     - name: Get exit status
       shell: bash
       id: exit_status
-      run: echo ::set-output name=code::$(cat ${{inputs.PYTEST_EXIT_CODE}})
+      run: echo "code=$(cat ${{inputs.PYTEST_EXIT_CODE}})" >> $GITHUB_OUTPUT
     - name: Check Success/Failure
       if: ${{ steps.exit_status.outputs.code != 0 }}
       uses: actions/github-script@v3
