@@ -291,7 +291,7 @@ class StandardVAE:
         # Training
         self.model = Model(self.x, self.x_decoded)
         self.model.compile(
-            optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+            optimizer=tf.keras.optimizers.legacy.Adam(learning_rate=0.001),
             loss=self._get_vae_loss,
         )
 
