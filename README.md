@@ -59,7 +59,7 @@ git clone https://github.com/microsoft/recommenders.git
 #   c. Run the notebook.
 ```
 
-For more information about setup on different platforms (e.g., Windows and macOS) and configurations (GPU, Spark and experimental features), see the [setup guide](SETUP.md).
+For more information about setup on other platforms (e.g., Windows and macOS) and different configurations (e.g., GPU, Spark and experimental features), see the [Setup Guide](SETUP.md).
 
 In addition to the core package, several extras are also provided, including:
 + `[examples]`: Needed for running examples.
