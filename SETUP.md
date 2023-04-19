@@ -10,7 +10,7 @@ In addition to the pip installable package, several extras are provided, includi
 + `[spark]`: Needed for running Spark models.
 + `[dev]`: Needed for development.
 + `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
-+ `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation).
++ `[experimental]`: Models that are not thoroughly tested and/or may require additional steps in installation).
 + `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
 
 
@@ -25,7 +25,7 @@ Follow the [Getting Started](./README.md#Getting-Started) section in the [README
 # 1. Make sure JDK is installed.  For example, OpenJDK 11 can be installed using the command
 # sudo apt-get install openjdk-11-jdk
 
-# 2. Follow Steps 1-5 in [Getting Started](./README.md#Getting-Started) section in [README](./README.md) to install the package and Jupyter kernel, adding the spark extra to the pip install command:
+# 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the spark extra to the pip install command:
 pip install recommenders[examples,spark]
 
 # 3. Within VS Code:
