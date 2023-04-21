@@ -1,6 +1,6 @@
 # Setup Guide
 
-The repo, including this guide, is tested on Linux.    Where applicable, we document differences in [Windows](#windows-specific-instructions)  and [macOS](#macos-specific-instructions) although 
+The repo, including this guide, is tested on Linux. Where applicable, we document differences in [Windows](#windows-specific-instructions)  and [macOS](#macos-specific-instructions) although 
 such documentation may not always be up to date.   
 
 ## Extras
