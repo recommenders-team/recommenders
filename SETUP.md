@@ -34,6 +34,18 @@ pip install recommenders[examples,spark]
 #   c. Run the notebook.
 ```
 
+## Setup for developers
+
+If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md).  The following instructions are for developers who want to install the package in a development environment.
+
+You will notice that our development branch is `staging`.
+
+```bash
+git checkout staging
+pip install -e .[dev]
+```
+
+ 
 ## Setup for Azure Databricks
 
 The following instructions were tested on Azure Databricks Runtime 12.2 LTS (Apache Spark version 3.3.2) and 11.3 LTS (Apache Spark version 3.3.0).
@@ -89,7 +101,6 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
    7. Restart the cluster.
 
 </details>
-
 
 
 ## Setup for Experimental 
