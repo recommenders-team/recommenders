@@ -36,16 +36,22 @@ pip install recommenders[examples,spark]
 
 ## Setup for developers
 
-If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md).  The following instructions are for developers who want to install the package in a development environment.
+If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md). You will notice that our development branch is `staging`.
 
-You will notice that our development branch is `staging`.
+To start developing, you need to install the latest `staging` branch in local, the `dev` package, and any other package you want. For example, for starting developing with GPU models, you can use the following command:
 
 ```bash
 git checkout staging
-pip install -e .[dev]
+pip install -e .[dev,gpu]
 ```
 
- 
+You can decide which packages you want to install, if you want to install all of them, you can use the following command:
+
+```bash
+git checkout staging
+pip install -e .[all]
+```
+
 ## Setup for Azure Databricks
 
 The following instructions were tested on Azure Databricks Runtime 12.2 LTS (Apache Spark version 3.3.2) and 11.3 LTS (Apache Spark version 3.3.0).
