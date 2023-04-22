@@ -34,29 +34,32 @@ For a more detailed overview of the repository, please see the documents on the 
 
 ## Getting Started
 
-We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [vscode](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook:
+We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.html?highlight=environment#conda-environment) for environment management, and [VS Code](https://code.visualstudio.com/) for development. To install the recommenders package and run an example notebook on Linux/WSL:
 
 ```bash
-# Create and activate a new conda environment
+# 1. Install gcc if it is not installed already. On Ubuntu, this could done by using the command
+# sudo apt install gcc
+
+# 2. Create and activate a new conda environment
 conda create -n <environment_name> python=3.9
 conda activate <environment_name>
 
-# Install the recommenders package with examples
+# 3. Install the recommenders package with examples
 pip install recommenders[examples]
 
-# create a Jupyter kernel
+# 4. create a Jupyter kernel
 python -m ipykernel install --user --name <environment_name> --display-name <kernel_name>
 
-# Clone this repo within vscode or using command:
+# 5. Clone this repo within vscode or using command:
 git clone https://github.com/microsoft/recommenders.git
 
-# Within vscode:
-#   1. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
-#   2. Select Jupyter kernel <kernel_name>;
-#   3. Run the notebook.
+# 6. Within VS Code:
+#   a. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
+#   b. Select Jupyter kernel <kernel_name>;
+#   c. Run the notebook.
 ```
 
-For more information about setup including extras, as well as configurations for GPU, Spark and Docker container, see the [setup guide](SETUP.md).
+For more information about setup on other platforms (e.g., Windows and macOS) and different configurations (e.g., GPU, Spark and experimental features), see the [Setup Guide](SETUP.md).
 
 In addition to the core package, several extras are also provided, including:
 + `[examples]`: Needed for running examples.
@@ -64,7 +67,7 @@ In addition to the core package, several extras are also provided, including:
 + `[spark]`: Needed for running Spark models.
 + `[dev]`: Needed for development for the repo.
 + `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
-+ `[experimental]`: Models that are not throughly tested and/or may require additional steps in installation.
++ `[experimental]`: Models that are not thoroughly tested and/or may require additional steps in installation.
 + `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
 
 
@@ -131,13 +134,11 @@ We provide a [benchmark notebook](examples/06_benchmarks/movielens.ipynb) to ill
 | [SAR](examples/00_quick_start/sar_movielens.ipynb) | 0.110591 |	0.382461 | 	0.330753 | 0.176385 | 1.253805 | 1.048484 |	-0.569363 |	0.030474 |
 | [SVD](examples/02_model_collaborative_filtering/surprise_svd_deep_dive.ipynb) | 0.012873	| 0.095930 |	0.091198 |	0.032783 | 0.938681 | 0.742690 | 0.291967 | 0.291971 |
 
-## Code of Conduct
-
-This project adheres to [Microsoft's Open Source Code of Conduct](CODE_OF_CONDUCT.md) in order to foster a welcoming and inspiring community for all.
-
 ## Contributing
 
 This project welcomes contributions and suggestions. Before contributing, please see our [contribution guidelines](CONTRIBUTING.md).
+
+This project adheres to [Microsoft's Open Source Code of Conduct](CODE_OF_CONDUCT.md) in order to foster a welcoming and inspiring community for all.
 
 ## Build Status
 

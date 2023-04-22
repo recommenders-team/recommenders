@@ -18,19 +18,17 @@ on:
     # cron works with default branch (main) only: # https://github.community/t/on-schedule-per-branch/17525/2
   
   push:
-    # because we can't schedule runs for non-main branches,
+    # Because we can't schedule runs for non-main branches,
     # to ensure we are running the build on the staging branch, we can add push policy for it
     branches: [staging]
-
-  pull_request:
-    branches:
-      - 'main'
     paths:
-      # Unit tests will be run only when there are changes in the
-      # unit tests related code including:
+      # Tests will be run only when there are changes in the code:
       - examples/**
+      - '!examples/**/*.md'
       - recommenders/**
+      - '!recommenders/**/*.md'
       - tests/**
+      - '!tests/**/*.md'
       - setup.py
 
   # Enable manual trigger
