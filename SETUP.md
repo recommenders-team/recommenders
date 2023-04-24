@@ -34,7 +34,7 @@ pip install recommenders[examples,spark]
 #   c. Run the notebook.
 ```
 
-## Setup for developers
+## Setup for Developers
 
 If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md). You will notice that our development branch is `staging`.
 
