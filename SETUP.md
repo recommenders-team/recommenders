@@ -1,6 +1,6 @@
 # Setup Guide
 
-The repo, including this guide, is tested on Linux.    Where applicable, we document differences in [Windows](#windows-specific-instructions)  and [macOS](#macos-specific-instructions) although 
+The repo, including this guide, is tested on Linux. Where applicable, we document differences in [Windows](#windows-specific-instructions)  and [macOS](#macos-specific-instructions) although 
 such documentation may not always be up to date.   
 
 ## Extras
@@ -32,6 +32,24 @@ pip install recommenders[examples,spark]
 #   a. Open a notebook with a Spark model, e.g., examples/00_quick_start/als_movielens.ipynb;  
 #   b. Select Jupyter kernel <kernel_name>;
 #   c. Run the notebook.
+```
+
+## Setup for Developers
+
+If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md). You will notice that our development branch is `staging`.
+
+To start developing, you need to install the latest `staging` branch in local, the `dev` package, and any other package you want. For example, for starting developing with GPU models, you can use the following command:
+
+```bash
+git checkout staging
+pip install -e .[dev,gpu]
+```
+
+You can decide which packages you want to install, if you want to install all of them, you can use the following command:
+
+```bash
+git checkout staging
+pip install -e .[all]
 ```
 
 ## Setup for Azure Databricks
@@ -89,7 +107,6 @@ Additionally, you must install the [spark-cosmosdb connector](https://docs.datab
    7. Restart the cluster.
 
 </details>
-
 
 
 ## Setup for Experimental 
