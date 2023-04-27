@@ -138,7 +138,7 @@ Another alternative is to run all the recommender utilities directly from a loca
 
 ## Setup for Making a Release
 
-The process of making a new release and publishing it to PyPI is as follows:
+The process of making a new release and publishing it to [PyPI](https://pypi.org/project/recommenders/) is as follows:
 
 First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`recommenders.py/__init__.py`](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
