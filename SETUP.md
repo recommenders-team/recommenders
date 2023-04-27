@@ -34,24 +34,6 @@ pip install recommenders[examples,spark]
 #   c. Run the notebook.
 ```
 
-## Setup for Developers
-
-If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md). You will notice that our development branch is `staging`.
-
-To start developing, you need to install the latest `staging` branch in local, the `dev` package, and any other package you want. For example, for starting developing with GPU models, you can use the following command:
-
-```bash
-git checkout staging
-pip install -e .[dev,gpu]
-```
-
-You can decide which packages you want to install, if you want to install all of them, you can use the following command:
-
-```bash
-git checkout staging
-pip install -e .[all]
-```
-
 ## Setup for Azure Databricks
 
 The following instructions were tested on Azure Databricks Runtime 12.2 LTS (Apache Spark version 3.3.2) and 11.3 LTS (Apache Spark version 3.3.0).
@@ -125,6 +107,24 @@ If zsh is used, one will need to use `pip install 'recommenders[<extras>]'` to i
 
 For Spark features to work, make sure Java and Spark are installed first. Also make sure environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` are set to the the same python executable.
 <!-- TO DO: Pytorch m1 mac GPU suppoort -->
+
+## Setup for Developers
+
+If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md). You will notice that our development branch is `staging`.
+
+To start developing, you need to install the latest `staging` branch in local, the `dev` package, and any other package you want. For example, for starting developing with GPU models, you can use the following command:
+
+```bash
+git checkout staging
+pip install -e .[dev,gpu]
+```
+
+You can decide which packages you want to install, if you want to install all of them, you can use the following command:
+
+```bash
+git checkout staging
+pip install -e .[all]
+```
 
 ## Test Environments
 
