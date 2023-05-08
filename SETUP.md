@@ -34,24 +34,6 @@ pip install recommenders[examples,spark]
 #   c. Run the notebook.
 ```
 
-## Setup for Developers
-
-If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md). You will notice that our development branch is `staging`.
-
-To start developing, you need to install the latest `staging` branch in local, the `dev` package, and any other package you want. For example, for starting developing with GPU models, you can use the following command:
-
-```bash
-git checkout staging
-pip install -e .[dev,gpu]
-```
-
-You can decide which packages you want to install, if you want to install all of them, you can use the following command:
-
-```bash
-git checkout staging
-pip install -e .[all]
-```
-
 ## Setup for Azure Databricks
 
 The following instructions were tested on Azure Databricks Runtime 12.2 LTS (Apache Spark version 3.3.2) and 11.3 LTS (Apache Spark version 3.3.0).
@@ -126,6 +108,24 @@ If zsh is used, one will need to use `pip install 'recommenders[<extras>]'` to i
 For Spark features to work, make sure Java and Spark are installed first. Also make sure environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` are set to the the same python executable.
 <!-- TO DO: Pytorch m1 mac GPU suppoort -->
 
+## Setup for Developers
+
+If you want to contribute to Recommenders, please first read the [Contributing Guide](./CONTRIBUTING.md). You will notice that our development branch is `staging`.
+
+To start developing, you need to install the latest `staging` branch in local, the `dev` package, and any other package you want. For example, for starting developing with GPU models, you can use the following command:
+
+```bash
+git checkout staging
+pip install -e .[dev,gpu]
+```
+
+You can decide which packages you want to install, if you want to install all of them, you can use the following command:
+
+```bash
+git checkout staging
+pip install -e .[all]
+```
+
 ## Test Environments
 
 Depending on the type of recommender system and the notebook that needs to be run, there are different computational requirements.
@@ -138,15 +138,14 @@ Another alternative is to run all the recommender utilities directly from a loca
 
 ## Setup for Making a Release
 
-The process of making a new release and publishing it to pypi is as follows:
+The process of making a new release and publishing it to [PyPI](https://pypi.org/project/recommenders/) is as follows:
 
 First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`recommenders.py/__init__.py`](recommenders.py/__init__.py). Follow the [contribution guideline](CONTRIBUTING.md) to add the change.
 
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
 1. Push the tag to the remote server: `git push origin 0.6.0`.
-1. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (unit, smoke and integration), 
-generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
+1. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (unit, smoke and integration), generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
 1. Install twine: `pip install twine`
