@@ -29,7 +29,7 @@ if HASH is not None:
 install_requires = [
     "numpy>=1.19",  # 1.19 required by tensorflow 2.6
     "pandas>1.0.3,<2",
-    "scipy>=1.0.0,<2",
+    "scipy>=1.0.0,<2",  
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<4",
     "scikit-learn>=0.22.1,<1.0.3",
@@ -45,7 +45,7 @@ install_requires = [
     "jinja2>=2,<3.1",
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
-    "cornac>=1.1.2,<2",
+    "cornac>=1.1.2,<1.15.2",
     "retrying>=1.3.3",
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
     "scikit-surprise>=1.0.6",
@@ -137,6 +137,9 @@ setup(
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
     python_requires=">=3.6, <3.10",
-    packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
-    setup_requires=["numpy>=1.15"]
+    packages=find_packages(
+        where=".",
+        exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
+    ),
+    setup_requires=["numpy>=1.15"],
 )
