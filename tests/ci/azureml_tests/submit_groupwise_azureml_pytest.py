@@ -206,19 +206,19 @@ def create_run_config(
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         # conda_dep.add_pip_package("[dev,examples,spark,gpu]")
-        run_azuremlcompute.command = ["pip", "install", ".[dev,examples,spark,gpu]"]
+        run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark,gpu]"]
     elif add_gpu_dependencies:
         # conda_dep.add_pip_package("[dev,examples,gpu]")
-        run_azuremlcompute.command = ["pip", "install", ".[dev,examples,gpu]"]
+        run_azuremlcompute.script = ["pip", "install", ".[dev,examples,gpu]"]
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
         # conda_dep.add_pip_package("[dev,examples,spark]")
-        run_azuremlcompute.command = ["pip", "install", ".[dev,examples,spark]"]
+        run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark]"]
 
     else:
         # conda_dep.add_pip_package("[dev,examples]")
-        run_azuremlcompute.command = ["pip", "install", ".[dev,examples]"]
+        run_azuremlcompute.script = ["pip", "install", ".[dev,examples]"]
 
 
     run_azuremlcompute.environment.python.conda_dependencies = conda_dep
