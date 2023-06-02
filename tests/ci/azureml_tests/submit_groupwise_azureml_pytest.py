@@ -205,15 +205,15 @@ def create_run_config(
     if add_gpu_dependencies and add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]")
+        conda_dep.add_pip_package(".[dev,examples,spark,gpu]")
     elif add_gpu_dependencies:
-        conda_dep.add_pip_package("recommenders[dev,examples,gpu]")
+        conda_dep.add_pip_package(".[dev,examples,gpu]")
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark]")
+        conda_dep.add_pip_package(".[dev,examples,spark]")
     else:
-        conda_dep.add_pip_package("recommenders[dev,examples]")
+        conda_dep.add_pip_package(".[dev,examples]")
 
     run_azuremlcompute.environment.python.conda_dependencies = conda_dep
     return run_azuremlcompute
