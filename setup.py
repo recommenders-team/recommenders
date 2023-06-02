@@ -45,7 +45,8 @@ install_requires = [
     "jinja2>=2,<3.1",
     "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
-    "cornac>=1.1.2,<1.15.2",
+    "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
+    "cornac>=1.1.2,<2;python_version>='3.8'",
     "retrying>=1.3.3",
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
     "scikit-surprise>=1.0.6",
