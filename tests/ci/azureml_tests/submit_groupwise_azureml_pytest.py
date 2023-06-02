@@ -205,16 +205,19 @@ def create_run_config(
     if add_gpu_dependencies and add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        # conda_dep.add_pip_package("[dev,examples,spark,gpu]")
-        run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark,gpu]"]
+        # conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]") # Not working, it installs the pip package instead of the local wheel
+        # run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark,gpu]"] # not working
+        run_azuremlcompute.command = ["pip", "install", ".[dev,examples,spark,gpu]"] 
     elif add_gpu_dependencies:
-        # conda_dep.add_pip_package("[dev,examples,gpu]")
-        run_azuremlcompute.script = ["pip", "install", ".[dev,examples,gpu]"]
+        # conda_dep.add_pip_package("recommenders[dev,examples,gpu]") # Not working, it installs the pip package instead of the local wheel
+        # run_azuremlcompute.script = ["pip", "install", ".[dev,examples,gpu]"] # not working
+        run_azuremlcompute.command = ["pip", "install", ".[dev,examples,gpu]"]
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        # conda_dep.add_pip_package("[dev,examples,spark]")
-        run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark]"]
+        # conda_dep.add_pip_package("recommenders[dev,examples,spark]") # Not working, it installs the pip package instead of the local wheel
+        # run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark]"] # not working
+        run_azuremlcompute.command = ["pip", "install", ".[dev,examples,spark]"]
 
     else:
         # conda_dep.add_pip_package("[dev,examples]")
