@@ -221,7 +221,9 @@ def create_run_config(
 
     else:
         # conda_dep.add_pip_package("[dev,examples]")
-        run_azuremlcompute.script = ["pip", "install", ".[dev,examples]"]
+        # run_azuremlcompute.script = ["pip", "install", ".[dev,examples]"]
+        run_azuremlcompute.command = ["pip", "install", ".[dev,examples]"]
+
 
 
     run_azuremlcompute.environment.python.conda_dependencies = conda_dep
