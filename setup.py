@@ -1,14 +1,14 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-from os import environ
-from pathlib import Path
-from setuptools import setup, find_packages
 import site
 import sys
 import time
+from os import environ
+from pathlib import Path
 
-# Workaround for enabling editable user pip installs
+from setuptools import find_packages, setup
+
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
 # Version
@@ -27,51 +27,57 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "numpy>=1.19",  # 1.19 required by tensorflow 2.6
-    "pandas>1.0.3,<2",
-    "scipy>=1.0.0,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
-    "tqdm>=4.31.1,<5",
-    "matplotlib>=2.2.2,<4",
-    "scikit-learn>=0.22.1,<1.0.3",
-    "numba>=0.38.1,<1",
-    "lightfm>=1.15,<2",
-    "lightgbm>=2.2.1",
-    "memory_profiler>=0.54.0,<1",
-    "nltk>=3.4,<4",
-    "seaborn>=0.8.1,<1",
-    "transformers>=2.5.0,<5",
-    "category_encoders>=1.3.0,<2",
-    "jinja2>=2,<3.1",
-    "requests>=2.31.0,<3",
-    "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
-    "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
-    "retrying>=1.3.3",
-    "pandera[strategies]>=0.6.5",  # For generating fake datasets
-    "scikit-surprise>=1.0.6",
-    "hyperopt>=0.1.2,<1",
-    "ipykernel>=4.6.1,<7",
-    "jupyter>=1,<2",
-    "locust>=1,<2",
+    "pandas>1.5.2,<2.1",  # requires numpy
+    "tqdm>=4.65.0,<5",
+    "matplotlib>=3.6.0,<4",
+    "scikit-learn>=1.1.3,<2",  # 1.0.2 may not support Python 3.10.  requires scipy
+    "numba>=0.57.0,<1",
+    "lightfm>=1.17,<2",
+    "lightgbm>=3.3.2,<4",
+    "memory_profiler>=0.61.0,<1",
+    "nltk>=3.8.1,<4",
+    "seaborn>=0.12.0,<1",
+    "transformers>=4.26.0,<5",  # requires pyyaml
+    "bottleneck>=1.3.7,<2",
+    "category_encoders>=2.6.0,<2",
+    "jinja2>=3.1.0,<3.2",
+    "cornac>=1.15.2,<2",
+    "retrying>=1.3.4",
+    "pandera[strategies]>=0.15.0",  # For generating fake datasets
+    "scikit-surprise>=1.1.3",
+    "scrapbook>=0.5.0,<1.0.0",
 ]
 
 # shared dependencies
 extras_require = {
+    "examples": [
+        "azure-mgmt-cosmosdb>=9.0.0,<10",
+        "hyperopt>=0.2.7,<1",
+        "ipykernel>=6.20.1,<7",
+        "notebook>=6.5.4,<8",
+        "locust>=2.15.1,<3",
+        "papermill>=2.4.0,<3",
+    ],
     "gpu": [
-        "nvidia-ml-py3>=7.352.0",
-        "tensorflow==2.8.4",  # FIXME: Temporarily pinned due to issue with TF version > 2.10.1 See #2018
+        "nvidia-ml-py3>=11.510.69",
+        # TensorFlow compiled with CUDA 11.2, cudnn 8.1
+        "tensorflow~=2.6.1;python_version=='3.6'",
+        "tensorflow~=2.7.0;python_version>='3.7'",
         "tf-slim>=1.1.0",
-        "torch>=1.13.1",  # for CUDA 11 support
-        "fastai>=1.0.46,<2",
+        "torch>=2.0.1",
+        "fastai>=2.7.11,<3",
     ],
     "spark": [
-        "pyarrow>=0.12.1,<7.0.0",
-        "pyspark>=2.4.5,<3.3.0",
+        "databricks_cli>=0.17.7,<1",
+        "pyarrow>=10.0.1",
+        "pyspark>=3.0.1,<=3.4.0",
     ],
     "dev": [
-        "black>=18.6b4,<21",
-        "pytest>=3.6.4",
-        "pytest-cov>=2.12.1",
-        "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
+        "black>=23.3.0,<24",
+        "pytest>=7.2.1",
+        "pytest-cov>=4.1.0",
+        "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
+        "pytest-rerunfailures>=11.1.2",  # to mark flaky tests
     ],
 }
 # For the brave of heart
@@ -115,6 +121,9 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
+        "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
     ],
     extras_require=extras_require,
@@ -122,10 +131,10 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.6",
+    python_requires=">=3.8, <3.12",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
     ),
-    setup_requires=["numpy>=1.19"],
+    setup_requires=["numpy>=1.15"],
 )
