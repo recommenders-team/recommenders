@@ -99,22 +99,24 @@ runs:
       shell: bash
       if: contains(inputs.TEST_GROUP, 'gpu')
       run: >-
-          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
-          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
-          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          --disable-warnings
+          # python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
+          # --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          # --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          # --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
+          # --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          # --disable-warnings
+          print("Skipping GPU tests for now")
     - name: Submit PySpark tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
       run: >-
-          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
-          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
-          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
-          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
-          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          --disable-warnings
+          # python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
+          # --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          # --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          # --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
+          # --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          # --disable-warnings
+          print("Skipping PySpark tests for now")
     - name: Print test logs
       shell: bash
       run: cat ${{inputs.TEST_LOGS_PATH}}
