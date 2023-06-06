@@ -105,7 +105,6 @@ runs:
           # --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
           # --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
           # --disable-warnings
-          touch ${{inputs.TEST_LOGS_PATH}}
     - name: Submit PySpark tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
@@ -116,10 +115,9 @@ runs:
           # --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
           # --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
           # --disable-warnings
-          touch ${{inputs.TEST_LOGS_PATH}}
-    - name: Print test logs
-      shell: bash
-      run: cat ${{inputs.TEST_LOGS_PATH}}
+    # - name: Print test logs
+    #   shell: bash
+    #   run: cat ${{inputs.TEST_LOGS_PATH}}
     - name: Get exit status
       shell: bash
       id: exit_status
