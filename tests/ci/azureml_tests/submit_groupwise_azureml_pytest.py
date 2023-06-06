@@ -179,7 +179,9 @@ def create_run_config(
 
     run_azuremlcompute = RunConfiguration()
     run_azuremlcompute.target = cpu_cluster
-    run_azuremlcompute.environment.docker.use_docker = True
+
+    # Enable DockerSection https://learn.microsoft.com/en-us/python/api/azureml-core/azureml.core.environment.dockersection
+    run_azuremlcompute.environment.docker.enabled = True
     # run_azuremlcompute.environment.docker.base_image = docker_proc_type
     
     dockerfile = """
