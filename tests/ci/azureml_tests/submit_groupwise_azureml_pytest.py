@@ -179,83 +179,42 @@ def create_run_config(
 
     run_azuremlcompute = RunConfiguration()
     run_azuremlcompute.target = cpu_cluster
-
-    # Enable DockerSection https://learn.microsoft.com/en-us/python/api/azureml-core/azureml.core.environment.dockersection
     run_azuremlcompute.environment.docker.enabled = True
-    # run_azuremlcompute.environment.docker.base_image = docker_proc_type
-    
-    dockerfile = """
-    FROM mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04
+    run_azuremlcompute.environment.docker.base_image = docker_proc_type
 
-    ARG HOME
-    ARG VIRTUAL_ENV
-    ENV HOME="${HOME}"
-    WORKDIR ${HOME}
+    # Use conda_dependencies.yml to create a conda environment in
+    # the Docker image for execution
+    # False means the user will provide a conda file for setup
+    # True means the user will manually configure the environment
+    run_azuremlcompute.environment.python.user_managed_dependencies = False
 
-    RUN apt-get update && \
-    apt-get install -y curl build-essential
+    # install local version of recommenders on AzureML compute using .whl file
+    whl_url = run_azuremlcompute.environment.add_private_pip_wheel(
+        workspace=workspace,
+        file_path=reco_wheel_path,
+        exist_ok=True,
+    )
+    conda_dep = CondaDependencies()
+    conda_dep.add_conda_package(conda_pkg_python)
+    conda_dep.add_pip_package(
+        "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"
+    )
 
-    # Install Anaconda
-    ARG ANACONDA="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-    RUN curl ${ANACONDA} -o anaconda.sh && \
-    /bin/bash anaconda.sh -b -p conda && \
-    rm anaconda.sh && \
-    echo ". ${HOME}/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc ; fi
+    # install extra dependencies
+    if add_gpu_dependencies and add_spark_dependencies:
+        conda_dep.add_channel("conda-forge")
+        conda_dep.add_conda_package(conda_pkg_jdk)
+        conda_dep.add_pip_package(whl_url + "[dev,examples,spark,gpu]")
+    elif add_gpu_dependencies:
+        conda_dep.add_pip_package(whl_url + "[dev,examples,gpu]")
+    elif add_spark_dependencies:
+        conda_dep.add_channel("conda-forge")
+        conda_dep.add_conda_package(conda_pkg_jdk)
+        conda_dep.add_pip_package(whl_url + "[dev,examples,spark]")
+    else:
+        conda_dep.add_pip_package(whl_url + "[dev,examples]")
 
-    # Install Python packages
-    RUN conda install python=3.7
-    RUN pip install .[dev,examples]
-
-    """
-    run_azuremlcompute.environment.docker.base_dockerfile = dockerfile
-
-    # # Use conda_dependencies.yml to create a conda environment in
-    # # the Docker image for execution
-    # # False means the user will provide a conda file for setup
-    # # True means the user will manually configure the environment
-    # run_azuremlcompute.environment.python.user_managed_dependencies = False
-
-    # # install local version of recommenders on AzureML compute using .whl file
-    # whl_url = run_azuremlcompute.environment.add_private_pip_wheel(
-    #     workspace=workspace,
-    #     file_path=reco_wheel_path,
-    #     exist_ok=True,
-    # )
-    # conda_dep = CondaDependencies()
-    # conda_dep.add_conda_package(conda_pkg_python)
-    # conda_dep.add_pip_package(whl_url)
-    # conda_dep.add_pip_package(
-    #     "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"
-    # )
-
-    # # install extra dependencies
-    # if add_gpu_dependencies and add_spark_dependencies:
-    #     conda_dep.add_channel("conda-forge")
-    #     conda_dep.add_conda_package(conda_pkg_jdk)
-    #     conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]") # Not working, it installs the pip package instead of the local wheel
-    #     # run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark,gpu]"] # not working
-    #     # run_azuremlcompute.command = ["pip", "install", ".[dev,examples,spark,gpu]"]  # Error: Both Script and Command cannot be specified with the request
-    #     # run_azuremlcompute.environment.python.interpreter_options = "-m venv .venv && source .venv/bin/activate && pip install -e .[dev,examples,spark,gpu]"    
-    # elif add_gpu_dependencies:
-    #     conda_dep.add_pip_package("recommenders[dev,examples,gpu]") # Not working, it installs the pip package instead of the local wheel
-    #     # run_azuremlcompute.script = ["pip", "install", ".[dev,examples,gpu]"] # not working
-    #     # run_azuremlcompute.command = ["pip", "install", ".[dev,examples,gpu]"] # Error: Both Script and Command cannot be specified with the request
-    #     # run_azuremlcompute.environment.python.interpreter_options = "-m venv .venv && source .venv/bin/activate && pip install -e .[dev,examples,gpu]"
-    # elif add_spark_dependencies:
-    #     conda_dep.add_channel("conda-forge")
-    #     conda_dep.add_conda_package(conda_pkg_jdk)
-    #     conda_dep.add_pip_package("recommenders[dev,examples,spark]") # Not working, it installs the pip package instead of the local wheel
-    #     # run_azuremlcompute.script = ["pip", "install", ".[dev,examples,spark]"] # not working
-    #     # run_azuremlcompute.command = ["pip", "install", ".[dev,examples,spark]"] # Error: Both Script and Command cannot be specified with the request
-    #     # run_azuremlcompute.environment.python.interpreter_options = "-m venv .venv && source .venv/bin/activate && pip install -e .[dev,examples,spark]"
-    # else:
-    #     conda_dep.add_pip_package("recommenders[dev,examples]")
-    #     # run_azuremlcompute.script = ["pip", "install", ".[dev,examples]"] # not working
-    #     # run_azuremlcompute.command = ["pip", "install", ".[dev,examples]"] # Error: Both Script and Command cannot be specified with the request
-    #     # run_azuremlcompute.environment.python.interpreter_options = "-m venv .venv && source .venv/bin/activate && pip install -e .[dev,examples]"
-
-    # run_azuremlcompute.environment.python.conda_dependencies = conda_dep
+    run_azuremlcompute.environment.python.conda_dependencies = conda_dep
     return run_azuremlcompute
 
 

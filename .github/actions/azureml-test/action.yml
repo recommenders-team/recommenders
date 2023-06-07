@@ -84,7 +84,10 @@ runs:
       run: pip install --quiet wheel
     - name: Create wheel from setup.py
       shell: bash
-      run: python setup.py --quiet bdist_wheel
+      run: |
+          random_key=$(openssl rand 1000 | tr -dc 'a-z0-9'  | fold -w 9 | head -n 1)
+          sed -i "/__version__/ s/$/ + '+${random_key}'/" setup.py
+          python setup.py --quiet bdist_wheel
     - name: Submit CPU tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'cpu')
@@ -99,25 +102,25 @@ runs:
       shell: bash
       if: contains(inputs.TEST_GROUP, 'gpu')
       run: >-
-          # python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
-          # --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
-          # --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
-          # --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
-          # --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          # --disable-warnings
+          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.GPU_CLUSTER_NAME}}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_gpu_dependencies --testkind ${{inputs.TEST_KIND}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          --disable-warnings
     - name: Submit PySpark tests to AzureML
       shell: bash
       if: contains(inputs.TEST_GROUP, 'spark')
       run: >-
-          # python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
-          # --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
-          # --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
-          # --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
-          # --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
-          # --disable-warnings
-    # - name: Print test logs
-    #   shell: bash
-    #   run: cat ${{inputs.TEST_LOGS_PATH}}
+          python tests/ci/azureml_tests/submit_groupwise_azureml_pytest.py --clustername ${{inputs.CPU_CLUSTER_NAME}}
+          --subid ${{inputs.AZUREML_TEST_SUBID}} --reponame "recommenders" --branch ${{ github.ref }}
+          --rg ${{inputs.RG}} --wsname ${{inputs.WS}} --expname ${{inputs.EXP_NAME}}_${{inputs.TEST_GROUP}}
+          --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
+          --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
+          --disable-warnings
+    - name: Print test logs
+      shell: bash
+      run: cat ${{inputs.TEST_LOGS_PATH}}
     - name: Get exit status
       shell: bash
       id: exit_status
