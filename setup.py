@@ -28,24 +28,22 @@ if HASH is not None:
 
 install_requires = [
     "pandas>1.5.2,<2.1",  # requires numpy
-    "tqdm>=4.65.0,<5",
-    "matplotlib>=3.6.0,<4",
-    "scikit-learn>=1.1.3,<2",  # 1.0.2 may not support Python 3.10.  requires scipy
+    "scikit-learn>=1.1.3,<2",  # requires scipy
     "numba>=0.57.0,<1",
     "lightfm>=1.17,<2",
     "lightgbm>=3.3.2,<4",
-    "memory_profiler>=0.61.0,<1",
-    "nltk>=3.8.1,<4",
-    "seaborn>=0.12.0,<1",
-    "transformers>=4.26.0,<5",  # requires pyyaml
+    "memory-profiler>=0.61.0,<1",
+    "nltk>=3.8.1,<4",  # requires tqdm
+    "seaborn>=0.12.0,<1",  # requires matplotlib
+    "transformers>=4.26.0,<5",  # requires pyyaml, tqdm
     "bottleneck>=1.3.7,<2",
-    "category_encoders>=2.6.0,<3",
+    "category-encoders>=2.6.0,<3",
     "jinja2>=3.1.0,<3.2",
-    "cornac>=1.15.2,<2",
+    "cornac>=1.15.2,<2",  # requires tqdm
     "retrying>=1.3.4",
     "pandera[strategies]>=0.15.0",  # For generating fake datasets
     "scikit-surprise>=1.1.3",
-    "scrapbook>=0.5.0,<1.0.0",
+    "scrapbook>=0.5.0,<1.0.0",  # requires tqdm, papermill
 ]
 
 # shared dependencies
@@ -53,10 +51,8 @@ extras_require = {
     "examples": [
         "azure-mgmt-cosmosdb>=9.0.0,<10",
         "hyperopt>=0.2.7,<1",
-        "ipykernel>=6.20.1,<7",
         "notebook>=6.5.4,<8",
         "locust>=2.15.1,<3",
-        "papermill>=2.4.0,<3",
     ],
     "gpu": [
         "nvidia-ml-py3>=11.510.69",
@@ -68,7 +64,7 @@ extras_require = {
         "fastai>=2.7.11,<3",
     ],
     "spark": [
-        "databricks_cli>=0.17.7,<1",
+        "databricks-cli>=0.17.7,<1",
         "pyarrow>=10.0.1",
         "pyspark>=3.0.1,<=3.4.0",
     ],
