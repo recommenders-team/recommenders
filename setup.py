@@ -56,7 +56,6 @@ install_requires = [
 # shared dependencies
 extras_require = {
     "examples": [
-        "azure.mgmt.cosmosdb>=0.8.0,<1",
         "hyperopt>=0.1.2,<1",
         "ipykernel>=4.6.1,<7",
         "jupyter>=1,<2",
@@ -142,5 +141,5 @@ setup(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
     ),
-    setup_requires=["numpy>=1.15"],
+    setup_requires=["numpy>=1.19"],
 )
