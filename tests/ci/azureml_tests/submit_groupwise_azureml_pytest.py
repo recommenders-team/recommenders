@@ -152,7 +152,7 @@ def create_run_config(
     add_spark_dependencies,
     conda_pkg_jdk,
     conda_pkg_python,
-    reco_wheel_path,
+    commit_sha,
 ):
     """
     AzureML requires the run environment to be setup prior to submission.
@@ -172,6 +172,7 @@ def create_run_config(
                                         added to the conda environment, else False
             add_spark_dependencies (bool)   : True if PySpark packages should be
                                         added to the conda environment, else False
+            commit_sha (str)                : the commit that triggers the workflow
 
     Return:
           run_azuremlcompute : AzureML run config
@@ -188,35 +189,28 @@ def create_run_config(
     # True means the user will manually configure the environment
     run_azuremlcompute.environment.python.user_managed_dependencies = False
 
-    # install local version of recommenders on AzureML compute using .whl file
-    whl_url = run_azuremlcompute.environment.add_private_pip_wheel(
-        workspace=workspace,
-        file_path=reco_wheel_path,
-        exist_ok=True,
-    )
     conda_dep = CondaDependencies()
     conda_dep.add_conda_package(conda_pkg_python)
     conda_dep.add_pip_package(
         "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"
     )
 
-    # install extra dependencies
+    # install recommenders
+    reco_extras = "dev,examples"
     if add_gpu_dependencies and add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        # conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]@" + whl_url)
-        conda_dep.add_pip_package(whl_url)
+        reco_extras = reco_extras + ",spark,gpu"
     elif add_gpu_dependencies:
-        # conda_dep.add_pip_package("recommenders[dev,examples,gpu]@" + whl_url)
-        conda_dep.add_pip_package(whl_url)
+        reco_extras = reco_extras + ",gpu"
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        # conda_dep.add_pip_package("recommenders[dev,examples,spark]@" + whl_url)
-        conda_dep.add_pip_package(whl_url)
-    else:
-        # conda_dep.add_pip_package("recommenders[dev,examples]@" + whl_url)
-        conda_dep.add_pip_package(whl_url)
+        reco_extras = reco_extras + ",spark"
+
+    conda_dep.add_pip_package(
+        f"recommenders[{reco_extras}]@git+https://github.com/microsoft/recommenders.git@{commit_sha}"
+    )
 
     run_azuremlcompute.environment.python.conda_dependencies = conda_dep
     return run_azuremlcompute
@@ -289,6 +283,11 @@ def create_arg_parser():
     """
 
     parser = argparse.ArgumentParser(description="Process some inputs")
+    parser.add_argument(
+        "--sha",
+        action="store",
+        help="the commit that triggers the workflow",
+    )
     # script to run pytest
     parser.add_argument(
         "--test",
@@ -451,11 +450,6 @@ if __name__ == "__main__":
         max_nodes=args.maxnodes,
     )
 
-    wheel_list = glob.glob("./dist/*.whl")
-    if not wheel_list:
-        logger.error("Wheel not found!")
-    logger.info("Found wheel at " + wheel_list[0])
-
     run_config = create_run_config(
         cpu_cluster=cpu_cluster,
         docker_proc_type=docker_proc_type,
@@ -464,7 +458,7 @@ if __name__ == "__main__":
         add_spark_dependencies=args.add_spark_dependencies,
         conda_pkg_jdk=args.conda_pkg_jdk,
         conda_pkg_python=args.conda_pkg_python,
-        reco_wheel_path=wheel_list[0],
+        commit_sha=args.sha,
     )
 
     logger.info("exp: In Azure, look for experiment named {}".format(args.expname))
