@@ -137,5 +137,5 @@ setup(
     package_dir={"recommenders": "recommenders"},
     python_requires=">=3.6, <3.10",
     packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
-    setup_requires=["numpy>=1.15"]
+    setup_requires=["numpy>=1.19"]
 )
