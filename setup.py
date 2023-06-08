@@ -43,7 +43,6 @@ install_requires = [
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3.1",
-    "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
     "cornac>=1.15.2,<2;python_version>='3.8'", # After 1.15.2, Cornac requires python 3.8
