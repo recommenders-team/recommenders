@@ -66,7 +66,6 @@ extras_require = {
         # TensorFlow compiled with CUDA 11.2, cudnn 8.1
         "tensorflow~=2.6.1;python_version=='3.6'",
         "tensorflow~=2.7.0;python_version>='3.7'",
-        "tf-slim>=1.1.0",
         "torch>=1.8",  # for CUDA 11 support
         "fastai>=1.0.46,<2",
     ],
