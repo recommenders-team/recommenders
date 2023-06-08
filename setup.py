@@ -71,7 +71,6 @@ extras_require = {
         "fastai>=1.0.46,<2",
     ],
     "spark": [
-        "databricks_cli>=0.8.6,<1",
         "pyarrow>=0.12.1,<7.0.0",
         "pyspark>=2.4.5,<3.3.0",
     ],
@@ -80,7 +79,6 @@ extras_require = {
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
-        "pytest-rerunfailures>=10.2",  # to mark flaky tests
     ],
 }
 # for the brave of heart
