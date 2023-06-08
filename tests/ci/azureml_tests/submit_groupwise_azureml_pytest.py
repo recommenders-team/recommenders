@@ -204,15 +204,19 @@ def create_run_config(
     if add_gpu_dependencies and add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]@" + whl_url)
+        # conda_dep.add_pip_package("recommenders[dev,examples,spark,gpu]@" + whl_url)
+        conda_dep.add_pip_package(whl_url)
     elif add_gpu_dependencies:
-        conda_dep.add_pip_package("recommenders[dev,examples,gpu]@" + whl_url)
+        # conda_dep.add_pip_package("recommenders[dev,examples,gpu]@" + whl_url)
+        conda_dep.add_pip_package(whl_url)
     elif add_spark_dependencies:
         conda_dep.add_channel("conda-forge")
         conda_dep.add_conda_package(conda_pkg_jdk)
-        conda_dep.add_pip_package("recommenders[dev,examples,spark]@" + whl_url)
+        # conda_dep.add_pip_package("recommenders[dev,examples,spark]@" + whl_url)
+        conda_dep.add_pip_package(whl_url)
     else:
-        conda_dep.add_pip_package("recommenders[dev,examples]@" + whl_url)
+        # conda_dep.add_pip_package("recommenders[dev,examples]@" + whl_url)
+        conda_dep.add_pip_package(whl_url)
 
     run_azuremlcompute.environment.python.conda_dependencies = conda_dep
     return run_azuremlcompute
