@@ -49,9 +49,8 @@ install_requires = [
 # shared dependencies
 extras_require = {
     "examples": [
-        "azure-mgmt-cosmosdb>=9.0.0,<10",
         "hyperopt>=0.2.7,<1",
-        "notebook>=6.5.4,<8",
+        "notebook>=6.5.4,<8",  # requires jupyter, ipykernel
         "locust>=2.15.1,<3",
     ],
     "gpu": [
@@ -116,10 +115,9 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
+        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
         "Operating System :: MacOS",
@@ -129,7 +127,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.8, <3.12",
+    python_requires=">=3.6, <3.10",
     packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
     setup_requires=["numpy>=1.15"]
 )
