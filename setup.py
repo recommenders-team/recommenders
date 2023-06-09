@@ -36,7 +36,6 @@ install_requires = [
     "nltk>=3.8.1,<4",  # requires tqdm
     "seaborn>=0.12.0,<1",  # requires matplotlib
     "transformers>=4.26.0,<5",  # requires pyyaml, tqdm
-    "bottleneck>=1.3.7,<2",
     "category-encoders>=2.6.0,<3",
     "jinja2>=3.1.0,<3.2",
     "cornac>=1.15.2,<2",  # requires tqdm
@@ -62,7 +61,6 @@ extras_require = {
         "fastai>=2.7.11,<3",
     ],
     "spark": [
-        "databricks-cli>=0.17.7,<1",
         "pyarrow>=10.0.1",
         "pyspark>=3.0.1,<=3.4.0",
     ],
@@ -71,7 +69,6 @@ extras_require = {
         "pytest>=7.2.1",
         "pytest-cov>=4.1.0",
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
-        "pytest-rerunfailures>=11.1.2",  # to mark flaky tests
     ],
 }
 # for the brave of heart
@@ -127,6 +124,9 @@ setup(
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
     python_requires=">=3.6, <3.10",
-    packages=find_packages(where=".", exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"]),
-    setup_requires=["numpy>=1.15"]
+    packages=find_packages(
+        where=".",
+        exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
+    ),
+    setup_requires=["numpy>=1.19"],
 )
