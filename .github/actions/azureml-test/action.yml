@@ -68,6 +68,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Install system-level dependencies
+      shell: bash
+      run: |
+        # for scipy, see https://docs.scipy.org/doc/scipy/dev/contributor/building.html
+        sudo apt install -y gcc g++ gfortran libopenblas-dev liblapack-dev pkg-config
     - name: Setup python
       uses: actions/setup-python@v4
       with:
