@@ -68,10 +68,14 @@ jobs:
       max-parallel: 50 # Usage limits: https://docs.github.com/en/actions/learn-github-actions/usage-limits-billing-and-administration
       matrix:
 <<<<<<< HEAD
+<<<<<<< HEAD
         python-version: ['"python=3.8"', '"python=3.9"']
 =======
         python-version: ['"python=3.8"', '"python=3.9"', '"python=3.10"', '"python=3.11"']
 >>>>>>> 644aa5d7 (Add tests for Python 3.10 and 3.11)
+=======
+        python-version: ['"python=3.8"', '"python=3.9"', '"python=3.10"']
+>>>>>>> 7f2e2989 (Drop python 3.11 because some packages do not support 3.11)
         test-group:  ${{ fromJSON(needs.get-test-groups.outputs.test_groups) }}
     steps:
       - name: Check out repository code
