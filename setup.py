@@ -40,7 +40,6 @@ install_requires = [
     "nltk>=3.4,<4",
     "seaborn>=0.8.1,<1",
     "transformers>=2.5.0,<5",
-    "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3.1",
     "requests>=2.0.0,<3",
