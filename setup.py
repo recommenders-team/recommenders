@@ -43,7 +43,6 @@ install_requires = [
     "bottleneck>=1.2.1,<2",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3.1",
-    "pyyaml>=5.4.1,<6",
     "requests>=2.0.0,<3",
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
     "cornac>=1.15.2,<2;python_version>='3.8'", # After 1.15.2, Cornac requires python 3.8
@@ -72,7 +71,6 @@ extras_require = {
         "fastai>=1.0.46,<2",
     ],
     "spark": [
-        "databricks_cli>=0.8.6,<1",
         "pyarrow>=0.12.1,<7.0.0",
         "pyspark>=2.4.5,<3.3.0",
     ],
@@ -81,7 +79,6 @@ extras_require = {
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
-        "pytest-rerunfailures>=10.2",  # to mark flaky tests
     ],
 }
 # for the brave of heart
