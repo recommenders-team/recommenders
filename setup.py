@@ -54,10 +54,9 @@ extras_require = {
         "locust>=2.15.1,<3",
     ],
     "gpu": [
-        "nvidia-ml-py3>=11.510.69",
-        # TensorFlow compiled with CUDA 11.2, cudnn 8.1
-        "tensorflow~=2.6.1;python_version=='3.6'",
-        "tensorflow~=2.7.0;python_version>='3.7'",
+        "nvidia-ml-py>=11.510.69",
+        # TensorFlow compiled with CUDA 11.8, cudnn 8.6.0.163
+        "tensorflow~=2.12.0",
         "tf-slim>=1.1.0",
         "torch>=2.0.1",
         "fastai>=2.7.11,<3",
