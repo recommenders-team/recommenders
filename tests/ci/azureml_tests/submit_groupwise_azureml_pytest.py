@@ -210,7 +210,7 @@ def create_run_config(
 
     conda_dep = CondaDependencies()
     conda_dep.add_conda_package(conda_pkg_python)
-    conda_dep.add_conda_package("pip==20.1.1")
+    conda_dep.add_conda_package("pip=20.1.1")
     conda_dep.add_pip_package(
         "pymanopt@https://github.com/pymanopt/pymanopt/archive/fb36a272cdeecb21992cfd9271eb82baafeb316d.zip"
     )
