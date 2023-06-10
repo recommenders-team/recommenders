@@ -37,7 +37,6 @@ Example:
 """
 import argparse
 import logging
-import glob
 
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace
@@ -146,7 +145,11 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
 
 def create_run_config(
     cpu_cluster,
+<<<<<<< HEAD
     docker_proc_type,
+=======
+    docker_image,
+>>>>>>> 09069f7c (Install dependencies for scipy in docker image)
     add_gpu_dependencies,
     add_spark_dependencies,
     conda_pkg_jdk,
@@ -165,7 +168,11 @@ def create_run_config(
                                                 the following:
                                                 - Reco_cpu_test
                                                 - Reco_gpu_test
+<<<<<<< HEAD
             docker_proc_type (str)          : processor type, cpu or gpu
+=======
+            docker_image (str)              : docker image for cpu or gpu
+>>>>>>> 09069f7c (Install dependencies for scipy in docker image)
             add_gpu_dependencies (bool)     : True if gpu packages should be
                                         added to the conda environment, else False
             add_spark_dependencies (bool)   : True if PySpark packages should be
@@ -179,7 +186,21 @@ def create_run_config(
     run_azuremlcompute = RunConfiguration()
     run_azuremlcompute.target = cpu_cluster
     run_azuremlcompute.environment.docker.enabled = True
-    run_azuremlcompute.environment.docker.base_image = docker_proc_type
+    # See https://learn.microsoft.com/en-us/azure/machine-learning/how-to-train-with-custom-image?view=azureml-api-1#use-a-custom-dockerfile-optional
+    run_azuremlcompute.environment.docker.base_image = None
+    run_azuremlcompute.environment.docker.base_dockerfile = f"""
+    FROM {docker_image}
+    # Install system-level deps for scipy.  See
+    # https://docs.scipy.org/doc/scipy/dev/contributor/building.html
+    RUN apt-get update && \
+        apt-get install -y \
+        gcc \
+        g++ \
+        gfortran \
+        libopenblas-dev \
+        liblapack-dev \
+        pkg-config
+    """
 
     # Use conda_dependencies.yml to create a conda environment in
     # the Docker image for execution
@@ -423,13 +444,11 @@ if __name__ == "__main__":
     args = create_arg_parser()
 
     if args.dockerproc == "cpu":
-        from azureml.core.runconfig import DEFAULT_CPU_IMAGE
-
-        docker_proc_type = DEFAULT_CPU_IMAGE
+        # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
+        docker_image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
     else:
-        from azureml.core.runconfig import DEFAULT_GPU_IMAGE
-
-        docker_proc_type = DEFAULT_GPU_IMAGE
+        # https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+        docker_image = "mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04"
 
     cli_auth = AzureCliAuthentication()
 
@@ -450,7 +469,11 @@ if __name__ == "__main__":
 
     run_config = create_run_config(
         cpu_cluster=cpu_cluster,
+<<<<<<< HEAD
         docker_proc_type=docker_proc_type,
+=======
+        docker_image=docker_image,
+>>>>>>> 09069f7c (Install dependencies for scipy in docker image)
         add_gpu_dependencies=args.add_gpu_dependencies,
         add_spark_dependencies=args.add_spark_dependencies,
         conda_pkg_jdk=args.conda_pkg_jdk,
