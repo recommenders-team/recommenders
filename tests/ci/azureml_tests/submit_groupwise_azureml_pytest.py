@@ -186,12 +186,11 @@ def create_run_config(
     # https://docs.scipy.org/doc/scipy/dev/contributor/building.html
     RUN apt-get update && \
         apt-get install -y \
-        gcc \
-        g++ \
         gfortran \
         libopenblas-dev \
         liblapack-dev \
         pkg-config
+    RUN apt-get install -y git
     """
 
     # Use conda_dependencies.yml to create a conda environment in
@@ -435,15 +434,12 @@ if __name__ == "__main__":
     logger = logging.getLogger("submit_groupwise_azureml_pytest.py")
     args = create_arg_parser()
 
-    # See Dockerfiles at https://github.com/Azure/AzureML-Containers/tree/master/base
     if args.dockerproc == "cpu":
-        from azureml.core.runconfig import DEFAULT_CPU_IMAGE
-
-        docker_image = DEFAULT_CPU_IMAGE
+        # https://github.com/Azure/AzureML-Containers/blob/master/base/cpu/openmpi4.1.0-ubuntu22.04
+        docker_image = "mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu22.04"
     else:
-        from azureml.core.runconfig import DEFAULT_GPU_IMAGE
-
-        docker_image = DEFAULT_GPU_IMAGE
+        # https://github.com/Azure/AzureML-Containers/blob/master/base/gpu/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04
+        docker_image = "mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04"
 
     cli_auth = AzureCliAuthentication()
 
