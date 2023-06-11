@@ -117,7 +117,10 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+<<<<<<< HEAD
         "Programming Language :: Python :: 3.11",
+=======
+>>>>>>> b71c4ed6 (Use docker images for ubuntu 22.04)
         "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
     ],
