@@ -5,6 +5,7 @@
 import numpy as np
 import pandas as pd
 import fastai
+import fastai.basic_train
 import fastprogress
 from fastprogress.fastprogress import force_console_behavior
 

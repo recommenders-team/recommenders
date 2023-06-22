@@ -51,18 +51,18 @@ try:
     )
 except (ImportError,NameError):
     pass  # skip this import if we are not in a Spark environment
-try:
-    from recommenders.models.deeprec.deeprec_utils import prepare_hparams
-    from recommenders.models.fastai.fastai_utils import (
-        cartesian_product,
-        score,
-    )
-    from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
-    from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-    from recommenders.models.ncf.ncf_singlenode import NCF
-    from recommenders.models.ncf.dataset import Dataset as NCFDataset
-except ImportError:
-    pass  # skip this import if we are not in a GPU environment
+# try:
+from recommenders.models.deeprec.deeprec_utils import prepare_hparams
+from recommenders.models.fastai.fastai_utils import (
+    cartesian_product,
+    score,
+)
+from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
+from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
+from recommenders.models.ncf.ncf_singlenode import NCF
+from recommenders.models.ncf.dataset import Dataset as NCFDataset
+# except ImportError as e:
+    # pass  # skip this import if we are not in a GPU environment
 
 # Helpers
 tmp_dir = TemporaryDirectory()
@@ -70,7 +70,7 @@ TRAIN_FILE = os.path.join(tmp_dir.name, "df_train.csv")
 TEST_FILE = os.path.join(tmp_dir.name, "df_test.csv")
 
 
-def prepare_training_als(train, test):
+def prepare_training_als(train, _):
     schema = StructType(
         (
             StructField(DEFAULT_USER_COL, IntegerType()),
@@ -109,7 +109,7 @@ def predict_als(model, test):
     return preds, t
 
 
-def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_als(model, _, train):
     with Timer() as t:
         # Get the cross join of all user-item pairs and score them.
         users = train.select(DEFAULT_USER_COL).distinct()
@@ -118,23 +118,18 @@ def recommend_k_als(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         dfs_pred = model.transform(user_item)
 
         # Remove seen items
-        dfs_pred_exclude_train = dfs_pred.alias("pred").join(
-            train.alias("train"),
-            (dfs_pred[DEFAULT_USER_COL] == train[DEFAULT_USER_COL])
-            & (dfs_pred[DEFAULT_ITEM_COL] == train[DEFAULT_ITEM_COL]),
-            how="outer",
+        topk_scores = dfs_pred.join(
+            train,
+            on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL],
+            how='left_anti',
         )
-        topk_scores = dfs_pred_exclude_train.filter(
-            dfs_pred_exclude_train["train." + DEFAULT_RATING_COL].isNull()
-        ).select(
-            "pred." + DEFAULT_USER_COL,
-            "pred." + DEFAULT_ITEM_COL,
-            "pred." + DEFAULT_PREDICTION_COL,
-        )
+
+        # Trigger lazy evaluation
+        topk_scores.cache().count()
     return topk_scores, t
 
 
-def prepare_training_svd(train, test):
+def prepare_training_svd(train, _):
     reader = surprise.Reader("ml-100k", rating_scale=(1, 5))
     return surprise.Dataset.load_from_df(
         train.drop(DEFAULT_TIMESTAMP_COL, axis=1), reader=reader
@@ -160,7 +155,7 @@ def predict_svd(model, test):
     return preds, t
 
 
-def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_svd(model, _, train):
     with Timer() as t:
         topk_scores = compute_ranking_predictions(
             model,
@@ -168,12 +163,12 @@ def recommend_k_svd(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             usercol=DEFAULT_USER_COL,
             itemcol=DEFAULT_ITEM_COL,
             predcol=DEFAULT_PREDICTION_COL,
-            remove_seen=remove_seen,
+            remove_seen=True,
         )
     return topk_scores, t
 
 
-def prepare_training_fastai(train, test):
+def prepare_training_fastai(train, _):
     data = train.copy()
     data[DEFAULT_USER_COL] = data[DEFAULT_USER_COL].astype("str")
     data[DEFAULT_ITEM_COL] = data[DEFAULT_ITEM_COL].astype("str")
@@ -215,7 +210,7 @@ def predict_fastai(model, test):
     return preds, t
 
 
-def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_fastai(model, test, train):
     with Timer() as t:
         total_users, total_items = model.data.train_ds.x.classes.values()
         total_items = total_items[1:]
@@ -226,6 +221,7 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
         users_items = pd.DataFrame(
             users_items, columns=[DEFAULT_USER_COL, DEFAULT_ITEM_COL]
         )
+        # Remove seen items.
         training_removed = pd.merge(
             users_items,
             train.astype(str),
@@ -241,7 +237,7 @@ def recommend_k_fastai(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             user_col=DEFAULT_USER_COL,
             item_col=DEFAULT_ITEM_COL,
             prediction_col=DEFAULT_PREDICTION_COL,
-            top_k=top_k,
+            top_k=DEFAULT_K,
         )
     return topk_scores, t
 
@@ -269,7 +265,7 @@ def train_ncf(params, data):
     return model, t
 
 
-def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_ncf(model, _, train):
     with Timer() as t:
         users, items, preds = [], [], []
         item = list(train[DEFAULT_ITEM_COL].unique())
@@ -285,6 +281,7 @@ def recommend_k_ncf(model, test, train, top_k=DEFAULT_K, remove_seen=True):
                 DEFAULT_PREDICTION_COL: preds,
             }
         )
+        # Remove seen items.
         merged = pd.merge(
             train, topk_scores, on=[DEFAULT_USER_COL, DEFAULT_ITEM_COL], how="outer"
         )
@@ -301,7 +298,7 @@ def prepare_training_cornac(train, test):
     )
 
 
-def recommend_k_cornac(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_cornac(model, _, train):
     with Timer() as t:
         topk_scores = predict_ranking(
             model,
@@ -309,7 +306,7 @@ def recommend_k_cornac(model, test, train, top_k=DEFAULT_K, remove_seen=True):
             usercol=DEFAULT_USER_COL,
             itemcol=DEFAULT_ITEM_COL,
             predcol=DEFAULT_PREDICTION_COL,
-            remove_seen=remove_seen,
+            remove_seen=True,
         )
     return topk_scores, t
 
@@ -328,7 +325,7 @@ def train_bivae(params, data):
     return model, t
 
 
-def prepare_training_sar(train, test):
+def prepare_training_sar(train, _):
     return train
 
 
@@ -340,10 +337,10 @@ def train_sar(params, data):
     return model, t
 
 
-def recommend_k_sar(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_sar(model, test, _):
     with Timer() as t:
         topk_scores = model.recommend_k_items(
-            test, top_k=top_k, remove_seen=remove_seen
+            test, top_k=DEFAULT_K, remove_seen=True
         )
     return topk_scores, t
 
@@ -360,10 +357,10 @@ def train_lightgcn(params, data):
     return model, t
 
 
-def recommend_k_lightgcn(model, test, train, top_k=DEFAULT_K, remove_seen=True):
+def recommend_k_lightgcn(model, test, _):
     with Timer() as t:
         topk_scores = model.recommend_k_items(
-            test, top_k=top_k, remove_seen=remove_seen
+            test, top_k=DEFAULT_K, remove_seen=True
         )
     return topk_scores, t
 

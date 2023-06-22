@@ -41,25 +41,17 @@ def user_item_pairs(
         pandas.DataFrame: All pairs of user-item from user_df and item_df, excepting the pairs in user_item_filter_df.
     """
 
-    # Get all user-item pairs
-    user_df["key"] = 1
-    item_df["key"] = 1
-    users_items = user_df.merge(item_df, on="key")
+    # Get all user-item pairs (cross join)
+    users_items = user_df.merge(item_df, how="cross")
 
-    user_df.drop("key", axis=1, inplace=True)
-    item_df.drop("key", axis=1, inplace=True)
-    users_items.drop("key", axis=1, inplace=True)
-
-    # Filter
+    # Filter by user_item_filter_df. e.g. remove seen items
     if user_item_filter_df is not None:
         users_items = filter_by(users_items, user_item_filter_df, [user_col, item_col])
 
     if shuffle:
-        users_items = users_items.sample(frac=1, random_state=seed).reset_index(
-            drop=True
-        )
+        users_items = users_items.sample(frac=1, random_state=seed)
 
-    return users_items
+    return users_items.reset_index(drop=True)
 
 
 def filter_by(df, filter_by_df, filter_by_cols):
@@ -75,12 +67,13 @@ def filter_by(df, filter_by_df, filter_by_cols):
         pandas.DataFrame: Dataframe filtered by `filter_by_df` on `filter_by_cols`.
 
     """
+    if isinstance(filter_by_cols, str):
+        filter_by_cols = [filter_by_cols]
 
-    return df.loc[
-        ~df.set_index(filter_by_cols).index.isin(
-            filter_by_df.set_index(filter_by_cols).index
-        )
-    ]
+    df = df.merge(
+        filter_by_df[filter_by_cols], how="outer", on=filter_by_cols, indicator=True
+    )
+    return df[df["_merge"] == "left_only"].drop(columns="_merge")
 
 
 class LibffmConverter:
