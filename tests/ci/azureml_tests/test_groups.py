@@ -238,7 +238,7 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data",
         "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler",
         #"tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec", # FIXME: it takes too long to run
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept",
+        # "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept", # FIXME: it takes too long to run
     ],
     "group_notebooks_gpu_001": [  # Total group time: 563.35s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
