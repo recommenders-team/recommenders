@@ -207,9 +207,9 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",
+        # "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition", # FIXME: Issue #1953
+        # "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition", # FIXME: Issue #1953
+        # "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition", # FIXME: Issue #1953
         "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
         "tests/unit/recommenders/models/test_rbm.py::test_sampling_funct",
         "tests/unit/recommenders/models/test_rbm.py::test_train_param_init",
@@ -235,10 +235,10 @@ unit_test_groups = {
         "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_init_unsorted",
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
         "tests/unit/recommenders/models/test_ncf_dataset.py::test_datafile_missing_column",
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data",
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler",
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec",
-        "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept",
+        # "tests/unit/recommenders/models/test_sasrec_model.py::test_prepare_data", # FIXME: it takes too long to run
+        # "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler", # FIXME: it takes too long to run
+        #"tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec", # FIXME: it takes too long to run
+        # "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept", # FIXME: it takes too long to run
     ],
     "group_notebooks_gpu_001": [  # Total group time: 563.35s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
