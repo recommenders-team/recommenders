@@ -252,7 +252,8 @@ def download_and_extract_glove(dest_path):
     Returns:
         str: File path where Glove was extracted.
     """
-    url = "http://nlp.stanford.edu/data/glove.6B.zip"
+    # url = "http://nlp.stanford.edu/data/glove.6B.zip"
+    url = "https://huggingface.co/stanfordnlp/glove/resolve/main/glove.6B.zip"
     filepath = maybe_download(url=url, work_directory=dest_path)
     glove_path = os.path.join(dest_path, "glove")
     unzip_file(filepath, glove_path, clean_zip_file=False)
