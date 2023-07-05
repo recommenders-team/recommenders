@@ -289,9 +289,9 @@ def test_nextitnet_component_definition(sequential_files, deeprec_config_path):
     assert model_nextitnet.hparams is not None
     assert model_nextitnet.hparams.model_type == "NextItNet"
     assert model_nextitnet.hparams.epochs == 1
-    assert model_nextitnet.hparams.batch_size == 128
+    assert model_nextitnet.hparams.batch_size == 400
     assert model_nextitnet.hparams.learning_rate == 0.001
-    assert model_nextitnet.hparams.loss == "log_loss"
+    assert model_nextitnet.hparams.loss == "softmax"
     assert model_nextitnet.hparams.optimizer == "adam"
     assert model_nextitnet.hparams.train_num_ngs == 4
     assert model_nextitnet.hparams.embed_l2 == 0.0
@@ -325,7 +325,7 @@ def test_sum_component_definition(sequential_files, deeprec_config_path):
     assert model_sum.update is not None
     assert model_sum.iterator is not None
     assert model_sum.hparams is not None
-    assert model_sum.hparams.model_type == "sum"
+    assert model_sum.hparams.model_type == "SUM"
     assert model_sum.hparams.epochs == 1
     assert model_sum.hparams.batch_size == 128
     assert model_sum.hparams.learning_rate == 0.001
