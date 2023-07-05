@@ -165,12 +165,18 @@ def test_dkn_component_definition(dkn_files):
         epochs=1,
         learning_rate=0.0001,
     )
-    assert hparams is not None
 
     model = DKN(hparams, DKNTextIterator)
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
+    assert model.hparams is not None
+    assert model.hparams.model_type == "dkn"
+    assert model.hparams.epochs == 1
+    assert model.hparams.batch_size == 100
+    assert model.hparams.learning_rate == 0.0001
+    assert model.hparams.loss == "log_loss"
+    assert model.hparams.optimizer == "adam"
 
 
 @pytest.mark.gpu
