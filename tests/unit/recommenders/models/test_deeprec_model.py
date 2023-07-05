@@ -42,11 +42,11 @@ except ImportError:
 def dkn_files(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
     yaml_file = os.path.join(data_path, "dkn.yaml")
-    news_feature_file = os.path.join(data_path, r"doc_feature.txt")
-    user_history_file = os.path.join(data_path, r"user_history.txt")
-    wordEmb_file = os.path.join(data_path, r"word_embeddings_100.npy")
-    entityEmb_file = os.path.join(data_path, r"TransE_entity2vec_100.npy")
-    contextEmb_file = os.path.join(data_path, r"TransE_context2vec_100.npy")
+    news_feature_file = os.path.join(data_path, "doc_feature.txt")
+    user_history_file = os.path.join(data_path, "user_history.txt")
+    wordEmb_file = os.path.join(data_path, "word_embeddings_100.npy")
+    entityEmb_file = os.path.join(data_path, "TransE_entity2vec_100.npy")
+    contextEmb_file = os.path.join(data_path, "TransE_context2vec_100.npy")
 
     download_deeprec_resources(
         "https://recodatasets.z20.web.core.windows.net/deeprec/",
@@ -68,26 +68,24 @@ def dkn_files(deeprec_resource_path):
 @pytest.fixture(scope="module")
 def sequential_files(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "slirec")
-    train_file = os.path.join(data_path, r"train_data")
-    valid_file = os.path.join(data_path, r"valid_data")
-    test_file = os.path.join(data_path, r"test_data")
-    user_vocab = os.path.join(data_path, r"user_vocab.pkl")
-    item_vocab = os.path.join(data_path, r"item_vocab.pkl")
-    cate_vocab = os.path.join(data_path, r"category_vocab.pkl")
+    train_file = os.path.join(data_path, "train_data")
+    valid_file = os.path.join(data_path, "valid_data")
+    test_file = os.path.join(data_path, "test_data")
+    user_vocab = os.path.join(data_path, "user_vocab.pkl")
+    item_vocab = os.path.join(data_path, "item_vocab.pkl")
+    cate_vocab = os.path.join(data_path, "category_vocab.pkl")
 
     reviews_name = "reviews_Movies_and_TV_5.json"
     meta_name = "meta_Movies_and_TV.json"
     reviews_file = os.path.join(data_path, reviews_name)
     meta_file = os.path.join(data_path, meta_name)
-    valid_num_ngs = (
-        4  # number of negative instances with a positive instance for validation
-    )
-    test_num_ngs = (
-        9  # number of negative instances with a positive instance for testing
-    )
-    sample_rate = (
-        0.01  # sample a small item set for training and testing here for example
-    )
+
+    # number of negative instances with a positive instance for validation
+    valid_num_ngs = 4
+    # number of negative instances with a positive instance for testing
+    test_num_ngs = 9
+    # sample a small item set for training and testing here for example
+    sample_rate = 0.01
 
     input_files = [
         reviews_file,
