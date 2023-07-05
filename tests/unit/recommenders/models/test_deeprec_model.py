@@ -132,6 +132,13 @@ def test_xdeepfm_component_definition(deeprec_resource_path):
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
+    assert model.hparams is not None
+    assert model.hparams.model_type == "xDeepFM"
+    assert model.hparams.epochs == 50
+    assert model.hparams.batch_size == 128
+    assert model.hparams.learning_rate == 0.0005
+    assert model.hparams.loss == "log_loss"
+    assert model.hparams.optimizer == "adam"
 
 
 @pytest.mark.gpu
