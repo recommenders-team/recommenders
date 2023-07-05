@@ -207,13 +207,21 @@ def test_dkn_item2item_component_definition(dkn_files):
         use_entity=True,
         use_context=True,
     )
-    assert hparams is not None
 
     hparams.neg_num = 9
     model_item2item = DKNItem2Item(hparams, DKNItem2itemTextIterator)
     assert model_item2item.pred_logits is not None
     assert model_item2item.update is not None
     assert model_item2item.iterator is not None
+    assert model_item2item.hparams is not None
+    assert model_item2item.hparams.model_type == "dkn"
+    assert model_item2item.hparams.epochs == 1
+    assert model_item2item.hparams.batch_size == 100
+    assert model_item2item.hparams.learning_rate == 0.0005
+    assert model_item2item.hparams.loss == "log_loss"
+    assert model_item2item.hparams.optimizer == "adam"
+    assert model_item2item.hparams.max_grad_norm == 0.5
+    assert model_item2item.hparams.his_size == 20
 
 
 @pytest.mark.gpu
