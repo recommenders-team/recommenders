@@ -329,7 +329,7 @@ def test_sum_component_definition(sequential_files, deeprec_config_path):
     assert model_sum.hparams.epochs == 1
     assert model_sum.hparams.batch_size == 400
     assert model_sum.hparams.learning_rate == 0.001
-    assert model_sum.hparams.loss == "log_loss"
+    assert model_sum.hparams.loss == "softmax"
     assert model_sum.hparams.optimizer == "adam"
     assert model_sum.hparams.train_num_ngs == 4
     assert model_sum.hparams.embed_l2 == 0.0
