@@ -251,9 +251,9 @@ def test_slirec_component_definition(sequential_files, deeprec_config_path):
     assert model.hparams is not None
     assert model.hparams.model_type == "sli_rec"
     assert model.hparams.epochs == 1
-    assert model.hparams.batch_size == 128
+    assert model.hparams.batch_size == 400
     assert model.hparams.learning_rate == 0.001
-    assert model.hparams.loss == "log_loss"
+    assert model.hparams.loss == "softmax"
     assert model.hparams.optimizer == "adam"
     assert model.hparams.train_num_ngs == 4
     assert model.hparams.embed_l2 == 0.0
@@ -350,6 +350,16 @@ def test_lightgcn_component_definition(deeprec_config_path):
     hparams = prepare_hparams(yaml_file, embed_size=embed_size)
     model = LightGCN(hparams, data)
 
+    assert model.logit is not None
+    assert model.update is not None
+    assert model.iterator is not None
+    assert model.hparams is not None
+    assert model.hparams.model_type == "lightgcn"
+    assert model.hparams.epochs == 1
+    assert model.hparams.batch_size == 128
+    assert model.hparams.learning_rate == 0.001
+    assert model.hparams.loss == "log_loss"
+    assert model.hparams.optimizer == "adam"
     assert model.norm_adj is not None
     assert model.ua_embeddings.shape == [data.n_users, embed_size]
     assert model.ia_embeddings.shape == [data.n_items, embed_size]
