@@ -243,12 +243,22 @@ def test_slirec_component_definition(sequential_files, deeprec_config_path):
         cate_vocab=cate_vocab,
         need_sample=True,
     )
-    assert hparams is not None
 
     model = SLI_RECModel(hparams, SequentialIterator)
     assert model.logit is not None
     assert model.update is not None
     assert model.iterator is not None
+    assert model.hparams is not None
+    assert model.hparams.model_type == "sli_rec"
+    assert model.hparams.epochs == 1
+    assert model.hparams.batch_size == 128
+    assert model.hparams.learning_rate == 0.001
+    assert model.hparams.loss == "log_loss"
+    assert model.hparams.optimizer == "adam"
+    assert model.hparams.train_num_ngs == 4
+    assert model.hparams.embed_l2 == 0.0
+    assert model.hparams.layer_l2 == 0.0
+    assert model.hparams.need_sample is True
 
 
 @pytest.mark.gpu
@@ -271,12 +281,22 @@ def test_nextitnet_component_definition(sequential_files, deeprec_config_path):
         cate_vocab=cate_vocab,
         need_sample=True,
     )
-    assert hparams_nextitnet is not None
 
     model_nextitnet = NextItNetModel(hparams_nextitnet, NextItNetIterator)
     assert model_nextitnet.logit is not None
     assert model_nextitnet.update is not None
     assert model_nextitnet.iterator is not None
+    assert model_nextitnet.hparams is not None
+    assert model_nextitnet.hparams.model_type == "nextitnet"
+    assert model_nextitnet.hparams.epochs == 1
+    assert model_nextitnet.hparams.batch_size == 128
+    assert model_nextitnet.hparams.learning_rate == 0.001
+    assert model_nextitnet.hparams.loss == "log_loss"
+    assert model_nextitnet.hparams.optimizer == "adam"
+    assert model_nextitnet.hparams.train_num_ngs == 4
+    assert model_nextitnet.hparams.embed_l2 == 0.0
+    assert model_nextitnet.hparams.layer_l2 == 0.0
+    assert model_nextitnet.hparams.need_sample is True
 
 
 @pytest.mark.gpu
@@ -299,12 +319,22 @@ def test_sum_component_definition(sequential_files, deeprec_config_path):
         cate_vocab=cate_vocab,
         need_sample=True,
     )
-    assert hparams_sum is not None
 
     model_sum = SUMModel(hparams_sum, SequentialIterator)
     assert model_sum.logit is not None
     assert model_sum.update is not None
     assert model_sum.iterator is not None
+    assert model_sum.hparams is not None
+    assert model_sum.hparams.model_type == "sum"
+    assert model_sum.hparams.epochs == 1
+    assert model_sum.hparams.batch_size == 128
+    assert model_sum.hparams.learning_rate == 0.001
+    assert model_sum.hparams.loss == "log_loss"
+    assert model_sum.hparams.optimizer == "adam"
+    assert model_sum.hparams.train_num_ngs == 4
+    assert model_sum.hparams.embed_l2 == 0.0
+    assert model_sum.hparams.layer_l2 == 0.0
+    assert model_sum.hparams.need_sample is True
 
 
 @pytest.mark.gpu
