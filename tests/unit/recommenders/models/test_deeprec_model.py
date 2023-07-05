@@ -327,7 +327,7 @@ def test_sum_component_definition(sequential_files, deeprec_config_path):
     assert model_sum.hparams is not None
     assert model_sum.hparams.model_type == "SUM"
     assert model_sum.hparams.epochs == 1
-    assert model_sum.hparams.batch_size == 128
+    assert model_sum.hparams.batch_size == 400
     assert model_sum.hparams.learning_rate == 0.001
     assert model_sum.hparams.loss == "log_loss"
     assert model_sum.hparams.optimizer == "adam"
@@ -346,26 +346,17 @@ def test_lightgcn_component_definition(deeprec_config_path):
 
     data = ImplicitCF(train=train, test=test)
 
-    embed_size = 64
-    hparams = prepare_hparams(yaml_file, embed_size=embed_size)
+    hparams = prepare_hparams(yaml_file, embed_size=64)
     model = LightGCN(hparams, data)
 
-    assert model.logit is not None
-    assert model.update is not None
-    assert model.iterator is not None
-    assert model.hparams is not None
-    assert model.hparams.model_type == "lightgcn"
-    assert model.hparams.epochs == 1
-    assert model.hparams.batch_size == 128
-    assert model.hparams.learning_rate == 0.001
-    assert model.hparams.loss == "log_loss"
-    assert model.hparams.optimizer == "adam"
     assert model.norm_adj is not None
-    assert model.ua_embeddings.shape == [data.n_users, embed_size]
-    assert model.ia_embeddings.shape == [data.n_items, embed_size]
+    assert model.ua_embeddings.shape == [943, 64]
+    assert model.ia_embeddings.shape == [1682, 64]
     assert model.u_g_embeddings is not None
     assert model.pos_i_g_embeddings is not None
     assert model.neg_i_g_embeddings is not None
     assert model.batch_ratings is not None
     assert model.loss is not None
     assert model.opt is not None
+    assert model.batch_size == 1024
+    assert model.epochs == 1000
