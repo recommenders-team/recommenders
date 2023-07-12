@@ -617,7 +617,7 @@ def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=5, batch_size=500),
+        parameters=dict(EPOCHS=5, BATCH_SIZE=500),
     )
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"

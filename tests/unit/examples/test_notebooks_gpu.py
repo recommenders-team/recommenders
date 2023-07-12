@@ -122,5 +122,5 @@ def test_dkn_quickstart(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, batch_size=500),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=500),
     )
