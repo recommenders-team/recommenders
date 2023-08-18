@@ -2,7 +2,7 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
-## What's New (April, 2023)
+## What's New (August, 2023)
 
 We reached 15,000 stars!!
 
