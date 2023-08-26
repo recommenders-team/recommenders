@@ -10,7 +10,7 @@ __title__ = "pysarplus"
 __version__ = (Path(__file__).resolve().parent / "VERSION").read_text().strip()
 __author__ = "RecoDev Team at Microsoft"
 __license__ = "MIT"
-__copyright__ = "Copyright 2018-present Microsoft Corporation"
+__copyright__ = "Copyright 2018-present Recommenders contributors."
 
 # Synonyms
 TITLE = __title__
