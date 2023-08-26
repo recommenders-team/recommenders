@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 # NOTE: This file is used by pytest to inject fixtures automatically. As it is explained in the documentation

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import os
@@ -71,14 +71,12 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel
 @pytest.mark.parametrize(
     "size, algos, expected_values_ndcg",
     [
-        (
-            ["100k"],
-            ["als"],
-            [0.035812]
-        ),
+        (["100k"], ["als"], [0.035812]),
     ],
 )
-def test_benchmark_movielens_pyspark(notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg):
+def test_benchmark_movielens_pyspark(
+    notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg
+):
     notebook_path = notebooks["benchmark_movielens"]
 
     os.environ["PYSPARK_PYTHON"] = sys.executable

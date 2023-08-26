@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import os
@@ -7,6 +7,7 @@ import pandas as pd
 from tempfile import TemporaryDirectory
 import surprise
 import cornac
+
 try:
     from pyspark.ml.recommendation import ALS
     from pyspark.sql.types import StructType, StructField
@@ -49,7 +50,7 @@ try:
         SparkRatingEvaluation,
         SparkRankingEvaluation,
     )
-except (ImportError,NameError):
+except (ImportError, NameError):
     pass  # skip this import if we are not in a Spark environment
 try:
     from recommenders.models.deeprec.deeprec_utils import prepare_hparams
@@ -100,7 +101,10 @@ def prepare_metrics_als(train, test):
         )
     )
     spark = start_or_get_spark()
-    return spark.createDataFrame(train, schema).cache(), spark.createDataFrame(test, schema).cache()
+    return (
+        spark.createDataFrame(train, schema).cache(),
+        spark.createDataFrame(test, schema).cache(),
+    )
 
 
 def predict_als(model, test):
