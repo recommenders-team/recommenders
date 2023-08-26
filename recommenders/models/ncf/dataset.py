@@ -1,3 +1,6 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
 import os
 from collections import OrderedDict
 import random
@@ -191,7 +194,9 @@ class DataFile:
         # fast forward in file to user/test batch
         while (self.line_num == 0) or (self.row[key_col] != key):
             if self.end_of_file:
-                raise MissingUserException("User {} not in file {}".format(key, self.filename))
+                raise MissingUserException(
+                    "User {} not in file {}".format(key, self.filename)
+                )
             next(self)
         # collect user/test batch data
         while self.row[key_col] == key:
