@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import tensorflow as tf
@@ -127,7 +127,7 @@ class SLI_RECModel(SequentialBaseModel):
                 last_hidden_nn_layer, hparams.att_fcn_layer_sizes, scope="att_fcn"
             )
             att_fnc_output = tf.squeeze(att_fnc_output, -1)
-            mask_paddings = tf.ones_like(att_fnc_output) * (-(2 ** 32) + 1)
+            mask_paddings = tf.ones_like(att_fnc_output) * (-(2**32) + 1)
             att_weights = tf.nn.softmax(
                 tf.compat.v1.where(boolean_mask, att_fnc_output, mask_paddings),
                 name="att_weights",
