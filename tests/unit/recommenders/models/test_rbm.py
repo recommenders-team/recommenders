@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import numpy as np
@@ -145,6 +145,7 @@ def test_sampling_funct(init_rbm, affinity_matrix):
     # check that the sampled values of the visible units is in [0,r]
     assert check_sampled_values(v_sampled, r).all()
 
+
 @pytest.mark.gpu
 def test_save_load(init_rbm, affinity_matrix):
 
@@ -205,4 +206,3 @@ def test_save_load(init_rbm, affinity_matrix):
     assert saved_model.sampling_protocol == original_model.sampling_protocol
     # number of epochs after which the rmse is displayed
     assert saved_model.display_epoch == original_model.display_epoch
-

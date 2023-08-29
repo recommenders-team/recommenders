@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 #
 # This script contains functions that appear in the tutorial jupyter notebooks (step_1 to step_5).

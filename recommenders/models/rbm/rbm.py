@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import numpy as np
@@ -119,7 +119,8 @@ class RBM:
             tf.lookup.KeyValueTensorInitializer(
                 tf.constant(list(range(len(self.possible_ratings))), dtype=tf.int32),
                 tf.constant(list(self.possible_ratings), dtype=tf.float32),
-            ), default_value=0
+            ),
+            default_value=0,
         )
 
         self.generate_graph()
@@ -191,14 +192,10 @@ class RBM:
         samp = tf.nn.relu(tf.sign(pr - f))  # apply rejection method
 
         # get integer index of the rating to be sampled
-        v_argmax = tf.cast(
-            tf.argmax(input=samp, axis=2), "int32"
-        )
+        v_argmax = tf.cast(tf.argmax(input=samp, axis=2), "int32")
 
         # lookup the rating using integer index
-        v_samp = tf.cast(
-            self.ratings_lookup_table.lookup(v_argmax), "float32"
-        )
+        v_samp = tf.cast(self.ratings_lookup_table.lookup(v_argmax), "float32")
 
         return v_samp
 
@@ -248,7 +245,9 @@ class RBM:
 
     def placeholder(self):
         """Initialize the placeholders for the visible units"""
-        self.vu = tf.compat.v1.placeholder(shape=[None, self.n_visible], dtype="float32")
+        self.vu = tf.compat.v1.placeholder(
+            shape=[None, self.n_visible], dtype="float32"
+        )
 
     def init_parameters(self):
         """Initialize the parameters of the model.
@@ -467,7 +466,9 @@ class RBM:
 
         if self.with_metrics:  # if true (default) returns evaluation metrics
             self.rmse = tf.sqrt(
-                tf.compat.v1.losses.mean_squared_error(self.v, self.v_k, weights=tf.where(self.v > 0, 1, 0))
+                tf.compat.v1.losses.mean_squared_error(
+                    self.v, self.v_k, weights=tf.where(self.v > 0, 1, 0)
+                )
             )
 
     def generate_graph(self):
@@ -698,7 +699,7 @@ class RBM:
 
         return vp
 
-    def save(self, file_path='./rbm_model.ckpt'):
+    def save(self, file_path="./rbm_model.ckpt"):
         """Save model parameters to `file_path`
 
         This function saves the current tensorflow session to a specified path.
@@ -718,7 +719,7 @@ class RBM:
         saver = tf.compat.v1.train.Saver()
         saver.save(self.sess, os.path.join(dir_name, file_name))
 
-    def load(self, file_path='./rbm_model.ckpt'):
+    def load(self, file_path="./rbm_model.ckpt"):
         """Load model parameters for further use.
 
         This function loads a saved tensorflow session.

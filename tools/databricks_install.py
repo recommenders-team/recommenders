@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 # This script installs Recommenders/recommenders from PyPI onto a Databricks Workspace
@@ -50,7 +50,7 @@ COSMOSDB_JAR_FILE_OPTIONS = {
     "6": "https://search.maven.org/remotecontent?filepath=com/microsoft/azure/azure-cosmosdb-spark_2.4.0_2.11/3.7.0/azure-cosmosdb-spark_2.4.0_2.11-3.7.0-uber.jar",
     "7": "https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar",
     "8": "https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar",
-    "9": "https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar"
+    "9": "https://search.maven.org/remotecontent?filepath=com/azure/cosmos/spark/azure-cosmos-spark_3-1_2-12/4.3.1/azure-cosmos-spark_3-1_2-12-4.3.1.jar",
 }
 
 MMLSPARK_INFO = {
@@ -74,11 +74,7 @@ PENDING_SLEEP_ATTEMPTS = int(
 )  # wait a maximum of 5 minutes...
 
 # dependencies from PyPI
-PYPI_PREREQS = [
-    "pip==21.2.4",
-    "setuptools==54.0.0",
-    "numpy==1.18.0"
-]
+PYPI_PREREQS = ["pip==21.2.4", "setuptools==54.0.0", "numpy==1.18.0"]
 
 PYPI_EXTRA_DEPS = [
     "azure-cli-core==2.0.75",
@@ -123,8 +119,15 @@ def get_installed_libraries(api_client, cluster_id):
         Dict[str, str]: dictionary of {package: status}
     """
     cluster_status = LibrariesApi(api_client).cluster_status(cluster_id)
-    libraries = {lib["library"]["pypi"]["package"]: lib["status"] for lib in cluster_status["library_statuses"] if "pypi" in lib["library"]}
-    return {pkg_resources.Requirement.parse(package).name: libraries[package] for package in libraries}
+    libraries = {
+        lib["library"]["pypi"]["package"]: lib["status"]
+        for lib in cluster_status["library_statuses"]
+        if "pypi" in lib["library"]
+    }
+    return {
+        pkg_resources.Requirement.parse(package).name: libraries[package]
+        for package in libraries
+    }
 
 
 def prepare_for_operationalization(
@@ -298,7 +301,9 @@ if __name__ == "__main__":
             args.cluster_id
         )
     )
-    LibrariesApi(my_api_client).install_libraries(args.cluster_id, [{"pypi": {"package": "recommenders"}}])
+    LibrariesApi(my_api_client).install_libraries(
+        args.cluster_id, [{"pypi": {"package": "recommenders"}}]
+    )
 
     # pip cannot handle everything together, so wait until recommenders package is installed
     installed_libraries = get_installed_libraries(my_api_client, args.cluster_id)
@@ -319,10 +324,7 @@ if __name__ == "__main__":
         print("Installing MMLSPARK package...")
         libs2install.extend([MMLSPARK_INFO])
     print(
-        "Installing {} onto databricks cluster {}".format(
-            libs2install,
-            args.cluster_id
-        )
+        "Installing {} onto databricks cluster {}".format(libs2install, args.cluster_id)
     )
     LibrariesApi(my_api_client).install_libraries(args.cluster_id, libs2install)
 

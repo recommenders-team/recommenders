@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 
@@ -506,7 +506,7 @@ def dcg_score(y_true, y_score, k=10):
     k = min(np.shape(y_true)[-1], k)
     order = np.argsort(y_score)[::-1]
     y_true = np.take(y_true, order[:k])
-    gains = 2 ** y_true - 1
+    gains = 2**y_true - 1
     discounts = np.log2(np.arange(len(y_true)) + 2)
     return np.sum(gains / discounts)
 

@@ -1,5 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
+
 import numpy as np
 import pandas as pd
 import logging
@@ -87,7 +88,9 @@ class SARSingleNode:
         ]
         if similarity_type not in available_similarity_types:
             raise ValueError(
-                'Similarity type must be one of ["' + '" | "'.join(available_similarity_types) + '"]'
+                'Similarity type must be one of ["'
+                + '" | "'.join(available_similarity_types)
+                + '"]'
             )
         self.similarity_type = similarity_type
         self.time_decay_half_life = (

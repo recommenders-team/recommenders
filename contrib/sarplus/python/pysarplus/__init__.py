@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 from pathlib import Path
@@ -10,7 +10,7 @@ __title__ = "pysarplus"
 __version__ = (Path(__file__).resolve().parent / "VERSION").read_text().strip()
 __author__ = "RecoDev Team at Microsoft"
 __license__ = "MIT"
-__copyright__ = "Copyright 2018-present Microsoft Corporation"
+__copyright__ = "Copyright 2018-present Recommenders contributors."
 
 # Synonyms
 TITLE = __title__
