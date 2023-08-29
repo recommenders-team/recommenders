@@ -2,6 +2,8 @@
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
+<img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" width="800">
+
 ## What's New (August, 2023)
 
 We moved to a new organization! Now to access the repo, instead of going to https://github.com/microsoft/recommenders, you need to go to https://github.com/recommenders-team/recommenders. The old URL will still resolve to the new one, but we recommend you to update your bookmarks.
