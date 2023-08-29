@@ -29,7 +29,7 @@ if HASH is not None:
 install_requires = [
     "numpy>=1.19",  # 1.19 required by tensorflow 2.6
     "pandas>1.0.3,<2",
-    "scipy>=1.0.0,<2,!=1.11.0,!=1.11.1",
+    "scipy>=1.0.0,<1.11.0", #FIXME: We limit <1.11.0 until #1954 is fixed
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<4",
     "scikit-learn>=0.22.1,<1.0.3",
