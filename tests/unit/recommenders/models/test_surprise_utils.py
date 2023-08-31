@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 
@@ -17,7 +17,7 @@ try:
         compute_ranking_predictions,
     )
 except:
-    pass    # skip if surprise not installed
+    pass  # skip if surprise not installed
 
 TOL = 0.001
 

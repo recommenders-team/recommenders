@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 from os import environ
@@ -29,7 +29,7 @@ if HASH is not None:
 install_requires = [
     "numpy>=1.19",  # 1.19 required by tensorflow 2.6
     "pandas>1.0.3,<2",
-    "scipy>=1.0.0,<2,!=1.11.0,!=1.11.1",
+    "scipy>=1.0.0,<1.11.0", #FIXME: We limit <1.11.0 until #1954 is fixed
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<4",
     "scikit-learn>=0.22.1,<1.0.3",
@@ -102,10 +102,10 @@ extras_require["nni"] = [
 setup(
     name="recommenders",
     version=version,
-    description="Microsoft Recommenders - Python utilities for building recommender systems",
+    description="Recommenders - Python utilities for building recommender systems",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
-    url="https://github.com/microsoft/recommenders",
+    url="https://github.com/recommenders-team/recommenders",
     project_urls={
         "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
         "Wiki": "https://github.com/microsoft/recommenders/wiki",
@@ -123,9 +123,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        "Operating System :: Microsoft :: Windows",
         "Operating System :: POSIX :: Linux",
-        "Operating System :: MacOS",
     ],
     extras_require=extras_require,
     keywords="recommendations recommendation recommenders recommender system engine "

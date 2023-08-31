@@ -1,10 +1,14 @@
 # What's New
 
+## Update August 18, 2023
+
+We moved to a new organization! Now to access the repo, instead of going to https://github.com/microsoft/recommenders, you need to go to https://github.com/recommenders-team/recommenders. The old URL will still resolve to the new one, but we recommend you to update your bookmarks.
+
 ## Update February 7, 2023 
 
 We reached 15,000 stars!!
 
-## Update July, 2022
+## Update July 20, 2022
 
 We have a new release [Recommenders 1.1.1](https://github.com/microsoft/recommenders/releases/tag/1.1.1)! 
 

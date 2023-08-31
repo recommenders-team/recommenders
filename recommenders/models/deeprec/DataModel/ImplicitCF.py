@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import random
@@ -70,7 +70,11 @@ class ImplicitCF(object):
             list: train and test pandas.DataFrame Dataset, which have been reindexed and filtered.
 
         """
-        df = train if test is None else pd.concat([train, test],axis=0,ignore_index=True)
+        df = (
+            train
+            if test is None
+            else pd.concat([train, test], axis=0, ignore_index=True)
+        )
 
         if self.user_idx is None:
             user_idx = df[[self.col_user]].drop_duplicates().reindex()

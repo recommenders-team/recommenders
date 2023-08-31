@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import os
@@ -596,10 +596,18 @@ class MockMovielensSchema(pa.SchemaModel):
 
     # Some notebooks will do a cross join with userID and itemID,
     # a sparse range for these IDs can slow down the notebook tests
-    userID: Series[int] = Field(in_range={"min_value": 1, "max_value": 50}, alias=DEFAULT_USER_COL)
-    itemID: Series[int] = Field(in_range={"min_value": 1, "max_value": 50}, alias=DEFAULT_ITEM_COL)
-    rating: Series[float] = Field(in_range={"min_value": 1, "max_value": 5}, alias=DEFAULT_RATING_COL)
-    timestamp: Series[int] = Field(in_range={"min_value": 0, "max_value": 1e9}, alias=DEFAULT_TIMESTAMP_COL)
+    userID: Series[int] = Field(
+        in_range={"min_value": 1, "max_value": 50}, alias=DEFAULT_USER_COL
+    )
+    itemID: Series[int] = Field(
+        in_range={"min_value": 1, "max_value": 50}, alias=DEFAULT_ITEM_COL
+    )
+    rating: Series[float] = Field(
+        in_range={"min_value": 1, "max_value": 5}, alias=DEFAULT_RATING_COL
+    )
+    timestamp: Series[int] = Field(
+        in_range={"min_value": 0, "max_value": 1e9}, alias=DEFAULT_TIMESTAMP_COL
+    )
     title: Series[str] = Field(eq="foo", alias=DEFAULT_TITLE_COL)
     genre: Series[str] = Field(eq="genreA|0", alias=DEFAULT_GENRE_COL)
 

@@ -1,14 +1,12 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
-
 
 import numpy as np
 import tensorflow as tf
 from recommenders.models.deeprec.models.dkn import DKN
 from recommenders.models.deeprec.deeprec_utils import cal_metric
 
-
-r"""
+"""
 This new model adapts DKN's structure for item-to-item recommendations.
 The tutorial can be found at: https://github.com/microsoft/recommenders/blob/main/examples/07_tutorials/KDD2020-tutorial/step4_run_dkn_item2item.ipynb
  """
