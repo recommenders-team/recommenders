@@ -32,7 +32,7 @@ They have admin access to the repo and provide support reviewing issues and pull
 * **[Scott Graham](https://github.com/gramhagen)**
    * Improving documentation
    * VW notebook
-* **[Simon Zhao](https://github.com/simonzhaoms)**
+* **[Simon Zhao](https://github.com/simonyansenzhao)**
    * SARplus algorithm upgrade
 * **[Tao Wu](https://github.com/wutaomsft)**
    * Improving documentation
