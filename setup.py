@@ -8,10 +8,10 @@ import site
 import sys
 import time
 
-# workround for enabling editable user pip installs
+# Workround for enabling editable user pip installs
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
-# version
+# Version
 here = Path(__file__).absolute().parent
 version_data = {}
 with open(here.joinpath("recommenders", "__init__.py"), "r") as f:
@@ -29,7 +29,7 @@ if HASH is not None:
 install_requires = [
     "numpy>=1.19",  # 1.19 required by tensorflow 2.6
     "pandas>1.0.3,<2",
-    "scipy>=1.0.0,<1.11.0", #FIXME: We limit <1.11.0 until #1954 is fixed
+    "scipy>=1.0.0,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<4",
     "scikit-learn>=0.22.1,<1.0.3",
@@ -49,17 +49,15 @@ install_requires = [
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
     "scikit-surprise>=1.0.6",
     "scrapbook>=0.5.0,<1.0.0",
+    "hyperopt>=0.1.2,<1",
+    "ipykernel>=4.6.1,<7",
+    "jupyter>=1,<2",
+    "locust>=1,<2",
+    "papermill>=2.1.2,<3",
 ]
 
 # shared dependencies
 extras_require = {
-    "examples": [
-        "hyperopt>=0.1.2,<1",
-        "ipykernel>=4.6.1,<7",
-        "jupyter>=1,<2",
-        "locust>=1,<2",
-        "papermill>=2.1.2,<3",
-    ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
         # TensorFlow compiled with CUDA 11.2, cudnn 8.1
@@ -80,17 +78,15 @@ extras_require = {
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
     ],
 }
-# for the brave of heart
+# For the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 
-# the following dependencies need additional testing
+# The following dependencies need additional testing
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
     # VW C++ binary needs to be installed manually for some code to work
     "vowpalwabbit>=8.9.0,<9",
-]
-extras_require["nni"] = [
     # nni needs to be upgraded
     "nni==1.5",
 ]
