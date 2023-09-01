@@ -110,7 +110,7 @@ The `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related
 
 For Spark features to work, make sure Java and Spark are installed and respective environment varialbes such as `JAVA_HOME`, `SPARK_HOME` and `HADOOP_HOME` are set properly. Also make sure environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` are set to the the same python executable.
 
-## macOS-Specific Instructions
+## MacOS-Specific Instructions
 
 We recommend using [Homebrew](https://brew.sh/) to install the dependencies on macOS, including conda (please remember to add conda's path to `$PATH`). One may also need to install lightgbm using Homebrew before pip install the package.
 
