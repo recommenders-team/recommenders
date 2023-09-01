@@ -18,11 +18,11 @@ Here you can find the package documentation: https://microsoft-recommenders.read
 
 This repository contains examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on five key tasks:
 
-- [Prepare Data](examples/01_prepare_data): Preparing and loading data for each recommender algorithm
+- [Prepare Data](examples/01_prepare_data): Preparing and loading data for each recommender algorithm.
 - [Model](examples/00_quick_start): Building models using various classical and deep learning recommender algorithms such as Alternating Least Squares ([ALS](https://spark.apache.org/docs/latest/api/python/_modules/pyspark/ml/recommendation.html#ALS)) or eXtreme Deep Factorization Machines ([xDeepFM](https://arxiv.org/abs/1803.05170)).
-- [Evaluate](examples/03_evaluate): Evaluating algorithms with offline metrics
-- [Model Select and Optimize](examples/04_model_select_and_optimize): Tuning and optimizing hyperparameters for recommender models
-- [Operationalize](examples/05_operationalize): Operationalizing models in a production environment on Azure
+- [Evaluate](examples/03_evaluate): Evaluating algorithms with offline metrics.
+- [Model Select and Optimize](examples/04_model_select_and_optimize): Tuning and optimizing hyperparameters for recommender models.
+- [Operationalize](examples/05_operationalize): Operationalizing models in a production environment on Azure.
 
 Several utilities are provided in [recommenders](recommenders) to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications. See the [Recommenders documentation](https://readthedocs.org/projects/microsoft-recommenders/).
 
@@ -40,16 +40,16 @@ We recommend [conda](https://docs.conda.io/projects/conda/en/latest/glossary.htm
 conda create -n <environment_name> python=3.9
 conda activate <environment_name>
 
-# 3. Install the recommenders package with examples
-pip install recommenders[examples]
+# 3. Install the core recommenders package. It can run all the CPU notebooks.
+pip install recommenders
 
 # 4. create a Jupyter kernel
 python -m ipykernel install --user --name <environment_name> --display-name <kernel_name>
 
-# 5. Clone this repo within vscode or using command:
-git clone https://github.com/microsoft/recommenders.git
+# 5. Clone this repo within VSCode or using command line:
+git clone https://github.com/recommenders-team/recommenders.git
 
-# 6. Within VS Code:
+# 6. Within VSCode:
 #   a. Open a notebook, e.g., examples/00_quick_start/sar_movielens.ipynb;  
 #   b. Select Jupyter kernel <kernel_name>;
 #   c. Run the notebook.
@@ -58,14 +58,11 @@ git clone https://github.com/microsoft/recommenders.git
 For more information about setup on other platforms (e.g., Windows and macOS) and different configurations (e.g., GPU, Spark and experimental features), see the [Setup Guide](SETUP.md).
 
 In addition to the core package, several extras are also provided, including:
-+ `[examples]`: Needed for running examples.
 + `[gpu]`: Needed for running GPU models.
 + `[spark]`: Needed for running Spark models.
 + `[dev]`: Needed for development for the repo.
-+ `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
++ `[all]`: `[gpu]`|`[spark]`|`[dev]`
 + `[experimental]`: Models that are not thoroughly tested and/or may require additional steps in installation.
-+ `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
-
 
 ## Algorithms
 
