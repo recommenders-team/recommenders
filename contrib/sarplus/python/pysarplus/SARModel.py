@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import pysarplus_cpp
@@ -21,7 +21,9 @@ class SARModel:
         sar_files = list(Path(path).glob("*" + SARModel.__extension))
         sar_files.sort(key=os.path.getmtime, reverse=True)
         if len(sar_files) < 1:
-            raise ValueError(f"Directory '{path}' must contain at least 1 file ending in '{SARModel.__extension}'")
+            raise ValueError(
+                f"Directory '{path}' must contain at least 1 file ending in '{SARModel.__extension}'"
+            )
 
         # instantiate C++ backend
         SARModel.__model = self.model = pysarplus_cpp.SARModelCpp(str(sar_files[0]))

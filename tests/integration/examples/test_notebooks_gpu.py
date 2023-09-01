@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import os
@@ -199,6 +199,7 @@ def test_xdeepfm_integration(
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
 
+
 @pytest.mark.gpu
 @pytest.mark.notebooks
 @pytest.mark.integration
@@ -224,7 +225,15 @@ def test_xdeepfm_integration(
     ],
 )
 def test_wide_deep_integration(
-    notebooks, output_notebook, kernel_name, size, steps, batch_size, expected_values, seed, tmp
+    notebooks,
+    output_notebook,
+    kernel_name,
+    size,
+    steps,
+    batch_size,
+    expected_values,
+    seed,
+    tmp,
 ):
     notebook_path = notebooks["wide_deep"]
 
@@ -617,7 +626,7 @@ def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=5, batch_size=500),
+        parameters=dict(EPOCHS=5, BATCH_SIZE=500),
     )
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
         "data"
@@ -723,11 +732,13 @@ def test_sasrec_quickstart_integration(
         (
             ["100k"],
             ["ncf", "fastai", "bivae", "lightgcn"],
-            [0.382793, 0.147583, 0.471722, 0.412664]
+            [0.382793, 0.147583, 0.471722, 0.412664],
         ),
     ],
 )
-def test_benchmark_movielens_gpu(notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg):
+def test_benchmark_movielens_gpu(
+    notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg
+):
     notebook_path = notebooks["benchmark_movielens"]
     pm.execute_notebook(
         notebook_path,

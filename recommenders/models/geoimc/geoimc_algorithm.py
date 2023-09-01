@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 """
@@ -80,7 +80,7 @@ class IMCProblem(object):
         B = params[1]
         V = params[2]
 
-        regularizer = 0.5 * self.lambda1 * np.sum(B ** 2)
+        regularizer = 0.5 * self.lambda1 * np.sum(B**2)
 
         IMCProblem._computeLoss_csrmatrix(
             self.X.dot(U.dot(B)),

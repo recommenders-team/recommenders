@@ -1,5 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
+
 import tensorflow as tf
 from recommenders.models.sasrec.model import SASREC, Encoder, LayerNormalization
 
@@ -100,7 +101,7 @@ class SSEPT(SASREC):
         # u0_latent = self.user_embedding_layer(users[0])
         # u0_latent = u0_latent * (self.embedding_dim ** 0.5)
         u_latent = self.user_embedding_layer(users)
-        u_latent = u_latent * (self.user_embedding_dim ** 0.5)  # (b, 1, h)
+        u_latent = u_latent * (self.user_embedding_dim**0.5)  # (b, 1, h)
         # return users
 
         # replicate the user embedding for all the items
@@ -180,12 +181,12 @@ class SSEPT(SASREC):
         seq_embeddings, positional_embeddings = self.embedding(input_seq)  # (1, s, h)
 
         u0_latent = self.user_embedding_layer(user)
-        u0_latent = u0_latent * (self.user_embedding_dim ** 0.5)  # (1, 1, h)
+        u0_latent = u0_latent * (self.user_embedding_dim**0.5)  # (1, 1, h)
         u0_latent = tf.squeeze(u0_latent, axis=0)  # (1, h)
         test_user_emb = tf.tile(u0_latent, [1 + self.num_neg_test, 1])  # (101, h)
 
         u_latent = self.user_embedding_layer(user)
-        u_latent = u_latent * (self.user_embedding_dim ** 0.5)  # (b, 1, h)
+        u_latent = u_latent * (self.user_embedding_dim**0.5)  # (b, 1, h)
         u_latent = tf.tile(u_latent, [1, tf.shape(input_seq)[1], 1])  # (b, s, h)
 
         seq_embeddings = tf.reshape(

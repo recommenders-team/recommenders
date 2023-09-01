@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import tensorflow as tf
@@ -299,29 +299,13 @@ class LightGCN(object):
         ret = []
         for metric in self.metrics:
             if metric == "map":
-                ret.append(
-                    map_at_k(
-                        self.data.test, topk_scores, k=self.top_k
-                    )
-                )
+                ret.append(map_at_k(self.data.test, topk_scores, k=self.top_k))
             elif metric == "ndcg":
-                ret.append(
-                    ndcg_at_k(
-                        self.data.test, topk_scores, k=self.top_k
-                    )
-                )
+                ret.append(ndcg_at_k(self.data.test, topk_scores, k=self.top_k))
             elif metric == "precision":
-                ret.append(
-                    precision_at_k(
-                        self.data.test, topk_scores, k=self.top_k
-                    )
-                )
+                ret.append(precision_at_k(self.data.test, topk_scores, k=self.top_k))
             elif metric == "recall":
-                ret.append(
-                    recall_at_k(
-                        self.data.test, topk_scores, k=self.top_k
-                    )
-                )
+                ret.append(recall_at_k(self.data.test, topk_scores, k=self.top_k))
         return ret
 
     def score(self, user_ids, remove_seen=True):

@@ -23,6 +23,7 @@ Here are the basic steps to get started with your first contribution. Please rea
 1. Create a test that replicates the issue.
 1. Make code changes.
 1. Ensure unit tests pass and code style / formatting is consistent (see [wiki](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines#python-and-docstrings-style) for more details).
+1. When adding code to the repo, make sure you sign the commits, otherwise the tests will fail (see [how to sign the commits](https://github.com/recommenders-team/recommenders/wiki/How-to-sign-commits)).
 1. Create a pull request against **staging** branch.
 
 Once the features included in a [milestone](https://github.com/microsoft/recommenders/milestones) are completed, we will merge staging into main. See the wiki for more detail about our [merge strategy](https://github.com/microsoft/recommenders/wiki/Strategy-to-merge-the-code-to-main-branch).

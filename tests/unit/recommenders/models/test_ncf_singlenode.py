@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 import os
@@ -148,7 +148,9 @@ def test_neumf_save_load(n_users, n_items):
 @pytest.mark.parametrize("model_type", ["NeuMF", "GMF", "MLP"])
 def test_fit(dataset_ncf_files_sorted, model_type):
     train_path, test_path, _ = dataset_ncf_files_sorted
-    data = Dataset(train_file=train_path, test_file=test_path, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
+    data = Dataset(
+        train_file=train_path, test_file=test_path, n_neg=N_NEG, n_neg_test=N_NEG_TEST
+    )
     model = NCF(
         n_users=data.n_users, n_items=data.n_items, model_type=model_type, n_epochs=1
     )
@@ -161,7 +163,9 @@ def test_predict(dataset_ncf_files_sorted, model_type):
     # test data format
     train_path, test_path, _ = dataset_ncf_files_sorted
     test = pd.read_csv(test_path)
-    data = Dataset(train_file=train_path, test_file=test_path, n_neg=N_NEG, n_neg_test=N_NEG_TEST)
+    data = Dataset(
+        train_file=train_path, test_file=test_path, n_neg=N_NEG, n_neg_test=N_NEG_TEST
+    )
     model = NCF(
         n_users=data.n_users, n_items=data.n_items, model_type=model_type, n_epochs=1
     )

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 # This script creates yaml files to build conda environments
@@ -65,9 +65,9 @@ CONDA_PYSPARK = {"pyarrow": "pyarrow>=0.8.0", "pyspark": "pyspark>=3"}
 CONDA_GPU = {
     "fastai": "fastai==1.0.46",
     "numba": "numba>=0.38.1",
-    "pytorch": "pytorch>=1.8.0",    # For cudatoolkit=11
+    "pytorch": "pytorch>=1.8.0",  # For cudatoolkit=11
     "cudatoolkit": "cudatoolkit=11.2",
-    "cudnn": "cudnn=8.1"
+    "cudnn": "cudnn=8.1",
 }
 
 PIP_BASE = {
@@ -93,7 +93,7 @@ PIP_BASE = {
 PIP_GPU = {
     "nvidia-ml-py3": "nvidia-ml-py3>=7.352.0",
     "tensorflow": "tensorflow>=2.6",
-    "tf-slim": "tf-slim>=1.1.0"
+    "tf-slim": "tf-slim>=1.1.0",
 }
 PIP_PYSPARK = {"databricks-cli": "databricks-cli==0.8.6"}
 

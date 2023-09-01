@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
 try:
@@ -17,7 +17,7 @@ try:
     )
     from pymanopt.manifolds import Stiefel, SymmetricPositiveDefinite
 except:
-    pass    # skip if pymanopt not installed
+    pass  # skip if pymanopt not installed
 
 _IMC_TEST_DATA = [
     (
