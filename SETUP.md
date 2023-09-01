@@ -1,23 +1,34 @@
 # Setup Guide
 
-The repo, including this guide, is tested on Linux. Where applicable, we document differences in [Windows](#windows-specific-instructions)  and [macOS](#macos-specific-instructions) although 
+The repo, including this guide, is tested on Linux. Where applicable, we document differences in [Windows](#windows-specific-instructions) and [MacOS](#macos-specific-instructions) although 
 such documentation may not always be up to date.   
 
 ## Extras
+
 In addition to the pip installable package, several extras are provided, including:
-+ `[examples]`: Needed for running examples.
 + `[gpu]`: Needed for running GPU models.  
 + `[spark]`: Needed for running Spark models.
 + `[dev]`: Needed for development.
-+ `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
++ `[all]`: `[gpu]`|`[spark]`|`[dev]`
 + `[experimental]`: Models that are not thoroughly tested and/or may require additional steps in installation).
-+ `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
-
 
 ## Setup for Core Package
 
 Follow the [Getting Started](./README.md#Getting-Started) section in the [README](./README.md) to install the package and run the examples.
 
+## Setup for GPU
+
+```bash
+# 1. Make sure CUDA is installed.
+
+# 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the gpu extra to the pip install command:
+pip install recommenders[gpu]
+
+# 3. Within VSCode:
+#   a. Open a notebook with a GPU model, e.g., examples/00_quick_start/wide_deep_movielens.ipynb;
+#   b. Select Jupyter kernel <kernel_name>;
+#   c. Run the notebook.
+```
 
 ## Setup for Spark 
 
@@ -26,9 +37,9 @@ Follow the [Getting Started](./README.md#Getting-Started) section in the [README
 # sudo apt-get install openjdk-11-jdk
 
 # 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the spark extra to the pip install command:
-pip install recommenders[examples,spark]
+pip install recommenders[spark]
 
-# 3. Within VS Code:
+# 3. Within VSCode:
 #   a. Open a notebook with a Spark model, e.g., examples/00_quick_start/als_movielens.ipynb;  
 #   b. Select Jupyter kernel <kernel_name>;
 #   c. Run the notebook.
