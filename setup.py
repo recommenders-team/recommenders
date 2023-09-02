@@ -11,7 +11,7 @@ import time
 # workaround for enabling editable user pip installs
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
-# version
+# Version
 here = Path(__file__).absolute().parent
 version_data = {}
 with open(here.joinpath("recommenders", "__init__.py"), "r") as f:
@@ -43,15 +43,13 @@ install_requires = [
     "pandera[strategies]>=0.15.0",  # For generating fake datasets
     "scikit-surprise>=1.1.3",
     "scrapbook>=0.5.0,<1.0.0",  # requires tqdm, papermill
+    "hyperopt>=0.2.7,<1",
+    "notebook>=6.5.4,<8",  # requires jupyter, ipykernel
+    "locust>=2.15.1,<3",
 ]
 
 # shared dependencies
 extras_require = {
-    "examples": [
-        "hyperopt>=0.2.7,<1",
-        "notebook>=6.5.4,<8",  # requires jupyter, ipykernel
-        "locust>=2.15.1,<3",
-    ],
     "gpu": [
         "nvidia-ml-py>=11.510.69",
         # TensorFlow compiled with CUDA 11.8, cudnn 8.6.0.163
@@ -71,17 +69,15 @@ extras_require = {
         "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
     ],
 }
-# for the brave of heart
+# For the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 
-# the following dependencies need additional testing
+# The following dependencies need additional testing
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
     # VW C++ binary needs to be installed manually for some code to work
     "vowpalwabbit>=8.9.0,<9",
-]
-extras_require["nni"] = [
     # nni needs to be upgraded
     "nni==1.5",
 ]
