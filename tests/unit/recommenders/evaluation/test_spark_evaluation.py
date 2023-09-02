@@ -286,12 +286,16 @@ def test_item_novelty(spark_diversity_data):
     )
     actual = evaluator.historical_item_novelty().toPandas()
     assert_frame_equal(
+<<<<<<< HEAD
         pd.DataFrame(
             dict(ItemId=[1, 2, 3, 4, 5], item_novelty=[3.0, 3.0, 2.0, 1.41504, 3.0])
         ),
         actual,
         check_exact=False,
         atol=TOL,
+=======
+        target_metrics["item_novelty"], actual, check_exact=False
+>>>>>>> e084412a (Remove nonexistent argument check_less_precise of assert_frame_equal())
     )
     assert np.all(actual["item_novelty"].values >= 0)
     # Test that novelty is zero when data includes only one item
@@ -333,7 +337,10 @@ def test_user_diversity(spark_diversity_data):
         ),
         actual,
         check_exact=False,
+<<<<<<< HEAD
         atol=TOL,
+=======
+>>>>>>> e084412a (Remove nonexistent argument check_less_precise of assert_frame_equal())
     )
 
 
@@ -374,7 +381,10 @@ def test_user_item_serendipity(spark_diversity_data):
         ),
         actual,
         check_exact=False,
+<<<<<<< HEAD
         atol=TOL,
+=======
+>>>>>>> e084412a (Remove nonexistent argument check_less_precise of assert_frame_equal())
     )
 
 
@@ -395,7 +405,10 @@ def test_user_serendipity(spark_diversity_data):
         ),
         actual,
         check_exact=False,
+<<<<<<< HEAD
         atol=TOL,
+=======
+>>>>>>> e084412a (Remove nonexistent argument check_less_precise of assert_frame_equal())
     )
 
 
@@ -430,7 +443,10 @@ def test_user_diversity_item_feature_vector(spark_diversity_data):
         ),
         actual,
         check_exact=False,
+<<<<<<< HEAD
         atol=TOL,
+=======
+>>>>>>> e084412a (Remove nonexistent argument check_less_precise of assert_frame_equal())
     )
 
 
@@ -480,7 +496,10 @@ def test_user_item_serendipity_item_feature_vector(
         ),
         actual,
         check_exact=False,
+<<<<<<< HEAD
         atol=TOL,
+=======
+>>>>>>> e084412a (Remove nonexistent argument check_less_precise of assert_frame_equal())
     )
 
 
@@ -503,7 +522,10 @@ def test_user_serendipity_item_feature_vector(spark_diversity_data):
         ),
         actual,
         check_exact=False,
+<<<<<<< HEAD
         atol=TOL,
+=======
+>>>>>>> e084412a (Remove nonexistent argument check_less_precise of assert_frame_equal())
     )
 
 
