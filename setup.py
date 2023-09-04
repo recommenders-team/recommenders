@@ -144,6 +144,7 @@ setup(
         "Programming Language :: Python :: 3.10",
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         "Programming Language :: Python :: 3.11",
 =======
 >>>>>>> b71c4ed6 (Use docker images for ubuntu 22.04)
@@ -151,6 +152,8 @@ setup(
 =======
         "Programming Language :: Python :: 3.11",
 >>>>>>> 22ac9e25 (Add python 3.11)
+=======
+>>>>>>> c3a70302 (Remove python 3.11)
         "Operating System :: POSIX :: Linux",
     ],
     extras_require=extras_require,
@@ -158,7 +161,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.8, <=3.11",
+    python_requires=">=3.8, <=3.10",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
