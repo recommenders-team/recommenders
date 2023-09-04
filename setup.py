@@ -9,6 +9,10 @@ from pathlib import Path
 
 from setuptools import find_packages, setup
 
+<<<<<<< HEAD
+=======
+# Workaround for enabling editable user pip installs
+>>>>>>> 22ac9e25 (Add python 3.11)
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
 # Version
@@ -139,10 +143,14 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
 <<<<<<< HEAD
+<<<<<<< HEAD
         "Programming Language :: Python :: 3.11",
 =======
 >>>>>>> b71c4ed6 (Use docker images for ubuntu 22.04)
         "Operating System :: Microsoft :: Windows",
+=======
+        "Programming Language :: Python :: 3.11",
+>>>>>>> 22ac9e25 (Add python 3.11)
         "Operating System :: POSIX :: Linux",
     ],
     extras_require=extras_require,
@@ -150,7 +158,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.8, <3.11",
+    python_requires=">=3.8, <=3.11",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
