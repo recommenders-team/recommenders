@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
+<<<<<<< HEAD
         python-version: ["3.8", "3.9"]
 =======
     runs-on: ubuntu-latest
@@ -51,6 +52,9 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
 >>>>>>> a6054048 (Remove tests for sarplus for Python 3.7)
+=======
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
+>>>>>>> 76901c6e (Add python 3.11)
     steps:
       - uses: actions/checkout@v3
 
