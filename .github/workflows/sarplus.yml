@@ -36,7 +36,7 @@ jobs:
     # Test pysarplus with different versions of Python.
     # Package pysarplus and upload as GitHub workflow artifact when merged into
     # the main branch.
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
