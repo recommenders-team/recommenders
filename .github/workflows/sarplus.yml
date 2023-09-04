@@ -37,12 +37,16 @@ jobs:
     # Package pysarplus and upload as GitHub workflow artifact when merged into
     # the main branch.
 <<<<<<< HEAD
+<<<<<<< HEAD
     runs-on: ubuntu-22.04
     strategy:
       matrix:
         python-version: ["3.8", "3.9"]
 =======
     runs-on: ubuntu-latest
+=======
+    runs-on: ubuntu-22.04
+>>>>>>> be86a29b (Use ubuntu-22.04 instead of latest)
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10"]
