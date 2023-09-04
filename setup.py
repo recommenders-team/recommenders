@@ -27,16 +27,20 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "pandas>1.5.2,<2.1",  # requires numpy
+    "pandas>1.5.2,<1.6",  # requires numpy
     "scikit-learn>=1.1.3,<2",  # requires scipy
     "numba>=0.57.0,<1",
     "lightfm>=1.17,<2",
-    "lightgbm>=3.3.2,<4",
+    "lightgbm>=3.3.2,<5",
     "memory-profiler>=0.61.0,<1",
     "nltk>=3.8.1,<4",  # requires tqdm
     "seaborn>=0.12.0,<1",  # requires matplotlib
+<<<<<<< HEAD
     "transformers>=4.26.0,<5",  # requires pyyaml, tqdm
     "bottleneck>=1.3.7,<2",
+=======
+    "transformers>=4.27.0,<5",  # requires pyyaml, tqdm
+>>>>>>> 40361f4b (Fixed error: 'DataFrame' object has no attribute 'append')
     "category-encoders>=2.6.0,<3",
     "jinja2>=3.1.0,<3.2",
     "cornac>=1.15.2,<2",  # requires tqdm
@@ -44,6 +48,12 @@ install_requires = [
     "pandera[strategies]>=0.15.0",  # For generating fake datasets
     "scikit-surprise>=1.1.3",
     "scrapbook>=0.5.0,<1.0.0",  # requires tqdm, papermill
+<<<<<<< HEAD
+=======
+    "hyperopt>=0.2.7,<1",
+    "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
+    "locust>=2.12.2,<3",
+>>>>>>> 40361f4b (Fixed error: 'DataFrame' object has no attribute 'append')
 ]
 
 # shared dependencies
