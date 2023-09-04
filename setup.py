@@ -27,7 +27,8 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "pandas>1.5.2,<1.6",  # requires numpy
+    # requires numpy and pandas>1.6 removes DataFrame.append() which is used in scrapbook.models
+    "pandas>1.5.2,<1.6",
     "scikit-learn>=1.1.3,<2",  # requires scipy
     "numba>=0.57.0,<1",
     "lightfm>=1.17,<2",
@@ -46,7 +47,7 @@ install_requires = [
     "hyperopt>=0.2.7,<1",
     "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
     "locust>=2.12.2,<3",
-    # 6.83.1 introduced a non-existent attribute '_deferred_pprinters' of IPython.lib.pretty in
+    # hypothesis 6.83.1 introduced a non-existent attribute '_deferred_pprinters' of IPython.lib.pretty in
     # https://github.com/HypothesisWorks/hypothesis/commit/5ea8e0c3e6da1cd9fb3f302124dc74791c14db11
     "hypothesis<6.83.1",
 ]
