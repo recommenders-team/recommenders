@@ -49,6 +49,7 @@ install_requires = [
     # hypothesis 6.83.1 introduced a non-existent attribute '_deferred_pprinters' of IPython.lib.pretty in
     # https://github.com/HypothesisWorks/hypothesis/commit/5ea8e0c3e6da1cd9fb3f302124dc74791c14db11
     "hypothesis<6.83.1",
+    "numpy>=1.23.3;python_version=='3.11'",
 ]
 
 # shared dependencies
