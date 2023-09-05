@@ -36,10 +36,10 @@ jobs:
     # Test pysarplus with different versions of Python.
     # Package pysarplus and upload as GitHub workflow artifact when merged into
     # the main branch.
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: ["3.6", "3.7", "3.8", "3.9", "3.10"]
+        python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v3
 
@@ -111,7 +111,7 @@ jobs:
 
   scala:
     # Test sarplus with different versions of Databricks and Synapse runtime
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         include:

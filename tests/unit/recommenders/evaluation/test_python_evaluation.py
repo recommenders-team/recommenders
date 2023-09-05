@@ -6,7 +6,7 @@ import pandas as pd
 import pytest
 from unittest.mock import Mock
 from sklearn.preprocessing import minmax_scale
-from pandas.util.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal
 
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
