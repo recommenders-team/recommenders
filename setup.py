@@ -49,7 +49,6 @@ install_requires = [
     # hypothesis 6.83.1 introduced a non-existent attribute '_deferred_pprinters' of IPython.lib.pretty in
     # https://github.com/HypothesisWorks/hypothesis/commit/5ea8e0c3e6da1cd9fb3f302124dc74791c14db11
     "hypothesis<6.83.1",
-    "numpy>=1.23.3;python_version=='3.11'",
 ]
 
 # shared dependencies
@@ -114,7 +113,6 @@ setup(
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
-        "Programming Language :: Python :: 3.11",
         "Operating System :: POSIX :: Linux",
     ],
     extras_require=extras_require,
@@ -122,7 +120,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.8, <=3.11",
+    python_requires=">=3.8, <=3.10",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
