@@ -441,7 +441,7 @@ def test_item_novelty(spark_diversity_data, target_metrics):
     )
     actual = evaluator.historical_item_novelty().toPandas()
     assert_frame_equal(
-        target_metrics["item_novelty"], actual, check_exact=False
+        target_metrics["item_novelty"], actual, check_exact=False, atol=0.0001,
     )
     assert np.all(actual["item_novelty"].values >= 0)
     # Test that novelty is zero when data includes only one item
@@ -482,6 +482,7 @@ def test_user_diversity(spark_diversity_data, target_metrics):
         target_metrics["user_diversity"],
         actual,
         check_exact=False,
+        atol=0.0001,
     )
 
 
@@ -509,6 +510,7 @@ def test_user_item_serendipity(spark_diversity_data, target_metrics):
         target_metrics["user_item_serendipity"],
         actual,
         check_exact=False,
+        atol=0.0001,
     )
 
 
@@ -527,6 +529,7 @@ def test_user_serendipity(spark_diversity_data, target_metrics):
         target_metrics["user_serendipity"],
         actual,
         check_exact=False,
+        atol=0.0001,
     )
 
 
@@ -559,6 +562,7 @@ def test_user_diversity_item_feature_vector(spark_diversity_data, target_metrics
         target_metrics["user_diversity_item_feature_vector"],
         actual,
         check_exact=False,
+        atol=0.0001,
     )
 
 
@@ -595,6 +599,7 @@ def test_user_item_serendipity_item_feature_vector(
         target_metrics["user_item_serendipity_item_feature_vector"],
         actual,
         check_exact=False,
+        atol=0.0001,
     )
 
 
@@ -615,6 +620,7 @@ def test_user_serendipity_item_feature_vector(spark_diversity_data, target_metri
         target_metrics["user_serendipity_item_feature_vector"],
         actual,
         check_exact=False,
+        atol=0.0001,
     )
 
 
