@@ -13,7 +13,7 @@ import pytest
 import argparse
 import glob
 from azureml.core import Run
-from test_groups import nightly_test_groups, unit_test_groups
+from test_groups import nightly_test_groups, pr_gate_test_groups
 
 if __name__ == "__main__":
 
@@ -46,7 +46,7 @@ if __name__ == "__main__":
     if args.testkind == "nightly":
         test_group = nightly_test_groups[args.testgroup]
     else:
-        test_group = unit_test_groups[args.testgroup]
+        test_group = pr_gate_test_groups[args.testgroup]
 
     logger.info("Tests to be executed")
     logger.info(str(test_group))

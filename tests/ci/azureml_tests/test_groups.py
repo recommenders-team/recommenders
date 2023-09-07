@@ -11,7 +11,7 @@
 # FOR INTEGRATION, NO GROUP SHOULD SURPASS 45MIN = 2700s !!!
 # FOR UNIT, NO GROUP SHOULD SURPASS 15MIN = 900s !!!
 
-global nightly_test_groups, unit_test_groups
+global nightly_test_groups, pr_gate_test_groups
 
 nightly_test_groups = {
     "group_cpu_001": [  # Total group time: 1883s
@@ -151,15 +151,17 @@ nightly_test_groups = {
     ],
 }
 
-unit_test_groups = {
+pr_gate_test_groups = {
     "group_spark_001": [  # Total group time: 270.41s
-        "tests/unit/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_custom_param__succeed",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_custom_param__succeed",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__data_serialization_default_param",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_default_param__succeed",
+
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_stratified_splitter",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_chrono_splitter",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__data_serialization_default_param",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_diversity_item_feature_vector",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_python_match",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_precision",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_spark_exp_var",
@@ -170,7 +172,6 @@ unit_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_serendipity",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_diversity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_diversity",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_default_param__succeed",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_serendipity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_serendipity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_item_serendipity_item_feature_vector",
@@ -257,17 +258,18 @@ unit_test_groups = {
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",
     ],
     "group_cpu_001": [  # Total group time: 525.96s
-        "tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed",
-        "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_wrong_bytes",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success",
+        "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id",
+
         "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_retry",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success",
+        "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_wrong_bytes",
         "tests/unit/recommenders/utils/test_timer.py::test_timer",
         "tests/unit/recommenders/tuning/test_ncf_utils.py::test_compute_test_results__return_success",
-        "tests/unit/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success",
         "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",
-        "tests/unit/recommenders/datasets/test_wikidata.py::test_find_wikidata_id",
         "tests/unit/recommenders/models/test_sar_singlenode.py::test_sar_item_similarity",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_tokenize_text",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_get_tokens",
