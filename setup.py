@@ -27,46 +27,50 @@ if HASH is not None:
     version += ".post" + str(int(time.time()))
 
 install_requires = [
-    "pandas>1.5.2,<1.6",  # requires numpy
-    "scikit-learn>=1.1.3,<2",  # requires scipy
-    "numba>=0.57.0,<1",
-    "lightfm>=1.17,<2",
-    "lightgbm>=3.3.2,<5",
-    "memory-profiler>=0.61.0,<1",
-    "nltk>=3.8.1,<4",  # requires tqdm
-    "seaborn>=0.12.0,<1",  # requires matplotlib
-    "transformers>=4.27.0,<5",  # requires pyyaml, tqdm
-    "category-encoders>=2.6.0,<3",
-    "jinja2>=3.1.0,<3.2",
-    "cornac>=1.15.2,<2",  # requires tqdm
-    "retrying>=1.3.4",
-    "pandera[strategies]>=0.15.0",  # For generating fake datasets
-    "scikit-surprise>=1.1.3",
+    "numpy>=1.19",  # 1.19 required by tensorflow 2.6
+    "pandas>1.0.3,<2",  # requires numpy
+    "scipy>=1.0.0,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
+    "scikit-learn>=0.22.1,<1.0.3",  # requires scipy
+    "numba>=0.38.1,<1",
+    "lightfm>=1.15,<2",
+    "lightgbm>=2.2.1",
+    "memory-profiler>=0.54.0,<1",
+    "nltk>=3.4,<4",  # requires tqdm
+    "seaborn>=0.8.1,<1",  # requires matplotlib
+    "transformers>=2.5.0,<5",  # requires pyyaml, tqdm
+    "category-encoders>=2.5.0,<2",
+    "jinja2>=2,<3.1",
+    "cornac>=1.1.2,<1.15.2;python_version<='3.7'",  # requires tqdm
+    "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
+    "retrying>=1.3.3",
+    "pandera[strategies]>=0.6.5",  # For generating fake datasets
+    "scikit-surprise>=1.0.6",
     "scrapbook>=0.5.0,<1.0.0",  # requires tqdm, papermill
-    "hyperopt>=0.2.7,<1",
-    "notebook>=7.0.0,<8",  # requires jupyter, ipykernel
-    "locust>=2.12.2,<3",
+    "hyperopt>=0.1.2,<1",
+    "notebook>=5.0.0,<8",  # requires jupyter, ipykernel
+    "locust>=1,<2",
 ]
 
 # shared dependencies
 extras_require = {
     "gpu": [
-        "nvidia-ml-py>=11.510.69",
-        # TensorFlow compiled with CUDA 11.8, cudnn 8.6
-        "tensorflow>=2.12.0",
+        "nvidia-ml-py>=7.352.0",
+        # TensorFlow compiled with CUDA 11.2, cudnn 8.1
+        "tensorflow~=2.6.1;python_version=='3.6'",
+        "tensorflow~=2.7.0;python_version>='3.7'",
         "tf-slim>=1.1.0",
-        "torch>=2.0.1",
-        "fastai>=2.7.11,<3",
+        "torch>=1.8",  # for CUDA 11 support
+        "fastai>=1.0.46,<2",
     ],
     "spark": [
-        "pyarrow>=10.0.1",
-        "pyspark>=3.4.0",
+        "pyarrow>=0.12.1,<7.0.0",
+        "pyspark>=2.4.5,<3.3.0",
     ],
     "dev": [
-        "black>=23.3.0,<24",
-        "pytest>=7.2.1",
-        "pytest-cov>=4.1.0",
-        "pytest-mock>=3.10.0",  # for access to mock fixtures in pytest
+        "black>=18.6b4,<21",
+        "pytest>=3.6.4",
+        "pytest-cov>=2.12.1",
+        "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
     ],
 }
 # For the brave of heart
@@ -109,7 +113,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
-        # "Programming Language :: Python :: 3.10",
         "Operating System :: POSIX :: Linux",
     ],
     extras_require=extras_require,
@@ -117,7 +120,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.8, <=3.9",
+    python_requires=">=3.6, <=3.9",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
