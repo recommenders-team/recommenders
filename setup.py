@@ -38,7 +38,7 @@ install_requires = [
     "nltk>=3.4,<4",  # requires tqdm
     "seaborn>=0.8.1,<1",  # requires matplotlib
     "transformers>=2.5.0,<5",  # requires pyyaml, tqdm
-    "category-encoders>=2.5.0,<2",
+    "category-encoders>=1.3.0,<2",
     "jinja2>=2,<3.1",
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",  # requires tqdm
     "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
