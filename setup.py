@@ -37,7 +37,7 @@ install_requires = [
     "memory-profiler>=0.54.0,<1",
     "nltk>=3.4,<4",  # requires tqdm
     "seaborn>=0.8.1,<1",  # requires matplotlib
-    "transformers>=2.5.0,<5",  # requires pyyaml, tqdm
+    "transformers>=4.0.0,<5",  # requires pyyaml, tqdm
     "category-encoders>=1.3.0,<3",
     "jinja2>=2,<3.2",
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",  # requires tqdm
