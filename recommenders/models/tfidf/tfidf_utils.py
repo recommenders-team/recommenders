@@ -115,7 +115,7 @@ class TfidfRecommender:
         return df
 
     def tokenize_text(
-        self, df_clean, text_col="cleaned_text", ngram_range=(1, 3), min_df=0
+        self, df_clean, text_col="cleaned_text", ngram_range=(1, 3), min_df=1
     ):
         """Tokenize the input text.
         For more details on the TfidfVectorizer, see https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
