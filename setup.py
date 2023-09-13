@@ -60,7 +60,7 @@ extras_require = {
         "tensorflow>=2.7.0;python_version>='3.7'",
         "tf-slim>=1.1.0",
         "torch>=1.8",  # for CUDA 11 support
-        "fastai>=1.0.46,<3",
+        "fastai>=1.0.46,<2",
     ],
     "spark": [
         "pyarrow>=0.12.1,<14.0.0",
