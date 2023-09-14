@@ -37,6 +37,7 @@ Example:
 """
 import argparse
 import logging
+import glob
 
 from azureml.core.authentication import AzureCliAuthentication
 from azureml.core import Workspace

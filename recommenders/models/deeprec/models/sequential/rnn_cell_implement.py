@@ -581,9 +581,9 @@ class _Linear(object):
     ):
         self._build_bias = build_bias
 
-        if args is None or (nest.is_nested(args) and not args):
+        if args is None or (nest.is_sequence(args) and not args):
             raise ValueError("`args` must be specified")
-        if not nest.is_nested(args):
+        if not nest.is_sequence(args):
             args = [args]
             self._is_sequence = False
         else:

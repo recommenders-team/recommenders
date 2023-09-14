@@ -68,8 +68,8 @@ class RLRMCdataset(object):
         """
         # Data processing and reindexing code is adopted from https://github.com/Microsoft/Recommenders/blob/main/recommenders/models/ncf/dataset.py
         # If validation dataset is None
-        df = train if validation is None else pd.concat([train, validation])
-        df = df if test is None else pd.concat([df, test])
+        df = train if validation is None else train.append(validation)
+        df = df if test is None else df.append(test)
 
         # Reindex user and item index
         if self.user_idx is None:
