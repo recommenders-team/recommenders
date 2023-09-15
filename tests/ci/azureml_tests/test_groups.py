@@ -187,8 +187,8 @@ pr_gate_test_groups = {
         "tests/security/test_dependency_security.py::test_requests",
         "tests/security/test_dependency_security.py::test_numpy",
         "tests/security/test_dependency_security.py::test_pandas",
-        "test/responsible_ai/recommenders/datasets/test_criteo_privacy.py",
-        "test/responsible_ai/recommenders/datasets/test_movielens_privacy.py",
+        "tests/responsible_ai/recommenders/datasets/test_criteo_privacy.py",
+        "tests/responsible_ai/recommenders/datasets/test_movielens_privacy.py",
     ],
     "group_notebooks_cpu_001": [  # Total group time: 226.42s
         "tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs",
