@@ -42,7 +42,7 @@ install_requires = [
     "transformers>=2.5.0,<5",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3.1",
-    "requests>=2.0.0,<3",
+    "requests>=2.31.0,<3",
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
     "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
     "retrying>=1.3.3",
