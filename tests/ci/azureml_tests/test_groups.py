@@ -291,6 +291,7 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
         "tests/security/test_dependency_security.py::test_tensorflow",
         "tests/security/test_dependency_security.py::test_torch",
+        "tests/regression/test_compatibility_tf.py",
     ],
     "group_notebooks_gpu_001": [  # Total group time: 563.35s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
