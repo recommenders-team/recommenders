@@ -4,8 +4,10 @@
 import numpy as np
 import pandas as pd
 import pytest
+import random
 from sklearn.preprocessing import minmax_scale
 
+from recommenders.utils.timer import Timer
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -28,15 +30,13 @@ from recommenders.evaluation.python_evaluation import (
     auc,
     logloss,
 )
-import random
-from recommenders.utils.timer import Timer
+
 
 random.seed(SEED)
 DATA_USER_NUM = 5000
 DATA_ITEM_NUM = DATA_USER_NUM * 2
 DATA_SAMPLE_NUM = DATA_USER_NUM * 1000
 DATA_RATING_MAX = 5
-
 TOL = 0.1
 
 
@@ -84,8 +84,6 @@ def rating_pred_binary(rating_pred):
 
 # The following time thresholds are benchmarked on Azure
 # Standard_A8m_v2 with 8 vCPUs and 64 GiB memory.
-
-
 def test_merge_rating(rating_true, rating_pred):
     with Timer() as t:
         merge_rating_true_pred(
