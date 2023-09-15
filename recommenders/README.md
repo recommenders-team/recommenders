@@ -9,7 +9,7 @@ Some dependencies require compilation during pip installation. On Linux this can
 ```bash
 sudo apt-get install -y build-essential libpython<version>
 ``` 
-where `<version>` should be the Python version (e.g. `3.6`).
+where `<version>` should be the Python version (e.g. `3.8`).
 
 On Windows you will need [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 

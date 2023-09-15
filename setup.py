@@ -8,7 +8,7 @@ import site
 import sys
 import time
 
-# Workround for enabling editable user pip installs
+# Workaround for enabling editable user pip installs
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
 # Version
@@ -116,7 +116,6 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Operating System :: POSIX :: Linux",
@@ -126,7 +125,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.6, <3.10",
+    python_requires=">=3.6",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
