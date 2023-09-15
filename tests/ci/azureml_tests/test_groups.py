@@ -158,7 +158,6 @@ pr_gate_test_groups = {
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__data_serialization_default_param",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_default_param__succeed",
-
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_stratified_splitter",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_chrono_splitter",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_diversity_item_feature_vector",
@@ -264,9 +263,10 @@ pr_gate_test_groups = {
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success",
         "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id",
-
-        "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_retry",
-        "tests/unit/recommenders/datasets/test_dataset.py::test_maybe_download_wrong_bytes",
+        "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download_wrong_bytes",
+        "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download_maybe",
+        "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download_retry",
+        "tests/unit/recommenders/datasets/test_download_utils.py::test_download_path",
         "tests/unit/recommenders/utils/test_timer.py::test_timer",
         "tests/unit/recommenders/tuning/test_ncf_utils.py::test_compute_test_results__return_success",
         "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",

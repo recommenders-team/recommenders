@@ -4,8 +4,9 @@
 import os
 import pytest
 import requests
-from tempfile import TemporaryDirectory
 import logging
+from tempfile import TemporaryDirectory
+
 from recommenders.datasets.download_utils import maybe_download, download_path
 
 
