@@ -184,6 +184,9 @@ pr_gate_test_groups = {
         "tests/performance/recommenders/evaluation/test_python_evaluation_time_performance.py::test_python_recall",
         "tests/performance/recommenders/evaluation/test_python_evaluation_time_performance.py::test_python_auc",
         "tests/performance/recommenders/evaluation/test_python_evaluation_time_performance.py::test_python_logloss",
+        "tests/security/test_dependency_security.py::test_requests",
+        "tests/security/test_dependency_security.py::test_numpy",
+        "tests/security/test_dependency_security.py::test_pandas",
     ],
     "group_notebooks_cpu_001": [  # Total group time: 226.42s
         "tests/unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs",
@@ -286,6 +289,8 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
+        "tests/security/test_dependency_security.py::test_tensorflow",
+        "tests/security/test_dependency_security.py::test_torch",
     ],
     "group_notebooks_gpu_001": [  # Total group time: 563.35s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
