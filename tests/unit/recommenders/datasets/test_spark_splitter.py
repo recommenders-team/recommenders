@@ -1,9 +1,10 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
+import pytest
 import numpy as np
 import pandas as pd
-import pytest
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
@@ -46,6 +47,25 @@ def spark_dataset(spark):
             }
         )
     )
+
+
+def _if_later(data1, data2):
+    """Helper function to test if records in data1 are earlier than that in data2.
+    Returns:
+        bool: True or False indicating if data1 is earlier than data2.
+    """
+
+    max_times = data1.groupBy(DEFAULT_USER_COL).agg(
+        F.max(DEFAULT_TIMESTAMP_COL).alias("max")
+    )
+    min_times = data2.groupBy(DEFAULT_USER_COL).agg(
+        F.min(DEFAULT_TIMESTAMP_COL).alias("min")
+    )
+    all_times = max_times.join(min_times, on=DEFAULT_USER_COL).select(
+        (F.col("max") <= F.col("min"))
+    )
+
+    return all([x[0] for x in all_times.collect()])
 
 
 @pytest.mark.spark
@@ -190,22 +210,3 @@ def test_timestamp_splitter(spark_dataset):
     max_split1 = splits[1].agg(F.max(DEFAULT_TIMESTAMP_COL)).first()[0]
     min_split2 = splits[2].agg(F.min(DEFAULT_TIMESTAMP_COL)).first()[0]
     assert max_split1 <= min_split2
-
-
-def _if_later(data1, data2):
-    """Helper function to test if records in data1 are earlier than that in data2.
-    Returns:
-        bool: True or False indicating if data1 is earlier than data2.
-    """
-
-    max_times = data1.groupBy(DEFAULT_USER_COL).agg(
-        F.max(DEFAULT_TIMESTAMP_COL).alias("max")
-    )
-    min_times = data2.groupBy(DEFAULT_USER_COL).agg(
-        F.min(DEFAULT_TIMESTAMP_COL).alias("min")
-    )
-    all_times = max_times.join(min_times, on=DEFAULT_USER_COL).select(
-        (F.col("max") <= F.col("min"))
-    )
-
-    return all([x[0] for x in all_times.collect()])
