@@ -3,12 +3,8 @@
 
 
 import pytest
-
-try:
-    import papermill as pm
-    import scrapbook as sb
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
+import papermill as pm
+import scrapbook as sb
 
 from recommenders.utils.gpu_utils import get_number_gpus
 
@@ -17,14 +13,12 @@ TOL = 0.5
 ABS_TOL = 0.05
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_gpu_vm():
     assert get_number_gpus() >= 1
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_ncf_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["ncf"]
@@ -45,7 +39,6 @@ def test_ncf_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["ncf_deep_dive"]
@@ -73,7 +66,6 @@ def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_fastai_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["fastai"]
@@ -98,7 +90,6 @@ def test_fastai_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xdeepfm_quickstart"]
@@ -125,7 +116,6 @@ def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_wide_deep_smoke(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["wide_deep"]
@@ -154,7 +144,6 @@ def test_wide_deep_smoke(notebooks, output_notebook, kernel_name, tmp):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_naml_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["naml_quickstart"]
@@ -175,7 +164,6 @@ def test_naml_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_nrms_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["nrms_quickstart"]
@@ -196,7 +184,6 @@ def test_nrms_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_npa_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["npa_quickstart"]
@@ -217,7 +204,6 @@ def test_npa_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_lstur_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["lstur_quickstart"]
@@ -238,7 +224,6 @@ def test_lstur_smoke(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_cornac_bivae_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["cornac_bivae_deep_dive"]
