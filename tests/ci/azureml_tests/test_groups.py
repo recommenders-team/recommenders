@@ -58,6 +58,7 @@ nightly_test_groups = {
         "tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke",  # 12.58s
         "tests/functional/examples/test_notebooks_python.py::test_sar_single_node_functional",  # 57.67s + 808.83s
         "tests/functional/examples/test_notebooks_python.py::test_xlearn_fm_functional",  # 255.73s
+        "tests/smoke/examples/test_notebooks_python.py::test_vw_deep_dive_smoke",
         "tests/functional/examples/test_notebooks_python.py::test_vw_deep_dive_functional",
         "tests/functional/examples/test_notebooks_python.py::test_nni_tuning_svd",
     ],

@@ -1,20 +1,16 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import pytest
 
-try:
-    import papermill as pm
-    import scrapbook as sb
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
+import pytest
+import papermill as pm
+import scrapbook as sb
 
 
 TOL = 0.05
 ABS_TOL = 0.05
 
 
-@pytest.mark.smoke
 @pytest.mark.notebooks
 def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["sar_single_node"]
@@ -34,7 +30,6 @@ def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.176385, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.smoke
 @pytest.mark.notebooks
 def test_baseline_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["baseline_deep_dive"]
@@ -58,7 +53,6 @@ def test_baseline_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.108826, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.smoke
 @pytest.mark.notebooks
 def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["surprise_svd_deep_dive"]
@@ -82,7 +76,6 @@ def test_surprise_svd_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.032, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.smoke
 @pytest.mark.notebooks
 @pytest.mark.skip(reason="VW pip package has installation incompatibilities")
 def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
@@ -107,7 +100,6 @@ def test_vw_deep_dive_smoke(notebooks, output_notebook, kernel_name):
     assert results["recall"] == pytest.approx(0.037612, rel=TOL, abs=ABS_TOL)
 
 
-@pytest.mark.smoke
 @pytest.mark.notebooks
 def test_lightgbm_quickstart_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["lightgbm_quickstart"]
@@ -138,7 +130,6 @@ def test_lightgbm_quickstart_smoke(notebooks, output_notebook, kernel_name):
     )
 
 
-@pytest.mark.smoke
 @pytest.mark.notebooks
 def test_cornac_bpr_smoke(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
