@@ -48,9 +48,9 @@ nightly_test_groups = {
         "tests/integration/examples/test_notebooks_python.py::test_benchmark_movielens_cpu",  # 58s
     ],
     "group_cpu_003": [  # Total group time: 2253s
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_download_criteo",  # 1.05s
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_extract_criteo",  # 1.22s
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_pandas_df",  # 1.73s
+        "tests/data_validation/recommenders/dataset/test_criteo.py::test_download_criteo_sample",  # 1.05s
+        "tests/data_validation/recommenders/dataset/test_criteo.py::test_extract_criteo_sample",  # 1.22s
+        "tests/data_validation/recommenders/dataset/test_criteo.py::test_criteo_load_pandas_df_sample",  # 1.73s
         "tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_pandas_df",  # 1368.63s
         #
         "tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke",  # 12.58s
@@ -141,7 +141,7 @@ nightly_test_groups = {
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 25.58s + 101.99s + 139.23s
         #
-        "tests/smoke/recommenders/dataset/test_criteo.py::test_criteo_load_spark_df",  # 6.83s
+        "tests/data_validation/recommenders/dataset/test_criteo.py::test_criteo_load_spark_df_sample",  # 6.83s
         "tests/smoke/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_smoke",  # 32.45s
         "tests/integration/recommenders/datasets/test_criteo.py::test_criteo_load_spark_df",  # 374.64s
         #
