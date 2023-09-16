@@ -29,6 +29,8 @@ nightly_test_groups = {
         "tests/data_validation/examples/test_mind.py::test_mind_utils_runs",  # 219.77s
         "tests/data_validation/examples/test_mind.py::test_mind_utils_values",  # 219.26s
         #
+        "tests/data_validation/examples/test_wikidata.py::test_wikidata_values",
+        #
         "tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke",  # 46.42s
         #
         "tests/smoke/examples/test_notebooks_python.py::test_cornac_bpr_smoke",  # 16.62s
@@ -44,6 +46,8 @@ nightly_test_groups = {
         "tests/functional/examples/test_notebooks_python.py::test_geoimc_functional",  # 1006.19s
         #
         "tests/functional/examples/test_notebooks_python.py::test_benchmark_movielens_cpu",  # 58s
+        #
+        "tests/functional/examples/test_notebooks_python.py::test_lightfm_functional",
     ],
     "group_cpu_003": [  # Total group time: 2253s
         "tests/data_validation/recommenders/dataset/test_criteo.py::test_download_criteo_sample",  # 1.05s
@@ -53,8 +57,9 @@ nightly_test_groups = {
         #
         "tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke",  # 12.58s
         "tests/functional/examples/test_notebooks_python.py::test_sar_single_node_functional",  # 57.67s + 808.83s
-        # FIXME: Add experimental tests in a later iteration
-        # "tests/functional/examples/test_notebooks_python.py::test_xlearn_fm_functional",  # 255.73s
+        "tests/functional/examples/test_notebooks_python.py::test_xlearn_fm_functional",  # 255.73s
+        "tests/functional/examples/test_notebooks_python.py::test_vw_deep_dive_functional",
+        "tests/functional/examples/test_notebooks_python.py::test_nni_tuning_svd",
     ],
     "group_gpu_001": [  # Total group time: 1937.01s
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
