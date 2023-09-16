@@ -4,8 +4,6 @@
 import os
 import pytest
 import requests
-import papermill as pm
-import scrapbook as sb
 
 from recommenders.datasets.mind import download_mind, extract_mind
 

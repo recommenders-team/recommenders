@@ -1,5 +1,11 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
+
 import os
 import pandas
+from pandas.core.series import Series
+from pytest_mock import MockerFixture
 import pytest
 
 from recommenders.datasets.movielens import MockMovielensSchema
@@ -9,12 +15,9 @@ from recommenders.datasets.movielens import (
     MOCK_DATA_FORMAT,
     DEFAULT_HEADER,
     DEFAULT_ITEM_COL,
-    DEFAULT_USER_COL
+    DEFAULT_USER_COL,
 )
 from recommenders.utils.constants import DEFAULT_GENRE_COL, DEFAULT_TITLE_COL
-
-from pandas.core.series import Series
-from pytest_mock import MockerFixture
 
 
 @pytest.mark.parametrize("size", [10, 100])
