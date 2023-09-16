@@ -259,6 +259,7 @@ pr_gate_test_groups = {
         "tests/unit/examples/test_notebooks_python.py::test_vw_deep_dive_runs",
     ],
     "group_spark_001": [  # Total group time: 270.41s
+        "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_init_spark",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__data_serialization_default_param",
