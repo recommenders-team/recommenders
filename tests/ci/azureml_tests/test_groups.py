@@ -140,10 +140,12 @@ nightly_test_groups = {
         #
         "tests/data_validation/recommenders/dataset/test_criteo.py::test_criteo_load_spark_df_sample",  # 6.83s
         "tests/data_validation/recommenders/datasets/test_criteo.py::test_criteo_load_spark_df_full",  # 374.64s
+        #
         "tests/smoke/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_smoke",  # 32.45s
         #
         "tests/smoke/examples/test_notebooks_pyspark.py::test_als_pyspark_smoke",  # 49.53s
         "tests/integration/examples/test_notebooks_pyspark.py::test_als_pyspark_integration",  # 110.58s
+        #
         "tests/integration/examples/test_notebooks_pyspark.py::test_benchmark_movielens_pyspark",  # 142s
     ],
 }
