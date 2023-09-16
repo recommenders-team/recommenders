@@ -271,23 +271,3 @@ def test_load_spark_df(
     assert len(df.columns) == 4
     del df
     gc.collect()
-
-
-@pytest.mark.integration
-@pytest.mark.parametrize("size", ["1m", "10m", "20m"])
-def test_download_and_extract_movielens(size, tmp):
-    """Test movielens data download and extract"""
-    zip_path = os.path.join(tmp, "ml.zip")
-    download_movielens(size, dest_path=zip_path)
-    assert len(os.listdir(tmp)) == 1
-    assert os.path.exists(zip_path)
-
-    rating_path = os.path.join(tmp, "rating.dat")
-    item_path = os.path.join(tmp, "item.dat")
-    extract_movielens(
-        size, rating_path=rating_path, item_path=item_path, zip_path=zip_path
-    )
-    # Test if raw-zip file, rating file, and item file are cached
-    assert len(os.listdir(tmp)) == 3
-    assert os.path.exists(rating_path)
-    assert os.path.exists(item_path)

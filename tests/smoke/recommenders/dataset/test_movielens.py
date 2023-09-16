@@ -11,16 +11,6 @@ from recommenders.datasets.movielens import (
     extract_movielens,
 )
 
-try:
-    from pyspark.sql.types import (
-        StructType,
-        StructField,
-        IntegerType,
-    )
-    from pyspark.sql.functions import col
-except ImportError:
-    pass  # skip this import if we are in pure python environment
-
 
 @pytest.mark.smoke
 @pytest.mark.parametrize(
@@ -210,23 +200,3 @@ def test_load_spark_df(
     assert df.count() == num_samples
     # user, item, rating and timestamp
     assert len(df.columns) == 4
-
-
-@pytest.mark.smoke
-@pytest.mark.parametrize("size", ["100k"])
-def test_download_and_extract_movielens(size, tmp):
-    """Test movielens data download and extract"""
-    zip_path = os.path.join(tmp, "ml.zip")
-    download_movielens(size, dest_path=zip_path)
-    assert len(os.listdir(tmp)) == 1
-    assert os.path.exists(zip_path)
-
-    rating_path = os.path.join(tmp, "rating.dat")
-    item_path = os.path.join(tmp, "item.dat")
-    extract_movielens(
-        size, rating_path=rating_path, item_path=item_path, zip_path=zip_path
-    )
-    # Test if raw-zip file, rating file, and item file are cached
-    assert len(os.listdir(tmp)) == 3
-    assert os.path.exists(rating_path)
-    assert os.path.exists(item_path)

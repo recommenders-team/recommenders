@@ -5,11 +5,27 @@
 import os
 import pandas
 from pandas.core.series import Series
-from pytest_mock import MockerFixture
 import pytest
+from pytest_mock import MockerFixture
+
+try:
+    from pyspark.sql.types import (
+        StructType,
+        StructField,
+        IntegerType,
+    )
+    from pyspark.sql.functions import col
+except ImportError:
+    pass  # skip this import if we are in pure python environment
 
 from recommenders.datasets.movielens import MockMovielensSchema
-from recommenders.datasets.movielens import load_pandas_df, load_spark_df
+from recommenders.datasets.movielens import (
+    load_pandas_df,
+    load_spark_df,
+    load_item_df,
+    download_movielens,
+    extract_movielens,
+)
 from recommenders.datasets.movielens import (
     DATA_FORMAT,
     MOCK_DATA_FORMAT,
@@ -66,6 +82,53 @@ def test_mock_movielens_schema__get_df__return_success(
         assert len(df[DEFAULT_GENRE_COL]) == size
 
 
+def test_mock_movielens_data__no_name_collision():
+    """
+    Making sure that no common names are shared between the mock and real dataset sizes
+    """
+    dataset_name = set(DATA_FORMAT.keys())
+    dataset_name_mock = set(MOCK_DATA_FORMAT.keys())
+    collision = dataset_name.intersection(dataset_name_mock)
+    assert not collision
+
+
+def test_load_pandas_df_mock_100__with_default_param__succeed():
+    df = load_pandas_df("mock100")
+    assert type(df) == pandas.DataFrame
+    assert len(df) == 100
+    assert not df[[DEFAULT_USER_COL, DEFAULT_ITEM_COL]].duplicated().any()
+
+
+def test_load_pandas_df_mock_100__with_custom_param__succeed():
+    df = load_pandas_df(
+        "mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL
+    )
+    assert type(df[DEFAULT_TITLE_COL]) == Series
+    assert type(df[DEFAULT_GENRE_COL]) == Series
+    assert len(df) == 100
+    assert "|" in df.loc[0, DEFAULT_GENRE_COL]
+    assert df.loc[0, DEFAULT_TITLE_COL] == "foo"
+
+
+@pytest.mark.parametrize("size", ["100k", "1m", "10m", "20m"])
+def test_download_and_extract_movielens(size, tmp):
+    """Test movielens data download and extract"""
+    zip_path = os.path.join(tmp, "ml.zip")
+    download_movielens(size, dest_path=zip_path)
+    assert len(os.listdir(tmp)) == 1
+    assert os.path.exists(zip_path)
+
+    rating_path = os.path.join(tmp, "rating.dat")
+    item_path = os.path.join(tmp, "item.dat")
+    extract_movielens(
+        size, rating_path=rating_path, item_path=item_path, zip_path=zip_path
+    )
+    # Test if raw-zip file, rating file, and item file are cached
+    assert len(os.listdir(tmp)) == 3
+    assert os.path.exists(rating_path)
+    assert os.path.exists(item_path)
+
+
 @pytest.mark.spark
 @pytest.mark.parametrize("keep_genre_col", [True, False])
 @pytest.mark.parametrize("keep_title_col", [True, False])
@@ -109,27 +172,10 @@ def test_mock_movielens_schema__get_spark_df__data_serialization_default_param(
     assert df.count() == data_size
 
 
-def test_mock_movielens_data__no_name_collision():
-    """
-    Making sure that no common names are shared between the mock and real dataset sizes
-    """
-    dataset_name = set(DATA_FORMAT.keys())
-    dataset_name_mock = set(MOCK_DATA_FORMAT.keys())
-    collision = dataset_name.intersection(dataset_name_mock)
-    assert not collision
-
-
 @pytest.mark.spark
 def test_load_spark_df_mock_100__with_default_param__succeed(spark):
     df = load_spark_df(spark, "mock100")
     assert df.count() == 100
-
-
-def test_load_pandas_df_mock_100__with_default_param__succeed():
-    df = load_pandas_df("mock100")
-    assert type(df) == pandas.DataFrame
-    assert len(df) == 100
-    assert not df[[DEFAULT_USER_COL, DEFAULT_ITEM_COL]].duplicated().any()
 
 
 @pytest.mark.spark
@@ -142,14 +188,3 @@ def test_load_spark_df_mock_100__with_custom_param__succeed(spark):
     assert df.count() == 100
     assert "|" in df.take(1)[0][DEFAULT_GENRE_COL]
     assert df.take(1)[0][DEFAULT_TITLE_COL] == "foo"
-
-
-def test_load_pandas_df_mock_100__with_custom_param__succeed():
-    df = load_pandas_df(
-        "mock100", title_col=DEFAULT_TITLE_COL, genres_col=DEFAULT_GENRE_COL
-    )
-    assert type(df[DEFAULT_TITLE_COL]) == Series
-    assert type(df[DEFAULT_GENRE_COL]) == Series
-    assert len(df) == 100
-    assert "|" in df.loc[0, DEFAULT_GENRE_COL]
-    assert df.loc[0, DEFAULT_TITLE_COL] == "foo"

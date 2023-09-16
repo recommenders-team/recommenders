@@ -15,12 +15,12 @@ global nightly_test_groups, pr_gate_test_groups
 
 nightly_test_groups = {
     "group_cpu_001": [  # Total group time: 1883s
-        "tests/smoke/recommenders/dataset/test_movielens.py::test_download_and_extract_movielens",  # 0.45s
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens",  # 0.45s + 0.61s + 3.47s + 8.28s
+        #
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df",  # 0.47s
         "tests/smoke/recommenders/dataset/test_movielens.py::test_load_pandas_df",  # 2.45s
         #
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 16.87s
-        "tests/integration/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens",  # 0.61s + 3.47s + 8.28s
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df",  # 0.59s + 3.59s + 8.44s
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 37.33s + 352.99s + 673.61s
         #
@@ -156,11 +156,13 @@ nightly_test_groups = {
 
 pr_gate_test_groups = {
     "group_cpu_001": [  # Total group time: 525.96s
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_invalid_param__return_failure",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_data__no_name_collision",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_default_param__succeed",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df_mock_100__with_custom_param__succeed",
-        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__has_default_col_names",
-        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df__return_success",
-        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_df_remove_default_col__return_success",
         "tests/data_validation/recommenders/datasets/test_wikidata.py::test_find_wikidata_id",
         "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download_wrong_bytes",
         "tests/unit/recommenders/datasets/test_download_utils.py::test_maybe_download_maybe",
@@ -205,11 +207,11 @@ pr_gate_test_groups = {
         "tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs",
     ],
     "group_spark_001": [  # Total group time: 270.41s
-        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_custom_param__succeed",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success",
-        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__data_serialization_default_param",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__store_tmp_file",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__data_serialization_default_param",
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_default_param__succeed",
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df_mock_100__with_custom_param__succeed",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_stratified_splitter",
         "tests/unit/recommenders/datasets/test_spark_splitter.py::test_chrono_splitter",
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_user_diversity_item_feature_vector",
