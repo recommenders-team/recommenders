@@ -24,12 +24,15 @@ nightly_test_groups = {
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df",  # 0.59s + 3.59s + 8.44s
         "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 37.33s + 352.99s + 673.61s
         #
-        "tests/smoke/recommenders/dataset/test_mind.py::test_mind_url",  # 0.38s
-        "tests/smoke/recommenders/dataset/test_mind.py::test_extract_mind",  # 10.23s
-        "tests/smoke/examples/test_notebooks_python.py::test_mind_utils",  # 219.77s
-        "tests/integration/recommenders/datasets/test_mind.py::test_download_mind",  # 37.63s
-        "tests/integration/recommenders/datasets/test_mind.py::test_extract_mind",  # 56.30s
-        "tests/integration/recommenders/datasets/test_mind.py::test_mind_utils_integration",  # 219.26s
+        "tests/data_validation/recommenders/dataset/test_mind.py::test_mind_url",  # 0.38s
+        "tests/data_validation/recommenders/dataset/test_mind.py::test_download_mind_demo",
+        "tests/data_validation/recommenders/datasets/test_mind.py::test_extract_mind_demo",
+        "tests/data_validation/recommenders/datasets/test_mind.py::test_download_mind_small",
+        "tests/data_validation/recommenders/datasets/test_mind.py::test_extract_mind_small",
+        "tests/data_validation/recommenders/datasets/test_mind.py::test_download_mind_large",
+        "tests/data_validation/recommenders/datasets/test_mind.py::test_extract_mind_large",
+        "tests/data_validation/examples/test_mind.py::test_mind_utils_runs",  # 219.77s
+        "tests/data_validation/examples/test_mind.py::test_mind_utils_values",  # 219.26s
         #
         "tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke",  # 46.42s
         #
