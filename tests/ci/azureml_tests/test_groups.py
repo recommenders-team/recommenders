@@ -16,16 +16,11 @@ global nightly_test_groups, pr_gate_test_groups
 nightly_test_groups = {
     "group_cpu_001": [  # Total group time: 1883s
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_download_and_extract_movielens",  # 0.45s + 0.61s + 3.47s + 8.28s
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_item_df",  # 0.47s + 0.59s + 3.59s + 8.44s
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 16.87s + 37.33s + 352.99s + 673.61s
         #
-        "tests/smoke/recommenders/dataset/test_movielens.py::test_load_item_df",  # 0.47s
-        "tests/smoke/recommenders/dataset/test_movielens.py::test_load_pandas_df",  # 2.45s
-        #
-        "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 16.87s
-        "tests/integration/recommenders/datasets/test_movielens.py::test_load_item_df",  # 0.59s + 3.59s + 8.44s
-        "tests/integration/recommenders/datasets/test_movielens.py::test_load_pandas_df",  # 37.33s + 352.99s + 673.61s
-        #
-        "tests/data_validation/recommenders/dataset/test_mind.py::test_mind_url",  # 0.38s
-        "tests/data_validation/recommenders/dataset/test_mind.py::test_download_mind_demo",
+        "tests/data_validation/recommenders/datasets/test_mind.py::test_mind_url",  # 0.38s
+        "tests/data_validation/recommenders/datasets/test_mind.py::test_download_mind_demo",
         "tests/data_validation/recommenders/datasets/test_mind.py::test_extract_mind_demo",
         "tests/data_validation/recommenders/datasets/test_mind.py::test_download_mind_small",
         "tests/data_validation/recommenders/datasets/test_mind.py::test_extract_mind_small",
@@ -141,8 +136,7 @@ nightly_test_groups = {
         "tests/smoke/recommenders/recommender/test_newsrec_model.py::test_model_lstur",  # 194.88s
     ],
     "group_spark_001": [  # Total group time: 987.16s
-        "tests/smoke/recommenders/dataset/test_movielens.py::test_load_spark_df",  # 4.33s
-        "tests/integration/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 25.58s + 101.99s + 139.23s
+        "tests/data_validation/recommenders/datasets/test_movielens.py::test_load_spark_df",  # 4.33s+ 25.58s + 101.99s + 139.23s
         #
         "tests/data_validation/recommenders/dataset/test_criteo.py::test_criteo_load_spark_df_sample",  # 6.83s
         "tests/data_validation/recommenders/datasets/test_criteo.py::test_criteo_load_spark_df_full",  # 374.64s
