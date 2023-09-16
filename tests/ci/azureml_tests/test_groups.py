@@ -29,6 +29,7 @@ nightly_test_groups = {
         "tests/data_validation/examples/test_mind.py::test_mind_utils_runs",  # 219.77s
         "tests/data_validation/examples/test_mind.py::test_mind_utils_values",  # 219.26s
         #
+        "tests/data_validation/examples/test_wikidata.py::test_wikidata_runs",
         "tests/data_validation/examples/test_wikidata.py::test_wikidata_values",
         #
         "tests/smoke/examples/test_notebooks_python.py::test_lightgbm_quickstart_smoke",  # 46.42s
@@ -209,6 +210,7 @@ pr_gate_test_groups = {
         "tests/unit/examples/test_notebooks_python.py::test_lightgbm",
         "tests/unit/examples/test_notebooks_python.py::test_cornac_deep_dive_runs",
         "tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs",
+        "tests/unit/examples/test_notebooks_python.py::test_vw_deep_dive_runs",
     ],
     "group_spark_001": [  # Total group time: 270.41s
         "tests/data_validation/recommenders/datasets/test_movielens.py::test_mock_movielens_schema__get_spark_df__return_success",

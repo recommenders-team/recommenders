@@ -1,13 +1,10 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import sys
 import pytest
-
-try:
-    import papermill as pm
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
+import papermill as pm
 
 from recommenders.utils.constants import (
     DEFAULT_RATING_COL,
