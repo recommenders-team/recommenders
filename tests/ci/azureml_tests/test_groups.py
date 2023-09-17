@@ -8,8 +8,8 @@
 # Standard_A8m_v2 with 8 vCPUs and 64 GiB memory.
 
 # IMPORTANT NOTE:
-# FOR INTEGRATION, NO GROUP SHOULD SURPASS 45MIN = 2700s !!!
-# FOR UNIT, NO GROUP SHOULD SURPASS 15MIN = 900s !!!
+# FOR NIGHTLY, NO GROUP SHOULD SURPASS 45MIN = 2700s !!!
+# FOR PR GATE, NO GROUP SHOULD SURPASS 15MIN = 900s !!!
 
 global nightly_test_groups, pr_gate_test_groups
 

@@ -24,7 +24,7 @@ def test_maybe_download(files_fixtures):
     if os.path.exists(filepath):
         os.remove(filepath)
 
-    downloaded_filepath = maybe_download(file_url, "license.txt", expected_bytes=1162)
+    downloaded_filepath = maybe_download(file_url, "license.txt", expected_bytes=1212)
     assert os.path.exists(downloaded_filepath)
     assert os.path.basename(downloaded_filepath) == "license.txt"
 
