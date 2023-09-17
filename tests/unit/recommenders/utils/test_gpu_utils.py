@@ -1,22 +1,21 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import sys
 import pytest
 
 try:
     import tensorflow as tf
     import torch
+    from recommenders.utils.gpu_utils import (
+        get_cuda_version,
+        get_cudnn_version,
+        get_gpu_info,
+        get_number_gpus,
+    )
 except ImportError:
     pass  # skip this import if we are in cpu environment
-
-
-from recommenders.utils.gpu_utils import (
-    get_cuda_version,
-    get_cudnn_version,
-    get_gpu_info,
-    get_number_gpus,
-)
 
 
 @pytest.mark.gpu

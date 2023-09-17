@@ -218,7 +218,6 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_item_serendipity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_python_evaluation.py::test_user_serendipity_item_feature_vector",
         "tests/unit/recommenders/evaluation/test_python_evaluation.py::test_serendipity_item_feature_vector",
-        "tests/unit/recommenders/utils/test_timer.py::test_timer",
         "tests/unit/recommenders/models/test_geoimc.py::test_imcproblem",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_init",
         "tests/unit/recommenders/models/test_tfidf_utils.py::test_clean_dataframe",
@@ -277,6 +276,20 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/tuning/test_nni_utils.py::test_check_metrics_written_timeout",
         "tests/unit/recommenders/tuning/test_nni_utils.py::test_get_trials",
         "tests/unit/recommenders/tuning/test_sweep.py::test_param_sweep",
+        "tests/unit/recommenders/utils/test_general_utils.py::test_invert_dictionary",
+        "tests/unit/recommenders/utils/test_general_utils.py::test_get_number_processors",
+        "tests/unit/recommenders/utils/test_plot.py::test_line_graph",
+        "tests/unit/recommenders/utils/test_python_utils.py::test_python_jaccard",
+        "tests/unit/recommenders/utils/test_python_utils.py::test_python_lift",
+        "tests/unit/recommenders/utils/test_python_utils.py::test_exponential_decay",
+        "tests/unit/recommenders/utils/test_python_utils.py::test_get_top_k_scored_items",
+        "tests/unit/recommenders/utils/test_python_utils.py::test_binarize",
+        "tests/unit/recommenders/utils/test_python_utils.py::test_rescale",
+        "tests/unit/recommenders/utils/test_timer.py::test_no_time",
+        "tests/unit/recommenders/utils/test_timer.py::test_stop_before_start",
+        "tests/unit/recommenders/utils/test_timer.py::test_interval_before_stop",
+        "tests/unit/recommenders/utils/test_timer.py::test_timer",
+        "tests/unit/recommenders/utils/test_timer.py::test_timer_format",
         "tests/performance/recommenders/evaluation/test_python_evaluation_time_performance.py::test_merge_rating",
         "tests/performance/recommenders/evaluation/test_python_evaluation_time_performance.py::test_merge_ranking",
         "tests/performance/recommenders/evaluation/test_python_evaluation_time_performance.py::test_python_rmse",
@@ -348,6 +361,7 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/evaluation/test_spark_evaluation.py::test_distributional_coverage",
     ],
     "group_notebooks_spark_001": [  # Total group time: 794s
+        "tests/unit/recommenders/utils/test_notebook_utils.py::test_is_databricks",
         "tests/unit/examples/test_notebooks_pyspark.py::test_als_deep_dive_runs",  # 287.70s
         "tests/unit/examples/test_notebooks_pyspark.py::test_als_pyspark_runs",  # 374.15s
         "tests/unit/examples/test_notebooks_pyspark.py::test_mmlspark_lightgbm_criteo_runs",  # 132.09s
@@ -378,9 +392,6 @@ pr_gate_test_groups = {
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_neumf_save_load",
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_regular_save_load",
         "tests/unit/recommenders/models/test_ncf_singlenode.py::test_predict",
-        "tests/unit/recommenders/utils/test_tf_utils.py::test_evaluation_log_hook",
-        "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn_for_saved_model",
-        "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn",
         "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_model",
         "tests/unit/recommenders/models/test_wide_deep_utils.py::test_deep_model",
         "tests/unit/recommenders/models/test_wide_deep_utils.py::test_wide_deep_model",
@@ -394,6 +405,18 @@ pr_gate_test_groups = {
         # "tests/unit/recommenders/models/test_sasrec_model.py::test_sampler", # FIXME: it takes too long to run
         # "tests/unit/recommenders/models/test_sasrec_model.py::test_sasrec", # FIXME: it takes too long to run
         # "tests/unit/recommenders/models/test_sasrec_model.py::test_ssept", # FIXME: it takes too long to run
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_gpu_info",
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_number_gpus",
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_clear_memory_all_gpus",
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cuda_version",
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_get_cudnn_version",
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_cudnn_enabled",
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_tensorflow_gpu",
+        "tests/unit/recommenders/utils/test_gpu_utils.py::test_pytorch_gpu",
+        "tests/unit/recommenders/utils/test_tf_utils.py::test_evaluation_log_hook",
+        "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn",
+        "tests/unit/recommenders/utils/test_tf_utils.py::test_pandas_input_fn_for_saved_model",
+        "tests/unit/recommenders/utils/test_tf_utils.py::test_build_optimizer",
     ],
     "group_gpu_002": [  # Total group time:
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)

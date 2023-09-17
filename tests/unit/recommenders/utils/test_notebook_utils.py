@@ -1,14 +1,12 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-from pathlib import Path
-import pytest
 
-try:
-    import papermill as pm
-    import scrapbook as sb
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
+import pytest
+import papermill as pm
+import scrapbook as sb
+from pathlib import Path
+
 from recommenders.utils.notebook_utils import is_jupyter, is_databricks
 
 
@@ -33,6 +31,8 @@ def test_is_jupyter(output_notebook, kernel_name):
     assert not result_is_databricks
 
 
-# @pytest.mark.notebooks
-# def test_is_databricks():
-#     TODO Currently, we cannot pytest modules on Databricks
+@pytest.mark.spark
+@pytest.mark.notebooks
+@pytest.mark.skip(reason="TODO: Implement this")
+def test_is_databricks():
+    pass
