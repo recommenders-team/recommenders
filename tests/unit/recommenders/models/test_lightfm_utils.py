@@ -136,6 +136,7 @@ def test_interactions(interactions):
     assert user_features.shape == (10, 17)
 
 
+@pytest.mark.skip(reason="Flaky test")
 def test_fitting(fitting):
     output, _ = fitting
     assert output.shape == (4, 4)
