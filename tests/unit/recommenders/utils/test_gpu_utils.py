@@ -37,12 +37,12 @@ def test_clear_memory_all_gpus():
 @pytest.mark.gpu
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
 def test_get_cuda_version():
-    assert get_cuda_version() > "9.0.0"
+    assert int(get_cuda_version().split(".")[0]) > 9
 
 
 @pytest.mark.gpu
 def test_get_cudnn_version():
-    assert get_cudnn_version() > "7.0.0"
+    assert int(get_cudnn_version()[0]) > 7
 
 
 @pytest.mark.gpu
@@ -52,7 +52,7 @@ def test_cudnn_enabled():
 
 @pytest.mark.gpu
 def test_tensorflow_gpu():
-    assert tf.test.is_gpu_available()
+    assert len(tf.config.list_physical_devices("GPU")) > 0
 
 
 @pytest.mark.gpu
