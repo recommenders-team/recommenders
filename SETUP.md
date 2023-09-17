@@ -156,9 +156,9 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`r
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
 1. Push the tag to the remote server: `git push origin 0.6.0`.
-1. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (unit, smoke and integration), generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
+1. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (PR gate and nightly builds), generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
 1. Install twine: `pip install twine`
-1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`
+1. Publish the wheel and tar.gz to PyPI: `twine upload recommenders*`
 
