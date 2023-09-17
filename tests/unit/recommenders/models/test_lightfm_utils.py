@@ -6,8 +6,9 @@ import pytest
 import itertools
 import numpy as np
 import pandas as pd
-from lightfm import LightFM, cross_validation
 from lightfm.data import Dataset
+from lightfm import LightFM, cross_validation
+
 from recommenders.models.lightfm.lightfm_utils import (
     track_model_metrics,
     similar_users,
