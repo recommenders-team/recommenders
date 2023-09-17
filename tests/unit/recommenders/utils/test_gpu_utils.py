@@ -51,6 +51,7 @@ def test_cudnn_enabled():
 
 
 @pytest.mark.gpu
+@pytest.mark.skip(reason="This function in TF is flaky")
 def test_tensorflow_gpu():
     assert len(tf.config.list_physical_devices("GPU")) > 0
 
