@@ -12,7 +12,9 @@ from recommenders.datasets.download_utils import maybe_download, download_path
 
 @pytest.fixture
 def files_fixtures():
-    file_url = "https://raw.githubusercontent.com/Microsoft/Recommenders/main/LICENSE"
+    file_url = (
+        "https://raw.githubusercontent.com/recommenders-team/recommenders/main/LICENSE"
+    )
     filepath = "license.txt"
     return file_url, filepath
 
