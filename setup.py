@@ -89,6 +89,7 @@ extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
     # nni needs to be upgraded
     "nni==1.5",
+    "pymanopt>=0.2.5",
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.

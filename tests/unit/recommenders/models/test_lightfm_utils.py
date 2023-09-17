@@ -1,6 +1,7 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import pytest
 import itertools
 import numpy as np
@@ -12,6 +13,7 @@ from recommenders.models.lightfm.lightfm_utils import (
     similar_users,
     similar_items,
 )
+
 
 SEEDNO = 42
 TEST_PERCENTAGE = 0.25
