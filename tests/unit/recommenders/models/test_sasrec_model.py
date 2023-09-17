@@ -1,8 +1,9 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import pytest
+
 import os
+import pytest
 from collections import defaultdict
 
 try:
@@ -15,7 +16,6 @@ try:
         download_and_extract,
         _reviews_preprocessing,
     )
-
 except ImportError:
     pass  # skip if in cpu environment
 
@@ -180,7 +180,6 @@ def test_sampler():
 
 @pytest.mark.gpu
 def test_sasrec(model_parameters):
-
     params = model_parameters
 
     model = SASREC(
@@ -202,7 +201,6 @@ def test_sasrec(model_parameters):
 
 @pytest.mark.gpu
 def test_ssept(model_parameters):
-
     params = model_parameters
 
     model = SSEPT(
