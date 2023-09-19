@@ -23,7 +23,6 @@ except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_DKN_iterator(deeprec_resource_path):
     data_path = os.path.join(deeprec_resource_path, "dkn")
@@ -82,7 +81,6 @@ def test_DKN_iterator(deeprec_resource_path):
             break
 
 
-@pytest.mark.smoke
 @pytest.mark.gpu
 def test_Sequential_Iterator(deeprec_resource_path, deeprec_config_path):
     data_path = os.path.join(deeprec_resource_path, "slirec")

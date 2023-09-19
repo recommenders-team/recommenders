@@ -2,12 +2,8 @@
 # Licensed under the MIT License.
 
 import pytest
-
-try:
-    import papermill as pm
-    import scrapbook as sb
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
+import papermill as pm
+import scrapbook as sb
 
 
 TOL = 0.05
@@ -15,7 +11,6 @@ ABS_TOL = 0.05
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
@@ -39,7 +34,7 @@ ABS_TOL = 0.05
         ),
     ],
 )
-def test_sar_single_node_integration(
+def test_sar_single_node_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["sar_single_node"]
@@ -58,7 +53,6 @@ def test_sar_single_node_integration(
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
@@ -74,7 +68,7 @@ def test_sar_single_node_integration(
         # ("10m", {"map": , "ndcg": , "precision": , "recall": }), # OOM on test machine
     ],
 )
-def test_baseline_deep_dive_integration(
+def test_baseline_deep_dive_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["baseline_deep_dive"]
@@ -93,7 +87,6 @@ def test_baseline_deep_dive_integration(
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
@@ -113,7 +106,7 @@ def test_baseline_deep_dive_integration(
         # 10m works but takes too long
     ],
 )
-def test_surprise_svd_integration(
+def test_surprise_svd_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["surprise_svd_deep_dive"]
@@ -132,7 +125,6 @@ def test_surprise_svd_integration(
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
@@ -152,7 +144,7 @@ def test_surprise_svd_integration(
     ],
 )
 @pytest.mark.skip(reason="VW pip package has installation incompatibilities")
-def test_vw_deep_dive_integration(
+def test_vw_deep_dive_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
@@ -171,7 +163,6 @@ def test_vw_deep_dive_integration(
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.skip(reason="NNI pip package has installation incompatibilities")
 def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
@@ -192,28 +183,6 @@ def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
-@pytest.mark.skip(reason="Wikidata API is unstable")
-def test_wikidata_integration(notebooks, output_notebook, kernel_name, tmp):
-    notebook_path = notebooks["wikidata_knowledge_graph"]
-    pm.execute_notebook(
-        notebook_path,
-        output_notebook,
-        kernel_name=kernel_name,
-        parameters=dict(
-            MOVIELENS_DATA_SIZE="100k", MOVIELENS_SAMPLE=True, MOVIELENS_SAMPLE_SIZE=5
-        ),
-    )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
-
-    # NOTE: The return number should be always 5, but sometimes we get less because wikidata is unstable
-    assert results["length_result"] >= 1
-
-
-@pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
@@ -221,7 +190,7 @@ def test_wikidata_integration(notebooks, output_notebook, kernel_name, tmp):
         # 10m works but takes too long
     ],
 )
-def test_cornac_bpr_integration(
+def test_cornac_bpr_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
@@ -240,7 +209,6 @@ def test_cornac_bpr_integration(
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, epochs, expected_values",
     [
@@ -256,7 +224,7 @@ def test_cornac_bpr_integration(
         ),
     ],
 )
-def test_lightfm_integration(
+def test_lightfm_functional(
     notebooks, output_notebook, kernel_name, size, epochs, expected_values
 ):
     notebook_path = notebooks["lightfm_deep_dive"]
@@ -275,13 +243,12 @@ def test_lightfm_integration(
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.experimental
 @pytest.mark.parametrize(
     "expected_values",
     [({"rmse": 0.4969, "mae": 0.4761})],
 )
-def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_values):
+def test_geoimc_functional(notebooks, output_notebook, kernel_name, expected_values):
     notebook_path = notebooks["geoimc_quickstart"]
     pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
     results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
@@ -293,9 +260,8 @@ def test_geoimc_integration(notebooks, output_notebook, kernel_name, expected_va
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.experimental
-def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
+def test_xlearn_fm_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xlearn_fm_deep_dive"]
     pm.execute_notebook(
         notebook_path,
@@ -311,7 +277,6 @@ def test_xlearn_fm_integration(notebooks, output_notebook, kernel_name):
 
 
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, algos, expected_values_ndcg",
     [

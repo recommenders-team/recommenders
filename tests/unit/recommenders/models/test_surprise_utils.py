@@ -2,22 +2,20 @@
 # Licensed under the MIT License.
 
 
-try:
-    import pandas as pd
-    import pytest
-    import surprise
+import pytest
+import pandas as pd
+import surprise
 
-    from recommenders.utils.constants import (
-        DEFAULT_USER_COL,
-        DEFAULT_ITEM_COL,
-        DEFAULT_RATING_COL,
-    )
-    from recommenders.models.surprise.surprise_utils import (
-        predict,
-        compute_ranking_predictions,
-    )
-except:
-    pass  # skip if surprise not installed
+from recommenders.utils.constants import (
+    DEFAULT_USER_COL,
+    DEFAULT_ITEM_COL,
+    DEFAULT_RATING_COL,
+)
+from recommenders.models.surprise.surprise_utils import (
+    predict,
+    compute_ranking_predictions,
+)
+
 
 TOL = 0.001
 

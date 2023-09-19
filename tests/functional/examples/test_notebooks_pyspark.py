@@ -4,13 +4,8 @@
 import os
 import sys
 import pytest
-
-try:
-    import papermill as pm
-    import scrapbook as sb
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
-
+import papermill as pm
+import scrapbook as sb
 
 TOL = 0.05
 ABS_TOL = 0.05
@@ -20,8 +15,7 @@ ABS_TOL = 0.05
 @pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.spark
 @pytest.mark.notebooks
-@pytest.mark.integration
-def test_als_pyspark_integration(notebooks, output_notebook, kernel_name):
+def test_als_pyspark_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_pyspark"]
     pm.execute_notebook(
         notebook_path,
@@ -47,10 +41,9 @@ def test_als_pyspark_integration(notebooks, output_notebook, kernel_name):
 @pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.spark
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.skip(reason="It takes too long in the current test machine")
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
-def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel_name):
+def test_mmlspark_lightgbm_criteo_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
     pm.execute_notebook(
         notebook_path,
@@ -67,7 +60,6 @@ def test_mmlspark_lightgbm_criteo_integration(notebooks, output_notebook, kernel
 
 @pytest.mark.spark
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, algos, expected_values_ndcg",
     [

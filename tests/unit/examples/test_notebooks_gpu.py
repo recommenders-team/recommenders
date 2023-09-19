@@ -1,13 +1,10 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import os
 import pytest
-
-try:
-    import papermill as pm
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
+import papermill as pm
 
 from recommenders.utils.gpu_utils import get_number_gpus
 

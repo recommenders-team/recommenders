@@ -1,8 +1,8 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import pytest
 
+import pytest
 
 from recommenders.datasets.wikidata import (
     find_wikidata_id,

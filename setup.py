@@ -42,7 +42,7 @@ install_requires = [
     "transformers>=2.5.0,<5",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3.1",
-    "requests>=2.0.0,<3",
+    "requests>=2.31.0,<3",
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
     "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
     "retrying>=1.3.3",
@@ -64,7 +64,7 @@ extras_require = {
         "tensorflow~=2.6.1;python_version=='3.6'",
         "tensorflow~=2.7.0;python_version>='3.7'",
         "tf-slim>=1.1.0",
-        "torch>=1.8",  # for CUDA 11 support
+        "torch>=1.13.1",  # for CUDA 11 support
         "fastai>=1.0.46,<2",
     ],
     "spark": [
@@ -89,6 +89,7 @@ extras_require["experimental"] = [
     "vowpalwabbit>=8.9.0,<9",
     # nni needs to be upgraded
     "nni==1.5",
+    "pymanopt>=0.2.5",
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
