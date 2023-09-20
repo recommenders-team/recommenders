@@ -60,7 +60,7 @@ install_requires = [
 extras_require = {
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        # TensorFlow compiled with CUDA 11.2, cudnn 8.1
+        # TensorFlow compiled with CUDA 11.2, CuDNN 8.1
         "tensorflow~=2.6.1;python_version=='3.6'",
         "tensorflow~=2.7.0;python_version>='3.7'",
         "tf-slim>=1.1.0",
@@ -107,7 +107,7 @@ setup(
         "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
         "Wiki": "https://github.com/recommenders-team/recommenders/wiki",
     },
-    author="RecoDev Team at Microsoft",
+    author="Recommenders contributors",
     author_email="RecoDevTeam@service.microsoft.com",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
