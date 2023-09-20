@@ -6,7 +6,7 @@
 
 ## What's New (August, 2023)
 
-We moved to a new organization! Now to access the repo, instead of going to https://github.com/microsoft/recommenders, you need to go to https://github.com/recommenders-team/recommenders. The old URL will still resolve to the new one, but we recommend you to update your bookmarks.
+We moved to a new organization! Now to access the repo, instead of going to https://github.com/microsoft/recommenders, you need to go to https://github.com/recommenders-team/recommenders. The old URL will still resolve to the new one, but we recommend that you update your bookmarks.
 
 Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
 
