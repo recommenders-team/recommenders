@@ -261,6 +261,7 @@ def test_geoimc_functional(notebooks, output_notebook, kernel_name, expected_val
 
 @pytest.mark.notebooks
 @pytest.mark.experimental
+@pytest.mark.skip(reason="xLearn pip package has installation incompatibilities")
 def test_xlearn_fm_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xlearn_fm_deep_dive"]
     pm.execute_notebook(
