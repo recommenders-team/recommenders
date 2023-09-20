@@ -86,7 +86,7 @@ docker run -it recommenders:cpu bash -c 'pip install pytest; \
 pip install pytest-cov; \
 pip install pytest-mock; \
 apt-get install -y git; \
-git clone https://github.com/microsoft/recommenders.git; \
+git clone https://github.com/recommenders-team/recommenders.git; \
 cd recommenders; \
 pytest tests/unit -m "not spark and not gpu and not notebooks and not experimental"'
 ```

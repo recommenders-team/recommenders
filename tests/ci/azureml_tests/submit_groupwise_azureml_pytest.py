@@ -209,7 +209,7 @@ def create_run_config(
         reco_extras = reco_extras + ",spark"
 
     conda_dep.add_pip_package(
-        f"recommenders[{reco_extras}]@git+https://github.com/microsoft/recommenders.git@{commit_sha}"
+        f"recommenders[{reco_extras}]@git+https://github.com/recommenders-team/recommenders.git@{commit_sha}"
     )
 
     run_azuremlcompute.environment.python.conda_dependencies = conda_dep
