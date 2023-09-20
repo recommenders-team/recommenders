@@ -105,7 +105,7 @@ setup(
     url="https://github.com/recommenders-team/recommenders",
     project_urls={
         "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
-        "Wiki": "https://github.com/microsoft/recommenders/wiki",
+        "Wiki": "https://github.com/recommenders-team/recommenders/wiki",
     },
     author="RecoDev Team at Microsoft",
     author_email="RecoDevTeam@service.microsoft.com",
