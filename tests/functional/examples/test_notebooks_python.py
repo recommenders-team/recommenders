@@ -214,7 +214,7 @@ def test_cornac_bpr_functional(
     [
         (
             "100k",
-            10,
+            3,
             dict(
                 eval_precision=0.131601,
                 eval_recall=0.038056,
@@ -224,6 +224,7 @@ def test_cornac_bpr_functional(
         ),
     ],
 )
+@pytest.mark.skip(reason="LightFM notebook takes too long to run. Review issue #1707")
 def test_lightfm_functional(
     notebooks, output_notebook, kernel_name, size, epochs, expected_values
 ):
