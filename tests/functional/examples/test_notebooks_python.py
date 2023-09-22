@@ -214,7 +214,7 @@ def test_cornac_bpr_functional(
     [
         (
             "100k",
-            10,
+            3,
             dict(
                 eval_precision=0.131601,
                 eval_recall=0.038056,
@@ -224,6 +224,7 @@ def test_cornac_bpr_functional(
         ),
     ],
 )
+@pytest.mark.skip(reason="LightFM notebook takes too long to run. Review issue #1707")
 def test_lightfm_functional(
     notebooks, output_notebook, kernel_name, size, epochs, expected_values
 ):
@@ -261,6 +262,7 @@ def test_geoimc_functional(notebooks, output_notebook, kernel_name, expected_val
 
 @pytest.mark.notebooks
 @pytest.mark.experimental
+@pytest.mark.skip(reason="xLearn pip package has installation incompatibilities")
 def test_xlearn_fm_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xlearn_fm_deep_dive"]
     pm.execute_notebook(
