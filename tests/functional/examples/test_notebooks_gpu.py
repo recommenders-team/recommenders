@@ -3,13 +3,8 @@
 
 import os
 import pytest
-
-try:
-    import papermill as pm
-    import scrapbook as sb
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
-
+import papermill as pm
+import scrapbook as sb
 
 from recommenders.utils.gpu_utils import get_number_gpus
 
@@ -19,14 +14,12 @@ ABS_TOL = 0.05
 
 
 @pytest.mark.gpu
-@pytest.mark.integration
 def test_gpu_vm():
     assert get_number_gpus() >= 1
 
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, epochs, expected_values, seed",
     [
@@ -44,7 +37,7 @@ def test_gpu_vm():
         # ("10m", 5, {"map": 0.024821, "ndcg": 0.153396, "precision": 0.143046, "recall": 0.056590})# takes too long
     ],
 )
-def test_ncf_integration(
+def test_ncf_functional(
     notebooks, output_notebook, kernel_name, size, epochs, expected_values, seed
 ):
     notebook_path = notebooks["ncf"]
@@ -66,7 +59,6 @@ def test_ncf_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, epochs, batch_size, expected_values, seed",
     [
@@ -88,7 +80,7 @@ def test_ncf_integration(
         )
     ],
 )
-def test_ncf_deep_dive_integration(
+def test_ncf_deep_dive_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -121,7 +113,6 @@ def test_ncf_deep_dive_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, epochs, expected_values",
     [
@@ -142,7 +133,7 @@ def test_ncf_deep_dive_integration(
         # ("10m", 5, ), # it gets an OOM on pred = learner.model.forward(u, m)
     ],
 )
-def test_fastai_integration(
+def test_fastai_functional(
     notebooks, output_notebook, kernel_name, size, epochs, expected_values
 ):
     notebook_path = notebooks["fastai"]
@@ -162,7 +153,6 @@ def test_fastai_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "epochs, expected_values, seed",
     [
@@ -173,7 +163,7 @@ def test_fastai_integration(
         )
     ],
 )
-def test_xdeepfm_integration(
+def test_xdeepfm_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -202,7 +192,6 @@ def test_xdeepfm_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, steps, batch_size, expected_values, seed",
     [
@@ -224,7 +213,7 @@ def test_xdeepfm_integration(
         )
     ],
 )
-def test_wide_deep_integration(
+def test_wide_deep_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -261,7 +250,6 @@ def test_wide_deep_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "yaml_file, data_path, epochs, batch_size, expected_values, seed",
     [
@@ -275,7 +263,7 @@ def test_wide_deep_integration(
         )
     ],
 )
-def test_slirec_quickstart_integration(
+def test_slirec_quickstart_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -313,7 +301,6 @@ def test_slirec_quickstart_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "epochs, batch_size, seed, MIND_type, expected_values",
     [
@@ -333,7 +320,7 @@ def test_slirec_quickstart_integration(
         )
     ],
 )
-def test_nrms_quickstart_integration(
+def test_nrms_quickstart_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -375,7 +362,6 @@ def test_nrms_quickstart_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "epochs, batch_size, seed, MIND_type, expected_values",
     [
@@ -395,7 +381,7 @@ def test_nrms_quickstart_integration(
         )
     ],
 )
-def test_naml_quickstart_integration(
+def test_naml_quickstart_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -437,7 +423,6 @@ def test_naml_quickstart_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "epochs, batch_size, seed, MIND_type, expected_values",
     [
@@ -457,7 +442,7 @@ def test_naml_quickstart_integration(
         )
     ],
 )
-def test_lstur_quickstart_integration(
+def test_lstur_quickstart_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -499,7 +484,6 @@ def test_lstur_quickstart_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "epochs, batch_size, seed, MIND_type, expected_values",
     [
@@ -519,7 +503,7 @@ def test_lstur_quickstart_integration(
         )
     ],
 )
-def test_npa_quickstart_integration(
+def test_npa_quickstart_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -561,7 +545,6 @@ def test_npa_quickstart_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "yaml_file, data_path, size, epochs, batch_size, expected_values, seed",
     [
@@ -581,7 +564,7 @@ def test_npa_quickstart_integration(
         )
     ],
 )
-def test_lightgcn_deep_dive_integration(
+def test_lightgcn_deep_dive_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -619,8 +602,7 @@ def test_lightgcn_deep_dive_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
-def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
+def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["dkn_quickstart"]
     pm.execute_notebook(
         notebook_path,
@@ -640,7 +622,6 @@ def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, expected_values",
     [
@@ -648,7 +629,7 @@ def test_dkn_quickstart_integration(notebooks, output_notebook, kernel_name):
         # 10m works but takes too long
     ],
 )
-def test_cornac_bivae_integration(
+def test_cornac_bivae_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["cornac_bivae_deep_dive"]
@@ -668,7 +649,6 @@ def test_cornac_bivae_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "data_dir, num_epochs, batch_size, model_name, expected_values, seed",
     [
@@ -690,7 +670,7 @@ def test_cornac_bivae_integration(
         ),
     ],
 )
-def test_sasrec_quickstart_integration(
+def test_sasrec_quickstart_functional(
     notebooks,
     output_notebook,
     kernel_name,
@@ -725,7 +705,6 @@ def test_sasrec_quickstart_integration(
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
-@pytest.mark.integration
 @pytest.mark.parametrize(
     "size, algos, expected_values_ndcg",
     [

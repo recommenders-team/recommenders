@@ -1,8 +1,9 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import numpy as np
+
 import pytest
+import numpy as np
 
 try:
     from recommenders.models.rbm.rbm import RBM

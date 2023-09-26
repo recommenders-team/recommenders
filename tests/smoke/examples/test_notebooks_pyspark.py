@@ -1,14 +1,11 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import sys
 import pytest
-
-try:
-    import papermill as pm
-    import scrapbook as sb
-except ImportError:
-    pass  # disable error while collecting tests for non-notebook environments
+import papermill as pm
+import scrapbook as sb
 
 
 TOL = 0.05
@@ -17,7 +14,6 @@ ABS_TOL = 0.05
 
 # This is a flaky test that can fail unexpectedly
 @pytest.mark.flaky(reruns=5, reruns_delay=2)
-@pytest.mark.smoke
 @pytest.mark.spark
 @pytest.mark.notebooks
 def test_als_pyspark_smoke(notebooks, output_notebook, kernel_name):
@@ -45,7 +41,6 @@ def test_als_pyspark_smoke(notebooks, output_notebook, kernel_name):
 
 # This is a flaky test that can fail unexpectedly
 @pytest.mark.flaky(reruns=5, reruns_delay=2)
-@pytest.mark.smoke
 @pytest.mark.spark
 @pytest.mark.notebooks
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")

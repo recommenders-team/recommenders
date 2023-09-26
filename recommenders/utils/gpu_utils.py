@@ -97,7 +97,7 @@ def get_cuda_version():
                 data = f.read().replace("\n", "")
             return data
         else:
-            return "Cannot find CUDA in this machine"
+            return None
 
 
 def get_cudnn_version():
@@ -125,14 +125,14 @@ def get_cudnn_version():
             if version:
                 return version
             else:
-                return "Cannot find CUDNN version"
+                return None
         else:
-            return "Cannot find CUDNN version"
+            return None
 
     try:
         import torch
 
-        return torch.backends.cudnn.version()
+        return str(torch.backends.cudnn.version())
     except (ImportError, ModuleNotFoundError):
         if sys.platform == "win32":
             candidates = [r"C:\NVIDIA\cuda\include\cudnn.h"]

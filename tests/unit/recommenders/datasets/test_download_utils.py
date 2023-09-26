@@ -4,14 +4,17 @@
 import os
 import pytest
 import requests
-from tempfile import TemporaryDirectory
 import logging
+from tempfile import TemporaryDirectory
+
 from recommenders.datasets.download_utils import maybe_download, download_path
 
 
 @pytest.fixture
 def files_fixtures():
-    file_url = "https://raw.githubusercontent.com/Microsoft/Recommenders/main/LICENSE"
+    file_url = (
+        "https://raw.githubusercontent.com/recommenders-team/recommenders/main/LICENSE"
+    )
     filepath = "license.txt"
     return file_url, filepath
 
@@ -21,7 +24,7 @@ def test_maybe_download(files_fixtures):
     if os.path.exists(filepath):
         os.remove(filepath)
 
-    downloaded_filepath = maybe_download(file_url, "license.txt", expected_bytes=1162)
+    downloaded_filepath = maybe_download(file_url, "license.txt", expected_bytes=1212)
     assert os.path.exists(downloaded_filepath)
     assert os.path.basename(downloaded_filepath) == "license.txt"
 

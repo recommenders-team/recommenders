@@ -1,23 +1,34 @@
 # Setup Guide
 
-The repo, including this guide, is tested on Linux. Where applicable, we document differences in [Windows](#windows-specific-instructions)  and [macOS](#macos-specific-instructions) although 
+The repo, including this guide, is tested on Linux. Where applicable, we document differences in [Windows](#windows-specific-instructions) and [MacOS](#macos-specific-instructions) although 
 such documentation may not always be up to date.   
 
 ## Extras
+
 In addition to the pip installable package, several extras are provided, including:
-+ `[examples]`: Needed for running examples.
 + `[gpu]`: Needed for running GPU models.  
 + `[spark]`: Needed for running Spark models.
 + `[dev]`: Needed for development.
-+ `[all]`: `[examples]`|`[gpu]`|`[spark]`|`[dev]`
++ `[all]`: `[gpu]`|`[spark]`|`[dev]`
 + `[experimental]`: Models that are not thoroughly tested and/or may require additional steps in installation).
-+ `[nni]`: Needed for running models integrated with [NNI](https://nni.readthedocs.io/en/stable/).
-
 
 ## Setup for Core Package
 
 Follow the [Getting Started](./README.md#Getting-Started) section in the [README](./README.md) to install the package and run the examples.
 
+## Setup for GPU
+
+```bash
+# 1. Make sure CUDA is installed.
+
+# 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the gpu extra to the pip install command:
+pip install recommenders[gpu]
+
+# 3. Within VSCode:
+#   a. Open a notebook with a GPU model, e.g., examples/00_quick_start/wide_deep_movielens.ipynb;
+#   b. Select Jupyter kernel <kernel_name>;
+#   c. Run the notebook.
+```
 
 ## Setup for Spark 
 
@@ -26,9 +37,9 @@ Follow the [Getting Started](./README.md#Getting-Started) section in the [README
 # sudo apt-get install openjdk-11-jdk
 
 # 2. Follow Steps 1-5 in the Getting Started section in README.md to install the package and Jupyter kernel, adding the spark extra to the pip install command:
-pip install recommenders[examples,spark]
+pip install recommenders[spark]
 
-# 3. Within VS Code:
+# 3. Within VSCode:
 #   a. Open a notebook with a Spark model, e.g., examples/00_quick_start/als_movielens.ipynb;  
 #   b. Select Jupyter kernel <kernel_name>;
 #   c. Run the notebook.
@@ -99,7 +110,7 @@ The `xlearn` package has dependency on `cmake`. If one uses the `xlearn` related
 
 For Spark features to work, make sure Java and Spark are installed and respective environment varialbes such as `JAVA_HOME`, `SPARK_HOME` and `HADOOP_HOME` are set properly. Also make sure environment variables `PYSPARK_PYTHON` and `PYSPARK_DRIVER_PYTHON` are set to the the same python executable.
 
-## macOS-Specific Instructions
+## MacOS-Specific Instructions
 
 We recommend using [Homebrew](https://brew.sh/) to install the dependencies on macOS, including conda (please remember to add conda's path to `$PATH`). One may also need to install lightgbm using Homebrew before pip install the package.
 
@@ -145,9 +156,9 @@ First make sure that the tag that you want to add, e.g. `0.6.0`, is added in [`r
 1. Make sure that the code in main passes all the tests (unit and nightly tests).
 1. Create a tag with the version number: e.g. `git tag -a 0.6.0 -m "Recommenders 0.6.0"`.
 1. Push the tag to the remote server: `git push origin 0.6.0`.
-1. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (unit, smoke and integration), generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
+1. When the new tag is pushed, a release pipeline is executed. This pipeline runs all the tests again (PR gate and nightly builds), generates a wheel and a tar.gz which are uploaded to a [GitHub draft release](https://github.com/microsoft/recommenders/releases).
 1. Fill up the draft release with all the recent changes in the code.
 1. Download the wheel and tar.gz locally, these files shouldn't have any bug, since they passed all the tests.
 1. Install twine: `pip install twine`
-1. Publish the wheel and tar.gz to pypi: `twine upload recommenders*`
+1. Publish the wheel and tar.gz to PyPI: `twine upload recommenders*`
 

@@ -1,6 +1,7 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import matplotlib
 import matplotlib.pyplot as plt
 from recommenders.utils.plot import line_graph
@@ -19,6 +20,8 @@ def test_line_graph():
         y_name="Accuracy",
         legend_loc="best",
     )
+    assert plt.gca().get_xlabel() == "Epoch"
+    assert plt.gca().get_ylabel() == "Accuracy"
     plt.close()
 
     # Single graph as a subplot

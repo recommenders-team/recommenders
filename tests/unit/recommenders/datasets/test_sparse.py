@@ -80,7 +80,7 @@ def python_dataset(test_specs):
     return results
 
 
-def test_df_to_sparse(test_specs, python_dataset):
+def test_df_to_sparse(python_dataset):
     # initialize the splitter
     header = {
         "col_user": DEFAULT_USER_COL,
@@ -100,7 +100,7 @@ def test_df_to_sparse(test_specs, python_dataset):
     )
 
 
-def test_sparse_to_df(test_specs, python_dataset):
+def test_sparse_to_df(python_dataset):
     # initialize the splitter
     header = {
         "col_user": DEFAULT_USER_COL,
@@ -115,20 +115,20 @@ def test_sparse_to_df(test_specs, python_dataset):
     X, _, _ = am.gen_affinity_matrix()
 
     # use the inverse function to generate a pandas df from a sparse matrix ordered by userID
-    DF = am.map_back_sparse(X, kind="ratings")
+    df = am.map_back_sparse(X, kind="ratings")
 
     # tests: check that the two dataframes have the same elements in the same positions.
     assert (
-        DF.userID.values.all()
+        df.userID.values.all()
         == python_dataset.sort_values(by=["userID"]).userID.values.all()
     )
 
     assert (
-        DF.itemID.values.all()
+        df.itemID.values.all()
         == python_dataset.sort_values(by=["userID"]).itemID.values.all()
     )
 
     assert (
-        DF.rating.values.all()
+        df.rating.values.all()
         == python_dataset.sort_values(by=["userID"]).rating.values.all()
     )

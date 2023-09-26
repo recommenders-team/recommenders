@@ -2,8 +2,9 @@
 # Licensed under the MIT License.
 
 
-import pytest
 import time
+import pytest
+
 from recommenders.utils.timer import Timer
 
 

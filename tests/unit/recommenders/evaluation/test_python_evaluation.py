@@ -1,6 +1,7 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -39,6 +40,7 @@ from recommenders.evaluation.python_evaluation import (
     catalog_coverage,
     distributional_coverage,
 )
+
 
 TOL = 0.0001
 

@@ -8,10 +8,10 @@ import site
 import sys
 import time
 
-# workround for enabling editable user pip installs
+# Workaround for enabling editable user pip installs
 site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
-# version
+# Version
 here = Path(__file__).absolute().parent
 version_data = {}
 with open(here.joinpath("recommenders", "__init__.py"), "r") as f:
@@ -29,7 +29,7 @@ if HASH is not None:
 install_requires = [
     "numpy>=1.19",  # 1.19 required by tensorflow 2.6
     "pandas>1.0.3,<2",
-    "scipy>=1.0.0,<1.11.0", #FIXME: We limit <1.11.0 until #1954 is fixed
+    "scipy>=1.0.0,<1.11.0",  # FIXME: We limit <1.11.0 until #1954 is fixed
     "tqdm>=4.31.1,<5",
     "matplotlib>=2.2.2,<4",
     "scikit-learn>=0.22.1,<1.0.3",
@@ -42,31 +42,29 @@ install_requires = [
     "transformers>=2.5.0,<5",
     "category_encoders>=1.3.0,<2",
     "jinja2>=2,<3.1",
-    "requests>=2.0.0,<3",
+    "requests>=2.31.0,<3",
     "cornac>=1.1.2,<1.15.2;python_version<='3.7'",
     "cornac>=1.15.2,<2;python_version>='3.8'",  # After 1.15.2, Cornac requires python 3.8
     "retrying>=1.3.3",
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
     "scikit-surprise>=1.0.6",
     "scrapbook>=0.5.0,<1.0.0",
+    "hyperopt>=0.1.2,<1",
+    "ipykernel>=4.6.1,<7",
+    "jupyter>=1,<2",
+    "locust>=1,<2",
+    "papermill>=2.1.2,<3",
 ]
 
 # shared dependencies
 extras_require = {
-    "examples": [
-        "hyperopt>=0.1.2,<1",
-        "ipykernel>=4.6.1,<7",
-        "jupyter>=1,<2",
-        "locust>=1,<2",
-        "papermill>=2.1.2,<3",
-    ],
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        # TensorFlow compiled with CUDA 11.2, cudnn 8.1
+        # TensorFlow compiled with CUDA 11.2, CuDNN 8.1
         "tensorflow~=2.6.1;python_version=='3.6'",
         "tensorflow~=2.7.0;python_version>='3.7'",
         "tf-slim>=1.1.0",
-        "torch>=1.8",  # for CUDA 11 support
+        "torch>=1.13.1",  # for CUDA 11 support
         "fastai>=1.0.46,<2",
     ],
     "spark": [
@@ -80,19 +78,18 @@ extras_require = {
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
     ],
 }
-# for the brave of heart
+# For the brave of heart
 extras_require["all"] = list(set(sum([*extras_require.values()], [])))
 
-# the following dependencies need additional testing
+# The following dependencies need additional testing
 extras_require["experimental"] = [
     # xlearn requires cmake to be pre-installed
     "xlearn==0.40a1",
     # VW C++ binary needs to be installed manually for some code to work
     "vowpalwabbit>=8.9.0,<9",
-]
-extras_require["nni"] = [
     # nni needs to be upgraded
     "nni==1.5",
+    "pymanopt>=0.2.5",
 ]
 
 # The following dependency can be installed as below, however PyPI does not allow direct URLs.
@@ -108,9 +105,9 @@ setup(
     url="https://github.com/recommenders-team/recommenders",
     project_urls={
         "Documentation": "https://microsoft-recommenders.readthedocs.io/en/stable/",
-        "Wiki": "https://github.com/microsoft/recommenders/wiki",
+        "Wiki": "https://github.com/recommenders-team/recommenders/wiki",
     },
-    author="RecoDev Team at Microsoft",
+    author="Recommenders contributors",
     author_email="RecoDevTeam@service.microsoft.com",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -120,7 +117,6 @@ setup(
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
         "Topic :: Software Development :: Libraries :: Python Modules",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Operating System :: POSIX :: Linux",
@@ -130,7 +126,7 @@ setup(
     "machine learning python spark gpu",
     install_requires=install_requires,
     package_dir={"recommenders": "recommenders"},
-    python_requires=">=3.6, <3.10",
+    python_requires=">=3.6",
     packages=find_packages(
         where=".",
         exclude=["contrib", "docs", "examples", "scenarios", "tests", "tools"],
