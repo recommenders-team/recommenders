@@ -20,7 +20,7 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 | [sar_azureml_designer](sar_movieratings_with_azureml_designer.ipynb) | MovieLens | Python CPU | An example of how to implement SAR on [AzureML Designer](https://docs.microsoft.com/en-us/azure/machine-learning/concept-designer). |
 | [a2svd](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use A2SVD [11] to predict a set of movies the user is going to interact in a short time. |
 | [caser](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use Caser [12] to predict a set of movies the user is going to interact in a short time. |
-| [gru4rec](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use GRU4Rec [13] to predict a set of movies the user is going to interact in a short time. |
+| [gru](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use GRU [13] to predict a set of movies the user is going to interact in a short time. |
 | [nextitnet](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use NextItNet [14] to predict a set of movies the user is going to interact in a short time. |
 | [sli-rec](sequential_recsys_amazondataset.ipynb) | Amazon | Python CPU, GPU | Use SLi-Rec [11] to predict a set of movies the user is going to interact in a short time. |
 | [wide-and-deep](wide_deep_movielens.ipynb) | MovieLens | Python CPU, GPU |  Utilizing Wide-and-Deep Model (Wide-and-Deep) [5] to predict movie ratings in a Python+GPU (TensorFlow) environment.
