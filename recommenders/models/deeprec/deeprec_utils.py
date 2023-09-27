@@ -184,7 +184,7 @@ def check_nn_config(f_config):
             "data_format",
             "dropout",
         ]
-    if f_config["model_type"] in ["gru", "GRU","gru4rec", "GRU4REC", "GRU4Rec"]:
+    if f_config["model_type"] in ["gru", "GRU"]:
         required_parameters = [
             "item_embedding_dim",
             "cate_embedding_dim",
