@@ -59,7 +59,7 @@ Caser
 
 GRU4Rec
 --------------
-.. automodule:: recommenders.models.deeprec.models.sequential.gru4rec
+.. automodule:: recommenders.models.deeprec.models.sequential.gru
     :members:
 
 NextItNet

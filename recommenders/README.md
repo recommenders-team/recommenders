@@ -143,7 +143,7 @@ The models submodule contains implementations of various algorithms that can be 
   *  Convolutional Sequence Embedding Recommendation (CASER)
   *  Deep Knowledge-Aware Network (DKN)
   *  Extreme Deep Factorization Machine (xDeepFM)
-  *  GRU4Rec
+  *  GRU
   *  LightGCN
   *  Next Item Recommendation (NextItNet)
   *  Short-term and Long-term Preference Integrated Recommender (SLi-Rec)
