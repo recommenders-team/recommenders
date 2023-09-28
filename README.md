@@ -12,7 +12,7 @@ We moved to a new organization! Now to access the repo, instead of going to http
 
 ## Introduction
 
-Recommenders objective is to assist researchers, developers, and enthusiasts in prototyping, experimenting with, and bringing to production a range of classic and state-of-the-art recommendation systems.
+Recommenders objective is to assist researchers, developers and enthusiasts in prototyping, experimenting with and bringing to production a range of classic and state-of-the-art recommendation systems.
 
 Recommenders is a project under the [Linux Foundation of AI and Data](https://lfaidata.foundation/projects/). 
 
