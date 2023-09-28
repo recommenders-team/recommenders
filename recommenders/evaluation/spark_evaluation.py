@@ -309,9 +309,7 @@ class SparkRankingEvaluation:
         Return:
             float: precision at k (min=0, max=1)
         """
-        precision = self._metrics.precisionAt(self.k)
-
-        return precision
+        return self._metrics.precisionAt(self.k)
 
     def recall_at_k(self):
         """Get recall@K.
@@ -323,15 +321,7 @@ class SparkRankingEvaluation:
         Return:
             float: recall at k (min=0, max=1).
         """
-        df_hit = self._items_for_user_all.withColumn(
-            "hit", F.array_intersect(DEFAULT_PREDICTION_COL, "ground_truth")
-        )
-        df_hit = df_hit.withColumn("num_hit", F.size("hit"))
-        df_hit = df_hit.withColumn("num_actual", F.size("ground_truth"))
-        df_hit = df_hit.withColumn("per_hit", df_hit["num_hit"] / df_hit["num_actual"])
-        recall = df_hit.select(F.mean("per_hit")).collect()[0][0]
-
-        return recall
+        return self._metrics.recallAt(self.k)
 
     def ndcg_at_k(self):
         """Get Normalized Discounted Cumulative Gain (NDCG)
@@ -343,9 +333,15 @@ class SparkRankingEvaluation:
         Return:
             float: nDCG at k (min=0, max=1).
         """
-        ndcg = self._metrics.ndcgAt(self.k)
+        return self._metrics.ndcgAt(self.k)
 
-        return ndcg
+    def map(self):
+        """Get mean average precision.
+
+        Return:
+            float: MAP (min=0, max=1).
+        """
+        return self._metrics.meanAveragePrecision
 
     def map_at_k(self):
         """Get mean average precision at k.
@@ -357,9 +353,7 @@ class SparkRankingEvaluation:
         Return:
             float: MAP at k (min=0, max=1).
         """
-        maprecision = self._metrics.meanAveragePrecision
-
-        return maprecision
+        return self._metrics.meanAveragePrecisionAt(self.k)
 
 
 def _get_top_k_items(
@@ -589,14 +583,14 @@ class SparkDiversityEvaluation:
 
                 if str(required_schema) != str(item_feature_df.schema):
                     raise Exception(
-                        "Incorrect schema! item_feature_df should have schema:"
-                        + str(required_schema)
+                        "Incorrect schema! item_feature_df should have schema "
+                        f"{str(required_schema)} but have {str(item_feature_df.schema)}"
                     )
             else:
                 raise Exception(
                     "item_feature_df not specified! item_feature_df must be provided "
                     "if choosing to use item_feature_vector to calculate item similarity. "
-                    "item_feature_df should have schema:" + str(required_schema)
+                    f"item_feature_df should have schema {str(required_schema)}"
                 )
 
         # check if reco_df contains any user_item pairs that are already shown in train_df

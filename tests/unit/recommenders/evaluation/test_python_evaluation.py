@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 from unittest.mock import Mock
 from sklearn.preprocessing import minmax_scale
-from pandas.util.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal
 
 from recommenders.utils.constants import (
     DEFAULT_USER_COL,
@@ -28,6 +28,7 @@ from recommenders.evaluation.python_evaluation import (
     recall_at_k,
     ndcg_at_k,
     map_at_k,
+    map,
     auc,
     logloss,
     user_diversity,
@@ -39,46 +40,12 @@ from recommenders.evaluation.python_evaluation import (
     serendipity,
     catalog_coverage,
     distributional_coverage,
+    ColumnMismatchError,
+    ColumnTypeMismatchError,
 )
 
 
 TOL = 0.0001
-
-
-# fmt: off
-@pytest.fixture
-def rating_true():
-    return pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1],
-            DEFAULT_ITEM_COL: [3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14, 1, 2],
-            DEFAULT_RATING_COL: [3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1, 5, 4],
-        }
-    )
-
-
-@pytest.fixture
-def rating_pred():
-    return pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1],
-            DEFAULT_ITEM_COL: [12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14, 3, 10],
-            DEFAULT_PREDICTION_COL: [12, 14, 13, 12, 11, 10, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 14, 13],
-            DEFAULT_RATING_COL: [3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1, 5, 4],
-        }
-    )
-
-
-@pytest.fixture
-def rating_nohit():
-    return pd.DataFrame(
-        {
-            DEFAULT_USER_COL: [1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1, 1],
-            DEFAULT_ITEM_COL: [100] * 18,
-            DEFAULT_PREDICTION_COL: [12, 14, 13, 12, 11, 10, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 14, 13],
-        }
-    )
-# fmt: on
 
 
 @pytest.fixture
@@ -100,12 +67,31 @@ def rating_pred_binary(rating_pred):
 
 
 def test_column_dtypes_match(rating_true, rating_pred):
-    # Change data types of true and prediction data, and there should type error produced
-    rating_true[DEFAULT_USER_COL] = rating_true[DEFAULT_USER_COL].astype(str)
-    rating_true[DEFAULT_RATING_COL] = rating_true[DEFAULT_RATING_COL].astype(str)
+    mocked_fn = Mock(return_value=True)
+    assert _check_column_dtypes(mocked_fn)(
+        rating_true,
+        rating_pred,
+        col_user=DEFAULT_USER_COL,
+        col_item=DEFAULT_ITEM_COL,
+        col_rating=DEFAULT_RATING_COL,
+        col_prediction=DEFAULT_PREDICTION_COL,
+    )
 
-    expected_error = "Columns in provided DataFrames are not the same datatype"
-    with pytest.raises(ValueError, match=expected_error):
+    # Change data types of true and prediction data, and there should type mismatch error produced
+    rating_true[DEFAULT_USER_COL] = rating_true[DEFAULT_USER_COL].astype(str)
+    with pytest.raises(ColumnTypeMismatchError):
+        _check_column_dtypes(Mock())(
+            rating_true,
+            rating_pred,
+            col_user=DEFAULT_USER_COL,
+            col_item=DEFAULT_ITEM_COL,
+            col_rating=DEFAULT_RATING_COL,
+            col_prediction=DEFAULT_PREDICTION_COL,
+        )
+    
+    # Drop a column, and there should column mismatch error produced
+    rating_true.drop(DEFAULT_USER_COL, axis="columns", inplace=True)
+    with pytest.raises(ColumnMismatchError):
         _check_column_dtypes(Mock())(
             rating_true,
             rating_pred,
@@ -155,7 +141,7 @@ def test_merge_ranking(rating_true, rating_pred):
     assert n_users == 3
 
 
-def test_python_rmse(rating_true, rating_pred):
+def test_python_rmse(rating_true, rating_pred, target_metrics):
     assert (
         rmse(
             rating_true=rating_true,
@@ -164,10 +150,10 @@ def test_python_rmse(rating_true, rating_pred):
         )
         == 0
     )
-    assert rmse(rating_true, rating_pred) == pytest.approx(7.254309, TOL)
+    assert rmse(rating_true, rating_pred) == target_metrics["rmse"]
 
 
-def test_python_mae(rating_true, rating_pred):
+def test_python_mae(rating_true, rating_pred, target_metrics):
     assert (
         mae(
             rating_true=rating_true,
@@ -176,25 +162,25 @@ def test_python_mae(rating_true, rating_pred):
         )
         == 0
     )
-    assert mae(rating_true, rating_pred) == pytest.approx(6.375, TOL)
+    assert mae(rating_true, rating_pred) == target_metrics["mae"]
 
 
-def test_python_rsquared(rating_true, rating_pred):
+def test_python_rsquared(rating_true, rating_pred, target_metrics):
     assert rsquared(
         rating_true=rating_true,
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL,
     ) == pytest.approx(1.0, TOL)
-    assert rsquared(rating_true, rating_pred) == pytest.approx(-31.699029, TOL)
+    assert rsquared(rating_true, rating_pred) == target_metrics["rsquared"]
 
 
-def test_python_exp_var(rating_true, rating_pred):
+def test_python_exp_var(rating_true, rating_pred, target_metrics):
     assert exp_var(
         rating_true=rating_true,
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL,
     ) == pytest.approx(1.0, TOL)
-    assert exp_var(rating_true, rating_pred) == pytest.approx(-6.4466, TOL)
+    assert exp_var(rating_true, rating_pred) == target_metrics["exp_var"]
 
 
 def test_get_top_k_items(rating_true):
@@ -247,7 +233,7 @@ def test_get_top_k_items_largek(rating_true):
     assert top_6_items_df[DEFAULT_ITEM_COL][13] in [10, 11, 12]
 
 
-def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
+def test_python_ndcg(rating_true, rating_pred, rating_nohit, target_metrics):
     assert ndcg_at_k(
         rating_true=rating_true,
         rating_pred=rating_true,
@@ -255,7 +241,7 @@ def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
         k=10,
     ) == pytest.approx(1.0, TOL)
     assert ndcg_at_k(rating_true, rating_nohit, k=10) == 0.0
-    assert ndcg_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.38172, TOL)
+    assert ndcg_at_k(rating_true, rating_pred, k=10) == target_metrics["ndcg"]
 
     # Test raw relevance score and log2 discounting factor using wiki example
     # See https://en.wikipedia.org/wiki/Discounted_cumulative_gain
@@ -278,7 +264,21 @@ def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit):
     ) == pytest.approx(0.785, TOL)
 
 
-def test_python_map_at_k(rating_true, rating_pred, rating_nohit):
+def test_python_map(rating_true, rating_pred, rating_nohit, target_metrics):
+    assert (
+        map(
+            rating_true=rating_true,
+            rating_pred=rating_true,
+            col_prediction=DEFAULT_RATING_COL,
+            k=10,
+        )
+        == 1
+    )
+    assert map(rating_true, rating_nohit, k=10) == 0.0
+    assert map(rating_true, rating_pred, k=10) == target_metrics["map"]
+
+
+def test_python_map_at_k(rating_true, rating_pred, rating_nohit, target_metrics):
     assert (
         map_at_k(
             rating_true=rating_true,
@@ -289,10 +289,10 @@ def test_python_map_at_k(rating_true, rating_pred, rating_nohit):
         == 1
     )
     assert map_at_k(rating_true, rating_nohit, k=10) == 0.0
-    assert map_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.23613, TOL)
+    assert map_at_k(rating_true, rating_pred, k=10) == target_metrics["map_at_k"]
 
 
-def test_python_precision(rating_true, rating_pred, rating_nohit):
+def test_python_precision(rating_true, rating_pred, rating_nohit, target_metrics):
     assert (
         precision_at_k(
             rating_true=rating_true,
@@ -303,7 +303,7 @@ def test_python_precision(rating_true, rating_pred, rating_nohit):
         == 0.6
     )
     assert precision_at_k(rating_true, rating_nohit, k=10) == 0.0
-    assert precision_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.26666, TOL)
+    assert precision_at_k(rating_true, rating_pred, k=10) == target_metrics["precision"]
 
     # Check normalization
     single_user = pd.DataFrame(
@@ -354,7 +354,7 @@ def test_python_precision(rating_true, rating_pred, rating_nohit):
     )
 
 
-def test_python_recall(rating_true, rating_pred, rating_nohit):
+def test_python_recall(rating_true, rating_pred, rating_nohit, target_metrics):
     assert recall_at_k(
         rating_true=rating_true,
         rating_pred=rating_true,
@@ -362,7 +362,7 @@ def test_python_recall(rating_true, rating_pred, rating_nohit):
         k=10,
     ) == pytest.approx(1, TOL)
     assert recall_at_k(rating_true, rating_nohit, k=10) == 0.0
-    assert recall_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.37777, TOL)
+    assert recall_at_k(rating_true, rating_pred, k=10) == target_metrics["recall"]
 
 
 def test_python_auc(rating_true_binary, rating_pred_binary):
@@ -396,10 +396,10 @@ def test_python_logloss(rating_true_binary, rating_pred_binary):
 
 
 def test_python_errors(rating_true, rating_pred):
-    with pytest.raises(ValueError):
+    with pytest.raises(ColumnMismatchError):
         rmse(rating_true, rating_true, col_user="not_user")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ColumnMismatchError):
         mae(
             rating_pred,
             rating_pred,
@@ -407,10 +407,10 @@ def test_python_errors(rating_true, rating_pred):
             col_user="not_user",
         )
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ColumnMismatchError):
         rsquared(rating_true, rating_pred, col_item="not_item")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ColumnMismatchError):
         exp_var(
             rating_pred,
             rating_pred,
@@ -418,16 +418,16 @@ def test_python_errors(rating_true, rating_pred):
             col_item="not_item",
         )
 
-    with pytest.raises(ValueError):
-        precision_at_k(rating_true, rating_pred, col_rating="not_rating")
+    with pytest.raises(ColumnMismatchError):
+        precision_at_k(rating_true, rating_pred, col_prediction="not_prediction")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ColumnMismatchError):
         recall_at_k(rating_true, rating_pred, col_prediction="not_prediction")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ColumnMismatchError):
         ndcg_at_k(rating_true, rating_true, col_user="not_user")
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ColumnMismatchError):
         map_at_k(
             rating_pred,
             rating_pred,
@@ -436,117 +436,29 @@ def test_python_errors(rating_true, rating_pred):
         )
 
 
-# test diversity metrics
-@pytest.fixture(scope="module")
-def target_metrics():
-    return {
-        "c_coverage": pytest.approx(0.8, TOL),
-        "d_coverage": pytest.approx(1.9183, TOL),
-        "item_novelty": pd.DataFrame(
-            dict(ItemId=[1, 2, 3, 4, 5], item_novelty=[3.0, 3.0, 2.0, 1.41504, 3.0])
-        ),
-        "novelty": pytest.approx(2.83333, TOL),
-        "diversity": pytest.approx(0.43096, TOL),
-        "user_diversity": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
-        ),
-        # diversity values when using item features to calculate item similarity
-        "diversity_item_feature_vector": pytest.approx(0.5000, TOL),
-        "user_diversity_item_feature_vector": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_diversity=[0.5000, 0.5000, 0.5000])
-        ),
-        "user_item_serendipity": pd.DataFrame(
-            dict(
-                UserId=[1, 1, 2, 2, 3, 3],
-                ItemId=[3, 5, 2, 5, 1, 2],
-                user_item_serendipity=[
-                    0.72783,
-                    0.0,
-                    0.71132,
-                    0.35777,
-                    0.80755,
-                    0.0,
-                ],
-            )
-        ),
-        "user_serendipity": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_serendipity=[0.363915, 0.53455, 0.403775])
-        ),
-        "serendipity": pytest.approx(0.43408, TOL),
-        # serendipity values when using item features to calculate item similarity
-        "user_item_serendipity_item_feature_vector": pd.DataFrame(
-            dict(
-                UserId=[1, 1, 2, 2, 3, 3],
-                ItemId=[3, 5, 2, 5, 1, 2],
-                user_item_serendipity=[
-                    0.5000,
-                    0.0,
-                    0.75,
-                    0.5000,
-                    0.6667,
-                    0.0,
-                ],
-            )
-        ),
-        "user_serendipity_item_feature_vector": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_serendipity=[0.2500, 0.625, 0.3333])
-        ),
-        "serendipity_item_feature_vector": pytest.approx(0.4028, TOL),
-    }
-
-
-@pytest.fixture(scope="module")
-def python_diversity_data():
-    train_df = pd.DataFrame(
-        {"UserId": [1, 1, 1, 2, 2, 3, 3, 3], "ItemId": [1, 2, 4, 3, 4, 3, 4, 5]}
-    )
-
-    reco_df = pd.DataFrame(
-        {
-            "UserId": [1, 1, 2, 2, 3, 3],
-            "ItemId": [3, 5, 2, 5, 1, 2],
-            "Relevance": [1, 0, 1, 1, 1, 0],
-        }
-    )
-
-    item_feature_df = pd.DataFrame(
-        {
-            "ItemId": [1, 2, 3, 4, 5],
-            "features": [
-                np.array([0.0, 1.0, 1.0, 0.0, 0.0], dtype=float),
-                np.array([0.0, 1.0, 0.0, 1.0, 0.0], dtype=float),
-                np.array([0.0, 0.0, 1.0, 1.0, 0.0], dtype=float),
-                np.array([0.0, 0.0, 1.0, 0.0, 1.0], dtype=float),
-                np.array([0.0, 0.0, 0.0, 1.0, 1.0], dtype=float),
-            ],
-        }
-    )
-    return train_df, reco_df, item_feature_df
-
-
-def test_catalog_coverage(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_catalog_coverage(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     c_coverage = catalog_coverage(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     assert c_coverage == target_metrics["c_coverage"]
 
 
-def test_distributional_coverage(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_distributional_coverage(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     d_coverage = distributional_coverage(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     assert d_coverage == target_metrics["d_coverage"]
 
 
-def test_item_novelty(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_item_novelty(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     actual = historical_item_novelty(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     assert_frame_equal(
-        target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4
+        target_metrics["item_novelty"], actual, check_exact=False,
     )
     assert np.all(actual["item_novelty"].values >= 0)
     # Test that novelty is zero when data includes only one item
@@ -557,8 +469,8 @@ def test_item_novelty(python_diversity_data, target_metrics):
     assert actual["item_novelty"].values[0] == 0
 
 
-def test_novelty(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_novelty(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     actual = novelty(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
@@ -578,8 +490,8 @@ def test_novelty(python_diversity_data, target_metrics):
     )
 
 
-def test_user_diversity(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_user_diversity(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     actual = user_diversity(
         train_df=train_df,
         reco_df=reco_df,
@@ -594,12 +506,12 @@ def test_user_diversity(python_diversity_data, target_metrics):
         target_metrics["user_diversity"],
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
-def test_diversity(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_diversity(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     assert target_metrics["diversity"] == diversity(
         train_df=train_df,
         reco_df=reco_df,
@@ -612,8 +524,8 @@ def test_diversity(python_diversity_data, target_metrics):
     )
 
 
-def test_user_item_serendipity(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_user_item_serendipity(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     actual = user_item_serendipity(
         train_df=train_df,
         reco_df=reco_df,
@@ -628,12 +540,11 @@ def test_user_item_serendipity(python_diversity_data, target_metrics):
         target_metrics["user_item_serendipity"],
         actual,
         check_exact=False,
-        check_less_precise=4,
     )
 
 
-def test_user_serendipity(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_user_serendipity(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     actual = user_serendipity(
         train_df=train_df,
         reco_df=reco_df,
@@ -648,12 +559,11 @@ def test_user_serendipity(python_diversity_data, target_metrics):
         target_metrics["user_serendipity"],
         actual,
         check_exact=False,
-        check_less_precise=4,
     )
 
 
-def test_serendipity(python_diversity_data, target_metrics):
-    train_df, reco_df, _ = python_diversity_data
+def test_serendipity(diversity_data, target_metrics):
+    train_df, reco_df, _ = diversity_data
     assert target_metrics["serendipity"] == serendipity(
         train_df=train_df,
         reco_df=reco_df,
@@ -666,8 +576,8 @@ def test_serendipity(python_diversity_data, target_metrics):
     )
 
 
-def test_user_diversity_item_feature_vector(python_diversity_data, target_metrics):
-    train_df, reco_df, item_feature_df = python_diversity_data
+def test_user_diversity_item_feature_vector(diversity_data, target_metrics):
+    train_df, reco_df, item_feature_df = diversity_data
     actual = user_diversity(
         train_df=train_df,
         reco_df=reco_df,
@@ -682,12 +592,11 @@ def test_user_diversity_item_feature_vector(python_diversity_data, target_metric
         target_metrics["user_diversity_item_feature_vector"],
         actual,
         check_exact=False,
-        check_less_precise=4,
     )
 
 
-def test_diversity_item_feature_vector(python_diversity_data, target_metrics):
-    train_df, reco_df, item_feature_df = python_diversity_data
+def test_diversity_item_feature_vector(diversity_data, target_metrics):
+    train_df, reco_df, item_feature_df = diversity_data
     assert target_metrics["diversity_item_feature_vector"] == diversity(
         train_df=train_df,
         reco_df=reco_df,
@@ -701,9 +610,9 @@ def test_diversity_item_feature_vector(python_diversity_data, target_metrics):
 
 
 def test_user_item_serendipity_item_feature_vector(
-    python_diversity_data, target_metrics
+    diversity_data, target_metrics
 ):
-    train_df, reco_df, item_feature_df = python_diversity_data
+    train_df, reco_df, item_feature_df = diversity_data
     actual = user_item_serendipity(
         train_df=train_df,
         reco_df=reco_df,
@@ -718,12 +627,12 @@ def test_user_item_serendipity_item_feature_vector(
         target_metrics["user_item_serendipity_item_feature_vector"],
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
-def test_user_serendipity_item_feature_vector(python_diversity_data, target_metrics):
-    train_df, reco_df, item_feature_df = python_diversity_data
+def test_user_serendipity_item_feature_vector(diversity_data, target_metrics):
+    train_df, reco_df, item_feature_df = diversity_data
     actual = user_serendipity(
         train_df=train_df,
         reco_df=reco_df,
@@ -738,12 +647,12 @@ def test_user_serendipity_item_feature_vector(python_diversity_data, target_metr
         target_metrics["user_serendipity_item_feature_vector"],
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
-def test_serendipity_item_feature_vector(python_diversity_data, target_metrics):
-    train_df, reco_df, item_feature_df = python_diversity_data
+def test_serendipity_item_feature_vector(diversity_data, target_metrics):
+    train_df, reco_df, item_feature_df = diversity_data
     assert target_metrics["serendipity_item_feature_vector"] == serendipity(
         train_df=train_df,
         reco_df=reco_df,
