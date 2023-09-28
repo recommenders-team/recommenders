@@ -38,5 +38,5 @@ In this directory, notebooks are provided to perform a quick demonstration of di
 [10] _NPA: Neural News Recommendation with Personalized Attention_, Chuhan Wu, Fangzhao Wu, Mingxiao An, Jianqiang Huang, Yongfeng Huang and Xing Xie. KDD 2019, ADS track.<br>
 [11] _Adaptive User Modeling with Long and Short-Term Preferences for Personailzed Recommendation_, Zeping Yu, Jianxun Lian, Ahmad Mahmoody, Gongshen Liu and Xing Xie, IJCAI 2019.<br>
 [12] _Personalized top-n sequential recommendation via convolutional sequence embedding_, Jiaxi Tang and Ke Wang, ACM WSDM 2018.<br>
-[13] _Session-based Recommendations with Recurrent Neural Networks_, Balazs Hidasi, Alexandros Karatzoglou, Linas Baltrunas and Domonkos Tikk, ICLR 2016.<br>
+[13] _Learning Phrase Representations using RNN Encoder-Decoder for Statistical Machine Translation_, Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, Fethi Bougares, Holger Schwenk, and Yoshua Bengio, arXiv preprint arXiv:1406.1078. 2014.<br>
 [14] _A Simple Convolutional Generative Network for Next Item Recommendation_, Fajie Yuan, Alexandros Karatzoglou, Ioannis Arapakis, Joemon M. Jose and Xiangnan He, WSDM 2019. <br>
