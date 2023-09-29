@@ -108,7 +108,7 @@ setup(
         "Wiki": "https://github.com/recommenders-team/recommenders/wiki",
     },
     author="Recommenders contributors",
-    author_email="RecoDevTeam@service.microsoft.com",
+    author_email="recommenders-technical-discuss@lists.lfaidata.foundation",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
