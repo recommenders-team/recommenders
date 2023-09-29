@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Tests
 
 In this document we show our test infrastructure and how to contribute tests to the repository.

@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Contribution Guidelines
 
 Contributions are welcomed! Here's a few things to know:

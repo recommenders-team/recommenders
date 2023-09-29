@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Recommendation System Scenarios
 
 On this section there is listed a number of business scenarios that are common in Recommendation Systems.
