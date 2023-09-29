@@ -1,4 +1,13 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # What's New
+
+## Update October 3, 2023
+
+We are pleased to announced that we have joined the [Linux Foundation of AI and Data](https://lfaidata.foundation/) (LF AI & Data). With this move, our objective is to keep building an ecosystem to sustain open source innovation and collaboration in recommendation systems.
 
 ## Update August 18, 2023
 

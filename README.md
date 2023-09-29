@@ -1,20 +1,25 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Recommenders
 
 [![Documentation Status](https://readthedocs.org/projects/microsoft-recommenders/badge/?version=latest)](https://microsoft-recommenders.readthedocs.io/en/latest/?badge=latest)
 
 <img src="https://raw.githubusercontent.com/recommenders-team/artwork/main/color/recommenders_color.svg" width="800">
 
-## What's New (August, 2023)
+## What's New (October, 2023)
+
+We are pleased to announced that we have joined the [Linux Foundation of AI and Data](https://lfaidata.foundation/) (LF AI & Data). With this move, our objective is to keep building an ecosystem to sustain open source innovation and collaboration in recommendation systems.
 
 We moved to a new organization! Now to access the repo, instead of going to https://github.com/microsoft/recommenders, you need to go to https://github.com/recommenders-team/recommenders. The old URL will still resolve to the new one, but we recommend that you update your bookmarks.
 
-Starting with release 0.6.0, Recommenders has been available on PyPI and can be installed using pip! 
-
-Here you can find the PyPi page: https://pypi.org/project/recommenders/
-
-Here you can find the package documentation: https://microsoft-recommenders.readthedocs.io/en/latest/
-
 ## Introduction
+
+Recommenders objective is to assist researchers, developers and enthusiasts in prototyping, experimenting with and bringing to production a range of classic and state-of-the-art recommendation systems.
+
+Recommenders is a project under the [Linux Foundation of AI and Data](https://lfaidata.foundation/projects/). 
 
 This repository contains examples and best practices for building recommendation systems, provided as Jupyter notebooks. The examples detail our learnings on five key tasks:
 
