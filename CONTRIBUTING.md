@@ -37,9 +37,9 @@ Once the features included in a [milestone](https://github.com/microsoft/recomme
 
 We strive to maintain high quality code to make the utilities in the repository easy to understand, use, and extend. We also work hard to maintain a friendly and constructive environment. We've found that having clear expectations on the development process and consistent style helps to ensure everyone can contribute and collaborate effectively.
 
-Please review the [coding guidelines](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines) wiki page to see more details about the expectations for development approach and style.
+Please review the [coding guidelines](https://github.com/recommenders-team/recommenders/wiki/Coding-Guidelines) wiki page to see more details about the expectations for development approach and style.
 
-Apart from the official [Code of Conduct](CODE_OF_CONDUCT.md) developed by Microsoft, in the Recommenders team we adopt the following behaviors, to ensure a great working environment:
+Apart from the official [Code of Conduct](CODE_OF_CONDUCT.md), in Recommenders team we adopt the following behaviors, to ensure a great working environment:
 
 #### Do not point fingers
 Let’s be constructive.
