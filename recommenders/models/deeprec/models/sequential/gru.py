@@ -8,25 +8,27 @@ from recommenders.models.deeprec.models.sequential.sequential_base_model import 
 )
 from tensorflow.compat.v1.nn import dynamic_rnn
 
-__all__ = ["GRU4RecModel"]
+__all__ = ["GRUModel"]
 
 
-class GRU4RecModel(SequentialBaseModel):
-    """GRU4Rec Model
+class GRUModel(SequentialBaseModel):
+    """GRU Model
 
     :Citation:
 
-        B. Hidasi, A. Karatzoglou, L. Baltrunas, D. Tikk, "Session-based Recommendations
-        with Recurrent Neural Networks", ICLR (Poster), 2016.
+        Kyunghyun Cho, Bart van Merrienboer, Caglar Gulcehre, Dzmitry Bahdanau, 
+        Fethi Bougares, Holger Schwenk, and Yoshua Bengio. Learning Phrase 
+        Representations using RNN Encoder-Decoder for Statistical Machine Translation. 
+        arXiv preprint arXiv:1406.1078. 2014.
     """
 
     def _build_seq_graph(self):
-        """The main function to create GRU4Rec model.
+        """The main function to create GRU model.
 
         Returns:
-            object:the output of GRU4Rec section.
+            object:the output of GRU section.
         """
-        with tf.compat.v1.variable_scope("gru4rec"):
+        with tf.compat.v1.variable_scope("gru"):
             # final_state = self._build_lstm()
             final_state = self._build_gru()
             model_output = tf.concat([final_state, self.target_item_embedding], 1)

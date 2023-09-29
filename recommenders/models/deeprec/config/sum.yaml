@@ -51,8 +51,8 @@ info:
     save_epoch : 1    # if save_model is set to True, save the model every save_epoch.
     metrics : ['auc','logloss']  # metrics for evaluation.
     pairwise_metrics : ['mean_mrr', 'ndcg@2;4;6', "group_auc"]  # pairwise metrics for evaluation, available when pairwise comparisons are needed
-    MODEL_DIR : ./tests/resources/deeprec/gru4rec/model/gru4rec_model/  # directory of saved models.
-    SUMMARIES_DIR : ./tests/resources/deeprec/gru4rec/summary/gru4rec_summary/  # directory of saved summaries.
+    MODEL_DIR : ./tests/resources/deeprec/gru/model/gru_model/  # directory of saved models.
+    SUMMARIES_DIR : ./tests/resources/deeprec/gru/summary/gru_summary/  # directory of saved summaries.
     write_tfevents : True  # whether to save summaries.
 
     
