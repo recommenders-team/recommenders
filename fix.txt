@@ -1,0 +1,12 @@
+# FAILED unit/examples/test_notebooks_python.py::test_sar_deep_dive_runs - papermill.exceptions.PapermillExecutionError:  
+# FAILED unit/examples/test_notebooks_python.py::test_baseline_deep_dive_runs - papermill.exceptions.PapermillExecutionError:
+# FAILED unit/examples/test_notebooks_python.py::test_rlrmc_quickstart_runs - papermill.exceptions.PapermillExecutionError:
+# FAILED unit/recommenders/datasets/test_pandas_df_utils.py::test_csv_to_libffm - AttributeError: module 'numpy' has no attribute 'float'.
+# FAILED unit/recommenders/models/test_geoimc.py::test_length_normalize[matrix0] - NameError: name 'length_normalize' is not defined
+# FAILED unit/recommenders/models/test_geoimc.py::test_length_normalize[matrix1] - NameError: name 'length_normalize' is not defined
+# FAILED unit/recommenders/models/test_geoimc.py::test_mean_center[matrix0] - NameError: name 'mean_center' is not definedFAILED unit/recommenders/models/test_geoimc.py::test_mean_center[matrix1] - NameError: name 'mean_center' is not definedFAILED unit/recommenders/models/test_geoimc.py::test_reduce_dims - NameError: name 'reduce_dims' is not defined
+# FAILED unit/recommenders/models/test_geoimc.py::test_imcproblem[dataPtr0-3] - NameError: name 'IMCProblem' is not defined
+# FAILED unit/recommenders/models/test_geoimc.py::test_imcproblem[dataPtr1-3] - NameError: name 'IMCProblem' is not defined
+# FAILED unit/recommenders/models/test_geoimc.py::test_inferer_infer[dataPtr0] - NameError: name 'Stiefel' is not defined 
+# FAILED unit/recommenders/models/test_geoimc.py::test_inferer_infer[dataPtr1] - NameError: name 'Stiefel' is not defined 
+
