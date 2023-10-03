@@ -476,10 +476,9 @@ def test_item_novelty(diversity_data):
 
 def test_novelty(diversity_data):
     train_df, reco_df, _ = diversity_data
-    novelty = novelty(
+    assert novelty(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
-    )
-    assert novelty == pytest.approx(2.83333, TOL)
+    ) == pytest.approx(2.83333, TOL)
 
     # Test that novelty is zero when data includes only one item
     train_df_new = train_df.loc[train_df["ItemId"] == 3]

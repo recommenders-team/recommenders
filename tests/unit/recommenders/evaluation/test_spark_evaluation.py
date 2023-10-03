@@ -304,8 +304,7 @@ def test_novelty(spark_diversity_data):
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    novelty = evaluator.novelty()
-    assert novelty == pytest.approx(2.83333, TOL)
+    assert evaluator.novelty() == pytest.approx(2.83333, TOL)
 
     # Test that novelty is zero when data includes only one item
     train_df_new = train_df.filter("ItemId == 3")
