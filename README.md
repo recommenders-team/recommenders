@@ -11,9 +11,11 @@ Licensed under the MIT License.
 
 ## What's New (October, 2023)
 
-We are pleased to announced that we have joined the [Linux Foundation of AI and Data](https://lfaidata.foundation/) (LF AI & Data). With this move, our objective is to keep building an ecosystem to sustain open source innovation and collaboration in recommendation systems.
+We are pleased to announce that this repository (formerly known as Microsoft Recommenders, https://github.com/microsoft/recommenders)", has joined the [Linux Foundation of AI and Data](https://lfaidata.foundation/) (LF AI & Data)! The new organization, `recommenders-team`, reflects this change.
 
-We moved to a new organization! Now to access the repo, instead of going to https://github.com/microsoft/recommenders, you need to go to https://github.com/recommenders-team/recommenders. The old URL will still resolve to the new one, but we recommend that you update your bookmarks.
+We hope this move makes it easy for anyone to contribute! Our objective continues to be building an ecosystem and a community to sustain open source innovations and collaborations in recommendation systems. 
+
+Now to access the repo, instead of going to https://github.com/microsoft/recommenders, you need to go to https://github.com/recommenders-team/recommenders. The old URL will still resolve to the new one, but we recommend that you update your bookmarks.
 
 ## Introduction
 
