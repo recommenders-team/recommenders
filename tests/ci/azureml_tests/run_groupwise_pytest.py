@@ -12,6 +12,7 @@ import logging
 import pytest
 import argparse
 import glob
+import pkg_resources
 from azureml.core import Run
 from test_groups import nightly_test_groups, pr_gate_test_groups
 
@@ -49,6 +50,10 @@ if __name__ == "__main__":
         test_group = pr_gate_test_groups[args.testgroup]
 
     logger.info(f"Python version: {sys.version}")
+
+    logger.info("Installed packages:")
+    for p in pkg_resources.working_set:
+        logger.info(f"{p.project_name}:{p.version}")
 
     logger.info("Tests to be executed")
     logger.info(str(test_group))
