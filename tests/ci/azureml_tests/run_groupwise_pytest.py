@@ -53,7 +53,7 @@ if __name__ == "__main__":
 
     logger.info("Installed packages:")
     for p in pkg_resources.working_set:
-        logger.info(f"{p.project_name}:{p.version}")
+        logger.info(f" {p.project_name}:{p.version}")
 
     logger.info("Tests to be executed")
     logger.info(str(test_group))
