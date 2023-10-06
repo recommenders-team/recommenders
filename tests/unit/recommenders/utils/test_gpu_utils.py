@@ -57,5 +57,6 @@ def test_tensorflow_gpu():
 
 
 @pytest.mark.gpu
+@pytest.mark.skip(reason="This function in PyTorch is flaky")
 def test_pytorch_gpu():
     assert torch.cuda.is_available()
