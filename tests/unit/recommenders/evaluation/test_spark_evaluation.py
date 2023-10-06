@@ -113,7 +113,7 @@ def test_spark_exp_var(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_spark_recall(spark_data, target_metrics):
+def test_spark_recall_at_k(spark_data, target_metrics):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred)
@@ -126,7 +126,7 @@ def test_spark_recall(spark_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_spark_precision(spark_data, target_metrics, spark):
+def test_spark_precision_at_k(spark_data, target_metrics, spark):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
@@ -165,7 +165,7 @@ def test_spark_precision(spark_data, target_metrics, spark):
 
 
 @pytest.mark.spark
-def test_spark_ndcg(spark_data, target_metrics):
+def test_spark_ndcg_at_k(spark_data, target_metrics):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_true, k=10, col_prediction="rating")

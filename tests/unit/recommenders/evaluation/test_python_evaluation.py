@@ -233,7 +233,7 @@ def test_get_top_k_items_largek(rating_true):
     assert top_6_items_df[DEFAULT_ITEM_COL][13] in [10, 11, 12]
 
 
-def test_python_ndcg(rating_true, rating_pred, rating_nohit, target_metrics):
+def test_python_ndcg_at_k(rating_true, rating_pred, rating_nohit, target_metrics):
     assert ndcg_at_k(
         rating_true=rating_true,
         rating_pred=rating_true,
@@ -292,7 +292,7 @@ def test_python_map_at_k(rating_true, rating_pred, rating_nohit, target_metrics)
     assert map_at_k(rating_true, rating_pred, k=10) == target_metrics["map_at_k"]
 
 
-def test_python_precision(rating_true, rating_pred, rating_nohit, target_metrics):
+def test_python_precision_at_k(rating_true, rating_pred, rating_nohit, target_metrics):
     assert (
         precision_at_k(
             rating_true=rating_true,
@@ -354,7 +354,7 @@ def test_python_precision(rating_true, rating_pred, rating_nohit, target_metrics
     )
 
 
-def test_python_recall(rating_true, rating_pred, rating_nohit, target_metrics):
+def test_python_recall_at_k(rating_true, rating_pred, rating_nohit, target_metrics):
     assert recall_at_k(
         rating_true=rating_true,
         rating_pred=rating_true,
