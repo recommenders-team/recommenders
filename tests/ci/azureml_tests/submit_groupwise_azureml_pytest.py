@@ -400,7 +400,7 @@ def create_arg_parser():
         "--conda_pkg_python",
         action="store",
         default="python=3.7",
-        help="conda package name for jdk",
+        help="conda package for Python",
     )
     parser.add_argument(
         "--testkind",
