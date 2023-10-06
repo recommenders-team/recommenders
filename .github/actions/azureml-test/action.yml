@@ -112,9 +112,6 @@ runs:
           --testlogs ${{inputs.TEST_LOGS_PATH}} --add_spark_dependencies --testkind ${{inputs.TEST_KIND}}
           --conda_pkg_python ${{inputs.PYTHON_VERSION}} --testgroup ${{inputs.TEST_GROUP}}
           --disable-warnings --sha "${GITHUB_SHA}"
-    - name: Print test logs
-      shell: bash
-      run: cat ${{inputs.TEST_LOGS_PATH}}
     - name: Get exit status
       shell: bash
       id: exit_status
