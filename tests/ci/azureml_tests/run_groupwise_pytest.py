@@ -48,6 +48,8 @@ if __name__ == "__main__":
     else:
         test_group = pr_gate_test_groups[args.testgroup]
 
+    logger.info(f"Python version: {sys.version}")
+
     logger.info("Tests to be executed")
     logger.info(str(test_group))
 
@@ -55,8 +57,6 @@ if __name__ == "__main__":
     # of env vars
     run = Run.get_context()
 
-    logger.info("Python version ")
-    logger.info(str(sys.version))
     logger.info("Executing tests now...")
 
     # Add options to pytest command (Duration and disable warnings)
