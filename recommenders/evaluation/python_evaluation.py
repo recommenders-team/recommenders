@@ -61,7 +61,6 @@ def _check_column_dtypes(func):
         rating_pred,
         col_user=DEFAULT_USER_COL,
         col_item=DEFAULT_ITEM_COL,
-        col_rating=DEFAULT_RATING_COL,
         col_prediction=DEFAULT_PREDICTION_COL,
         *args,
         **kwargs
@@ -76,14 +75,17 @@ def _check_column_dtypes(func):
             col_rating (str): column name for rating
             col_prediction (str): column name for prediction
         """
-
-        if not has_columns(rating_true, [col_user, col_item, col_rating]):
+        # Some ranking metrics don't have the rating column, so we don't need to check.
+        expected_true_columns = {col_user, col_item}
+        if "col_rating" in kwargs:
+            expected_true_columns.add(kwargs["col_rating"])
+        if not has_columns(rating_true, expected_true_columns):
             raise ColumnMismatchError("Missing columns in true rating DataFrame")
-        if not has_columns(rating_pred, [col_user, col_item, col_prediction]):
+        
+        if not has_columns(rating_pred, {col_user, col_item, col_prediction}):
             raise ColumnMismatchError("Missing columns in predicted rating DataFrame")
-        if not has_same_base_dtype(
-            rating_true, rating_pred, columns=[col_user, col_item]
-        ):
+        
+        if not has_same_base_dtype(rating_true, rating_pred, columns=[col_user, col_item]):
             raise ColumnTypeMismatchError("Columns in provided DataFrames are not the same datatype")
 
         return func(
@@ -91,7 +93,6 @@ def _check_column_dtypes(func):
             rating_pred=rating_pred,
             col_user=col_user,
             col_item=col_item,
-            col_rating=col_rating,
             col_prediction=col_prediction,
             *args,
             **kwargs
@@ -447,7 +448,6 @@ def precision_at_k(
         rating_pred (pandas.DataFrame): Predicted DataFrame
         col_user (str): column name for user
         col_item (str): column name for item
-        col_rating (str): column name for rating
         col_prediction (str): column name for prediction
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
@@ -492,7 +492,6 @@ def recall_at_k(
         rating_pred (pandas.DataFrame): Predicted DataFrame
         col_user (str): column name for user
         col_item (str): column name for item
-        col_rating (str): column name for rating
         col_prediction (str): column name for prediction
         relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
             top k items are directly provided, so there is no need to compute the relevancy operation.
@@ -525,13 +524,14 @@ def ndcg_at_k(
     rating_pred,
     col_user=DEFAULT_USER_COL,
     col_item=DEFAULT_ITEM_COL,
+    col_rating=DEFAULT_RATING_COL,
     col_prediction=DEFAULT_PREDICTION_COL,
     relevancy_method="top_k",
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
     score_type="binary",
     discfun_type="loge",
-    **kwargs,
+    **_,
 ):
     """Normalized Discounted Cumulative Gain (nDCG).
 
@@ -556,7 +556,6 @@ def ndcg_at_k(
     Returns:
         float: nDCG at k (min=0, max=1).
     """
-    col_rating = _get_rating_column(relevancy_method, **kwargs)
     df_hit, _, _ = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
@@ -629,8 +628,6 @@ def _get_reciprocal_rank(
     k=DEFAULT_K,
     threshold=DEFAULT_THRESHOLD,
 ):
-    """
-    """
     df_hit, df_hit_count, n_users = merge_ranking_true_pred(
         rating_true=rating_true,
         rating_pred=rating_pred,
@@ -806,26 +803,6 @@ metrics = {
     ndcg_at_k.__name__: ndcg_at_k,
     map_at_k.__name__: map_at_k,
 }
-
-
-def _get_rating_column(relevancy_method: str, **kwargs) -> str:
-    r"""Helper utility to simplify the arguments of eval metrics
-    Attemtps to address https://github.com/microsoft/recommenders/issues/1737.
-
-    Args:
-        relevancy_method (str): method for determining relevancy ['top_k', 'by_threshold', None]. None means that the
-            top k items are directly provided, so there is no need to compute the relevancy operation.
-
-    Returns:
-        str: rating column name.
-    """
-    if relevancy_method != "top_k":
-        if "col_rating" not in kwargs:
-            raise ValueError("Expected an argument `col_rating` but wasn't found.")
-        col_rating = kwargs.get("col_rating")
-    else:
-        col_rating = kwargs.get("col_rating", DEFAULT_RATING_COL)
-    return col_rating
 
 
 # diversity metrics
