@@ -147,7 +147,6 @@ def setup_persistent_compute_target(workspace, cluster_name, vm_size, max_nodes)
 def create_run_config(
     cpu_cluster,
     docker_proc_type,
-    workspace,
     add_gpu_dependencies,
     add_spark_dependencies,
     conda_pkg_jdk,
@@ -167,7 +166,6 @@ def create_run_config(
                                                 - Reco_cpu_test
                                                 - Reco_gpu_test
             docker_proc_type (str)          : processor type, cpu or gpu
-            workspace                       : workspace reference
             add_gpu_dependencies (bool)     : True if gpu packages should be
                                         added to the conda environment, else False
             add_spark_dependencies (bool)   : True if PySpark packages should be
@@ -400,7 +398,7 @@ def create_arg_parser():
         "--conda_pkg_python",
         action="store",
         default="python=3.7",
-        help="conda package name for jdk",
+        help="conda package for Python",
     )
     parser.add_argument(
         "--testkind",
@@ -453,7 +451,6 @@ if __name__ == "__main__":
     run_config = create_run_config(
         cpu_cluster=cpu_cluster,
         docker_proc_type=docker_proc_type,
-        workspace=workspace,
         add_gpu_dependencies=args.add_gpu_dependencies,
         add_spark_dependencies=args.add_spark_dependencies,
         conda_pkg_jdk=args.conda_pkg_jdk,
