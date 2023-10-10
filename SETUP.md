@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Setup Guide
 
 The repo, including this guide, is tested on Linux. Where applicable, we document differences in [Windows](#windows-specific-instructions) and [MacOS](#macos-specific-instructions) although 

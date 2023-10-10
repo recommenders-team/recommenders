@@ -8,7 +8,7 @@ data:
 #model
 model:
     method : classification # classification or regression
-    model_type : GRU4Rec
+    model_type : GRU
     layer_sizes : [100, 64]  # layers' size of DNN. In this example, DNN has two layers, and each layer has 100 hidden nodes.
     activation : [relu, relu] # activation function for DNN
     user_dropout: True 
@@ -48,8 +48,8 @@ info:
     save_epoch : 1    # if save_model is set to True, save the model every save_epoch.
     metrics : ['auc','logloss']  # metrics for evaluation.
     pairwise_metrics : ['mean_mrr', 'ndcg@2;4;6', "group_auc"]  # pairwise metrics for evaluation, available when pairwise comparisons are needed
-    MODEL_DIR : ./tests/resources/deeprec/gru4rec/model/gru4rec_model/  # directory of saved models.
-    SUMMARIES_DIR : ./tests/resources/deeprec/gru4rec/summary/gru4rec_summary/  # directory of saved summaries.
+    MODEL_DIR : ./tests/resources/deeprec/gru/model/gru_model/  # directory of saved models.
+    SUMMARIES_DIR : ./tests/resources/deeprec/gru/summary/gru_summary/  # directory of saved summaries.
     write_tfevents : True  # whether to save summaries.
 
     
