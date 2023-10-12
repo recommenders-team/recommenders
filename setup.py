@@ -60,9 +60,7 @@ install_requires = [
 extras_require = {
     "gpu": [
         "nvidia-ml-py3>=7.352.0",
-        # TensorFlow compiled with CUDA 11.2, CuDNN 8.1
-        "tensorflow~=2.6.1;python_version=='3.6'",
-        "tensorflow~=2.7.0;python_version>='3.7'",
+        "tensorflow>=2.10.1",
         "tf-slim>=1.1.0",
         "torch>=1.13.1",  # for CUDA 11 support
         "fastai>=1.0.46,<2",

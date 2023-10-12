@@ -33,7 +33,8 @@ def test_pandas():
 def test_tensorflow():
     # Security issue: https://github.com/advisories/GHSA-w5gh-2wr2-pm6g
     # Security issue: https://github.com/advisories/GHSA-r6jx-9g48-2r5r
-    assert tf.__version__ >= "2.5.1"
+    # Security issue: https://github.com/advisories/GHSA-xxcj-rhqg-m46g
+    assert tf.__version__ >= "2.10.1"
 
 
 @pytest.mark.gpu
