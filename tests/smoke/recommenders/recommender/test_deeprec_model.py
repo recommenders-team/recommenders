@@ -4,6 +4,9 @@
 import os
 import pytest
 
+from recommenders.datasets import movielens
+from recommenders.datasets.python_splitters import python_stratified_split
+
 try:
     import tensorflow as tf
     from recommenders.models.deeprec.deeprec_utils import (
@@ -24,8 +27,7 @@ try:
     )
     from recommenders.models.deeprec.models.graphrec.lightgcn import LightGCN
     from recommenders.models.deeprec.DataModel.ImplicitCF import ImplicitCF
-    from recommenders.datasets import movielens
-    from recommenders.datasets.python_splitters import python_stratified_split
+
 except ImportError:
     pass  # disable error while collecting tests for non-gpu environments
 
