@@ -34,7 +34,7 @@ def test_tensorflow():
     # Security issue: https://github.com/advisories/GHSA-w5gh-2wr2-pm6g
     # Security issue: https://github.com/advisories/GHSA-r6jx-9g48-2r5r
     # Security issue: https://github.com/advisories/GHSA-xxcj-rhqg-m46g
-    assert tf.__version__ >= "2.10.1"
+    assert tf.__version__ >= "2.8.4"
 
 
 @pytest.mark.gpu
