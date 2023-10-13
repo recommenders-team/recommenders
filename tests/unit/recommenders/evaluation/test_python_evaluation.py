@@ -67,6 +67,7 @@ def rating_pred_binary(rating_pred):
 
 
 def test_column_dtypes_match(rating_true, rating_pred):
+    # Check if _check_column_dtypes wraps the input function (i.e. returns the same output as the input function's)
     mocked_fn = Mock(return_value=True)
     assert _check_column_dtypes(mocked_fn)(
         rating_true,
