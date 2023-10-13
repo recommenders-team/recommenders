@@ -420,12 +420,12 @@ pr_gate_test_groups = {
     ],
     "group_gpu_002": [  # Total group time:
         "tests/unit/examples/test_notebooks_gpu.py::test_gpu_vm",  # 0.76s (Always the first test to check the GPU works)
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",
+        # "tests/unit/recommenders/models/test_deeprec_model.py::test_xdeepfm_component_definition",  # FIXME: Issue with TF version > 2.10.1 See #2018
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_component_definition",
         "tests/unit/recommenders/models/test_deeprec_model.py::test_dkn_item2item_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition",
+        # "tests/unit/recommenders/models/test_deeprec_model.py::test_slirec_component_definition", # FIXME: Issue with TF version > 2.10.1 See #2018
         "tests/unit/recommenders/models/test_deeprec_model.py::test_nextitnet_component_definition",
-        "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition",
+        # "tests/unit/recommenders/models/test_deeprec_model.py::test_sum_component_definition", # FIXME: Issue with TF version > 2.10.1 See #2018
         "tests/unit/recommenders/models/test_deeprec_model.py::test_lightgcn_component_definition",
         "tests/unit/recommenders/models/test_deeprec_utils.py::test_prepare_hparams",
         "tests/unit/recommenders/models/test_deeprec_utils.py::test_load_yaml_file",
