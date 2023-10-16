@@ -6,10 +6,12 @@
 name: azureml-unit-tests
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - 'staging'
       - 'main'
+      - 'miguel/pull_request_target' # DELETE ME
+    types: [labeled, edited, opened, synchronize]
     paths:
       # Tests will be run only when there are changes in the code:
       - examples/**
@@ -33,6 +35,7 @@ on:
 jobs:
   get-test-groups:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe to test'))
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
