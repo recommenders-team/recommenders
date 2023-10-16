@@ -11,7 +11,7 @@ on:
       - 'staging'
       - 'main'
       - 'miguel/pull_request_target' # DELETE ME
-    types: [labeled, edited, opened, synchronize]
+    types: [labeled, edited, opened, reopened, synchronize]
     paths:
       # Tests will be run only when there are changes in the code:
       - examples/**
