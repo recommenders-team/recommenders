@@ -74,6 +74,7 @@ extras_require = {
         "pytest>=3.6.4",
         "pytest-cov>=2.12.1",
         "pytest-mock>=3.6.1",  # for access to mock fixtures in pytest
+        "packaging>=20.9",  # for version comparison in test_dependency_security.py
     ],
 }
 # For the brave of heart
