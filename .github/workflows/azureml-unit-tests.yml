@@ -35,6 +35,8 @@ on:
 jobs:
   get-test-groups:
     runs-on: ubuntu-latest
+    # Execute the tests when the PR is from an internal contributor or if it is a fork, when the PR has the label 'safe to test'
+    if: contains(github.event.pull_request.labels.*.name, 'safe to test') || github.event.pull_request.head.repo.fork == 'false'
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
