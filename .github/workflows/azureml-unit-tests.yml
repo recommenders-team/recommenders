@@ -11,7 +11,7 @@ on:
       - 'staging'
       - 'main'
       - 'miguel/pull_request_target' # DELETE ME
-    types: [labeled, edited, opened, synchronize]
+    types: [labeled, edited, opened, reopened, synchronize]
     paths:
       # Tests will be run only when there are changes in the code:
       - examples/**
@@ -35,7 +35,8 @@ on:
 jobs:
   get-test-groups:
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' || (github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'safe to test'))
+    # For security: Execute the tests when the PR is from an internal contributor or if it is a fork, when the PR has the label 'safe to test'
+    if: contains(github.event.pull_request.labels.*.name, 'safe to test') || github.event.pull_request.head.repo.fork == 'false'
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3

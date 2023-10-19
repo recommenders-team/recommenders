@@ -3,7 +3,7 @@
 
 __title__ = "Recommenders"
 __version__ = "1.1.1"
-__author__ = "RecoDev Team at Microsoft"
+__author__ = "Recommenders contributors."
 __license__ = "MIT"
 __copyright__ = "Copyright 2018-present Recommenders contributors."
 
