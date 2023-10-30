@@ -48,12 +48,10 @@ install_requires = [
     "retrying>=1.3.3",
     "pandera[strategies]>=0.6.5",  # For generating fake datasets
     "scikit-surprise>=1.0.6",
-    "scrapbook>=0.5.0,<1.0.0",
     "hyperopt>=0.1.2,<1",
     "ipykernel>=4.6.1,<7",
     "jupyter>=1,<2",
     "locust>=1,<2",
-    "papermill>=2.1.2,<3",
 ]
 
 # shared dependencies
