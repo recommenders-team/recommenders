@@ -8,9 +8,6 @@ from nbconvert.preprocessors import ExecutePreprocessor
 from IPython.display import display
 
 
-NOTEBOOK_OUTPUT_CONTENT_TYPE = "application/notebook_utils.json+json"
-
-
 def is_jupyter():
     """Check if the module is running on Jupyter notebook/console.
 
@@ -44,30 +41,8 @@ def is_databricks():
         return False
 
 
-def _update_parameters(parameter_cell_source, new_parameters):
-    """Replace parameter values in the cell source code."""
-    modified_cell_source = parameter_cell_source
-    for param, new_value in new_parameters.items():
-        if (
-            isinstance(new_value, str)
-            and not (new_value.startswith('"') and new_value.endswith('"'))
-            and not (new_value.startswith("'") and new_value.endswith("'"))
-        ):
-            # Check if the new value is a string and surround it with quotes if necessary
-            new_value = f'"{new_value}"'
-
-        # Define a regular expression pattern to match parameter assignments and ignore comments
-        pattern = re.compile(
-            rf"(\b{param})\s*=\s*([^#\n]+)(?:#.*$)?",
-            re.MULTILINE
-        )
-        modified_cell_source = pattern.sub(rf"\1 = {new_value}", modified_cell_source)
-
-    return modified_cell_source
-
-
 def execute_notebook(
-    input_notebook, output_notebook, parameters={}, kernel_name="python3", timeout=2200
+    input_notebook, output_notebook, parameters, kernel_name="python3", timeout=600
 ):
     """Execute a notebook while passing parameters to it.
 
@@ -96,8 +71,26 @@ def execute_notebook(
             and "parameters" in cell.metadata["tags"]
             and cell.cell_type == "code"
         ):
+            cell_source = cell.source
+            modified_cell_source = (
+                cell_source  # Initialize a variable to hold the modified source
+            )
+            for param, new_value in parameters.items():
+                # Check if the new value is a string and surround it with quotes if necessary
+                if isinstance(new_value, str):
+                    new_value = f'"{new_value}"'
+                # Define a regular expression pattern to match parameter assignments and ignore comments
+                pattern = re.compile(
+                    rf"\b{param}\s*=\s*([^#\n]+)(?:#.*$)?", re.MULTILINE
+                )
+                matches = re.findall(pattern, cell_source)
+                for match in matches:
+                    old_assignment = match.strip()
+                    modified_cell_source = modified_cell_source.replace(
+                        old_assignment, f"{new_value}"
+                    )
             # Update the cell's source within notebook_content
-            cell.source = _update_parameters(cell.source, parameters)
+            cell.source = modified_cell_source
 
     # Create an execution preprocessor
     execute_preprocessor = ExecutePreprocessor(timeout=timeout, kernel_name=kernel_name)
@@ -114,6 +107,7 @@ def execute_notebook(
 
 def store_metadata(name, value):
     """Store data in the notebook's output source code.
+    This function is similar to snapbook.glue().
 
     Args:
         name (str): Name of the data.
@@ -133,6 +127,7 @@ def store_metadata(name, value):
 
 def read_notebook(path):
     """Read the metadata stored in the notebook's output source code.
+    This function is similar to snapbook.read_notebook().
 
     Args:
         path (str): Path to the notebook.
@@ -144,13 +139,13 @@ def read_notebook(path):
     with open(path, "r") as notebook_file:
         notebook_content = nbformat.read(notebook_file, as_version=4)
 
-    # Search for parameters and store them in a dictionary
+    # Search for and replace parameter values in code cells
     results = {}
     for cell in notebook_content.cells:
         if cell.cell_type == "code" and "outputs" in cell:
             for outputs in cell.outputs:
                 if "metadata" in outputs and "notebook_utils" in outputs.metadata:
-                    name = outputs.data[NOTEBOOK_OUTPUT_CONTENT_TYPE]["name"]
-                    data = outputs.data[NOTEBOOK_OUTPUT_CONTENT_TYPE]["data"]
+                    name = outputs.data["application/notebook_utils.json+json"]["name"]
+                    data = outputs.data["application/notebook_utils.json+json"]["data"]
                     results[name] = data
     return results
