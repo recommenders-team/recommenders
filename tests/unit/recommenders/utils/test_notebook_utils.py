@@ -1,8 +1,8 @@
 # Copyright (c) Recommenders contributors.
 # Licensed under the MIT License.
 
-import nbclient
 import pytest
+import nbclient
 import papermill as pm
 import scrapbook as sb
 from pathlib import Path
@@ -41,12 +41,10 @@ def test_is_jupyter(notebook_types, output_notebook, kernel_name):
         output_notebook,
         kernel_name=kernel_name,
     )
-    nb = sb.read_notebook(output_notebook)
-    df = nb.scraps.dataframe
-    result_is_jupyter = df.loc[df["name"] == "is_jupyter", "data"].values[0]
-    assert result_is_jupyter  # is True not allowed
-    result_is_databricks = df.loc[df["name"] == "is_databricks", "data"].values[0]
-    assert not result_is_databricks
+    results = read_notebook(output_notebook)
+
+    assert results["is_jupyter"]
+    assert not results["is_databricks"]
 
 
 @pytest.mark.spark
@@ -56,6 +54,7 @@ def test_is_databricks():
     pass
 
 
+@pytest.mark.notebooks
 def test_notebook_execution_int(notebook_programmatic, output_notebook, kernel_name):
     execute_notebook(
         notebook_programmatic,
@@ -68,6 +67,7 @@ def test_notebook_execution_int(notebook_programmatic, output_notebook, kernel_n
     assert results["response1"] == 8
 
 
+@pytest.mark.notebooks
 def test_notebook_execution_float(notebook_programmatic, output_notebook, kernel_name):
     execute_notebook(
         notebook_programmatic,
@@ -80,6 +80,7 @@ def test_notebook_execution_float(notebook_programmatic, output_notebook, kernel
     assert results["response1"] == 3.5
 
 
+@pytest.mark.notebooks
 def test_notebook_execution_letter(notebook_programmatic, output_notebook, kernel_name):
     execute_notebook(
         notebook_programmatic,
@@ -92,6 +93,7 @@ def test_notebook_execution_letter(notebook_programmatic, output_notebook, kerne
     assert results["response2"] is True
 
 
+@pytest.mark.notebooks
 def test_notebook_execution_other_letter(
     notebook_programmatic, output_notebook, kernel_name
 ):
@@ -106,6 +108,7 @@ def test_notebook_execution_other_letter(
     assert results["response2"] == "A"
 
 
+@pytest.mark.notebooks
 def test_notebook_execution_value_error_fails(
     notebook_programmatic, output_notebook, kernel_name
 ):
@@ -118,6 +121,7 @@ def test_notebook_execution_value_error_fails(
         )
 
 
+@pytest.mark.notebooks
 def test_notebook_execution_int_with_comment(
     notebook_programmatic, output_notebook, kernel_name
 ):
