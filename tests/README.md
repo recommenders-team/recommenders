@@ -135,8 +135,8 @@ This is an example on how we do a smoke test. The complete code can be found in 
 
 ```python
 import pytest
-import papermill as pm
-import scrapbook as sb
+
+from recommenders.utils.notebook_utils import execute_notebook, read_notebook
 
 TOL = 0.05
 ABS_TOL = 0.05

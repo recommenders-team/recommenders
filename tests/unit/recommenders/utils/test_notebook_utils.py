@@ -53,6 +53,20 @@ def test_is_databricks():
 
 
 @pytest.mark.notebooks
+def test_notebook_execution(notebook_programmatic, output_notebook, kernel_name):
+    execute_notebook(
+        notebook_programmatic,
+        output_notebook,
+        kernel_name=kernel_name,
+    )
+
+    results = read_notebook(output_notebook)
+    assert results["response1"] == 3
+    assert results["response2"] is True
+    assert results["response3"] == 7
+
+
+@pytest.mark.notebooks
 def test_notebook_execution_int(notebook_programmatic, output_notebook, kernel_name):
     execute_notebook(
         notebook_programmatic,
