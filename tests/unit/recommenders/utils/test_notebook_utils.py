@@ -3,8 +3,6 @@
 
 import pytest
 import nbclient
-import papermill as pm
-import scrapbook as sb
 from pathlib import Path
 
 from recommenders.utils.notebook_utils import (

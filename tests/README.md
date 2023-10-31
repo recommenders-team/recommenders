@@ -103,7 +103,7 @@ Executing a notebook with Papermill is easy, this is what we mostly do in the un
 
 ```python
 import pytest
-import papermill as pm
+from recommenders.utils.notebook_utils import execute_notebook
 
 @pytest.mark.notebooks
 def test_sar_single_node_runs(notebooks, output_notebook, kernel_name):
