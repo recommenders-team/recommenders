@@ -247,7 +247,7 @@ def test_wide_deep_functional(
             os.path.join("tests", "resources", "deeprec", "slirec"),
             10,
             400,
-            {"res_syn": {"auc": 0.7183, "logloss": 0.6045}},
+            {"auc": 0.7183, "logloss": 0.6045},
             42,
         )
     ],
@@ -277,13 +277,11 @@ def test_slirec_quickstart_functional(
     )
     results = read_notebook(output_notebook)
 
-    for key, value in expected_values.items():
-        assert results[key]["auc"] == pytest.approx(value["auc"], rel=TOL, abs=ABS_TOL)
-
-        ## disable logloss check, because so far SLi-Rec uses ranking loss, not a point-wise loss
-        # assert results[key]["logloss"] == pytest.approx(
-        #     value["logloss"], rel=TOL, abs=ABS_TOL
-        # )
+    assert results["auc"] == pytest.approx(expected_values["auc"], rel=TOL, abs=ABS_TOL)
+    ## disable logloss check, because so far SLi-Rec uses ranking loss, not a point-wise loss
+    # assert results["logloss"] == pytest.approx(
+    #     expected_values["logloss"], rel=TOL, abs=ABS_TOL
+    # )
 
 
 @pytest.mark.gpu
@@ -297,12 +295,10 @@ def test_slirec_quickstart_functional(
             42,
             "demo",
             {
-                "res_syn": {
-                    "group_auc": 0.6217,
-                    "mean_mrr": 0.2783,
-                    "ndcg@5": 0.3024,
-                    "ndcg@10": 0.3719,
-                }
+                "group_auc": 0.6217,
+                "mean_mrr": 0.2783,
+                "ndcg@5": 0.3024,
+                "ndcg@10": 0.3719,
             },
         )
     ],
@@ -330,19 +326,18 @@ def test_nrms_quickstart_functional(
     )
     results = read_notebook(output_notebook)
 
-    for key, value in expected_values.items():
-        assert results[key]["group_auc"] == pytest.approx(
-            value["group_auc"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["mean_mrr"] == pytest.approx(
-            value["mean_mrr"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@5"] == pytest.approx(
-            value["ndcg@5"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@10"] == pytest.approx(
-            value["ndcg@10"], rel=TOL, abs=ABS_TOL
-        )
+    assert results["group_auc"] == pytest.approx(
+        expected_values["group_auc"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["mean_mrr"] == pytest.approx(
+        expected_values["mean_mrr"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["ndcg@5"] == pytest.approx(
+        expected_values["ndcg@5"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["ndcg@10"] == pytest.approx(
+        expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
+    )
 
 
 @pytest.mark.gpu
@@ -356,12 +351,10 @@ def test_nrms_quickstart_functional(
             42,
             "demo",
             {
-                "res_syn": {
-                    "group_auc": 0.6436,
-                    "mean_mrr": 0.2990,
-                    "ndcg@5": 0.3297,
-                    "ndcg@10": 0.3933,
-                }
+                "group_auc": 0.6436,
+                "mean_mrr": 0.2990,
+                "ndcg@5": 0.3297,
+                "ndcg@10": 0.3933,
             },
         )
     ],
@@ -389,19 +382,18 @@ def test_naml_quickstart_functional(
     )
     results = read_notebook(output_notebook)
 
-    for key, value in expected_values.items():
-        assert results[key]["group_auc"] == pytest.approx(
-            value["group_auc"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["mean_mrr"] == pytest.approx(
-            value["mean_mrr"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@5"] == pytest.approx(
-            value["ndcg@5"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@10"] == pytest.approx(
-            value["ndcg@10"], rel=TOL, abs=ABS_TOL
-        )
+    assert results["group_auc"] == pytest.approx(
+        expected_values["group_auc"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["mean_mrr"] == pytest.approx(
+        expected_values["mean_mrr"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["ndcg@5"] == pytest.approx(
+        expected_values["ndcg@5"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["ndcg@10"] == pytest.approx(
+        expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
+    )
 
 
 @pytest.mark.gpu
@@ -415,12 +407,10 @@ def test_naml_quickstart_functional(
             42,
             "demo",
             {
-                "res_syn": {
-                    "group_auc": 0.6444,
-                    "mean_mrr": 0.2983,
-                    "ndcg@5": 0.3287,
-                    "ndcg@10": 0.3938,
-                }
+                "group_auc": 0.6444,
+                "mean_mrr": 0.2983,
+                "ndcg@5": 0.3287,
+                "ndcg@10": 0.3938,
             },
         )
     ],
@@ -448,19 +438,18 @@ def test_lstur_quickstart_functional(
     )
     results = read_notebook(output_notebook)
 
-    for key, value in expected_values.items():
-        assert results[key]["group_auc"] == pytest.approx(
-            value["group_auc"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["mean_mrr"] == pytest.approx(
-            value["mean_mrr"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@5"] == pytest.approx(
-            value["ndcg@5"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@10"] == pytest.approx(
-            value["ndcg@10"], rel=TOL, abs=ABS_TOL
-        )
+    assert results["group_auc"] == pytest.approx(
+        expected_values["group_auc"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["mean_mrr"] == pytest.approx(
+        expected_values["mean_mrr"], rel=TOL, abs=ABS_TOL
+    )
+    assert expected_values["ndcg@5"] == pytest.approx(
+        value["ndcg@5"], rel=TOL, abs=ABS_TOL
+    )
+    assert expected_values["ndcg@10"] == pytest.approx(
+        value["ndcg@10"], rel=TOL, abs=ABS_TOL
+    )
 
 
 @pytest.mark.gpu
@@ -474,12 +463,10 @@ def test_lstur_quickstart_functional(
             42,
             "demo",
             {
-                "res_syn": {
-                    "group_auc": 0.6035,
-                    "mean_mrr": 0.2765,
-                    "ndcg@5": 0.2977,
-                    "ndcg@10": 0.3637,
-                }
+                "group_auc": 0.6035,
+                "mean_mrr": 0.2765,
+                "ndcg@5": 0.2977,
+                "ndcg@10": 0.3637,
             },
         )
     ],
@@ -507,19 +494,18 @@ def test_npa_quickstart_functional(
     )
     results = read_notebook(output_notebook)
 
-    for key, value in expected_values.items():
-        assert results[key]["group_auc"] == pytest.approx(
-            value["group_auc"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["mean_mrr"] == pytest.approx(
-            value["mean_mrr"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@5"] == pytest.approx(
-            value["ndcg@5"], rel=TOL, abs=ABS_TOL
-        )
-        assert results[key]["ndcg@10"] == pytest.approx(
-            value["ndcg@10"], rel=TOL, abs=ABS_TOL
-        )
+    assert results["group_auc"] == pytest.approx(
+        expected_values["group_auc"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["mean_mrr"] == pytest.approx(
+        expected_values["mean_mrr"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["ndcg@5"] == pytest.approx(
+        expected_values["ndcg@5"], rel=TOL, abs=ABS_TOL
+    )
+    assert results["ndcg@10"] == pytest.approx(
+        expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
+    )
 
 
 @pytest.mark.gpu
@@ -589,10 +575,10 @@ def test_dkn_quickstart_functional(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["res"]["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
-    assert results["res"]["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
+    assert results["auc"] == pytest.approx(0.5651, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.1639, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@5"] == pytest.approx(0.1735, rel=TOL, abs=ABS_TOL)
+    assert results["ndcg@10"] == pytest.approx(0.2301, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.gpu
@@ -697,6 +683,7 @@ def test_benchmark_movielens_gpu(
         parameters=dict(data_sizes=size, algorithms=algos),
     )
     results = read_notebook(output_notebook)
+
     assert len(results["results"]) == 4
     for i, value in enumerate(results["results"]):
         assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
