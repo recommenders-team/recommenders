@@ -5,9 +5,7 @@
 import sys
 import pytest
 
-import recommenders
 from recommenders.utils.notebook_utils import execute_notebook, read_notebook
-
 
 TOL = 0.05
 ABS_TOL = 0.05
@@ -19,13 +17,14 @@ def test_template_runs(notebooks, output_notebook, kernel_name):
     execute_notebook(
         notebook_path,
         output_notebook,
-        parameters=dict(RECOMMENDERS_VERSION=recommenders.__version__),
+        parameters=dict(PM_VERSION=pm.__version__),
         kernel_name=kernel_name,
     )
-    results = read_notebook(output_notebook)
-
-    assert len(results) == 1
-    assert results["checked_version"]
+    nb = sb.read_notebook(output_notebook)
+    df = nb.papermill_dataframe
+    assert df.shape[0] == 2
+    check_version = df.loc[df["name"] == "checked_version", "value"].values[0]
+    assert check_version is True
 
 
 @pytest.mark.notebooks
@@ -83,7 +82,6 @@ def test_cornac_deep_dive_runs(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.experimental
-@pytest.mark.skip(reason="rlrmc doesn't work with any officially released pymanopt package")
 def test_rlrmc_quickstart_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["rlrmc_quickstart"]
     execute_notebook(

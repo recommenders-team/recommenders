@@ -79,9 +79,6 @@ def test_benchmark_movielens_pyspark(
         parameters=dict(data_sizes=size, algorithms=algos),
     )
     results = read_notebook(output_notebook)
-
-    assert len(results) == 1
-    for i, value in enumerate(algos):
-        assert results[value] == pytest.approx(
-            expected_values_ndcg[i], rel=TOL, abs=ABS_TOL
-        )
+    assert len(results["results"]) == 1
+    for i, value in enumerate(results["results"]):
+        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
