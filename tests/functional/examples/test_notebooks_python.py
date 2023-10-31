@@ -279,9 +279,10 @@ def test_benchmark_movielens_cpu(
         kernel_name=kernel_name,
         parameters=dict(data_sizes=size, algorithms=algos),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
-    assert len(results["results"]) == 3
-    for i, value in enumerate(results["results"]):
-        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+    results = read_notebook(output_notebook)
+
+    assert len(results) == 3
+    for i, value in enumerate(algos):
+        assert results[value] == pytest.approx(
+            expected_values_ndcg[i], rel=TOL, abs=ABS_TOL
+        )

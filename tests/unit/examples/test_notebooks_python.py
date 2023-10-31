@@ -24,7 +24,7 @@ def test_template_runs(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert len(results) == 2
+    assert len(results) == 1
     assert results["check_version"]
 
 

@@ -684,6 +684,8 @@ def test_benchmark_movielens_gpu(
     )
     results = read_notebook(output_notebook)
 
-    assert len(results["results"]) == 4
-    for i, value in enumerate(results["results"]):
-        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+    assert len(results) == 4
+    for i, value in enumerate(algos):
+        assert results[value] == pytest.approx(
+            expected_values_ndcg[i], rel=TOL, abs=ABS_TOL
+        )
