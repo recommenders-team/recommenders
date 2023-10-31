@@ -36,7 +36,7 @@ def test_is_jupyter(notebook_types, output_notebook, kernel_name):
     assert is_databricks() is False
 
     # Test on Jupyter notebook
-    pm.execute_notebook(
+    execute_notebook(
         notebook_types,
         output_notebook,
         kernel_name=kernel_name,
