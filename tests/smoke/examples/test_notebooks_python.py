@@ -110,14 +110,10 @@ def test_lightgbm_quickstart_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["res_basic"]["auc"] == pytest.approx(0.7674, rel=TOL, abs=ABS_TOL)
-    assert results["res_basic"]["logloss"] == pytest.approx(
-        0.4669, rel=TOL, abs=ABS_TOL
-    )
-    assert results["res_optim"]["auc"] == pytest.approx(0.7757, rel=TOL, abs=ABS_TOL)
-    assert results["res_optim"]["logloss"] == pytest.approx(
-        0.4607, rel=TOL, abs=ABS_TOL
-    )
+    assert results["auc_basic"] == pytest.approx(0.7674, rel=TOL, abs=ABS_TOL)
+    assert results["logloss_basic"] == pytest.approx(0.4669, rel=TOL, abs=ABS_TOL)
+    assert results["auc_opt"] == pytest.approx(0.7757, rel=TOL, abs=ABS_TOL)
+    assert results["logloss_opt"] == pytest.approx(0.4607, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
