@@ -4,13 +4,13 @@
 
 import sys
 import pytest
-import papermill as pm
 
 from recommenders.utils.constants import (
     DEFAULT_RATING_COL,
     DEFAULT_USER_COL,
     DEFAULT_ITEM_COL,
 )
+from recommenders.utils.notebook_utils import execute_notebook
 
 
 # This is a flaky test that can fail unexpectedly
@@ -22,7 +22,7 @@ from recommenders.utils.constants import (
 )
 def test_als_pyspark_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_pyspark"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -39,7 +39,7 @@ def test_als_pyspark_runs(notebooks, output_notebook, kernel_name):
 @pytest.mark.spark
 def test_data_split_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["data_split"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
 
 
 # This is a flaky test that can fail unexpectedly
@@ -51,7 +51,7 @@ def test_data_split_runs(notebooks, output_notebook, kernel_name):
 )
 def test_als_deep_dive_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -73,7 +73,7 @@ def test_als_deep_dive_runs(notebooks, output_notebook, kernel_name):
 )
 def test_evaluation_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["evaluation"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
 
 
 # This is a flaky test that can fail unexpectedly
@@ -82,7 +82,7 @@ def test_evaluation_runs(notebooks, output_notebook, kernel_name):
 @pytest.mark.spark
 def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["evaluation_diversity"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -105,7 +105,7 @@ def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
 )
 def test_spark_tuning(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["spark_tuning"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -125,7 +125,7 @@ def test_spark_tuning(notebooks, output_notebook, kernel_name):
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
 def test_mmlspark_lightgbm_criteo_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
