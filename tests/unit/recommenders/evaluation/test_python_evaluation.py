@@ -355,7 +355,7 @@ def test_python_precision_at_k(rating_true, rating_pred, rating_nohit):
     )
 
 
-def test_python_recall_at_k(rating_true, rating_pred, rating_nohit, target_metrics):
+def test_python_recall_at_k(rating_true, rating_pred, rating_nohit):
     assert recall_at_k(
         rating_true=rating_true,
         rating_pred=rating_true,
@@ -363,7 +363,7 @@ def test_python_recall_at_k(rating_true, rating_pred, rating_nohit, target_metri
         k=10,
     ) == pytest.approx(1, TOL)
     assert recall_at_k(rating_true, rating_nohit, k=10) == 0.0
-    assert recall_at_k(rating_true, rating_pred, k=10) == target_metrics["recall"]
+    assert recall_at_k(rating_true, rating_pred, k=10) == pytest.approx(0.37777, TOL)
 
 
 def test_python_auc(rating_true_binary, rating_pred_binary):
