@@ -8,6 +8,9 @@ from nbconvert.preprocessors import ExecutePreprocessor
 from IPython.display import display
 
 
+NOTEBOOK_OUTPUT_CONTENT_TYPE = "application/notebook_utils.json+json"
+
+
 def is_jupyter():
     """Check if the module is running on Jupyter notebook/console.
 
@@ -87,7 +90,7 @@ def execute_notebook(
                 for match in matches:
                     old_assignment = match.strip()
                     modified_cell_source = modified_cell_source.replace(
-                        old_assignment, f"{new_value}"
+                        old_assignment, str(new_value)
                     )
             # Update the cell's source within notebook_content
             cell.source = modified_cell_source
@@ -139,13 +142,13 @@ def read_notebook(path):
     with open(path, "r") as notebook_file:
         notebook_content = nbformat.read(notebook_file, as_version=4)
 
-    # Search for and replace parameter values in code cells
+    # Search for parameters and store them in a dictionary
     results = {}
     for cell in notebook_content.cells:
         if cell.cell_type == "code" and "outputs" in cell:
             for outputs in cell.outputs:
                 if "metadata" in outputs and "notebook_utils" in outputs.metadata:
-                    name = outputs.data["application/notebook_utils.json+json"]["name"]
-                    data = outputs.data["application/notebook_utils.json+json"]["data"]
+                    name = outputs.data[NOTEBOOK_OUTPUT_CONTENT_TYPE]["name"]
+                    data = outputs.data[NOTEBOOK_OUTPUT_CONTENT_TYPE]["data"]
                     results[name] = data
     return results
