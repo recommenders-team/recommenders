@@ -54,6 +54,7 @@ def test_is_databricks():
 
 @pytest.mark.notebooks
 def test_notebook_execution(notebook_programmatic, output_notebook, kernel_name):
+    """Test that the notebook executes and returns the correct results without params."""
     execute_notebook(
         notebook_programmatic,
         output_notebook,
@@ -68,6 +69,7 @@ def test_notebook_execution(notebook_programmatic, output_notebook, kernel_name)
 
 @pytest.mark.notebooks
 def test_notebook_execution_int(notebook_programmatic, output_notebook, kernel_name):
+    """Test that the notebook executes and returns the correct results with integers."""
     execute_notebook(
         notebook_programmatic,
         output_notebook,
@@ -81,6 +83,7 @@ def test_notebook_execution_int(notebook_programmatic, output_notebook, kernel_n
 
 @pytest.mark.notebooks
 def test_notebook_execution_float(notebook_programmatic, output_notebook, kernel_name):
+    """Test that the notebook executes and returns the correct results with floats."""
     execute_notebook(
         notebook_programmatic,
         output_notebook,
@@ -94,6 +97,7 @@ def test_notebook_execution_float(notebook_programmatic, output_notebook, kernel
 
 @pytest.mark.notebooks
 def test_notebook_execution_letter(notebook_programmatic, output_notebook, kernel_name):
+    """Test that the notebook executes and returns the correct results with a string."""
     execute_notebook(
         notebook_programmatic,
         output_notebook,
@@ -109,6 +113,7 @@ def test_notebook_execution_letter(notebook_programmatic, output_notebook, kerne
 def test_notebook_execution_other_letter(
     notebook_programmatic, output_notebook, kernel_name
 ):
+    """Test that the notebook executes and returns the correct results with a different string."""
     execute_notebook(
         notebook_programmatic,
         output_notebook,
@@ -124,6 +129,7 @@ def test_notebook_execution_other_letter(
 def test_notebook_execution_value_error_fails(
     notebook_programmatic, output_notebook, kernel_name
 ):
+    """Test that the notebook fails with a value error."""
     with pytest.raises(nbclient.exceptions.CellExecutionError):
         execute_notebook(
             notebook_programmatic,
@@ -137,6 +143,7 @@ def test_notebook_execution_value_error_fails(
 def test_notebook_execution_int_with_comment(
     notebook_programmatic, output_notebook, kernel_name
 ):
+    """Test that the notebook executes and returns the correct results with integers and a comment."""
     execute_notebook(
         notebook_programmatic,
         output_notebook,
