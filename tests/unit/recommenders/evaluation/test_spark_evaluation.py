@@ -12,12 +12,12 @@ from recommenders.evaluation.python_evaluation import (
     recall_at_k,
     ndcg_at_k,
     map_at_k,
+    map,
 )
 
 try:
-    from pyspark.sql import Row
-    from pyspark.ml.linalg import Vectors, VectorUDT
-    from pyspark.sql.types import StructField, StructType, IntegerType
+    from pyspark.ml.functions import array_to_vector
+    from pyspark.sql.types import ArrayType, FloatType, IntegerType, StructField, StructType
     from recommenders.evaluation.spark_evaluation import (
         SparkDiversityEvaluation,
         SparkRankingEvaluation,
@@ -30,161 +30,29 @@ except ImportError:
 TOL = 0.0001
 
 
-@pytest.fixture(scope="module")
-def target_metrics():
-    return {
-        "rmse": pytest.approx(7.254309, TOL),
-        "mae": pytest.approx(6.375, TOL),
-        "rsquared": pytest.approx(-31.699029, TOL),
-        "exp_var": pytest.approx(-6.4466, 0.01),
-        "ndcg": pytest.approx(0.38172, TOL),
-        "precision": pytest.approx(0.26666, TOL),
-        "map": pytest.approx(0.23613, TOL),
-        "recall": pytest.approx(0.37777, TOL),
-        "c_coverage": pytest.approx(0.8, TOL),
-        "d_coverage": pytest.approx(1.9183, TOL),
-        "item_novelty": pd.DataFrame(
-            dict(ItemId=[1, 2, 3, 4, 5], item_novelty=[3.0, 3.0, 2.0, 1.41504, 3.0])
-        ),
-        "novelty": pytest.approx(2.83333, TOL),
-        # diversity when using item co-occurrence count to calculate item similarity
-        "diversity": pytest.approx(0.43096, TOL),
-        "user_diversity": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
-        ),
-        # diversity values when using item features to calculate item similarity
-        "diversity_item_feature_vector": pytest.approx(0.5000, TOL),
-        "user_diversity_item_feature_vector": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_diversity=[0.5000, 0.5000, 0.5000])
-        ),
-        "user_item_serendipity": pd.DataFrame(
-            dict(
-                UserId=[1, 1, 2, 2, 3, 3],
-                ItemId=[3, 5, 2, 5, 1, 2],
-                user_item_serendipity=[
-                    0.72783,
-                    0.0,
-                    0.71132,
-                    0.35777,
-                    0.80755,
-                    0.0,
-                ],
-            )
-        ),
-        "user_serendipity": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_serendipity=[0.363915, 0.53455, 0.403775])
-        ),
-        "serendipity": pytest.approx(0.43408, TOL),
-        # serendipity values when using item features to calculate item similarity
-        "user_item_serendipity_item_feature_vector": pd.DataFrame(
-            dict(
-                UserId=[1, 1, 2, 2, 3, 3],
-                ItemId=[3, 5, 2, 5, 1, 2],
-                user_item_serendipity=[
-                    0.5000,
-                    0.0,
-                    0.75,
-                    0.5000,
-                    0.6667,
-                    0.0,
-                ],
-            )
-        ),
-        "user_serendipity_item_feature_vector": pd.DataFrame(
-            dict(UserId=[1, 2, 3], user_serendipity=[0.2500, 0.625, 0.3333])
-        ),
-        "serendipity_item_feature_vector": pytest.approx(0.4028, TOL),
-    }
-
-
-@pytest.fixture(scope="module")
-def python_data():
-    rating_true = pd.DataFrame(
-        {
-            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            "itemID": [1, 2, 3, 1, 4, 5, 6, 7, 2, 5, 6, 8, 9, 10, 11, 12, 13, 14],
-            "rating": [5, 4, 3, 5, 5, 3, 3, 1, 5, 5, 5, 4, 4, 3, 3, 3, 2, 1],
-        }
-    )
-    rating_pred = pd.DataFrame(
-        {
-            "userID": [1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-            "itemID": [3, 10, 12, 10, 3, 5, 11, 13, 4, 10, 7, 13, 1, 3, 5, 2, 11, 14],
-            "prediction": [
-                14,
-                13,
-                12,
-                14,
-                13,
-                12,
-                11,
-                10,
-                14,
-                13,
-                12,
-                11,
-                10,
-                9,
-                8,
-                7,
-                6,
-                5,
-            ],
-        }
-    )
-    return rating_true, rating_pred
-
-
-@pytest.fixture(scope="module")
-def spark_data(python_data, spark):
-    rating_true, rating_pred = python_data
-
+@pytest.fixture
+def spark_data(rating_true, rating_pred, spark):
     df_true = spark.createDataFrame(rating_true)
     df_pred = spark.createDataFrame(rating_pred)
 
     return df_true, df_pred
 
 
-@pytest.fixture(scope="module")
-def spark_diversity_data(spark):
-    train_df = spark.createDataFrame(
-        [
-            Row(UserId=1, ItemId=1),
-            Row(UserId=1, ItemId=2),
-            Row(UserId=1, ItemId=4),
-            Row(UserId=2, ItemId=3),
-            Row(UserId=2, ItemId=4),
-            Row(UserId=3, ItemId=3),
-            Row(UserId=3, ItemId=4),
-            Row(UserId=3, ItemId=5),
-        ]
-    )
-    reco_df = spark.createDataFrame(
-        [
-            Row(UserId=1, ItemId=3, Relevance=1),
-            Row(UserId=1, ItemId=5, Relevance=0),
-            Row(UserId=2, ItemId=2, Relevance=1),
-            Row(UserId=2, ItemId=5, Relevance=1),
-            Row(UserId=3, ItemId=1, Relevance=1),
-            Row(UserId=3, ItemId=2, Relevance=0),
-        ]
-    )
-
+@pytest.fixture
+def spark_diversity_data(diversity_data, spark):
+    train_df, reco_df, item_feature_df = diversity_data
+    
+    train_df = spark.createDataFrame(train_df)
+    reco_df = spark.createDataFrame(reco_df)
+    item_feature_df["features"] = item_feature_df["features"].apply(lambda x: x.tolist())
     field = [
         StructField("ItemId", IntegerType(), True),
-        StructField("features", VectorUDT(), True),
+        StructField("features", ArrayType(FloatType()), True),
     ]
-    schema = StructType(field)
-    item_feature_df = spark.createDataFrame(
-        [
-            Row(ItemId=1, features=Vectors.sparse(5, [1, 2], [1.0, 1.0])),
-            Row(ItemId=2, features=Vectors.sparse(5, [1, 3], [1.0, 1.0])),
-            Row(ItemId=3, features=Vectors.sparse(5, [2, 3], [1.0, 1.0])),
-            Row(ItemId=4, features=Vectors.sparse(5, [2, 4], [1.0, 1.0])),
-            Row(ItemId=5, features=Vectors.sparse(5, [3, 4], [1.0, 1.0])),
-        ],
-        schema,
-    )
+    item_feature_df = spark.createDataFrame(item_feature_df, schema=StructType(field))
+    # Array[Float] to VectorUDT
+    item_feature_df = item_feature_df.withColumn("features", array_to_vector(item_feature_df["features"]))
+
     return train_df, reco_df, item_feature_df
 
 
@@ -201,83 +69,83 @@ def test_init_spark_rating_eval(spark_data):
 
 
 @pytest.mark.spark
-def test_spark_rmse(spark_data, target_metrics):
+def test_spark_rmse(spark_data):
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
-    assert evaluator1.rmse() == 0
+    evaluator = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
+    assert evaluator.rmse() == 0
 
-    evaluator2 = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator2.rmse() == target_metrics["rmse"]
+    evaluator = SparkRatingEvaluation(df_true, df_pred)
+    assert evaluator.rmse() == pytest.approx(7.254309, TOL)
 
 
 @pytest.mark.spark
-def test_spark_mae(spark_data, target_metrics):
+def test_spark_mae(spark_data):
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
-    assert evaluator1.mae() == 0
+    evaluator = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
+    assert evaluator.mae() == 0
 
-    evaluator2 = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator2.mae() == target_metrics["mae"]
+    evaluator = SparkRatingEvaluation(df_true, df_pred)
+    assert evaluator.mae() == pytest.approx(6.375, TOL)
 
 
 @pytest.mark.spark
-def test_spark_rsquared(spark_data, target_metrics):
+def test_spark_rsquared(spark_data):
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
-    assert evaluator1.rsquared() == pytest.approx(1.0, TOL)
+    evaluator = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
+    assert evaluator.rsquared() == pytest.approx(1.0, TOL)
 
-    evaluator2 = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator2.rsquared() == target_metrics["rsquared"]
+    evaluator = SparkRatingEvaluation(df_true, df_pred)
+    assert evaluator.rsquared() == pytest.approx(-31.699029, TOL)
 
 
 @pytest.mark.spark
-def test_spark_exp_var(spark_data, target_metrics):
+def test_spark_exp_var(spark_data):
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
-    assert evaluator1.exp_var() == pytest.approx(1.0, TOL)
+    evaluator = SparkRatingEvaluation(df_true, df_true, col_prediction="rating")
+    assert evaluator.exp_var() == pytest.approx(1.0, TOL)
 
-    evaluator2 = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator2.exp_var() == target_metrics["exp_var"]
+    evaluator = SparkRatingEvaluation(df_true, df_pred)
+    assert evaluator.exp_var() == pytest.approx(-6.4466, 0.01)
 
 
 @pytest.mark.spark
-def test_spark_recall(spark_data, target_metrics):
+def test_spark_recall_at_k(spark_data):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred)
-    assert evaluator.recall_at_k() == target_metrics["recall"]
+    assert evaluator.recall_at_k() == pytest.approx(0.37777, TOL)
 
-    evaluator1 = SparkRankingEvaluation(
+    evaluator = SparkRankingEvaluation(
         df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
-    assert evaluator1.recall_at_k() == target_metrics["recall"]
+    assert evaluator.recall_at_k() == pytest.approx(0.37777, TOL)
 
 
 @pytest.mark.spark
-def test_spark_precision(spark_data, target_metrics, spark):
+def test_spark_precision_at_k(spark_data, spark):
     df_true, df_pred = spark_data
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
-    assert evaluator.precision_at_k() == target_metrics["precision"]
+    assert evaluator.precision_at_k() == pytest.approx(0.26666, TOL)
 
-    evaluator1 = SparkRankingEvaluation(
+    evaluator = SparkRankingEvaluation(
         df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
-    assert evaluator1.precision_at_k() == target_metrics["precision"]
+    assert evaluator.precision_at_k() == pytest.approx(0.26666, TOL)
 
     # Check normalization
     single_user = pd.DataFrame(
         {"userID": [1, 1, 1], "itemID": [1, 2, 3], "rating": [5, 4, 3]}
     )
     df_single = spark.createDataFrame(single_user)
-    evaluator2 = SparkRankingEvaluation(
+    evaluator = SparkRankingEvaluation(
         df_single, df_single, k=3, col_prediction="rating"
     )
-    assert evaluator2.precision_at_k() == 1
+    assert evaluator.precision_at_k() == 1
 
     same_items = pd.DataFrame(
         {
@@ -287,162 +155,138 @@ def test_spark_precision(spark_data, target_metrics, spark):
         }
     )
     df_same = spark.createDataFrame(same_items)
-    evaluator3 = SparkRankingEvaluation(df_same, df_same, k=3, col_prediction="rating")
-    assert evaluator3.precision_at_k() == 1
+    evaluator = SparkRankingEvaluation(df_same, df_same, k=3, col_prediction="rating")
+    assert evaluator.precision_at_k() == 1
 
     # Check that if the sample size is smaller than k, the maximum precision can not be 1
     # if we do precision@5 when there is only 3 items, we can get a maximum of 3/5.
-    evaluator4 = SparkRankingEvaluation(df_same, df_same, k=5, col_prediction="rating")
-    assert evaluator4.precision_at_k() == 0.6
+    evaluator = SparkRankingEvaluation(df_same, df_same, k=5, col_prediction="rating")
+    assert evaluator.precision_at_k() == 0.6
 
 
 @pytest.mark.spark
-def test_spark_ndcg(spark_data, target_metrics):
+def test_spark_ndcg_at_k(spark_data):
     df_true, df_pred = spark_data
 
-    evaluator0 = SparkRankingEvaluation(df_true, df_true, k=10, col_prediction="rating")
-    assert evaluator0.ndcg_at_k() == 1.0
+    evaluator = SparkRankingEvaluation(df_true, df_true, k=10, col_prediction="rating")
+    assert evaluator.ndcg_at_k() == 1.0
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
-    assert evaluator.ndcg_at_k() == target_metrics["ndcg"]
+    assert evaluator.ndcg_at_k() == pytest.approx(0.38172, TOL)
 
-    evaluator1 = SparkRankingEvaluation(
+    evaluator = SparkRankingEvaluation(
         df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
-    assert evaluator1.ndcg_at_k() == target_metrics["ndcg"]
+    assert evaluator.ndcg_at_k() == pytest.approx(0.38172, TOL)
 
 
 @pytest.mark.spark
-def test_spark_map(spark_data, target_metrics):
+def test_spark_map(spark_data):
     df_true, df_pred = spark_data
 
-    evaluator1 = SparkRankingEvaluation(
-        k=10, rating_true=df_true, rating_pred=df_true, col_prediction="rating"
-    )
-    assert evaluator1.map_at_k() == 1.0
+    evaluator = SparkRankingEvaluation(df_true, df_true, k=10, col_prediction="rating")
+    assert evaluator.map() == 1.0
 
     evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
-    assert evaluator.map_at_k() == target_metrics["map"]
+    assert evaluator.map() == pytest.approx(0.23613, TOL)
 
-    evaluator1 = SparkRankingEvaluation(
+    evaluator = SparkRankingEvaluation(
         df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
     )
-    assert evaluator1.map_at_k() == target_metrics["map"]
+    assert evaluator.map() == pytest.approx(0.23613, TOL)
 
 
 @pytest.mark.spark
-def test_spark_python_match(python_data, spark):
+def test_spark_map_at_k(spark_data):
+    df_true, df_pred = spark_data
+
+    evaluator = SparkRankingEvaluation(df_true, df_true, k=10, col_prediction="rating")
+    assert evaluator.map_at_k() == 1.0
+
+    evaluator = SparkRankingEvaluation(df_true, df_pred, k=10)
+    assert evaluator.map_at_k() == pytest.approx(0.23613, TOL)
+
+    evaluator = SparkRankingEvaluation(
+        df_true, df_pred, relevancy_method="by_threshold", threshold=3.5
+    )
+    assert evaluator.map_at_k() == pytest.approx(0.23613, TOL)
+
+
+@pytest.mark.spark
+@pytest.mark.parametrize(
+    "k,pred_start_row_i,user_id",
+    [
+        (10, 0, None),
+        (3, 0, None),   # Different k
+        (10, 0, None),  # Different pred
+        (10, 0, 3),     # Test with one user (userID == 3)
+    ]
+)
+def test_spark_python_match(rating_true, rating_pred, spark, k, pred_start_row_i, user_id):
+    df_true, df_pred = rating_true, rating_pred
+    df_pred = df_pred[pred_start_row_i:]
+    if user_id is not None:
+        df_pred = df_pred.loc[df_pred["userID"] == 3]
+        df_true = df_true.loc[df_true["userID"] == 3]
+
+    dfs_true = spark.createDataFrame(df_true)
+    dfs_pred = spark.createDataFrame(df_pred)
+
     # Test on the original data with k = 10.
-    df_true, df_pred = python_data
+    evaluator = SparkRankingEvaluation(dfs_true, dfs_pred, k=k)
 
-    dfs_true = spark.createDataFrame(df_true)
-    dfs_pred = spark.createDataFrame(df_pred)
-
-    eval_spark1 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
-
-    assert recall_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark1.recall_at_k(), TOL
+    assert recall_at_k(df_true, df_pred, k=k) == pytest.approx(
+        evaluator.recall_at_k(), TOL
     )
-    assert precision_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark1.precision_at_k(), TOL
+    assert precision_at_k(df_true, df_pred, k=k) == pytest.approx(
+        evaluator.precision_at_k(), TOL
     )
-    assert ndcg_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark1.ndcg_at_k(), TOL
+    assert ndcg_at_k(df_true, df_pred, k=k) == pytest.approx(
+        evaluator.ndcg_at_k(), TOL
     )
-    assert map_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark1.map_at_k(), TOL
+    assert map_at_k(df_true, df_pred, k=k) == pytest.approx(
+        evaluator.map_at_k(), TOL
     )
-
-    # Test on the original data with k = 3.
-    dfs_true = spark.createDataFrame(df_true)
-    dfs_pred = spark.createDataFrame(df_pred)
-
-    eval_spark2 = SparkRankingEvaluation(dfs_true, dfs_pred, k=3)
-
-    assert recall_at_k(df_true, df_pred, k=3) == pytest.approx(
-        eval_spark2.recall_at_k(), TOL
-    )
-    assert precision_at_k(df_true, df_pred, k=3) == pytest.approx(
-        eval_spark2.precision_at_k(), TOL
-    )
-    assert ndcg_at_k(df_true, df_pred, k=3) == pytest.approx(
-        eval_spark2.ndcg_at_k(), TOL
-    )
-    assert map_at_k(df_true, df_pred, k=3) == pytest.approx(eval_spark2.map_at_k(), TOL)
-
-    # Remove the first row from the original data.
-    df_pred = df_pred[1:-1]
-
-    dfs_true = spark.createDataFrame(df_true)
-    dfs_pred = spark.createDataFrame(df_pred)
-
-    eval_spark3 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
-
-    assert recall_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark3.recall_at_k(), TOL
-    )
-    assert precision_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark3.precision_at_k(), TOL
-    )
-    assert ndcg_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark3.ndcg_at_k(), TOL
-    )
-    assert map_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark3.map_at_k(), TOL
-    )
-
-    # Test with one user
-    df_pred = df_pred.loc[df_pred["userID"] == 3]
-    df_true = df_true.loc[df_true["userID"] == 3]
-
-    dfs_true = spark.createDataFrame(df_true)
-    dfs_pred = spark.createDataFrame(df_pred)
-
-    eval_spark4 = SparkRankingEvaluation(dfs_true, dfs_pred, k=10)
-
-    assert recall_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark4.recall_at_k(), TOL
-    )
-    assert precision_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark4.precision_at_k(), TOL
-    )
-    assert ndcg_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark4.ndcg_at_k(), TOL
-    )
-    assert map_at_k(df_true, df_pred, k=10) == pytest.approx(
-        eval_spark4.map_at_k(), TOL
+    assert map(df_true, df_pred, k=k) == pytest.approx(
+        evaluator.map(), TOL
     )
 
 
 @pytest.mark.spark
-def test_catalog_coverage(spark_diversity_data, target_metrics):
+def test_catalog_coverage(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     c_coverage = evaluator.catalog_coverage()
-    assert c_coverage == target_metrics["c_coverage"]
+    assert c_coverage == pytest.approx(0.8, TOL)
 
 
 @pytest.mark.spark
-def test_distributional_coverage(spark_diversity_data, target_metrics):
+def test_distributional_coverage(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     d_coverage = evaluator.distributional_coverage()
-    assert d_coverage == target_metrics["d_coverage"]
+    assert d_coverage == pytest.approx(1.9183, TOL)
 
 
 @pytest.mark.spark
-def test_item_novelty(spark_diversity_data, target_metrics):
+def test_item_novelty(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
+
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     actual = evaluator.historical_item_novelty().toPandas()
     assert_frame_equal(
-        target_metrics["item_novelty"], actual, check_exact=False, check_less_precise=4
+        pd.DataFrame(
+            dict(ItemId=[1, 2, 3, 4, 5], item_novelty=[3.0, 3.0, 2.0, 1.41504, 3.0])
+        ),
+        actual,
+        check_exact=False,
+        atol=TOL,
     )
     assert np.all(actual["item_novelty"].values >= 0)
     # Test that novelty is zero when data includes only one item
@@ -455,14 +299,13 @@ def test_item_novelty(spark_diversity_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_novelty(spark_diversity_data, target_metrics):
+def test_novelty(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    novelty = evaluator.novelty()
-    assert target_metrics["novelty"] == novelty
-    assert novelty >= 0
+    assert evaluator.novelty() == pytest.approx(2.83333, TOL)
+
     # Test that novelty is zero when data includes only one item
     train_df_new = train_df.filter("ItemId == 3")
     reco_df_new = reco_df.filter("ItemId == 3")
@@ -473,31 +316,33 @@ def test_novelty(spark_diversity_data, target_metrics):
 
 
 @pytest.mark.spark
-def test_user_diversity(spark_diversity_data, target_metrics):
+def test_user_diversity(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
     actual = evaluator.user_diversity().toPandas()
     assert_frame_equal(
-        target_metrics["user_diversity"],
+        pd.DataFrame(
+            dict(UserId=[1, 2, 3], user_diversity=[0.29289, 1.0, 0.0])
+        ),
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
 @pytest.mark.spark
-def test_diversity(spark_diversity_data, target_metrics):
+def test_diversity(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df, reco_df=reco_df, col_user="UserId", col_item="ItemId"
     )
-    assert target_metrics["diversity"] == evaluator.diversity()
+    assert evaluator.diversity() == pytest.approx(0.43096, TOL)
 
 
 @pytest.mark.spark
-def test_user_item_serendipity(spark_diversity_data, target_metrics):
+def test_user_item_serendipity(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
@@ -508,15 +353,28 @@ def test_user_item_serendipity(spark_diversity_data, target_metrics):
     )
     actual = evaluator.user_item_serendipity().toPandas()
     assert_frame_equal(
-        target_metrics["user_item_serendipity"],
+        pd.DataFrame(
+            dict(
+                UserId=[1, 1, 2, 2, 3, 3],
+                ItemId=[3, 5, 2, 5, 1, 2],
+                user_item_serendipity=[
+                    0.72783,
+                    0.0,
+                    0.71132,
+                    0.35777,
+                    0.80755,
+                    0.0,
+                ],
+            )
+        ),
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
 @pytest.mark.spark
-def test_user_serendipity(spark_diversity_data, target_metrics):
+def test_user_serendipity(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
@@ -527,15 +385,17 @@ def test_user_serendipity(spark_diversity_data, target_metrics):
     )
     actual = evaluator.user_serendipity().toPandas()
     assert_frame_equal(
-        target_metrics["user_serendipity"],
+        pd.DataFrame(
+            dict(UserId=[1, 2, 3], user_serendipity=[0.363915, 0.53455, 0.403775])
+        ),
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
 @pytest.mark.spark
-def test_serendipity(spark_diversity_data, target_metrics):
+def test_serendipity(spark_diversity_data):
     train_df, reco_df, _ = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
@@ -544,11 +404,11 @@ def test_serendipity(spark_diversity_data, target_metrics):
         col_item="ItemId",
         col_relevance="Relevance",
     )
-    assert target_metrics["serendipity"] == evaluator.serendipity()
+    assert evaluator.serendipity() == pytest.approx(0.43408, TOL)
 
 
 @pytest.mark.spark
-def test_user_diversity_item_feature_vector(spark_diversity_data, target_metrics):
+def test_user_diversity_item_feature_vector(spark_diversity_data):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
@@ -560,15 +420,17 @@ def test_user_diversity_item_feature_vector(spark_diversity_data, target_metrics
     )
     actual = evaluator.user_diversity().toPandas()
     assert_frame_equal(
-        target_metrics["user_diversity_item_feature_vector"],
+        pd.DataFrame(
+            dict(UserId=[1, 2, 3], user_diversity=[0.5000, 0.5000, 0.5000])
+        ),
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
 @pytest.mark.spark
-def test_diversity_item_feature_vector(spark_diversity_data, target_metrics):
+def test_diversity_item_feature_vector(spark_diversity_data):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
@@ -578,12 +440,12 @@ def test_diversity_item_feature_vector(spark_diversity_data, target_metrics):
         col_user="UserId",
         col_item="ItemId",
     )
-    assert target_metrics["diversity_item_feature_vector"] == evaluator.diversity()
+    assert evaluator.diversity() == pytest.approx(0.5000, TOL)
 
 
 @pytest.mark.spark
 def test_user_item_serendipity_item_feature_vector(
-    spark_diversity_data, target_metrics
+    spark_diversity_data,
 ):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
@@ -597,15 +459,28 @@ def test_user_item_serendipity_item_feature_vector(
     )
     actual = evaluator.user_item_serendipity().toPandas()
     assert_frame_equal(
-        target_metrics["user_item_serendipity_item_feature_vector"],
+        pd.DataFrame(
+            dict(
+                UserId=[1, 1, 2, 2, 3, 3],
+                ItemId=[3, 5, 2, 5, 1, 2],
+                user_item_serendipity=[
+                    0.5000,
+                    0.0,
+                    0.75,
+                    0.5000,
+                    0.6667,
+                    0.0,
+                ],
+            )
+        ),
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
 @pytest.mark.spark
-def test_user_serendipity_item_feature_vector(spark_diversity_data, target_metrics):
+def test_user_serendipity_item_feature_vector(spark_diversity_data):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
@@ -618,15 +493,17 @@ def test_user_serendipity_item_feature_vector(spark_diversity_data, target_metri
     )
     actual = evaluator.user_serendipity().toPandas()
     assert_frame_equal(
-        target_metrics["user_serendipity_item_feature_vector"],
+        pd.DataFrame(
+            dict(UserId=[1, 2, 3], user_serendipity=[0.2500, 0.625, 0.3333])
+        ),
         actual,
         check_exact=False,
-        check_less_precise=4,
+        atol=TOL,
     )
 
 
 @pytest.mark.spark
-def test_serendipity_item_feature_vector(spark_diversity_data, target_metrics):
+def test_serendipity_item_feature_vector(spark_diversity_data):
     train_df, reco_df, item_feature_df = spark_diversity_data
     evaluator = SparkDiversityEvaluation(
         train_df=train_df,
@@ -637,4 +514,4 @@ def test_serendipity_item_feature_vector(spark_diversity_data, target_metrics):
         col_item="ItemId",
         col_relevance="Relevance",
     )
-    assert target_metrics["serendipity_item_feature_vector"] == evaluator.serendipity()
+    assert evaluator.serendipity() == pytest.approx(0.4028, TOL)
