@@ -84,7 +84,8 @@ def execute_notebook(
                     new_value = f'"{new_value}"'
                 # Define a regular expression pattern to match parameter assignments and ignore comments
                 pattern = re.compile(
-                    rf"\b{param}\s*=\s*([^#\n]+)(?:#.*$)?", re.MULTILINE
+                    # rf"\b{param}\s*=\s*([^#\n]+)(?:#.*$)?", re.MULTILINE
+                    rf"\b{param}\s*=\s*([^\n]+)\b"
                 )
                 matches = re.findall(pattern, cell_source)
                 for match in matches:
