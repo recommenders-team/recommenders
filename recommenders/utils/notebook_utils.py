@@ -79,13 +79,21 @@ def execute_notebook(
                 cell_source  # Initialize a variable to hold the modified source
             )
             for param, new_value in parameters.items():
-                # Check if the new value is a string and surround it with quotes if necessary
-                if isinstance(new_value, str):
+                if (
+                    isinstance(new_value, str)
+                    and not (new_value.startswith('"') and new_value.endswith('"'))
+                    and not (new_value.startswith("'") and new_value.endswith("'"))
+                ):
+                    # Check if the new value is a string and surround it with quotes if necessary
                     new_value = f'"{new_value}"'
+                # # Check if the new value is a string and surround it with quotes if necessary
+                # if isinstance(new_value, str):
+                #     new_value = f'"{new_value}"'
                 # Define a regular expression pattern to match parameter assignments and ignore comments
                 pattern = re.compile(
-                    # rf"\b{param}\s*=\s*([^#\n]+)(?:#.*$)?", re.MULTILINE
-                    rf"\b{param}\s*=\s*([^\n]+)\b"
+                    rf"\b{param}\s*=\s*([^#\n]+)(?:#.*$)?",
+                    re.MULTILINE
+                    # rf"\b{param}\s*=\s*([^\n]+)\b"
                 )
                 matches = re.findall(pattern, cell_source)
                 for match in matches:
