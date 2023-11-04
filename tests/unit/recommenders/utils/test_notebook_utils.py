@@ -126,6 +126,22 @@ def test_notebook_execution_other_letter(
 
 
 @pytest.mark.notebooks
+def test_notebook_execution_letter_and_number(
+    notebook_programmatic, output_notebook, kernel_name
+):
+    """Test that the notebook executes and returns the correct results with string that has a number."""
+    execute_notebook(
+        notebook_programmatic,
+        output_notebook,
+        kernel_name=kernel_name,
+        parameters=dict(b="100k"),
+    )
+
+    results = read_notebook(output_notebook)
+    assert results["response2"] == "100k"
+
+
+@pytest.mark.notebooks
 def test_notebook_execution_value_error_fails(
     notebook_programmatic, output_notebook, kernel_name
 ):
