@@ -37,7 +37,7 @@ from recommenders.models.surprise.surprise_utils import (
 )
 from recommenders.models.cornac.cornac_utils import predict_ranking
 from recommenders.evaluation.python_evaluation import (
-    map_at_k,
+    map,
     ndcg_at_k,
     precision_at_k,
     recall_at_k,
@@ -387,7 +387,7 @@ def ranking_metrics_pyspark(test, predictions, k=DEFAULT_K):
         test, predictions, k=k, relevancy_method="top_k", **COL_DICT
     )
     return {
-        "MAP": rank_eval.map_at_k(),
+        "MAP": rank_eval.map(),
         "nDCG@k": rank_eval.ndcg_at_k(),
         "Precision@k": rank_eval.precision_at_k(),
         "Recall@k": rank_eval.recall_at_k(),
@@ -405,7 +405,7 @@ def rating_metrics_python(test, predictions):
 
 def ranking_metrics_python(test, predictions, k=DEFAULT_K):
     return {
-        "MAP": map_at_k(test, predictions, k=k, **COL_DICT),
+        "MAP": map(test, predictions, k=k, **COL_DICT),
         "nDCG@k": ndcg_at_k(test, predictions, k=k, **COL_DICT),
         "Precision@k": precision_at_k(test, predictions, k=k, **COL_DICT),
         "Recall@k": recall_at_k(test, predictions, k=k, **COL_DICT),
