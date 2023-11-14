@@ -91,16 +91,12 @@ def execute_notebook(
                 #     new_value = f'"{new_value}"'
                 # Define a regular expression pattern to match parameter assignments and ignore comments
                 pattern = re.compile(
-                    rf"\b{param}\s*=\s*([^#\n]+)(?:#.*$)?",
+                    rf"(\b{param})\s*=\s*([^#\n]+)(?:#.*$)?",
                     re.MULTILINE
                     # rf"\b{param}\s*=\s*([^\n]+)\b"
                 )
-                matches = re.findall(pattern, cell_source)
-                for match in matches:
-                    old_assignment = match.strip()
-                    modified_cell_source = modified_cell_source.replace(
-                        old_assignment, str(new_value)
-                    )
+                modified_cell_source = pattern.sub(rf"\1 = {new_value}", cell_source)
+
             # Update the cell's source within notebook_content
             cell.source = modified_cell_source
 
