@@ -4,9 +4,9 @@
 
 import os
 import pytest
-import papermill as pm
 
 from recommenders.utils.gpu_utils import get_number_gpus
+from recommenders.utils.notebook_utils import execute_notebook
 
 
 @pytest.mark.notebooks
@@ -19,7 +19,7 @@ def test_gpu_vm():
 @pytest.mark.gpu
 def test_fastai(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["fastai"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -31,7 +31,7 @@ def test_fastai(notebooks, output_notebook, kernel_name):
 @pytest.mark.gpu
 def test_ncf(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["ncf"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -45,7 +45,7 @@ def test_ncf(notebooks, output_notebook, kernel_name):
 @pytest.mark.gpu
 def test_ncf_deep_dive(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["ncf_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -59,7 +59,7 @@ def test_ncf_deep_dive(notebooks, output_notebook, kernel_name):
 @pytest.mark.gpu
 def test_xdeepfm(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xdeepfm_quickstart"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -89,7 +89,7 @@ def test_wide_deep(notebooks, output_notebook, kernel_name, tmp):
         "RATING_METRICS": ["rmse"],
         "RANKING_METRICS": ["ndcg_at_k"],
     }
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
 
@@ -106,7 +106,7 @@ def test_wide_deep(notebooks, output_notebook, kernel_name, tmp):
         "RATING_METRICS": ["rsquared"],
         "RANKING_METRICS": ["map_at_k"],
     }
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path, output_notebook, kernel_name=kernel_name, parameters=params
     )
 
@@ -115,7 +115,7 @@ def test_wide_deep(notebooks, output_notebook, kernel_name, tmp):
 @pytest.mark.gpu
 def test_dkn_quickstart(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["dkn_quickstart"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,

@@ -4,8 +4,9 @@
 import os
 import sys
 import pytest
-import papermill as pm
-import scrapbook as sb
+
+from recommenders.utils.notebook_utils import execute_notebook, read_notebook
+
 
 TOL = 0.05
 ABS_TOL = 0.05
@@ -17,15 +18,13 @@ ABS_TOL = 0.05
 @pytest.mark.notebooks
 def test_als_pyspark_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["als_pyspark"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="1m"),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     assert results["map"] == pytest.approx(0.00201, rel=TOL, abs=ABS_TOL)
     assert results["ndcg"] == pytest.approx(0.02516, rel=TOL, abs=ABS_TOL)
@@ -45,15 +44,13 @@ def test_als_pyspark_functional(notebooks, output_notebook, kernel_name):
 @pytest.mark.skipif(sys.platform == "win32", reason="Not implemented on Windows")
 def test_mmlspark_lightgbm_criteo_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["mmlspark_lightgbm_criteo"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(DATA_SIZE="full", NUM_ITERATIONS=50),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     assert results["auc"] == pytest.approx(0.68895, rel=TOL, abs=ABS_TOL)
 
@@ -75,15 +72,16 @@ def test_benchmark_movielens_pyspark(
     os.environ["PYSPARK_DRIVER_PYTHON"] = sys.executable
     os.environ.pop("SPARK_HOME", None)
 
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(data_sizes=size, algorithms=algos),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
-    assert len(results["results"]) == 1
-    for i, value in enumerate(results["results"]):
-        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+    results = read_notebook(output_notebook)
+
+    assert len(results) == 1
+    for i, value in enumerate(algos):
+        assert results[value] == pytest.approx(
+            expected_values_ndcg[i], rel=TOL, abs=ABS_TOL
+        )
