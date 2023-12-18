@@ -53,6 +53,7 @@ def test_is_databricks():
     pass
 
 
+@pytest.mark.notebooks
 def test_update_parameters():
     parameter_cell_source = '''
 # Integer
@@ -106,77 +107,34 @@ def test_notebook_execution(notebook_programmatic, output_notebook, kernel_name)
 
 
 @pytest.mark.notebooks
-def test_notebook_execution_int(notebook_programmatic, output_notebook, kernel_name):
-    """Test that the notebook executes and returns the correct results with integers."""
-    execute_notebook(
-        notebook_programmatic,
-        output_notebook,
-        kernel_name=kernel_name,
-        parameters=dict(a=6),
-    )
-
-    results = read_notebook(output_notebook)
-    assert results["response1"] == 8
-
-
-@pytest.mark.notebooks
-def test_notebook_execution_float(notebook_programmatic, output_notebook, kernel_name):
-    """Test that the notebook executes and returns the correct results with floats."""
-    execute_notebook(
-        notebook_programmatic,
-        output_notebook,
-        kernel_name=kernel_name,
-        parameters=dict(a=1.5),
-    )
-
-    results = read_notebook(output_notebook)
-    assert results["response1"] == 3.5
-
-
-@pytest.mark.notebooks
-def test_notebook_execution_letter(notebook_programmatic, output_notebook, kernel_name):
-    """Test that the notebook executes and returns the correct results with a string."""
-    execute_notebook(
-        notebook_programmatic,
-        output_notebook,
-        kernel_name=kernel_name,
-        parameters=dict(b="M"),
-    )
-
-    results = read_notebook(output_notebook)
-    assert results["response2"] is True
-
-
-@pytest.mark.notebooks
-def test_notebook_execution_other_letter(
-    notebook_programmatic, output_notebook, kernel_name
+@pytest.mark.parametrize(
+    "parameters,expected_key,expected_value", [
+        (dict(a=6), "response1", 8),            # Test the correct results with integers
+        (dict(a=1.5), "response1", 3.5),        # Test the correct results with floats
+        (dict(b="M"), "response2", True),       # Test the correct results with strings
+        (dict(b="A"), "response2", "A"),        # Test the correct results with different strings
+        (dict(b="100k"), "response2", "100k"),  # Test the correct results with strings that have numbers
+        (dict(c=10), "response3", 12),          # Test the correct results with integers and a comment
+    ]
+)
+def test_notebook_execution_with_parameters(
+    notebook_programmatic,
+    output_notebook,
+    kernel_name,
+    parameters,
+    expected_key,
+    expected_value,    
 ):
-    """Test that the notebook executes and returns the correct results with a different string."""
+    """Test that the notebook executes."""
     execute_notebook(
         notebook_programmatic,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(b="A"),
+        parameters=parameters,
     )
 
     results = read_notebook(output_notebook)
-    assert results["response2"] == "A"
-
-
-@pytest.mark.notebooks
-def test_notebook_execution_letter_and_number(
-    notebook_programmatic, output_notebook, kernel_name
-):
-    """Test that the notebook executes and returns the correct results with string that has a number."""
-    execute_notebook(
-        notebook_programmatic,
-        output_notebook,
-        kernel_name=kernel_name,
-        parameters=dict(b="100k"),
-    )
-
-    results = read_notebook(output_notebook)
-    assert results["response2"] == "100k"
+    assert results[expected_key] == expected_value
 
 
 @pytest.mark.notebooks
@@ -191,19 +149,3 @@ def test_notebook_execution_value_error_fails(
             kernel_name=kernel_name,
             parameters=dict(b=1),
         )
-
-
-@pytest.mark.notebooks
-def test_notebook_execution_int_with_comment(
-    notebook_programmatic, output_notebook, kernel_name
-):
-    """Test that the notebook executes and returns the correct results with integers and a comment."""
-    execute_notebook(
-        notebook_programmatic,
-        output_notebook,
-        kernel_name=kernel_name,
-        parameters=dict(c=10),
-    )
-
-    results = read_notebook(output_notebook)
-    assert results["response3"] == 12
