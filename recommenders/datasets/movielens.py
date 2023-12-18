@@ -198,7 +198,7 @@ def load_pandas_df(
     """
     size = size.lower()
     if size not in DATA_FORMAT and size not in MOCK_DATA_FORMAT:
-        raise ValueError(ERROR_MOVIE_LENS_SIZE)
+        raise ValueError(f"Size: {size}. " + ERROR_MOVIE_LENS_SIZE)
 
     if header is None:
         header = DEFAULT_HEADER
@@ -276,7 +276,7 @@ def load_item_df(
     """
     size = size.lower()
     if size not in DATA_FORMAT:
-        raise ValueError(ERROR_MOVIE_LENS_SIZE)
+        raise ValueError(f"Size: {size}. " + ERROR_MOVIE_LENS_SIZE)
 
     with download_path(local_cache_path) as path:
         filepath = os.path.join(path, "ml-{}.zip".format(size))
@@ -421,7 +421,7 @@ def load_spark_df(
     """
     size = size.lower()
     if size not in DATA_FORMAT and size not in MOCK_DATA_FORMAT:
-        raise ValueError(ERROR_MOVIE_LENS_SIZE)
+        raise ValueError(f"Size: {size}. " + ERROR_MOVIE_LENS_SIZE)
 
     if size in MOCK_DATA_FORMAT:
         # generate fake data
@@ -550,7 +550,7 @@ def download_movielens(size, dest_path):
         dest_path (str): File path for the downloaded file
     """
     if size not in DATA_FORMAT:
-        raise ValueError(ERROR_MOVIE_LENS_SIZE)
+        raise ValueError(f"Size: {size}. " + ERROR_MOVIE_LENS_SIZE)
 
     url = "https://files.grouplens.org/datasets/movielens/ml-" + size + ".zip"
     dirs, file = os.path.split(dest_path)
