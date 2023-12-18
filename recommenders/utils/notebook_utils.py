@@ -45,7 +45,7 @@ def is_databricks():
 
 
 def execute_notebook(
-    input_notebook, output_notebook, parameters={}, kernel_name="python3", timeout=600
+    input_notebook, output_notebook, parameters={}, kernel_name="python3", timeout=2200
 ):
     """Execute a notebook while passing parameters to it.
 
