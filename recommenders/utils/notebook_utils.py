@@ -44,6 +44,28 @@ def is_databricks():
         return False
 
 
+def update_parameters(parameter_cell_source, new_parameters):
+    """Replace parameter values in the cell source code."""
+    modified_cell_source = parameter_cell_source
+    for param, new_value in new_parameters.items():
+        if (
+            isinstance(new_value, str)
+            and not (new_value.startswith('"') and new_value.endswith('"'))
+            and not (new_value.startswith("'") and new_value.endswith("'"))
+        ):
+            # Check if the new value is a string and surround it with quotes if necessary
+            new_value = f'"{new_value}"'
+
+        # Define a regular expression pattern to match parameter assignments and ignore comments
+        pattern = re.compile(
+            rf"(\b{param})\s*=\s*([^#\n]+)(?:#.*$)?",
+            re.MULTILINE
+        )
+        modified_cell_source = pattern.sub(rf"\1 = {new_value}", modified_cell_source)
+
+    return modified_cell_source
+
+
 def execute_notebook(
     input_notebook, output_notebook, parameters={}, kernel_name="python3", timeout=2200
 ):
@@ -74,31 +96,8 @@ def execute_notebook(
             and "parameters" in cell.metadata["tags"]
             and cell.cell_type == "code"
         ):
-            cell_source = cell.source
-            modified_cell_source = (
-                cell_source  # Initialize a variable to hold the modified source
-            )
-            for param, new_value in parameters.items():
-                if (
-                    isinstance(new_value, str)
-                    and not (new_value.startswith('"') and new_value.endswith('"'))
-                    and not (new_value.startswith("'") and new_value.endswith("'"))
-                ):
-                    # Check if the new value is a string and surround it with quotes if necessary
-                    new_value = f'"{new_value}"'
-                # # Check if the new value is a string and surround it with quotes if necessary
-                # if isinstance(new_value, str):
-                #     new_value = f'"{new_value}"'
-                # Define a regular expression pattern to match parameter assignments and ignore comments
-                pattern = re.compile(
-                    rf"(\b{param})\s*=\s*([^#\n]+)(?:#.*$)?",
-                    re.MULTILINE
-                    # rf"\b{param}\s*=\s*([^\n]+)\b"
-                )
-                modified_cell_source = pattern.sub(rf"\1 = {new_value}", cell_source)
-
             # Update the cell's source within notebook_content
-            cell.source = modified_cell_source
+            cell.source = update_parameters(cell.source, parameters)
 
     # Create an execution preprocessor
     execute_preprocessor = ExecutePreprocessor(timeout=timeout, kernel_name=kernel_name)

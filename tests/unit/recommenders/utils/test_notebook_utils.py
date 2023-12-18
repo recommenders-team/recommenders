@@ -10,6 +10,7 @@ from recommenders.utils.notebook_utils import (
     is_databricks,
     execute_notebook,
     read_notebook,
+    update_parameters,
 )
 
 
@@ -50,6 +51,43 @@ def test_is_jupyter(notebook_types, output_notebook, kernel_name):
 @pytest.mark.skip(reason="TODO: Implement this")
 def test_is_databricks():
     pass
+
+
+def test_update_parameters():
+    parameter_cell_source = '''
+# Integer
+TOP_K = 10
+# Float
+LEARNING_RATE = 0.001
+# String
+MOVIELENS_DATA_SIZE = "100k"
+# List
+RANKING_METRICS = [ evaluator.ndcg_at_k.__name__, evaluator.precision_at_k.__name__ ]
+# Boolean
+EVALUATE_WHILE_TRAINING = True
+'''
+
+    new_parameters = {
+        "MOVIELENS_DATA_SIZE": "1m",
+        "TOP_K": 1,
+        "EVALUATE_WHILE_TRAINING": False,
+        "RANKING_METRICS": ["ndcg_at_k", "precision_at_k"],
+        "LEARNING_RATE": 0.1,
+    }
+
+    new_cell_source = update_parameters(parameter_cell_source, new_parameters)
+    assert new_cell_source == '''
+# Integer
+TOP_K = 1
+# Float
+LEARNING_RATE = 0.1
+# String
+MOVIELENS_DATA_SIZE = "1m"
+# List
+RANKING_METRICS = ['ndcg_at_k', 'precision_at_k']
+# Boolean
+EVALUATE_WHILE_TRAINING = False
+'''
 
 
 @pytest.mark.notebooks
