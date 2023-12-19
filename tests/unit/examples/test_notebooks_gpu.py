@@ -64,10 +64,8 @@ def test_xdeepfm(notebooks, output_notebook, kernel_name):
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
-            EPOCHS_FOR_SYNTHETIC_RUN=1,
-            EPOCHS_FOR_CRITEO_RUN=1,
-            BATCH_SIZE_SYNTHETIC=128,
-            BATCH_SIZE_CRITEO=512,
+            EPOCHS=1,
+            BATCH_SIZE=1024,
         ),
     )
 
@@ -119,5 +117,5 @@ def test_dkn_quickstart(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(EPOCHS=1, BATCH_SIZE=500),
+        parameters=dict(EPOCHS=1, BATCH_SIZE=500, HISTORY_SIZE=5),
     )
