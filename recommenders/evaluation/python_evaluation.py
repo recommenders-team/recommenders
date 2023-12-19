@@ -802,6 +802,7 @@ metrics = {
     recall_at_k.__name__: recall_at_k,
     ndcg_at_k.__name__: ndcg_at_k,
     map_at_k.__name__: map_at_k,
+    map.__name__: map,
 }
 
 
