@@ -1,2 +1,0 @@
-https://huggingface.co/datasets/amazon_reviews_multi
-use amazon review for recommendations scenario using language model.
