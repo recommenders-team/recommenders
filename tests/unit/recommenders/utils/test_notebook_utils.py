@@ -10,7 +10,7 @@ from recommenders.utils.notebook_utils import (
     is_databricks,
     execute_notebook,
     read_notebook,
-    update_parameters,
+    _update_parameters,
 )
 
 
@@ -76,7 +76,7 @@ EVALUATE_WHILE_TRAINING = True
         "LEARNING_RATE": 0.1,
     }
 
-    new_cell_source = update_parameters(parameter_cell_source, new_parameters)
+    new_cell_source = _update_parameters(parameter_cell_source, new_parameters)
     assert new_cell_source == '''
 # Integer
 TOP_K = 1

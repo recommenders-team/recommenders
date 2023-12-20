@@ -44,7 +44,7 @@ def is_databricks():
         return False
 
 
-def update_parameters(parameter_cell_source, new_parameters):
+def _update_parameters(parameter_cell_source, new_parameters):
     """Replace parameter values in the cell source code."""
     modified_cell_source = parameter_cell_source
     for param, new_value in new_parameters.items():
