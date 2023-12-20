@@ -97,7 +97,7 @@ def execute_notebook(
             and cell.cell_type == "code"
         ):
             # Update the cell's source within notebook_content
-            cell.source = update_parameters(cell.source, parameters)
+            cell.source = _update_parameters(cell.source, parameters)
 
     # Create an execution preprocessor
     execute_preprocessor = ExecutePreprocessor(timeout=timeout, kernel_name=kernel_name)
