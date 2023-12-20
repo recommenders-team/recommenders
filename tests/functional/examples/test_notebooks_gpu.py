@@ -196,7 +196,7 @@ def test_xdeepfm_functional(
                 "rsquared": 0.262963,
                 "exp_var": 0.268413,
                 "ndcg_at_k": 0.118114,
-                "map_at_k": 0.0139213,
+                "map": 0.0139213,
                 "precision_at_k": 0.107087,
                 "recall_at_k": 0.0328638,
             },
@@ -225,7 +225,7 @@ def test_wide_deep_functional(
         "MODEL_DIR": tmp,
         "EXPORT_DIR_BASE": tmp,
         "RATING_METRICS": ["rmse", "mae", "rsquared", "exp_var"],
-        "RANKING_METRICS": ["ndcg_at_k", "map_at_k", "precision_at_k", "recall_at_k"],
+        "RANKING_METRICS": ["ndcg_at_k", "map", "precision_at_k", "recall_at_k"],
         "RANDOM_SEED": seed,
     }
     execute_notebook(
@@ -247,7 +247,7 @@ def test_wide_deep_functional(
             os.path.join("tests", "resources", "deeprec", "slirec"),
             10,
             400,
-            {"auc": 0.7183, "logloss": 0.6045},
+            {"auc": 0.7183},  # Don't do logloss check as SLi-Rec uses ranking loss, not a point-wise loss
             42,
         )
     ],
@@ -278,11 +278,7 @@ def test_slirec_quickstart_functional(
     results = read_notebook(output_notebook)
 
     assert results["auc"] == pytest.approx(expected_values["auc"], rel=TOL, abs=ABS_TOL)
-    ## disable logloss check, because so far SLi-Rec uses ranking loss, not a point-wise loss
-    # assert results["logloss"] == pytest.approx(
-    #     expected_values["logloss"], rel=TOL, abs=ABS_TOL
-    # )
-
+    
 
 @pytest.mark.gpu
 @pytest.mark.notebooks
@@ -444,11 +440,11 @@ def test_lstur_quickstart_functional(
     assert results["mean_mrr"] == pytest.approx(
         expected_values["mean_mrr"], rel=TOL, abs=ABS_TOL
     )
-    assert expected_values["ndcg@5"] == pytest.approx(
-        value["ndcg@5"], rel=TOL, abs=ABS_TOL
+    assert results["ndcg@5"] == pytest.approx(
+        expected_values["ndcg@5"], rel=TOL, abs=ABS_TOL
     )
-    assert expected_values["ndcg@10"] == pytest.approx(
-        value["ndcg@10"], rel=TOL, abs=ABS_TOL
+    assert results["ndcg@10"] == pytest.approx(
+        expected_values["ndcg@10"], rel=TOL, abs=ABS_TOL
     )
 
 

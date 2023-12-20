@@ -237,6 +237,7 @@ def test_lightfm_functional(
     "expected_values",
     [({"rmse": 0.4969, "mae": 0.4761})],
 )
+@pytest.mark.skip(reason="geoimc doesn't work with any officially released pymanopt package")
 def test_geoimc_functional(notebooks, output_notebook, kernel_name, expected_values):
     notebook_path = notebooks["geoimc_quickstart"]
     execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
