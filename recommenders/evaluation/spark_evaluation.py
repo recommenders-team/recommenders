@@ -156,12 +156,14 @@ class SparkRatingEvaluation:
         Returns:
             float: Explained variance (min=0, max=1).
         """
-        var1 = self.y_pred_true.selectExpr("variance(label - prediction)").collect()[0][
-            0
-        ]
+        var1 = self.y_pred_true.selectExpr("variance(label-prediction)").collect()[0][0]
         var2 = self.y_pred_true.selectExpr("variance(label)").collect()[0][0]
-        # numpy divide is more tolerant to var2 being zero
-        return 1 - np.divide(var1, var2)
+
+        if var1 is None or var2 is None:
+            return -np.inf
+        else: 
+            # numpy divide is more tolerant to var2 being zero
+            return 1 - np.divide(var1, var2)
 
 
 class SparkRankingEvaluation:

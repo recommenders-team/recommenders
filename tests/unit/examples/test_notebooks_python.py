@@ -83,6 +83,7 @@ def test_cornac_deep_dive_runs(notebooks, output_notebook, kernel_name):
 
 @pytest.mark.notebooks
 @pytest.mark.experimental
+@pytest.mark.skip(reason="rlrmc doesn't work with any officially released pymanopt package")
 def test_rlrmc_quickstart_runs(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["rlrmc_quickstart"]
     execute_notebook(

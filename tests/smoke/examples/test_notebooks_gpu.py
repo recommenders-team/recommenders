@@ -43,9 +43,7 @@ def test_ncf_deep_dive_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(
-            TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=1024
-        ),
+        parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k", EPOCHS=1, BATCH_SIZE=1024),
     )
     results = read_notebook(output_notebook)
 
@@ -91,19 +89,15 @@ def test_xdeepfm_smoke(notebooks, output_notebook, kernel_name):
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
-            EPOCHS_FOR_SYNTHETIC_RUN=1,
-            EPOCHS_FOR_CRITEO_RUN=1,
-            BATCH_SIZE_SYNTHETIC=128,
-            BATCH_SIZE_CRITEO=512,
+            EPOCHS=1,
+            BATCH_SIZE=512,
             RANDOM_SEED=42,
         ),
     )
     results = read_notebook(output_notebook)
 
-    assert results["res_syn"]["auc"] == pytest.approx(0.5043, rel=TOL, abs=ABS_TOL)
-    assert results["res_syn"]["logloss"] == pytest.approx(0.7046, rel=TOL, abs=ABS_TOL)
-    assert results["res_real"]["auc"] == pytest.approx(0.7251, rel=TOL, abs=ABS_TOL)
-    assert results["res_real"]["logloss"] == pytest.approx(0.508, rel=TOL, abs=ABS_TOL)
+    assert results["auc"] == pytest.approx(0.7251, rel=TOL, abs=ABS_TOL)
+    assert results["logloss"] == pytest.approx(0.508, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -140,14 +134,14 @@ def test_naml_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, seed=42, MIND_type="demo"),
+        parameters=dict(epochs=1, batch_size=64, seed=42, MIND_type="demo"),
     )
     results = read_notebook(output_notebook)
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(
+    assert results["group_auc"] == pytest.approx(
         0.5801, rel=TOL, abs=ABS_TOL
     )
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2512, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.2512, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -162,10 +156,10 @@ def test_nrms_smoke(notebooks, output_notebook, kernel_name):
     )
     results = read_notebook(output_notebook)
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(
+    assert results["group_auc"] == pytest.approx(
         0.5768, rel=TOL, abs=ABS_TOL
     )
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2457, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.2457, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -176,14 +170,14 @@ def test_npa_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, seed=42, MIND_type="demo"),
+        parameters=dict(epochs=1, batch_size=64, seed=42, MIND_type="demo"),
     )
     results = read_notebook(output_notebook)
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(
+    assert results["group_auc"] == pytest.approx(
         0.5861, rel=TOL, abs=ABS_TOL
     )
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.255, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.255, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
@@ -194,14 +188,14 @@ def test_lstur_smoke(notebooks, output_notebook, kernel_name):
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
-        parameters=dict(epochs=1, seed=40, MIND_type="demo"),
+        parameters=dict(epochs=1, batch_size=64, seed=40, MIND_type="demo"),
     )
     results = read_notebook(output_notebook)
 
-    assert results["res_syn"]["group_auc"] == pytest.approx(
+    assert results["group_auc"] == pytest.approx(
         0.5977, rel=TOL, abs=ABS_TOL
     )
-    assert results["res_syn"]["mean_mrr"] == pytest.approx(0.2618, rel=TOL, abs=ABS_TOL)
+    assert results["mean_mrr"] == pytest.approx(0.2618, rel=TOL, abs=ABS_TOL)
 
 
 @pytest.mark.notebooks
