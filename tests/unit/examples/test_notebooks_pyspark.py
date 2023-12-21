@@ -96,7 +96,11 @@ def test_evaluation_diversity_runs(notebooks, output_notebook, kernel_name):
     )
 
 
-# This is a flaky test that can fail unexpectedly
+# mock100 dataset throws the following error:
+#   TrainValidationSplit IllegalArgumentException: requirement failed:
+#   Nothing has been added to this summarizer.
+# This seems to be caused by cold start problem -- https://stackoverflow.com/questions/58827795/requirement-failed-nothing-has-been-added-to-this-summarizer
+# In terms of the processing speed at Spark, "100k" dataset does not take much longer than "mock100" dataset and thus use "100k" here to go around the issue. 
 @pytest.mark.flaky(reruns=5, reruns_delay=2)
 @pytest.mark.notebooks
 @pytest.mark.spark
@@ -110,7 +114,7 @@ def test_spark_tuning(notebooks, output_notebook, kernel_name):
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(
-            MOVIELENS_DATA_SIZE="mock100",
+            MOVIELENS_DATA_SIZE="100k",  # Note: mock100 throws an error   
             NUMBER_CORES="1",
             NUMBER_ITERATIONS=3,
             SUBSET_RATIO=0.5,

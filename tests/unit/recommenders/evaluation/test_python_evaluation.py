@@ -181,7 +181,7 @@ def test_python_exp_var(rating_true, rating_pred):
         rating_pred=rating_true,
         col_prediction=DEFAULT_RATING_COL,
     ) == pytest.approx(1.0, TOL)
-    assert exp_var(rating_true, rating_pred) == pytest.approx(-6.4466, 0.01)
+    assert exp_var(rating_true, rating_pred) == pytest.approx(-6.4466, TOL)
 
 
 def test_get_top_k_items(rating_true):
