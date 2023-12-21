@@ -109,7 +109,7 @@ def test_spark_exp_var(spark_data):
     assert evaluator.exp_var() == pytest.approx(1.0, TOL)
 
     evaluator = SparkRatingEvaluation(df_true, df_pred)
-    assert evaluator.exp_var() == pytest.approx(-6.4466, 0.01)
+    assert evaluator.exp_var() == pytest.approx(-6.4466, TOL)
 
 
 @pytest.mark.spark
