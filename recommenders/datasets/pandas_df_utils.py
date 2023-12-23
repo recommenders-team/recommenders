@@ -360,19 +360,14 @@ def has_columns(df, columns):
 
     Args:
         df (pandas.DataFrame): DataFrame
-        columns (list(str): columns to check for
+        columns (iterable(str)): columns to check for
 
     Returns:
         bool: True if DataFrame has specified columns.
     """
-
-    result = True
-    for column in columns:
-        if column not in df.columns:
-            logger.error("Missing column: {} in DataFrame".format(column))
-            result = False
-
-    return result
+    if not isinstance(columns, set):
+        columns = set(columns)
+    return columns.issubset(df.columns)
 
 
 def has_same_base_dtype(df_1, df_2, columns=None):

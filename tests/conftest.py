@@ -75,7 +75,6 @@ def spark(tmp_path_factory, app_name="Sample", url="local[*]"):
     Returns:
         SparkSession: new Spark session
     """
-
     with TemporaryDirectory(dir=tmp_path_factory.getbasetemp()) as td:
         config = {
             "spark.local.dir": td,

@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 
 import pytest
-import papermill as pm
-import scrapbook as sb
+
+from recommenders.utils.notebook_utils import execute_notebook, read_notebook
 
 
 TOL = 0.05
@@ -38,15 +38,13 @@ def test_sar_single_node_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["sar_single_node"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -72,15 +70,13 @@ def test_baseline_deep_dive_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["baseline_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -110,15 +106,13 @@ def test_surprise_svd_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["surprise_svd_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -148,15 +142,13 @@ def test_vw_deep_dive_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["vowpal_wabbit_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size, TOP_K=10),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -166,7 +158,7 @@ def test_vw_deep_dive_functional(
 @pytest.mark.skip(reason="NNI pip package has installation incompatibilities")
 def test_nni_tuning_svd(notebooks, output_notebook, kernel_name, tmp):
     notebook_path = notebooks["nni_tuning_svd"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
@@ -194,15 +186,13 @@ def test_cornac_bpr_functional(
     notebooks, output_notebook, kernel_name, size, expected_values
 ):
     notebook_path = notebooks["cornac_bpr_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -229,15 +219,13 @@ def test_lightfm_functional(
     notebooks, output_notebook, kernel_name, size, epochs, expected_values
 ):
     notebook_path = notebooks["lightfm_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(MOVIELENS_DATA_SIZE=size, NO_EPOCHS=epochs),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -249,12 +237,11 @@ def test_lightfm_functional(
     "expected_values",
     [({"rmse": 0.4969, "mae": 0.4761})],
 )
+@pytest.mark.skip(reason="geoimc doesn't work with any officially released pymanopt package")
 def test_geoimc_functional(notebooks, output_notebook, kernel_name, expected_values):
     notebook_path = notebooks["geoimc_quickstart"]
-    pm.execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    execute_notebook(notebook_path, output_notebook, kernel_name=kernel_name)
+    results = read_notebook(output_notebook)
 
     for key, value in expected_values.items():
         assert results[key] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
@@ -265,15 +252,13 @@ def test_geoimc_functional(notebooks, output_notebook, kernel_name, expected_val
 @pytest.mark.skip(reason="xLearn pip package has installation incompatibilities")
 def test_xlearn_fm_functional(notebooks, output_notebook, kernel_name):
     notebook_path = notebooks["xlearn_fm_deep_dive"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(LEARNING_RATE=0.2, EPOCH=10),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
+    results = read_notebook(output_notebook)
 
     assert results["auc_score"] == pytest.approx(0.75, rel=TOL, abs=ABS_TOL)
 
@@ -289,15 +274,16 @@ def test_benchmark_movielens_cpu(
     notebooks, output_notebook, kernel_name, size, algos, expected_values_ndcg
 ):
     notebook_path = notebooks["benchmark_movielens"]
-    pm.execute_notebook(
+    execute_notebook(
         notebook_path,
         output_notebook,
         kernel_name=kernel_name,
         parameters=dict(data_sizes=size, algorithms=algos),
     )
-    results = sb.read_notebook(output_notebook).scraps.dataframe.set_index("name")[
-        "data"
-    ]
-    assert len(results["results"]) == 3
-    for i, value in enumerate(results["results"]):
-        assert results["results"][i] == pytest.approx(value, rel=TOL, abs=ABS_TOL)
+    results = read_notebook(output_notebook)
+
+    assert len(results) == 3
+    for i, value in enumerate(algos):
+        assert results[value] == pytest.approx(
+            expected_values_ndcg[i], rel=TOL, abs=ABS_TOL
+        )
