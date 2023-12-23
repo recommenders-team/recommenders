@@ -95,11 +95,18 @@ assert rmse(rating_true, rating_pred) == pytest.approx(7.254309)
 
 ### How to create tests for the notebooks
 
-In the notebooks of this repo, we use [Papermill](https://github.com/nteract/papermill) and [Scrapbook](https://nteract-scrapbook.readthedocs.io/en/latest/) in unit, smoke and integration tests. Papermill is a tool that enables you to parametrize and execute notebooks. Scrapbook is a library for recording a notebook’s data values and generate visual content as “scraps”. These recorded scraps can be read at a future time. We use Scrapbook to collect the metrics in the notebooks.
+For testing the notebooks of this repo, we developed the Recommenders notebook executor, that enables you to parametrize and execute notebooks for testing. 
 
-#### Developing PR gate tests with Papermill and Scrapbook
+The notebook executor is located in [recommenders/utils/notebook_utils.py](../recommenders/utils/notebook_utils.py). The main functions are:
 
-Executing a notebook with Papermill is easy, this is what we mostly do in the unit tests. Next, we show just one of the tests that we have in [tests/unit/examples/test_notebooks_python.py](unit/examples/test_notebooks_python.py).
+* `execute_notebook`: Executes a notebook and saves the output in a new notebook. Optionally, you can inject parameters to the notebook. For that, you need to tag the cells with the tag `parameters`. Every cell tagged with `parameters` can be injected with the variables passed in the `parameters` dictionary.
+* `store_metadata`: Stores the output of a variable. The output is stored in the metadata of the Jupyter notebook and can be read by `read_notebook` function.
+* `read_notebook`: Reads the output notebook and returns a dictionary with the variables recorded with `store_metadata`.
+
+
+#### Developing PR gate tests with the notebook executor
+
+Executing a notebook with the Recommenders notebook executor is easy, this is what we mostly do in the unit tests. Next, we show just one of the tests that we have in [tests/unit/examples/test_notebooks_python.py](unit/examples/test_notebooks_python.py).
 
 ```python
 import pytest
