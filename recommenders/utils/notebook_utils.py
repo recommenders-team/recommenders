@@ -114,7 +114,6 @@ def execute_notebook(
 
 def store_metadata(name, value):
     """Store data in the notebook's output source code.
-    This function is similar to snapbook.glue().
 
     Args:
         name (str): Name of the data.
@@ -134,7 +133,6 @@ def store_metadata(name, value):
 
 def read_notebook(path):
     """Read the metadata stored in the notebook's output source code.
-    This function is similar to snapbook.read_notebook().
 
     Args:
         path (str): Path to the notebook.
