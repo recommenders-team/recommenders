@@ -128,15 +128,15 @@ For executing this test, first make sure you are in the correct environment as d
 pytest tests/unit/examples/test_notebooks_python.py::test_sar_single_node_runs
 ```
 
-#### Developing nightly tests with Papermill and Scrapbook
+#### Developing nightly tests with the notebook executor
 
 A more advanced option is used in the nightly tests, where we not only execute the notebook, but inject parameters and recover the computed metrics.
 
 The first step is to tag the parameters that we are going to inject. For it we need to modify the notebook. We will add a tag with the name `parameters`. To add a tag, go the notebook menu, View, Cell Toolbar and Tags. A tag field will appear on every cell. The variables in the cell tagged with `parameters` can be injected. The typical variables that we inject are `MOVIELENS_DATA_SIZE`, `EPOCHS` and other configuration variables for our algorithms.
 
-The way papermill works to inject parameters is very simple, it generates a copy of the notebook (in our code we call it `OUTPUT_NOTEBOOK`), and creates a new cell with the injected variables.
+The way the notebook executor works to inject parameters is very simple, it generates a copy of the notebook (in our code we call it `OUTPUT_NOTEBOOK`), and replaces the cell with the tag `parameters` with the injected variables.
 
-The second modification that we need to do to the notebook is to record the metrics we want to test using `sb.glue("output_variable", python_variable_name)`. We normally use the last cell of the notebook to record all the metrics. These are the metrics that we are going to control in the smoke and functional tests.
+The second modification that we need to do to the notebook is to record the metrics we want to test using `store_metadata("output_variable", python_variable_name)`. We normally use the last cell of the notebook to record all the metrics. These are the metrics that we are going to control in the smoke and functional tests.
 
 This is an example on how we do a smoke test. The complete code can be found in [smoke/examples/test_notebooks_python.py](./smoke/examples/test_notebooks_python.py):
 
@@ -157,6 +157,7 @@ def test_sar_single_node_smoke(notebooks, output_notebook, kernel_name):
         parameters=dict(TOP_K=10, MOVIELENS_DATA_SIZE="100k"),
     )
     results = read_notebook(output_notebook)
+    
     assert results["precision"] == pytest.approx(0.330753, rel=TOL, abs=ABS_TOL)
     assert results["recall"] == pytest.approx(0.176385, rel=TOL, abs=ABS_TOL)
 ```
@@ -170,8 +171,6 @@ For executing this test, first make sure you are in the correct environment as d
 ```
 pytest tests/smoke/examples/test_notebooks_python.py::test_sar_single_node_smoke
 ```
-
-More details on how to integrate Papermill with notebooks can be found in their [repo](https://github.com/nteract/papermill). Also, you can check the [Scrapbook repo](https://github.com/nteract/scrapbook).
 
 ### How to add tests to the AzureML pipeline
 
