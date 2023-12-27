@@ -8,4 +8,4 @@ To build the documentation:
 
     jupyter-book build docs
 
-To contribute to this repository, please follow our [coding guidelines](https://github.com/Microsoft/Recommenders/wiki/Coding-Guidelines). See also the [reStructuredText documentation](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) for the syntax of docstrings.
+To contribute to this repository, please follow our [coding guidelines](https://github.com/recommenders-team/recommenders/wiki/Coding-Guidelines). See also the [reStructuredText documentation](https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html) for the syntax of docstrings.
