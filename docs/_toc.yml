@@ -3,7 +3,9 @@
 
 format: jb-book
 root: intro
-chapters:
-- file: markdown
-- file: notebooks
-- file: markdown-notebooks
+defaults:
+  numbered: false
+parts:
+  - caption: Getting Started
+    chapters:
+      - file: ../SETUP.md
