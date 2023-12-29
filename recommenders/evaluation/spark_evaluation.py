@@ -187,7 +187,7 @@ class SparkRankingEvaluation:
         precision.
 
         The implementations of precision@k, ndcg@k, and mean average precision are referenced from Spark MLlib, which
-        can be found at `here <https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems>`_.
+        can be found at `the link <https://spark.apache.org/docs/2.3.0/mllib-evaluation-metrics.html#ranking-systems>`_.
 
         Args:
             rating_true (pyspark.sql.DataFrame): DataFrame of true rating data (in the
@@ -305,8 +305,8 @@ class SparkRankingEvaluation:
         """Get precision@k.
 
         .. note::
-            More details can be found
-            `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt>`_.
+            More details can be found 
+            `on this website <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt>`_.
 
         Return:
             float: precision at k (min=0, max=1)
@@ -330,7 +330,7 @@ class SparkRankingEvaluation:
 
         .. note::
             More details can be found
-            `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
+            `on <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
 
         Return:
             float: nDCG at k (min=0, max=1).
@@ -349,8 +349,7 @@ class SparkRankingEvaluation:
         """Get mean average precision at k.
 
         .. note::
-            More details can be found
-            `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
+            More details `on this link <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
             float: MAP at k (min=0, max=1).
