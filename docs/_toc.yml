@@ -1,3 +1,6 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
 # Table of contents
 # Learn more at https://jupyterbook.org/customize/toc.html
 
@@ -9,6 +12,7 @@ parts:
   - caption: Getting Started
     chapters:
       - file: ../SETUP.md
+      - file: TEMP
   - caption: Recommenders API Documentation
     chapters:
       - file: datasets

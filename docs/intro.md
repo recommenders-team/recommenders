@@ -1,3 +1,8 @@
+<!--
+Copyright (c) Recommenders contributors.
+Licensed under the MIT License.
+-->
+
 # Welcome to Recommenders
 
 Recommenders objective is to assist researchers, developers and enthusiasts in prototyping, experimenting with and bringing to production a range of classic and state-of-the-art recommendation systems.
