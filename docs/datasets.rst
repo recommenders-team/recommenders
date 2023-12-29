@@ -111,13 +111,6 @@ Download utilities
     :members:
 
 
-Cosmos CLI utilities
-*********************
-
-.. automodule:: recommenders.datasets.cosmos_cli
-    :members:
-
-
 Pandas dataframe utilities
 ***************************
 
