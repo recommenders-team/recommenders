@@ -1,5 +1,13 @@
+# Copyright (c) Recommenders contributors.
+# Licensed under the MIT License.
+
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
+
+# To build the Jupyter Book:
+# $ jupyter-book clean docs 
+# $ jupyter-book build docs
+
 
 title: Recommenders documentation
 author: Recommenders contributors
