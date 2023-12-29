@@ -19,7 +19,7 @@ notebook_interface            : "notebook"
 # Launch button settings
 repository:
   url                         : https://github.com/recommenders-team/recommenders 
-  path_to_book                : docs
+  path_to_book                : /docs
   branch                      : main
 
 launch_buttons:
@@ -43,3 +43,5 @@ sphinx:
     napoleon_google_docstring: True
     autodoc_member_order: groupwise
     autoclass_content: both
+
+
