@@ -9,3 +9,10 @@ parts:
   - caption: Getting Started
     chapters:
       - file: ../SETUP.md
+  - caption: Recommenders API Documentation
+    chapters:
+      - file: datasets
+      - file: evaluation
+      - file: models
+      - file: tuning
+      - file: utils
