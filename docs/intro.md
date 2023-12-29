@@ -23,5 +23,7 @@ The examples detail our learnings on five key tasks:
 
 Several utilities are provided in the `recommenders` library to support common tasks such as loading datasets in the format expected by different algorithms, evaluating model outputs, and splitting training/test data. Implementations of several state-of-the-art algorithms are included for self-study and customization in your own applications.
 
+
 ```{tableofcontents}
 ```
+

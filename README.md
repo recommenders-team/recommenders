@@ -73,7 +73,7 @@ In addition to the core package, several extras are also provided, including:
 
 ## Algorithms
 
-The table below lists the recommendationalgorithms currently available in the repository. Notebooks are linked under the Example column as Quick start, showcasing an easy to run example of the algorithm, or as Deep dive, explaining in detail the math and implementation of the algorithm.
+The table below lists the recommendation algorithms currently available in the repository. Notebooks are linked under the Example column as Quick start, showcasing an easy to run example of the algorithm, or as Deep dive, explaining in detail the math and implementation of the algorithm.
 
 | Algorithm | Type | Description | Example |
 |-----------|------|-------------|---------|
