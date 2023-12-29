@@ -8,6 +8,8 @@ In this directory, notebooks are provided to give a deep dive of collaborative f
 | [baseline_deep_dive](baseline_deep_dive.ipynb) | --- | Deep dive on baseline performance estimation.
 | [cornac_bivae_deep_dive](cornac_bivae_deep_dive.ipynb) | Python CPU, GPU | Deep dive on the BiVAE algorithm and implementation.
 | [cornac_bpr_deep_dive](cornac_bpr_deep_dive.ipynb) | Python CPU | Deep dive on the BPR algorithm and implementation.
+| [fm_deep_dive](fm_deep_dive.ipynb) | Python CPU | Deep dive into factorization machine (FM) and field-aware FM (FFM) algorithm.
+| [lightfm_deep_dive](lightfm_deep_dive.ipynb) | Python CPU | Deep dive into matrix factorization model with LightFM.
 | [lightgcn_deep_dive](lightgcn_deep_dive.ipynb) | Python CPU, GPU | Deep dive on a LightGCN algorithm and implementation.
 | [multi_vae_deep_dive](multi_vae_deep_dive.ipynb) | Python CPU, GPU | Deep dive on the Multinomial VAE algorithm and implementation.
 | [ncf_deep_dive](ncf_deep_dive.ipynb) | Python CPU, GPU | Deep dive on a NCF algorithm and implementation.
