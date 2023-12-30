@@ -203,7 +203,7 @@ class SparkRankingEvaluation:
                 values are "top_k", "by_time_stamp", and "by_threshold".
             threshold (float): threshold for determining the relevant recommended items.
                 This is used for the case that predicted ratings follow a known
-                distribution. NOTE: this option is only activated if relevancy_method is
+                distribution. NOTE: this option is only activated if `relevancy_method` is
                 set to "by_threshold".
         """
         self.rating_true = rating_true
@@ -463,7 +463,7 @@ def _get_relevant_items_by_timestamp(
         col_rating (str): column name for rating.
         col_timestamp (str): column name for timestamp.
         col_prediction (str): column name for prediction.
-        k: number of relevent items to be filtered by the function.
+        k: number of relevant items to be filtered by the function.
 
     Return:
         pyspark.sql.DataFrame: DataFrame of customerID-itemID-rating tuples with only relevant items.
@@ -525,7 +525,7 @@ class SparkDiversityEvaluation:
             P. Castells, S. Vargas, and J. Wang, Novelty and diversity metrics for recommender systems:
             choice, discovery and relevance, ECIR 2011
 
-            Eugene Yan, Serendipity: Accuracy’s unpopular best friend in Recommender Systems,
+            Eugene Yan, Serendipity: Accuracy's unpopular best friend in Recommender Systems,
             eugeneyan.com, April 2020
 
         Args:
