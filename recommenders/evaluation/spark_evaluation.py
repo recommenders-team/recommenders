@@ -150,7 +150,7 @@ class SparkRatingEvaluation:
     def exp_var(self):
         """Calculate explained variance.
 
-        .. note::
+        Note:
            Spark MLLib's implementation is buggy (can lead to values > 1), hence we use var().
 
         Returns:
@@ -161,7 +161,7 @@ class SparkRatingEvaluation:
 
         if var1 is None or var2 is None:
             return -np.inf
-        else: 
+        else:
             # numpy divide is more tolerant to var2 being zero
             return 1 - np.divide(var1, var2)
 
@@ -304,8 +304,8 @@ class SparkRankingEvaluation:
     def precision_at_k(self):
         """Get precision@k.
 
-        .. note::
-            More details can be found 
+        Note:
+            More details can be found
             `on this website <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.precisionAt>`_.
 
         Return:
@@ -316,7 +316,7 @@ class SparkRankingEvaluation:
     def recall_at_k(self):
         """Get recall@K.
 
-        .. note::
+        Note:
             More details can be found
             `here <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
@@ -328,7 +328,7 @@ class SparkRankingEvaluation:
     def ndcg_at_k(self):
         """Get Normalized Discounted Cumulative Gain (NDCG)
 
-        .. note::
+        Note:
             More details can be found
             `on <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.ndcgAt>`_.
 
@@ -348,7 +348,7 @@ class SparkRankingEvaluation:
     def map_at_k(self):
         """Get mean average precision at k.
 
-        .. note::
+        Note:
             More details `on this link <http://spark.apache.org/docs/2.1.1/api/python/pyspark.mllib.html#pyspark.mllib.evaluation.RankingMetrics.meanAveragePrecision>`_.
 
         Return:
@@ -369,7 +369,7 @@ def _get_top_k_items(
     DataFrame, output a Spark DataFrame in the dense format of top k items
     for each user.
 
-    .. note::
+    Note:
         if it is implicit rating, just append a column of constants to be ratings.
 
     Args:
@@ -581,7 +581,6 @@ class SparkDiversityEvaluation:
                 )
             )
             if self.item_feature_df is not None:
-
                 if str(required_schema) != str(item_feature_df.schema):
                     raise Exception(
                         "Incorrect schema! item_feature_df should have schema "
@@ -621,7 +620,6 @@ class SparkDiversityEvaluation:
         )
 
     def _get_cosine_similarity(self, n_partitions=200):
-
         if self.item_sim_measure == "item_cooccurrence_count":
             # calculate item-item similarity based on item co-occurrence count
             self._get_cooccurrence_similarity(n_partitions)
