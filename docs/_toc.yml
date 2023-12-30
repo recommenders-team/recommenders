@@ -9,10 +9,6 @@ root: intro
 defaults:
   numbered: false
 parts:
-  - caption: Getting Started
-    chapters:
-      - file: ../SETUP.md
-      - file: TEMP
   - caption: Recommenders API Documentation
     chapters:
       - file: datasets
