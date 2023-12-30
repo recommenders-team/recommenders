@@ -29,14 +29,14 @@ DKN item-to-item
 .. automodule:: recommenders.models.deeprec.models.dkn_item2item
     :members:
 
-LightGCN
-==================
-.. automodule:: recommenders.models.deeprec.models.graphrec.lightgcn
-    :members:
-
 xDeepFM
 ==============
 .. automodule:: recommenders.models.deeprec.models.xDeepFM
+    :members:
+
+LightGCN
+==================
+.. automodule:: recommenders.models.deeprec.models.graphrec.lightgcn
     :members:
 
 Sequential models
@@ -254,6 +254,13 @@ VAE
     :members:
 
 .. automodule:: recommenders.models.vae.standard_vae
+    :members:
+
+
+Vowpal Wabbit
+******************************
+
+.. automodule:: recommenders.models.vowpal_wabbit.vw
     :members:
 
 
