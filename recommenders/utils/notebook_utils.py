@@ -57,10 +57,7 @@ def _update_parameters(parameter_cell_source, new_parameters):
             new_value = f'"{new_value}"'
 
         # Define a regular expression pattern to match parameter assignments and ignore comments
-        pattern = re.compile(
-            rf"(\b{param})\s*=\s*([^#\n]+)(?:#.*$)?",
-            re.MULTILINE
-        )
+        pattern = re.compile(rf"(\b{param})\s*=\s*([^#\n]+)(?:#.*$)?", re.MULTILINE)
         modified_cell_source = pattern.sub(rf"\1 = {new_value}", modified_cell_source)
 
     return modified_cell_source
@@ -71,11 +68,10 @@ def execute_notebook(
 ):
     """Execute a notebook while passing parameters to it.
 
-    .. note::
-
-    Ensure your Jupyter Notebook is set up with parameters that can be
-    modified and read. Use Markdown cells to specify parameters that need
-    modification and code cells to set parameters that need to be read.
+    Note:
+        Ensure your Jupyter Notebook is set up with parameters that can be
+        modified and read. Use Markdown cells to specify parameters that need
+        modification and code cells to set parameters that need to be read.
 
     Args:
         input_notebook (str): Path to the input notebook.
