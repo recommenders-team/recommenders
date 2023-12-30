@@ -56,7 +56,7 @@ class AttLayer2(layers.Layer):
         super(AttLayer2, self).build(input_shape)  # be sure you call this somewhere!
 
     def call(self, inputs, mask=None, **kwargs):
-        """Core implemention of soft attention
+        """Core implementation of soft attention.
 
         Args:
             inputs (object): input tensor.
@@ -84,7 +84,7 @@ class AttLayer2(layers.Layer):
         return K.sum(weighted_input, axis=1)
 
     def compute_mask(self, input, input_mask=None):
-        """Compte output mask value
+        """Compte output mask value.
 
         Args:
             input (object): input tensor.
@@ -96,7 +96,7 @@ class AttLayer2(layers.Layer):
         return None
 
     def compute_output_shape(self, input_shape):
-        """Compute shape of output tensor
+        """Compute shape of output tensor.
 
         Args:
             input_shape (tuple): shape of input tensor.
@@ -112,7 +112,7 @@ class SelfAttention(layers.Layer):
 
     Args:
         multiheads (int): The number of heads.
-        head_dim (object): Dimention of each head.
+        head_dim (object): Dimension of each head.
         mask_right (boolean): whether to mask right words.
 
     Returns:
@@ -313,6 +313,14 @@ class ComputeMasking(layers.Layer):
         super(ComputeMasking, self).__init__(**kwargs)
 
     def call(self, inputs, **kwargs):
+        """Call method for ComputeMasking.
+
+        Args:
+            inputs (object): input tensor.
+
+        Returns:
+            bool tensor: True for values not equal to zero.
+        """
         mask = K.not_equal(inputs, 0)
         return K.cast(mask, K.floatx())
 
@@ -321,7 +329,7 @@ class ComputeMasking(layers.Layer):
 
 
 class OverwriteMasking(layers.Layer):
-    """Set values at spasific positions to zero.
+    """Set values at specific positions to zero.
 
     Args:
         inputs (list): value tensor and mask tensor.
@@ -337,6 +345,14 @@ class OverwriteMasking(layers.Layer):
         super(OverwriteMasking, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
+        """Call method for OverwriteMasking.
+
+        Args:
+            inputs (list): value tensor and mask tensor.
+
+        Returns:
+            object: tensor after setting values to zero.
+        """
         return inputs[0] * K.expand_dims(inputs[1])
 
     def compute_output_shape(self, input_shape):
