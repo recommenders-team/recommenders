@@ -61,8 +61,7 @@ def pandas_input_fn(
     """Pandas input function for TensorFlow high-level API Estimator.
     This function returns a `tf.data.Dataset` function.
 
-    .. note::
-
+    Note:
         `tf.estimator.inputs.pandas_input_fn` cannot handle array/list column properly.
         For more information, see https://www.tensorflow.org/api_docs/python/tf/estimator/inputs/numpy_input_fn
 
@@ -199,7 +198,7 @@ def evaluation_log_hook(
 ):
     """Evaluation log hook for TensorFlow high-level API Estimator.
 
-    .. note::
+    Note:
        TensorFlow Estimator model uses the last checkpoint weights for evaluation or prediction.
        In order to get the most up-to-date evaluation results while training,
        set model's `save_checkpoints_steps` to be equal or greater than hook's `every_n_iter`.
@@ -216,7 +215,7 @@ def evaluation_log_hook(
         batch_size (int): Number of samples fed into the model at a time.
             Note, the batch size doesn't affect on evaluation results.
         eval_fns (iterable of functions): List of evaluation functions that have signature of
-            (true_df, prediction_df, **eval_kwargs)->(float). If None, loss is calculated on true_df.
+            `(true_df, prediction_df, **eval_kwargs)`->`float`. If None, loss is calculated on `true_df`.
         eval_kwargs: Evaluation function's keyword arguments.
             Note, prediction column name should be 'prediction'
 

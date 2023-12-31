@@ -87,7 +87,7 @@ class LibffmConverter:
     """Converts an input dataframe to another dataframe in libffm format. A text file of the converted
     Dataframe is optionally generated.
 
-    .. note::
+    Note:
 
         The input dataframe is expected to represent the feature data in the following schema:
 

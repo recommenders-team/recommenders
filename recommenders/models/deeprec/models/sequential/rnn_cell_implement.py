@@ -59,7 +59,6 @@ class Time4LSTMCell(RNNCell):
         activation=None,
         reuse=None,
     ):
-
         super(Time4LSTMCell, self).__init__(_reuse=reuse)
         if not state_is_tuple:
             logging.warn(
@@ -127,6 +126,17 @@ class Time4LSTMCell(RNNCell):
         return self._output_size
 
     def call(self, inputs, state):
+        """Call method for the Time4LSTMCell.
+
+        Args:
+            inputs: A 2D Tensor of shape [batch_size, input_size].
+            state: A 2D Tensor of shape [batch_size, state_size].
+
+        Returns:
+            A tuple containing:
+            - A 2D Tensor of shape [batch_size, output_size].
+            - A 2D Tensor of shape [batch_size, state_size].
+        """
         time_now_score = tf.expand_dims(inputs[:, -1], -1)
         time_last_score = tf.expand_dims(inputs[:, -2], -1)
         inputs = inputs[:, :-2]
@@ -314,7 +324,6 @@ class Time4ALSTMCell(RNNCell):
         activation=None,
         reuse=None,
     ):
-
         super(Time4ALSTMCell, self).__init__(_reuse=reuse)
         if not state_is_tuple:
             logging.warn(
@@ -382,6 +391,17 @@ class Time4ALSTMCell(RNNCell):
         return self._output_size
 
     def call(self, inputs, state):
+        """Call method for the Time4ALSTMCell.
+
+        Args:
+            inputs: A 2D Tensor of shape [batch_size, input_size].
+            state: A 2D Tensor of shape [batch_size, state_size].
+
+        Returns:
+            A tuple containing:
+            - A 2D Tensor of shape [batch_size, output_size].
+            - A 2D Tensor of shape [batch_size, state_size].
+        """
         att_score = tf.expand_dims(inputs[:, -1], -1)
         time_now_score = tf.expand_dims(inputs[:, -2], -1)
         time_last_score = tf.expand_dims(inputs[:, -3], -1)
