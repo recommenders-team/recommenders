@@ -32,6 +32,9 @@ jobs:
       - name: Build and deploy documentation
         run: |
           cd docs/_build/html
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git config user.signingkey "${{ secrets.GPG_KEY_ID }}"
           git add * -f
           git commit -m "Update documentation"
           git push origin gh-pages
