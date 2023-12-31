@@ -3,7 +3,7 @@ name: Update Documentation
 on:
   push:
     branches:
-      - main
+      - miguel/jupyter_book
 
 jobs:
   build:
