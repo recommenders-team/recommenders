@@ -20,6 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install --upgrade pip setuptools wheel
           pip install --no-use-pep517 lightfm
           pip install .
           pip install -r docs/requirements-doc.txt
